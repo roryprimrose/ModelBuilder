@@ -29,7 +29,7 @@ namespace ModelBuilder
         {
             var requestedType = typeof (T);
 
-            var instance = BuildInstance(requestedType, args);
+            var instance = BuildInstance(requestedType, null, null, args);
 
             if (instance == null)
             {
@@ -45,25 +45,25 @@ namespace ModelBuilder
         /// <inheritdoc />
         public virtual T Populate(T instance)
         {
-            var requestedType = typeof (T);
-
-            return (T) PopulateInstance(requestedType, instance);
+            return (T) PopulateInstance(instance);
         }
 
         /// <summary>
         /// Builds an instance of the specified type.
         /// </summary>
         /// <param name="type">The type of instance to create.</param>
+        /// <param name="referenceName">Identifies the possible parameter or property name this value is intended for.</param>
+        /// <param name="context">The possible context object this value is being created for.</param>
         /// <param name="args">The arguements to create the instance with.</param>
         /// <returns>A new instance.</returns>
-        protected virtual object BuildInstance(Type type, params object[] args)
+        protected virtual object BuildInstance(Type type, string referenceName, object context, params object[] args)
         {
             // First check if this is a type supported by a value generator
-            var valueGenerator = ValueGenerators.FirstOrDefault(x => x.IsSupported(type));
+            var valueGenerator = ValueGenerators.Where(x => x.IsSupported(type, referenceName, context)).OrderByDescending(x => x.Priority).FirstOrDefault();
 
             if (valueGenerator != null)
             {
-                return valueGenerator.Generate(type);
+                return valueGenerator.Generate(type, referenceName, context);
             }
 
             var typeCreator = TypeCreators.FirstOrDefault(x => x.IsSupported(type));
@@ -100,7 +100,7 @@ namespace ModelBuilder
                     foreach (var parameterInfo in parameterInfos)
                     {
                         // Recurse to build this parameter value
-                        var parameterValue = BuildInstance(parameterInfo.ParameterType);
+                        var parameterValue = BuildInstance(parameterInfo.ParameterType, parameterInfo.Name, null);
 
                         parameters.Add(parameterValue);
                     }
@@ -120,12 +120,17 @@ namespace ModelBuilder
         /// <summary>
         /// Populates the settable properties on the specified instance.
         /// </summary>
-        /// <param name="type">The type of instance to populate.</param>
         /// <param name="instance">The instance to populate.</param>
         /// <returns>The updated instance.</returns>
-        protected virtual object PopulateInstance(Type type, object instance)
+        protected virtual object PopulateInstance(object instance)
         {
+            if (instance == null)
+            {
+                throw new ArgumentNullException(nameof(instance));
+            }
+
             var flags = BindingFlags.Instance | BindingFlags.Public;
+            var type = instance.GetType();
 
             var propertyInfos = type.GetProperties(flags).Where(x => x.CanWrite);
 
@@ -138,7 +143,7 @@ namespace ModelBuilder
                     continue;
                 }
 
-                var parameterValue = BuildInstance(propertyInfo.PropertyType);
+                var parameterValue = BuildInstance(propertyInfo.PropertyType, propertyInfo.Name, instance);
 
                 propertyInfo.SetValue(instance, parameterValue);
             }

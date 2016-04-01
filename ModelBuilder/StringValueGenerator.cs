@@ -4,23 +4,16 @@ namespace ModelBuilder
 {
     /// <summary>
     /// The <see cref="BooleanValueGenerator"/>
-    /// class is used to generate random <see cref="bool"/> values.
+    /// class is used to generate random <see cref="string"/> values.
     /// </summary>
-    public class BooleanValueGenerator : ValueGeneratorBase
+    public class StringValueGenerator : ValueGeneratorBase
     {
         /// <inheritdoc />
         public override object Generate(Type type, string referenceName, object context)
         {
             VerifyGenerateRequest(type, referenceName, context);
 
-            var remainder = Environment.TickCount%2;
-
-            if (remainder == 0)
-            {
-                return false;
-            }
-
-            return true;
+            return Guid.NewGuid().ToString();
         }
 
         /// <inheritdoc />
@@ -31,17 +24,7 @@ namespace ModelBuilder
                 throw new ArgumentNullException(nameof(type));
             }
 
-            if (type.IsValueType == false)
-            {
-                return false;
-            }
-
-            if (type == typeof (bool))
-            {
-                return true;
-            }
-
-            return false;
+            return type == typeof (string);
         }
     }
 }

@@ -34,6 +34,10 @@ namespace ModelBuilder.UnitTests
 
         public SimpleEnum Order { get; set; }
 
+        public string PersonalEmail { get; set; }
+
         public int Priority { get; set; }
+
+        public string WorkEmail { get; set; }
     }
 }

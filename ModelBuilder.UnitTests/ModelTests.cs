@@ -59,6 +59,8 @@ namespace ModelBuilder.UnitTests
 
             actual.Should().NotBeNull();
             actual.DOB.Should().NotBe(default(DateTime));
+            actual.PersonalEmail.Should().Match("*@*.*");
+            actual.WorkEmail.Should().Match("*@*.*");
             actual.FirstName.Should().NotBeNullOrWhiteSpace();
             actual.LastName.Should().NotBeNullOrWhiteSpace();
             actual.Id.Should().NotBeEmpty();

@@ -67,6 +67,9 @@
     <Compile Include="DefaultTypeCreator.cs">
       <DependentUpon>ITypeCreator.cs</DependentUpon>
     </Compile>
+    <Compile Include="EmailValueGenerator.cs">
+      <DependentUpon>IValueGenerator.cs</DependentUpon>
+    </Compile>
     <Compile Include="EnumerableTypeCreator.cs">
       <DependentUpon>ITypeCreator.cs</DependentUpon>
     </Compile>
@@ -100,9 +103,13 @@
     <Compile Include="DefaultBuildStrategy.cs">
       <DependentUpon>IBuildStrategy.cs</DependentUpon>
     </Compile>
-    <Compile Include="StringValueCreator.cs">
+    <Compile Include="StringValueGenerator.cs">
       <DependentUpon>IValueGenerator.cs</DependentUpon>
     </Compile>
+    <Compile Include="ValueGeneratorBase.cs">
+      <DependentUpon>IValueGenerator.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ValueGeneratorExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">

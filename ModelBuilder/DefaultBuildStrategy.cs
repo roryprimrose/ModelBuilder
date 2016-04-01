@@ -77,12 +77,13 @@ namespace ModelBuilder
         {
             get
             {
-                yield return new StringValueCreator();
+                yield return new StringValueGenerator();
                 yield return new BooleanValueGenerator();
                 yield return new DateTimeValueGenerator();
                 yield return new EnumValueGenerator();
                 yield return new NumericValueGenerator();
                 yield return new GuidValueGenerator();
+                yield return new EmailValueGenerator();
             }
         }
     }

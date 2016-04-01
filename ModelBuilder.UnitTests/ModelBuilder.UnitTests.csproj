@@ -105,6 +105,7 @@
     <Compile Include="Singleton.cs">
       <DependentUpon>Models.cs</DependentUpon>
     </Compile>
+    <Compile Include="ValueGeneratorExtensionTests.cs" />
     <Compile Include="WithInterfaceAndAbstractParameters.cs">
       <DependentUpon>Models.cs</DependentUpon>
     </Compile>
@@ -128,6 +129,9 @@
     <CodeAnalysisDictionary Include="..\Solution Items\CustomDictionary.xml">
       <Link>Properties\CustomDictionary.xml</Link>
     </CodeAnalysisDictionary>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

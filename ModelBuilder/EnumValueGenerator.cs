@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Globalization;
-using ModelBuilder.Properties;
 
 namespace ModelBuilder
 {
@@ -8,25 +6,14 @@ namespace ModelBuilder
     /// The <see cref="BooleanValueGenerator"/>
     /// class is used to generate random enum values.
     /// </summary>
-    public class EnumValueGenerator : IValueGenerator
+    public class EnumValueGenerator : ValueGeneratorBase
     {
         private static readonly Random _random = new Random(Environment.TickCount);
 
         /// <inheritdoc />
-        public object Generate(Type type)
+        public override object Generate(Type type, string referenceName, object context)
         {
-            if (type == null)
-            {
-                throw new ArgumentNullException(nameof(type));
-            }
-
-            if (IsSupported(type) == false)
-            {
-                var message = string.Format(CultureInfo.CurrentCulture, Resources.Error_TypeNotSupportedFormat,
-                    GetType().FullName, type.FullName);
-
-                throw new NotSupportedException(message);
-            }
+            VerifyGenerateRequest(type, referenceName, context);
 
             var values = Enum.GetValues(type);
             var valueIndex = _random.Next(0, values.Length - 1);
@@ -35,7 +22,7 @@ namespace ModelBuilder
         }
 
         /// <inheritdoc />
-        public bool IsSupported(Type type)
+        public override bool IsSupported(Type type, string referenceName, object context)
         {
             if (type == null)
             {
