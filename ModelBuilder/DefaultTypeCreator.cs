@@ -7,26 +7,17 @@ namespace ModelBuilder
     /// The <see cref="DefaultTypeCreator"/>
     /// class is used to create an instance of a type using the constructors that match any arguments supplied.
     /// </summary>
-    public class DefaultTypeCreator : BaseTypeCreator
+    public class DefaultTypeCreator : TypeCreatorBase
     {
         /// <inheritdoc />
-        public override object Create(Type type, params object[] args)
+        public override object Create(Type type, string referenceName, object context, params object[] args)
         {
             if (type == null)
             {
                 throw new ArgumentNullException(nameof(type));
             }
 
-            if (type.IsInterface)
-            {
-                throw new NotSupportedException("Unable to create an instance of an interface.");
-            }
-
-            if (type.IsValueType)
-            {
-                throw new NotSupportedException(
-                    "Unable to create an instance of a value type. Use a IValueGenerator instead.");
-            }
+            VerifyCreateRequest(type, referenceName, context);
 
             if (args?.Length == 0)
             {

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace ModelBuilder
 {
@@ -8,6 +9,21 @@ namespace ModelBuilder
     /// </summary>
     public interface IExecuteStrategy
     {
+        /// <summary>
+        /// Creates a new instance of the specified type with optional constructor arguments.
+        /// </summary>
+        /// <param name="type">The type of object to create.</param>
+        /// <param name="args">The constructor arguments of the type.</param>
+        /// <returns>A new instance of the specified type.</returns>
+        object CreateWith(Type type, params object[] args);
+
+        /// <summary>
+        /// Populates values onto settable properties of the specified instance.
+        /// </summary>
+        /// <param name="instance">The instance to populate.</param>
+        /// <returns>The populated object.</returns>
+        object Populate(object instance);
+
         /// <summary>
         /// Gets the constructor resolver used to create an instance of a type.
         /// </summary>

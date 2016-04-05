@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
+using ModelBuilder.Properties;
 
 namespace ModelBuilder
 {
@@ -29,7 +31,7 @@ namespace ModelBuilder
         {
             var requestedType = typeof (T);
 
-            var instance = BuildInstance(requestedType, null, null, args);
+            var instance = Build(requestedType, null, null, args);
 
             if (instance == null)
             {
@@ -37,15 +39,25 @@ namespace ModelBuilder
                 return default(T);
             }
 
-            var item = (T) instance;
+            return (T) instance;
+        }
 
-            return Populate(item);
+        /// <inheritdoc />
+        public object CreateWith(Type type, params object[] args)
+        {
+            return Build(type, null, null, args);
         }
 
         /// <inheritdoc />
         public virtual T Populate(T instance)
         {
             return (T) PopulateInstance(instance);
+        }
+
+        /// <inheritdoc />
+        public object Populate(object instance)
+        {
+            return PopulateInstance(instance);
         }
 
         /// <summary>
@@ -56,65 +68,43 @@ namespace ModelBuilder
         /// <param name="context">The possible context object this value is being created for.</param>
         /// <param name="args">The arguements to create the instance with.</param>
         /// <returns>A new instance.</returns>
-        protected virtual object BuildInstance(Type type, string referenceName, object context, params object[] args)
+        protected virtual object Build(Type type, string referenceName, object context, params object[] args)
         {
             // First check if this is a type supported by a value generator
-            var valueGenerator = ValueGenerators.Where(x => x.IsSupported(type, referenceName, context)).OrderByDescending(x => x.Priority).FirstOrDefault();
+            var valueGenerator =
+                ValueGenerators.Where(x => x.IsSupported(type, referenceName, context))
+                    .OrderByDescending(x => x.Priority)
+                    .FirstOrDefault();
 
             if (valueGenerator != null)
             {
                 return valueGenerator.Generate(type, referenceName, context);
             }
 
-            var typeCreator = TypeCreators.FirstOrDefault(x => x.IsSupported(type));
+            var typeCreator =
+                TypeCreators.Where(x => x.IsSupported(type, referenceName, context))
+                    .OrderByDescending(x => x.Priority)
+                    .FirstOrDefault();
 
             if (typeCreator == null)
             {
-                throw new NotSupportedException(
-                    "No supporting ITypeCreator or IValueGenerator was found for the requested type.");
+                var message = string.Format(CultureInfo.CurrentCulture, Resources.NoMatchingCreatorOrGeneratorFound,
+                    type.FullName);
+
+                throw new NotSupportedException(message);
             }
 
-            object item;
+            var instance = CreateInstance(typeCreator, type, referenceName, context, args);
 
-            if (args?.Length > 0)
+            if (typeCreator.AutoPopulate)
             {
-                // We have arguments so will just let the type creator do the work here
-                item = typeCreator.Create(type, args);
-            }
-            else if (typeCreator.AutoDetectConstructor)
-            {
-                // Use constructor detection to figure out how to create this instance
-                var constructor = ConstructorResolver.Resolve(type, args);
-
-                var parameterInfos = constructor.GetParameters();
-
-                if (parameterInfos.Length == 0)
-                {
-                    item = typeCreator.Create(type);
-                }
-                else
-                {
-                    // Get values for each of the constructor parameters
-                    var parameters = new Collection<object>();
-
-                    foreach (var parameterInfo in parameterInfos)
-                    {
-                        // Recurse to build this parameter value
-                        var parameterValue = BuildInstance(parameterInfo.ParameterType, parameterInfo.Name, null);
-
-                        parameters.Add(parameterValue);
-                    }
-
-                    item = typeCreator.Create(type, parameters.ToArray());
-                }
-            }
-            else
-            {
-                // The type creator is going to be solely responsible for creating this instance
-                item = typeCreator.Create(type);
+                instance = PopulateInstance(instance);
             }
 
-            return item;
+            // Allow the type creator to do its own population of the instance
+            instance = typeCreator.Populate(instance, this);
+
+            return instance;
         }
 
         /// <summary>
@@ -143,12 +133,58 @@ namespace ModelBuilder
                     continue;
                 }
 
-                var parameterValue = BuildInstance(propertyInfo.PropertyType, propertyInfo.Name, instance);
+                var parameterValue = Build(propertyInfo.PropertyType, propertyInfo.Name, instance);
 
                 propertyInfo.SetValue(instance, parameterValue);
             }
 
             return instance;
+        }
+
+        private object CreateInstance(ITypeCreator typeCreator, Type type, string referenceName, object context,
+            object[] args)
+        {
+            object item;
+
+            if (args?.Length > 0)
+            {
+                // We have arguments so will just let the type creator do the work here
+                item = typeCreator.Create(type, referenceName, context, args);
+            }
+            else if (typeCreator.AutoDetectConstructor)
+            {
+                // Use constructor detection to figure out how to create this instance
+                var constructor = ConstructorResolver.Resolve(type, args);
+
+                var parameterInfos = constructor.GetParameters();
+
+                if (parameterInfos.Length == 0)
+                {
+                    item = typeCreator.Create(type, referenceName, context);
+                }
+                else
+                {
+                    // Get values for each of the constructor parameters
+                    var parameters = new Collection<object>();
+
+                    foreach (var parameterInfo in parameterInfos)
+                    {
+                        // Recurse to build this parameter value
+                        var parameterValue = Build(parameterInfo.ParameterType, parameterInfo.Name, null);
+
+                        parameters.Add(parameterValue);
+                    }
+
+                    item = typeCreator.Create(type, referenceName, context, parameters.ToArray());
+                }
+            }
+            else
+            {
+                // The type creator is going to be solely responsible for creating this instance
+                item = typeCreator.Create(type, referenceName, context);
+            }
+
+            return item;
         }
 
         /// <inheritdoc />

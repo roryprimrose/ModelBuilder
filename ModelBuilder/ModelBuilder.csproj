@@ -46,10 +46,25 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AgeValueGenerator.cs">
+      <DependentUpon>IValueGenerator.cs</DependentUpon>
+    </Compile>
     <Compile Include="BaseBuildStrategy.cs">
       <DependentUpon>IBuildStrategy.cs</DependentUpon>
     </Compile>
-    <Compile Include="BaseTypeCreator.cs">
+    <Compile Include="BuilderStrategyExtensions.cs">
+      <DependentUpon>Extensions.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DateOfBirthValueGenerator.cs">
+      <DependentUpon>IValueGenerator.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ExecuteStrategyExtensions.cs">
+      <DependentUpon>Extensions.cs</DependentUpon>
+    </Compile>
+    <Compile Include="RandomExtensions.cs">
+      <DependentUpon>Extensions.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TypeCreatorBase.cs">
       <DependentUpon>ITypeCreator.cs</DependentUpon>
     </Compile>
     <Compile Include="BooleanValueGenerator.cs">
@@ -99,17 +114,21 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="RandomExtensions.cs" />
     <Compile Include="DefaultBuildStrategy.cs">
       <DependentUpon>IBuildStrategy.cs</DependentUpon>
     </Compile>
     <Compile Include="StringValueGenerator.cs">
       <DependentUpon>IValueGenerator.cs</DependentUpon>
     </Compile>
+    <Compile Include="TypeCreatorExtensions.cs">
+      <DependentUpon>Extensions.cs</DependentUpon>
+    </Compile>
     <Compile Include="ValueGeneratorBase.cs">
       <DependentUpon>IValueGenerator.cs</DependentUpon>
     </Compile>
-    <Compile Include="ValueGeneratorExtensions.cs" />
+    <Compile Include="ValueGeneratorExtensions.cs">
+      <DependentUpon>Extensions.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">

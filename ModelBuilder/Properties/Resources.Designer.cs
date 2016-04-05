@@ -104,5 +104,14 @@ namespace ModelBuilder.Properties {
                 return ResourceManager.GetString("Error_TypeNotSupportedFormat", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No supporting ITypeCreator or IValueGenerator was found to build the type &apos;{0}&apos;..
+        /// </summary>
+        internal static string NoMatchingCreatorOrGeneratorFound {
+            get {
+                return ResourceManager.GetString("NoMatchingCreatorOrGeneratorFound", resourceCulture);
+            }
+        }
     }
 }

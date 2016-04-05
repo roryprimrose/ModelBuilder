@@ -84,6 +84,8 @@ namespace ModelBuilder
                 yield return new NumericValueGenerator();
                 yield return new GuidValueGenerator();
                 yield return new EmailValueGenerator();
+                yield return new AgeValueGenerator();
+                yield return new DateOfBirthValueGenerator();
             }
         }
     }

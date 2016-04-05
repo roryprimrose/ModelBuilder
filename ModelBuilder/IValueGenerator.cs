@@ -16,8 +16,8 @@ namespace ModelBuilder
         /// Generates a new value of the specified type.
         /// </summary>
         /// <param name="type">The type of value to generate.</param>
-        /// <param name="referenceName">Identifies the possible parameter or property name this value is intended for.</param>
-        /// <param name="context">The possible context object this value is being created for.</param>
+        /// <param name="referenceName">Identifies the possible parameter or property name the value is intended for.</param>
+        /// <param name="context">The possible context object the value is being created for.</param>
         /// <returns>A new value of the type.</returns>
         object Generate(Type type, string referenceName, object context);
 
@@ -25,12 +25,14 @@ namespace ModelBuilder
         /// Returns whether the specified type is supported by this generator.
         /// </summary>
         /// <param name="type">The type to evaulate.</param>
-        /// <param name="referenceName">Identifies the possible parameter or property name this value is intended for.</param>
-        /// <param name="context">The possible context object this value is being created for.</param>
+        /// <param name="referenceName">Identifies the possible parameter or property name the value is intended for.</param>
+        /// <param name="context">The possible context object the value is being created for.</param>
         /// <returns><c>true</c> if the type is supported; otherwise <c>false</c>.</returns>
         bool IsSupported(Type type, string referenceName, object context);
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Gets the priority for this generator.
+        /// </summary>
         int Priority { get; }
     }
 }

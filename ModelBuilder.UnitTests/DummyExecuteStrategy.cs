@@ -15,6 +15,16 @@ namespace ModelBuilder.UnitTests
             throw new NotImplementedException();
         }
 
+        public object CreateWith(Type type, params object[] args)
+        {
+            throw new NotImplementedException();
+        }
+
+        public object Populate(object instance)
+        {
+            throw new NotImplementedException();
+        }
+
         public IConstructorResolver ConstructorResolver { get; set; } = new DefaultConstructorResolver();
         public ICollection<IgnoreRule> IgnoreRules { get; } = new List<IgnoreRule>();
         public ICollection<ITypeCreator> TypeCreators { get; } = new List<ITypeCreator>();

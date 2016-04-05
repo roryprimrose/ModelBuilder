@@ -74,6 +74,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Address.cs" />
     <Compile Include="Company.cs">
       <DependentUpon>Models.cs</DependentUpon>
     </Compile>
@@ -105,7 +106,8 @@
     <Compile Include="Singleton.cs">
       <DependentUpon>Models.cs</DependentUpon>
     </Compile>
-    <Compile Include="ValueGeneratorExtensionTests.cs" />
+    <Compile Include="TypeCreatorExtensionsTests.cs" />
+    <Compile Include="ValueGeneratorExtensionsTests.cs" />
     <Compile Include="WithInterfaceAndAbstractParameters.cs">
       <DependentUpon>Models.cs</DependentUpon>
     </Compile>

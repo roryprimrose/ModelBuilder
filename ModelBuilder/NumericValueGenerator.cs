@@ -8,8 +8,6 @@ namespace ModelBuilder
     /// </summary>
     public class NumericValueGenerator : ValueGeneratorBase
     {
-        private static readonly Random _random = new Random(Environment.TickCount);
-
         /// <inheritdoc />
         public override object Generate(Type type, string referenceName, object context)
         {
@@ -17,51 +15,51 @@ namespace ModelBuilder
 
             if (type == typeof (sbyte))
             {
-                return Convert.ToSByte(_random.Next(sbyte.MinValue, sbyte.MaxValue));
+                return Convert.ToSByte(Generator.Next(sbyte.MinValue, sbyte.MaxValue));
             }
 
             if (type == typeof (byte))
             {
-                return Convert.ToByte(_random.Next(byte.MinValue, byte.MaxValue));
+                return Convert.ToByte(Generator.Next(byte.MinValue, byte.MaxValue));
             }
 
             if (type == typeof (short))
             {
-                return Convert.ToInt16(_random.Next(short.MinValue, short.MaxValue));
+                return Convert.ToInt16(Generator.Next(short.MinValue, short.MaxValue));
             }
 
             if (type == typeof (ushort))
             {
-                return Convert.ToInt16(_random.Next(ushort.MinValue, ushort.MaxValue));
+                return Convert.ToInt16(Generator.Next(ushort.MinValue, ushort.MaxValue));
             }
 
             if (type == typeof (uint))
             {
-                return _random.NextUInt32();
+                return Generator.NextUInt32();
             }
 
             if (type == typeof (long))
             {
-                return _random.NextInt64();
+                return Generator.NextInt64();
             }
 
             if (type == typeof (ulong))
             {
-                return _random.NextUInt64();
+                return Generator.NextUInt64();
             }
 
             if (type == typeof (double))
             {
-                return _random.NextDouble();
+                return Generator.NextDouble();
             }
 
             if (type == typeof (float))
             {
-                return _random.NextFloat();
+                return Generator.NextFloat();
             }
 
             // Return int by default
-            return _random.Next();
+            return Generator.Next();
         }
 
         /// <inheritdoc />
@@ -129,5 +127,10 @@ namespace ModelBuilder
 
             return false;
         }
+
+        /// <summary>
+        /// Gets the random generator.
+        /// </summary>
+        protected Random Generator { get; } = new Random(Environment.TickCount);
     }
 }

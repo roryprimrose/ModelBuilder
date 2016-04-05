@@ -29,6 +29,28 @@ namespace ModelBuilder.UnitTests
         }
 
         [Fact]
+        public void CreateBuildsAndPopulatesNestedInstancesTest()
+        {
+            var actual = Model.Create<Person>();
+
+            actual.Address.Should().NotBeNull();
+            actual.Address.AddressLine1.Should().NotBeNullOrEmpty();
+            actual.Address.AddressLine2.Should().NotBeNullOrEmpty();
+            actual.Address.City.Should().NotBeNullOrEmpty();
+            actual.Address.Country.Should().NotBeNullOrEmpty();
+            actual.Address.State.Should().NotBeNullOrEmpty();
+            actual.Address.Suburb.Should().NotBeNullOrEmpty();
+        }
+
+        [Fact]
+        public void CreateReturnsGuidTest()
+        {
+            var actual = Model.Create<Guid>();
+
+            actual.Should().NotBeEmpty();
+        }
+
+        [Fact]
         public void CreateReturnsSimpleInstanceTest()
         {
             var actual = Model.Create<Simple>();
@@ -42,13 +64,21 @@ namespace ModelBuilder.UnitTests
         }
 
         [Fact]
+        public void CreateReturnsStringTest()
+        {
+            var actual = Model.Create<string>();
+
+            actual.Should().NotBeNullOrWhiteSpace();
+        }
+
+        [Fact]
         public void CreateWithReturnsCompanyWithEnumerableTypeCreatorUsageTest()
         {
             var actual = Model.Create<Company>();
 
             actual.Should().NotBeNull();
             actual.Name.Should().NotBeNullOrWhiteSpace();
-            actual.Staff.Should().NotBeNull();
+            actual.Staff.Should().NotBeEmpty();
         }
 
         [Fact]

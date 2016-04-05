@@ -5,7 +5,7 @@ using Xunit;
 
 namespace ModelBuilder.UnitTests
 {
-    public class ValueGeneratorExtensionTests
+    public class ValueGeneratorExtensionsTests
     {
         [Fact]
         public void GenerateReturnsGeneratorValueWithoutContextInformationTest()

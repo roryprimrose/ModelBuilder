@@ -24,6 +24,8 @@ namespace ModelBuilder.UnitTests
             Priority = priority;
         }
 
+        public Address Address { get; set; }
+
         public int Age => DateTime.UtcNow.Subtract(DOB).Days/365;
 
         public DateTime DOB { get; set; }
