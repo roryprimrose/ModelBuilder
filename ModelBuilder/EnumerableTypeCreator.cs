@@ -71,11 +71,12 @@ namespace ModelBuilder
             }
 
             var type = instance.GetType();
-            var listGenericType = typeof (List<string>).GetGenericTypeDefinition();
             var typeArgument = type.GenericTypeArguments.Single();
+
+            var listGenericType = typeof (ICollection<string>).GetGenericTypeDefinition();
             var expectedGenericType = listGenericType.MakeGenericType(typeArgument);
 
-            if (expectedGenericType != type)
+            if (expectedGenericType.IsAssignableFrom(type) == false)
             {
                 // The instance is not List<T> and therefore cannot be populated by this type creator
                 var message = string.Format(CultureInfo.CurrentCulture, Resources.Error_TypeNotSupportedFormat,
@@ -98,14 +99,19 @@ namespace ModelBuilder
         }
 
         /// <summary>
-        /// Gets or sets how many instances will be auto-populated into the list.
+        /// Gets or sets how many instances will be auto-populated into the list by default when the <see cref="EnumerableTypeCreator"/> is created.
         /// </summary>
-        public static int AutoPopulateCount { get; set; } = 10;
+        public static int DefaultAutoPopulateCount { get; set; } = 10;
 
         /// <inheritdoc />
         public override bool AutoDetectConstructor => false;
 
         /// <inheritdoc />
         public override bool AutoPopulate => false;
+
+        /// <summary>
+        /// Gets or sets how many instances will be auto-populated into the list.
+        /// </summary>
+        public int AutoPopulateCount { get; set; } = DefaultAutoPopulateCount;
     }
 }

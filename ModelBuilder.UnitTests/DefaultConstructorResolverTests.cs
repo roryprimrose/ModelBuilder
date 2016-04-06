@@ -15,16 +15,6 @@ namespace ModelBuilder.UnitTests
         }
 
         [Fact]
-        public void ResolveIgnoresInterfaceAndAbstractParameterTypesWhenSearchingForBestConstructorTest()
-        {
-            var target = new DefaultConstructorResolver();
-
-            var constructor = target.Resolve(typeof (WithInterfaceAndAbstractParameters));
-
-            constructor.GetParameters().Length.Should().Be(5);
-        }
-
-        [Fact]
         public void ResolveMatchesConstructorWithDerivedParameterTypesTest()
         {
             var person = new Person
@@ -49,6 +39,16 @@ namespace ModelBuilder.UnitTests
                 Environment.TickCount);
 
             constructor.GetParameters().Length.Should().Be(6);
+        }
+
+        [Fact]
+        public void ResolveReturnsConstructorWithLeastParametersTest()
+        {
+            var target = new DefaultConstructorResolver();
+
+            var constructor = target.Resolve(typeof (WithInterfaceAndAbstractParameters));
+
+            constructor.GetParameters().Should().HaveCount(1);
         }
 
         [Fact]
@@ -114,6 +114,16 @@ namespace ModelBuilder.UnitTests
                         priority);
 
             _output.WriteLine(action.ShouldThrow<MissingMemberException>().And.Message);
+        }
+
+        [Fact]
+        public void ResolveThrowsExceptionWithNullTypeTest()
+        {
+            var target = new DefaultConstructorResolver();
+
+            Action action = () => target.Resolve(null);
+
+            action.ShouldThrow<ArgumentNullException>();
         }
     }
 }

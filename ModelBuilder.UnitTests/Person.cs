@@ -4,6 +4,8 @@ namespace ModelBuilder.UnitTests
 {
     public class Person : Entity
     {
+        public int MinAge = 0;
+
         public Person()
         {
         }
@@ -22,6 +24,11 @@ namespace ModelBuilder.UnitTests
             IsActive = isActive;
             Id = id;
             Priority = priority;
+        }
+
+        public object DoSomething()
+        {
+            return null;
         }
 
         public Address Address { get; set; }

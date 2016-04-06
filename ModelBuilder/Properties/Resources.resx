@@ -120,19 +120,19 @@
   <data name="ConstructorResolver_NoPublicConstructorFound" xml:space="preserve">
     <value>No public constructor is available for type {0}.</value>
   </data>
-  <data name="Error_ExpressionRefersToMethodFormat" xml:space="preserve">
-    <value>Expression '{0}' refers to a method, not a property.</value>
-  </data>
-  <data name="Error_ExpressionRefersToFieldFormat" xml:space="preserve">
-    <value>Expression '{0}' refers to a field, not a property.</value>
-  </data>
-  <data name="Error_ExpressionRefersToPropertyOnWrongType" xml:space="preserve">
-    <value>Expression '{0}' refers to a property that is not from type {1}.</value>
+  <data name="Error_ExpressionNotPropertyFormat" xml:space="preserve">
+    <value>Expression '{0}' does not refer to a property.</value>
   </data>
   <data name="Error_TypeNotSupportedFormat" xml:space="preserve">
     <value>{0} does not support the {1} type.</value>
   </data>
   <data name="NoMatchingCreatorOrGeneratorFound" xml:space="preserve">
     <value>No supporting ITypeCreator or IValueGenerator was found to build the type '{0}'.</value>
+  </data>
+  <data name="NoMatchingCreatorOrGeneratorFoundWithName" xml:space="preserve">
+    <value>No supporting ITypeCreator or IValueGenerator was found to build the type '{0}' for '{1}'.</value>
+  </data>
+  <data name="NoMatchingCreatorOrGeneratorFoundWithNameAndContext" xml:space="preserve">
+    <value>No supporting ITypeCreator or IValueGenerator was found to build the type '{0}' for '{1}' on type '{2}'.</value>
   </data>
 </root>

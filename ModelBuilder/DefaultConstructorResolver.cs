@@ -23,7 +23,6 @@ namespace ModelBuilder
             if (args?.Length == 0)
             {
                 var constructors = from x in type.GetConstructors()
-                    where x.GetParameters().All(IsSupportedParameterType)
                     orderby x.GetParameters().Length
                     select x;
 
@@ -55,31 +54,6 @@ namespace ModelBuilder
             }
 
             return constructor;
-        }
-
-        /// <summary>
-        /// Returns whether the specified parameter has a supported parameter type.
-        /// </summary>
-        /// <param name="parameter">The parameter information.</param>
-        /// <returns><c>true</c> if the parameter is supported; otherwise <c>false</c>.</returns>
-        protected virtual bool IsSupportedParameterType(ParameterInfo parameter)
-        {
-            if (parameter == null)
-            {
-                throw new ArgumentNullException(nameof(parameter));
-            }
-
-            if (parameter.ParameterType.IsInterface)
-            {
-                return false;
-            }
-
-            if (parameter.ParameterType.IsAbstract)
-            {
-                return false;
-            }
-
-            return true;
         }
     }
 }

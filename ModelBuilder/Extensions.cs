@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ModelBuilder
 {
@@ -34,13 +35,67 @@ namespace ModelBuilder
         }
 
         /// <summary>
+        /// Sets values on each instance in a set.
+        /// </summary>
+        /// <typeparam name="T">The type of instance to configure.</typeparam>
+        /// <param name="instances">The instances.</param>
+        /// <param name="action">The configuration action.</param>
+        /// <returns>A list of the instances.</returns>
+        public static List<T> SetEach<T>(this IEnumerable<T> instances, Action<T> action) where T : class
+        {
+            if (instances == null)
+            {
+                throw new ArgumentNullException(nameof(instances));
+            }
+
+            if (action == null)
+            {
+                throw new ArgumentNullException(nameof(action));
+            }
+
+            var items = instances as List<T>;
+
+            if (items == null)
+            {
+                // It is not already a list so we need to convert it first
+                items = instances.ToList();
+            }
+            
+            return SetEach(items, action);
+        }
+
+        /// <summary>
+        /// Sets values on each instance in a set.
+        /// </summary>
+        /// <typeparam name="T">The type of instance to configure.</typeparam>
+        /// <param name="instances">The instances.</param>
+        /// <param name="action">The configuration action.</param>
+        /// <returns>A list of the instances.</returns>
+        public static List<T> SetEach<T>(this List<T> instances, Action<T> action) where T : class
+        {
+            if (instances == null)
+            {
+                throw new ArgumentNullException(nameof(instances));
+            }
+
+            if (action == null)
+            {
+                throw new ArgumentNullException(nameof(action));
+            }
+
+            instances.ForEach(action);
+
+            return instances;
+        }
+
+        /// <summary>
         /// Makes a change to each instance using the specified action.
         /// </summary>
         /// <typeparam name="T">The type of instance being changed.</typeparam>
         /// <param name="instances">The instances to update.</param>
         /// <param name="action">The action to run against the instance.</param>
         /// <returns>The updated instances.</returns>
-        public static T SetEach<T>(this T instances, Action<T> action) where T : ICollection<T>
+        public static ICollection<T> SetEach<T>(this ICollection<T> instances, Action<T> action)
         {
             if (instances == null)
             {

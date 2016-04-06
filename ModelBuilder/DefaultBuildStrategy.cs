@@ -6,7 +6,7 @@ namespace ModelBuilder
     /// The <see cref="DefaultBuildStrategy"/>
     /// class is used to provide the default definition for how to create and update instances of a type.
     /// </summary>
-    public class DefaultBuildStrategy : BaseBuildStrategy
+    public class DefaultBuildStrategy : BuildStrategyBase
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="DefaultBuildStrategy"/> class.
@@ -14,10 +14,18 @@ namespace ModelBuilder
         public DefaultBuildStrategy()
             : base(
                 DefaultConstructorResolver, DefaultTypeCreators, DefaultValueGenerators,
-                GetDefaultIgnoreRules())
+                DefaultIgnoreRules)
         {
         }
 
+        private DefaultBuildStrategy(IEnumerable<ITypeCreator> typeCreators,
+            IEnumerable<IValueGenerator> valueGenerators, IEnumerable<IgnoreRule> ignoreRules)
+            : base(
+                DefaultConstructorResolver, typeCreators, valueGenerators,
+                ignoreRules)
+        {
+        }
+        
         /// <inheritdoc />
         public override IExecuteStrategy<T> GetExecuteStrategy<T>()
         {
@@ -40,21 +48,18 @@ namespace ModelBuilder
 
             return executeStrategy;
         }
-
-        /// <summary>
-        /// Gets the default ignore rules.
-        /// </summary>
-        /// <returns>The ignore rules.</returns>
-        private static IEnumerable<IgnoreRule> GetDefaultIgnoreRules()
-        {
-            return new List<IgnoreRule>();
-        }
-
+        
         /// <summary>
         /// Gets the default constructor resolver.
         /// </summary>
         /// <value>The constructor resolver.</value>
         public static IConstructorResolver DefaultConstructorResolver => new DefaultConstructorResolver();
+
+        /// <summary>
+        /// Gets the default ignore rules.
+        /// </summary>
+        /// <value>The ignore rules.</value>
+        public static IEnumerable<IgnoreRule> DefaultIgnoreRules { get; } = new List<IgnoreRule>();
 
         /// <summary>
         /// Gets the default type creators.

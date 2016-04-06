@@ -1,4 +1,6 @@
-﻿namespace ModelBuilder
+﻿using System;
+
+namespace ModelBuilder
 {
     /// <summary>
     /// The <see cref="Model"/>
@@ -6,6 +8,17 @@
     /// </summary>
     public static class Model
     {
+        private static readonly DefaultBuildStrategy _defaultBuildStrategy = new DefaultBuildStrategy();
+        private static IBuildStrategy _buildStrategy;
+
+        /// <summary>
+        /// Initializes the static instance of the <see cref="Model"/> class.
+        /// </summary>
+        static Model()
+        {
+            BuildStrategy = DefaultBuildStrategy;
+        }
+
         /// <summary>
         /// Creates an instance of <typeparamref name="T"/> using the default build and execute strategies.
         /// </summary>
@@ -60,18 +73,35 @@
         }
 
         /// <summary>
-        /// Returns a new execute strategy using <see cref="DefaultBuildStrategy"/>.
+        /// Returns a new execute strategy using <see cref="ModelBuilder.DefaultBuildStrategy"/>.
         /// </summary>
         /// <typeparam name="T">The type of execute strategy to create.</typeparam>
         /// <returns>A new execute strategy.</returns>
         public static T With<T>() where T : IExecuteStrategy, new()
         {
-            return DefaultStrategy.With<T>();
+            return BuildStrategy.With<T>();
         }
 
         /// <summary>
-        /// Gets or sets the default build strategy to use in this application domain.
+        /// Gets or sets the current build strategy to use in this application domain.
         /// </summary>
-        public static IBuildStrategy DefaultStrategy { get; set; } = new DefaultBuildStrategy();
+        public static IBuildStrategy BuildStrategy
+        {
+            get { return _buildStrategy; }
+            set
+            {
+                if (value == null)
+                {
+                    throw new ArgumentNullException(nameof(value));
+                }
+
+                _buildStrategy = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the default build strategy.
+        /// </summary>
+        public static IBuildStrategy DefaultBuildStrategy => _defaultBuildStrategy;
     }
 }

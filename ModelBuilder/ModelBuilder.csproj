@@ -49,10 +49,10 @@
     <Compile Include="AgeValueGenerator.cs">
       <DependentUpon>IValueGenerator.cs</DependentUpon>
     </Compile>
-    <Compile Include="BaseBuildStrategy.cs">
+    <Compile Include="BuildStrategyBase.cs">
       <DependentUpon>IBuildStrategy.cs</DependentUpon>
     </Compile>
-    <Compile Include="BuilderStrategyExtensions.cs">
+    <Compile Include="BuildStrategyExtensions.cs">
       <DependentUpon>Extensions.cs</DependentUpon>
     </Compile>
     <Compile Include="DateOfBirthValueGenerator.cs">

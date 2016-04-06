@@ -21,12 +21,12 @@ namespace ModelBuilder
                 throw new ArgumentNullException(nameof(type));
             }
 
-            if (type.IsAbstract)
+            if (type.IsInterface)
             {
                 return false;
             }
 
-            if (type.IsInterface)
+            if (type.IsAbstract)
             {
                 return false;
             }

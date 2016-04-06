@@ -6,19 +6,19 @@ using System.Linq;
 namespace ModelBuilder
 {
     /// <summary>
-    /// The <see cref="BaseBuildStrategy"/>
+    /// The <see cref="BuildStrategyBase"/>
     /// class is used to provide the base framework for a build strategy.
     /// </summary>
-    public abstract class BaseBuildStrategy : IBuildStrategy
+    public abstract class BuildStrategyBase : IBuildStrategy
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="BaseBuildStrategy"/> class.
+        /// Initializes a new instance of the <see cref="BuildStrategyBase"/> class.
         /// </summary>
         /// <param name="constructorResolver">The constructor resolver.</param>
         /// <param name="typeCreators">The type creators.</param>
         /// <param name="valueGenerators">The value generators.</param>
         /// <param name="ignoreRules">The ignore rules.</param>
-        protected BaseBuildStrategy(IConstructorResolver constructorResolver, IEnumerable<ITypeCreator> typeCreators,
+        protected BuildStrategyBase(IConstructorResolver constructorResolver, IEnumerable<ITypeCreator> typeCreators,
             IEnumerable<IValueGenerator> valueGenerators, IEnumerable<IgnoreRule> ignoreRules)
         {
             if (typeCreators == null)

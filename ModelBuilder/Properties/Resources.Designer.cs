@@ -70,29 +70,11 @@ namespace ModelBuilder.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Expression &apos;{0}&apos; refers to a field, not a property..
+        ///   Looks up a localized string similar to Expression &apos;{0}&apos; does not refer to a property..
         /// </summary>
-        internal static string Error_ExpressionRefersToFieldFormat {
+        internal static string Error_ExpressionNotPropertyFormat {
             get {
-                return ResourceManager.GetString("Error_ExpressionRefersToFieldFormat", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Expression &apos;{0}&apos; refers to a method, not a property..
-        /// </summary>
-        internal static string Error_ExpressionRefersToMethodFormat {
-            get {
-                return ResourceManager.GetString("Error_ExpressionRefersToMethodFormat", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Expression &apos;{0}&apos; refers to a property that is not from type {1}..
-        /// </summary>
-        internal static string Error_ExpressionRefersToPropertyOnWrongType {
-            get {
-                return ResourceManager.GetString("Error_ExpressionRefersToPropertyOnWrongType", resourceCulture);
+                return ResourceManager.GetString("Error_ExpressionNotPropertyFormat", resourceCulture);
             }
         }
         
@@ -111,6 +93,24 @@ namespace ModelBuilder.Properties {
         internal static string NoMatchingCreatorOrGeneratorFound {
             get {
                 return ResourceManager.GetString("NoMatchingCreatorOrGeneratorFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No supporting ITypeCreator or IValueGenerator was found to build the type &apos;{0}&apos; for &apos;{1}&apos;..
+        /// </summary>
+        internal static string NoMatchingCreatorOrGeneratorFoundWithName {
+            get {
+                return ResourceManager.GetString("NoMatchingCreatorOrGeneratorFoundWithName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No supporting ITypeCreator or IValueGenerator was found to build the type &apos;{0}&apos; for &apos;{1}&apos; on type &apos;{2}&apos;..
+        /// </summary>
+        internal static string NoMatchingCreatorOrGeneratorFoundWithNameAndContext {
+            get {
+                return ResourceManager.GetString("NoMatchingCreatorOrGeneratorFoundWithNameAndContext", resourceCulture);
             }
         }
     }

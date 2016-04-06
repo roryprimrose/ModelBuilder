@@ -75,24 +75,44 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Address.cs" />
+    <Compile Include="BuildStrategyExtensionsTests.cs" />
     <Compile Include="Company.cs">
       <DependentUpon>Models.cs</DependentUpon>
     </Compile>
+    <Compile Include="DefaultBuildStrategyTests.cs" />
     <Compile Include="DefaultConstructorResolverTests.cs" />
+    <Compile Include="DefaultExecuteStrategyTests.cs" />
+    <Compile Include="DefaultTypeCreatorTests.cs" />
     <Compile Include="DummyBuildStrategy.cs">
       <DependentUpon>DummyTypes.cs</DependentUpon>
     </Compile>
     <Compile Include="DummyExecuteStrategy.cs">
       <DependentUpon>DummyTypes.cs</DependentUpon>
     </Compile>
+    <Compile Include="DummyTypeCreator.cs">
+      <DependentUpon>DummyTypes.cs</DependentUpon>
+    </Compile>
     <Compile Include="DummyTypes.cs" />
     <Compile Include="Entity.cs">
       <DependentUpon>Models.cs</DependentUpon>
     </Compile>
+    <Compile Include="EnumerableTypeCreatorTests.cs" />
     <Compile Include="EnumValueGeneratorTests.cs" />
+    <Compile Include="ExecuteStrategyExtensionTests.cs" />
+    <Compile Include="ExtensionsTests.cs" />
     <Compile Include="IEntityResolver.cs" />
+    <Compile Include="IgnoreRuleTests.cs" />
     <Compile Include="Models.cs" />
     <Compile Include="ModelTests.cs" />
+    <Compile Include="NullBuildStrategy.cs" />
+    <Compile Include="NullExecuteStrategy.cs" />
+    <Compile Include="NullTypeBuildExecuteStrategy.cs" />
+    <Compile Include="PropertyScopes.cs" />
+    <Compile Include="RandomExtensionsTests.cs" />
+    <Compile Include="ReadOnlyModel.cs">
+      <DependentUpon>Models.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ScenarioTests.cs" />
     <Compile Include="Person.cs">
       <DependentUpon>Models.cs</DependentUpon>
     </Compile>
@@ -106,6 +126,13 @@
     <Compile Include="Singleton.cs">
       <DependentUpon>Models.cs</DependentUpon>
     </Compile>
+    <Compile Include="SlimModel.cs">
+      <DependentUpon>Models.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SpecificCompany.cs">
+      <DependentUpon>Models.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TypeCreatorBaseTests.cs" />
     <Compile Include="TypeCreatorExtensionsTests.cs" />
     <Compile Include="ValueGeneratorExtensionsTests.cs" />
     <Compile Include="WithInterfaceAndAbstractParameters.cs">

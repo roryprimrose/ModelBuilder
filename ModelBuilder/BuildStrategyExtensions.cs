@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Linq.Expressions;
 
 namespace ModelBuilder
@@ -8,7 +7,7 @@ namespace ModelBuilder
     /// The <see cref="Extensions"/>
     /// class provides extension methods for the <see cref="IBuildStrategy"/> interface.
     /// </summary>
-    public static class BuilderStrategyExtensions
+    public static class BuildStrategyExtensions
     {
         /// <summary>
         /// Creates an instance of <typeparamref name="T"/> using the specified build strategy.
@@ -47,16 +46,20 @@ namespace ModelBuilder
         /// Returns an <see cref="IExecuteStrategy{T}"/> for the specified build strategy with a new <see cref="IgnoreRule"/> that matches the specified expression.
         /// </summary>
         /// <typeparam name="T">The type of instance that matches the rule.</typeparam>
-        /// <typeparam name="TProperty">The type of property to ignore.</typeparam>
         /// <param name="buildStrategy">The build strategy.</param>
         /// <param name="expression">The expression that identifies a property on <typeparamref name="T"/></param>
         /// <returns>A new execute strategy.</returns>
-        public static IExecuteStrategy<T> Ignoring<T, TProperty>(this IBuildStrategy buildStrategy,
-            Expression<Func<T, TProperty>> expression)
+        public static IExecuteStrategy<T> Ignoring<T>(this IBuildStrategy buildStrategy,
+            Expression<Func<T, object>> expression)
         {
             if (buildStrategy == null)
             {
                 throw new ArgumentNullException(nameof(buildStrategy));
+            }
+
+            if (expression == null)
+            {
+                throw new ArgumentNullException(nameof(expression));
             }
 
             return buildStrategy.GetExecuteStrategy<T>().Ignoring(expression);
@@ -94,9 +97,20 @@ namespace ModelBuilder
 
             var executeStrategy = new T {ConstructorResolver = buildStrategy.ConstructorResolver};
 
-            buildStrategy.IgnoreRules.ToList().ForEach(x => executeStrategy.IgnoreRules.Add(x));
-            buildStrategy.TypeCreators.ToList().ForEach(x => executeStrategy.TypeCreators.Add(x));
-            buildStrategy.ValueGenerators.ToList().ForEach(x => executeStrategy.ValueGenerators.Add(x));
+            foreach (var ignoreRule in buildStrategy.IgnoreRules)
+            {
+                executeStrategy.IgnoreRules.Add(ignoreRule);
+            }
+
+            foreach (var typeCreator in buildStrategy.TypeCreators)
+            {
+                executeStrategy.TypeCreators.Add(typeCreator);
+            }
+
+            foreach (var valueGenerator in buildStrategy.ValueGenerators)
+            {
+                executeStrategy.ValueGenerators.Add(valueGenerator);
+            }
 
             return executeStrategy;
         }

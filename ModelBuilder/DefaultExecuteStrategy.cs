@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
@@ -45,6 +46,11 @@ namespace ModelBuilder
         /// <inheritdoc />
         public object CreateWith(Type type, params object[] args)
         {
+            if (type == null)
+            {
+                throw new ArgumentNullException(nameof(type));
+            }
+
             return Build(type, null, null, args);
         }
 
@@ -70,6 +76,11 @@ namespace ModelBuilder
         /// <returns>A new instance.</returns>
         protected virtual object Build(Type type, string referenceName, object context, params object[] args)
         {
+            if (type == null)
+            {
+                throw new ArgumentNullException(nameof(type));
+            }
+
             // First check if this is a type supported by a value generator
             var valueGenerator =
                 ValueGenerators.Where(x => x.IsSupported(type, referenceName, context))
@@ -88,17 +99,42 @@ namespace ModelBuilder
 
             if (typeCreator == null)
             {
-                var message = string.Format(CultureInfo.CurrentCulture, Resources.NoMatchingCreatorOrGeneratorFound,
-                    type.FullName);
+                string message;
+
+                if (context != null)
+                {
+                    message = string.Format(CultureInfo.CurrentCulture,
+                        Resources.NoMatchingCreatorOrGeneratorFoundWithNameAndContext,
+                        type.FullName, referenceName, context.GetType().FullName);
+                }
+                else if (string.IsNullOrWhiteSpace(referenceName) == false)
+                {
+                    message = string.Format(CultureInfo.CurrentCulture,
+                        Resources.NoMatchingCreatorOrGeneratorFoundWithName,
+                        type.FullName, referenceName);
+                }
+                else
+                {
+                    message = string.Format(CultureInfo.CurrentCulture, Resources.NoMatchingCreatorOrGeneratorFound,
+                        type.FullName);
+                }
 
                 throw new NotSupportedException(message);
             }
 
             var instance = CreateInstance(typeCreator, type, referenceName, context, args);
 
+            if (instance == null)
+            {
+                return null;
+            }
+
             if (typeCreator.AutoPopulate)
             {
+                // The type creator has indicated that this type should not be auto populated by the execute strategy
                 instance = PopulateInstance(instance);
+
+                Debug.Assert(instance != null, "Populating the instance did not return the original instance");
             }
 
             // Allow the type creator to do its own population of the instance
@@ -119,15 +155,22 @@ namespace ModelBuilder
                 throw new ArgumentNullException(nameof(instance));
             }
 
-            var flags = BindingFlags.Instance | BindingFlags.Public;
+            // We will only set public instance properties that have a setter (the setter must also be public)
+            var flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.SetProperty;
             var type = instance.GetType();
 
             var propertyInfos = type.GetProperties(flags).Where(x => x.CanWrite);
 
             foreach (var propertyInfo in propertyInfos)
             {
+                if (propertyInfo.SetMethod.IsPublic == false)
+                {
+                    // The property is public, but the setter is not
+                    continue;
+                }
+
                 // Check if there is a matching ignore rule
-                if (IgnoreRules.Any(x => x.TargetType == type && x.PropertyName == propertyInfo.Name))
+                if (IgnoreRules.Any(x => x.TargetType.IsAssignableFrom(type) && x.PropertyName == propertyInfo.Name))
                 {
                     // We need to ignore this property
                     continue;

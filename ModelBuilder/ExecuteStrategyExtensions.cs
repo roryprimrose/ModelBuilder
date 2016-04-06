@@ -33,14 +33,13 @@ namespace ModelBuilder
         /// Appends a new <see cref="IgnoreRule"/> to the specified <see cref="IExecuteStrategy{T}"/> using the specified expression.
         /// </summary>
         /// <typeparam name="T">The type of instance that matches the rule.</typeparam>
-        /// <typeparam name="TProperty">The type of property to ignore.</typeparam>
         /// <param name="executeStrategy">The execute strategy to update.</param>
         /// <param name="expression">The expression that identifies a property on <typeparamref name="T"/></param>
         /// <returns>An execute strategy with the new rule.</returns>
         [SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters",
             Justification = "This type is required in order to support the fluent syntax of call sites.")]
-        public static IExecuteStrategy<T> Ignoring<T, TProperty>(this IExecuteStrategy<T> executeStrategy,
-            Expression<Func<T, TProperty>> expression)
+        public static IExecuteStrategy<T> Ignoring<T>(this IExecuteStrategy<T> executeStrategy,
+            Expression<Func<T, object>> expression)
         {
             if (executeStrategy == null)
             {
@@ -52,45 +51,49 @@ namespace ModelBuilder
                 throw new ArgumentNullException(nameof(expression));
             }
 
-            var type = typeof (T);
-
-            var member = expression.Body as MemberExpression;
-
-            if (member == null)
-            {
-                var message = string.Format(CultureInfo.CurrentCulture,
-                    Resources.Error_ExpressionRefersToMethodFormat,
-                    expression);
-
-                throw new ArgumentException(message);
-            }
-
-            var propInfo = member.Member as PropertyInfo;
+            var propInfo = GetPropertyInfo(expression);
 
             if (propInfo == null)
             {
                 var message = string.Format(CultureInfo.CurrentCulture,
-                    Resources.Error_ExpressionRefersToFieldFormat,
+                    Resources.Error_ExpressionNotPropertyFormat,
                     expression);
 
                 throw new ArgumentException(message);
             }
-
-            if (propInfo.ReflectedType.IsAssignableFrom(type) == false)
-            {
-                var message = string.Format(CultureInfo.CurrentCulture,
-                    Resources.Error_ExpressionRefersToPropertyOnWrongType,
-                    expression,
-                    type);
-
-                throw new ArgumentException(message);
-            }
-
+            
+            var type = typeof (T);
             var rule = new IgnoreRule(type, propInfo.Name);
 
             executeStrategy.IgnoreRules.Add(rule);
 
             return executeStrategy;
+        }
+
+        private static PropertyInfo GetPropertyInfo<T>(Expression<Func<T, object>> expression)
+        {
+            PropertyInfo property = null;
+
+            var unaryExpression = expression.Body as UnaryExpression;
+
+            if (unaryExpression != null)
+            {
+                property = ((MemberExpression) unaryExpression.Operand).Member as PropertyInfo;
+            }
+
+            if (property != null)
+            {
+                return property;
+            }
+
+            var memberExpression = expression.Body as MemberExpression;
+
+            if (memberExpression != null)
+            {
+                return memberExpression.Member as PropertyInfo;
+            }
+
+            return null;
         }
     }
 }
