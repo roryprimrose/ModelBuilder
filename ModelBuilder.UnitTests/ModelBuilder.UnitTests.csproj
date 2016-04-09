@@ -75,6 +75,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Address.cs" />
+    <Compile Include="BooleanValueGeneratorTests.cs" />
     <Compile Include="NumericTypeDataSource.cs" />
     <Compile Include="NumericValueGeneratorTests.cs" />
     <Compile Include="AgeValueGeneratorTests.cs" />

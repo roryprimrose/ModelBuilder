@@ -13,9 +13,28 @@ namespace ModelBuilder
         {
             VerifyGenerateRequest(type, referenceName, context);
 
-            var remainder = Environment.TickCount%2;
+            if (type == typeof (bool?))
+            {
+                var source = Generator.Next(1, 999);
+                bool? value = null;
+                var remainer = source%3;
 
-            if (remainder == 0)
+                if (remainer == 0)
+                {
+                    value = false;
+                }
+
+                if (remainer == 1)
+                {
+                    value = true;
+                }
+
+                return value;
+            }
+
+            var nextValue = Generator.Next(1, 1000);
+
+            if (nextValue % 2 == 0)
             {
                 return false;
             }
@@ -30,13 +49,13 @@ namespace ModelBuilder
             {
                 throw new ArgumentNullException(nameof(type));
             }
-
-            if (type.IsValueType == false)
+            
+            if (type == typeof (bool))
             {
-                return false;
+                return true;
             }
 
-            if (type == typeof (bool))
+            if (type == typeof (bool?))
             {
                 return true;
             }
