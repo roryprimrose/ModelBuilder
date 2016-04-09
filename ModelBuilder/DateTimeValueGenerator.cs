@@ -43,12 +43,7 @@ namespace ModelBuilder
             {
                 throw new ArgumentNullException(nameof(type));
             }
-
-            if (type.IsValueType == false)
-            {
-                return false;
-            }
-
+            
             if (type == typeof (DateTime))
             {
                 return true;

@@ -74,7 +74,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Address.cs" />
+    <Compile Include="Address.cs">
+      <DependentUpon>Models.cs</DependentUpon>
+    </Compile>
+    <Compile Include="BooleanValueGeneratorTests.cs" />
+    <Compile Include="DateTimeValueGeneratorTests.cs" />
+    <Compile Include="DateOfBirthValueGeneratorTests.cs" />
     <Compile Include="NumericTypeDataSource.cs" />
     <Compile Include="NumericValueGeneratorTests.cs" />
     <Compile Include="AgeValueGeneratorTests.cs" />
