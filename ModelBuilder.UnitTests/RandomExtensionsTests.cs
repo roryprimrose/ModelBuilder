@@ -7,6 +7,27 @@ namespace ModelBuilder.UnitTests
     public class RandomExtensionsTests
     {
         [Fact]
+        public void NextByteReturnsDifferentValuesTest()
+        {
+            var target = new Random(Environment.TickCount);
+
+            var first = target.NextByte();
+            var second = target.NextByte();
+
+            first.Should().NotBe(second);
+        }
+
+        [Fact]
+        public void NextByteThrowsExceptionWithNullRandomTest()
+        {
+            Random target = null;
+
+            Action action = () => target.NextByte();
+
+            action.ShouldThrow<ArgumentNullException>();
+        }
+
+        [Fact]
         public void NextFloatReturnsDifferentValuesTest()
         {
             var target = new Random(Environment.TickCount);

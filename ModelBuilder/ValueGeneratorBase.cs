@@ -41,6 +41,11 @@ namespace ModelBuilder
         }
 
         /// <inheritdoc />
-        public virtual int Priority { get; } = 0;
+        public virtual int Priority { get; } = int.MinValue;
+
+        /// <summary>
+        /// Gets the random generator for this instance.
+        /// </summary>
+        protected Random Generator { get; } = new Random(Environment.TickCount);
     }
 }

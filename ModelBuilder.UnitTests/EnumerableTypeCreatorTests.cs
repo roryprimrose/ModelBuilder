@@ -197,12 +197,6 @@ namespace ModelBuilder.UnitTests
             {
                 EnumerableTypeCreator.DefaultAutoPopulateCount = 10;
             }
-            var target = new EnumerableTypeCreator
-            {
-                AutoPopulateCount = Environment.TickCount
-            };
-
-            EnumerableTypeCreator.DefaultAutoPopulateCount.Should().NotBe(target.AutoPopulateCount);
         }
     }
 }

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Globalization;
-using ModelBuilder.Properties;
 
 namespace ModelBuilder
 {
@@ -13,22 +11,14 @@ namespace ModelBuilder
         /// <inheritdoc />
         public override object Generate(Type type, string referenceName, object context)
         {
-            if (type == null)
-            {
-                throw new ArgumentNullException(nameof(type));
-            }
+            VerifyGenerateRequest(type, referenceName, context);
 
-            if (IsSupported(type, referenceName, context) == false)
-            {
-                var message = string.Format(CultureInfo.CurrentCulture, Resources.Error_TypeNotSupportedFormat,
-                    GetType().FullName, type.FullName);
-
-                throw new NotSupportedException(message);
-            }
-
-            var firstPart = Guid.NewGuid().ToString("N").Substring(0, 5);
-            var secondPart = Guid.NewGuid().ToString("N").Substring(0, 8);
-            var domainPart = Guid.NewGuid().ToString("N").Substring(0, 10);
+            var firstPartLength = Generator.Next(2, 5);
+            var firstPart = Guid.NewGuid().ToString("N").Substring(0, firstPartLength);
+            var secondPartLength = Generator.Next(3, 8);
+            var secondPart = Guid.NewGuid().ToString("N").Substring(0, secondPartLength);
+            var thirdPartLength = Generator.Next(3, 10);
+            var domainPart = Guid.NewGuid().ToString("N").Substring(0, thirdPartLength);
 
             return firstPart + "." + secondPart + "@" + domainPart + ".com";
         }
@@ -49,11 +39,6 @@ namespace ModelBuilder
             }
 
             if (referenceName.IndexOf("email", StringComparison.OrdinalIgnoreCase) > -1)
-            {
-                return true;
-            }
-
-            if (referenceName.IndexOf("emailaddress", StringComparison.OrdinalIgnoreCase) > -1)
             {
                 return true;
             }

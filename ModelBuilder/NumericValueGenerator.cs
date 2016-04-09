@@ -30,7 +30,7 @@ namespace ModelBuilder
 
             if (type == typeof (ushort))
             {
-                return Convert.ToInt16(Generator.Next(ushort.MinValue, ushort.MaxValue));
+                return Convert.ToUInt16(Generator.Next(ushort.MinValue, ushort.MaxValue));
             }
 
             if (type == typeof (uint))
@@ -127,10 +127,5 @@ namespace ModelBuilder
 
             return false;
         }
-
-        /// <summary>
-        /// Gets the random generator.
-        /// </summary>
-        protected Random Generator { get; } = new Random(Environment.TickCount);
     }
 }

@@ -10,6 +10,23 @@ namespace ModelBuilder
     public static class RandomExtensions
     {
         /// <summary>
+        /// Returns a next random byte value.
+        /// </summary>
+        /// <param name="random">The random instance.</param>
+        /// <returns>A random byte value.</returns>
+        public static byte NextByte(this Random random)
+        {
+            if (random == null)
+            {
+                throw new ArgumentNullException(nameof(random));
+            }
+
+            var value = random.Next(byte.MinValue, byte.MaxValue);
+
+            return Convert.ToByte(value);
+        }
+
+        /// <summary>
         /// Returns a next random float value.
         /// </summary>
         /// <param name="random">The random instance.</param>

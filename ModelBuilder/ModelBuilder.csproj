@@ -61,6 +61,9 @@
     <Compile Include="ExecuteStrategyExtensions.cs">
       <DependentUpon>Extensions.cs</DependentUpon>
     </Compile>
+    <Compile Include="IPAddressValueGenerator.cs">
+      <DependentUpon>IValueGenerator.cs</DependentUpon>
+    </Compile>
     <Compile Include="RandomExtensions.cs">
       <DependentUpon>Extensions.cs</DependentUpon>
     </Compile>

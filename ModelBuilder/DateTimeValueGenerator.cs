@@ -8,14 +8,12 @@ namespace ModelBuilder
     /// </summary>
     public class DateTimeValueGenerator : ValueGeneratorBase
     {
-        private static readonly Random _random = new Random(Environment.TickCount);
-
         /// <inheritdoc />
         public override object Generate(Type type, string referenceName, object context)
         {
             VerifyGenerateRequest(type, referenceName, context);
 
-            var shift = _random.Next();
+            var shift = Generator.Next();
 
             if (type == typeof (DateTime))
             {
@@ -30,7 +28,7 @@ namespace ModelBuilder
             if (type == typeof (TimeZoneInfo))
             {
                 var zones = TimeZoneInfo.GetSystemTimeZones();
-                var zoneIndex = _random.Next(0, zones.Count - 1);
+                var zoneIndex = Generator.Next(0, zones.Count - 1);
 
                 return zones[zoneIndex];
             }

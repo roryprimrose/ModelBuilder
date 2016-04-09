@@ -8,15 +8,13 @@ namespace ModelBuilder
     /// </summary>
     public class EnumValueGenerator : ValueGeneratorBase
     {
-        private static readonly Random _random = new Random(Environment.TickCount);
-
         /// <inheritdoc />
         public override object Generate(Type type, string referenceName, object context)
         {
             VerifyGenerateRequest(type, referenceName, context);
 
             var values = Enum.GetValues(type);
-            var valueIndex = _random.Next(0, values.Length - 1);
+            var valueIndex = Generator.Next(0, values.Length - 1);
 
             return values.GetValue(valueIndex);
         }

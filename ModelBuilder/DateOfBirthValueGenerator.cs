@@ -1,6 +1,4 @@
 using System;
-using System.Globalization;
-using ModelBuilder.Properties;
 
 namespace ModelBuilder
 {
@@ -9,18 +7,7 @@ namespace ModelBuilder
         /// <inheritdoc />
         public override object Generate(Type type, string referenceName, object context)
         {
-            if (type == null)
-            {
-                throw new ArgumentNullException(nameof(type));
-            }
-
-            if (IsSupported(type, referenceName, context) == false)
-            {
-                var message = string.Format(CultureInfo.CurrentCulture, Resources.Error_TypeNotSupportedFormat,
-                    GetType().FullName, type.FullName);
-
-                throw new NotSupportedException(message);
-            }
+            VerifyGenerateRequest(type, referenceName, context);
 
             var years = Generator.Next(0, 98);
             var months = Generator.Next(0, 12);
@@ -28,7 +15,7 @@ namespace ModelBuilder
             var hours = Generator.Next(0, 24);
             var minutes = Generator.Next(0, 60);
 
-            if (type == typeof(DateTime))
+            if (type == typeof (DateTime))
             {
                 var point = DateTime.UtcNow;
 
@@ -39,7 +26,8 @@ namespace ModelBuilder
 
             var offsetPoint = DateTimeOffset.UtcNow;
 
-            offsetPoint = offsetPoint.AddYears(-years).AddMonths(-months).AddDays(-days).AddHours(-hours).AddMinutes(-minutes);
+            offsetPoint =
+                offsetPoint.AddYears(-years).AddMonths(-months).AddDays(-days).AddHours(-hours).AddMinutes(-minutes);
 
             return offsetPoint;
         }
@@ -54,8 +42,9 @@ namespace ModelBuilder
                 return false;
             }
 
-            if (type != typeof(DateTime)
-                && type != typeof(DateTimeOffset))
+            if (type != typeof (DateTime)
+                &&
+                type != typeof (DateTimeOffset))
             {
                 return false;
             }
@@ -85,10 +74,5 @@ namespace ModelBuilder
 
         /// <inheritdoc />
         public override int Priority { get; } = 1000;
-
-        /// <summary>
-        /// Gets the random generator.
-        /// </summary>
-        private Random Generator { get; } = new Random(Environment.TickCount);
     }
 }

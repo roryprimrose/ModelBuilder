@@ -75,6 +75,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Address.cs" />
+    <Compile Include="NumericTypeDataSource.cs" />
+    <Compile Include="NumericValueGeneratorTests.cs" />
+    <Compile Include="AgeValueGeneratorTests.cs" />
     <Compile Include="BuildStrategyExtensionsTests.cs" />
     <Compile Include="Company.cs">
       <DependentUpon>Models.cs</DependentUpon>
@@ -93,6 +96,9 @@
       <DependentUpon>DummyTypes.cs</DependentUpon>
     </Compile>
     <Compile Include="DummyTypes.cs" />
+    <Compile Include="DummyValueGenerator.cs">
+      <DependentUpon>DummyTypes.cs</DependentUpon>
+    </Compile>
     <Compile Include="Entity.cs">
       <DependentUpon>Models.cs</DependentUpon>
     </Compile>
@@ -134,6 +140,7 @@
     </Compile>
     <Compile Include="TypeCreatorBaseTests.cs" />
     <Compile Include="TypeCreatorExtensionsTests.cs" />
+    <Compile Include="ValueGeneratorBaseTests.cs" />
     <Compile Include="ValueGeneratorExtensionsTests.cs" />
     <Compile Include="WithInterfaceAndAbstractParameters.cs">
       <DependentUpon>Models.cs</DependentUpon>

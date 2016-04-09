@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Globalization;
-using ModelBuilder.Properties;
 
 namespace ModelBuilder
 {
@@ -13,20 +11,11 @@ namespace ModelBuilder
         /// <inheritdoc />
         public override object Generate(Type type, string referenceName, object context)
         {
-            if (type == null)
-            {
-                throw new ArgumentNullException(nameof(type));
-            }
+            VerifyGenerateRequest(type, referenceName, context);
 
-            if (IsSupported(type, referenceName, context) == false)
-            {
-                var message = string.Format(CultureInfo.CurrentCulture, Resources.Error_TypeNotSupportedFormat,
-                    GetType().FullName, type.FullName);
+            var value = Generator.Next(0, MaxAge);
 
-                throw new NotSupportedException(message);
-            }
-
-            return Generator.Next(0, 100);
+            return Convert.ChangeType(value, type);
         }
 
         /// <inheritdoc />
@@ -54,5 +43,9 @@ namespace ModelBuilder
 
         /// <inheritdoc />
         public override int Priority { get; } = 1000;
+
+        public int MaxAge { get; set; } = DefaultMaxAge;
+
+        public static int DefaultMaxAge { get; set; } = 100;
     }
 }
