@@ -10,6 +10,14 @@ namespace ModelBuilder
     /// </summary>
     public abstract class ValueGeneratorBase : IValueGenerator
     {
+        private static readonly IRandomGenerator _random;
+
+        static ValueGeneratorBase()
+        {
+            // Define a single random generator for the app domain to avoid collisions within a short space of time
+            _random = new RandomGenerator();
+        }
+
         /// <inheritdoc />
         public abstract object Generate(Type type, string referenceName, object context);
 
@@ -46,6 +54,6 @@ namespace ModelBuilder
         /// <summary>
         /// Gets the random generator for this instance.
         /// </summary>
-        protected Random Generator { get; } = new Random(Environment.TickCount);
+        protected virtual IRandomGenerator Generator { get; } = _random;
     }
 }

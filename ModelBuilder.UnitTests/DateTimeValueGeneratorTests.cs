@@ -8,25 +8,33 @@ namespace ModelBuilder.UnitTests
     public class DateTimeValueGeneratorTests
     {
         [Fact]
-        public void GenerateReturnsDateTimeOffsetValueTest()
+        public void GenerateReturnsRandomDateTimeOffsetValueTest()
         {
             var target = new DateTimeValueGenerator();
 
-            var actual = target.Generate(typeof (DateTimeOffset), null, null);
+            var first = target.Generate(typeof (DateTimeOffset), null, null);
 
-            actual.Should().BeOfType<DateTimeOffset>();
-            actual.As<DateTimeOffset>().Offset.Should().Be(TimeSpan.Zero);
+            first.Should().BeOfType<DateTimeOffset>();
+            first.As<DateTimeOffset>().Offset.Should().Be(TimeSpan.Zero);
+
+            var second = target.Generate(typeof (DateTimeOffset), null, null);
+
+            first.Should().NotBe(second);
         }
 
         [Fact]
-        public void GenerateReturnsDateTimeValueTest()
+        public void GenerateReturnsRandomDateTimeValueTest()
         {
             var target = new DateTimeValueGenerator();
 
-            var actual = target.Generate(typeof (DateTime), null, null);
+            var first = target.Generate(typeof (DateTime), null, null);
 
-            actual.Should().BeOfType<DateTime>();
-            actual.As<DateTime>().Kind.Should().Be(DateTimeKind.Utc);
+            first.Should().BeOfType<DateTime>();
+            first.As<DateTime>().Kind.Should().Be(DateTimeKind.Utc);
+
+            var second = target.Generate(typeof (DateTime), null, null);
+
+            first.Should().NotBe(second);
         }
 
         [Theory]

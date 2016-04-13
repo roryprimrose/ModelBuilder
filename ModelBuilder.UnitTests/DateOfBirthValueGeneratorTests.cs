@@ -7,29 +7,37 @@ namespace ModelBuilder.UnitTests
     public class DateOfBirthValueGeneratorTests
     {
         [Fact]
-        public void GenerateReturnsDateTimeOffsetValueWithinLast100YearsTest()
+        public void GenerateReturnsRandomDateTimeOffsetValueWithinLast100YearsTest()
         {
             var target = new DateOfBirthValueGenerator();
 
-            var actual = target.Generate(typeof (DateTimeOffset), "dob", null);
+            var first = target.Generate(typeof (DateTimeOffset), "dob", null);
 
-            actual.Should().BeOfType<DateTimeOffset>();
-            actual.As<DateTimeOffset>().Should().BeBefore(DateTimeOffset.UtcNow);
-            actual.As<DateTimeOffset>().Should().BeAfter(DateTimeOffset.UtcNow.AddYears(-100));
-            actual.As<DateTimeOffset>().Offset.Should().Be(TimeSpan.Zero);
+            first.Should().BeOfType<DateTimeOffset>();
+            first.As<DateTimeOffset>().Should().BeBefore(DateTimeOffset.UtcNow);
+            first.As<DateTimeOffset>().Should().BeAfter(DateTimeOffset.UtcNow.AddYears(-100));
+            first.As<DateTimeOffset>().Offset.Should().Be(TimeSpan.Zero);
+
+            var second = target.Generate(typeof (DateTimeOffset), "dob", null);
+
+            first.Should().NotBe(second);
         }
 
         [Fact]
-        public void GenerateReturnsDateTimeValueWithinLast100YearsTest()
+        public void GenerateReturnsRandomDateTimeValueWithinLast100YearsTest()
         {
             var target = new DateOfBirthValueGenerator();
 
-            var actual = target.Generate(typeof (DateTime), "dob", null);
+            var first = target.Generate(typeof (DateTime), "dob", null);
 
-            actual.Should().BeOfType<DateTime>();
-            actual.As<DateTime>().Should().BeBefore(DateTime.UtcNow);
-            actual.As<DateTime>().Should().BeAfter(DateTime.UtcNow.AddYears(-100));
-            actual.As<DateTime>().Kind.Should().Be(DateTimeKind.Utc);
+            first.Should().BeOfType<DateTime>();
+            first.As<DateTime>().Should().BeBefore(DateTime.UtcNow);
+            first.As<DateTime>().Should().BeAfter(DateTime.UtcNow.AddYears(-100));
+            first.As<DateTime>().Kind.Should().Be(DateTimeKind.Utc);
+
+            var second = target.Generate(typeof (DateTime), "dob", null);
+
+            first.Should().NotBe(second);
         }
 
         [Theory]

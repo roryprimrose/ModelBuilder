@@ -77,9 +77,19 @@
     <Compile Include="Address.cs">
       <DependentUpon>Models.cs</DependentUpon>
     </Compile>
+    <Compile Include="BigEnum.cs">
+      <DependentUpon>Models.cs</DependentUpon>
+    </Compile>
+    <Compile Include="BigFlagsEnum.cs">
+      <DependentUpon>Models.cs</DependentUpon>
+    </Compile>
     <Compile Include="BooleanValueGeneratorTests.cs" />
     <Compile Include="DateTimeValueGeneratorTests.cs" />
     <Compile Include="DateOfBirthValueGeneratorTests.cs" />
+    <Compile Include="EmailValueGeneratorTests.cs" />
+    <Compile Include="EmptyEnum.cs">
+      <DependentUpon>Models.cs</DependentUpon>
+    </Compile>
     <Compile Include="NumericTypeDataSource.cs" />
     <Compile Include="NumericValueGeneratorTests.cs" />
     <Compile Include="AgeValueGeneratorTests.cs" />
@@ -119,7 +129,6 @@
     <Compile Include="NullExecuteStrategy.cs" />
     <Compile Include="NullTypeBuildExecuteStrategy.cs" />
     <Compile Include="PropertyScopes.cs" />
-    <Compile Include="RandomExtensionsTests.cs" />
     <Compile Include="ReadOnlyModel.cs">
       <DependentUpon>Models.cs</DependentUpon>
     </Compile>
@@ -134,10 +143,16 @@
     <Compile Include="SimpleEnum.cs">
       <DependentUpon>Models.cs</DependentUpon>
     </Compile>
+    <Compile Include="SingleEnum.cs">
+      <DependentUpon>Models.cs</DependentUpon>
+    </Compile>
     <Compile Include="Singleton.cs">
       <DependentUpon>Models.cs</DependentUpon>
     </Compile>
     <Compile Include="SlimModel.cs">
+      <DependentUpon>Models.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SmallFlags.cs">
       <DependentUpon>Models.cs</DependentUpon>
     </Compile>
     <Compile Include="SpecificCompany.cs">

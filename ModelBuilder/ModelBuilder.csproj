@@ -64,7 +64,11 @@
     <Compile Include="IPAddressValueGenerator.cs">
       <DependentUpon>IValueGenerator.cs</DependentUpon>
     </Compile>
-    <Compile Include="RandomExtensions.cs">
+    <Compile Include="IRandomGenerator.cs" />
+    <Compile Include="RandomGenerator.cs">
+      <DependentUpon>IRandomGenerator.cs</DependentUpon>
+    </Compile>
+    <Compile Include="RandomGeneratorExtensions.cs">
       <DependentUpon>Extensions.cs</DependentUpon>
     </Compile>
     <Compile Include="TypeCreatorBase.cs">

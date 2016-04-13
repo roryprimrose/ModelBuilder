@@ -13,7 +13,7 @@ namespace ModelBuilder
         {
             VerifyGenerateRequest(type, referenceName, context);
 
-            var shift = Generator.Next();
+            var shift = Generator.Next<int>();
 
             if (type == typeof (DateTime))
             {

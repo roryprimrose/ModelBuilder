@@ -15,16 +15,15 @@ namespace ModelBuilder
 
             if (type == typeof (bool?))
             {
-                var source = Generator.Next(1, 999);
+                var source = Generator.Next(0, 2);
                 bool? value = null;
-                var remainer = source%3;
 
-                if (remainer == 0)
+                if (source == 0)
                 {
                     value = false;
                 }
 
-                if (remainer == 1)
+                if (source == 1)
                 {
                     value = true;
                 }
@@ -32,9 +31,9 @@ namespace ModelBuilder
                 return value;
             }
 
-            var nextValue = Generator.Next(1, 1000);
+            var nextValue = Generator.Next(0, 1);
 
-            if (nextValue % 2 == 0)
+            if (nextValue == 0)
             {
                 return false;
             }

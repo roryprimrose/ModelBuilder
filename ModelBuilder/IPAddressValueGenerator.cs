@@ -14,10 +14,10 @@ namespace ModelBuilder
         {
             VerifyGenerateRequest(type, referenceName, context);
 
-            var firstPart = Generator.NextByte();
-            var secondPart = Generator.NextByte();
-            var thirdPart = Generator.NextByte();
-            var fourthPart = Generator.NextByte();
+            var firstPart = Generator.Next<byte>();
+            var secondPart = Generator.Next<byte>();
+            var thirdPart = Generator.Next<byte>();
+            var fourthPart = Generator.Next<byte>();
 
             if (type == typeof (IPAddress))
             {

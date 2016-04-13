@@ -113,5 +113,14 @@ namespace ModelBuilder.Properties {
                 return ResourceManager.GetString("NoMatchingCreatorOrGeneratorFoundWithNameAndContext", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The {0} parameter is not of type {1}..
+        /// </summary>
+        internal static string RandomGenerator_IncorrectParameterType {
+            get {
+                return ResourceManager.GetString("RandomGenerator_IncorrectParameterType", resourceCulture);
+            }
+        }
     }
 }
