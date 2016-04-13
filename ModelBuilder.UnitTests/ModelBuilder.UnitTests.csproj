@@ -129,6 +129,7 @@
     <Compile Include="NullExecuteStrategy.cs" />
     <Compile Include="NullTypeBuildExecuteStrategy.cs" />
     <Compile Include="PropertyScopes.cs" />
+    <Compile Include="RandomGeneratorExtensionTests.cs" />
     <Compile Include="ReadOnlyModel.cs">
       <DependentUpon>Models.cs</DependentUpon>
     </Compile>

@@ -15,17 +15,21 @@ namespace ModelBuilder
 
             if (type == typeof (bool?))
             {
-                var source = Generator.Next(0, 2);
-                bool? value = null;
+                var source = Generator.Next<double>(0, 3);
 
-                if (source == 0)
+                bool? value;
+
+                if (source < 1)
                 {
                     value = false;
                 }
-
-                if (source == 1)
+                else if (source < 2)
                 {
                     value = true;
+                }
+                else
+                {
+                    value = null;
                 }
 
                 return value;

@@ -23,8 +23,9 @@ namespace ModelBuilder
             var type = typeof (T);
             var max = generator.GetMax(type);
             var min = generator.GetMin(type);
+            var value = generator.Next(type, min, max);
 
-            return (T) generator.Next(type, min, max);
+            return (T) value;
         }
 
         /// <summary>

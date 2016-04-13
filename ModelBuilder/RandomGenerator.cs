@@ -96,8 +96,9 @@ namespace ModelBuilder
             
             var minimum = Convert.ToDouble(min);
             var maximum = Convert.ToDouble(max);
+            var requiresRounding = RequiresRounding(type);
 
-            var value = NextValue<double>(minimum, maximum);
+            var value = NextValue<double>(minimum, maximum, requiresRounding);
 
             return Convert.ChangeType(value, type);
         }
@@ -171,6 +172,23 @@ namespace ModelBuilder
             return double.MaxValue;
         }
 
+        private bool RequiresRounding(Type type)
+        {
+            ValidateRequestedType(type);
+            
+            if (type == typeof(float))
+            {
+                return true;
+            }
+
+            if (type == typeof(double))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
         /// <inheritdoc />
         public double GetMin(Type type)
         {
@@ -224,7 +242,7 @@ namespace ModelBuilder
             return double.MinValue;
         }
 
-        private T NextValue<T>(double min, double max)
+        private T NextValue<T>(double min, double max, bool roundValue)
         {
             if (min > max)
             {
@@ -234,8 +252,18 @@ namespace ModelBuilder
             var range = max - min;
             var variance = _random.NextDouble();
             var pointInRange = variance*range;
+            double value;
 
-            var shiftedPoint = Math.Round(pointInRange) + min;
+            if (roundValue)
+            {
+                value = Math.Round(pointInRange);
+            }
+            else
+            {
+                value = pointInRange;
+            }
+
+            var shiftedPoint = value + min;
 
             return (T) Convert.ChangeType(shiftedPoint, typeof (T));
         }
