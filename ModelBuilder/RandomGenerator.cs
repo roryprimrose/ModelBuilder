@@ -178,15 +178,15 @@ namespace ModelBuilder
             
             if (type == typeof(float))
             {
-                return true;
+                return false;
             }
 
             if (type == typeof(double))
             {
-                return true;
+                return false;
             }
 
-            return false;
+            return true;
         }
 
         /// <inheritdoc />
@@ -251,7 +251,25 @@ namespace ModelBuilder
 
             var range = max - min;
             var variance = _random.NextDouble();
-            var pointInRange = variance*range;
+
+            if (double.IsInfinity(range))
+            {
+                // We are going against the full range of double
+                // Infinity causes calculation problems so we need to break up the range to avoid it
+                // Dumb the range down to just half of the possible double values
+                // Double has a negative and positive range so by taking the MaxValue, we restrict the range by half
+                // By default we will take a random value from the negative range unless the variance is over 0.5
+                range = double.MaxValue;
+
+                if (variance >= 0.5D)
+                {
+                    // Get a random number from the positive side of double numbers
+                    min = 0;
+                }
+            }
+
+            var pointInRange = variance * range;
+
             double value;
 
             if (roundValue)
