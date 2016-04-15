@@ -9,6 +9,32 @@ namespace ModelBuilder.UnitTests
 {
     public class ExtensionsTests
     {
+        [Theory]
+        [InlineData(typeof(string), false)]
+        [InlineData(typeof(bool), false)]
+        [InlineData(typeof(int), false)]
+        [InlineData(typeof(List<int>), false)]
+        [InlineData(typeof(bool?), true)]
+        [InlineData(typeof(int?), true)]
+        [InlineData(typeof(byte?), true)]
+        [InlineData(typeof(Guid?), true)]
+        public void IsNullableReturnsWhetherTypeIsNullableTest(Type type, bool expected)
+        {
+            var actual = type.IsNullable();
+
+            actual.Should().Be(expected);
+        }
+
+        [Fact]
+        public void IsNullableThrowsExceptionWithNullTypeTest()
+        {
+            Type target = null;
+
+            Action action = () => target.IsNullable();
+
+            action.ShouldThrow<ArgumentNullException>();
+        }
+
         [Fact]
         public void SetEachCollectionRunsActionAgainstInstanceTest()
         {

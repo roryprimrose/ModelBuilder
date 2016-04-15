@@ -63,7 +63,7 @@ namespace ModelBuilder.UnitTests
                     falseFound = true;
                 }
 
-                if (falseFound &&
+                if (nullFound &&
                     trueFound &&
                     falseFound)
                 {

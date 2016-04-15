@@ -13,6 +13,112 @@ namespace ModelBuilder
         private static readonly Random _random = new Random();
 
         /// <inheritdoc />
+        public double GetMax(Type type)
+        {
+            ValidateRequestedType(type);
+
+            if (type == typeof (int))
+            {
+                return int.MaxValue;
+            }
+
+            if (type == typeof (uint))
+            {
+                return uint.MaxValue;
+            }
+
+            if (type == typeof (long))
+            {
+                return long.MaxValue;
+            }
+
+            if (type == typeof (ulong))
+            {
+                return ulong.MaxValue;
+            }
+
+            if (type == typeof (short))
+            {
+                return short.MaxValue;
+            }
+
+            if (type == typeof (ushort))
+            {
+                return ushort.MaxValue;
+            }
+
+            if (type == typeof (byte))
+            {
+                return byte.MaxValue;
+            }
+
+            if (type == typeof (sbyte))
+            {
+                return sbyte.MaxValue;
+            }
+
+            if (type == typeof (float))
+            {
+                return float.MaxValue;
+            }
+
+            return double.MaxValue;
+        }
+
+        /// <inheritdoc />
+        public double GetMin(Type type)
+        {
+            ValidateRequestedType(type);
+
+            if (type == typeof (int))
+            {
+                return int.MinValue;
+            }
+
+            if (type == typeof (uint))
+            {
+                return uint.MinValue;
+            }
+
+            if (type == typeof (long))
+            {
+                return long.MinValue;
+            }
+
+            if (type == typeof (ulong))
+            {
+                return ulong.MinValue;
+            }
+
+            if (type == typeof (short))
+            {
+                return short.MinValue;
+            }
+
+            if (type == typeof (ushort))
+            {
+                return ushort.MinValue;
+            }
+
+            if (type == typeof (byte))
+            {
+                return byte.MinValue;
+            }
+
+            if (type == typeof (sbyte))
+            {
+                return sbyte.MinValue;
+            }
+
+            if (type == typeof (float))
+            {
+                return float.MinValue;
+            }
+
+            return double.MinValue;
+        }
+
+        /// <inheritdoc />
         public virtual bool IsSupported(Type type)
         {
             if (type == null)
@@ -72,13 +178,13 @@ namespace ModelBuilder
 
             return false;
         }
-        
+
         /// <inheritdoc />
         public T Next<T>(T min, T max) where T : struct
         {
-            return (T) Next(typeof(T), min, max);
+            return (T) Next(typeof (T), min, max);
         }
-        
+
         /// <inheritdoc />
         public object Next(Type type, object min, object max)
         {
@@ -93,7 +199,7 @@ namespace ModelBuilder
             {
                 throw new ArgumentNullException(nameof(max));
             }
-            
+
             var minimum = Convert.ToDouble(min);
             var maximum = Convert.ToDouble(max);
             var requiresRounding = RequiresRounding(type);
@@ -117,129 +223,6 @@ namespace ModelBuilder
 
                 buffer[index] = next;
             }
-        }
-
-        /// <inheritdoc />
-        public double GetMax(Type type)
-        {
-            ValidateRequestedType(type);
-
-            if (type == typeof (int))
-            {
-                return int.MaxValue;
-            }
-
-            if (type == typeof (uint))
-            {
-                return uint.MaxValue;
-            }
-
-            if (type == typeof (long))
-            {
-                return long.MaxValue;
-            }
-
-            if (type == typeof (ulong))
-            {
-                return ulong.MaxValue;
-            }
-
-            if (type == typeof (short))
-            {
-                return short.MaxValue;
-            }
-
-            if (type == typeof (ushort))
-            {
-                return ushort.MaxValue;
-            }
-
-            if (type == typeof (byte))
-            {
-                return byte.MaxValue;
-            }
-
-            if (type == typeof (sbyte))
-            {
-                return sbyte.MaxValue;
-            }
-
-            if (type == typeof (float))
-            {
-                return float.MaxValue;
-            }
-
-            return double.MaxValue;
-        }
-
-        private bool RequiresRounding(Type type)
-        {
-            ValidateRequestedType(type);
-            
-            if (type == typeof(float))
-            {
-                return false;
-            }
-
-            if (type == typeof(double))
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        /// <inheritdoc />
-        public double GetMin(Type type)
-        {
-            ValidateRequestedType(type);
-
-            if (type == typeof (int))
-            {
-                return int.MinValue;
-            }
-
-            if (type == typeof (uint))
-            {
-                return uint.MinValue;
-            }
-
-            if (type == typeof (long))
-            {
-                return long.MinValue;
-            }
-
-            if (type == typeof (ulong))
-            {
-                return ulong.MinValue;
-            }
-
-            if (type == typeof (short))
-            {
-                return short.MinValue;
-            }
-
-            if (type == typeof (ushort))
-            {
-                return ushort.MinValue;
-            }
-
-            if (type == typeof (byte))
-            {
-                return byte.MinValue;
-            }
-
-            if (type == typeof (sbyte))
-            {
-                return sbyte.MinValue;
-            }
-
-            if (type == typeof (float))
-            {
-                return float.MinValue;
-            }
-
-            return double.MinValue;
         }
 
         private T NextValue<T>(double min, double max, bool roundValue)
@@ -268,7 +251,7 @@ namespace ModelBuilder
                 }
             }
 
-            var pointInRange = variance * range;
+            var pointInRange = variance*range;
 
             double value;
 
@@ -284,6 +267,23 @@ namespace ModelBuilder
             var shiftedPoint = value + min;
 
             return (T) Convert.ChangeType(shiftedPoint, typeof (T));
+        }
+
+        private bool RequiresRounding(Type type)
+        {
+            ValidateRequestedType(type);
+
+            if (type == typeof (float))
+            {
+                return false;
+            }
+
+            if (type == typeof (double))
+            {
+                return false;
+            }
+
+            return true;
         }
 
         private void ValidateRequestedType(Type type)

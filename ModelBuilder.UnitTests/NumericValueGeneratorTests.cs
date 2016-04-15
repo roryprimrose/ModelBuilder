@@ -7,8 +7,8 @@ namespace ModelBuilder.UnitTests
     public class NumericValueGeneratorTests
     {
         [Theory]
-        [ClassData(typeof (NumericTypeDataSource))]
-        public void GenerateCanEvalutateManyTimesTest(Type type, bool typeSupported)
+        [ClassData(typeof(NumericTypeDataSource))]
+        public void GenerateCanEvalutateManyTimesTest(Type type, bool typeSupported, double min, double max)
         {
             if (typeSupported == false)
             {
@@ -18,12 +18,29 @@ namespace ModelBuilder.UnitTests
 
             var target = new NumericValueGenerator();
 
-            for (var index = 0; index < 100000; index++)
+            for (var index = 0; index < 10000; index++)
             {
                 var value = target.Generate(type, null, null);
+                
+                if (type.IsNullable() && value == null)
+                {
+                    // Nullable values could be returned so nothing more to assert
+                    return;
+                }
 
-                value.Should().NotBeNull();
-                value.Should().BeOfType(type);
+                var evaluateType = type;
+
+                if (type.IsNullable())
+                {
+                    evaluateType = type.GenericTypeArguments[0];
+                }
+
+                value.Should().BeOfType(evaluateType);
+
+                var convertedValue = Convert.ToDouble(value);
+
+                convertedValue.Should().BeGreaterOrEqualTo(min);
+                convertedValue.Should().BeLessOrEqualTo(max);
             }
         }
 
@@ -36,7 +53,7 @@ namespace ModelBuilder.UnitTests
 
             for (var index = 0; index < 1000; index++)
             {
-                var value = target.Generate(typeof (double), null, null);
+                var value = target.Generate(typeof(double), null, null);
 
                 var actual = Convert.ToDouble(value);
 
@@ -60,7 +77,7 @@ namespace ModelBuilder.UnitTests
 
             for (var index = 0; index < 1000; index++)
             {
-                var value = target.Generate(typeof (double), null, null);
+                var value = target.Generate(typeof(double), null, null);
 
                 var actual = Convert.ToDouble(value);
 
@@ -76,11 +93,42 @@ namespace ModelBuilder.UnitTests
         }
 
         [Fact]
+        public void GenerateCanReturnNullAndNonNullValuesTest()
+        {
+            var nullFound = false;
+            var valueFound = false;
+
+            var target = new NumericValueGenerator();
+
+            for (var index = 0; index < 1000; index++)
+            {
+                var value = (int?) target.Generate(typeof(int?), null, null);
+
+                if (value == null)
+                {
+                    nullFound = true;
+                }
+                else
+                {
+                    valueFound = true;
+                }
+
+                if (nullFound && valueFound)
+                {
+                    break;
+                }
+            }
+
+            nullFound.Should().BeTrue();
+            valueFound.Should().BeTrue();
+        }
+
+        [Fact]
         public void GenerateDoesNotReturnInfinityForDoubleTest()
         {
             var target = new NumericValueGenerator();
 
-            var value = target.Generate(typeof (double), null, null);
+            var value = target.Generate(typeof(double), null, null);
 
             var actual = Convert.ToDouble(value);
 
@@ -88,8 +136,8 @@ namespace ModelBuilder.UnitTests
         }
 
         [Theory]
-        [InlineData(typeof (float))]
-        [InlineData(typeof (double))]
+        [InlineData(typeof(float))]
+        [InlineData(typeof(double))]
         public void GenerateReturnsDecimalValuesTest(Type type)
         {
             var decimalFound = false;
@@ -114,8 +162,8 @@ namespace ModelBuilder.UnitTests
         }
 
         [Theory]
-        [ClassData(typeof (NumericTypeDataSource))]
-        public void GenerateReturnsNewValueTest(Type type, bool typeSupported)
+        [ClassData(typeof(NumericTypeDataSource))]
+        public void GenerateReturnsNewValueTest(Type type, bool typeSupported, double min, double max)
         {
             if (typeSupported == false)
             {
@@ -127,13 +175,30 @@ namespace ModelBuilder.UnitTests
 
             var value = target.Generate(type, null, null);
 
-            value.Should().NotBeNull();
-            value.Should().BeOfType(type);
+            if (type.IsNullable() && value == null)
+            {
+                // Nullable values could be returned so nothing more to assert
+                return;
+            }
+
+            var evaluateType = type;
+
+            if (type.IsNullable())
+            {
+                evaluateType = type.GenericTypeArguments[0];
+            }
+
+            value.Should().BeOfType(evaluateType);
+
+            var convertedValue = Convert.ToDouble(value);
+
+            convertedValue.Should().BeGreaterOrEqualTo(min);
+            convertedValue.Should().BeLessOrEqualTo(max);
         }
 
         [Theory]
-        [ClassData(typeof (NumericTypeDataSource))]
-        public void GenerateValidatesRequestedTypeTest(Type type, bool typeSupported)
+        [ClassData(typeof(NumericTypeDataSource))]
+        public void GenerateValidatesRequestedTypeTest(Type type, bool typeSupported, double min, double max)
         {
             var target = new NumericValueGenerator();
 
@@ -150,8 +215,8 @@ namespace ModelBuilder.UnitTests
         }
 
         [Theory]
-        [ClassData(typeof (NumericTypeDataSource))]
-        public void IsSupportedEvaluatesRequestedTypeTest(Type type, bool typeSupported)
+        [ClassData(typeof(NumericTypeDataSource))]
+        public void IsSupportedEvaluatesRequestedTypeTest(Type type, bool typeSupported, double min, double max)
         {
             var target = new NumericValueGenerator();
 

@@ -11,6 +11,31 @@ namespace ModelBuilder
     public static class Extensions
     {
         /// <summary>
+        /// Gets whether the specified type is a nullable type.
+        /// </summary>
+        /// <param name="type">The type to validate.</param>
+        /// <returns><c>true</c> if the type is nullable; otherwise <c>false</c>.</returns>
+        public static bool IsNullable(this Type type)
+        {
+            if (type == null)
+            {
+                throw new ArgumentNullException(nameof(type));
+            }
+
+            if (type.IsGenericType == false)
+            {
+                return false;
+            }
+
+            if (type.GetGenericTypeDefinition() == typeof(Nullable<>))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
         /// Makes a change to the instance using the specified action.
         /// </summary>
         /// <typeparam name="T">The type of instance being changed.</typeparam>
@@ -60,7 +85,7 @@ namespace ModelBuilder
                 // It is not already a list so we need to convert it first
                 items = instances.ToList();
             }
-            
+
             return SetEach(items, action);
         }
 

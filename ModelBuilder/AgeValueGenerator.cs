@@ -9,16 +9,6 @@ namespace ModelBuilder
     public class AgeValueGenerator : NumericValueGenerator
     {
         /// <inheritdoc />
-        public override object Generate(Type type, string referenceName, object context)
-        {
-            VerifyGenerateRequest(type, referenceName, context);
-
-            var value = Generator.Next(0, MaxAge);
-
-            return Convert.ChangeType(value, type);
-        }
-
-        /// <inheritdoc />
         public override bool IsSupported(Type type, string referenceName, object context)
         {
             var baseSupported = base.IsSupported(type, referenceName, context);
@@ -41,11 +31,21 @@ namespace ModelBuilder
             return false;
         }
 
-        /// <inheritdoc />
-        public override int Priority { get; } = 1000;
+        protected override object GetMaximum(Type type, string referenceName, object context)
+        {
+            return MaxAge;
+        }
+
+        protected override object GetMinimum(Type type, string referenceName, object context)
+        {
+            return 1;
+        }
+
+        public static int DefaultMaxAge { get; set; } = 100;
 
         public int MaxAge { get; set; } = DefaultMaxAge;
 
-        public static int DefaultMaxAge { get; set; } = 100;
+        /// <inheritdoc />
+        public override int Priority { get; } = 1000;
     }
 }

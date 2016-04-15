@@ -3,7 +3,7 @@
 namespace ModelBuilder
 {
     /// <summary>
-    /// The <see cref="BooleanValueGenerator"/>
+    /// The <see cref="StringValueGenerator"/>
     /// class is used to generate random <see cref="string"/> values.
     /// </summary>
     public class StringValueGenerator : ValueGeneratorBase

@@ -3,7 +3,7 @@
 namespace ModelBuilder
 {
     /// <summary>
-    /// The <see cref="BooleanValueGenerator"/>
+    /// The <see cref="GuidValueGenerator"/>
     /// class is used to generate <see cref="Guid"/> values.
     /// </summary>
     public class GuidValueGenerator : ValueGeneratorBase
@@ -13,7 +13,26 @@ namespace ModelBuilder
         {
             VerifyGenerateRequest(type, referenceName, context);
 
-            return Guid.NewGuid();
+            if (type == typeof (Guid))
+            {
+                return Guid.NewGuid();
+            }
+
+            // Weight the random distribution so that it is roughly 5 times more likely to get a new guid than a null
+            var source = Generator.Next<double>(0, 5);
+
+            Guid? value;
+
+            if (source < 1)
+            {
+                value = null;
+            }
+            else
+            {
+                value = Guid.NewGuid();
+            }
+
+            return value;
         }
 
         /// <inheritdoc />
@@ -24,12 +43,12 @@ namespace ModelBuilder
                 throw new ArgumentNullException(nameof(type));
             }
 
-            if (type.IsValueType == false)
+            if (type == typeof(Guid))
             {
-                return false;
+                return true;
             }
 
-            if (type == typeof (Guid))
+            if (type == typeof(Guid?))
             {
                 return true;
             }

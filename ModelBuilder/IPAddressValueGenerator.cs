@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Net;
 
 namespace ModelBuilder
@@ -14,27 +15,39 @@ namespace ModelBuilder
         {
             VerifyGenerateRequest(type, referenceName, context);
 
-            var firstPart = Generator.Next<byte>();
-            var secondPart = Generator.Next<byte>();
-            var thirdPart = Generator.Next<byte>();
-            var fourthPart = Generator.Next<byte>();
+            var buffer = new byte[4];
+
+            Generator.Next(buffer);
 
             if (type == typeof (IPAddress))
             {
-                var parts = new[] {firstPart, secondPart, thirdPart, fourthPart};
-
-                return new IPAddress(parts);
+                return new IPAddress(buffer);
             }
 
-            return firstPart + "." + secondPart + "." + thirdPart + "." + fourthPart;
+            const string addressFormat = "{0}.{1}.{2}.{3}";
+
+            var address = string.Format(CultureInfo.InvariantCulture, addressFormat, buffer[0], buffer[1], buffer[2],
+                buffer[3]);
+
+            return address;
         }
 
         /// <inheritdoc />
         public override bool IsSupported(Type type, string referenceName, object context)
         {
+            if (type == null)
+            {
+                throw new ArgumentNullException(nameof(type));
+            }
+
             if (type == typeof (IPAddress))
             {
                 return true;
+            }
+
+            if (type != typeof (string))
+            {
+                return false;
             }
 
             if (string.IsNullOrEmpty(referenceName))

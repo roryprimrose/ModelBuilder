@@ -7,17 +7,28 @@ namespace ModelBuilder.UnitTests
     {
         private readonly List<object[]> _data = new List<object[]>
         {
-            new object[] {typeof (sbyte), true},
-            new object[] {typeof (byte), true},
-            new object[] {typeof (short), true},
-            new object[] {typeof (ushort), true},
-            new object[] {typeof (int), true},
-            new object[] {typeof (uint), true},
-            new object[] {typeof (long), true},
-            new object[] {typeof (ulong), true},
-            new object[] {typeof (double), true},
-            new object[] {typeof (float), true},
-            new object[] {typeof (string), false}
+            new object[] {typeof (sbyte), true, sbyte.MinValue, sbyte.MaxValue},
+            new object[] {typeof (byte), true, byte.MinValue, byte.MaxValue},
+            new object[] {typeof (short), true, short.MinValue, short.MaxValue},
+            new object[] {typeof (ushort), true, ushort.MinValue, ushort.MaxValue},
+            new object[] {typeof (int), true, int.MinValue, int.MaxValue},
+            new object[] {typeof (uint), true, uint.MinValue, uint.MaxValue},
+            new object[] {typeof (long), true, long.MinValue, long.MaxValue},
+            new object[] {typeof (ulong), true, ulong.MinValue, ulong.MaxValue},
+            new object[] {typeof (double), true, double.MinValue, double.MaxValue},
+            new object[] {typeof (float), true, float.MinValue, float.MaxValue},
+            new object[] {typeof (sbyte?), true, sbyte.MinValue, sbyte.MaxValue},
+            new object[] {typeof (byte?), true, byte.MinValue, byte.MaxValue},
+            new object[] {typeof (short?), true, short.MinValue, short.MaxValue},
+            new object[] {typeof (ushort?), true, ushort.MinValue, ushort.MaxValue},
+            new object[] {typeof (int?), true, int.MinValue, int.MaxValue},
+            new object[] {typeof (uint?), true, uint.MinValue, uint.MaxValue},
+            new object[] {typeof (long?), true, long.MinValue, long.MaxValue},
+            new object[] {typeof (ulong?), true, ulong.MinValue, ulong.MaxValue},
+            new object[] {typeof (double?), true, double.MinValue, double.MaxValue},
+            new object[] {typeof (float?), true, float.MinValue, float.MaxValue},
+            new object[] {typeof (decimal), false, decimal.MinValue, decimal.MaxValue},
+            new object[] {typeof (string), false, 0, 0}
         };
 
         public IEnumerator<object[]> GetEnumerator()

@@ -82,15 +82,16 @@ namespace ModelBuilder
         {
             get
             {
-                yield return new StringValueGenerator();
-                yield return new BooleanValueGenerator();
-                yield return new DateTimeValueGenerator();
-                yield return new EnumValueGenerator();
-                yield return new NumericValueGenerator();
-                yield return new GuidValueGenerator();
-                yield return new EmailValueGenerator();
                 yield return new AgeValueGenerator();
+                yield return new BooleanValueGenerator();
                 yield return new DateOfBirthValueGenerator();
+                yield return new DateTimeValueGenerator();
+                yield return new EmailValueGenerator();
+                yield return new EnumValueGenerator();
+                yield return new GuidValueGenerator();
+                yield return new IPAddressValueGenerator();
+                yield return new NumericValueGenerator();
+                yield return new StringValueGenerator();
             }
         }
     }

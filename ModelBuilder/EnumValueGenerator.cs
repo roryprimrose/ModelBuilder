@@ -5,7 +5,7 @@ using System.Linq;
 namespace ModelBuilder
 {
     /// <summary>
-    /// The <see cref="BooleanValueGenerator"/>
+    /// The <see cref="EnumValueGenerator"/>
     /// class is used to generate random enum values.
     /// </summary>
     public class EnumValueGenerator : ValueGeneratorBase

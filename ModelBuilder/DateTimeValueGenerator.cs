@@ -3,7 +3,7 @@
 namespace ModelBuilder
 {
     /// <summary>
-    /// The <see cref="BooleanValueGenerator"/>
+    /// The <see cref="DateTimeValueGenerator"/>
     /// class is used to generate random date time values.
     /// </summary>
     public class DateTimeValueGenerator : ValueGeneratorBase

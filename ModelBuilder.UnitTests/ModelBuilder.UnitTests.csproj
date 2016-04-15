@@ -90,6 +90,8 @@
     <Compile Include="EmptyEnum.cs">
       <DependentUpon>Models.cs</DependentUpon>
     </Compile>
+    <Compile Include="GuidValueGeneratorTests.cs" />
+    <Compile Include="IPAddressValueGeneratorTests.cs" />
     <Compile Include="NumericTypeDataSource.cs" />
     <Compile Include="NumericValueGeneratorTests.cs" />
     <Compile Include="AgeValueGeneratorTests.cs" />
@@ -130,6 +132,7 @@
     <Compile Include="NullTypeBuildExecuteStrategy.cs" />
     <Compile Include="PropertyScopes.cs" />
     <Compile Include="RandomGeneratorExtensionTests.cs" />
+    <Compile Include="RandomGeneratorTests.cs" />
     <Compile Include="ReadOnlyModel.cs">
       <DependentUpon>Models.cs</DependentUpon>
     </Compile>
@@ -159,6 +162,7 @@
     <Compile Include="SpecificCompany.cs">
       <DependentUpon>Models.cs</DependentUpon>
     </Compile>
+    <Compile Include="StringValueGeneratorTests.cs" />
     <Compile Include="TypeCreatorBaseTests.cs" />
     <Compile Include="TypeCreatorExtensionsTests.cs" />
     <Compile Include="ValueGeneratorBaseTests.cs" />

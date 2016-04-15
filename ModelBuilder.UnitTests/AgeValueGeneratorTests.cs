@@ -7,8 +7,77 @@ namespace ModelBuilder.UnitTests
     public class AgeValueGeneratorTests
     {
         [Theory]
-        [ClassData(typeof (NumericTypeDataSource))]
-        public void GenerateReturnsNewValueTest(Type type, bool typeSupported)
+        [ClassData(typeof(NumericTypeDataSource))]
+        public void GenerateCanEvalutateManyTimesTest(Type type, bool typeSupported, double min, double max)
+        {
+            if (typeSupported == false)
+            {
+                // Ignore this test
+                return;
+            }
+
+            var target = new AgeValueGenerator();
+
+            for (var index = 0; index < 10000; index++)
+            {
+                var value = target.Generate(type, "Age", null);
+
+                if (type.IsNullable() && value == null)
+                {
+                    // Nullable values could be returned so nothing more to assert
+                    return;
+                }
+
+                var evaluateType = type;
+
+                if (type.IsNullable())
+                {
+                    evaluateType = type.GenericTypeArguments[0];
+                }
+
+                value.Should().BeOfType(evaluateType);
+
+                var convertedValue = Convert.ToDouble(value);
+
+                convertedValue.Should().BeGreaterOrEqualTo(min);
+                convertedValue.Should().BeLessOrEqualTo(max);
+            }
+        }
+
+        [Fact]
+        public void GenerateCanReturnNullAndNonNullValuesTest()
+        {
+            var nullFound = false;
+            var valueFound = false;
+
+            var target = new AgeValueGenerator();
+
+            for (var index = 0; index < 1000; index++)
+            {
+                var value = (int?) target.Generate(typeof(int?), "Age", null);
+
+                if (value == null)
+                {
+                    nullFound = true;
+                }
+                else
+                {
+                    valueFound = true;
+                }
+
+                if (nullFound && valueFound)
+                {
+                    break;
+                }
+            }
+
+            nullFound.Should().BeTrue();
+            valueFound.Should().BeTrue();
+        }
+
+        [Theory]
+        [ClassData(typeof(NumericTypeDataSource))]
+        public void GenerateReturnsNewValueTest(Type type, bool typeSupported, double min, double max)
         {
             if (typeSupported == false)
             {
@@ -20,18 +89,32 @@ namespace ModelBuilder.UnitTests
 
             var value = target.Generate(type, "Age", null);
 
-            value.Should().NotBeNull();
-            value.Should().BeOfType(type);
+            if (type.IsNullable()
+                &&
+                value == null)
+            {
+                // We can't run the assertions because null is a valid outcome
+                return;
+            }
+            
+            var evaluateType = type;
 
-            var convertedValue = Convert.ToInt32(value);
+            if (type.IsNullable())
+            {
+                evaluateType = type.GenericTypeArguments[0];
+            }
+
+            value.Should().BeOfType(evaluateType);
+
+            var convertedValue = Convert.ToDouble(value);
 
             convertedValue.Should().BeLessOrEqualTo(target.MaxAge);
-            convertedValue.Should().BeGreaterOrEqualTo(0);
+            convertedValue.Should().BeGreaterOrEqualTo(1);
         }
 
         [Theory]
-        [ClassData(typeof (NumericTypeDataSource))]
-        public void GenerateThrowsExceptionWhenReferenceNotAgeTest(Type type, bool typeSupported)
+        [ClassData(typeof(NumericTypeDataSource))]
+        public void GenerateThrowsExceptionWhenReferenceNotAgeTest(Type type, bool typeSupported, double min, double max)
         {
             var target = new AgeValueGenerator();
 
@@ -41,8 +124,8 @@ namespace ModelBuilder.UnitTests
         }
 
         [Theory]
-        [ClassData(typeof (NumericTypeDataSource))]
-        public void GenerateValidatesRequestedTypeTest(Type type, bool typeSupported)
+        [ClassData(typeof(NumericTypeDataSource))]
+        public void GenerateValidatesRequestedTypeTest(Type type, bool typeSupported, double min, double max)
         {
             var target = new AgeValueGenerator();
 
@@ -59,8 +142,8 @@ namespace ModelBuilder.UnitTests
         }
 
         [Theory]
-        [ClassData(typeof (NumericTypeDataSource))]
-        public void IsSupportedEvaluatesRequestedTypeTest(Type type, bool typeSupported)
+        [ClassData(typeof(NumericTypeDataSource))]
+        public void IsSupportedEvaluatesRequestedTypeTest(Type type, bool typeSupported, double min, double max)
         {
             var target = new AgeValueGenerator();
 
@@ -70,8 +153,9 @@ namespace ModelBuilder.UnitTests
         }
 
         [Theory]
-        [ClassData(typeof (NumericTypeDataSource))]
-        public void IsSupportedReturnsFalseWhenReferenceNameIsNullTest(Type type, bool typeSupported)
+        [ClassData(typeof(NumericTypeDataSource))]
+        public void IsSupportedReturnsFalseWhenReferenceNameIsNullTest(Type type, bool typeSupported, double min,
+            double max)
         {
             if (typeSupported == false)
             {
@@ -87,8 +171,9 @@ namespace ModelBuilder.UnitTests
         }
 
         [Theory]
-        [ClassData(typeof (NumericTypeDataSource))]
-        public void IsSupportedReturnsFalseWhenReferenceNameNotAgeTest(Type type, bool typeSupported)
+        [ClassData(typeof(NumericTypeDataSource))]
+        public void IsSupportedReturnsFalseWhenReferenceNameNotAgeTest(Type type, bool typeSupported, double min,
+            double max)
         {
             if (typeSupported == false)
             {
@@ -104,8 +189,9 @@ namespace ModelBuilder.UnitTests
         }
 
         [Theory]
-        [ClassData(typeof (NumericTypeDataSource))]
-        public void IsSupportedReturnsTrueWhenReferenceNameIncludesAgeTest(Type type, bool typeSupported)
+        [ClassData(typeof(NumericTypeDataSource))]
+        public void IsSupportedReturnsTrueWhenReferenceNameIncludesAgeTest(Type type, bool typeSupported, double min,
+            double max)
         {
             if (typeSupported == false)
             {
