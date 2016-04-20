@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using FluentAssertions;
-using NSubstitute;
 using Xunit;
 
 namespace ModelBuilder.UnitTests
@@ -22,11 +24,48 @@ namespace ModelBuilder.UnitTests
         }
 
         [Fact]
+        public void CreateReadOnlyCollectionWithAutoPopulatedItemsTest()
+        {
+            var actual = Model.Create<ReadOnlyCollection<int>>();
+
+            actual.Should().HaveCount(EnumerableTypeCreator.DefaultAutoPopulateCount);
+            actual.All(x => x == 0).Should().BeFalse();
+        }
+
+        [Fact]
+        public void CreateReturnsCollectionWithAutoPopulatedItemsInstanceTest()
+        {
+            var actual = Model.Create<ICollection<int>>();
+
+            actual.Should().HaveCount(EnumerableTypeCreator.DefaultAutoPopulateCount);
+            actual.All(x => x == 0).Should().BeFalse();
+        }
+
+        [Fact]
+        public void CreateReturnsEnumerableWithAutoPopulatedItemsInstanceTest()
+        {
+            var actual = Model.Create<IEnumerable<int>>();
+
+            actual.Should().HaveCount(EnumerableTypeCreator.DefaultAutoPopulateCount);
+            actual.All(x => x == 0).Should().BeFalse();
+        }
+
+        [Fact]
         public void CreateReturnsGuidTest()
         {
             var actual = Model.Create<Guid>();
 
             actual.Should().NotBeEmpty();
+        }
+
+
+        [Fact]
+        public void CreateReturnsListWithAutoPopulatedItemsInstanceTest()
+        {
+            var actual = Model.Create<IList<int>>();
+
+            actual.Should().HaveCount(EnumerableTypeCreator.DefaultAutoPopulateCount);
+            actual.All(x => x == 0).Should().BeFalse();
         }
 
         [Fact]
@@ -81,21 +120,7 @@ namespace ModelBuilder.UnitTests
         {
             var actual = Model.For<string>();
 
-            actual.Should().BeOfType(typeof (DefaultExecuteStrategy<string>));
-        }
-
-        [Fact]
-        public void PopulateCanBuildExistingInstanceTest()
-        {
-            var entity = new Person();
-            var actual = Model.Populate(entity);
-
-            actual.Should().NotBeNull();
-            actual.DOB.Should().NotBe(default(DateTime));
-            actual.FirstName.Should().NotBeNullOrWhiteSpace();
-            actual.LastName.Should().NotBeNullOrWhiteSpace();
-            actual.Id.Should().NotBeEmpty();
-            actual.Priority.Should().NotBe(0);
+            actual.Should().BeOfType(typeof(DefaultExecuteStrategy<string>));
         }
 
         [Fact]
@@ -111,6 +136,20 @@ namespace ModelBuilder.UnitTests
             actual.Priority.Should().NotBe(0);
             actual.Id.Should().Be(entity.Id);
             actual.IsActive.Should().Be(entity.IsActive);
+        }
+
+        [Fact]
+        public void PopulateCanBuildExistingInstanceTest()
+        {
+            var entity = new Person();
+            var actual = Model.Populate(entity);
+
+            actual.Should().NotBeNull();
+            actual.DOB.Should().NotBe(default(DateTime));
+            actual.FirstName.Should().NotBeNullOrWhiteSpace();
+            actual.LastName.Should().NotBeNullOrWhiteSpace();
+            actual.Id.Should().NotBeEmpty();
+            actual.Priority.Should().NotBe(0);
         }
     }
 }

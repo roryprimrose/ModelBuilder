@@ -12,11 +12,40 @@ namespace ModelBuilder.UnitTests
     public class EnumerableTypeCreatorTests
     {
         [Fact]
+        public void CreateDoesNotPopulateListTest()
+        {
+            var target = new IncrementingEnumerableTypeCreator();
+
+            var result = (IList<int>) target.Create(typeof(IList<int>));
+
+            result.Should().BeEmpty();
+        }
+
+        [Theory]
+        [InlineData(typeof(Dictionary<string, int>))]
+        [InlineData(typeof(IEnumerable<string>))]
+        [InlineData(typeof(ICollection<string>))]
+        [InlineData(typeof(IList<string>))]
+        [InlineData(typeof(Collection<string>))]
+        [InlineData(typeof(List<string>))]
+        [InlineData(typeof(HashSet<string>))]
+        [InlineData(typeof(LinkedList<string>))]
+        [InlineData(typeof(ArraySegment<string>))]
+        public void CreateReturnsInstanceTest(Type type)
+        {
+            var target = new EnumerableTypeCreator();
+
+            var actual = target.Create(type, null, null);
+
+            actual.Should().NotBeNull();
+        }
+
+        [Fact]
         public void CreateReturnsNewListOfSpecfiedTypeTest()
         {
             var target = new EnumerableTypeCreator();
 
-            var actual = target.Create(typeof (IEnumerable<int>), null, null);
+            var actual = target.Create(typeof(IEnumerable<int>), null, null);
 
             actual.Should().BeOfType<List<int>>();
             actual.As<List<int>>().Should().BeEmpty();
@@ -32,44 +61,65 @@ namespace ModelBuilder.UnitTests
             action.ShouldThrow<ArgumentNullException>();
         }
 
-        [Fact]
-        public void IsSupportedReturnsFalseForNonGenericTypeTest()
+        [Theory]
+        [InlineData(typeof(string), false)]
+        [InlineData(typeof(Stream), false)]
+        [InlineData(typeof(int), false)]
+        [InlineData(typeof(ReadOnlyCollection<int>), false)]
+        [InlineData(typeof(IDictionary<string, int>), false)]
+        [InlineData(typeof(Tuple<string, bool>), false)]
+        [InlineData(typeof(Dictionary<string, int>), true)]
+        [InlineData(typeof(IEnumerable<string>), true)]
+        [InlineData(typeof(ICollection<string>), true)]
+        [InlineData(typeof(Collection<string>), true)]
+        [InlineData(typeof(IList<string>), true)]
+        [InlineData(typeof(List<string>), true)]
+        [InlineData(typeof(IReadOnlyCollection<int>), true)]
+        [InlineData(typeof(IReadOnlyList<int>), true)]
+        [InlineData(typeof(HashSet<string>), true)]
+        [InlineData(typeof(LinkedList<string>), true)]
+        [InlineData(typeof(ArraySegment<string>), true)]
+        public void CreateValidatesWhetherTypeIsSupportedTest(Type type, bool supported)
         {
             var target = new EnumerableTypeCreator();
 
-            var actual = target.IsSupported(typeof (MemoryStream), null, null);
+            Action action = () => target.Create(type, null, null);
 
-            actual.Should().BeFalse();
+            if (supported)
+            {
+                action.ShouldNotThrow();
+            }
+            else
+            {
+                action.ShouldThrow<NotSupportedException>();
+            }
         }
 
-        [Fact]
-        public void IsSupportedReturnsFalseForUnsupportedGenericTypeTest()
+        [Theory]
+        [InlineData(typeof(string), false)]
+        [InlineData(typeof(Stream), false)]
+        [InlineData(typeof(int), false)]
+        [InlineData(typeof(ReadOnlyCollection<int>), false)]
+        [InlineData(typeof(IDictionary<string, int>), false)]
+        [InlineData(typeof(Tuple<string, bool>), false)]
+        [InlineData(typeof(Dictionary<string, int>), true)]
+        [InlineData(typeof(IEnumerable<string>), true)]
+        [InlineData(typeof(ICollection<string>), true)]
+        [InlineData(typeof(Collection<string>), true)]
+        [InlineData(typeof(IList<string>), true)]
+        [InlineData(typeof(List<string>), true)]
+        [InlineData(typeof(IReadOnlyCollection<int>), true)]
+        [InlineData(typeof(IReadOnlyList<int>), true)]
+        [InlineData(typeof(HashSet<string>), true)]
+        [InlineData(typeof(LinkedList<string>), true)]
+        [InlineData(typeof(ArraySegment<string>), true)]
+        public void IsSupportedReturnsWhetherTypeIsSupportedTest(Type type, bool supported)
         {
             var target = new EnumerableTypeCreator();
 
-            var actual = target.IsSupported(typeof (Tuple<string, bool>), null, null);
+            var actual = target.IsSupported(type, null, null);
 
-            actual.Should().BeFalse();
-        }
-
-        [Fact]
-        public void IsSupportedReturnsFalseForValueTypeTest()
-        {
-            var target = new EnumerableTypeCreator();
-
-            var actual = target.IsSupported(typeof (int), null, null);
-
-            actual.Should().BeFalse();
-        }
-
-        [Fact]
-        public void IsSupportedReturnsTrueForSupportedTypeTest()
-        {
-            var target = new EnumerableTypeCreator();
-
-            var actual = target.IsSupported(typeof (IEnumerable<string>), null, null);
-
-            actual.Should().BeTrue();
+            actual.Should().Be(supported);
         }
 
         [Fact]
@@ -89,7 +139,7 @@ namespace ModelBuilder.UnitTests
 
             var strategy = Substitute.For<IExecuteStrategy>();
 
-            strategy.CreateWith(typeof (Guid)).Returns(Guid.NewGuid());
+            strategy.CreateWith(typeof(Guid)).Returns(Guid.NewGuid());
 
             var target = new EnumerableTypeCreator
             {
@@ -113,7 +163,7 @@ namespace ModelBuilder.UnitTests
 
             var strategy = Substitute.For<IExecuteStrategy>();
 
-            strategy.CreateWith(typeof (Guid)).Returns(Guid.NewGuid());
+            strategy.CreateWith(typeof(Guid)).Returns(Guid.NewGuid());
 
             var target = new EnumerableTypeCreator
             {
@@ -128,6 +178,27 @@ namespace ModelBuilder.UnitTests
 
             set.Should().HaveCount(target.AutoPopulateCount);
             set.All(x => x != Guid.Empty).Should().BeTrue();
+        }
+
+        [Fact]
+        public void PopulateCanAddItemsBasedOnPreviousItemTest()
+        {
+            var actual = new List<int>();
+            var executeStrategy = Model.BuildStrategy.GetExecuteStrategy<List<int>>();
+
+            var target = new IncrementingEnumerableTypeCreator();
+
+            var result = (List<int>) target.Populate(actual, executeStrategy);
+
+            var baseValue = result[0];
+            var expected = new List<int>(target.AutoPopulateCount);
+
+            for (var index = 0; index < target.AutoPopulateCount; index++)
+            {
+                expected.Add(baseValue + index);
+            }
+
+            result.ShouldAllBeEquivalentTo(expected);
         }
 
         [Fact]
@@ -155,7 +226,7 @@ namespace ModelBuilder.UnitTests
         }
 
         [Fact]
-        public void PopulateThrowsExceptionWithWhenInstanceNotGenericCollectionBasedTest()
+        public void PopulateThrowsExceptionWithUnsupportedTypeTest()
         {
             var instance = new Lazy<bool>(() => true);
 
@@ -166,6 +237,15 @@ namespace ModelBuilder.UnitTests
             Action action = () => target.Populate(instance, strategy);
 
             action.ShouldThrow<NotSupportedException>();
+        }
+
+        [Fact]
+        public void ProrityReturnsHigherThanDefaultTypeCreatorTest()
+        {
+            var target = new EnumerableTypeCreator();
+            var other = new DefaultTypeCreator();
+
+            target.Priority.Should().BeGreaterThan(other.Priority);
         }
 
         [Fact]

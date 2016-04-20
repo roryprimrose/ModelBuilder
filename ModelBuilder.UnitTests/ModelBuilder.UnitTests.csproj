@@ -91,6 +91,7 @@
       <DependentUpon>Models.cs</DependentUpon>
     </Compile>
     <Compile Include="GuidValueGeneratorTests.cs" />
+    <Compile Include="IncrementingEnumerableTypeCreator.cs" />
     <Compile Include="IPAddressValueGeneratorTests.cs" />
     <Compile Include="NumericTypeDataSource.cs" />
     <Compile Include="NumericValueGeneratorTests.cs" />

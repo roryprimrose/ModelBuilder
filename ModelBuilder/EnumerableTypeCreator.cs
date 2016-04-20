@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
+using System.Collections.ObjectModel;
 using System.Linq;
-using ModelBuilder.Properties;
 
 namespace ModelBuilder
 {
@@ -22,11 +21,16 @@ namespace ModelBuilder
 
             VerifyCreateRequest(type, referenceName, context);
 
-            var listGenericType = typeof (List<string>).GetGenericTypeDefinition();
-            var typeArgument = type.GenericTypeArguments.Single();
-            var genericType = listGenericType.MakeGenericType(typeArgument);
+            if (type.IsInterface)
+            {
+                var internalType = FindEnumerableTypeArgument(type);
+                var listGenericType = typeof(List<string>).GetGenericTypeDefinition();
+                var genericType = listGenericType.MakeGenericType(internalType);
 
-            return Activator.CreateInstance(genericType);
+                return Activator.CreateInstance(genericType);
+            }
+
+            return Activator.CreateInstance(type, args);
         }
 
         /// <inheritdoc />
@@ -37,24 +41,46 @@ namespace ModelBuilder
                 throw new ArgumentNullException(nameof(type));
             }
 
-            if (type.IsValueType)
-            {
-                return false;
-            }
-
             if (type.IsGenericType == false)
             {
                 return false;
             }
 
-            var expectedGenericType = typeof (IEnumerable<string>).GetGenericTypeDefinition();
+            // The type may implementation multiple interfaces including IEnumerable<T> where the type generic definition of the type itself is not the same as the IEnumerable<T> definition
+            // Dictionary<TKey, TValue> is an example of this where it implements IEnumerable<KeyValuePair<TKey, TValue>>
+            var internalType = FindEnumerableTypeArgument(type);
 
-            if (type.GetGenericTypeDefinition() == expectedGenericType)
+            if (internalType == null)
             {
+                // The type does not implement IEnumerable<T>
+                return false;
+            }
+
+            var readOnlyGenericType = typeof(ReadOnlyCollection<string>).GetGenericTypeDefinition();
+            var readOnlyType = readOnlyGenericType.MakeGenericType(internalType);
+
+            if (type == readOnlyType)
+            {
+                // The type is ReadOnlyCollection<T> which should be supported by DefaultTypeCreator as it will determine the data to build for its constructor
+                return false;
+            }
+            
+            if (type.IsInterface == false)
+            {
+                // Other known collection concrete types are expected to be supported
                 return true;
             }
 
-            return false;
+            var listGenericType = typeof(List<string>).GetGenericTypeDefinition();
+            var listType = listGenericType.MakeGenericType(internalType);
+
+            if (type.IsAssignableFrom(listType) == false)
+            {
+                // The instance is not List<T> and therefore cannot be created or populated by this type creator
+                return false;
+            }
+
+            return true;
         }
 
         /// <inheritdoc />
@@ -71,31 +97,77 @@ namespace ModelBuilder
             }
 
             var type = instance.GetType();
-            var typeArgument = type.GenericTypeArguments.Single();
+            var internalType = FindEnumerableTypeArgument(type);
 
-            var listGenericType = typeof (ICollection<string>).GetGenericTypeDefinition();
-            var expectedGenericType = listGenericType.MakeGenericType(typeArgument);
-
-            if (expectedGenericType.IsAssignableFrom(type) == false)
-            {
-                // The instance is not List<T> and therefore cannot be populated by this type creator
-                var message = string.Format(CultureInfo.CurrentCulture, Resources.Error_TypeNotSupportedFormat,
-                    GetType().FullName, type.FullName);
-
-                throw new NotSupportedException(message);
-            }
+            VerifyCreateRequest(type, null, instance);
 
             // Get the Add method
             var addMethod = type.GetMethod("Add");
 
+            object previousItem = null;
+
             for (var index = 0; index < AutoPopulateCount; index++)
             {
-                var childInstance = executeStrategy.CreateWith(typeArgument);
+                var childInstance = CreateChildItem(internalType, executeStrategy, previousItem);
 
-                addMethod.Invoke(instance, new[] {childInstance});
+                addMethod.Invoke(instance, new[] { childInstance });
+
+                previousItem = childInstance;
             }
 
             return base.Populate(instance, executeStrategy);
+        }
+
+        protected virtual object CreateChildItem(Type type, IExecuteStrategy executeStrategy, object previousItem)
+        {
+            return executeStrategy.CreateWith(type);
+        }
+
+        private static Type FindEnumerableTypeArgument(Type type)
+        {
+            var topLevelTypeArgument = GetEnumerableTypeArgument(type);
+
+            if (topLevelTypeArgument != null)
+            {
+                // The type itself is IEnumerable<T> so we don't need to search the implemented interfaces
+                return topLevelTypeArgument;
+            }
+
+            var interfaces = type.GetInterfaces();
+
+            for (var index = 0; index < interfaces.Length; index++)
+            {
+                var internalType = interfaces[index];
+
+                var genericTypeArgument = GetEnumerableTypeArgument(internalType);
+
+                if (genericTypeArgument != null)
+                {
+                    return genericTypeArgument;
+                }
+            }
+
+            return null;
+        }
+
+        private static Type GetEnumerableTypeArgument(Type type)
+        {
+            if (type.IsGenericType == false)
+            {
+                return null;
+            }
+
+            var genericInternalType = type.GetGenericTypeDefinition();
+
+            var enumerableType = typeof(IEnumerable<string>).GetGenericTypeDefinition();
+
+            if (genericInternalType != enumerableType)
+            {
+                // We don't have a match on IEnumerable
+                return null;
+            }
+
+            return type.GenericTypeArguments[0];
         }
 
         /// <summary>
@@ -113,5 +185,8 @@ namespace ModelBuilder
         /// Gets or sets how many instances will be auto-populated into the list.
         /// </summary>
         public int AutoPopulateCount { get; set; } = DefaultAutoPopulateCount;
+
+        /// <inheritdoc />
+        public override int Priority => 100;
     }
 }
