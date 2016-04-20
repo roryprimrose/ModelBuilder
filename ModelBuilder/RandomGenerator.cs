@@ -17,47 +17,55 @@ namespace ModelBuilder
         {
             ValidateRequestedType(type);
 
-            if (type == typeof (int))
+            var checkType = type;
+
+            if (type.IsNullable())
+            {
+                // The type is nullable so we need to validate whether we support the type argument
+                checkType = type.GenericTypeArguments[0];
+            }
+
+            if (checkType == typeof (int))
             {
                 return int.MaxValue;
             }
 
-            if (type == typeof (uint))
+            if (checkType == typeof (uint))
             {
                 return uint.MaxValue;
             }
 
-            if (type == typeof (long))
+            if (checkType == typeof (long))
             {
                 return long.MaxValue;
             }
 
-            if (type == typeof (ulong))
+            if (checkType == typeof (ulong))
             {
                 return ulong.MaxValue;
             }
 
-            if (type == typeof (short))
+            if (checkType == typeof (short))
             {
                 return short.MaxValue;
             }
 
-            if (type == typeof (ushort))
+            if (checkType == typeof (ushort))
             {
                 return ushort.MaxValue;
             }
 
-            if (type == typeof (byte))
+            if (checkType == typeof (byte))
             {
                 return byte.MaxValue;
             }
 
-            if (type == typeof (sbyte))
+            if (checkType == typeof (sbyte))
             {
                 return sbyte.MaxValue;
             }
 
-            if (type == typeof (float))
+            if (checkType == typeof (float))
             {
                 return float.MaxValue;
             }
@@ -70,47 +78,55 @@ namespace ModelBuilder
         {
             ValidateRequestedType(type);
 
-            if (type == typeof (int))
+            var checkType = type;
+
+            if (type.IsNullable())
+            {
+                // The type is nullable so we need to validate whether we support the type argument
+                checkType = type.GenericTypeArguments[0];
+            }
+
+            if (checkType == typeof (int))
             {
                 return int.MinValue;
             }
 
-            if (type == typeof (uint))
+            if (checkType == typeof (uint))
             {
                 return uint.MinValue;
             }
 
-            if (type == typeof (long))
+            if (checkType == typeof (long))
             {
                 return long.MinValue;
             }
 
-            if (type == typeof (ulong))
+            if (checkType == typeof (ulong))
             {
                 return ulong.MinValue;
             }
 
-            if (type == typeof (short))
+            if (checkType == typeof (short))
             {
                 return short.MinValue;
             }
 
-            if (type == typeof (ushort))
+            if (checkType == typeof (ushort))
             {
                 return ushort.MinValue;
             }
 
-            if (type == typeof (byte))
+            if (checkType == typeof (byte))
             {
                 return byte.MinValue;
             }
 
-            if (type == typeof (sbyte))
+            if (checkType == typeof (sbyte))
             {
                 return sbyte.MinValue;
             }
 
-            if (type == typeof (float))
+            if (checkType == typeof (float))
             {
                 return float.MinValue;
             }
@@ -126,52 +142,60 @@ namespace ModelBuilder
                 throw new ArgumentNullException(nameof(type));
             }
 
-            if (type == typeof (int))
+            var checkType = type;
+
+            if (type.IsNullable())
+            {
+                // The type is nullable so we need to validate whether we support the type argument
+                checkType = type.GenericTypeArguments[0];
+            }
+
+            if (checkType == typeof (int))
             {
                 return true;
             }
 
-            if (type == typeof (uint))
+            if (checkType == typeof (uint))
             {
                 return true;
             }
 
-            if (type == typeof (long))
+            if (checkType == typeof (long))
             {
                 return true;
             }
 
-            if (type == typeof (ulong))
+            if (checkType == typeof (ulong))
             {
                 return true;
             }
 
-            if (type == typeof (short))
+            if (checkType == typeof (short))
             {
                 return true;
             }
 
-            if (type == typeof (ushort))
+            if (checkType == typeof (ushort))
             {
                 return true;
             }
 
-            if (type == typeof (byte))
+            if (checkType == typeof (byte))
             {
                 return true;
             }
 
-            if (type == typeof (sbyte))
+            if (checkType == typeof (sbyte))
             {
                 return true;
             }
 
-            if (type == typeof (double))
+            if (checkType == typeof (double))
             {
                 return true;
             }
 
-            if (type == typeof (float))
+            if (checkType == typeof (float))
             {
                 return true;
             }
@@ -202,11 +226,31 @@ namespace ModelBuilder
 
             var minimum = Convert.ToDouble(min);
             var maximum = Convert.ToDouble(max);
-            var requiresRounding = RequiresRounding(type);
+
+            var isNullable = type.IsNullable();
+            var checkType = type;
+            
+            if (isNullable)
+            {
+                // The type is nullable so we need to validate whether we support the type argument
+                checkType = type.GenericTypeArguments[0];
+            }
+
+            var requiresRounding = RequiresRounding(checkType);
 
             var value = NextValue<double>(minimum, maximum, requiresRounding);
+            var convertedValue = Convert.ChangeType(value, checkType);
 
-            return Convert.ChangeType(value, type);
+            if (isNullable)
+            {
+                // Create a nullable with the converted value
+                var instance = Activator.CreateInstance(type, convertedValue);
+
+                return instance;
+            }
+
+            // Return the value converted to its target type
+            return convertedValue;
         }
 
         /// <inheritdoc />

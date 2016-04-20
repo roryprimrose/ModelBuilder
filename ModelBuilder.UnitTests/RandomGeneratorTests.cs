@@ -165,7 +165,15 @@ namespace ModelBuilder.UnitTests
                 var value = target.Next(type, min, max);
 
                 value.Should().NotBeNull();
-                value.Should().BeOfType(type);
+
+                if (type.IsNullable())
+                {
+                    value.Should().BeOfType(type.GetGenericArguments()[0]);
+                }
+                else
+                {
+                    value.Should().BeOfType(type);
+                }
             }
         }
 
@@ -273,7 +281,15 @@ namespace ModelBuilder.UnitTests
             var value = target.Next(type, min, max);
 
             value.Should().NotBeNull();
-            value.Should().BeOfType(type);
+
+            if (type.IsNullable())
+            {
+                value.Should().BeOfType(type.GetGenericArguments()[0]);
+            }
+            else
+            {
+                value.Should().BeOfType(type);
+            }
         }
 
 
