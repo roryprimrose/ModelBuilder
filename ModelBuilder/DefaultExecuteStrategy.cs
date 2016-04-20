@@ -24,13 +24,14 @@ namespace ModelBuilder
             TypeCreators = new List<ITypeCreator>();
             ValueGenerators = new List<IValueGenerator>();
             IgnoreRules = new List<IgnoreRule>();
+            ExecuteOrderRules = new List<ExecuteOrderRule>();
             ConstructorResolver = new DefaultConstructorResolver();
         }
 
         /// <inheritdoc />
         public virtual T CreateWith(params object[] args)
         {
-            var requestedType = typeof (T);
+            var requestedType = typeof(T);
 
             var instance = Build(requestedType, null, null, args);
 
@@ -40,7 +41,7 @@ namespace ModelBuilder
                 return default(T);
             }
 
-            return (T) instance;
+            return (T)instance;
         }
 
         /// <inheritdoc />
@@ -57,7 +58,7 @@ namespace ModelBuilder
         /// <inheritdoc />
         public virtual T Populate(T instance)
         {
-            return (T) PopulateInstance(instance);
+            return (T)PopulateInstance(instance);
         }
 
         /// <inheritdoc />
@@ -159,8 +160,11 @@ namespace ModelBuilder
             var flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.SetProperty;
             var type = instance.GetType();
 
-            var propertyInfos = type.GetProperties(flags).Where(x => x.CanWrite);
-
+            var propertyInfos = from x in type.GetProperties(flags)
+                                where x.CanWrite
+                                orderby GetMaximumOrderPrority(x.PropertyType, x.Name) descending
+                                select x;
+            
             foreach (var propertyInfo in propertyInfos)
             {
                 if (propertyInfo.SetMethod.IsPublic == false)
@@ -182,6 +186,22 @@ namespace ModelBuilder
             }
 
             return instance;
+        }
+
+        private int GetMaximumOrderPrority(Type type, string propertyName)
+        {
+            var matchingRules = from x in ExecuteOrderRules
+                                where x.IsMatch(type, propertyName)
+                                orderby x.Priority descending
+                                select x;
+            var matchingRule = matchingRules.FirstOrDefault();
+
+            if (matchingRule == null)
+            {
+                return 0;
+            }
+
+            return matchingRule.Priority;
         }
 
         private object CreateInstance(ITypeCreator typeCreator, Type type, string referenceName, object context,
@@ -232,6 +252,9 @@ namespace ModelBuilder
 
         /// <inheritdoc />
         public IConstructorResolver ConstructorResolver { get; set; }
+
+        /// <inheritdoc />
+        public ICollection<ExecuteOrderRule> ExecuteOrderRules { get; }
 
         /// <inheritdoc />
         public ICollection<IgnoreRule> IgnoreRules { get; }

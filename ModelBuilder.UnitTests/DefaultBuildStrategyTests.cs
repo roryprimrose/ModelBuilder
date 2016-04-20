@@ -14,6 +14,7 @@ namespace ModelBuilder.UnitTests
             target.ConstructorResolver.Should().BeOfType<DefaultConstructorResolver>();
             target.TypeCreators.ShouldAllBeEquivalentTo(DefaultBuildStrategy.DefaultTypeCreators);
             target.ValueGenerators.ShouldAllBeEquivalentTo(DefaultBuildStrategy.DefaultValueGenerators);
+            target.ExecuteOrderRules.ShouldAllBeEquivalentTo(DefaultBuildStrategy.DefaultExecuteOrderRules);
         }
 
         [Fact]
@@ -27,6 +28,7 @@ namespace ModelBuilder.UnitTests
             actual.ConstructorResolver.Should().BeOfType<DefaultConstructorResolver>();
             actual.TypeCreators.ShouldAllBeEquivalentTo(target.TypeCreators);
             actual.ValueGenerators.ShouldAllBeEquivalentTo(target.ValueGenerators);
+            actual.ExecuteOrderRules.ShouldAllBeEquivalentTo(target.ExecuteOrderRules);
         }
     }
 }

@@ -19,8 +19,8 @@ namespace ModelBuilder.UnitTests
 
             var target = new DefaultExecuteStrategy<SlimModel>();
 
-            creator.IsSupported(typeof (SlimModel), null, null).Returns(true);
-            creator.Create(typeof (SlimModel), null, null).Returns(model);
+            creator.IsSupported(typeof(SlimModel), null, null).Returns(true);
+            creator.Create(typeof(SlimModel), null, null).Returns(model);
             creator.Priority.Returns(1);
             creator.AutoPopulate.Returns(false);
             creator.Populate(model, target).Returns(model);
@@ -40,7 +40,7 @@ namespace ModelBuilder.UnitTests
 
             var target = new DefaultExecuteStrategy<SlimModel>();
 
-            creator.IsSupported(typeof (SlimModel), null, null).Returns(true);
+            creator.IsSupported(typeof(SlimModel), null, null).Returns(true);
 
             target.TypeCreators.Add(creator);
 
@@ -54,8 +54,8 @@ namespace ModelBuilder.UnitTests
         {
             var typeCreator = Substitute.For<ITypeCreator>();
 
-            typeCreator.IsSupported(typeof (Stream), null, null).Returns(true);
-            typeCreator.Create(typeof (Stream), null, null).Returns(null);
+            typeCreator.IsSupported(typeof(Stream), null, null).Returns(true);
+            typeCreator.Create(typeof(Stream), null, null).Returns(null);
 
             var target = new DefaultExecuteStrategy<Stream>();
 
@@ -71,8 +71,8 @@ namespace ModelBuilder.UnitTests
         {
             var valueGenerator = Substitute.For<IValueGenerator>();
 
-            valueGenerator.IsSupported(typeof (int), null, null).Returns(true);
-            valueGenerator.Generate(typeof (int), null, null).Returns(null);
+            valueGenerator.IsSupported(typeof(int), null, null).Returns(true);
+            valueGenerator.Generate(typeof(int), null, null).Returns(null);
 
             var target = new DefaultExecuteStrategy<int>();
 
@@ -94,12 +94,12 @@ namespace ModelBuilder.UnitTests
 
             var target = new DefaultExecuteStrategy<SlimModel>();
 
-            creator.IsSupported(typeof (SlimModel), null, null).Returns(true);
-            creator.Create(typeof (SlimModel), null, null).Returns(expected);
+            creator.IsSupported(typeof(SlimModel), null, null).Returns(true);
+            creator.Create(typeof(SlimModel), null, null).Returns(expected);
             creator.Populate(expected, target).Returns(expected);
             creator.AutoPopulate.Returns(true);
-            generator.IsSupported(typeof (Guid), "Value", expected).Returns(true);
-            generator.Generate(typeof (Guid), "Value", expected).Returns(value);
+            generator.IsSupported(typeof(Guid), "Value", expected).Returns(true);
+            generator.Generate(typeof(Guid), "Value", expected).Returns(value);
 
             target.TypeCreators.Add(creator);
             target.ValueGenerators.Add(generator);
@@ -128,8 +128,8 @@ namespace ModelBuilder.UnitTests
 
             var target = new DefaultExecuteStrategy<Person>();
 
-            creator.IsSupported(typeof (Person), null, null).Returns(true);
-            creator.Create(typeof (Person), null, null, args).Returns(expected);
+            creator.IsSupported(typeof(Person), null, null).Returns(true);
+            creator.Create(typeof(Person), null, null, args).Returns(expected);
             creator.Populate(expected, target).Returns(expected);
             creator.AutoPopulate.Returns(false);
 
@@ -153,18 +153,18 @@ namespace ModelBuilder.UnitTests
 
             var target = new DefaultExecuteStrategy<SlimModel>();
 
-            firstCreator.IsSupported(typeof (SlimModel), null, null).Returns(true);
-            firstCreator.Create(typeof (SlimModel), null, null).Returns(firstModel);
+            firstCreator.IsSupported(typeof(SlimModel), null, null).Returns(true);
+            firstCreator.Create(typeof(SlimModel), null, null).Returns(firstModel);
             firstCreator.Priority.Returns(1);
             firstCreator.AutoPopulate.Returns(true);
             firstCreator.Populate(firstModel, target).Returns(firstModel);
-            secondCreator.IsSupported(typeof (SlimModel), null, null).Returns(true);
-            secondCreator.Create(typeof (SlimModel), null, null).Returns(secondModel);
+            secondCreator.IsSupported(typeof(SlimModel), null, null).Returns(true);
+            secondCreator.Create(typeof(SlimModel), null, null).Returns(secondModel);
             secondCreator.Priority.Returns(2);
             secondCreator.AutoPopulate.Returns(true);
             secondCreator.Populate(secondModel, target).Returns(secondModel);
-            generator.IsSupported(typeof (Guid), "Value", secondModel).Returns(true);
-            generator.Generate(typeof (Guid), "Value", secondModel).Returns(value);
+            generator.IsSupported(typeof(Guid), "Value", secondModel).Returns(true);
+            generator.Generate(typeof(Guid), "Value", secondModel).Returns(value);
 
             target.TypeCreators.Add(firstCreator);
             target.TypeCreators.Add(secondCreator);
@@ -185,8 +185,8 @@ namespace ModelBuilder.UnitTests
 
             var target = new DefaultExecuteStrategy<Person>();
 
-            creator.IsSupported(typeof (Person), null, null).Returns(true);
-            creator.Create(typeof (Person), null, null).Returns(expected);
+            creator.IsSupported(typeof(Person), null, null).Returns(true);
+            creator.Create(typeof(Person), null, null).Returns(expected);
             creator.Populate(expected, target).Returns(expected);
             creator.AutoPopulate.Returns(false);
             creator.AutoDetectConstructor.Returns(false);
@@ -211,10 +211,10 @@ namespace ModelBuilder.UnitTests
                 ConstructorResolver = resolver
             };
 
-            resolver.Resolve(typeof (Person))
-                .Returns(typeof (Person).GetConstructors().Single(x => x.GetParameters().Length == 0));
-            creator.IsSupported(typeof (Person), null, null).Returns(true);
-            creator.Create(typeof (Person), null, null).Returns(expected);
+            resolver.Resolve(typeof(Person))
+                .Returns(typeof(Person).GetConstructors().Single(x => x.GetParameters().Length == 0));
+            creator.IsSupported(typeof(Person), null, null).Returns(true);
+            creator.Create(typeof(Person), null, null).Returns(expected);
             creator.Populate(expected, target).Returns(expected);
             creator.AutoPopulate.Returns(false);
             creator.AutoDetectConstructor.Returns(true);
@@ -235,11 +235,11 @@ namespace ModelBuilder.UnitTests
             var firstGenerator = Substitute.For<IValueGenerator>();
             var secondGenerator = Substitute.For<IValueGenerator>();
 
-            firstGenerator.IsSupported(typeof (Guid), null, null).Returns(true);
-            firstGenerator.Generate(typeof (Guid), null, null).Returns(firstValue);
+            firstGenerator.IsSupported(typeof(Guid), null, null).Returns(true);
+            firstGenerator.Generate(typeof(Guid), null, null).Returns(firstValue);
             firstGenerator.Priority.Returns(1);
-            secondGenerator.IsSupported(typeof (Guid), null, null).Returns(true);
-            secondGenerator.Generate(typeof (Guid), null, null).Returns(secondValue);
+            secondGenerator.IsSupported(typeof(Guid), null, null).Returns(true);
+            secondGenerator.Generate(typeof(Guid), null, null).Returns(secondValue);
             secondGenerator.Priority.Returns(2);
 
             var target = new DefaultExecuteStrategy<Guid>();
@@ -263,13 +263,13 @@ namespace ModelBuilder.UnitTests
 
             var target = new DefaultExecuteStrategy<ReadOnlyModel>();
 
-            creator.IsSupported(typeof (ReadOnlyModel), null, null).Returns(true);
-            creator.Create(typeof (ReadOnlyModel), null, null, value).Returns(expected);
+            creator.IsSupported(typeof(ReadOnlyModel), null, null).Returns(true);
+            creator.Create(typeof(ReadOnlyModel), null, null, value).Returns(expected);
             creator.Populate(expected, target).Returns(expected);
             creator.AutoPopulate.Returns(true);
             creator.AutoDetectConstructor.Returns(true);
-            generator.IsSupported(typeof (Guid), "value", null).Returns(true);
-            generator.Generate(typeof (Guid), "value", null).Returns(value);
+            generator.IsSupported(typeof(Guid), "value", null).Returns(true);
+            generator.Generate(typeof(Guid), "value", null).Returns(value);
 
             target.TypeCreators.Add(creator);
             target.ValueGenerators.Add(generator);
@@ -293,18 +293,18 @@ namespace ModelBuilder.UnitTests
 
             var target = new DefaultExecuteStrategy<SlimModel>();
 
-            firstCreator.IsSupported(typeof (SlimModel), null, null).Returns(false);
-            firstCreator.Create(typeof (SlimModel), null, null).Returns(firstModel);
+            firstCreator.IsSupported(typeof(SlimModel), null, null).Returns(false);
+            firstCreator.Create(typeof(SlimModel), null, null).Returns(firstModel);
             firstCreator.Priority.Returns(10);
             firstCreator.AutoPopulate.Returns(true);
             firstCreator.Populate(firstModel, target).Returns(firstModel);
-            secondCreator.IsSupported(typeof (SlimModel), null, null).Returns(true);
-            secondCreator.Create(typeof (SlimModel), null, null).Returns(secondModel);
+            secondCreator.IsSupported(typeof(SlimModel), null, null).Returns(true);
+            secondCreator.Create(typeof(SlimModel), null, null).Returns(secondModel);
             secondCreator.Priority.Returns(2);
             secondCreator.AutoPopulate.Returns(true);
             secondCreator.Populate(secondModel, target).Returns(secondModel);
-            generator.IsSupported(typeof (Guid), "Value", secondModel).Returns(true);
-            generator.Generate(typeof (Guid), "Value", secondModel).Returns(value);
+            generator.IsSupported(typeof(Guid), "Value", secondModel).Returns(true);
+            generator.Generate(typeof(Guid), "Value", secondModel).Returns(value);
 
             target.TypeCreators.Add(firstCreator);
             target.TypeCreators.Add(secondCreator);
@@ -325,11 +325,11 @@ namespace ModelBuilder.UnitTests
             var firstGenerator = Substitute.For<IValueGenerator>();
             var secondGenerator = Substitute.For<IValueGenerator>();
 
-            firstGenerator.IsSupported(typeof (Guid), null, null).Returns(false);
-            firstGenerator.Generate(typeof (Guid), null, null).Returns(firstValue);
+            firstGenerator.IsSupported(typeof(Guid), null, null).Returns(false);
+            firstGenerator.Generate(typeof(Guid), null, null).Returns(firstValue);
             firstGenerator.Priority.Returns(10);
-            secondGenerator.IsSupported(typeof (Guid), null, null).Returns(true);
-            secondGenerator.Generate(typeof (Guid), null, null).Returns(secondValue);
+            secondGenerator.IsSupported(typeof(Guid), null, null).Returns(true);
+            secondGenerator.Generate(typeof(Guid), null, null).Returns(secondValue);
             secondGenerator.Priority.Returns(2);
 
             var target = new DefaultExecuteStrategy<Guid>();
@@ -351,8 +351,8 @@ namespace ModelBuilder.UnitTests
 
             var target = new DefaultExecuteStrategy<string>();
 
-            valueGenerator.IsSupported(typeof (string), null, null).Returns(true);
-            valueGenerator.Generate(typeof (string), null, null).Returns(expected);
+            valueGenerator.IsSupported(typeof(string), null, null).Returns(true);
+            valueGenerator.Generate(typeof(string), null, null).Returns(expected);
 
             target.ValueGenerators.Add(valueGenerator);
 
@@ -428,6 +428,7 @@ namespace ModelBuilder.UnitTests
             target.IgnoreRules.Should().BeEmpty();
             target.TypeCreators.Should().BeEmpty();
             target.ValueGenerators.Should().BeEmpty();
+            target.ExecuteOrderRules.Should().BeEmpty();
         }
 
         [Fact]
@@ -442,11 +443,11 @@ namespace ModelBuilder.UnitTests
 
             var target = new DefaultExecuteStrategy<Company>();
 
-            typeCreator.IsSupported(typeof (IEnumerable<Person>), "Staff", expected).Returns(true);
-            typeCreator.Create(typeof (IEnumerable<Person>), "Staff", expected).Returns(staff);
+            typeCreator.IsSupported(typeof(IEnumerable<Person>), "Staff", expected).Returns(true);
+            typeCreator.Create(typeof(IEnumerable<Person>), "Staff", expected).Returns(staff);
             typeCreator.Populate(staff, target).Returns(staff);
-            valueGenerator.IsSupported(typeof (string), "Name", expected).Returns(true);
-            valueGenerator.Generate(typeof (string), "Name", expected).Returns(name);
+            valueGenerator.IsSupported(typeof(string), "Name", expected).Returns(true);
+            valueGenerator.Generate(typeof(string), "Name", expected).Returns(name);
 
             target.TypeCreators.Add(typeCreator);
             target.ValueGenerators.Add(valueGenerator);
@@ -470,11 +471,11 @@ namespace ModelBuilder.UnitTests
 
             var target = new DefaultExecuteStrategy<Company>();
 
-            typeCreator.IsSupported(typeof (IEnumerable<Person>), "Staff", expected).Returns(true);
-            typeCreator.Create(typeof (IEnumerable<Person>), "Staff", expected).Returns(staff);
+            typeCreator.IsSupported(typeof(IEnumerable<Person>), "Staff", expected).Returns(true);
+            typeCreator.Create(typeof(IEnumerable<Person>), "Staff", expected).Returns(staff);
             typeCreator.Populate(staff, target).Returns(staff);
-            valueGenerator.IsSupported(typeof (string), "Name", expected).Returns(true);
-            valueGenerator.Generate(typeof (string), "Name", expected).Returns(name);
+            valueGenerator.IsSupported(typeof(string), "Name", expected).Returns(true);
+            valueGenerator.Generate(typeof(string), "Name", expected).Returns(name);
 
             target.TypeCreators.Add(typeCreator);
             target.ValueGenerators.Add(valueGenerator);
@@ -487,23 +488,61 @@ namespace ModelBuilder.UnitTests
         }
 
         [Fact]
+        public void PopulateAssignsValueUsingDefaultExecutionOrderRulesTest()
+        {
+            var first = SimpleEnum.Seventh;
+            var second = Environment.TickCount;
+            var third = Guid.NewGuid().ToString();
+            var fourth = new Person();
+            var expected = new PopulateOrderItem();
+
+            var typeCreator = Substitute.For<ITypeCreator>();
+            var valueGenerator = Substitute.For<IValueGenerator>();
+
+            var target = new DefaultExecuteStrategy<PopulateOrderItem>();
+
+            DefaultBuildStrategy.DefaultExecuteOrderRules.ToList().ForEach(x => target.ExecuteOrderRules.Add(x));
+            
+            valueGenerator.IsSupported(typeof(SimpleEnum), "Z", expected).Returns(true);
+            valueGenerator.Generate(typeof(SimpleEnum), "Z", expected).Returns(first);
+            valueGenerator.IsSupported(typeof(int), "Y", expected).Returns(true);
+            valueGenerator.Generate(typeof(int), "Y", expected).Returns(second);
+            valueGenerator.IsSupported(typeof(string), "X", expected).Returns(true);
+            valueGenerator.Generate(typeof(string), "X", expected).Returns(third);
+            typeCreator.IsSupported(typeof(Person), "W", expected).Returns(true);
+            typeCreator.Create(typeof(Person), "W", expected).Returns(fourth);
+            typeCreator.Populate(fourth, target).Returns(fourth);
+
+            target.TypeCreators.Add(typeCreator);
+            target.ValueGenerators.Add(valueGenerator);
+
+            var actual = target.Populate(expected);
+
+            actual.Should().BeSameAs(expected);
+            actual.Z.Should().Be(first);
+            actual.Y.Should().Be(second);
+            actual.X.Should().Be(third);
+            actual.W.Should().BeSameAs(fourth);
+        }
+
+        [Fact]
         public void PopulateDoesNotApplyIgnoreRuleWhenPropertyNameHasDifferentCaseTest()
         {
             var staff = new List<Person>();
             var name = Guid.NewGuid().ToString();
             var expected = new Company();
-            var ignoreRule = new IgnoreRule(typeof (Company), "name");
+            var ignoreRule = new IgnoreRule(typeof(Company), "name");
 
             var typeCreator = Substitute.For<ITypeCreator>();
             var valueGenerator = Substitute.For<IValueGenerator>();
 
             var target = new DefaultExecuteStrategy<Company>();
 
-            typeCreator.IsSupported(typeof (IEnumerable<Person>), "Staff", expected).Returns(true);
-            typeCreator.Create(typeof (IEnumerable<Person>), "Staff", expected).Returns(staff);
+            typeCreator.IsSupported(typeof(IEnumerable<Person>), "Staff", expected).Returns(true);
+            typeCreator.Create(typeof(IEnumerable<Person>), "Staff", expected).Returns(staff);
             typeCreator.Populate(staff, target).Returns(staff);
-            valueGenerator.IsSupported(typeof (string), "Name", expected).Returns(true);
-            valueGenerator.Generate(typeof (string), "Name", expected).Returns(name);
+            valueGenerator.IsSupported(typeof(string), "Name", expected).Returns(true);
+            valueGenerator.Generate(typeof(string), "Name", expected).Returns(name);
 
             target.TypeCreators.Add(typeCreator);
             target.ValueGenerators.Add(valueGenerator);
@@ -522,18 +561,18 @@ namespace ModelBuilder.UnitTests
             var staff = new List<Person>();
             var name = Guid.NewGuid().ToString();
             var expected = new Company();
-            var ignoreRule = new IgnoreRule(typeof (Company), "Names");
+            var ignoreRule = new IgnoreRule(typeof(Company), "Names");
 
             var typeCreator = Substitute.For<ITypeCreator>();
             var valueGenerator = Substitute.For<IValueGenerator>();
 
             var target = new DefaultExecuteStrategy<Company>();
 
-            typeCreator.IsSupported(typeof (IEnumerable<Person>), "Staff", expected).Returns(true);
-            typeCreator.Create(typeof (IEnumerable<Person>), "Staff", expected).Returns(staff);
+            typeCreator.IsSupported(typeof(IEnumerable<Person>), "Staff", expected).Returns(true);
+            typeCreator.Create(typeof(IEnumerable<Person>), "Staff", expected).Returns(staff);
             typeCreator.Populate(staff, target).Returns(staff);
-            valueGenerator.IsSupported(typeof (string), "Name", expected).Returns(true);
-            valueGenerator.Generate(typeof (string), "Name", expected).Returns(name);
+            valueGenerator.IsSupported(typeof(string), "Name", expected).Returns(true);
+            valueGenerator.Generate(typeof(string), "Name", expected).Returns(name);
 
             target.TypeCreators.Add(typeCreator);
             target.ValueGenerators.Add(valueGenerator);
@@ -552,18 +591,18 @@ namespace ModelBuilder.UnitTests
             var staff = new List<Person>();
             var name = Guid.NewGuid().ToString();
             var expected = new Company();
-            var ignoreRule = new IgnoreRule(typeof (Stream), "Name");
+            var ignoreRule = new IgnoreRule(typeof(Stream), "Name");
 
             var typeCreator = Substitute.For<ITypeCreator>();
             var valueGenerator = Substitute.For<IValueGenerator>();
 
             var target = new DefaultExecuteStrategy<Company>();
 
-            typeCreator.IsSupported(typeof (IEnumerable<Person>), "Staff", expected).Returns(true);
-            typeCreator.Create(typeof (IEnumerable<Person>), "Staff", expected).Returns(staff);
+            typeCreator.IsSupported(typeof(IEnumerable<Person>), "Staff", expected).Returns(true);
+            typeCreator.Create(typeof(IEnumerable<Person>), "Staff", expected).Returns(staff);
             typeCreator.Populate(staff, target).Returns(staff);
-            valueGenerator.IsSupported(typeof (string), "Name", expected).Returns(true);
-            valueGenerator.Generate(typeof (string), "Name", expected).Returns(name);
+            valueGenerator.IsSupported(typeof(string), "Name", expected).Returns(true);
+            valueGenerator.Generate(typeof(string), "Name", expected).Returns(name);
 
             target.TypeCreators.Add(typeCreator);
             target.ValueGenerators.Add(valueGenerator);
@@ -586,8 +625,8 @@ namespace ModelBuilder.UnitTests
 
             var target = new DefaultExecuteStrategy<PropertyScopes>();
 
-            valueGenerator.IsSupported(typeof (Guid), Arg.Any<string>(), Arg.Any<object>()).Returns(true);
-            valueGenerator.Generate(typeof (Guid), Arg.Any<string>(), Arg.Any<object>()).Returns(value);
+            valueGenerator.IsSupported(typeof(Guid), Arg.Any<string>(), Arg.Any<object>()).Returns(true);
+            valueGenerator.Generate(typeof(Guid), Arg.Any<string>(), Arg.Any<object>()).Returns(value);
 
             target.ValueGenerators.Add(valueGenerator);
 
@@ -606,18 +645,18 @@ namespace ModelBuilder.UnitTests
             var staff = new List<Person>();
             var name = Guid.NewGuid().ToString();
             var expected = new Company();
-            var ignoreRule = new IgnoreRule(typeof (Company), "Name");
+            var ignoreRule = new IgnoreRule(typeof(Company), "Name");
 
             var typeCreator = Substitute.For<ITypeCreator>();
             var valueGenerator = Substitute.For<IValueGenerator>();
 
             var target = new DefaultExecuteStrategy<Company>();
 
-            typeCreator.IsSupported(typeof (IEnumerable<Person>), "Staff", expected).Returns(true);
-            typeCreator.Create(typeof (IEnumerable<Person>), "Staff", expected).Returns(staff);
+            typeCreator.IsSupported(typeof(IEnumerable<Person>), "Staff", expected).Returns(true);
+            typeCreator.Create(typeof(IEnumerable<Person>), "Staff", expected).Returns(staff);
             typeCreator.Populate(staff, target).Returns(staff);
-            valueGenerator.IsSupported(typeof (string), "Name", expected).Returns(true);
-            valueGenerator.Generate(typeof (string), "Name", expected).Returns(name);
+            valueGenerator.IsSupported(typeof(string), "Name", expected).Returns(true);
+            valueGenerator.Generate(typeof(string), "Name", expected).Returns(name);
 
             target.TypeCreators.Add(typeCreator);
             target.ValueGenerators.Add(valueGenerator);
@@ -636,18 +675,18 @@ namespace ModelBuilder.UnitTests
             var staff = new List<Person>();
             var name = Guid.NewGuid().ToString();
             var expected = new SpecificCompany();
-            var ignoreRule = new IgnoreRule(typeof (Company), "Name");
+            var ignoreRule = new IgnoreRule(typeof(Company), "Name");
 
             var typeCreator = Substitute.For<ITypeCreator>();
             var valueGenerator = Substitute.For<IValueGenerator>();
 
             var target = new DefaultExecuteStrategy<SpecificCompany>();
 
-            typeCreator.IsSupported(typeof (IEnumerable<Person>), "Staff", expected).Returns(true);
-            typeCreator.Create(typeof (IEnumerable<Person>), "Staff", expected).Returns(staff);
+            typeCreator.IsSupported(typeof(IEnumerable<Person>), "Staff", expected).Returns(true);
+            typeCreator.Create(typeof(IEnumerable<Person>), "Staff", expected).Returns(staff);
             typeCreator.Populate(staff, target).Returns(staff);
-            valueGenerator.IsSupported(typeof (string), Arg.Any<string>(), expected).Returns(true);
-            valueGenerator.Generate(typeof (string), Arg.Any<string>(), expected).Returns(name);
+            valueGenerator.IsSupported(typeof(string), Arg.Any<string>(), expected).Returns(true);
+            valueGenerator.Generate(typeof(string), Arg.Any<string>(), expected).Returns(name);
 
             target.TypeCreators.Add(typeCreator);
             target.ValueGenerators.Add(valueGenerator);

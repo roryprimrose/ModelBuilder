@@ -26,6 +26,7 @@ namespace ModelBuilder.UnitTests
         }
 
         public IConstructorResolver ConstructorResolver { get; set; } = new DefaultConstructorResolver();
+        public ICollection<ExecuteOrderRule> ExecuteOrderRules { get; } = new List<ExecuteOrderRule>();
         public ICollection<IgnoreRule> IgnoreRules { get; } = new List<IgnoreRule>();
         public ICollection<ITypeCreator> TypeCreators { get; } = new List<ITypeCreator>();
         public ICollection<IValueGenerator> ValueGenerators { get; } = new List<IValueGenerator>();
