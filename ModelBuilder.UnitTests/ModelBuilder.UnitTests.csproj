@@ -84,6 +84,7 @@
       <DependentUpon>Models.cs</DependentUpon>
     </Compile>
     <Compile Include="BooleanValueGeneratorTests.cs" />
+    <Compile Include="BuilderStrategyBaseTests.cs" />
     <Compile Include="DateTimeValueGeneratorTests.cs" />
     <Compile Include="DateOfBirthValueGeneratorTests.cs" />
     <Compile Include="EmailValueGeneratorTests.cs" />
@@ -91,6 +92,7 @@
       <DependentUpon>Models.cs</DependentUpon>
     </Compile>
     <Compile Include="GuidValueGeneratorTests.cs" />
+    <Compile Include="ExecuteOrderRuleTests.cs" />
     <Compile Include="IncrementingEnumerableTypeCreator.cs" />
     <Compile Include="IPAddressValueGeneratorTests.cs" />
     <Compile Include="NumericTypeDataSource.cs" />
@@ -131,6 +133,9 @@
     <Compile Include="NullBuildStrategy.cs" />
     <Compile Include="NullExecuteStrategy.cs" />
     <Compile Include="NullTypeBuildExecuteStrategy.cs" />
+    <Compile Include="PopulateOrderItem.cs">
+      <DependentUpon>Models.cs</DependentUpon>
+    </Compile>
     <Compile Include="PropertyScopes.cs" />
     <Compile Include="RandomGeneratorExtensionTests.cs" />
     <Compile Include="RandomGeneratorTests.cs" />

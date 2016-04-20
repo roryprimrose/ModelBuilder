@@ -88,6 +88,24 @@ namespace ModelBuilder.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Either targetType or propertyName must be supplied..
+        /// </summary>
+        internal static string ExecuteOrderRule_NoTargetTypeOrPropetyName {
+            get {
+                return ResourceManager.GetString("ExecuteOrderRule_NoTargetTypeOrPropetyName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The expression returned a property {0} that was not defined on type &apos;{1}&apos;..
+        /// </summary>
+        internal static string ExecuteStrategy_ExpressionTargetsWrongType {
+            get {
+                return ResourceManager.GetString("ExecuteStrategy_ExpressionTargetsWrongType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No supporting ITypeCreator or IValueGenerator was found to build the type &apos;{0}&apos;..
         /// </summary>
         internal static string NoMatchingCreatorOrGeneratorFound {
@@ -111,15 +129,6 @@ namespace ModelBuilder.Properties {
         internal static string NoMatchingCreatorOrGeneratorFoundWithNameAndContext {
             get {
                 return ResourceManager.GetString("NoMatchingCreatorOrGeneratorFoundWithNameAndContext", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The {0} parameter is not of type {1}..
-        /// </summary>
-        internal static string RandomGenerator_IncorrectParameterType {
-            get {
-                return ResourceManager.GetString("RandomGenerator_IncorrectParameterType", resourceCulture);
             }
         }
     }

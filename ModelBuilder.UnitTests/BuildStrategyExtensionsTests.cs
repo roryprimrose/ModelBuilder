@@ -20,8 +20,8 @@ namespace ModelBuilder.UnitTests
             var target = Substitute.For<IBuildStrategy>();
 
             target.ValueGenerators.Returns(generators);
-            generator.IsSupported(typeof (Guid), null, null).Returns(true);
-            generator.Generate(typeof (Guid), null, null).Returns(value);
+            generator.IsSupported(typeof(Guid), null, null).Returns(true);
+            generator.Generate(typeof(Guid), null, null).Returns(value);
 
             target.Create<Guid>().Returns(value);
 
@@ -50,8 +50,8 @@ namespace ModelBuilder.UnitTests
             var target = Substitute.For<IBuildStrategy>();
 
             target.ValueGenerators.Returns(generators);
-            generator.IsSupported(typeof (Guid), null, null).Returns(true);
-            generator.Generate(typeof (Guid), null, null).Returns(value);
+            generator.IsSupported(typeof(Guid), null, null).Returns(true);
+            generator.Generate(typeof(Guid), null, null).Returns(value);
 
             target.CreateWith<Guid>(null).Returns(value);
 
@@ -110,6 +110,18 @@ namespace ModelBuilder.UnitTests
         }
 
         [Fact]
+        public void PopulateThrowsExceptionWithNullBuildStrategyTest()
+        {
+            var model = new Person();
+
+            IBuildStrategy target = null;
+
+            Action action = () => target.Populate(model);
+
+            action.ShouldThrow<ArgumentNullException>();
+        }
+
+        [Fact]
         public void PopulateThrowsExceptionWithNullInstanceTest()
         {
             var target = Substitute.For<IBuildStrategy>();
@@ -130,8 +142,8 @@ namespace ModelBuilder.UnitTests
             var generators = new List<IValueGenerator> {generator}.AsReadOnly();
 
             target.ValueGenerators.Returns(generators);
-            generator.IsSupported(typeof (Guid), "Value", expected).Returns(true);
-            generator.Generate(typeof (Guid), "Value", expected).Returns(value);
+            generator.IsSupported(typeof(Guid), "Value", expected).Returns(true);
+            generator.Generate(typeof(Guid), "Value", expected).Returns(value);
 
             var actual = target.Populate(expected);
 
@@ -141,11 +153,23 @@ namespace ModelBuilder.UnitTests
         [Fact]
         public void WithReturnsExecuteStrategyWithBuildStrategyConfigurationsTest()
         {
-            IBuildStrategy target = new DefaultBuildStrategy();
+            var ignoreRules = new List<IgnoreRule>
+            {
+                new IgnoreRule(typeof(string), "Stuff")
+            };
+
+            var target = Substitute.For<IBuildStrategy>();
+
+            target.ConstructorResolver.Returns(DefaultBuildStrategy.DefaultConstructorResolver);
+            target.ExecuteOrderRules.Returns(new ReadOnlyCollection<ExecuteOrderRule>(DefaultBuildStrategy.DefaultExecuteOrderRules.ToList()));
+            target.TypeCreators.Returns(new ReadOnlyCollection<ITypeCreator>(DefaultBuildStrategy.DefaultTypeCreators.ToList()));
+            target.ValueGenerators.Returns(new ReadOnlyCollection<IValueGenerator>(DefaultBuildStrategy.DefaultValueGenerators.ToList()));
+            target.IgnoreRules.Returns(new ReadOnlyCollection<IgnoreRule>(ignoreRules));
 
             var actual = target.With<DefaultExecuteStrategy<Person>>();
 
             actual.ConstructorResolver.Should().BeSameAs(target.ConstructorResolver);
+            actual.ExecuteOrderRules.ShouldAllBeEquivalentTo(target.ExecuteOrderRules);
             actual.IgnoreRules.ShouldAllBeEquivalentTo(target.IgnoreRules);
             actual.TypeCreators.ShouldAllBeEquivalentTo(target.TypeCreators);
             actual.ValueGenerators.ShouldAllBeEquivalentTo(target.ValueGenerators);

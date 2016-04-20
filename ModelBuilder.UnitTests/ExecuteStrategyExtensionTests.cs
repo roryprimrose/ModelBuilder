@@ -43,7 +43,19 @@ namespace ModelBuilder.UnitTests
             var actual = target.Ignoring(x => x.Priority);
 
             actual.Should().BeSameAs(target);
-            actual.IgnoreRules.Should().Contain(x => x.PropertyName == "Priority" && x.TargetType == typeof (Person));
+            actual.IgnoreRules.Should().Contain(x => x.PropertyName == "Priority" && x.TargetType == typeof(Person));
+        }
+
+        [Fact]
+        public void IgnoringThrowsExceptionWhenPropertyNotOnTargetTypeTest()
+        {
+            var target = Substitute.For<IExecuteStrategy<Person>>();
+
+            target.IgnoreRules.Returns(new List<IgnoreRule>());
+
+            Action action = () => target.Ignoring(x => x.Priority.ToString().Length);
+
+            action.ShouldThrow<ArgumentException>();
         }
 
         [Fact]

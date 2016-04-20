@@ -14,46 +14,38 @@ namespace ModelBuilder
         public DefaultBuildStrategy()
             : base(
                 DefaultConstructorResolver, DefaultTypeCreators, DefaultValueGenerators,
-                DefaultIgnoreRules)
-        {
-        }
-
-        private DefaultBuildStrategy(IEnumerable<ITypeCreator> typeCreators,
-            IEnumerable<IValueGenerator> valueGenerators, IEnumerable<IgnoreRule> ignoreRules)
-            : base(
-                DefaultConstructorResolver, typeCreators, valueGenerators,
-                ignoreRules)
+                DefaultIgnoreRules, DefaultExecuteOrderRules)
         {
         }
         
         /// <inheritdoc />
         public override IExecuteStrategy<T> GetExecuteStrategy<T>()
         {
-            var executeStrategy = new DefaultExecuteStrategy<T> {ConstructorResolver = ConstructorResolver};
-
-            foreach (var ignoreRule in IgnoreRules)
-            {
-                executeStrategy.IgnoreRules.Add(ignoreRule);
-            }
-
-            foreach (var typeCreator in TypeCreators)
-            {
-                executeStrategy.TypeCreators.Add(typeCreator);
-            }
-
-            foreach (var valueGenerator in ValueGenerators)
-            {
-                executeStrategy.ValueGenerators.Add(valueGenerator);
-            }
-
-            return executeStrategy;
+            return this.With<DefaultExecuteStrategy<T>>();
         }
-        
+
         /// <summary>
         /// Gets the default constructor resolver.
         /// </summary>
         /// <value>The constructor resolver.</value>
         public static IConstructorResolver DefaultConstructorResolver => new DefaultConstructorResolver();
+
+        /// <summary>
+        /// Gets the default execute order rules.
+        /// </summary>
+        /// <value>The execute order rules.</value>
+        public static IEnumerable<ExecuteOrderRule> DefaultExecuteOrderRules
+        {
+            get
+            {
+                yield return new ExecuteOrderRule((type, name) => type.IsClass, 100);
+                // Populate strings before other reference types
+                yield return new ExecuteOrderRule(typeof(string), null, 200);
+                yield return new ExecuteOrderRule((type, name) => type.IsValueType, 300);
+                yield return new ExecuteOrderRule((type, name) => type.IsEnum, 400);
+
+            }
+        }
 
         /// <summary>
         /// Gets the default ignore rules.

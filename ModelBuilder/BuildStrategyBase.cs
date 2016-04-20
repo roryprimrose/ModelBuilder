@@ -18,8 +18,10 @@ namespace ModelBuilder
         /// <param name="typeCreators">The type creators.</param>
         /// <param name="valueGenerators">The value generators.</param>
         /// <param name="ignoreRules">The ignore rules.</param>
+        /// <param name="executeOrderRules">The execute order rules.</param>
         protected BuildStrategyBase(IConstructorResolver constructorResolver, IEnumerable<ITypeCreator> typeCreators,
-            IEnumerable<IValueGenerator> valueGenerators, IEnumerable<IgnoreRule> ignoreRules)
+            IEnumerable<IValueGenerator> valueGenerators, IEnumerable<IgnoreRule> ignoreRules,
+            IEnumerable<ExecuteOrderRule> executeOrderRules)
         {
             if (typeCreators == null)
             {
@@ -41,10 +43,16 @@ namespace ModelBuilder
                 throw new ArgumentNullException(nameof(ignoreRules));
             }
 
+            if (executeOrderRules == null)
+            {
+                throw new ArgumentNullException(nameof(executeOrderRules));
+            }
+
             ConstructorResolver = constructorResolver;
             TypeCreators = new ReadOnlyCollection<ITypeCreator>(typeCreators.ToList());
             ValueGenerators = new ReadOnlyCollection<IValueGenerator>(valueGenerators.ToList());
             IgnoreRules = new ReadOnlyCollection<IgnoreRule>(ignoreRules.ToList());
+            ExecuteOrderRules = new ReadOnlyCollection<ExecuteOrderRule>(executeOrderRules.ToList());
         }
 
         /// <inheritdoc />
@@ -52,6 +60,9 @@ namespace ModelBuilder
 
         /// <inheritdoc />
         public IConstructorResolver ConstructorResolver { get; }
+
+        /// <inheritdoc />
+        public IReadOnlyCollection<ExecuteOrderRule> ExecuteOrderRules { get; }
 
         /// <inheritdoc />
         public IReadOnlyCollection<IgnoreRule> IgnoreRules { get; }

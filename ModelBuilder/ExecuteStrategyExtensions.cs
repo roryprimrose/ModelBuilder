@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using ModelBuilder.Properties;
@@ -63,6 +64,16 @@ namespace ModelBuilder
             }
             
             var type = typeof (T);
+            var typeProperties = type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy);
+            
+            if (typeProperties.Any(x => x.DeclaringType == propInfo.DeclaringType && x.PropertyType == propInfo.PropertyType && x.Name == propInfo.Name) == false)
+            {
+                var message = string.Format(CultureInfo.CurrentCulture,
+                    Resources.ExecuteStrategy_ExpressionTargetsWrongType, propInfo.Name, type.FullName);
+
+                throw new ArgumentException(message);
+            }
+
             var rule = new IgnoreRule(type, propInfo.Name);
 
             executeStrategy.IgnoreRules.Add(rule);

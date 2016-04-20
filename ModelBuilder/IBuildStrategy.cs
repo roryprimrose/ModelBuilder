@@ -21,6 +21,11 @@ namespace ModelBuilder
         IConstructorResolver ConstructorResolver { get; }
 
         /// <summary>
+        /// Gets the execute order rules used to determine the order that properties are populated.
+        /// </summary>
+        IReadOnlyCollection<ExecuteOrderRule> ExecuteOrderRules { get; }
+
+        /// <summary>
         /// Gets the ignore rules used to skip over property population.
         /// </summary>
         IReadOnlyCollection<IgnoreRule> IgnoreRules { get; }

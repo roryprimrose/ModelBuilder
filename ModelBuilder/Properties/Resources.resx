@@ -135,7 +135,10 @@
   <data name="NoMatchingCreatorOrGeneratorFoundWithNameAndContext" xml:space="preserve">
     <value>No supporting ITypeCreator or IValueGenerator was found to build the type '{0}' for '{1}' on type '{2}'.</value>
   </data>
-  <data name="RandomGenerator_IncorrectParameterType" xml:space="preserve">
-    <value>The {0} parameter is not of type {1}.</value>
+  <data name="ExecuteOrderRule_NoTargetTypeOrPropetyName" xml:space="preserve">
+    <value>Either targetType or propertyName must be supplied.</value>
+  </data>
+  <data name="ExecuteStrategy_ExpressionTargetsWrongType" xml:space="preserve">
+    <value>The expression returned a property {0} that was not defined on type '{1}'.</value>
   </data>
 </root>

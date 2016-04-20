@@ -102,6 +102,11 @@ namespace ModelBuilder
                 executeStrategy.IgnoreRules.Add(ignoreRule);
             }
 
+            foreach (var executeOrderRule in buildStrategy.ExecuteOrderRules)
+            {
+                executeStrategy.ExecuteOrderRules.Add(executeOrderRule);
+            }
+
             foreach (var typeCreator in buildStrategy.TypeCreators)
             {
                 executeStrategy.TypeCreators.Add(typeCreator);
