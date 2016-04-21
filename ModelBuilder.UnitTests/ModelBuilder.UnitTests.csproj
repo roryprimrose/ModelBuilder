@@ -169,6 +169,7 @@
       <DependentUpon>Models.cs</DependentUpon>
     </Compile>
     <Compile Include="StringValueGeneratorTests.cs" />
+    <Compile Include="TestDataTests.cs" />
     <Compile Include="TypeCreatorBaseTests.cs" />
     <Compile Include="TypeCreatorExtensionsTests.cs" />
     <Compile Include="ValueGeneratorBaseTests.cs" />

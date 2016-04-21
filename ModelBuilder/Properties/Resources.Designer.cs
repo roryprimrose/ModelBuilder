@@ -131,5 +131,14 @@ namespace ModelBuilder.Properties {
                 return ResourceManager.GetString("NoMatchingCreatorOrGeneratorFoundWithNameAndContext", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&apos;1.0&apos; encoding=&apos;UTF-8&apos;?&gt;&lt;DataSet&gt;&lt;Person&gt;&lt;Gender&gt;Female&lt;/Gender&gt;&lt;FirstName&gt;Patricia&lt;/FirstName&gt;&lt;LastName&gt;Sims&lt;/LastName&gt;&lt;Email&gt;psims0@google.co.uk&lt;/Email&gt;&lt;Company&gt;Brainlounge&lt;/Company&gt;&lt;DomainName&gt;ucsd.edu&lt;/DomainName&gt;&lt;Address&gt;7041 Swallow Avenue&lt;/Address&gt;&lt;State/&gt;&lt;PostCode/&gt;&lt;City&gt;Joyabaj&lt;/City&gt;&lt;Phone&gt;502-(259)264-0579&lt;/Phone&gt;&lt;Country&gt;Guatemala&lt;/Country&gt;&lt;TimeZone&gt;Africa/Harare&lt;/TimeZone&gt;&lt;/Person&gt;&lt;Person&gt;&lt;Gender&gt;Male&lt;/Gender&gt;&lt;FirstName&gt;Keith&lt;/FirstName&gt;&lt;LastName&gt;Berry&lt;/LastName&gt;&lt;Email&gt;kberry1@eba [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string People {
+            get {
+                return ResourceManager.GetString("People", resourceCulture);
+            }
+        }
     }
 }
