@@ -81,18 +81,29 @@ namespace ModelBuilder
         {
             get
             {
+                yield return new AddressValueGenerator();
                 yield return new AgeValueGenerator();
                 yield return new BooleanValueGenerator();
+                yield return new CityValueGenerator();
+                yield return new CompanyValueGenerator();
+                yield return new CountryValueGenerator();
                 yield return new DateOfBirthValueGenerator();
                 yield return new DateTimeValueGenerator();
+                yield return new DomainValueGenerator();
                 yield return new EmailValueGenerator();
                 yield return new EnumValueGenerator();
                 yield return new FirstNameValueGenerator();
+                yield return new GenderValueGenerator();
                 yield return new GuidValueGenerator();
                 yield return new IPAddressValueGenerator();
                 yield return new LastNameValueGenerator();
                 yield return new NumericValueGenerator();
+                yield return new PhoneValueGenerator();
+                yield return new PostCodeValueGenerator();
+                yield return new StateValueGenerator();
                 yield return new StringValueGenerator();
+                yield return new SuburbValueGenerator();
+                yield return new TimeZoneValueGenerator();
             }
         }
     }

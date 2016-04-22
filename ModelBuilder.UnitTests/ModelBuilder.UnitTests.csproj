@@ -77,6 +77,17 @@
     <Compile Include="Address.cs">
       <DependentUpon>Models.cs</DependentUpon>
     </Compile>
+    <Compile Include="SuburbValueGeneratorTests.cs" />
+    <Compile Include="PhoneValueGeneratorTests.cs" />
+    <Compile Include="TimeZoneValueGeneratorTests.cs" />
+    <Compile Include="PostCodeValueGeneratorTests.cs" />
+    <Compile Include="GenderValueGeneratorTests.cs" />
+    <Compile Include="CompanyValueGeneratorTests.cs" />
+    <Compile Include="DomainValueGeneratorTests.cs" />
+    <Compile Include="CountryValueGeneratorTests.cs" />
+    <Compile Include="StateValueGeneratorTests.cs" />
+    <Compile Include="CityValueGeneratorTests.cs" />
+    <Compile Include="AddressValueGeneratorTests.cs" />
     <Compile Include="BigEnum.cs">
       <DependentUpon>Models.cs</DependentUpon>
     </Compile>
@@ -182,6 +193,7 @@
     <Compile Include="TypeCreatorExtensionsTests.cs" />
     <Compile Include="ValueGeneratorBaseTests.cs" />
     <Compile Include="ValueGeneratorExtensionsTests.cs" />
+    <Compile Include="ValueGeneratorMatcherTests.cs" />
     <Compile Include="WithInterfaceAndAbstractParameters.cs">
       <DependentUpon>Models.cs</DependentUpon>
     </Compile>

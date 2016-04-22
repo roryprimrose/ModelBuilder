@@ -31,8 +31,6 @@ namespace ModelBuilder.UnitTests
             return null;
         }
 
-        public Gender Gender { get; set; }
-
         public Address Address { get; set; }
 
         public int Age => DateTime.UtcNow.Subtract(DOB).Days/365;
@@ -41,13 +39,19 @@ namespace ModelBuilder.UnitTests
 
         public string FirstName { get; set; }
 
+        public Gender Gender { get; set; }
+
         public string LastName { get; set; }
+        public string Mobile { get; set; }
 
         public SimpleEnum Order { get; set; }
 
         public string PersonalEmail { get; set; }
+        public string Phone { get; set; }
 
         public int Priority { get; set; }
+
+        public string TimeZone { get; set; }
 
         public string WorkEmail { get; set; }
     }

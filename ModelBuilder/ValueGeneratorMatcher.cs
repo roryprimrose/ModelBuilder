@@ -10,6 +10,11 @@ namespace ModelBuilder
 
         protected ValueGeneratorMatcher(params Type[] types)
         {
+            if (types == null)
+            {
+                throw new ArgumentNullException(nameof(types));
+            }
+
             _matcher = (type, referenceName, context) =>
             {
                 return types.Any(x => x == type);
@@ -25,6 +30,18 @@ namespace ModelBuilder
 
             _matcher = (type, name, context) =>
             {
+                if (name == null)
+                {
+                    // We can't match on null names so it can't be a match
+                    return false;
+                }
+
+                if (types?.Length == 0)
+                {
+                    // We are only matching by name
+                    return referenceName.Equals(name, StringComparison.OrdinalIgnoreCase);
+                }
+
                 var matches = from x in types
                     where x == type
                           && referenceName.Equals(name, StringComparison.OrdinalIgnoreCase)
@@ -47,6 +64,12 @@ namespace ModelBuilder
                 {
                     // We can't match on null names with Regex so it can be a match
                     return false;
+                }
+
+                if (types?.Length == 0)
+                {
+                    // We are only matching by name
+                    return expression.IsMatch(name);
                 }
 
                 var matches = from x in types

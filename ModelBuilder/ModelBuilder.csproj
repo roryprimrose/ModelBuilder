@@ -46,6 +46,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AddressValueGenerator.cs">
+      <DependentUpon>IValueGenerator.cs</DependentUpon>
+    </Compile>
     <Compile Include="AgeValueGenerator.cs">
       <DependentUpon>IValueGenerator.cs</DependentUpon>
     </Compile>
@@ -55,10 +58,22 @@
     <Compile Include="BuildStrategyExtensions.cs">
       <DependentUpon>Extensions.cs</DependentUpon>
     </Compile>
+    <Compile Include="CityValueGenerator.cs">
+      <DependentUpon>IValueGenerator.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CompanyValueGenerator.cs">
+      <DependentUpon>IValueGenerator.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CountryValueGenerator.cs">
+      <DependentUpon>IValueGenerator.cs</DependentUpon>
+    </Compile>
     <Compile Include="Data\People.cs" />
     <Compile Include="Data\Person.cs" />
     <Compile Include="Data\TestData.cs" />
     <Compile Include="DateOfBirthValueGenerator.cs">
+      <DependentUpon>IValueGenerator.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DomainValueGenerator.cs">
       <DependentUpon>IValueGenerator.cs</DependentUpon>
     </Compile>
     <Compile Include="ExecuteOrderRule.cs" />
@@ -66,6 +81,9 @@
       <DependentUpon>Extensions.cs</DependentUpon>
     </Compile>
     <Compile Include="FirstNameValueGenerator.cs">
+      <DependentUpon>IValueGenerator.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GenderValueGenerator.cs">
       <DependentUpon>IValueGenerator.cs</DependentUpon>
     </Compile>
     <Compile Include="IPAddressValueGenerator.cs">
@@ -77,6 +95,12 @@
     </Compile>
     <Compile Include="ObjectExtensions.cs">
       <DependentUpon>Extensions.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PhoneValueGenerator.cs">
+      <DependentUpon>IValueGenerator.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PostCodeValueGenerator.cs">
+      <DependentUpon>IValueGenerator.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -91,6 +115,15 @@
       <DependentUpon>Extensions.cs</DependentUpon>
     </Compile>
     <Compile Include="RelativeValueGenerator.cs">
+      <DependentUpon>IValueGenerator.cs</DependentUpon>
+    </Compile>
+    <Compile Include="StateValueGenerator.cs">
+      <DependentUpon>IValueGenerator.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SuburbValueGenerator.cs">
+      <DependentUpon>IValueGenerator.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TimeZoneValueGenerator.cs">
       <DependentUpon>IValueGenerator.cs</DependentUpon>
     </Compile>
     <Compile Include="TypeCreatorBase.cs">
