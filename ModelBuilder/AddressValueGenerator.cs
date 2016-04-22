@@ -1,9 +1,14 @@
 ﻿using System;
+using System.Globalization;
 using System.Text.RegularExpressions;
 using ModelBuilder.Data;
 
 namespace ModelBuilder
 {
+    /// <summary>
+    /// The <see cref="AddressValueGenerator"/>
+    /// class is used to generate postal addressing values.
+    /// </summary>
     public class AddressValueGenerator : ValueGeneratorMatcher
     {
         private static readonly Regex _multipleAddressExpression = new Regex("Address(Line)?(?<Number>\\d+)",
@@ -16,6 +21,7 @@ namespace ModelBuilder
         {
         }
 
+        /// <inheritdoc />
         protected override object GenerateValue(Type type, string referenceName, object context)
         {
             var multipleMatch = _multipleAddressExpression.Match(referenceName);
@@ -23,12 +29,12 @@ namespace ModelBuilder
             if (multipleMatch.Success)
             {
                 // Get the number from the match
-                var number = int.Parse(multipleMatch.Groups["Number"].Value);
+                var number = int.Parse(multipleMatch.Groups["Number"].Value, CultureInfo.InvariantCulture);
 
                 if (number == 1)
                 {
-                    var floor = Generator.Next(1, 15);
-                    var unitIndex = Generator.Next(0, 15);
+                    var floor = Generator.NextValue(1, 15);
+                    var unitIndex = Generator.NextValue(0, 15);
                     var unit = (char) (65 + unitIndex);
 
                     // Return a Unit Xy, Floor X style value
@@ -41,7 +47,7 @@ namespace ModelBuilder
                 }
             }
 
-            var index = Generator.Next(0, TestData.People.Count - 1);
+            var index = Generator.NextValue(0, TestData.People.Count - 1);
             var person = TestData.People[index];
 
             return person.Address;

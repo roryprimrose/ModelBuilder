@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Xml.Serialization;
 using ModelBuilder.Properties;
@@ -12,6 +13,10 @@ namespace ModelBuilder.Data
     /// </summary>
     public static class TestData
     {
+        [SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline",
+            Justification =
+                "This is done in the constructor for the better performance of splitting males an females in a single iteration."
+            )]
         static TestData()
         {
             People = ReadPeople();

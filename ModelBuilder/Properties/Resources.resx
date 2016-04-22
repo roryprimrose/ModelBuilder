@@ -148,4 +148,7 @@
   <data name="ExecuteOrderRule_NoTargetTypeOrPropetyExpression" xml:space="preserve">
     <value>Either targetType or propertyExpression must be supplied.</value>
   </data>
+  <data name="ArgumentException_NullOrWhiteSpace" xml:space="preserve">
+    <value>The value cannot be null, white space or empty.</value>
+  </data>
 </root>

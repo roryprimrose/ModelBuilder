@@ -4,6 +4,10 @@ using ModelBuilder.Data;
 
 namespace ModelBuilder
 {
+    /// <summary>
+    /// The <see cref="CompanyValueGenerator"/>
+    /// class is used to generate random company name values.
+    /// </summary>
     public class CompanyValueGenerator : ValueGeneratorMatcher
     {
         /// <summary>
@@ -14,9 +18,10 @@ namespace ModelBuilder
         {
         }
 
+        /// <inheritdoc />
         protected override object GenerateValue(Type type, string referenceName, object context)
         {
-            var index = Generator.Next(0, TestData.People.Count - 1);
+            var index = Generator.NextValue(0, TestData.People.Count - 1);
             var person = TestData.People[index];
 
             return person.Company;

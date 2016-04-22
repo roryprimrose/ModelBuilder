@@ -24,7 +24,7 @@ namespace ModelBuilder
             if (generateType.IsNullable())
             {
                 // Allow for a 10% the chance that this might be null
-                var range = Generator.Next(0, 100);
+                var range = Generator.NextValue(0, 100);
 
                 if (range < 10)
                 {
@@ -50,7 +50,7 @@ namespace ModelBuilder
             if (generateType == typeof(TimeZoneInfo))
             {
                 var zones = TimeZoneInfo.GetSystemTimeZones();
-                var zoneIndex = Generator.Next(0, zones.Count - 1);
+                var zoneIndex = Generator.NextValue(0, zones.Count - 1);
 
                 return zones[zoneIndex];
             }

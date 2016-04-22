@@ -19,6 +19,11 @@ namespace ModelBuilder
         /// <param name="valueGenerators">The value generators.</param>
         /// <param name="ignoreRules">The ignore rules.</param>
         /// <param name="executeOrderRules">The execute order rules.</param>
+        /// <exception cref="ArgumentNullException">The <paramref name="typeCreators"/> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="constructorResolver"/> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="valueGenerators"/> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="ignoreRules"/> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="executeOrderRules"/> parameter is null.</exception>
         protected BuildStrategyBase(IConstructorResolver constructorResolver, IEnumerable<ITypeCreator> typeCreators,
             IEnumerable<IValueGenerator> valueGenerators, IEnumerable<IgnoreRule> ignoreRules,
             IEnumerable<ExecuteOrderRule> executeOrderRules)

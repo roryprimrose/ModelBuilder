@@ -3,6 +3,10 @@ using System.Text.RegularExpressions;
 
 namespace ModelBuilder
 {
+    /// <summary>
+    /// The <see cref="GenderValueGenerator"/>
+    /// class is used to generate random gender values.
+    /// </summary>
     public class GenderValueGenerator : ValueGeneratorMatcher
     {
         /// <summary>
@@ -13,9 +17,10 @@ namespace ModelBuilder
         {
         }
 
+        /// <inheritdoc />
         protected override object GenerateValue(Type type, string referenceName, object context)
         {
-            var index = Generator.Next(0, 1);
+            var index = Generator.NextValue(0, 1);
 
             if (index == 0)
             {

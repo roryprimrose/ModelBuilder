@@ -43,10 +43,10 @@ namespace ModelBuilder
                 yield return new ExecuteOrderRule((type, name) => type.IsValueType, 3000);
 
                 // Populate personal properties in a specific order for scenarios where a value generator may use the values in order to set other values
-                yield return new ExecuteOrderRule(null, new Regex(PropertyExpression.Gender), 2600);
-                yield return new ExecuteOrderRule(typeof(string), new Regex(PropertyExpression.FirstName), 2580);
-                yield return new ExecuteOrderRule(typeof(string), new Regex(PropertyExpression.LastName), 2560);
-                yield return new ExecuteOrderRule(typeof(string), new Regex(PropertyExpression.Email), 2540);
+                yield return new ExecuteOrderRule(null, PropertyExpression.Gender, 2600);
+                yield return new ExecuteOrderRule(typeof(string), PropertyExpression.FirstName, 2580);
+                yield return new ExecuteOrderRule(typeof(string), PropertyExpression.LastName, 2560);
+                yield return new ExecuteOrderRule(typeof(string), PropertyExpression.Email, 2540);
 
                 // Populate strings before other reference types
                 yield return new ExecuteOrderRule(typeof(string), (string)null, 2000);
@@ -89,7 +89,7 @@ namespace ModelBuilder
                 yield return new CountryValueGenerator();
                 yield return new DateOfBirthValueGenerator();
                 yield return new DateTimeValueGenerator();
-                yield return new DomainValueGenerator();
+                yield return new DomainNameValueGenerator();
                 yield return new EmailValueGenerator();
                 yield return new EnumValueGenerator();
                 yield return new FirstNameValueGenerator();

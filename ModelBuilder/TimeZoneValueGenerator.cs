@@ -5,6 +5,10 @@ using ModelBuilder.Data;
 
 namespace ModelBuilder
 {
+    /// <summary>
+    /// The <see cref="TimeZoneValueGenerator"/>
+    /// class is used to generate IANA time zone values.
+    /// </summary>
     public class TimeZoneValueGenerator : ValueGeneratorMatcher
     {
         /// <summary>
@@ -15,6 +19,7 @@ namespace ModelBuilder
         {
         }
 
+        /// <inheritdoc />
         protected override object GenerateValue(Type type, string referenceName, object context)
         {
             string country = null;
@@ -32,7 +37,7 @@ namespace ModelBuilder
 
             if (country == null)
             {
-                var index = Generator.Next(0, TestData.People.Count - 1);
+                var index = Generator.NextValue(0, TestData.People.Count - 1);
                 var person = TestData.People[index];
 
                 return person.TimeZone;
@@ -42,7 +47,7 @@ namespace ModelBuilder
                 TestData.People.Where(x => x.TimeZone.IndexOf(country, StringComparison.OrdinalIgnoreCase) > -1)
                     .ToList();
 
-            var filteredIndex = Generator.Next(0, people.Count - 1);
+            var filteredIndex = Generator.NextValue(0, people.Count - 1);
             var filteredPerson = people[filteredIndex];
 
             return filteredPerson.TimeZone;

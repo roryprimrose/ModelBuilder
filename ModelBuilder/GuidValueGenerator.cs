@@ -24,7 +24,7 @@ namespace ModelBuilder
             }
 
             // Weight the random distribution so that it is roughly 5 times more likely to get a new guid than a null
-            var source = Generator.Next<double>(0, 5);
+            var source = Generator.NextValue<double>(0, 5);
 
             Guid? value;
 

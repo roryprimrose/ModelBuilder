@@ -73,7 +73,7 @@
     <Compile Include="DateOfBirthValueGenerator.cs">
       <DependentUpon>IValueGenerator.cs</DependentUpon>
     </Compile>
-    <Compile Include="DomainValueGenerator.cs">
+    <Compile Include="DomainNameValueGenerator.cs">
       <DependentUpon>IValueGenerator.cs</DependentUpon>
     </Compile>
     <Compile Include="ExecuteOrderRule.cs" />

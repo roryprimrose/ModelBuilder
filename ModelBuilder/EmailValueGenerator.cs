@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.RegularExpressions;
 using ModelBuilder.Data;
@@ -20,6 +21,8 @@ namespace ModelBuilder
         }
 
         /// <inheritdoc />
+        [SuppressMessage("Microsoft.Globalization", "CA1308:NormalizeStringsToUppercase",
+            Justification = "Email addresses are lower case by convention.")]
         protected override object GenerateValue(Type type, string referenceName, object context)
         {
             string firstName = null;
@@ -27,16 +30,14 @@ namespace ModelBuilder
 
             if (context != null)
             {
-                var firstNameExpression = new Regex(PropertyExpression.FirstName);
-                var firstNameProperty = context.FindProperties(firstNameExpression).FirstOrDefault();
+                var firstNameProperty = context.FindProperties(PropertyExpression.FirstName).FirstOrDefault();
 
                 if (firstNameProperty != null)
                 {
                     firstName = (string) firstNameProperty.GetValue(context);
                 }
 
-                var lastNameExpression = new Regex(PropertyExpression.LastName);
-                var lastNameProperty = context.FindProperties(lastNameExpression).LastOrDefault();
+                var lastNameProperty = context.FindProperties(PropertyExpression.LastName).LastOrDefault();
 
                 if (lastNameProperty != null)
                 {
@@ -44,7 +45,7 @@ namespace ModelBuilder
                 }
             }
 
-            var index = Generator.Next(0, TestData.People.Count - 1);
+            var index = Generator.NextValue(0, TestData.People.Count - 1);
             var person = TestData.People[index];
 
             if (firstName == null)

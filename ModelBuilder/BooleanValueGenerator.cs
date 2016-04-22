@@ -20,7 +20,7 @@ namespace ModelBuilder
         {
             if (type == typeof(bool?))
             {
-                var source = Generator.Next<double>(0, 3);
+                var source = Generator.NextValue<double>(0, 3);
 
                 bool? value;
 
@@ -40,7 +40,7 @@ namespace ModelBuilder
                 return value;
             }
 
-            var nextValue = Generator.Next(0, 1);
+            var nextValue = Generator.NextValue(0, 1);
 
             if (nextValue == 0)
             {

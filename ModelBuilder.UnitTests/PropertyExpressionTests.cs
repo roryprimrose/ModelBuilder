@@ -20,7 +20,7 @@ namespace ModelBuilder.UnitTests
         [InlineData("email_address", true)]
         public void EmailEvaluatesValueTest(string value, bool expected)
         {
-            var target = new Regex(PropertyExpression.Email);
+            var target = PropertyExpression.Email;
 
             var actual = target.IsMatch(value);
 
@@ -47,7 +47,7 @@ namespace ModelBuilder.UnitTests
         [InlineData("given_Name", true)]
         public void FirstNameEvaluatesValueTest(string value, bool expected)
         {
-            var target = new Regex(PropertyExpression.FirstName);
+            var target = PropertyExpression.FirstName;
 
             var actual = target.IsMatch(value);
 
@@ -62,7 +62,7 @@ namespace ModelBuilder.UnitTests
         [InlineData("sex", true)]
         public void GenderEvaluatesValueTest(string value, bool expected)
         {
-            var target = new Regex(PropertyExpression.Gender);
+            var target = PropertyExpression.Gender;
 
             var actual = target.IsMatch(value);
 
@@ -83,7 +83,7 @@ namespace ModelBuilder.UnitTests
         [InlineData("Surname", true)]
         public void LastNameEvaluatesValueTest(string value, bool expected)
         {
-            var target = new Regex(PropertyExpression.LastName);
+            var target = PropertyExpression.LastName;
 
             var actual = target.IsMatch(value);
 

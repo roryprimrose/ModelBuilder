@@ -14,6 +14,7 @@ namespace ModelBuilder
         public abstract object Create(Type type, string referenceName, object context, params object[] args);
 
         /// <inheritdoc />
+        /// <exception cref="ArgumentNullException">The <paramref name="type"/> parameter is null.</exception>
         public virtual bool IsSupported(Type type, string referenceName, object context)
         {
             if (type == null)

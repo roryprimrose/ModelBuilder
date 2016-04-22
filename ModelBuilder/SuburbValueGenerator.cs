@@ -4,6 +4,10 @@ using ModelBuilder.Data;
 
 namespace ModelBuilder
 {
+    /// <summary>
+    /// The <see cref="SuburbValueGenerator"/>
+    /// class is used to generate random suburb values.
+    /// </summary>
     public class SuburbValueGenerator : ValueGeneratorMatcher
     {
         /// <summary>
@@ -14,9 +18,10 @@ namespace ModelBuilder
         {
         }
 
+        /// <inheritdoc />
         protected override object GenerateValue(Type type, string referenceName, object context)
         {
-            var index = Generator.Next(0, TestData.People.Count - 1);
+            var index = Generator.NextValue(0, TestData.People.Count - 1);
             var person = TestData.People[index];
 
             // Many suburbs are named after people so we will just take a random last name

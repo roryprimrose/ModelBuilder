@@ -11,6 +11,7 @@ namespace ModelBuilder
     public class IPAddressValueGenerator : ValueGeneratorBase
     {
         /// <inheritdoc />
+        /// <exception cref="ArgumentNullException">The <paramref name="type"/> parameter is null.</exception>
         public override bool IsSupported(Type type, string referenceName, object context)
         {
             if (type == null)
@@ -46,7 +47,7 @@ namespace ModelBuilder
         {
             var buffer = new byte[4];
 
-            Generator.Next(buffer);
+            Generator.NextValue(buffer);
 
             if (type == typeof(IPAddress))
             {

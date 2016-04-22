@@ -5,12 +5,12 @@ using Xunit;
 
 namespace ModelBuilder.UnitTests
 {
-    public class DomainValueGeneratorTests
+    public class DomainNameValueGeneratorTests
     {
         [Fact]
         public void GenerateReturnsRandomDomainTest()
         {
-            var target = new DomainValueGenerator();
+            var target = new DomainNameValueGenerator();
 
             var first = target.Generate(typeof(string), "domain", null);
 
@@ -27,7 +27,7 @@ namespace ModelBuilder.UnitTests
         [InlineData(typeof(string), "Domain", true)]
         public void GenerateReturnsValuesForSeveralNameFormatsTest(Type type, string referenceName, bool expected)
         {
-            var target = new DomainValueGenerator();
+            var target = new DomainNameValueGenerator();
 
             var actual = (string) target.Generate(type, referenceName, null);
 
@@ -40,7 +40,7 @@ namespace ModelBuilder.UnitTests
         [InlineData(typeof(string), "Stuff")]
         public void GenerateThrowsExceptionWithInvalidParametersTest(Type type, string referenceName)
         {
-            var target = new DomainValueGenerator();
+            var target = new DomainNameValueGenerator();
 
             Action action = () => target.Generate(type, referenceName, null);
 
@@ -50,7 +50,7 @@ namespace ModelBuilder.UnitTests
         [Fact]
         public void GenerateThrowsExceptionWithNullTypeTest()
         {
-            var target = new DomainValueGenerator();
+            var target = new DomainNameValueGenerator();
 
             Action action = () => target.Generate(null, null, null);
 
@@ -60,7 +60,7 @@ namespace ModelBuilder.UnitTests
         [Fact]
         public void HasHigherPriorityThanStringValueGeneratorTest()
         {
-            var target = new DomainValueGenerator();
+            var target = new DomainNameValueGenerator();
             var other = new StringValueGenerator();
 
             target.Priority.Should().BeGreaterThan(other.Priority);
@@ -75,7 +75,7 @@ namespace ModelBuilder.UnitTests
         [InlineData(typeof(string), "Domain", true)]
         public void IsSupportedTest(Type type, string referenceName, bool expected)
         {
-            var target = new DomainValueGenerator();
+            var target = new DomainNameValueGenerator();
 
             var actual = target.IsSupported(type, referenceName, null);
 
@@ -85,7 +85,7 @@ namespace ModelBuilder.UnitTests
         [Fact]
         public void IsSupportedThrowsExceptionWithNullTypeTest()
         {
-            var target = new DomainValueGenerator();
+            var target = new DomainNameValueGenerator();
 
             Action action = () => target.IsSupported(null, null, null);
 

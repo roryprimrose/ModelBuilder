@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using FluentAssertions;
 using Xunit;
 
@@ -94,7 +95,7 @@ namespace ModelBuilder.UnitTests
 
         private class GeneratorWrapper : RelativeValueGenerator
         {
-            public GeneratorWrapper(string targetNameExpression, string sourceNameExpression)
+            public GeneratorWrapper(Regex targetNameExpression, Regex sourceNameExpression)
                 : base(targetNameExpression, sourceNameExpression)
             {
             }

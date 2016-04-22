@@ -11,21 +11,21 @@ namespace ModelBuilder
         /// <summary>
         /// Defines the expression for matching first/given name properties.
         /// </summary>
-        public const string FirstName = "(((G|g)iven)|((F|f)irst))[_]?(N|n)ame";
+        public static readonly Regex FirstName = new Regex("(Given|First)[_]?Name", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         /// <summary>
         /// Defines the expression for matching gender/sex properties.
         /// </summary>
-        public const string Gender = "((G|g)ender)|((S|s)ex)";
+        public static readonly Regex Gender = new Regex("Gender|Sex", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         /// <summary>
         /// Defines the expression for matching last name/surname properties.
         /// </summary>
-        public const string LastName = "((S|s)urname)|(((L|l)ast)[_]?(N|n)ame)";
+        public static readonly Regex LastName = new Regex("Surname|(Last[_]?Name)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         /// <summary>
         /// Defines the expression for matching email properties.
         /// </summary>
-        public const string Email = "(E|e)mail";
+        public static readonly Regex Email = new Regex("Email", RegexOptions.Compiled | RegexOptions.IgnoreCase);
     }
 }

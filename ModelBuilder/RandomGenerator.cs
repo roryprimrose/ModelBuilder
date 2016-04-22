@@ -25,47 +25,47 @@ namespace ModelBuilder
                 checkType = type.GenericTypeArguments[0];
             }
 
-            if (checkType == typeof (int))
+            if (checkType == typeof(int))
             {
                 return int.MaxValue;
             }
 
-            if (checkType == typeof (uint))
+            if (checkType == typeof(uint))
             {
                 return uint.MaxValue;
             }
 
-            if (checkType == typeof (long))
+            if (checkType == typeof(long))
             {
                 return long.MaxValue;
             }
 
-            if (checkType == typeof (ulong))
+            if (checkType == typeof(ulong))
             {
                 return ulong.MaxValue;
             }
 
-            if (checkType == typeof (short))
+            if (checkType == typeof(short))
             {
                 return short.MaxValue;
             }
 
-            if (checkType == typeof (ushort))
+            if (checkType == typeof(ushort))
             {
                 return ushort.MaxValue;
             }
 
-            if (checkType == typeof (byte))
+            if (checkType == typeof(byte))
             {
                 return byte.MaxValue;
             }
 
-            if (checkType == typeof (sbyte))
+            if (checkType == typeof(sbyte))
             {
                 return sbyte.MaxValue;
             }
 
-            if (checkType == typeof (float))
+            if (checkType == typeof(float))
             {
                 return float.MaxValue;
             }
@@ -86,47 +86,47 @@ namespace ModelBuilder
                 checkType = type.GenericTypeArguments[0];
             }
 
-            if (checkType == typeof (int))
+            if (checkType == typeof(int))
             {
                 return int.MinValue;
             }
 
-            if (checkType == typeof (uint))
+            if (checkType == typeof(uint))
             {
                 return uint.MinValue;
             }
 
-            if (checkType == typeof (long))
+            if (checkType == typeof(long))
             {
                 return long.MinValue;
             }
 
-            if (checkType == typeof (ulong))
+            if (checkType == typeof(ulong))
             {
                 return ulong.MinValue;
             }
 
-            if (checkType == typeof (short))
+            if (checkType == typeof(short))
             {
                 return short.MinValue;
             }
 
-            if (checkType == typeof (ushort))
+            if (checkType == typeof(ushort))
             {
                 return ushort.MinValue;
             }
 
-            if (checkType == typeof (byte))
+            if (checkType == typeof(byte))
             {
                 return byte.MinValue;
             }
 
-            if (checkType == typeof (sbyte))
+            if (checkType == typeof(sbyte))
             {
                 return sbyte.MinValue;
             }
 
-            if (checkType == typeof (float))
+            if (checkType == typeof(float))
             {
                 return float.MinValue;
             }
@@ -135,6 +135,7 @@ namespace ModelBuilder
         }
 
         /// <inheritdoc />
+        /// <exception cref="ArgumentNullException">The <paramref name="type"/> parameter is null.</exception>
         public virtual bool IsSupported(Type type)
         {
             if (type == null)
@@ -150,52 +151,52 @@ namespace ModelBuilder
                 checkType = type.GenericTypeArguments[0];
             }
 
-            if (checkType == typeof (int))
+            if (checkType == typeof(int))
             {
                 return true;
             }
 
-            if (checkType == typeof (uint))
+            if (checkType == typeof(uint))
             {
                 return true;
             }
 
-            if (checkType == typeof (long))
+            if (checkType == typeof(long))
             {
                 return true;
             }
 
-            if (checkType == typeof (ulong))
+            if (checkType == typeof(ulong))
             {
                 return true;
             }
 
-            if (checkType == typeof (short))
+            if (checkType == typeof(short))
             {
                 return true;
             }
 
-            if (checkType == typeof (ushort))
+            if (checkType == typeof(ushort))
             {
                 return true;
             }
 
-            if (checkType == typeof (byte))
+            if (checkType == typeof(byte))
             {
                 return true;
             }
 
-            if (checkType == typeof (sbyte))
+            if (checkType == typeof(sbyte))
             {
                 return true;
             }
 
-            if (checkType == typeof (double))
+            if (checkType == typeof(double))
             {
                 return true;
             }
 
-            if (checkType == typeof (float))
+            if (checkType == typeof(float))
             {
                 return true;
             }
@@ -204,13 +205,15 @@ namespace ModelBuilder
         }
 
         /// <inheritdoc />
-        public T Next<T>(T min, T max) where T : struct
+        public T NextValue<T>(T min, T max) where T : struct
         {
-            return (T) Next(typeof (T), min, max);
+            return (T) NextValue(typeof(T), min, max);
         }
 
         /// <inheritdoc />
-        public object Next(Type type, object min, object max)
+        /// <exception cref="ArgumentNullException">The <paramref name="min"/> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="max"/> parameter is null.</exception>
+        public object NextValue(Type type, object min, object max)
         {
             ValidateRequestedType(type);
 
@@ -224,12 +227,12 @@ namespace ModelBuilder
                 throw new ArgumentNullException(nameof(max));
             }
 
-            var minimum = Convert.ToDouble(min);
-            var maximum = Convert.ToDouble(max);
+            var minimum = Convert.ToDouble(min, CultureInfo.InvariantCulture);
+            var maximum = Convert.ToDouble(max, CultureInfo.InvariantCulture);
 
             var isNullable = type.IsNullable();
             var checkType = type;
-            
+
             if (isNullable)
             {
                 // The type is nullable so we need to validate whether we support the type argument
@@ -239,7 +242,7 @@ namespace ModelBuilder
             var requiresRounding = RequiresRounding(checkType);
 
             var value = NextValue<double>(minimum, maximum, requiresRounding);
-            var convertedValue = Convert.ChangeType(value, checkType);
+            var convertedValue = Convert.ChangeType(value, checkType, CultureInfo.InvariantCulture);
 
             if (isNullable)
             {
@@ -254,7 +257,8 @@ namespace ModelBuilder
         }
 
         /// <inheritdoc />
-        public void Next(byte[] buffer)
+        /// <exception cref="ArgumentNullException">The <paramref name="buffer"/> parameter is null.</exception>
+        public void NextValue(byte[] buffer)
         {
             if (buffer == null)
             {
@@ -263,13 +267,13 @@ namespace ModelBuilder
 
             for (var index = 0; index < buffer.Length; index++)
             {
-                var next = Next(byte.MinValue, byte.MaxValue);
+                var next = NextValue(byte.MinValue, byte.MaxValue);
 
                 buffer[index] = next;
             }
         }
 
-        private T NextValue<T>(double min, double max, bool roundValue)
+        private static T NextValue<T>(double min, double max, bool roundValue)
         {
             if (min > max)
             {
@@ -310,19 +314,19 @@ namespace ModelBuilder
 
             var shiftedPoint = value + min;
 
-            return (T) Convert.ChangeType(shiftedPoint, typeof (T));
+            return (T) Convert.ChangeType(shiftedPoint, typeof(T), CultureInfo.InvariantCulture);
         }
 
         private bool RequiresRounding(Type type)
         {
             ValidateRequestedType(type);
 
-            if (type == typeof (float))
+            if (type == typeof(float))
             {
                 return false;
             }
 
-            if (type == typeof (double))
+            if (type == typeof(double))
             {
                 return false;
             }

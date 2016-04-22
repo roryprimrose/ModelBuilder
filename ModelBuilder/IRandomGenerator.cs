@@ -36,7 +36,7 @@ namespace ModelBuilder
         /// <param name="max">The maximum value.</param>
         /// <typeparam name="T">The type of number to generate.</typeparam>
         /// <returns>A new random value.</returns>
-        T Next<T>(T min, T max) where T : struct;
+        T NextValue<T>(T min, T max) where T : struct;
 
         /// <summary>
         /// Generates a new random value constrained to the specified minimum and maximum boundaries.
@@ -45,11 +45,11 @@ namespace ModelBuilder
         /// <param name="min">The minimum value.</param>
         /// <param name="max">The maximum value.</param>
         /// <returns>A new random value.</returns>
-        object Next(Type type, object min, object max);
+        object NextValue(Type type, object min, object max);
 
         /// <summary>
         /// Populates the specified buffer with random bytes.
         /// </summary>
-        void Next(byte[] buffer);
+        void NextValue(byte[] buffer);
     }
 }

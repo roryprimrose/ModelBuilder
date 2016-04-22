@@ -6,27 +6,37 @@ using System.Text.RegularExpressions;
 
 namespace ModelBuilder
 {
+    /// <summary>
+    /// The <see cref="RelativeValueGenerator"/>
+    /// class is used to assist in generating a value that is related to another value for a given context.
+    /// </summary>
     public abstract class RelativeValueGenerator : StringValueGenerator
     {
-        private readonly string _sourceExpression;
-        private readonly string _targetExpression;
+        private readonly Regex _sourceExpression;
+        private readonly Regex _targetExpression;
 
-        protected RelativeValueGenerator(string targetNameExpression, string sourceNameExpression)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RelativeValueGenerator"/> class.
+        /// </summary>
+        /// <param name="targetNameExpression">The expression to match the target property or parameter.</param>
+        /// <param name="sourceNameExpression">The expression to match the source property.</param>
+        protected RelativeValueGenerator(Regex targetNameExpression, Regex sourceNameExpression)
         {
-            if (string.IsNullOrEmpty(targetNameExpression))
+            if (targetNameExpression == null)
             {
-                throw new ArgumentException(nameof(targetNameExpression));
+                throw new ArgumentNullException(nameof(targetNameExpression));
             }
 
-            if (string.IsNullOrEmpty(sourceNameExpression))
+            if (sourceNameExpression == null)
             {
-                throw new ArgumentException(nameof(sourceNameExpression));
+                throw new ArgumentNullException(nameof(sourceNameExpression));
             }
 
             _targetExpression = targetNameExpression;
             _sourceExpression = sourceNameExpression;
         }
 
+        /// <inheritdoc />
         public override bool IsSupported(Type type, string referenceName, object context)
         {
             var baseSupported = base.IsSupported(type, referenceName, context);
@@ -48,9 +58,7 @@ namespace ModelBuilder
                 return false;
             }
 
-            var targetExpression = new Regex(_targetExpression);
-
-            if (targetExpression.IsMatch(referenceName) == false)
+            if (_targetExpression.IsMatch(referenceName) == false)
             {
                 return false;
             }
@@ -67,12 +75,23 @@ namespace ModelBuilder
             return true;
         }
 
+        /// <summary>
+        /// Gets the source property value for the specified context.
+        /// </summary>
+        /// <param name="context">The context to use for reference informamtion.</param>
+        /// <returns>The string value of the source property.</returns>
         protected virtual string GetSourceValue(object context)
         {
             return GetValue(_sourceExpression, context);
         }
 
-        protected virtual string GetValue(string expression, object context)
+        /// <summary>
+        /// Gets the property value using the specified expression and context.
+        /// </summary>
+        /// <param name="expression">The expression used to identify the property.</param>
+        /// <param name="context">The context to use for reference informamtion.</param>
+        /// <returns>The string value of the source property.</returns>
+        protected virtual string GetValue(Regex expression, object context)
         {
             var property = GetMatchingProperty(expression, context);
 
@@ -93,12 +112,11 @@ namespace ModelBuilder
             return value.ToString();
         }
 
-        private PropertyInfo GetMatchingProperty(string expression, object context)
+        private static PropertyInfo GetMatchingProperty(Regex expression, object context)
         {
-            var regex = new Regex(expression);
             var contextType = context.GetType();
             var properties = contextType.GetProperties();
-            var matchingProperty = properties.FirstOrDefault(x => regex.IsMatch(x.Name));
+            var matchingProperty = properties.FirstOrDefault(x => expression.IsMatch(x.Name));
 
             return matchingProperty;
         }

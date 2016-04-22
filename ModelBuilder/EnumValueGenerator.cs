@@ -11,6 +11,7 @@ namespace ModelBuilder
     public class EnumValueGenerator : ValueGeneratorBase
     {
         /// <inheritdoc />
+        /// <exception cref="ArgumentNullException">The <paramref name="type"/> parameter is null.</exception>
         public override bool IsSupported(Type type, string referenceName, object context)
         {
             if (type == null)
@@ -41,7 +42,7 @@ namespace ModelBuilder
             if (generateType.IsNullable())
             {
                 // Allow for a 10% the chance that this might be null
-                var range = Generator.Next(0, 100);
+                var range = Generator.NextValue(0, 100);
 
                 if (range < 10)
                 {
@@ -70,12 +71,12 @@ namespace ModelBuilder
             if (isFlags)
             {
                 // Build a bitwise value
-                var flagCount = Generator.Next(1, values.Length);
+                var flagCount = Generator.NextValue(1, values.Length);
                 var parts = new List<string>();
 
                 for (var index = 0; index < flagCount; index++)
                 {
-                    var nextIndex = Generator.Next(0, values.Length - 1);
+                    var nextIndex = Generator.NextValue(0, values.Length - 1);
                     var nextValue = values.GetValue(nextIndex);
                     var valueText = nextValue.ToString();
 
@@ -88,7 +89,7 @@ namespace ModelBuilder
             }
 
             // This is not a flags enum so we will return a single value
-            var valueIndex = Generator.Next(0, values.Length - 1);
+            var valueIndex = Generator.NextValue(0, values.Length - 1);
 
             return values.GetValue(valueIndex);
         }

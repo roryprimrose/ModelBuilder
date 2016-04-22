@@ -96,7 +96,7 @@ namespace ModelBuilder.UnitTests
 
             var target = new RandomGenerator();
 
-            target.Next(buffer);
+            target.NextValue(buffer);
 
             buffer.Any(x => x != default(byte)).Should().BeTrue();
         }
@@ -106,7 +106,7 @@ namespace ModelBuilder.UnitTests
         {
             var target = new RandomGenerator();
 
-            Action action = () => target.Next(null);
+            Action action = () => target.NextValue(null);
 
             action.ShouldThrow<ArgumentNullException>();
         }
@@ -119,7 +119,7 @@ namespace ModelBuilder.UnitTests
         {
             var target = new RandomGenerator();
 
-            var actual = target.Next(min, max);
+            var actual = target.NextValue(min, max);
 
             var converted = Convert.ToDouble(actual);
 
@@ -132,7 +132,7 @@ namespace ModelBuilder.UnitTests
         {
             var target = new RandomGenerator();
 
-            Action action = () => target.Next(1, 0);
+            Action action = () => target.NextValue(1, 0);
 
             action.ShouldThrow<ArgumentOutOfRangeException>();
         }
@@ -142,7 +142,7 @@ namespace ModelBuilder.UnitTests
         {
             var target = new RandomGenerator();
 
-            Action action = () => target.Next(0M, 1M);
+            Action action = () => target.NextValue(0M, 1M);
 
             action.ShouldThrow<NotSupportedException>();
         }
@@ -162,7 +162,7 @@ namespace ModelBuilder.UnitTests
 
             for (var index = 0; index < 100000; index++)
             {
-                var value = target.Next(type, min, max);
+                var value = target.NextValue(type, min, max);
 
                 value.Should().NotBeNull();
 
@@ -186,7 +186,7 @@ namespace ModelBuilder.UnitTests
 
             for (var index = 0; index < 1000; index++)
             {
-                var value = target.Next(typeof (double), double.MinValue, double.MaxValue);
+                var value = target.NextValue(typeof (double), double.MinValue, double.MaxValue);
 
                 var actual = Convert.ToDouble(value);
 
@@ -210,7 +210,7 @@ namespace ModelBuilder.UnitTests
 
             for (var index = 0; index < 1000; index++)
             {
-                var value = target.Next(typeof (double), double.MinValue, double.MaxValue);
+                var value = target.NextValue(typeof (double), double.MinValue, double.MaxValue);
 
                 var actual = Convert.ToDouble(value);
 
@@ -230,7 +230,7 @@ namespace ModelBuilder.UnitTests
         {
             var target = new RandomGenerator();
 
-            var value = target.Next(typeof (double), double.MinValue, double.MaxValue);
+            var value = target.NextValue(typeof (double), double.MinValue, double.MaxValue);
 
             var actual = Convert.ToDouble(value);
 
@@ -251,7 +251,7 @@ namespace ModelBuilder.UnitTests
                 var min = target.GetMin(type);
                 var max = target.GetMax(type);
 
-                var value = target.Next(type, min, max);
+                var value = target.NextValue(type, min, max);
 
                 var actual = Convert.ToDouble(value);
 
@@ -278,7 +278,7 @@ namespace ModelBuilder.UnitTests
 
             var target = new RandomGenerator();
 
-            var value = target.Next(type, min, max);
+            var value = target.NextValue(type, min, max);
 
             value.Should().NotBeNull();
 
@@ -304,7 +304,7 @@ namespace ModelBuilder.UnitTests
 
             var target = new RandomGenerator();
 
-            var actual = target.Next(type, min, max);
+            var actual = target.NextValue(type, min, max);
 
             var converted = Convert.ToDouble(actual);
 
@@ -317,7 +317,7 @@ namespace ModelBuilder.UnitTests
         {
             var target = new RandomGenerator();
 
-            Action action = () => target.Next(typeof (double), 1, 0);
+            Action action = () => target.NextValue(typeof (double), 1, 0);
 
             action.ShouldThrow<ArgumentOutOfRangeException>();
         }
@@ -327,7 +327,7 @@ namespace ModelBuilder.UnitTests
         {
             var target = new RandomGenerator();
 
-            Action action = () => target.Next(typeof (int), 0, Guid.NewGuid().ToString());
+            Action action = () => target.NextValue(typeof (int), 0, Guid.NewGuid().ToString());
 
             action.ShouldThrow<FormatException>();
         }
@@ -337,7 +337,7 @@ namespace ModelBuilder.UnitTests
         {
             var target = new RandomGenerator();
 
-            Action action = () => target.Next(typeof (int), Guid.NewGuid().ToString(), 0);
+            Action action = () => target.NextValue(typeof (int), Guid.NewGuid().ToString(), 0);
 
             action.ShouldThrow<FormatException>();
         }
@@ -347,7 +347,7 @@ namespace ModelBuilder.UnitTests
         {
             var target = new RandomGenerator();
 
-            Action action = () => target.Next(typeof (int), 0, null);
+            Action action = () => target.NextValue(typeof (int), 0, null);
 
             action.ShouldThrow<ArgumentNullException>();
         }
@@ -357,7 +357,7 @@ namespace ModelBuilder.UnitTests
         {
             var target = new RandomGenerator();
 
-            Action action = () => target.Next(typeof (int), null, 0);
+            Action action = () => target.NextValue(typeof (int), null, 0);
 
             action.ShouldThrow<ArgumentNullException>();
         }
@@ -367,7 +367,7 @@ namespace ModelBuilder.UnitTests
         {
             var target = new RandomGenerator();
 
-            Action action = () => target.Next(null, 0, 0);
+            Action action = () => target.NextValue(null, 0, 0);
 
             action.ShouldThrow<ArgumentNullException>();
         }
@@ -378,7 +378,7 @@ namespace ModelBuilder.UnitTests
         {
             var target = new RandomGenerator();
 
-            Action action = () => target.Next(type, min, max);
+            Action action = () => target.NextValue(type, min, max);
 
             if (typeSupported)
             {

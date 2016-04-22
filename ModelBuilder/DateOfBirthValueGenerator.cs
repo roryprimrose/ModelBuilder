@@ -3,6 +3,10 @@ using System.Text.RegularExpressions;
 
 namespace ModelBuilder
 {
+    /// <summary>
+    /// The <see cref="DateOfBirthValueGenerator"/>
+    /// class is used to generate random date of birth values.
+    /// </summary>
     public class DateOfBirthValueGenerator : ValueGeneratorMatcher
     {
         /// <summary>
@@ -21,7 +25,7 @@ namespace ModelBuilder
             if (generateType.IsNullable())
             {
                 // Allow for a 10% the chance that this might be null
-                var range = Generator.Next(0, 100);
+                var range = Generator.NextValue(0, 100);
 
                 if (range < 10)
                 {
@@ -32,11 +36,11 @@ namespace ModelBuilder
                 generateType = type.GenericTypeArguments[0];
             }
 
-            var years = Generator.Next(0, 98);
-            var months = Generator.Next(0, 12);
-            var days = Generator.Next(0, 31);
-            var hours = Generator.Next(0, 24);
-            var minutes = Generator.Next(0, 60);
+            var years = Generator.NextValue(0, 98);
+            var months = Generator.NextValue(0, 12);
+            var days = Generator.NextValue(0, 31);
+            var hours = Generator.NextValue(0, 24);
+            var minutes = Generator.NextValue(0, 60);
 
             if (generateType == typeof(DateTime))
             {

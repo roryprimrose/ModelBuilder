@@ -61,6 +61,15 @@ namespace ModelBuilder.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The value cannot be null, white space or empty..
+        /// </summary>
+        internal static string ArgumentException_NullOrWhiteSpace {
+            get {
+                return ResourceManager.GetString("ArgumentException_NullOrWhiteSpace", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No public constructor is available for type {0}..
         /// </summary>
         internal static string ConstructorResolver_NoPublicConstructorFound {
@@ -142,8 +151,8 @@ namespace ModelBuilder.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;?xml version=&apos;1.0&apos; encoding=&apos;UTF-8&apos;?&gt;&lt;People&gt;
-        ///&lt;Person&gt;&lt;Gender&gt;Female&lt;/Gender&gt;&lt;FirstName&gt;Theresa&lt;/FirstName&gt;&lt;LastName&gt;Spencer&lt;/LastName&gt;&lt;Email&gt;tspencer0@is.gd&lt;/Email&gt;&lt;Company&gt;Tanoodle&lt;/Company&gt;&lt;Domain&gt;google.ca&lt;/Domain&gt;&lt;Address&gt;997 Emmet Circle&lt;/Address&gt;&lt;State&gt;Delaware&lt;/State&gt;&lt;PostCode&gt;19714&lt;/PostCode&gt;&lt;City&gt;Newark&lt;/City&gt;&lt;Phone&gt;1-(302)560-3674&lt;/Phone&gt;&lt;Country&gt;United States&lt;/Country&gt;&lt;TimeZone&gt;America/Mexico_City&lt;/TimeZone&gt;&lt;/Person&gt;&lt;Person&gt;&lt;Gender&gt;Male&lt;/Gender&gt;&lt;FirstName&gt;Craig&lt;/FirstName&gt;&lt;LastName&gt;Martin&lt;/Las [rest of string was truncated]&quot;;.
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+        ///&lt;People xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;&gt;&lt;Person&gt;&lt;Address&gt;997 Emmet Circle&lt;/Address&gt;&lt;City&gt;Newark&lt;/City&gt;&lt;Company&gt;Tanoodle&lt;/Company&gt;&lt;Country&gt;Benin&lt;/Country&gt;&lt;Domain&gt;google.ca&lt;/Domain&gt;&lt;Email&gt;tspencer0@is.gd&lt;/Email&gt;&lt;FirstName&gt;Theresa&lt;/FirstName&gt;&lt;Gender&gt;Female&lt;/Gender&gt;&lt;LastName&gt;Spencer&lt;/LastName&gt;&lt;Phone&gt;1-(302)560-3674&lt;/Phone&gt;&lt;PostCode&gt;19714&lt;/PostCode&gt;&lt;State&gt;Delaware&lt;/State&gt;&lt;TimeZone&gt;America/Mexico_City&lt;/TimeZ [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string People {
             get {

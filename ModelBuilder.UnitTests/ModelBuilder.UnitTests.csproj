@@ -83,7 +83,7 @@
     <Compile Include="PostCodeValueGeneratorTests.cs" />
     <Compile Include="GenderValueGeneratorTests.cs" />
     <Compile Include="CompanyValueGeneratorTests.cs" />
-    <Compile Include="DomainValueGeneratorTests.cs" />
+    <Compile Include="DomainNameValueGeneratorTests.cs" />
     <Compile Include="CountryValueGeneratorTests.cs" />
     <Compile Include="StateValueGeneratorTests.cs" />
     <Compile Include="CityValueGeneratorTests.cs" />

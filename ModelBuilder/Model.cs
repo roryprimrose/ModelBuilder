@@ -9,16 +9,8 @@ namespace ModelBuilder
     public static class Model
     {
         private static readonly DefaultBuildStrategy _defaultBuildStrategy = new DefaultBuildStrategy();
-        private static IBuildStrategy _buildStrategy;
-
-        /// <summary>
-        /// Initializes the static instance of the <see cref="Model"/> class.
-        /// </summary>
-        static Model()
-        {
-            BuildStrategy = DefaultBuildStrategy;
-        }
-
+        private static IBuildStrategy _buildStrategy = _defaultBuildStrategy;
+        
         /// <summary>
         /// Creates an instance of <typeparamref name="T"/> using the default build and execute strategies.
         /// </summary>
@@ -85,6 +77,7 @@ namespace ModelBuilder
         /// <summary>
         /// Gets or sets the current build strategy to use in this application domain.
         /// </summary>
+        /// <exception cref="ArgumentNullException">The <paramref name="value"/> parameter is null.</exception>
         public static IBuildStrategy BuildStrategy
         {
             get { return _buildStrategy; }
