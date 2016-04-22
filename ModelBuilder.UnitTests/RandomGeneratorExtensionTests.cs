@@ -17,7 +17,7 @@ namespace ModelBuilder.UnitTests
 
             target.GetMax(type).Returns(int.MaxValue);
             target.GetMin(type).Returns(int.MinValue);
-            target.Next(type, Arg.Is<double>(int.MinValue), Arg.Is<double>(int.MaxValue)).Returns(expected);
+            target.NextValue(type, Arg.Is<double>(int.MinValue), Arg.Is<double>(int.MaxValue)).Returns(expected);
 
             var actual = target.Next<int>();
 
@@ -44,7 +44,7 @@ namespace ModelBuilder.UnitTests
             var target = Substitute.For<IRandomGenerator>();
 
             target.GetMin(type).Returns(int.MinValue);
-            target.Next(type, Arg.Is<double>(int.MinValue), max).Returns(expected);
+            target.NextValue(type, Arg.Is<double>(int.MinValue), max).Returns(expected);
 
             var actual = target.Next(max);
 
@@ -71,7 +71,7 @@ namespace ModelBuilder.UnitTests
             var target = Substitute.For<IRandomGenerator>();
 
             target.GetMin(type).Returns(int.MinValue);
-            target.Next(type, Arg.Is<double>(int.MinValue), max).Returns(expected);
+            target.NextValue(type, Arg.Is<double>(int.MinValue), max).Returns(expected);
 
             var actual = target.Next(typeof (int), max);
 
@@ -112,7 +112,7 @@ namespace ModelBuilder.UnitTests
 
             target.GetMax(type).Returns(int.MaxValue);
             target.GetMin(type).Returns(int.MinValue);
-            target.Next(type, Arg.Is<double>(int.MinValue), Arg.Is<double>(int.MaxValue)).Returns(expected);
+            target.NextValue(type, Arg.Is<double>(int.MinValue), Arg.Is<double>(int.MaxValue)).Returns(expected);
 
             var actual = target.Next(typeof (int));
 

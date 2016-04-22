@@ -4,12 +4,12 @@ namespace ModelBuilder.UnitTests
 {
     public class DummyValueGenerator : ValueGeneratorBase
     {
-        public override object Generate(Type type, string referenceName, object context)
+        public override bool IsSupported(Type type, string referenceName, object context)
         {
             throw new NotImplementedException();
         }
 
-        public override bool IsSupported(Type type, string referenceName, object context)
+        protected override object GenerateValue(Type type, string referenceName, object context)
         {
             throw new NotImplementedException();
         }

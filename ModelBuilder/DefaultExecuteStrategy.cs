@@ -45,6 +45,7 @@ namespace ModelBuilder
         }
 
         /// <inheritdoc />
+        /// <exception cref="ArgumentNullException">The <paramref name="type"/> parameter is null.</exception>
         public object CreateWith(Type type, params object[] args)
         {
             if (type == null)
@@ -75,6 +76,8 @@ namespace ModelBuilder
         /// <param name="context">The possible context object this value is being created for.</param>
         /// <param name="args">The arguements to create the instance with.</param>
         /// <returns>A new instance.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="type"/> parameter is null.</exception>
+        /// <exception cref="NotSupportedException">The <paramref name="type"/> parameter can not be created using this strategy.</exception>
         protected virtual object Build(Type type, string referenceName, object context, params object[] args)
         {
             if (type == null)
@@ -149,6 +152,7 @@ namespace ModelBuilder
         /// </summary>
         /// <param name="instance">The instance to populate.</param>
         /// <returns>The updated instance.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="instance"/> parameter is null.</exception>
         protected virtual object PopulateInstance(object instance)
         {
             if (instance == null)

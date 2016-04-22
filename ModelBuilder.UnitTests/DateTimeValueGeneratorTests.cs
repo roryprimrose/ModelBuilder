@@ -8,6 +8,37 @@ namespace ModelBuilder.UnitTests
     public class DateTimeValueGeneratorTests
     {
         [Fact]
+        public void GenerateCanReturnNullAndRandomValuesTest()
+        {
+            var nullFound = false;
+            var valueFound = false;
+
+            var target = new DateTimeValueGenerator();
+
+            for (var index = 0; index < 1000; index++)
+            {
+                var value = (DateTime?) target.Generate(typeof(DateTime?), null, null);
+
+                if (value == null)
+                {
+                    nullFound = true;
+                }
+                else
+                {
+                    valueFound = true;
+                }
+
+                if (nullFound && valueFound)
+                {
+                    break;
+                }
+            }
+
+            nullFound.Should().BeTrue();
+            valueFound.Should().BeTrue();
+        }
+
+        [Fact]
         public void GenerateReturnsRandomDateTimeOffsetValueTest()
         {
             var target = new DateTimeValueGenerator();
@@ -85,9 +116,12 @@ namespace ModelBuilder.UnitTests
         [InlineData(typeof(string), false)]
         [InlineData(typeof(Stream), false)]
         [InlineData(typeof(TimeSpan), true)]
+        [InlineData(typeof(TimeSpan?), true)]
         [InlineData(typeof(TimeZoneInfo), true)]
         [InlineData(typeof(DateTimeOffset), true)]
+        [InlineData(typeof(DateTimeOffset?), true)]
         [InlineData(typeof(DateTime), true)]
+        [InlineData(typeof(DateTime?), true)]
         public void IsSupportedTest(Type type, bool expected)
         {
             var target = new DateTimeValueGenerator();

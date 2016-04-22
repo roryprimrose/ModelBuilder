@@ -436,6 +436,7 @@ namespace ModelBuilder.UnitTests
         {
             var staff = new List<Person>();
             var name = Guid.NewGuid().ToString();
+            var address = Guid.NewGuid().ToString();
             var expected = new Company();
 
             var typeCreator = Substitute.For<ITypeCreator>();
@@ -448,6 +449,8 @@ namespace ModelBuilder.UnitTests
             typeCreator.Populate(staff, target).Returns(staff);
             valueGenerator.IsSupported(typeof(string), "Name", expected).Returns(true);
             valueGenerator.Generate(typeof(string), "Name", expected).Returns(name);
+            valueGenerator.IsSupported(typeof(string), "Address", expected).Returns(true);
+            valueGenerator.Generate(typeof(string), "Address", expected).Returns(address);
 
             target.TypeCreators.Add(typeCreator);
             target.ValueGenerators.Add(valueGenerator);
@@ -456,6 +459,7 @@ namespace ModelBuilder.UnitTests
 
             actual.Should().BeSameAs(expected);
             actual.Name.Should().Be(name);
+            actual.Address.Should().Be(address);
             actual.Staff.Should().BeSameAs(staff);
         }
 
@@ -464,6 +468,7 @@ namespace ModelBuilder.UnitTests
         {
             var staff = new List<Person>();
             var name = Guid.NewGuid().ToString();
+            var address = Guid.NewGuid().ToString();
             var expected = new Company();
 
             var typeCreator = Substitute.For<ITypeCreator>();
@@ -476,6 +481,8 @@ namespace ModelBuilder.UnitTests
             typeCreator.Populate(staff, target).Returns(staff);
             valueGenerator.IsSupported(typeof(string), "Name", expected).Returns(true);
             valueGenerator.Generate(typeof(string), "Name", expected).Returns(name);
+            valueGenerator.IsSupported(typeof(string), "Address", expected).Returns(true);
+            valueGenerator.Generate(typeof(string), "Address", expected).Returns(address);
 
             target.TypeCreators.Add(typeCreator);
             target.ValueGenerators.Add(valueGenerator);
@@ -484,6 +491,7 @@ namespace ModelBuilder.UnitTests
 
             actual.Should().BeSameAs(expected);
             actual.Name.Should().Be(name);
+            actual.Address.Should().Be(address);
             actual.Staff.Should().BeSameAs(staff);
         }
 
@@ -530,6 +538,7 @@ namespace ModelBuilder.UnitTests
         {
             var staff = new List<Person>();
             var name = Guid.NewGuid().ToString();
+            var address = Guid.NewGuid().ToString();
             var expected = new Company();
             var ignoreRule = new IgnoreRule(typeof(Company), "name");
 
@@ -543,6 +552,8 @@ namespace ModelBuilder.UnitTests
             typeCreator.Populate(staff, target).Returns(staff);
             valueGenerator.IsSupported(typeof(string), "Name", expected).Returns(true);
             valueGenerator.Generate(typeof(string), "Name", expected).Returns(name);
+            valueGenerator.IsSupported(typeof(string), "Address", expected).Returns(true);
+            valueGenerator.Generate(typeof(string), "Address", expected).Returns(address);
 
             target.TypeCreators.Add(typeCreator);
             target.ValueGenerators.Add(valueGenerator);
@@ -552,6 +563,7 @@ namespace ModelBuilder.UnitTests
 
             actual.Should().BeSameAs(expected);
             actual.Name.Should().Be(name);
+            actual.Address.Should().Be(address);
             actual.Staff.Should().BeSameAs(staff);
         }
 
@@ -560,6 +572,7 @@ namespace ModelBuilder.UnitTests
         {
             var staff = new List<Person>();
             var name = Guid.NewGuid().ToString();
+            var address = Guid.NewGuid().ToString();
             var expected = new Company();
             var ignoreRule = new IgnoreRule(typeof(Company), "Names");
 
@@ -573,6 +586,8 @@ namespace ModelBuilder.UnitTests
             typeCreator.Populate(staff, target).Returns(staff);
             valueGenerator.IsSupported(typeof(string), "Name", expected).Returns(true);
             valueGenerator.Generate(typeof(string), "Name", expected).Returns(name);
+            valueGenerator.IsSupported(typeof(string), "Address", expected).Returns(true);
+            valueGenerator.Generate(typeof(string), "Address", expected).Returns(address);
 
             target.TypeCreators.Add(typeCreator);
             target.ValueGenerators.Add(valueGenerator);
@@ -582,6 +597,7 @@ namespace ModelBuilder.UnitTests
 
             actual.Should().BeSameAs(expected);
             actual.Name.Should().Be(name);
+            actual.Address.Should().Be(address);
             actual.Staff.Should().BeSameAs(staff);
         }
 
@@ -590,6 +606,7 @@ namespace ModelBuilder.UnitTests
         {
             var staff = new List<Person>();
             var name = Guid.NewGuid().ToString();
+            var address = Guid.NewGuid().ToString();
             var expected = new Company();
             var ignoreRule = new IgnoreRule(typeof(Stream), "Name");
 
@@ -603,6 +620,8 @@ namespace ModelBuilder.UnitTests
             typeCreator.Populate(staff, target).Returns(staff);
             valueGenerator.IsSupported(typeof(string), "Name", expected).Returns(true);
             valueGenerator.Generate(typeof(string), "Name", expected).Returns(name);
+            valueGenerator.IsSupported(typeof(string), "Address", expected).Returns(true);
+            valueGenerator.Generate(typeof(string), "Address", expected).Returns(address);
 
             target.TypeCreators.Add(typeCreator);
             target.ValueGenerators.Add(valueGenerator);
@@ -612,6 +631,7 @@ namespace ModelBuilder.UnitTests
 
             actual.Should().BeSameAs(expected);
             actual.Name.Should().Be(name);
+            actual.Address.Should().Be(address);
             actual.Staff.Should().BeSameAs(staff);
         }
 
@@ -644,6 +664,7 @@ namespace ModelBuilder.UnitTests
         {
             var staff = new List<Person>();
             var name = Guid.NewGuid().ToString();
+            var address = Guid.NewGuid().ToString();
             var expected = new Company();
             var ignoreRule = new IgnoreRule(typeof(Company), "Name");
 
@@ -657,6 +678,8 @@ namespace ModelBuilder.UnitTests
             typeCreator.Populate(staff, target).Returns(staff);
             valueGenerator.IsSupported(typeof(string), "Name", expected).Returns(true);
             valueGenerator.Generate(typeof(string), "Name", expected).Returns(name);
+            valueGenerator.IsSupported(typeof(string), "Address", expected).Returns(true);
+            valueGenerator.Generate(typeof(string), "Address", expected).Returns(address);
 
             target.TypeCreators.Add(typeCreator);
             target.ValueGenerators.Add(valueGenerator);
@@ -666,6 +689,7 @@ namespace ModelBuilder.UnitTests
 
             actual.Should().BeSameAs(expected);
             actual.Name.Should().BeNullOrEmpty();
+            actual.Address.Should().Be(address);
             actual.Staff.Should().BeSameAs(staff);
         }
 

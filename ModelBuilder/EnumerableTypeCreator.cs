@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 
 namespace ModelBuilder
 {
@@ -12,6 +11,7 @@ namespace ModelBuilder
     public class EnumerableTypeCreator : TypeCreatorBase
     {
         /// <inheritdoc />
+        /// <exception cref="ArgumentNullException">The <paramref name="type"/> parameter is null.</exception>
         public override object Create(Type type, string referenceName, object context, params object[] args)
         {
             if (type == null)
@@ -34,6 +34,7 @@ namespace ModelBuilder
         }
 
         /// <inheritdoc />
+        /// <exception cref="ArgumentNullException">The <paramref name="type"/> parameter is null.</exception>
         public override bool IsSupported(Type type, string referenceName, object context)
         {
             if (type == null)
@@ -64,7 +65,7 @@ namespace ModelBuilder
                 // The type is ReadOnlyCollection<T> which should be supported by DefaultTypeCreator as it will determine the data to build for its constructor
                 return false;
             }
-            
+
             if (type.IsInterface == false)
             {
                 // Other known collection concrete types are expected to be supported
@@ -84,6 +85,8 @@ namespace ModelBuilder
         }
 
         /// <inheritdoc />
+        /// <exception cref="ArgumentNullException">The <paramref name="instance"/> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy"/> parameter is null.</exception>
         public override object Populate(object instance, IExecuteStrategy executeStrategy)
         {
             if (instance == null)
@@ -110,7 +113,7 @@ namespace ModelBuilder
             {
                 var childInstance = CreateChildItem(internalType, executeStrategy, previousItem);
 
-                addMethod.Invoke(instance, new[] { childInstance });
+                addMethod.Invoke(instance, new[] {childInstance});
 
                 previousItem = childInstance;
             }
@@ -118,8 +121,21 @@ namespace ModelBuilder
             return base.Populate(instance, executeStrategy);
         }
 
+        /// <summary>
+        /// Creates a child item given the context of a possible previous item being created.
+        /// </summary>
+        /// <param name="type">The type of value to generate.</param>
+        /// <param name="executeStrategy">The execute strategy.</param>
+        /// <param name="previousItem">The previous item generated, or <c>null</c>.</param>
+        /// <returns>The new item generated.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy"/> parameter is null.</exception>
         protected virtual object CreateChildItem(Type type, IExecuteStrategy executeStrategy, object previousItem)
         {
+            if (executeStrategy == null)
+            {
+                throw new ArgumentNullException(nameof(executeStrategy));
+            }
+
             return executeStrategy.CreateWith(type);
         }
 

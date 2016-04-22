@@ -8,11 +8,42 @@ namespace ModelBuilder.UnitTests
     public class EnumValueGeneratorTests
     {
         [Fact]
+        public void GenerateCanReturnNullAndRandomValuesTest()
+        {
+            var nullFound = false;
+            var valueFound = false;
+
+            var target = new EnumValueGenerator();
+
+            for (var index = 0; index < 1000; index++)
+            {
+                var value = (SingleEnum?) target.Generate(typeof(SingleEnum?), null, null);
+
+                if (value == null)
+                {
+                    nullFound = true;
+                }
+                else
+                {
+                    valueFound = true;
+                }
+
+                if (nullFound && valueFound)
+                {
+                    break;
+                }
+            }
+
+            nullFound.Should().BeTrue();
+            valueFound.Should().BeTrue();
+        }
+
+        [Fact]
         public void GenerateReturnsOnlyAvailableEnumValueWhenSingleValueDefinedTest()
         {
             var target = new EnumValueGenerator();
 
-            var first = target.Generate(typeof (SingleEnum));
+            var first = target.Generate(typeof(SingleEnum));
 
             first.Should().BeOfType<SingleEnum>();
             first.Should().Be(SingleEnum.First);
@@ -23,11 +54,11 @@ namespace ModelBuilder.UnitTests
         {
             var target = new EnumValueGenerator();
 
-            var first = target.Generate(typeof (FileAttributes));
+            var first = target.Generate(typeof(FileAttributes));
 
             first.Should().BeOfType<FileAttributes>();
 
-            var second = target.Generate(typeof (FileAttributes));
+            var second = target.Generate(typeof(FileAttributes));
 
             first.Should().NotBe(second);
         }
@@ -37,15 +68,15 @@ namespace ModelBuilder.UnitTests
         {
             var target = new EnumValueGenerator();
 
-            var first = target.Generate(typeof (BigFlagsEnum));
+            var first = target.Generate(typeof(BigFlagsEnum));
 
             first.Should().BeOfType<BigFlagsEnum>();
 
-            var values = Enum.GetValues(typeof (BigFlagsEnum));
+            var values = Enum.GetValues(typeof(BigFlagsEnum));
 
             values.Should().NotContain(first);
 
-            var second = target.Generate(typeof (BigFlagsEnum));
+            var second = target.Generate(typeof(BigFlagsEnum));
 
             first.Should().NotBe(second);
         }
@@ -55,12 +86,12 @@ namespace ModelBuilder.UnitTests
         {
             var target = new EnumValueGenerator();
 
-            var first = target.Generate(typeof (BigEnum));
+            var first = target.Generate(typeof(BigEnum));
 
             first.Should().BeOfType<BigEnum>();
-            Enum.IsDefined(typeof (BigEnum), first).Should().BeTrue();
+            Enum.IsDefined(typeof(BigEnum), first).Should().BeTrue();
 
-            var second = target.Generate(typeof (BigEnum));
+            var second = target.Generate(typeof(BigEnum));
 
             first.Should().NotBe(second);
         }
@@ -75,7 +106,7 @@ namespace ModelBuilder.UnitTests
 
             for (var index = 0; index < 1000; index++)
             {
-                var actual = (SmallFlags) target.Generate(typeof (SmallFlags));
+                var actual = (SmallFlags) target.Generate(typeof(SmallFlags));
 
                 if (actual == SmallFlags.First)
                 {
@@ -108,15 +139,15 @@ namespace ModelBuilder.UnitTests
         {
             var target = new EnumValueGenerator();
 
-            var first = target.Generate(typeof (EmptyEnum));
+            var first = target.Generate(typeof(EmptyEnum));
 
             first.Should().BeOfType<EmptyEnum>();
-            first.Should().Be((EmptyEnum)0);
+            first.Should().Be((EmptyEnum) 0);
         }
 
         [Theory]
-        [InlineData(typeof (Stream))]
-        [InlineData(typeof (string))]
+        [InlineData(typeof(Stream))]
+        [InlineData(typeof(string))]
         public void GenerateThrowsExceptionWithInvalidParametersTest(Type type)
         {
             var target = new EnumValueGenerator();
@@ -137,11 +168,14 @@ namespace ModelBuilder.UnitTests
         }
 
         [Theory]
-        [InlineData(typeof (Stream), false)]
-        [InlineData(typeof (string), false)]
-        [InlineData(typeof (SimpleEnum), true)]
-        [InlineData(typeof (BigEnum), true)]
-        [InlineData(typeof (BigFlagsEnum), true)]
+        [InlineData(typeof(Stream), false)]
+        [InlineData(typeof(string), false)]
+        [InlineData(typeof(SimpleEnum), true)]
+        [InlineData(typeof(SimpleEnum?), true)]
+        [InlineData(typeof(BigEnum), true)]
+        [InlineData(typeof(BigEnum?), true)]
+        [InlineData(typeof(BigFlagsEnum), true)]
+        [InlineData(typeof(BigFlagsEnum?), true)]
         public void IsSupportedTest(Type type, bool expected)
         {
             var target = new EnumValueGenerator();

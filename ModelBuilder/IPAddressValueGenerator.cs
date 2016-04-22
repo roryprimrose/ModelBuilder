@@ -11,28 +11,7 @@ namespace ModelBuilder
     public class IPAddressValueGenerator : ValueGeneratorBase
     {
         /// <inheritdoc />
-        public override object Generate(Type type, string referenceName, object context)
-        {
-            VerifyGenerateRequest(type, referenceName, context);
-
-            var buffer = new byte[4];
-
-            Generator.Next(buffer);
-
-            if (type == typeof (IPAddress))
-            {
-                return new IPAddress(buffer);
-            }
-
-            const string addressFormat = "{0}.{1}.{2}.{3}";
-
-            var address = string.Format(CultureInfo.InvariantCulture, addressFormat, buffer[0], buffer[1], buffer[2],
-                buffer[3]);
-
-            return address;
-        }
-
-        /// <inheritdoc />
+        /// <exception cref="ArgumentNullException">The <paramref name="type"/> parameter is null.</exception>
         public override bool IsSupported(Type type, string referenceName, object context)
         {
             if (type == null)
@@ -40,12 +19,12 @@ namespace ModelBuilder
                 throw new ArgumentNullException(nameof(type));
             }
 
-            if (type == typeof (IPAddress))
+            if (type == typeof(IPAddress))
             {
                 return true;
             }
 
-            if (type != typeof (string))
+            if (type != typeof(string))
             {
                 return false;
             }
@@ -61,6 +40,26 @@ namespace ModelBuilder
             }
 
             return false;
+        }
+
+        /// <inheritdoc />
+        protected override object GenerateValue(Type type, string referenceName, object context)
+        {
+            var buffer = new byte[4];
+
+            Generator.NextValue(buffer);
+
+            if (type == typeof(IPAddress))
+            {
+                return new IPAddress(buffer);
+            }
+
+            const string addressFormat = "{0}.{1}.{2}.{3}";
+
+            var address = string.Format(CultureInfo.InvariantCulture, addressFormat, buffer[0], buffer[1], buffer[2],
+                buffer[3]);
+
+            return address;
         }
 
         /// <inheritdoc />

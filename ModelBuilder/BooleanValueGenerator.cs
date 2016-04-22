@@ -6,16 +6,21 @@ namespace ModelBuilder
     /// The <see cref="BooleanValueGenerator"/>
     /// class is used to generate random <see cref="bool"/> values.
     /// </summary>
-    public class BooleanValueGenerator : ValueGeneratorBase
+    public class BooleanValueGenerator : ValueGeneratorMatcher
     {
-        /// <inheritdoc />
-        public override object Generate(Type type, string referenceName, object context)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BooleanValueGenerator"/> class.
+        /// </summary>
+        public BooleanValueGenerator() : base(typeof(bool), typeof(bool?))
         {
-            VerifyGenerateRequest(type, referenceName, context);
-
-            if (type == typeof (bool?))
+        }
+        
+        /// <inheritdoc />
+        protected override object GenerateValue(Type type, string referenceName, object context)
+        {
+            if (type == typeof(bool?))
             {
-                var source = Generator.Next<double>(0, 3);
+                var source = Generator.NextValue<double>(0, 3);
 
                 bool? value;
 
@@ -35,7 +40,7 @@ namespace ModelBuilder
                 return value;
             }
 
-            var nextValue = Generator.Next(0, 1);
+            var nextValue = Generator.NextValue(0, 1);
 
             if (nextValue == 0)
             {
@@ -43,27 +48,6 @@ namespace ModelBuilder
             }
 
             return true;
-        }
-
-        /// <inheritdoc />
-        public override bool IsSupported(Type type, string referenceName, object context)
-        {
-            if (type == null)
-            {
-                throw new ArgumentNullException(nameof(type));
-            }
-            
-            if (type == typeof (bool))
-            {
-                return true;
-            }
-
-            if (type == typeof (bool?))
-            {
-                return true;
-            }
-
-            return false;
         }
     }
 }

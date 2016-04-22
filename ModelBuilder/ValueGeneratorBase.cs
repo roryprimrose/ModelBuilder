@@ -10,19 +10,27 @@ namespace ModelBuilder
     /// </summary>
     public abstract class ValueGeneratorBase : IValueGenerator
     {
-        private static readonly IRandomGenerator _random;
-
-        static ValueGeneratorBase()
+        private static readonly IRandomGenerator _random = new RandomGenerator();
+        
+        /// <inheritdoc />
+        public virtual object Generate(Type type, string referenceName, object context)
         {
-            // Define a single random generator for the app domain to avoid collisions within a short space of time
-            _random = new RandomGenerator();
+            VerifyGenerateRequest(type, referenceName, context);
+
+            return GenerateValue(type, referenceName, context);
         }
 
         /// <inheritdoc />
-        public abstract object Generate(Type type, string referenceName, object context);
-
-        /// <inheritdoc />
         public abstract bool IsSupported(Type type, string referenceName, object context);
+
+        /// <summary>
+        /// Generates a new value with the provided context.
+        /// </summary>
+        /// <param name="type">The type of value to generate.</param>
+        /// <param name="referenceName">Identifies the possible parameter or property name the value is intended for.</param>
+        /// <param name="context">The possible context object the value is being created for.</param>
+        /// <returns>A new value of the type.</returns>
+        protected abstract object GenerateValue(Type type, string referenceName, object context);
 
         /// <summary>
         /// Verifies that the minimum required information has been provided in order to generate a value.

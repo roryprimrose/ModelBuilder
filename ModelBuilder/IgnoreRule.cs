@@ -1,4 +1,5 @@
 ﻿using System;
+using ModelBuilder.Properties;
 
 namespace ModelBuilder
 {
@@ -13,6 +14,8 @@ namespace ModelBuilder
         /// </summary>
         /// <param name="targetType">The target type that matches the rule.</param>
         /// <param name="propertyName">The property name that matches the rule.</param>
+        /// <exception cref="ArgumentNullException">The <paramref name="targetType"/> parameter is null.</exception>
+        /// <exception cref="ArgumentException">The <paramref name="propertyName"/> parameter is null, only contains whitespace or is empty.</exception>
         public IgnoreRule(Type targetType, string propertyName)
         {
             if (targetType == null)
@@ -22,7 +25,7 @@ namespace ModelBuilder
 
             if (string.IsNullOrWhiteSpace(propertyName))
             {
-                throw new ArgumentNullException(nameof(propertyName));
+                throw new ArgumentException(Resources.ArgumentException_NullOrWhiteSpace, nameof(propertyName));
             }
 
             TargetType = targetType;

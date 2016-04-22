@@ -6,65 +6,56 @@ namespace ModelBuilder
     /// The <see cref="DateTimeValueGenerator"/>
     /// class is used to generate random date time values.
     /// </summary>
-    public class DateTimeValueGenerator : ValueGeneratorBase
+    public class DateTimeValueGenerator : ValueGeneratorMatcher
     {
-        /// <inheritdoc />
-        public override object Generate(Type type, string referenceName, object context)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DateTimeValueGenerator"/> class.
+        /// </summary>
+        public DateTimeValueGenerator()
+            : base(typeof(DateTime), typeof(DateTime?), typeof(DateTimeOffset), typeof(DateTimeOffset?), typeof(TimeSpan), typeof(TimeSpan?), typeof(TimeZoneInfo))
         {
-            VerifyGenerateRequest(type, referenceName, context);
+        }
+
+        /// <inheritdoc />
+        protected override object GenerateValue(Type type, string referenceName, object context)
+        {
+            var generateType = type;
+
+            if (generateType.IsNullable())
+            {
+                // Allow for a 10% the chance that this might be null
+                var range = Generator.NextValue(0, 100);
+
+                if (range < 10)
+                {
+                    return null;
+                }
+
+                // Hijack the type to generator so we can continue with the normal code pointed at the correct type to generate
+                generateType = type.GenericTypeArguments[0];
+            }
 
             var shift = Generator.Next<int>();
 
-            if (type == typeof (DateTime))
+            if (generateType == typeof(DateTime))
             {
                 return DateTime.UtcNow.AddSeconds(shift);
             }
 
-            if (type == typeof (TimeSpan))
+            if (generateType == typeof(TimeSpan))
             {
                 return TimeSpan.FromSeconds(shift);
             }
 
-            if (type == typeof (TimeZoneInfo))
+            if (generateType == typeof(TimeZoneInfo))
             {
                 var zones = TimeZoneInfo.GetSystemTimeZones();
-                var zoneIndex = Generator.Next(0, zones.Count - 1);
+                var zoneIndex = Generator.NextValue(0, zones.Count - 1);
 
                 return zones[zoneIndex];
             }
 
             return DateTimeOffset.UtcNow.AddSeconds(shift);
-        }
-
-        /// <inheritdoc />
-        public override bool IsSupported(Type type, string referenceName, object context)
-        {
-            if (type == null)
-            {
-                throw new ArgumentNullException(nameof(type));
-            }
-            
-            if (type == typeof (DateTime))
-            {
-                return true;
-            }
-
-            if (type == typeof (DateTimeOffset))
-            {
-                return true;
-            }
-
-            if (type == typeof (TimeSpan))
-            {
-                return true;
-            }
-
-            if (type == typeof (TimeZoneInfo))
-            {
-                return true;
-            }
-
-            return false;
         }
     }
 }

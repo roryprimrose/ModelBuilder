@@ -13,6 +13,9 @@ namespace ModelBuilder
     public class DefaultConstructorResolver : IConstructorResolver
     {
         /// <inheritdoc />
+        /// <exception cref="ArgumentNullException">The <paramref name="type"/> parameter is null.</exception>
+        /// <exception cref="MissingMemberException">The <paramref name="type"/> parameter does not have a public constructor and no arguments are supplied.</exception>
+        /// <exception cref="MissingMemberException">The <paramref name="type"/> parameter does not have a constructor that matches the supplied arguments.</exception>
         public ConstructorInfo Resolve(Type type, params object[] args)
         {
             if (type == null)

@@ -14,6 +14,7 @@ namespace ModelBuilder
         /// <param name="creator">The creator that will create a value.</param>
         /// <param name="type">The type of value to create.</param>
         /// <returns>A new value of the type.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="creator"/> parameter is null.</exception>
         public static object Create(this ITypeCreator creator, Type type)
         {
             if (creator == null)
@@ -30,6 +31,7 @@ namespace ModelBuilder
         /// <param name="creator">The creator that will create a value.</param>
         /// <param name="type">The type to evaulate.</param>
         /// <returns><c>true</c> if the type is supported; otherwise <c>false</c>.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="creator"/> parameter is null.</exception>
         public static bool IsSupported(this ITypeCreator creator, Type type)
         {
             if (creator == null)

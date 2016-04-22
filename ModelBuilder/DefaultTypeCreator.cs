@@ -10,6 +10,8 @@ namespace ModelBuilder
     public class DefaultTypeCreator : TypeCreatorBase
     {
         /// <inheritdoc />
+        /// <exception cref="ArgumentNullException">The <paramref name="type"/> parameter is null.</exception>
+        /// <exception cref="MissingMemberException">The <paramref name="type"/> parameter does not have a constructor matching the specified arguments.</exception>
         public override object Create(Type type, string referenceName, object context, params object[] args)
         {
             if (type == null)

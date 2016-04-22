@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace ModelBuilder
@@ -15,6 +16,7 @@ namespace ModelBuilder
         /// </summary>
         /// <param name="type">The type to validate.</param>
         /// <returns><c>true</c> if the type is nullable; otherwise <c>false</c>.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="type"/> parameter is null.</exception>
         public static bool IsNullable(this Type type)
         {
             if (type == null)
@@ -42,6 +44,8 @@ namespace ModelBuilder
         /// <param name="instance">The instance to update.</param>
         /// <param name="action">The action to run against the instance.</param>
         /// <returns>The updated instance.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="instance"/> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="action"/> parameter is null.</exception>
         public static T Set<T>(this T instance, Action<T> action)
         {
             if (instance == null)
@@ -66,6 +70,12 @@ namespace ModelBuilder
         /// <param name="instances">The instances.</param>
         /// <param name="action">The configuration action.</param>
         /// <returns>A list of the instances.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="instances"/> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="action"/> parameter is null.</exception>
+        [SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists",
+            Justification =
+                "For usability in the calling code, the return type reflects the actual type to avoid unnecessary conversion or casting."
+            )]
         public static List<T> SetEach<T>(this IEnumerable<T> instances, Action<T> action) where T : class
         {
             if (instances == null)
@@ -96,6 +106,12 @@ namespace ModelBuilder
         /// <param name="instances">The instances.</param>
         /// <param name="action">The configuration action.</param>
         /// <returns>A list of the instances.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="instances"/> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="action"/> parameter is null.</exception>
+        [SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists",
+            Justification =
+                "For usability in the calling code, the return type reflects the actual type to avoid unnecessary conversion or casting."
+            )]
         public static List<T> SetEach<T>(this List<T> instances, Action<T> action) where T : class
         {
             if (instances == null)
@@ -120,6 +136,8 @@ namespace ModelBuilder
         /// <param name="instances">The instances to update.</param>
         /// <param name="action">The action to run against the instance.</param>
         /// <returns>The updated instances.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="instances"/> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="action"/> parameter is null.</exception>
         public static ICollection<T> SetEach<T>(this ICollection<T> instances, Action<T> action)
         {
             if (instances == null)

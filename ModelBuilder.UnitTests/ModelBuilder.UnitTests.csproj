@@ -77,6 +77,17 @@
     <Compile Include="Address.cs">
       <DependentUpon>Models.cs</DependentUpon>
     </Compile>
+    <Compile Include="SuburbValueGeneratorTests.cs" />
+    <Compile Include="PhoneValueGeneratorTests.cs" />
+    <Compile Include="TimeZoneValueGeneratorTests.cs" />
+    <Compile Include="PostCodeValueGeneratorTests.cs" />
+    <Compile Include="GenderValueGeneratorTests.cs" />
+    <Compile Include="CompanyValueGeneratorTests.cs" />
+    <Compile Include="DomainNameValueGeneratorTests.cs" />
+    <Compile Include="CountryValueGeneratorTests.cs" />
+    <Compile Include="StateValueGeneratorTests.cs" />
+    <Compile Include="CityValueGeneratorTests.cs" />
+    <Compile Include="AddressValueGeneratorTests.cs" />
     <Compile Include="BigEnum.cs">
       <DependentUpon>Models.cs</DependentUpon>
     </Compile>
@@ -89,6 +100,11 @@
     <Compile Include="DateOfBirthValueGeneratorTests.cs" />
     <Compile Include="EmailValueGeneratorTests.cs" />
     <Compile Include="EmptyEnum.cs">
+      <DependentUpon>Models.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LastNameValueGeneratorTests.cs" />
+    <Compile Include="FirstNameValueGeneratorTests.cs" />
+    <Compile Include="Gender.cs">
       <DependentUpon>Models.cs</DependentUpon>
     </Compile>
     <Compile Include="GuidValueGeneratorTests.cs" />
@@ -133,15 +149,18 @@
     <Compile Include="NullBuildStrategy.cs" />
     <Compile Include="NullExecuteStrategy.cs" />
     <Compile Include="NullTypeBuildExecuteStrategy.cs" />
+    <Compile Include="ObjectExtensionTests.cs" />
     <Compile Include="PopulateOrderItem.cs">
       <DependentUpon>Models.cs</DependentUpon>
     </Compile>
+    <Compile Include="PropertyExpressionTests.cs" />
     <Compile Include="PropertyScopes.cs" />
     <Compile Include="RandomGeneratorExtensionTests.cs" />
     <Compile Include="RandomGeneratorTests.cs" />
     <Compile Include="ReadOnlyModel.cs">
       <DependentUpon>Models.cs</DependentUpon>
     </Compile>
+    <Compile Include="RelativeValueGeneratorTests.cs" />
     <Compile Include="ScenarioTests.cs" />
     <Compile Include="Person.cs">
       <DependentUpon>Models.cs</DependentUpon>
@@ -169,14 +188,19 @@
       <DependentUpon>Models.cs</DependentUpon>
     </Compile>
     <Compile Include="StringValueGeneratorTests.cs" />
+    <Compile Include="TestDataTests.cs" />
     <Compile Include="TypeCreatorBaseTests.cs" />
     <Compile Include="TypeCreatorExtensionsTests.cs" />
     <Compile Include="ValueGeneratorBaseTests.cs" />
     <Compile Include="ValueGeneratorExtensionsTests.cs" />
+    <Compile Include="ValueGeneratorMatcherTests.cs" />
     <Compile Include="WithInterfaceAndAbstractParameters.cs">
       <DependentUpon>Models.cs</DependentUpon>
     </Compile>
     <Compile Include="WithMixedValueParameters.cs">
+      <DependentUpon>Models.cs</DependentUpon>
+    </Compile>
+    <Compile Include="WithStatic.cs">
       <DependentUpon>Models.cs</DependentUpon>
     </Compile>
     <Compile Include="WithValueParameters.cs">

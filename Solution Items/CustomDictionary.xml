@@ -16,6 +16,9 @@
     </Recognized>
     <DiscreteExceptions>
     </DiscreteExceptions>
+    <Compound>
+      <Term CompoundAlternate="PostCode">postcode</Term>
+    </Compound>
   </Words>
   <Acronyms>
     <CasingExceptions>

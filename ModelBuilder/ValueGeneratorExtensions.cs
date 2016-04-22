@@ -14,6 +14,7 @@ namespace ModelBuilder
         /// <param name="generator">The generator that will create a value.</param>
         /// <param name="type">The type of value to generate.</param>
         /// <returns>A new value of the type.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="generator"/> parameter is null.</exception>
         public static object Generate(this IValueGenerator generator, Type type)
         {
             if (generator == null)
@@ -30,6 +31,7 @@ namespace ModelBuilder
         /// <param name="generator">The generator that will create a value.</param>
         /// <param name="type">The type to evaulate.</param>
         /// <returns><c>true</c> if the type is supported; otherwise <c>false</c>.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="generator"/> parameter is null.</exception>
         public static bool IsSupported(this IValueGenerator generator, Type type)
         {
             if (generator == null)

@@ -61,6 +61,15 @@ namespace ModelBuilder.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The value cannot be null, white space or empty..
+        /// </summary>
+        internal static string ArgumentException_NullOrWhiteSpace {
+            get {
+                return ResourceManager.GetString("ArgumentException_NullOrWhiteSpace", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No public constructor is available for type {0}..
         /// </summary>
         internal static string ConstructorResolver_NoPublicConstructorFound {
@@ -84,6 +93,15 @@ namespace ModelBuilder.Properties {
         internal static string Error_TypeNotSupportedFormat {
             get {
                 return ResourceManager.GetString("Error_TypeNotSupportedFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Either targetType or propertyExpression must be supplied..
+        /// </summary>
+        internal static string ExecuteOrderRule_NoTargetTypeOrPropetyExpression {
+            get {
+                return ResourceManager.GetString("ExecuteOrderRule_NoTargetTypeOrPropetyExpression", resourceCulture);
             }
         }
         
@@ -129,6 +147,16 @@ namespace ModelBuilder.Properties {
         internal static string NoMatchingCreatorOrGeneratorFoundWithNameAndContext {
             get {
                 return ResourceManager.GetString("NoMatchingCreatorOrGeneratorFoundWithNameAndContext", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+        ///&lt;People xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;&gt;&lt;Person&gt;&lt;Address&gt;997 Emmet Circle&lt;/Address&gt;&lt;City&gt;Newark&lt;/City&gt;&lt;Company&gt;Tanoodle&lt;/Company&gt;&lt;Country&gt;Benin&lt;/Country&gt;&lt;Domain&gt;google.ca&lt;/Domain&gt;&lt;Email&gt;tspencer0@is.gd&lt;/Email&gt;&lt;FirstName&gt;Theresa&lt;/FirstName&gt;&lt;Gender&gt;Female&lt;/Gender&gt;&lt;LastName&gt;Spencer&lt;/LastName&gt;&lt;Phone&gt;1-(302)560-3674&lt;/Phone&gt;&lt;PostCode&gt;19714&lt;/PostCode&gt;&lt;State&gt;Delaware&lt;/State&gt;&lt;TimeZone&gt;America/Mexico_City&lt;/TimeZ [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string People {
+            get {
+                return ResourceManager.GetString("People", resourceCulture);
             }
         }
     }

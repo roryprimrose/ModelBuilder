@@ -17,6 +17,7 @@ namespace ModelBuilder.UnitTests
             actual.Address.Should().NotBeNull();
             actual.Address.AddressLine1.Should().NotBeNullOrEmpty();
             actual.Address.AddressLine2.Should().NotBeNullOrEmpty();
+            actual.Address.AddressLine3.Should().BeNullOrEmpty();
             actual.Address.City.Should().NotBeNullOrEmpty();
             actual.Address.Country.Should().NotBeNullOrEmpty();
             actual.Address.State.Should().NotBeNullOrEmpty();
@@ -111,7 +112,6 @@ namespace ModelBuilder.UnitTests
             actual.WorkEmail.Should().Match("*@*.*");
             actual.FirstName.Should().NotBeNullOrWhiteSpace();
             actual.LastName.Should().NotBeNullOrWhiteSpace();
-            actual.Id.Should().NotBeEmpty();
             actual.Priority.Should().NotBe(0);
         }
 

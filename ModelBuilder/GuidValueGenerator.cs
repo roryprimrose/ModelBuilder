@@ -6,20 +6,25 @@ namespace ModelBuilder
     /// The <see cref="GuidValueGenerator"/>
     /// class is used to generate <see cref="Guid"/> values.
     /// </summary>
-    public class GuidValueGenerator : ValueGeneratorBase
+    public class GuidValueGenerator : ValueGeneratorMatcher
     {
-        /// <inheritdoc />
-        public override object Generate(Type type, string referenceName, object context)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GuidValueGenerator"/> class.
+        /// </summary>
+        public GuidValueGenerator() : base(typeof(Guid), typeof(Guid?))
         {
-            VerifyGenerateRequest(type, referenceName, context);
+        }
 
-            if (type == typeof (Guid))
+        /// <inheritdoc />
+        protected override object GenerateValue(Type type, string referenceName, object context)
+        {
+            if (type == typeof(Guid))
             {
                 return Guid.NewGuid();
             }
 
             // Weight the random distribution so that it is roughly 5 times more likely to get a new guid than a null
-            var source = Generator.Next<double>(0, 5);
+            var source = Generator.NextValue<double>(0, 5);
 
             Guid? value;
 
@@ -33,27 +38,6 @@ namespace ModelBuilder
             }
 
             return value;
-        }
-
-        /// <inheritdoc />
-        public override bool IsSupported(Type type, string referenceName, object context)
-        {
-            if (type == null)
-            {
-                throw new ArgumentNullException(nameof(type));
-            }
-
-            if (type == typeof(Guid))
-            {
-                return true;
-            }
-
-            if (type == typeof(Guid?))
-            {
-                return true;
-            }
-
-            return false;
         }
     }
 }

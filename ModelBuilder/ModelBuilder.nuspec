@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>ModelBuilder</id>
+
+    <!-- When empty, this will be set at compile time to the [assembly:AssemblyProduct("")] attribute value -->
+    <title></title>
+
+    <!-- When empty, these will be set at compile time to either Thread.CurrentPrincipal.Identity.Name or Environment.UserName -->
+    <authors></authors>
+    <owners></owners>
+
+    <!-- Ignore, this will get updated at compile time -->
+    <version>1.0.0</version>
+
+    <!-- When empty, this will be set at compile time to the [assembly:AssemblyDescription("")] attribute value -->
+    <summary></summary>
+
+    <!-- When empty, this will be set at compile time to the [assembly:AssemblyTitle("")] attribute value -->
+    <description></description>
+
+    <!-- Set this to false if you don't need to support a license -->
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+
+    <releaseNotes></releaseNotes>
+    <tags></tags>
+
+    <dependencies>
+      <!-- Ignore, all referenced NuGet packages will be added here at compile time -->
+    </dependencies>
+
+    <frameworkAssemblies>
+      <!-- This will get populated at compile time with any System.* references in the project -->
+      <!-- You will need to manually add any non-System.* assemblies here -->
+    </frameworkAssemblies>
+  </metadata>
+  <files>
+    <!-- This will automatically add the binary output of this project at compile time.
+	It will inject a file element like the following:		
+    <file src="**\ModelBuilder.*" target="lib/[targetFramework]" exclude="ModelBuilder.*.CodeAnalysisLog.xml;ModelBuilder.*.lastcodeanalysissucceeded;*Test*.*" />
+	The targetFramework value will be determined by the target framework of the project
+	-->
+
+    <!-- Add any additional files here manually -->
+  </files>
+</package>
