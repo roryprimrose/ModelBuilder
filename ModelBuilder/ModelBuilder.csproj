@@ -13,6 +13,7 @@
     <FileAlignment>512</FileAlignment>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <RunNuGetPack Condition=" '$(Configuration)' == 'Release' ">true</RunNuGetPack>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -203,6 +204,9 @@
     </CodeAnalysisDictionary>
   </ItemGroup>
   <ItemGroup>
+    <None Include="ModelBuilder.nuspec">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -215,6 +219,11 @@
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\GitVersionTask.3.4.0\Build\dotnet\GitVersionTask.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\GitVersionTask.3.4.0\Build\dotnet\GitVersionTask.targets'))" />
+  </Target>
+  <Import Project="..\packages\MsBuild.NuGet.Pack.1.6.1\tools\MsBuild.NuGet.Pack.targets" Condition="Exists('..\packages\MsBuild.NuGet.Pack.1.6.1\tools\MsBuild.NuGet.Pack.targets')" />
+  <Target Name="EnsureMsBuildNuGetPackImported" BeforeTargets="BeforeBuild" Condition="'$(MsBuildNuGetPackImported)' == ''">
+    <Error Condition="!Exists('..\packages\MsBuild.NuGet.Pack.1.6.1\tools\MsBuild.NuGet.Pack.targets') And ('$(RunNuGetPack)' != '' And $(RunNuGetPack))" Text="You are trying to build with MsBuild.NuGet.Pack, but the MsBuild.NuGet.Pack.targets file is not available on this computer. This is probably because the MsBuild.NuGet.Pack package has not been committed to source control, or NuGet Package Restore is not enabled. Please enable NuGet Package Restore to download them. For more information, see http://go.microsoft.com/fwlink/?LinkID=317567." HelpKeyword="BCLBUILD2001" />
+    <Error Condition="Exists('..\packages\MsBuild.NuGet.Pack.1.6.1\tools\MsBuild.NuGet.Pack.targets') And ('$(RunNuGetPack)' != '' And $(RunNuGetPack))" Text="MsBuild.NuGet.Pack cannot be run because NuGet packages were restored prior to the build running, and the targets file was unavailable when the build started. Please build the project again to include these packages in the build. You may also need to make sure that your build server does not delete packages prior to each build. For more information, see http://go.microsoft.com/fwlink/?LinkID=317568." HelpKeyword="BCLBUILD2002" />
   </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
