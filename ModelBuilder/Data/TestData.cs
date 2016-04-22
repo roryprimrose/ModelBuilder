@@ -51,16 +51,16 @@ namespace ModelBuilder.Data
         /// <summary>
         /// Gets a test data set of females.
         /// </summary>
-        public static IReadOnlyCollection<Person> Females { get; }
+        public static ReadOnlyCollection<Person> Females { get; }
 
         /// <summary>
         /// Gets a test data set of males.
         /// </summary>
-        public static IReadOnlyCollection<Person> Males { get; }
+        public static ReadOnlyCollection<Person> Males { get; }
 
         /// <summary>
         /// Gets a test data set of people.
         /// </summary>
-        public static IReadOnlyCollection<Person> People { get; }
+        public static ReadOnlyCollection<Person> People { get; }
     }
 }

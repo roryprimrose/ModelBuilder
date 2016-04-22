@@ -88,6 +88,15 @@ namespace ModelBuilder.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Either targetType or propertyExpression must be supplied..
+        /// </summary>
+        internal static string ExecuteOrderRule_NoTargetTypeOrPropetyExpression {
+            get {
+                return ResourceManager.GetString("ExecuteOrderRule_NoTargetTypeOrPropetyExpression", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Either targetType or propertyName must be supplied..
         /// </summary>
         internal static string ExecuteOrderRule_NoTargetTypeOrPropetyName {
@@ -133,7 +142,8 @@ namespace ModelBuilder.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;?xml version=&apos;1.0&apos; encoding=&apos;UTF-8&apos;?&gt;&lt;DataSet&gt;&lt;Person&gt;&lt;Gender&gt;Female&lt;/Gender&gt;&lt;FirstName&gt;Patricia&lt;/FirstName&gt;&lt;LastName&gt;Sims&lt;/LastName&gt;&lt;Email&gt;psims0@google.co.uk&lt;/Email&gt;&lt;Company&gt;Brainlounge&lt;/Company&gt;&lt;DomainName&gt;ucsd.edu&lt;/DomainName&gt;&lt;Address&gt;7041 Swallow Avenue&lt;/Address&gt;&lt;State/&gt;&lt;PostCode/&gt;&lt;City&gt;Joyabaj&lt;/City&gt;&lt;Phone&gt;502-(259)264-0579&lt;/Phone&gt;&lt;Country&gt;Guatemala&lt;/Country&gt;&lt;TimeZone&gt;Africa/Harare&lt;/TimeZone&gt;&lt;/Person&gt;&lt;Person&gt;&lt;Gender&gt;Male&lt;/Gender&gt;&lt;FirstName&gt;Keith&lt;/FirstName&gt;&lt;LastName&gt;Berry&lt;/LastName&gt;&lt;Email&gt;kberry1@eba [rest of string was truncated]&quot;;.
+        ///   Looks up a localized string similar to &lt;?xml version=&apos;1.0&apos; encoding=&apos;UTF-8&apos;?&gt;&lt;People&gt;
+        ///&lt;Person&gt;&lt;Gender&gt;Female&lt;/Gender&gt;&lt;FirstName&gt;Theresa&lt;/FirstName&gt;&lt;LastName&gt;Spencer&lt;/LastName&gt;&lt;Email&gt;tspencer0@is.gd&lt;/Email&gt;&lt;Company&gt;Tanoodle&lt;/Company&gt;&lt;Domain&gt;google.ca&lt;/Domain&gt;&lt;Address&gt;997 Emmet Circle&lt;/Address&gt;&lt;State&gt;Delaware&lt;/State&gt;&lt;PostCode&gt;19714&lt;/PostCode&gt;&lt;City&gt;Newark&lt;/City&gt;&lt;Phone&gt;1-(302)560-3674&lt;/Phone&gt;&lt;Country&gt;United States&lt;/Country&gt;&lt;TimeZone&gt;America/Mexico_City&lt;/TimeZone&gt;&lt;/Person&gt;&lt;Person&gt;&lt;Gender&gt;Male&lt;/Gender&gt;&lt;FirstName&gt;Craig&lt;/FirstName&gt;&lt;LastName&gt;Martin&lt;/Las [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string People {
             get {

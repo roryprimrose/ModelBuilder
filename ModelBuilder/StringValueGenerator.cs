@@ -6,25 +6,19 @@ namespace ModelBuilder
     /// The <see cref="StringValueGenerator"/>
     /// class is used to generate random <see cref="string"/> values.
     /// </summary>
-    public class StringValueGenerator : ValueGeneratorBase
+    public class StringValueGenerator : ValueGeneratorMatcher
     {
-        /// <inheritdoc />
-        public override object Generate(Type type, string referenceName, object context)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="StringValueGenerator"/> class.
+        /// </summary>
+        public StringValueGenerator() : base(typeof(string))
         {
-            VerifyGenerateRequest(type, referenceName, context);
-
-            return Guid.NewGuid().ToString();
         }
 
         /// <inheritdoc />
-        public override bool IsSupported(Type type, string referenceName, object context)
+        protected override object GenerateValue(Type type, string referenceName, object context)
         {
-            if (type == null)
-            {
-                throw new ArgumentNullException(nameof(type));
-            }
-
-            return type == typeof (string);
+            return Guid.NewGuid().ToString();
         }
     }
 }

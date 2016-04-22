@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 using ModelBuilder.Properties;
 
 namespace ModelBuilder
@@ -20,6 +21,40 @@ namespace ModelBuilder
             }
 
             _func = evaluator;
+            Priority = priority;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ExecuteOrderRule"/> class.
+        /// </summary>
+        /// <param name="targetType">The target type that matches the rule.</param>
+        /// <param name="propertyExpression">The property name regular expression that matches the rule.</param>
+        /// <param name="priority">The priority of the rule.</param>
+        public ExecuteOrderRule(Type targetType, Regex propertyExpression, int priority)
+        {
+            if (targetType == null &&
+                propertyExpression == null)
+            {
+                throw new ArgumentNullException(Resources.ExecuteOrderRule_NoTargetTypeOrPropetyExpression);
+            }
+
+            _func = (type, name) =>
+            {
+                if (targetType != null &&
+                    targetType != type)
+                {
+                    return false;
+                }
+
+                if (propertyExpression != null &&
+                    propertyExpression.IsMatch(name) == false)
+                {
+                    return false;
+                }
+
+                return true;
+            };
+
             Priority = priority;
         }
 

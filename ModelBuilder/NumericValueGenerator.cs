@@ -9,10 +9,27 @@ namespace ModelBuilder
     public class NumericValueGenerator : ValueGeneratorBase
     {
         /// <inheritdoc />
-        public override object Generate(Type type, string referenceName, object context)
+        public override bool IsSupported(Type type, string referenceName, object context)
         {
-            VerifyGenerateRequest(type, referenceName, context);
+            if (type == null)
+            {
+                throw new ArgumentNullException(nameof(type));
+            }
 
+            if (type.IsNullable())
+            {
+                // Get the internal type
+                var internalType = type.GenericTypeArguments[0];
+
+                return Generator.IsSupported(internalType);
+            }
+
+            return Generator.IsSupported(type);
+        }
+
+        /// <inheritdoc />
+        protected override object GenerateValue(Type type, string referenceName, object context)
+        {
             var generateType = type;
 
             if (generateType.IsNullable())
@@ -43,25 +60,6 @@ namespace ModelBuilder
         protected virtual object GetMinimum(Type type, string referenceName, object context)
         {
             return Generator.GetMin(type);
-        }
-
-        /// <inheritdoc />
-        public override bool IsSupported(Type type, string referenceName, object context)
-        {
-            if (type == null)
-            {
-                throw new ArgumentNullException(nameof(type));
-            }
-
-            if (type.IsNullable())
-            {
-                // Get the internal type
-                var internalType = type.GenericTypeArguments[0];
-
-                return Generator.IsSupported(internalType);
-            }
-
-            return Generator.IsSupported(type);
         }
     }
 }

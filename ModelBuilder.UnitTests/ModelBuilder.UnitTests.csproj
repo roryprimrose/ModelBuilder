@@ -91,6 +91,11 @@
     <Compile Include="EmptyEnum.cs">
       <DependentUpon>Models.cs</DependentUpon>
     </Compile>
+    <Compile Include="LastNameValueGeneratorTests.cs" />
+    <Compile Include="FirstNameValueGeneratorTests.cs" />
+    <Compile Include="Gender.cs">
+      <DependentUpon>Models.cs</DependentUpon>
+    </Compile>
     <Compile Include="GuidValueGeneratorTests.cs" />
     <Compile Include="ExecuteOrderRuleTests.cs" />
     <Compile Include="IncrementingEnumerableTypeCreator.cs" />
@@ -133,15 +138,18 @@
     <Compile Include="NullBuildStrategy.cs" />
     <Compile Include="NullExecuteStrategy.cs" />
     <Compile Include="NullTypeBuildExecuteStrategy.cs" />
+    <Compile Include="ObjectExtensionTests.cs" />
     <Compile Include="PopulateOrderItem.cs">
       <DependentUpon>Models.cs</DependentUpon>
     </Compile>
+    <Compile Include="PropertyExpressionTests.cs" />
     <Compile Include="PropertyScopes.cs" />
     <Compile Include="RandomGeneratorExtensionTests.cs" />
     <Compile Include="RandomGeneratorTests.cs" />
     <Compile Include="ReadOnlyModel.cs">
       <DependentUpon>Models.cs</DependentUpon>
     </Compile>
+    <Compile Include="RelativeValueGeneratorTests.cs" />
     <Compile Include="ScenarioTests.cs" />
     <Compile Include="Person.cs">
       <DependentUpon>Models.cs</DependentUpon>
@@ -178,6 +186,9 @@
       <DependentUpon>Models.cs</DependentUpon>
     </Compile>
     <Compile Include="WithMixedValueParameters.cs">
+      <DependentUpon>Models.cs</DependentUpon>
+    </Compile>
+    <Compile Include="WithStatic.cs">
       <DependentUpon>Models.cs</DependentUpon>
     </Compile>
     <Compile Include="WithValueParameters.cs">

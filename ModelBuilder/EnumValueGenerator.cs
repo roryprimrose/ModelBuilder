@@ -11,18 +11,55 @@ namespace ModelBuilder
     public class EnumValueGenerator : ValueGeneratorBase
     {
         /// <inheritdoc />
-        public override object Generate(Type type, string referenceName, object context)
+        public override bool IsSupported(Type type, string referenceName, object context)
         {
-            VerifyGenerateRequest(type, referenceName, context);
+            if (type == null)
+            {
+                throw new ArgumentNullException(nameof(type));
+            }
 
-            var isFlags = type.GetCustomAttributes(typeof(FlagsAttribute), true).Any();
+            var generateType = type;
 
-            var values = Enum.GetValues(type);
+            if (generateType.IsNullable())
+            {
+                generateType = type.GenericTypeArguments[0];
+            }
+
+            if (generateType.IsEnum)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <inheritdoc />
+        protected override object GenerateValue(Type type, string referenceName, object context)
+        {
+            var generateType = type;
+
+            if (generateType.IsNullable())
+            {
+                // Allow for a 10% the chance that this might be null
+                var range = Generator.Next(0, 100);
+
+                if (range < 10)
+                {
+                    return null;
+                }
+
+                // Hijack the type to generator so we can continue with the normal code pointed at the correct type to generate
+                generateType = type.GenericTypeArguments[0];
+            }
+
+            var isFlags = generateType.GetCustomAttributes(typeof(FlagsAttribute), true).Any();
+
+            var values = Enum.GetValues(generateType);
 
             if (values.Length == 0)
             {
                 // Return the default value of the enum
-                return Activator.CreateInstance(type);
+                return Activator.CreateInstance(generateType);
             }
 
             if (values.Length == 1)
@@ -35,41 +72,25 @@ namespace ModelBuilder
                 // Build a bitwise value
                 var flagCount = Generator.Next(1, values.Length);
                 var parts = new List<string>();
-                
+
                 for (var index = 0; index < flagCount; index++)
                 {
                     var nextIndex = Generator.Next(0, values.Length - 1);
                     var nextValue = values.GetValue(nextIndex);
                     var valueText = nextValue.ToString();
-                    
+
                     parts.Add(valueText);
                 }
 
                 var text = parts.Aggregate((x, y) => x + ", " + y);
 
-                return Enum.Parse(type, text, true);
+                return Enum.Parse(generateType, text, true);
             }
 
             // This is not a flags enum so we will return a single value
             var valueIndex = Generator.Next(0, values.Length - 1);
 
             return values.GetValue(valueIndex);
-        }
-
-        /// <inheritdoc />
-        public override bool IsSupported(Type type, string referenceName, object context)
-        {
-            if (type == null)
-            {
-                throw new ArgumentNullException(nameof(type));
-            }
-
-            if (type.IsEnum)
-            {
-                return true;
-            }
-
-            return false;
         }
     }
 }

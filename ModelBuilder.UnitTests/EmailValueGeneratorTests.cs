@@ -12,22 +12,40 @@ namespace ModelBuilder.UnitTests
         {
             var target = new EmailValueGenerator();
 
-            var first = target.Generate(typeof (string), "email", null);
+            var first = target.Generate(typeof(string), "email", null);
 
             first.Should().BeOfType<string>();
             first.As<string>().Should().NotBeNullOrWhiteSpace();
             first.As<string>().Should().Contain("@");
 
-            var second = target.Generate(typeof (string), "email", null);
+            var second = target.Generate(typeof(string), "email", null);
 
             first.Should().NotBe(second);
         }
 
+        [Fact]
+        public void GenerateReturnsRandomEmailAddressUsingFirstAndLastNameOfContextTest()
+        {
+            var person = new Person
+            {
+                FirstName = Guid.NewGuid().ToString("N"),
+                LastName = Guid.NewGuid().ToString("N")
+            };
+
+            var target = new EmailValueGenerator();
+
+            var actual = (string) target.Generate(typeof(string), "email", person);
+
+            var expected = person.FirstName.Substring(0, 1) + person.LastName;
+
+            actual.Should().StartWith(expected.ToLowerInvariant());
+        }
+
         [Theory]
-        [InlineData(typeof (Stream), "email")]
-        [InlineData(typeof (string), null)]
-        [InlineData(typeof (string), "")]
-        [InlineData(typeof (string), "Stuff")]
+        [InlineData(typeof(Stream), "email")]
+        [InlineData(typeof(string), null)]
+        [InlineData(typeof(string), "")]
+        [InlineData(typeof(string), "Stuff")]
         public void GenerateThrowsExceptionWithInvalidParametersTest(Type type, string referenceName)
         {
             var target = new EmailValueGenerator();
@@ -57,11 +75,11 @@ namespace ModelBuilder.UnitTests
         }
 
         [Theory]
-        [InlineData(typeof (Stream), "email", false)]
-        [InlineData(typeof (string), null, false)]
-        [InlineData(typeof (string), "", false)]
-        [InlineData(typeof (string), "Stuff", false)]
-        [InlineData(typeof (string), "email", true)]
+        [InlineData(typeof(Stream), "email", false)]
+        [InlineData(typeof(string), null, false)]
+        [InlineData(typeof(string), "", false)]
+        [InlineData(typeof(string), "Stuff", false)]
+        [InlineData(typeof(string), "email", true)]
         public void IsSupportedTest(Type type, string referenceName, bool expected)
         {
             var target = new EmailValueGenerator();

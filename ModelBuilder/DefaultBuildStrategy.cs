@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace ModelBuilder
 {
@@ -17,7 +18,7 @@ namespace ModelBuilder
                 DefaultIgnoreRules, DefaultExecuteOrderRules)
         {
         }
-        
+
         /// <inheritdoc />
         public override IExecuteStrategy<T> GetExecuteStrategy<T>()
         {
@@ -38,12 +39,18 @@ namespace ModelBuilder
         {
             get
             {
-                yield return new ExecuteOrderRule((type, name) => type.IsClass, 100);
-                // Populate strings before other reference types
-                yield return new ExecuteOrderRule(typeof(string), null, 200);
-                yield return new ExecuteOrderRule((type, name) => type.IsValueType, 300);
-                yield return new ExecuteOrderRule((type, name) => type.IsEnum, 400);
+                yield return new ExecuteOrderRule((type, name) => type.IsEnum, 4000);
+                yield return new ExecuteOrderRule((type, name) => type.IsValueType, 3000);
 
+                // Populate personal properties in a specific order for scenarios where a value generator may use the values in order to set other values
+                yield return new ExecuteOrderRule(null, new Regex(PropertyExpression.Gender), 2600);
+                yield return new ExecuteOrderRule(typeof(string), new Regex(PropertyExpression.FirstName), 2580);
+                yield return new ExecuteOrderRule(typeof(string), new Regex(PropertyExpression.LastName), 2560);
+                yield return new ExecuteOrderRule(typeof(string), new Regex(PropertyExpression.Email), 2540);
+
+                // Populate strings before other reference types
+                yield return new ExecuteOrderRule(typeof(string), (string)null, 2000);
+                yield return new ExecuteOrderRule((type, name) => type.IsClass, 1000);
             }
         }
 
@@ -80,8 +87,10 @@ namespace ModelBuilder
                 yield return new DateTimeValueGenerator();
                 yield return new EmailValueGenerator();
                 yield return new EnumValueGenerator();
+                yield return new FirstNameValueGenerator();
                 yield return new GuidValueGenerator();
                 yield return new IPAddressValueGenerator();
+                yield return new LastNameValueGenerator();
                 yield return new NumericValueGenerator();
                 yield return new StringValueGenerator();
             }

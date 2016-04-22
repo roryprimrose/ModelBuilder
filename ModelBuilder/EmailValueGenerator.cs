@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Linq;
+using System.Text.RegularExpressions;
+using ModelBuilder.Data;
 
 namespace ModelBuilder
 {
@@ -6,44 +9,58 @@ namespace ModelBuilder
     /// The <see cref="EmailValueGenerator"/>
     /// class is used to generate strings that should represent an email.
     /// </summary>
-    public class EmailValueGenerator : StringValueGenerator
+    public class EmailValueGenerator : ValueGeneratorMatcher
     {
-        /// <inheritdoc />
-        public override object Generate(Type type, string referenceName, object context)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EmailValueGenerator"/> class.
+        /// </summary>
+        public EmailValueGenerator()
+            : base(new Regex("email", RegexOptions.IgnoreCase), typeof(string))
         {
-            VerifyGenerateRequest(type, referenceName, context);
-
-            var firstPartLength = Generator.Next(2, 5);
-            var firstPart = Guid.NewGuid().ToString("N").Substring(0, firstPartLength);
-            var secondPartLength = Generator.Next(3, 8);
-            var secondPart = Guid.NewGuid().ToString("N").Substring(0, secondPartLength);
-            var thirdPartLength = Generator.Next(3, 10);
-            var domainPart = Guid.NewGuid().ToString("N").Substring(0, thirdPartLength);
-
-            return firstPart + "." + secondPart + "@" + domainPart + ".com";
         }
 
         /// <inheritdoc />
-        public override bool IsSupported(Type type, string referenceName, object context)
+        protected override object GenerateValue(Type type, string referenceName, object context)
         {
-            var baseSupported = base.IsSupported(type, referenceName, context);
+            string firstName = null;
+            string lastName = null;
 
-            if (baseSupported == false)
+            if (context != null)
             {
-                return false;
+                var firstNameExpression = new Regex(PropertyExpression.FirstName);
+                var firstNameProperty = context.FindProperties(firstNameExpression).FirstOrDefault();
+
+                if (firstNameProperty != null)
+                {
+                    firstName = (string) firstNameProperty.GetValue(context);
+                }
+
+                var lastNameExpression = new Regex(PropertyExpression.LastName);
+                var lastNameProperty = context.FindProperties(lastNameExpression).LastOrDefault();
+
+                if (lastNameProperty != null)
+                {
+                    lastName = (string) lastNameProperty.GetValue(context);
+                }
             }
 
-            if (string.IsNullOrEmpty(referenceName))
+            var index = Generator.Next(0, TestData.People.Count - 1);
+            var person = TestData.People[index];
+
+            if (firstName == null)
             {
-                return false;
+                firstName = person.FirstName;
             }
 
-            if (referenceName.IndexOf("email", StringComparison.OrdinalIgnoreCase) > -1)
+            if (lastName == null)
             {
-                return true;
+                lastName = person.LastName;
             }
 
-            return false;
+            var prefix = firstName.Substring(0, 1);
+            var email = prefix + lastName + "@" + person.Domain;
+
+            return email.ToLowerInvariant();
         }
 
         /// <inheritdoc />

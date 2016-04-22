@@ -7,7 +7,7 @@ namespace ModelBuilder.UnitTests
     public class GuidValueGeneratorTests
     {
         [Fact]
-        public void GenerateCanReturnNullAndRandomGuidsTest()
+        public void GenerateCanReturnNullAndRandomValuesTest()
         {
             var nullFound = false;
             var valueFound = false;

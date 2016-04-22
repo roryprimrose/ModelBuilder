@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 using FluentAssertions;
 using Xunit;
 
@@ -17,6 +18,32 @@ namespace ModelBuilder.UnitTests
             var priority = Environment.TickCount;
 
             var target = new ExecuteOrderRule(type, name, priority);
+
+            var actual = target.IsMatch(matchType, matchName);
+
+            actual.Should().Be(expected);
+        }
+
+        [Theory]
+        [InlineData(typeof(string), "stuff", typeof(int), "no", false)]
+        [InlineData(typeof(string), "stuff", typeof(string), "no", false)]
+        [InlineData(typeof(string), "stuff", typeof(int), "stuff", false)]
+        [InlineData(typeof(string), "stuff", typeof(string), "stuff", true)]
+        [InlineData(typeof(string), "First.+", typeof(string), "FirstName", true)]
+        [InlineData(typeof(string), "(F|f)irst[_]?(N|n)ame", typeof(string), "FirstName", true)]
+        [InlineData(typeof(string), "(F|f)irst[_]?(N|n)ame", typeof(string), "First_Name",true)]
+        [InlineData(typeof(string), "(F|f)irst[_]?(N|n)ame", typeof(string), "First_name",true)]
+        [InlineData(typeof(string), "(F|f)irst[_]?(N|n)ame", typeof(string), "Firstname", true)]
+        [InlineData(typeof(string), "(F|f)irst[_]?(N|n)ame", typeof(string), "first_name", true)]
+        [InlineData(typeof(string), "(F|f)irst[_]?(N|n)ame", typeof(string), "first_Name", true)]
+        [InlineData(typeof(string), "(F|f)irst[_]?(N|n)ame", typeof(string), "firstname", true)]
+        public void IsMatchReturnsWhetherTypeAndRegularExpressionMatchTest(Type type, string expression, Type matchType,
+            string matchName, bool expected)
+        {
+            var priority = Environment.TickCount;
+            var regex = new Regex(expression);
+
+            var target = new ExecuteOrderRule(type, regex, priority);
 
             var actual = target.IsMatch(matchType, matchName);
 
@@ -46,11 +73,21 @@ namespace ModelBuilder.UnitTests
         }
 
         [Fact]
+        public void ThrowsExceptionWhenCreatedWithNullTypeAndRegularExpressionTest()
+        {
+            var priority = Environment.TickCount;
+
+            Action action = () => new ExecuteOrderRule(null, (Regex)null, priority);
+
+            action.ShouldThrow<ArgumentNullException>();
+        }
+
+        [Fact]
         public void ThrowsExceptionWhenCreatedWithNullTypeAndNameTest()
         {
             var priority = Environment.TickCount;
 
-            Action action = () => new ExecuteOrderRule(null, null, priority);
+            Action action = () => new ExecuteOrderRule(null, (string)null, priority);
 
             action.ShouldThrow<ArgumentNullException>();
         }

@@ -65,20 +65,33 @@
     <Compile Include="ExecuteStrategyExtensions.cs">
       <DependentUpon>Extensions.cs</DependentUpon>
     </Compile>
+    <Compile Include="FirstNameValueGenerator.cs">
+      <DependentUpon>IValueGenerator.cs</DependentUpon>
+    </Compile>
     <Compile Include="IPAddressValueGenerator.cs">
       <DependentUpon>IValueGenerator.cs</DependentUpon>
     </Compile>
     <Compile Include="IRandomGenerator.cs" />
+    <Compile Include="LastNameValueGenerator.cs">
+      <DependentUpon>IValueGenerator.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ObjectExtensions.cs">
+      <DependentUpon>Extensions.cs</DependentUpon>
+    </Compile>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="PropertyExpression.cs" />
     <Compile Include="RandomGenerator.cs">
       <DependentUpon>IRandomGenerator.cs</DependentUpon>
     </Compile>
     <Compile Include="RandomGeneratorExtensions.cs">
       <DependentUpon>Extensions.cs</DependentUpon>
+    </Compile>
+    <Compile Include="RelativeValueGenerator.cs">
+      <DependentUpon>IValueGenerator.cs</DependentUpon>
     </Compile>
     <Compile Include="TypeCreatorBase.cs">
       <DependentUpon>ITypeCreator.cs</DependentUpon>
@@ -139,6 +152,9 @@
     </Compile>
     <Compile Include="ValueGeneratorExtensions.cs">
       <DependentUpon>Extensions.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ValueGeneratorMatcher.cs">
+      <DependentUpon>IValueGenerator.cs</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
