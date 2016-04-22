@@ -7,8 +7,8 @@
     <title></title>
 
     <!-- When empty, these will be set at compile time to either Thread.CurrentPrincipal.Identity.Name or Environment.UserName -->
-    <authors></authors>
-    <owners></owners>
+    <authors>roryprimrose</authors>
+    <owners>roryprimrose</owners>
 
     <!-- Ignore, this will get updated at compile time -->
     <version>1.0.0</version>
@@ -23,7 +23,7 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
 
     <releaseNotes></releaseNotes>
-    <tags></tags>
+    <tags>Model Builder DTO Testing</tags>
 
     <dependencies>
       <!-- Ignore, all referenced NuGet packages will be added here at compile time -->
