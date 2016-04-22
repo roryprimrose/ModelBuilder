@@ -7,24 +7,25 @@
     <title></title>
 
     <!-- When empty, these will be set at compile time to either Thread.CurrentPrincipal.Identity.Name or Environment.UserName -->
-    <authors>roryprimrose</authors>
-    <owners>roryprimrose</owners>
+    <authors>rprimrose</authors>
+    <owners>rprimrose</owners>
 
     <!-- Ignore, this will get updated at compile time -->
     <version>1.0.0</version>
 
     <!-- When empty, this will be set at compile time to the [assembly:AssemblyDescription("")] attribute value -->
-    <summary></summary>
+    <summary>Provides build features for creating model data.</summary>
 
     <!-- When empty, this will be set at compile time to the [assembly:AssemblyTitle("")] attribute value -->
-    <description></description>
+    <description>Provides build features for creating model data.</description>
 
     <!-- Set this to false if you don't need to support a license -->
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
 
     <releaseNotes></releaseNotes>
     <tags>Model Builder DTO Testing</tags>
-
+    <projectUrl>https://github.com/roryprimrose/ModelBuilder</projectUrl>
+    
     <dependencies>
       <!-- Ignore, all referenced NuGet packages will be added here at compile time -->
     </dependencies>
