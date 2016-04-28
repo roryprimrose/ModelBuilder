@@ -10,6 +10,25 @@ namespace ModelBuilder.UnitTests
     public class ScenarioTests
     {
         [Fact]
+        public void CanCreateCustomBuildStrategyToCreateModelsTest()
+        {
+            var strategy =
+                Model.DefaultBuildStrategy.Clone()
+                    .Set(x => x.ValueGenerators.Clear())
+                    .AddValueGenerator<StringValueGenerator>()
+                    .AddValueGenerator<NumericValueGenerator>()
+                    .AddValueGenerator<BooleanValueGenerator>()
+                    .AddValueGenerator<GuidValueGenerator>()
+                    .AddValueGenerator<DateTimeValueGenerator>()
+                    .AddValueGenerator<EnumValueGenerator>()
+                    .Compile();
+
+            var actual = strategy.Create<Person>();
+
+            Guid.Parse(actual.Address.AddressLine1).Should().NotBeEmpty();
+        }
+
+        [Fact]
         public void CreateBuildsAndPopulatesNestedInstancesTest()
         {
             var actual = Model.Create<Person>();
@@ -58,7 +77,6 @@ namespace ModelBuilder.UnitTests
 
             actual.Should().NotBeEmpty();
         }
-
 
         [Fact]
         public void CreateReturnsListWithAutoPopulatedItemsInstanceTest()

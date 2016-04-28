@@ -12,6 +12,18 @@ namespace ModelBuilder.UnitTests
     public class EnumerableTypeCreatorTests
     {
         [Fact]
+        public void CreateChildItemThrowsExceptionWithNullExecuteStrategyTest()
+        {
+            var person = new Person();
+
+            var target = new EnumerableTypeCreatorWrapper();
+
+            Action action = () => target.CreateItem(typeof(Person), null, person);
+
+            action.ShouldThrow<ArgumentNullException>();
+        }
+
+        [Fact]
         public void CreateDoesNotPopulateListTest()
         {
             var target = new IncrementingEnumerableTypeCreator();
@@ -276,6 +288,14 @@ namespace ModelBuilder.UnitTests
             finally
             {
                 EnumerableTypeCreator.DefaultAutoPopulateCount = 10;
+            }
+        }
+
+        private class EnumerableTypeCreatorWrapper : EnumerableTypeCreator
+        {
+            public void CreateItem(Type type, IExecuteStrategy executeStrategy, object item)
+            {
+                CreateChildItem(type, executeStrategy, item);
             }
         }
     }

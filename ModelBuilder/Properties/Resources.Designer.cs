@@ -70,6 +70,15 @@ namespace ModelBuilder.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The ConstructorResolver is null. A constructor resolver must be provided in order to create a build strategy..
+        /// </summary>
+        internal static string BuildStrategyCompiler_NullConstructorResolver {
+            get {
+                return ResourceManager.GetString("BuildStrategyCompiler_NullConstructorResolver", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No public constructor is available for type {0}..
         /// </summary>
         internal static string ConstructorResolver_NoPublicConstructorFound {
