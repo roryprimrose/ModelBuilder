@@ -80,6 +80,9 @@
     <Compile Include="BuildStrategyCompilerExtensionsTests.cs" />
     <Compile Include="BuildStrategyCompilerTests.cs" />
     <Compile Include="BuildStrategyTests.cs" />
+    <Compile Include="Numbers.cs">
+      <DependentUpon>Models.cs</DependentUpon>
+    </Compile>
     <Compile Include="SuburbValueGeneratorTests.cs" />
     <Compile Include="PhoneValueGeneratorTests.cs" />
     <Compile Include="TimeZoneValueGeneratorTests.cs" />
