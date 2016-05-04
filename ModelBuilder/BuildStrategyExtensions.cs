@@ -10,6 +10,47 @@ namespace ModelBuilder
     public static class BuildStrategyExtensions
     {
         /// <summary>
+        /// Clones the specified builder strategy and returns a compiler.
+        /// </summary>
+        /// <param name="buildStrategy">The build strategy to create the instance with.</param>
+        /// <returns>The new build strategy compiler.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="buildStrategy"/> parameter is null.</exception>
+        public static IBuildStrategyCompiler Clone(this IBuildStrategy buildStrategy)
+        {
+            if (buildStrategy == null)
+            {
+                throw new ArgumentNullException(nameof(buildStrategy));
+            }
+
+            var compiler = new BuildStrategyCompiler
+            {
+                ConstructorResolver = buildStrategy.ConstructorResolver
+            };
+
+            foreach (var executeOrderRule in buildStrategy.ExecuteOrderRules)
+            {
+                compiler.ExecuteOrderRules.Add(executeOrderRule);
+            }
+
+            foreach (var ignoreRule in buildStrategy.IgnoreRules)
+            {
+                compiler.IgnoreRules.Add(ignoreRule);
+            }
+
+            foreach (var typeCreator in buildStrategy.TypeCreators)
+            {
+                compiler.TypeCreators.Add(typeCreator);
+            }
+
+            foreach (var valueGenerator in buildStrategy.ValueGenerators)
+            {
+                compiler.ValueGenerators.Add(valueGenerator);
+            }
+
+            return compiler;
+        }
+
+        /// <summary>
         /// Creates an instance of <typeparamref name="T"/> using the specified build strategy.
         /// </summary>
         /// <typeparam name="T">The type of instance to create.</typeparam>

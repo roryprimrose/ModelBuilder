@@ -11,6 +11,30 @@ namespace ModelBuilder.UnitTests
     public class BuildStrategyExtensionsTests
     {
         [Fact]
+        public void CloneReturnsCompilerWithBuildStrategyConfigurationTest()
+        {
+            var target = new DefaultBuildStrategy().Clone().AddIgnoreRule(typeof(string), "FirstName").Compile();
+
+            var actual = target.Clone();
+
+            actual.ConstructorResolver.Should().Be(target.ConstructorResolver);
+            actual.TypeCreators.ShouldBeEquivalentTo(target.TypeCreators);
+            actual.ValueGenerators.ShouldBeEquivalentTo(target.ValueGenerators);
+            actual.IgnoreRules.ShouldBeEquivalentTo(target.IgnoreRules);
+            actual.ExecuteOrderRules.ShouldBeEquivalentTo(target.ExecuteOrderRules);
+        }
+
+        [Fact]
+        public void CloneThrowsExceptionWithNullBuildStrategyTest()
+        {
+            IBuildStrategy target = null;
+
+            Action action = () => target.Clone();
+
+            action.ShouldThrow<ArgumentNullException>();
+        }
+
+        [Fact]
         public void CreateReturnsInstanceCreatedByDefaultExecuteStrategyTest()
         {
             var value = Guid.NewGuid();
@@ -161,9 +185,12 @@ namespace ModelBuilder.UnitTests
             var target = Substitute.For<IBuildStrategy>();
 
             target.ConstructorResolver.Returns(DefaultBuildStrategy.DefaultConstructorResolver);
-            target.ExecuteOrderRules.Returns(new ReadOnlyCollection<ExecuteOrderRule>(DefaultBuildStrategy.DefaultExecuteOrderRules.ToList()));
-            target.TypeCreators.Returns(new ReadOnlyCollection<ITypeCreator>(DefaultBuildStrategy.DefaultTypeCreators.ToList()));
-            target.ValueGenerators.Returns(new ReadOnlyCollection<IValueGenerator>(DefaultBuildStrategy.DefaultValueGenerators.ToList()));
+            target.ExecuteOrderRules.Returns(
+                new ReadOnlyCollection<ExecuteOrderRule>(DefaultBuildStrategy.DefaultExecuteOrderRules.ToList()));
+            target.TypeCreators.Returns(
+                new ReadOnlyCollection<ITypeCreator>(DefaultBuildStrategy.DefaultTypeCreators.ToList()));
+            target.ValueGenerators.Returns(
+                new ReadOnlyCollection<IValueGenerator>(DefaultBuildStrategy.DefaultValueGenerators.ToList()));
             target.IgnoreRules.Returns(new ReadOnlyCollection<IgnoreRule>(ignoreRules));
 
             var actual = target.With<DefaultExecuteStrategy<Person>>();

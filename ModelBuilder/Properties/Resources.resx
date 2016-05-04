@@ -151,4 +151,7 @@
   <data name="ArgumentException_NullOrWhiteSpace" xml:space="preserve">
     <value>The value cannot be null, white space or empty.</value>
   </data>
+  <data name="BuildStrategyCompiler_NullConstructorResolver" xml:space="preserve">
+    <value>The ConstructorResolver is null. A constructor resolver must be provided in order to create a build strategy.</value>
+  </data>
 </root>

@@ -66,8 +66,8 @@ namespace ModelBuilder.UnitTests
             var generators = new List<IValueGenerator> {generator}.AsReadOnly();
 
             build.ValueGenerators.Returns(generators);
-            generator.IsSupported(typeof (Guid), null, null).Returns(true);
-            generator.Generate(typeof (Guid), null, null).Returns(value);
+            generator.IsSupported(typeof(Guid), null, null).Returns(true);
+            generator.Generate(typeof(Guid), null, null).Returns(value);
 
             try
             {
@@ -94,8 +94,8 @@ namespace ModelBuilder.UnitTests
             var creators = new List<ITypeCreator> {creator}.AsReadOnly();
 
             build.TypeCreators.Returns(creators);
-            creator.IsSupported(typeof (ReadOnlyModel), null, null).Returns(true);
-            creator.Create(typeof (ReadOnlyModel), null, null, value).Returns(expected);
+            creator.IsSupported(typeof(ReadOnlyModel), null, null).Returns(true);
+            creator.Create(typeof(ReadOnlyModel), null, null, value).Returns(expected);
             creator.Populate(expected, Arg.Any<IExecuteStrategy>()).Returns(expected);
 
             try
@@ -155,6 +155,22 @@ namespace ModelBuilder.UnitTests
         }
 
         [Fact]
+        public void IgnoringThrowsExceptionWithNullExpressionTest()
+        {
+            Action action = () => Model.Ignoring<Person>(null);
+
+            action.ShouldThrow<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void IgnoringUsesBuildStrategyToCreateInstanceTest()
+        {
+            var actual = Model.Ignoring<Person>(x => x.FirstName).Create();
+
+            actual.FirstName.Should().BeNull();
+        }
+
+        [Fact]
         public void PopulateUsesBuildStrategyToPopulateInstanceTest()
         {
             var value = Guid.NewGuid();
@@ -165,8 +181,8 @@ namespace ModelBuilder.UnitTests
             var generators = new List<IValueGenerator> {generator}.AsReadOnly();
 
             build.ValueGenerators.Returns(generators);
-            generator.IsSupported(typeof (Guid), "Value", expected).Returns(true);
-            generator.Generate(typeof (Guid), "Value", expected).Returns(value);
+            generator.IsSupported(typeof(Guid), "Value", expected).Returns(true);
+            generator.Generate(typeof(Guid), "Value", expected).Returns(value);
 
             try
             {
@@ -195,7 +211,7 @@ namespace ModelBuilder.UnitTests
         {
             var actual = Model.Using<DummyBuildStrategy>();
 
-            actual.Should().BeOfType(typeof (DummyBuildStrategy));
+            actual.Should().BeOfType(typeof(DummyBuildStrategy));
         }
 
         [Fact]
@@ -222,7 +238,7 @@ namespace ModelBuilder.UnitTests
         {
             var actual = Model.With<DummyExecuteStrategy>();
 
-            actual.Should().BeOfType(typeof (DummyExecuteStrategy));
+            actual.Should().BeOfType(typeof(DummyExecuteStrategy));
         }
     }
 }

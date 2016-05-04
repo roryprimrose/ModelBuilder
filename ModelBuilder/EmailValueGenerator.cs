@@ -48,6 +48,12 @@ namespace ModelBuilder
             var index = Generator.NextValue(0, TestData.People.Count - 1);
             var person = TestData.People[index];
 
+            if (firstName == null &&
+                lastName == null)
+            {
+                return person.Email;
+            }
+
             if (firstName == null)
             {
                 firstName = person.FirstName;
