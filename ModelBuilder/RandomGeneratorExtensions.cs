@@ -14,14 +14,14 @@ namespace ModelBuilder
         /// <param name="generator">The generator.</param>
         /// <returns>A new random value.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="generator"/> parameter is null.</exception>
-        public static T Next<T>(this IRandomGenerator generator) where T : struct
+        public static T NextValue<T>(this IRandomGenerator generator) where T : struct
         {
             if (generator == null)
             {
                 throw new ArgumentNullException(nameof(generator));
             }
 
-            var type = typeof (T);
+            var type = typeof(T);
             var max = generator.GetMax(type);
             var min = generator.GetMin(type);
             var value = generator.NextValue(type, min, max);
@@ -36,15 +36,35 @@ namespace ModelBuilder
         /// <param name="max">The maximum value.</param>
         /// <returns>A new random value.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="generator"/> parameter is null.</exception>
-        public static T Next<T>(this IRandomGenerator generator, T max)
+        public static T NextValue<T>(this IRandomGenerator generator, T max)
         {
             if (generator == null)
             {
                 throw new ArgumentNullException(nameof(generator));
             }
 
-            var type = typeof (T);
+            var type = typeof(T);
             var min = generator.GetMin(type);
+
+            return (T) generator.NextValue(type, min, max);
+        }
+
+        /// <summary>
+        /// Generates a new random value constrained to the specified minimum and maximum boundaries.
+        /// </summary>
+        /// <param name="generator">The generator.</param>
+        /// <param name="min">The minimum value.</param>
+        /// <param name="max">The maximum value.</param>
+        /// <returns>A new random value.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="generator"/> parameter is null.</exception>
+        public static T NextValue<T>(this IRandomGenerator generator, T min, T max)
+        {
+            if (generator == null)
+            {
+                throw new ArgumentNullException(nameof(generator));
+            }
+
+            var type = typeof(T);
 
             return (T) generator.NextValue(type, min, max);
         }
@@ -57,7 +77,7 @@ namespace ModelBuilder
         /// <returns>A new random value.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="generator"/> parameter is null.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="type"/> parameter is null.</exception>
-        public static object Next(this IRandomGenerator generator, Type type)
+        public static object NextValue(this IRandomGenerator generator, Type type)
         {
             if (generator == null)
             {
@@ -84,7 +104,7 @@ namespace ModelBuilder
         /// <returns>A new random value.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="generator"/> parameter is null.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="type"/> parameter is null.</exception>
-        public static object Next(this IRandomGenerator generator, Type type, object max)
+        public static object NextValue(this IRandomGenerator generator, Type type, object max)
         {
             if (generator == null)
             {

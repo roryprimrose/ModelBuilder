@@ -13,7 +13,7 @@ namespace ModelBuilder
         private static readonly Random _random = new Random();
 
         /// <inheritdoc />
-        public double GetMax(Type type)
+        public object GetMax(Type type)
         {
             ValidateRequestedType(type);
 
@@ -70,11 +70,16 @@ namespace ModelBuilder
                 return float.MaxValue;
             }
 
+            if (checkType == typeof(decimal))
+            {
+                return decimal.MaxValue;
+            }
+
             return double.MaxValue;
         }
 
         /// <inheritdoc />
-        public double GetMin(Type type)
+        public object GetMin(Type type)
         {
             ValidateRequestedType(type);
 
@@ -129,6 +134,11 @@ namespace ModelBuilder
             if (checkType == typeof(float))
             {
                 return float.MinValue;
+            }
+
+            if (checkType == typeof(decimal))
+            {
+                return decimal.MinValue;
             }
 
             return double.MinValue;
@@ -201,15 +211,14 @@ namespace ModelBuilder
                 return true;
             }
 
+            if (checkType == typeof(decimal))
+            {
+                return true;
+            }
+
             return false;
         }
-
-        /// <inheritdoc />
-        public T NextValue<T>(T min, T max) where T : struct
-        {
-            return (T) NextValue(typeof(T), min, max);
-        }
-
+        
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="min"/> parameter is null.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="max"/> parameter is null.</exception>
@@ -267,9 +276,9 @@ namespace ModelBuilder
 
             for (var index = 0; index < buffer.Length; index++)
             {
-                var next = NextValue(byte.MinValue, byte.MaxValue);
+                var next = NextValue(typeof(byte), byte.MinValue, byte.MaxValue);
 
-                buffer[index] = next;
+                buffer[index] = (byte)next;
             }
         }
 

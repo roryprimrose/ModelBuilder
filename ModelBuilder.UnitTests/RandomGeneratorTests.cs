@@ -8,7 +8,7 @@ namespace ModelBuilder.UnitTests
     public class RandomGeneratorTests
     {
         [Theory]
-        [ClassData(typeof (NumericTypeDataSource))]
+        [ClassData(typeof(NumericTypeDataSource))]
         public void GetMaxEvaluatesRequestedTypeTest(Type type, bool typeSupported, double min, double max)
         {
             if (typeSupported == false)
@@ -36,7 +36,7 @@ namespace ModelBuilder.UnitTests
         }
 
         [Theory]
-        [ClassData(typeof (NumericTypeDataSource))]
+        [ClassData(typeof(NumericTypeDataSource))]
         public void GetMinEvaluatesRequestedTypeTest(Type type, bool typeSupported, double min, double max)
         {
             if (typeSupported == false)
@@ -64,7 +64,7 @@ namespace ModelBuilder.UnitTests
         }
 
         [Theory]
-        [ClassData(typeof (NumericTypeDataSource))]
+        [ClassData(typeof(NumericTypeDataSource))]
         public void IsSupportedEvaluatesRequestedTypeTest(Type type, bool typeSupported, double min, double max)
         {
             if (typeSupported == false)
@@ -90,7 +90,7 @@ namespace ModelBuilder.UnitTests
         }
 
         [Fact]
-        public void NextByteArrayPopulatesBufferTest()
+        public void NextValueByteArrayPopulatesBufferTest()
         {
             var buffer = new byte[1024];
 
@@ -102,7 +102,7 @@ namespace ModelBuilder.UnitTests
         }
 
         [Fact]
-        public void NextByteArrayThrowsExceptionWithNullBufferTest()
+        public void NextValueForByteArrayThrowsExceptionWithNullBufferTest()
         {
             var target = new RandomGenerator();
 
@@ -112,45 +112,8 @@ namespace ModelBuilder.UnitTests
         }
 
         [Theory]
-        [InlineData(double.MinValue, double.MaxValue)]
-        [InlineData(-1, 1)]
-        [InlineData(0, 0)]
-        public void NextReturnsRandomValueUsingFullRangeTest(double min, double max)
-        {
-            var target = new RandomGenerator();
-
-            var actual = target.NextValue(min, max);
-
-            var converted = Convert.ToDouble(actual);
-
-            converted.Should().BeGreaterOrEqualTo(min);
-            converted.Should().BeLessOrEqualTo(max);
-        }
-
-        [Fact]
-        public void NextThrowsExceptionWhenMinimumGreaterThanMaximumTest()
-        {
-            var target = new RandomGenerator();
-
-            Action action = () => target.NextValue(1, 0);
-
-            action.ShouldThrow<ArgumentOutOfRangeException>();
-        }
-
-        [Fact]
-        public void NextThrowsExceptionWithUnsupportedTypeTest()
-        {
-            var target = new RandomGenerator();
-
-            Action action = () => target.NextValue(0M, 1M);
-
-            action.ShouldThrow<NotSupportedException>();
-        }
-
-
-        [Theory]
-        [ClassData(typeof (NumericTypeDataSource))]
-        public void NextWithTypeCanEvalutateManyTimesTest(Type type, bool typeSupported, double min, double max)
+        [ClassData(typeof(NumericTypeDataSource))]
+        public void NextValueWithTypeCanEvalutateManyTimesTest(Type type, bool typeSupported, object min, object max)
         {
             if (typeSupported == false)
             {
@@ -178,7 +141,7 @@ namespace ModelBuilder.UnitTests
         }
 
         [Fact]
-        public void NextWithTypeCanReturnNonMaxValuesTest()
+        public void NextValueWithTypeCanReturnNonMaxValuesTest()
         {
             var valueFound = false;
 
@@ -186,7 +149,7 @@ namespace ModelBuilder.UnitTests
 
             for (var index = 0; index < 1000; index++)
             {
-                var value = target.NextValue(typeof (double), double.MinValue, double.MaxValue);
+                var value = target.NextValue(typeof(double), double.MinValue, double.MaxValue);
 
                 var actual = Convert.ToDouble(value);
 
@@ -202,7 +165,7 @@ namespace ModelBuilder.UnitTests
         }
 
         [Fact]
-        public void NextWithTypeCanReturnNonMinValuesTest()
+        public void NextValueWithTypeCanReturnNonMinValuesTest()
         {
             var valueFound = false;
 
@@ -210,7 +173,7 @@ namespace ModelBuilder.UnitTests
 
             for (var index = 0; index < 1000; index++)
             {
-                var value = target.NextValue(typeof (double), double.MinValue, double.MaxValue);
+                var value = target.NextValue(typeof(double), double.MinValue, double.MaxValue);
 
                 var actual = Convert.ToDouble(value);
 
@@ -226,11 +189,11 @@ namespace ModelBuilder.UnitTests
         }
 
         [Fact]
-        public void NextWithTypeDoesNotReturnInfinityForDoubleTest()
+        public void NextValueWithTypeDoesNotReturnInfinityForDoubleTest()
         {
             var target = new RandomGenerator();
 
-            var value = target.NextValue(typeof (double), double.MinValue, double.MaxValue);
+            var value = target.NextValue(typeof(double), double.MinValue, double.MaxValue);
 
             var actual = Convert.ToDouble(value);
 
@@ -238,9 +201,9 @@ namespace ModelBuilder.UnitTests
         }
 
         [Theory]
-        [InlineData(typeof (float))]
-        [InlineData(typeof (double))]
-        public void NextWithTypeReturnsDecimalValuesTest(Type type)
+        [InlineData(typeof(float))]
+        [InlineData(typeof(double))]
+        public void NextValueWithTypeReturnsDecimalValuesTest(Type type)
         {
             var decimalFound = false;
 
@@ -267,8 +230,8 @@ namespace ModelBuilder.UnitTests
         }
 
         [Theory]
-        [ClassData(typeof (NumericTypeDataSource))]
-        public void NextWithTypeReturnsNewValueTest(Type type, bool typeSupported, double min, double max)
+        [ClassData(typeof(NumericTypeDataSource))]
+        public void NextValueWithTypeReturnsNewValueTest(Type type, bool typeSupported, double min, double max)
         {
             if (typeSupported == false)
             {
@@ -294,8 +257,8 @@ namespace ModelBuilder.UnitTests
 
 
         [Theory]
-        [ClassData(typeof (NumericTypeDataSource))]
-        public void NextWithTypeReturnsRandomValueTest(Type type, bool typeSupported, double min, double max)
+        [ClassData(typeof(NumericTypeDataSource))]
+        public void NextValueWithTypeReturnsRandomValueTest(Type type, bool typeSupported, double min, double max)
         {
             if (typeSupported == false)
             {
@@ -313,57 +276,57 @@ namespace ModelBuilder.UnitTests
         }
 
         [Fact]
-        public void NextWithTypeThrowsExceptionWhenMinimumGreaterThanMaximumTest()
+        public void NextValueWithTypeThrowsExceptionWhenMinimumGreaterThanMaximumTest()
         {
             var target = new RandomGenerator();
 
-            Action action = () => target.NextValue(typeof (double), 1, 0);
+            Action action = () => target.NextValue(typeof(double), 1, 0);
 
             action.ShouldThrow<ArgumentOutOfRangeException>();
         }
 
         [Fact]
-        public void NextWithTypeThrowsExceptionWithNonNumericMaximumTest()
+        public void NextValueWithTypeThrowsExceptionWithNonNumericMaximumTest()
         {
             var target = new RandomGenerator();
 
-            Action action = () => target.NextValue(typeof (int), 0, Guid.NewGuid().ToString());
+            Action action = () => target.NextValue(typeof(int), 0, Guid.NewGuid().ToString());
 
             action.ShouldThrow<FormatException>();
         }
 
         [Fact]
-        public void NextWithTypeThrowsExceptionWithNonNumericMinimumTest()
+        public void NextValueWithTypeThrowsExceptionWithNonNumericMinimumTest()
         {
             var target = new RandomGenerator();
 
-            Action action = () => target.NextValue(typeof (int), Guid.NewGuid().ToString(), 0);
+            Action action = () => target.NextValue(typeof(int), Guid.NewGuid().ToString(), 0);
 
             action.ShouldThrow<FormatException>();
         }
 
         [Fact]
-        public void NextWithTypeThrowsExceptionWithNullMaximumTest()
+        public void NextValueWithTypeThrowsExceptionWithNullMaximumTest()
         {
             var target = new RandomGenerator();
 
-            Action action = () => target.NextValue(typeof (int), 0, null);
+            Action action = () => target.NextValue(typeof(int), 0, null);
 
             action.ShouldThrow<ArgumentNullException>();
         }
 
         [Fact]
-        public void NextWithTypeThrowsExceptionWithNullMinimumTest()
+        public void NextValueWithTypeThrowsExceptionWithNullMinimumTest()
         {
             var target = new RandomGenerator();
 
-            Action action = () => target.NextValue(typeof (int), null, 0);
+            Action action = () => target.NextValue(typeof(int), null, 0);
 
             action.ShouldThrow<ArgumentNullException>();
         }
 
         [Fact]
-        public void NextWithTypeThrowsExceptionWithNullTypeTest()
+        public void NextValueWithTypeThrowsExceptionWithNullTypeTest()
         {
             var target = new RandomGenerator();
 
@@ -373,8 +336,8 @@ namespace ModelBuilder.UnitTests
         }
 
         [Theory]
-        [ClassData(typeof (NumericTypeDataSource))]
-        public void NextWithTypeValidatesRequestedTypeTest(Type type, bool typeSupported, double min, double max)
+        [ClassData(typeof(NumericTypeDataSource))]
+        public void NextValueWithTypeValidatesRequestedTypeTest(Type type, bool typeSupported, double min, double max)
         {
             var target = new RandomGenerator();
 

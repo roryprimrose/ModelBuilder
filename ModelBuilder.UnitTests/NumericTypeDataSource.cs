@@ -27,7 +27,7 @@ namespace ModelBuilder.UnitTests
             new object[] {typeof (ulong?), true, ulong.MinValue, ulong.MaxValue},
             new object[] {typeof (double?), true, double.MinValue, double.MaxValue},
             new object[] {typeof (float?), true, float.MinValue, float.MaxValue},
-            new object[] {typeof (decimal), false, decimal.MinValue, decimal.MaxValue},
+            new object[] {typeof (decimal), true, decimal.MinValue, decimal.MaxValue},
             new object[] {typeof (string), false, 0, 0}
         };
 

@@ -35,7 +35,7 @@ namespace ModelBuilder
                 generateType = type.GenericTypeArguments[0];
             }
 
-            var shift = Generator.Next<int>();
+            var shift = Generator.NextValue<int>();
 
             if (generateType == typeof(DateTime))
             {
