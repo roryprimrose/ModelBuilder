@@ -88,6 +88,69 @@ namespace ModelBuilder.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to End creating type {0}.
+        /// </summary>
+        internal static string DefaultBuildLog_CreatedType {
+            get {
+                return ResourceManager.GetString("DefaultBuildLog_CreatedType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Creating parameter {0} ({1}) for type {2}.
+        /// </summary>
+        internal static string DefaultBuildLog_CreateParameter {
+            get {
+                return ResourceManager.GetString("DefaultBuildLog_CreateParameter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Creating property {0} ({1}) on type {2}.
+        /// </summary>
+        internal static string DefaultBuildLog_CreateProperty {
+            get {
+                return ResourceManager.GetString("DefaultBuildLog_CreateProperty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Start creating type {0}.
+        /// </summary>
+        internal static string DefaultBuildLog_CreatingType {
+            get {
+                return ResourceManager.GetString("DefaultBuildLog_CreatingType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Creating {0} value.
+        /// </summary>
+        internal static string DefaultBuildLog_CreatingValue {
+            get {
+                return ResourceManager.GetString("DefaultBuildLog_CreatingValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to End populating instance {0}.
+        /// </summary>
+        internal static string DefaultBuildLog_PopulatedInstance {
+            get {
+                return ResourceManager.GetString("DefaultBuildLog_PopulatedInstance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Start populating instance {0}.
+        /// </summary>
+        internal static string DefaultBuildLog_PopulatingInstance {
+            get {
+                return ResourceManager.GetString("DefaultBuildLog_PopulatingInstance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Expression &apos;{0}&apos; does not refer to a property..
         /// </summary>
         internal static string Error_ExpressionNotPropertyFormat {

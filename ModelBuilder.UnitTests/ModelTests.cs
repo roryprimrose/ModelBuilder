@@ -122,7 +122,7 @@ namespace ModelBuilder.UnitTests
         }
 
         [Fact]
-        public void ForReturnsDefaultExecuteStrategyWithBuildStrategyConfigurationTest()
+        public void ForReturnsDefaultExecuteStrategyWithDefaultBuildStrategyConfigurationTest()
         {
             var build = Substitute.For<IBuildStrategy>();
             var generator = Substitute.For<IValueGenerator>();
@@ -143,10 +143,7 @@ namespace ModelBuilder.UnitTests
 
                 var actual = Model.For<ReadOnlyModel>();
 
-                actual.ConstructorResolver.Should().Be(build.ConstructorResolver);
-                actual.IgnoreRules.ShouldAllBeEquivalentTo(build.IgnoreRules);
-                actual.TypeCreators.ShouldAllBeEquivalentTo(build.TypeCreators);
-                actual.ValueGenerators.ShouldAllBeEquivalentTo(build.ValueGenerators);
+                actual.BuildStrategy.Should().Be(build);
             }
             finally
             {
@@ -165,7 +162,7 @@ namespace ModelBuilder.UnitTests
         [Fact]
         public void IgnoringUsesBuildStrategyToCreateInstanceTest()
         {
-            var actual = Model.Ignoring<Person>(x => x.FirstName).Create();
+            var actual = Model.Ignoring<Person>(x => x.FirstName).Create<Person>();
 
             actual.FirstName.Should().BeNull();
         }

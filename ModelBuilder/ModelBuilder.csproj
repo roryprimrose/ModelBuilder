@@ -78,6 +78,9 @@
     <Compile Include="DateOfBirthValueGenerator.cs">
       <DependentUpon>IValueGenerator.cs</DependentUpon>
     </Compile>
+    <Compile Include="DefaultBuildLog.cs">
+      <DependentUpon>IBuildLog.cs</DependentUpon>
+    </Compile>
     <Compile Include="DomainNameValueGenerator.cs">
       <DependentUpon>IValueGenerator.cs</DependentUpon>
     </Compile>
@@ -91,6 +94,7 @@
     <Compile Include="GenderValueGenerator.cs">
       <DependentUpon>IValueGenerator.cs</DependentUpon>
     </Compile>
+    <Compile Include="IBuildLog.cs" />
     <Compile Include="IBuildStrategyCompiler.cs" />
     <Compile Include="IPAddressValueGenerator.cs">
       <DependentUpon>IValueGenerator.cs</DependentUpon>

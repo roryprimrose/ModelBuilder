@@ -16,6 +16,11 @@ namespace ModelBuilder
         IExecuteStrategy<T> GetExecuteStrategy<T>();
 
         /// <summary>
+        /// Gets the build log for items created by this strategy.
+        /// </summary>
+        IBuildLog BuildLog { get; }
+
+        /// <summary>
         /// Gets the constructor resolver used to create an instance of a type.
         /// </summary>
         IConstructorResolver ConstructorResolver { get; }

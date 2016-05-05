@@ -44,20 +44,20 @@ namespace ModelBuilder
         }
 
         /// <summary>
-        /// Returns an <see cref="IExecuteStrategy{T}"/> for the specified build strategy with a new <see cref="IgnoreRule"/> that matches the specified expression.
+        /// Returns a <see cref="IBuildStrategy"/> with a new <see cref="IgnoreRule"/> that matches the specified expression.
         /// </summary>
         /// <typeparam name="T">The type of instance that matches the rule.</typeparam>
         /// <param name="expression">The expression that identifies a property on <typeparamref name="T"/></param>
-        /// <returns>A new execute strategy.</returns>
+        /// <returns>A new build strategy.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="expression"/> parameter is null.</exception>
-        public static IExecuteStrategy<T> Ignoring<T>(Expression<Func<T, object>> expression)
+        public static IBuildStrategy Ignoring<T>(Expression<Func<T, object>> expression)
         {
             if (expression == null)
             {
                 throw new ArgumentNullException(nameof(expression));
             }
 
-            return For<T>().Ignoring(expression);
+            return BuildStrategy.Ignoring(expression);
         }
 
         /// <summary>

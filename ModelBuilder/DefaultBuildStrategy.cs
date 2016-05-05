@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 
 namespace ModelBuilder
 {
@@ -15,7 +14,7 @@ namespace ModelBuilder
         public DefaultBuildStrategy()
             : base(
                 DefaultConstructorResolver, DefaultTypeCreators, DefaultValueGenerators,
-                DefaultIgnoreRules, DefaultExecuteOrderRules)
+                DefaultIgnoreRules, DefaultExecuteOrderRules, DefaultBuildLog)
         {
         }
 
@@ -24,6 +23,12 @@ namespace ModelBuilder
         {
             return this.With<DefaultExecuteStrategy<T>>();
         }
+
+        /// <summary>
+        /// Gets the default build log.
+        /// </summary>
+        /// <value>The build log.</value>
+        public static IBuildLog DefaultBuildLog => new DefaultBuildLog();
 
         /// <summary>
         /// Gets the default constructor resolver.
@@ -49,7 +54,7 @@ namespace ModelBuilder
                 yield return new ExecuteOrderRule(typeof(string), PropertyExpression.Email, 2540);
 
                 // Populate strings before other reference types
-                yield return new ExecuteOrderRule(typeof(string), (string)null, 2000);
+                yield return new ExecuteOrderRule(typeof(string), (string) null, 2000);
                 yield return new ExecuteOrderRule((type, name) => type.IsClass, 1000);
             }
         }

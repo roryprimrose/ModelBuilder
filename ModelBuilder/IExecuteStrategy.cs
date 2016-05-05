@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace ModelBuilder
 {
@@ -25,28 +24,8 @@ namespace ModelBuilder
         object Populate(object instance);
 
         /// <summary>
-        /// Gets the constructor resolver used to create an instance of a type.
+        /// Gets or sets the build strategy.
         /// </summary>
-        IConstructorResolver ConstructorResolver { get; set; }
-
-        /// <summary>
-        /// Gets the execute order rules used to determine the order that properties are populated.
-        /// </summary>
-        ICollection<ExecuteOrderRule> ExecuteOrderRules { get; }
-
-        /// <summary>
-        /// Gets the ignore rules used to skip over property population.
-        /// </summary>
-        ICollection<IgnoreRule> IgnoreRules { get; }
-
-        /// <summary>
-        /// Gets the type creators used to create instances.
-        /// </summary>
-        ICollection<ITypeCreator> TypeCreators { get; }
-
-        /// <summary>
-        /// Gets the value generators used to generate flat values.
-        /// </summary>
-        ICollection<IValueGenerator> ValueGenerators { get; }
+        IBuildStrategy BuildStrategy { get; set; }
     }
 }
