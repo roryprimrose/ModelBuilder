@@ -17,7 +17,13 @@ var model = Model.CreateWith<Person>("Fred", "Smith");
 You may want to create a model that ignores setting a property for a specific construction.
 
 ```
-var model = Model.Ignoring<Person>(x => x.FirstName).Create();
+var model = Model.Ignoring<Person>(x => x.FirstName).Create<Person>();
+```
+
+Ignoring a property can also be configured for types that may exist deep in an inheritance hierarchy for the type being created.
+
+```
+var model = Model.Ignoring<Address>(x => x.AddressLine1).Create<Person>();
 ```
 
 Do you already have an instance that perhaps you didn't create? That is ok too.
@@ -28,7 +34,7 @@ var person = new Person
     FirstName = "Jane"
 };
 
-var model = Model.Ignoring<Person>(x => x.FirstName).Populate();
+var model = Model.Ignoring<Person>(x => x.FirstName).Populate<Person>();
 
 var customer = new Person();
 

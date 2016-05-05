@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Globalization;
+using System.Linq;
 using System.Text;
 using ModelBuilder.Properties;
 
@@ -16,12 +17,24 @@ namespace ModelBuilder
         private int _indent;
 
         /// <inheritdoc />
+        public void BuildFailure(Exception ex)
+        {
+            if (ex == null)
+            {
+                throw new ArgumentNullException(nameof(ex));
+            }
+
+            WriteMessage(ex.ToString());
+        }
+
+        /// <inheritdoc />
         public void Clear()
         {
             _builder.Clear();
         }
 
         /// <inheritdoc />
+        /// <exception cref="ArgumentNullException">The <paramref name="type"/> parameter is null.</exception>
         public void CreatedType(Type type, object context)
         {
             if (type == null)
@@ -35,6 +48,9 @@ namespace ModelBuilder
         }
 
         /// <inheritdoc />
+        /// <exception cref="ArgumentNullException">The <paramref name="instanceType"/> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="parameterType"/> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="parameterName"/> parameter is null.</exception>
         public void CreateParameter(Type instanceType, Type parameterType, string parameterName, object context)
         {
             if (instanceType == null)
@@ -57,6 +73,9 @@ namespace ModelBuilder
         }
 
         /// <inheritdoc />
+        /// <exception cref="ArgumentNullException">The <paramref name="propertyType"/> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="propertyName"/> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="context"/> parameter is null.</exception>
         public void CreateProperty(Type propertyType, string propertyName, object context)
         {
             if (propertyType == null)
@@ -79,6 +98,7 @@ namespace ModelBuilder
         }
 
         /// <inheritdoc />
+        /// <exception cref="ArgumentNullException">The <paramref name="type"/> parameter is null.</exception>
         public void CreatingType(Type type, object context)
         {
             if (type == null)
@@ -92,6 +112,7 @@ namespace ModelBuilder
         }
 
         /// <inheritdoc />
+        /// <exception cref="ArgumentNullException">The <paramref name="type"/> parameter is null.</exception>
         public void CreatingValue(Type type, object context)
         {
             if (type == null)
@@ -103,6 +124,7 @@ namespace ModelBuilder
         }
 
         /// <inheritdoc />
+        /// <exception cref="ArgumentNullException">The <paramref name="instance"/> parameter is null.</exception>
         public void PopulatedInstance(object instance)
         {
             if (instance == null)
@@ -116,6 +138,7 @@ namespace ModelBuilder
         }
 
         /// <inheritdoc />
+        /// <exception cref="ArgumentNullException">The <paramref name="instance"/> parameter is null.</exception>
         public void PopulatingInstance(object instance)
         {
             if (instance == null)
@@ -132,17 +155,26 @@ namespace ModelBuilder
         private void WriteMessage(string message, params object[] args)
         {
             Debug.Assert(message != null, "No message has been provided");
-            Debug.Assert(args != null, "No arguments have been provided");
+
+            var messageToWrite = message;
+
+            if (args.Length > 0)
+            {
+                messageToWrite = string.Format(CultureInfo.CurrentCulture, message, args);
+            }
 
             if (_indent > 0)
             {
+                var lines = messageToWrite.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
                 var indent = new string(' ', _indent*4);
 
-                _builder.Append(indent);
+                // Add the indent to each line and rebuild the message
+                var indentedLines = lines.Select(x => indent + x);
+
+                messageToWrite = string.Join(Environment.NewLine, indentedLines);
             }
 
-            _builder.AppendFormat(CultureInfo.CurrentCulture, message, args);
-
+            _builder.Append(messageToWrite);
             _builder.AppendLine();
         }
 

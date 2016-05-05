@@ -48,6 +48,7 @@
     <Compile Include="AgeValueGenerator.cs">
       <DependentUpon>IValueGenerator.cs</DependentUpon>
     </Compile>
+    <Compile Include="BuildException.cs" />
     <Compile Include="BuildStrategyCompiler.cs">
       <DependentUpon>IBuildStrategyCompiler.cs</DependentUpon>
     </Compile>
