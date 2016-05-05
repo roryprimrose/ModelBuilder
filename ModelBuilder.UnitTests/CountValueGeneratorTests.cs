@@ -4,25 +4,26 @@ using Xunit;
 
 namespace ModelBuilder.UnitTests
 {
-    public class AgeValueGeneratorTests
+    public class CountValueGeneratorTests
     {
         [Theory]
         [ClassData(typeof(NumericTypeDataSource))]
-        public void GenerateCanEvalutateManyTimesTest(Type type, bool typeSupported, double min, double max)
+        public void GenerateCanEvalutateManyTimesTest(Type type, bool isSupported, double min, double max)
         {
-            if (typeSupported == false)
+            if (isSupported == false)
             {
                 // Ignore this test
                 return;
             }
 
-            var target = new AgeValueGenerator();
+            var target = new CountValueGenerator();
 
             for (var index = 0; index < 10000; index++)
             {
-                var value = target.Generate(type, "Age", null);
+                var value = target.Generate(type, "Count", null);
 
-                if (type.IsNullable() && value == null)
+                if (type.IsNullable() &&
+                    value == null)
                 {
                     // Nullable values could be returned so nothing more to assert
                     return;
@@ -50,11 +51,11 @@ namespace ModelBuilder.UnitTests
             var nullFound = false;
             var valueFound = false;
 
-            var target = new AgeValueGenerator();
+            var target = new CountValueGenerator();
 
             for (var index = 0; index < 1000; index++)
             {
-                var value = (int?) target.Generate(typeof(int?), "Age", null);
+                var value = (int?)target.Generate(typeof(int?), "Count", null);
 
                 if (value == null)
                 {
@@ -77,17 +78,17 @@ namespace ModelBuilder.UnitTests
 
         [Theory]
         [ClassData(typeof(NumericTypeDataSource))]
-        public void GenerateReturnsNewValueTest(Type type, bool typeSupported, double min, double max)
+        public void GenerateReturnsNewValueTest(Type type, bool isSupported, double min, double max)
         {
-            if (typeSupported == false)
+            if (isSupported == false)
             {
                 // Ignore this test
                 return;
             }
 
-            var target = new AgeValueGenerator();
+            var target = new CountValueGenerator();
 
-            var value = target.Generate(type, "Age", null);
+            var value = target.Generate(type, "Count", null);
 
             if (type.IsNullable()
                 &&
@@ -96,7 +97,7 @@ namespace ModelBuilder.UnitTests
                 // We can't run the assertions because null is a valid outcome
                 return;
             }
-            
+
             var evaluateType = type;
 
             if (type.IsNullable())
@@ -108,15 +109,15 @@ namespace ModelBuilder.UnitTests
 
             var convertedValue = Convert.ToDouble(value);
 
-            convertedValue.Should().BeLessOrEqualTo(target.MaxAge);
+            convertedValue.Should().BeLessOrEqualTo(target.MaxCount);
             convertedValue.Should().BeGreaterOrEqualTo(1);
         }
 
         [Theory]
         [ClassData(typeof(NumericTypeDataSource))]
-        public void GenerateThrowsExceptionWhenReferenceNotAgeTest(Type type, bool typeSupported, double min, double max)
+        public void GenerateThrowsExceptionWhenReferenceNotCountTest(Type type, bool isSupported, double min, double max)
         {
-            var target = new AgeValueGenerator();
+            var target = new CountValueGenerator();
 
             Action action = () => target.Generate(type, "Stuff", null);
 
@@ -125,13 +126,13 @@ namespace ModelBuilder.UnitTests
 
         [Theory]
         [ClassData(typeof(NumericTypeDataSource))]
-        public void GenerateValidatesRequestedTypeTest(Type type, bool typeSupported, double min, double max)
+        public void GenerateValidatesRequestedTypeTest(Type type, bool isSupported, double min, double max)
         {
-            var target = new AgeValueGenerator();
+            var target = new CountValueGenerator();
 
-            Action action = () => target.Generate(type, "Age", null);
+            Action action = () => target.Generate(type, "Count", null);
 
-            if (typeSupported)
+            if (isSupported)
             {
                 action.ShouldNotThrow();
             }
@@ -142,28 +143,47 @@ namespace ModelBuilder.UnitTests
         }
 
         [Theory]
-        [ClassData(typeof(NumericTypeDataSource))]
-        public void IsSupportedEvaluatesRequestedTypeTest(Type type, bool typeSupported, double min, double max)
+        [InlineData(null, false)]
+        [InlineData("", false)]
+        [InlineData("other", false)]
+        [InlineData("someCount", false)]
+        [InlineData("Counter", false)]
+        [InlineData("length", true)]
+        [InlineData("Length", true)]
+        [InlineData("count", true)]
+        [InlineData("Count", true)]
+        public void IsSupportedEvaluatesRequestedReferenceNameTest(string referenceName, bool isSupported)
         {
-            var target = new AgeValueGenerator();
+            var target = new CountValueGenerator();
 
-            var actual = target.IsSupported(type, "Age", null);
+            var actual = target.IsSupported(typeof(int), referenceName, null);
 
-            actual.Should().Be(typeSupported);
+            actual.Should().Be(isSupported);
         }
 
         [Theory]
         [ClassData(typeof(NumericTypeDataSource))]
-        public void IsSupportedReturnsFalseWhenReferenceNameIsNullTest(Type type, bool typeSupported, double min,
+        public void IsSupportedEvaluatesRequestedTypeTest(Type type, bool isSupported, double min, double max)
+        {
+            var target = new CountValueGenerator();
+
+            var actual = target.IsSupported(type, "Count", null);
+
+            actual.Should().Be(isSupported);
+        }
+
+        [Theory]
+        [ClassData(typeof(NumericTypeDataSource))]
+        public void IsSupportedReturnsFalseWhenReferenceNameIsNullTest(Type type, bool isSupported, double min,
             double max)
         {
-            if (typeSupported == false)
+            if (isSupported == false)
             {
                 // Ignore this test
                 return;
             }
 
-            var target = new AgeValueGenerator();
+            var target = new CountValueGenerator();
 
             var actual = target.IsSupported(type, null, null);
 
@@ -172,16 +192,16 @@ namespace ModelBuilder.UnitTests
 
         [Theory]
         [ClassData(typeof(NumericTypeDataSource))]
-        public void IsSupportedReturnsFalseWhenReferenceNameNotAgeTest(Type type, bool typeSupported, double min,
+        public void IsSupportedReturnsFalseWhenReferenceNameNotCountTest(Type type, bool isSupported, double min,
             double max)
         {
-            if (typeSupported == false)
+            if (isSupported == false)
             {
                 // Ignore this test
                 return;
             }
 
-            var target = new AgeValueGenerator();
+            var target = new CountValueGenerator();
 
             var actual = target.IsSupported(type, "Stuff", null);
 
@@ -190,18 +210,18 @@ namespace ModelBuilder.UnitTests
 
         [Theory]
         [ClassData(typeof(NumericTypeDataSource))]
-        public void IsSupportedReturnsTrueWhenReferenceNameIncludesAgeTest(Type type, bool typeSupported, double min,
+        public void IsSupportedReturnsTrueWhenReferenceNameIsCountTest(Type type, bool isSupported, double min,
             double max)
         {
-            if (typeSupported == false)
+            if (isSupported == false)
             {
                 // Ignore this test
                 return;
             }
 
-            var target = new AgeValueGenerator();
+            var target = new CountValueGenerator();
 
-            var actual = target.IsSupported(type, "SomeAgeValue", null);
+            var actual = target.IsSupported(type, "Count", null);
 
             actual.Should().BeTrue();
         }
@@ -209,7 +229,7 @@ namespace ModelBuilder.UnitTests
         [Fact]
         public void IsSupportedThrowsExceptionWithNullTypeTest()
         {
-            var target = new AgeValueGenerator();
+            var target = new CountValueGenerator();
 
             Action action = () => target.IsSupported(null, null, null);
 
@@ -217,36 +237,36 @@ namespace ModelBuilder.UnitTests
         }
 
         [Fact]
-        public void SettingDefaultMaxAgeOnlyAffectsNewInstancesTest()
+        public void SettingDefaultMaxCountOnlyAffectsNewInstancesTest()
         {
-            var expected = AgeValueGenerator.DefaultMaxAge;
+            var expected = CountValueGenerator.DefaultMaxCount;
 
             try
             {
-                var first = new AgeValueGenerator();
+                var first = new CountValueGenerator();
 
-                AgeValueGenerator.DefaultMaxAge = 11;
+                CountValueGenerator.DefaultMaxCount = 11;
 
-                var second = new AgeValueGenerator();
+                var second = new CountValueGenerator();
 
-                first.MaxAge.Should().Be(expected);
-                second.MaxAge.Should().Be(11);
+                first.MaxCount.Should().Be(expected);
+                second.MaxCount.Should().Be(11);
             }
             finally
             {
-                AgeValueGenerator.DefaultMaxAge = expected;
+                CountValueGenerator.DefaultMaxCount = expected;
             }
         }
 
         [Fact]
-        public void SettingMaxAgeShouldNotChangeDefaultMaxAgeTest()
+        public void SettingMaxCountShouldNotChangeDefaultMaxCountTest()
         {
-            var target = new AgeValueGenerator
+            var target = new CountValueGenerator
             {
-                MaxAge = Environment.TickCount
+                MaxCount = Environment.TickCount
             };
 
-            AgeValueGenerator.DefaultMaxAge.Should().NotBe(target.MaxAge);
+            CountValueGenerator.DefaultMaxCount.Should().NotBe(target.MaxCount);
         }
     }
 }

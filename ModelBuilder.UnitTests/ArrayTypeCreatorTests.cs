@@ -9,64 +9,38 @@ using Xunit;
 
 namespace ModelBuilder.UnitTests
 {
-    public class EnumerableTypeCreatorTests
+    public class ArrayTypeCreatorTests
     {
         [Fact]
         public void CreateChildItemThrowsExceptionWithNullExecuteStrategyTest()
         {
             var person = new Person();
 
-            var target = new EnumerableTypeCreatorWrapper();
+            var target = new ArrayTypeCreatorWrapper();
 
-            Action action = () => target.CreateItem(typeof(Person), null, person);
+            Action action = () => target.CreateItem(typeof(Person[]), null, person);
 
             action.ShouldThrow<ArgumentNullException>();
         }
 
-        [Fact]
-        public void CreateDoesNotPopulateListTest()
-        {
-            var target = new IncrementingEnumerableTypeCreator();
-
-            var result = (IList<int>) target.Create(typeof(IList<int>));
-
-            result.Should().BeEmpty();
-        }
-
         [Theory]
-        [InlineData(typeof(Dictionary<string, int>))]
-        [InlineData(typeof(IEnumerable<string>))]
-        [InlineData(typeof(ICollection<string>))]
-        [InlineData(typeof(IList<string>))]
-        [InlineData(typeof(Collection<string>))]
-        [InlineData(typeof(List<string>))]
-        [InlineData(typeof(HashSet<string>))]
-        [InlineData(typeof(LinkedList<string>))]
-        [InlineData(typeof(ArraySegment<string>))]
+        [InlineData(typeof(byte[]))]
+        [InlineData(typeof(int[]))]
+        [InlineData(typeof(Guid[]))]
+        [InlineData(typeof(Person[]))]
         public void CreateReturnsInstanceTest(Type type)
         {
-            var target = new EnumerableTypeCreator();
+            var target = new ArrayTypeCreator();
 
             var actual = target.Create(type, null, null);
 
             actual.Should().NotBeNull();
         }
-
-        [Fact]
-        public void CreateReturnsNewListOfSpecfiedTypeTest()
-        {
-            var target = new EnumerableTypeCreator();
-
-            var actual = target.Create(typeof(IEnumerable<int>), null, null);
-
-            actual.Should().BeOfType<List<int>>();
-            actual.As<List<int>>().Should().BeEmpty();
-        }
-
+        
         [Fact]
         public void CreateThrowsExceptionWithNullTypeTest()
         {
-            var target = new EnumerableTypeCreator();
+            var target = new ArrayTypeCreator();
 
             Action action = () => target.Create(null, null, null);
 
@@ -80,20 +54,24 @@ namespace ModelBuilder.UnitTests
         [InlineData(typeof(ReadOnlyCollection<int>), false)]
         [InlineData(typeof(IDictionary<string, int>), false)]
         [InlineData(typeof(Tuple<string, bool>), false)]
-        [InlineData(typeof(Dictionary<string, int>), true)]
-        [InlineData(typeof(IEnumerable<string>), true)]
-        [InlineData(typeof(ICollection<string>), true)]
-        [InlineData(typeof(Collection<string>), true)]
-        [InlineData(typeof(IList<string>), true)]
-        [InlineData(typeof(List<string>), true)]
-        [InlineData(typeof(IReadOnlyCollection<int>), true)]
-        [InlineData(typeof(IReadOnlyList<int>), true)]
-        [InlineData(typeof(HashSet<string>), true)]
-        [InlineData(typeof(LinkedList<string>), true)]
-        [InlineData(typeof(ArraySegment<string>), true)]
+        [InlineData(typeof(Dictionary<string, int>), false)]
+        [InlineData(typeof(IEnumerable<string>), false)]
+        [InlineData(typeof(ICollection<string>), false)]
+        [InlineData(typeof(Collection<string>), false)]
+        [InlineData(typeof(IList<string>), false)]
+        [InlineData(typeof(List<string>), false)]
+        [InlineData(typeof(IReadOnlyCollection<int>), false)]
+        [InlineData(typeof(IReadOnlyList<int>), false)]
+        [InlineData(typeof(HashSet<string>), false)]
+        [InlineData(typeof(LinkedList<string>), false)]
+        [InlineData(typeof(ArraySegment<string>), false)]
+        [InlineData(typeof(byte[]), true)]
+        [InlineData(typeof(int[]), true)]
+        [InlineData(typeof(Guid[]), true)]
+        [InlineData(typeof(Person[]), true)]
         public void CreateValidatesWhetherTypeIsSupportedTest(Type type, bool supported)
         {
-            var target = new EnumerableTypeCreator();
+            var target = new ArrayTypeCreator();
 
             Action action = () => target.Create(type, null, null);
 
@@ -114,20 +92,24 @@ namespace ModelBuilder.UnitTests
         [InlineData(typeof(ReadOnlyCollection<int>), false)]
         [InlineData(typeof(IDictionary<string, int>), false)]
         [InlineData(typeof(Tuple<string, bool>), false)]
-        [InlineData(typeof(Dictionary<string, int>), true)]
-        [InlineData(typeof(IEnumerable<string>), true)]
-        [InlineData(typeof(ICollection<string>), true)]
-        [InlineData(typeof(Collection<string>), true)]
-        [InlineData(typeof(IList<string>), true)]
-        [InlineData(typeof(List<string>), true)]
-        [InlineData(typeof(IReadOnlyCollection<int>), true)]
-        [InlineData(typeof(IReadOnlyList<int>), true)]
-        [InlineData(typeof(HashSet<string>), true)]
-        [InlineData(typeof(LinkedList<string>), true)]
-        [InlineData(typeof(ArraySegment<string>), true)]
+        [InlineData(typeof(Dictionary<string, int>), false)]
+        [InlineData(typeof(IEnumerable<string>), false)]
+        [InlineData(typeof(ICollection<string>), false)]
+        [InlineData(typeof(Collection<string>), false)]
+        [InlineData(typeof(IList<string>), false)]
+        [InlineData(typeof(List<string>), false)]
+        [InlineData(typeof(IReadOnlyCollection<int>), false)]
+        [InlineData(typeof(IReadOnlyList<int>), false)]
+        [InlineData(typeof(HashSet<string>), false)]
+        [InlineData(typeof(LinkedList<string>), false)]
+        [InlineData(typeof(ArraySegment<string>), false)]
+        [InlineData(typeof(byte[]), true)]
+        [InlineData(typeof(int[]), true)]
+        [InlineData(typeof(Guid[]), true)]
+        [InlineData(typeof(Person[]), true)]
         public void IsSupportedReturnsWhetherTypeIsSupportedTest(Type type, bool supported)
         {
-            var target = new EnumerableTypeCreator();
+            var target = new ArrayTypeCreator();
 
             var actual = target.IsSupported(type, null, null);
 
@@ -137,7 +119,7 @@ namespace ModelBuilder.UnitTests
         [Fact]
         public void IsSupportedThrowsExceptionWithNullTypeTest()
         {
-            var target = new EnumerableTypeCreator();
+            var target = new ArrayTypeCreator();
 
             Action action = () => target.IsSupported(null, null, null);
 
@@ -147,67 +129,67 @@ namespace ModelBuilder.UnitTests
         [Fact]
         public void PopulateAddsItemsToCollectionFromExecuteStrategyTest()
         {
-            var expected = new Collection<Guid>();
+            var expected = new Guid[15];
 
             var strategy = Substitute.For<IExecuteStrategy>();
 
             strategy.CreateWith(typeof(Guid)).Returns(Guid.NewGuid());
 
-            var target = new EnumerableTypeCreator
+            var target = new ArrayTypeCreator
             {
-                AutoPopulateCount = 15
+                MaxCount = 15
             };
 
             var actual = target.Populate(expected, strategy);
 
             actual.Should().BeSameAs(expected);
 
-            var set = (Collection<Guid>) actual;
+            var set = (Guid[]) actual;
 
-            set.Should().HaveCount(target.AutoPopulateCount);
+            set.Should().HaveCount(target.MaxCount);
             set.All(x => x != Guid.Empty).Should().BeTrue();
         }
 
         [Fact]
         public void PopulateAddsItemsToListFromExecuteStrategyTest()
         {
-            var expected = new List<Guid>();
+            var expected = new Guid[15];
 
             var strategy = Substitute.For<IExecuteStrategy>();
 
             strategy.CreateWith(typeof(Guid)).Returns(Guid.NewGuid());
 
-            var target = new EnumerableTypeCreator
+            var target = new ArrayTypeCreator
             {
-                AutoPopulateCount = 15
+                MaxCount = 15
             };
 
             var actual = target.Populate(expected, strategy);
 
             actual.Should().BeSameAs(expected);
 
-            var set = (List<Guid>) actual;
+            var set = (Guid[])actual;
 
-            set.Should().HaveCount(target.AutoPopulateCount);
+            set.Should().HaveCount(target.MaxCount);
             set.All(x => x != Guid.Empty).Should().BeTrue();
         }
 
         [Fact]
         public void PopulateCanAddItemsBasedOnPreviousItemTest()
         {
-            var actual = new List<int>();
+            var actual = new int[15];
             var executeStrategy = Model.BuildStrategy.GetExecuteStrategy<List<int>>();
 
-            var target = new IncrementingEnumerableTypeCreator();
+            var target = new IncrementingArrayTypeCreator();
 
-            var result = (List<int>) target.Populate(actual, executeStrategy);
+            var result = (int[]) target.Populate(actual, executeStrategy);
 
             var baseValue = result[0];
-            var expected = new List<int>(target.AutoPopulateCount);
+            var expected = new int[actual.Length];
 
-            for (var index = 0; index < target.AutoPopulateCount; index++)
+            for (var index = 0; index < expected.Length; index++)
             {
-                expected.Add(baseValue + index);
+                expected[index] = baseValue + index;
             }
 
             result.ShouldAllBeEquivalentTo(expected);
@@ -218,7 +200,7 @@ namespace ModelBuilder.UnitTests
         {
             var strategy = Substitute.For<IExecuteStrategy>();
 
-            var target = new EnumerableTypeCreator();
+            var target = new ArrayTypeCreator();
 
             Action action = () => target.Populate(null, strategy);
 
@@ -230,7 +212,7 @@ namespace ModelBuilder.UnitTests
         {
             var instance = new List<string>();
 
-            var target = new EnumerableTypeCreator();
+            var target = new ArrayTypeCreator();
 
             Action action = () => target.Populate(instance, null);
 
@@ -244,7 +226,7 @@ namespace ModelBuilder.UnitTests
 
             var strategy = Substitute.For<IExecuteStrategy>();
 
-            var target = new EnumerableTypeCreator();
+            var target = new ArrayTypeCreator();
 
             Action action = () => target.Populate(instance, strategy);
 
@@ -254,46 +236,46 @@ namespace ModelBuilder.UnitTests
         [Fact]
         public void ProrityReturnsHigherThanDefaultTypeCreatorTest()
         {
-            var target = new EnumerableTypeCreator();
+            var target = new ArrayTypeCreator();
             var other = new DefaultTypeCreator();
 
             target.Priority.Should().BeGreaterThan(other.Priority);
         }
 
         [Fact]
-        public void SettingAutoPopulateCountShouldNotChangeDefaultAutoPopulateCountTest()
+        public void SettingMaxCountShouldNotChangeDefaultMaxCountTest()
         {
-            var target = new EnumerableTypeCreator
+            var target = new ArrayTypeCreator
             {
-                AutoPopulateCount = Environment.TickCount
+                MaxCount = Environment.TickCount
             };
 
-            EnumerableTypeCreator.DefaultAutoPopulateCount.Should().NotBe(target.AutoPopulateCount);
+            ArrayTypeCreator.DefaultMaxCount.Should().NotBe(target.MaxCount);
         }
 
         [Fact]
-        public void SettingDefaultAutoPopulateCountOnlyAffectsNewInstancesTest()
+        public void SettingDefaultMaxCountOnlyAffectsNewInstancesTest()
         {
-            var expected = EnumerableTypeCreator.DefaultAutoPopulateCount;
+            var expected = ArrayTypeCreator.DefaultMaxCount;
 
             try
             {
-                var first = new EnumerableTypeCreator();
+                var first = new ArrayTypeCreator();
 
-                EnumerableTypeCreator.DefaultAutoPopulateCount = 11;
+                ArrayTypeCreator.DefaultMaxCount = 11;
 
-                var second = new EnumerableTypeCreator();
+                var second = new ArrayTypeCreator();
 
-                first.AutoPopulateCount.Should().Be(expected);
-                second.AutoPopulateCount.Should().Be(11);
+                first.MaxCount.Should().Be(expected);
+                second.MaxCount.Should().Be(11);
             }
             finally
             {
-                EnumerableTypeCreator.DefaultAutoPopulateCount = expected;
+                ArrayTypeCreator.DefaultMaxCount = expected;
             }
         }
 
-        private class EnumerableTypeCreatorWrapper : EnumerableTypeCreator
+        private class ArrayTypeCreatorWrapper : ArrayTypeCreator
         {
             public void CreateItem(Type type, IExecuteStrategy executeStrategy, object item)
             {

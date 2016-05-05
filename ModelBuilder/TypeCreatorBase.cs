@@ -10,6 +10,8 @@ namespace ModelBuilder
     /// </summary>
     public abstract class TypeCreatorBase : ITypeCreator
     {
+        private static readonly IRandomGenerator _random = new RandomGenerator();
+
         /// <inheritdoc />
         public abstract object Create(Type type, string referenceName, object context, params object[] args);
 
@@ -79,5 +81,11 @@ namespace ModelBuilder
 
         /// <inheritdoc />
         public virtual int Priority { get; } = 0;
+
+
+        /// <summary>
+        /// Gets the random generator for this instance.
+        /// </summary>
+        protected virtual IRandomGenerator Generator { get; } = _random;
     }
 }

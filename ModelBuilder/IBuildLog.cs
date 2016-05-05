@@ -9,6 +9,12 @@ namespace ModelBuilder
     public interface IBuildLog
     {
         /// <summary>
+        /// Logs a build failure
+        /// </summary>
+        /// <param name="ex">The expception to log.</param>
+        void BuildFailure(Exception ex);
+
+        /// <summary>
         /// Clears the current build log.
         /// </summary>
         void Clear();

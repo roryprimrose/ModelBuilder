@@ -73,6 +73,7 @@ namespace ModelBuilder
         {
             get
             {
+                yield return new ArrayTypeCreator();
                 yield return new EnumerableTypeCreator();
                 yield return new DefaultTypeCreator();
             }
@@ -92,6 +93,7 @@ namespace ModelBuilder
                 yield return new CityValueGenerator();
                 yield return new CompanyValueGenerator();
                 yield return new CountryValueGenerator();
+                yield return new CountValueGenerator();
                 yield return new DateOfBirthValueGenerator();
                 yield return new DateTimeValueGenerator();
                 yield return new DomainNameValueGenerator();

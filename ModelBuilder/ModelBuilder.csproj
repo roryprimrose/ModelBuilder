@@ -48,6 +48,10 @@
     <Compile Include="AgeValueGenerator.cs">
       <DependentUpon>IValueGenerator.cs</DependentUpon>
     </Compile>
+    <Compile Include="ArrayTypeCreator.cs">
+      <DependentUpon>ITypeCreator.cs</DependentUpon>
+    </Compile>
+    <Compile Include="BuildException.cs" />
     <Compile Include="BuildStrategyCompiler.cs">
       <DependentUpon>IBuildStrategyCompiler.cs</DependentUpon>
     </Compile>
@@ -70,6 +74,9 @@
       <DependentUpon>IValueGenerator.cs</DependentUpon>
     </Compile>
     <Compile Include="CountryValueGenerator.cs">
+      <DependentUpon>IValueGenerator.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CountValueGenerator.cs">
       <DependentUpon>IValueGenerator.cs</DependentUpon>
     </Compile>
     <Compile Include="Data\People.cs" />
