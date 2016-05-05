@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using FluentAssertions;
 using Xunit;
 
@@ -6,6 +7,28 @@ namespace ModelBuilder.UnitTests
 {
     public class DefaultBuildLogTests
     {
+        [Fact]
+        public void BuildFailureAppendsLogEntryTest()
+        {
+            var ex = new BuildException(Guid.NewGuid().ToString());
+
+            var target = new DefaultBuildLog();
+
+            target.BuildFailure(ex);
+
+            target.Output.Should().Contain(ex.ToString());
+        }
+
+        [Fact]
+        public void BuildFailureThrowsExceptionWithNullTypeTest()
+        {
+            var target = new DefaultBuildLog();
+
+            Action action = () => target.BuildFailure(null);
+
+            action.ShouldThrow<ArgumentNullException>();
+        }
+
         [Fact]
         public void ClearRemovesExistingBuildLogDataTest()
         {
@@ -107,6 +130,33 @@ namespace ModelBuilder.UnitTests
             var actual = target.Output;
 
             actual.Should().Contain("    ");
+        }
+
+        [Fact]
+        public void WritingLogEntryIndentsAllLinesOfMessageTest()
+        {
+            var target = new DefaultBuildLog();
+
+            Exception exception;
+
+            try
+            {
+                throw new TimeoutException();
+            }
+            catch (Exception ex)
+            {
+                // Get the exception with a valid stack trace
+                exception = ex;
+            }
+
+            target.CreatingType(typeof(Person), null);
+            target.BuildFailure(exception);
+            target.CreatedType(typeof(Person), null);
+
+            var lines = target.Output.Split(new [] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+            var indentedLines = lines.Skip(1).Take(lines.Length - 2);
+
+            indentedLines.All(x => x.StartsWith("    ")).Should().BeTrue();
         }
 
         [Fact]
