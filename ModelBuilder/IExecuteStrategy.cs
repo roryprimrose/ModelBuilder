@@ -25,7 +25,12 @@ namespace ModelBuilder
         object Populate(object instance);
 
         /// <summary>
-        /// Gets the constructor resolver used to create an instance of a type.
+        /// Gets or sets the build log for items created by this strategy.
+        /// </summary>
+        IBuildLog BuildLog { get; set; }
+
+        /// <summary>
+        /// Gets or sets the constructor resolver used to create an instance of a type.
         /// </summary>
         IConstructorResolver ConstructorResolver { get; set; }
 

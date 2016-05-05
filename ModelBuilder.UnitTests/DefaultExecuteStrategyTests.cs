@@ -424,6 +424,7 @@ namespace ModelBuilder.UnitTests
         {
             var target = new DefaultExecuteStrategy<string>();
 
+            target.BuildLog.Should().BeOfType<DefaultBuildLog>();
             target.ConstructorResolver.Should().BeOfType<DefaultConstructorResolver>();
             target.IgnoreRules.Should().BeEmpty();
             target.TypeCreators.Should().BeEmpty();

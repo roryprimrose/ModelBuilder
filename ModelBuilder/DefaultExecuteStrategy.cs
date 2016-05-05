@@ -21,11 +21,12 @@ namespace ModelBuilder
         /// </summary>
         public DefaultExecuteStrategy()
         {
+            BuildLog = new DefaultBuildLog();
+            ConstructorResolver = new DefaultConstructorResolver();
+            ExecuteOrderRules = new List<ExecuteOrderRule>();
+            IgnoreRules = new List<IgnoreRule>();
             TypeCreators = new List<ITypeCreator>();
             ValueGenerators = new List<IValueGenerator>();
-            IgnoreRules = new List<IgnoreRule>();
-            ExecuteOrderRules = new List<ExecuteOrderRule>();
-            ConstructorResolver = new DefaultConstructorResolver();
         }
 
         /// <inheritdoc />
@@ -93,58 +94,69 @@ namespace ModelBuilder
 
             if (valueGenerator != null)
             {
+                BuildLog.CreatingValue(type, context);
+
                 return valueGenerator.Generate(type, referenceName, context);
             }
 
-            var typeCreator =
-                TypeCreators.Where(x => x.IsSupported(type, referenceName, context))
-                    .OrderByDescending(x => x.Priority)
-                    .FirstOrDefault();
+            BuildLog.CreatingType(type, context);
 
-            if (typeCreator == null)
+            try
             {
-                string message;
+                var typeCreator =
+                    TypeCreators.Where(x => x.IsSupported(type, referenceName, context))
+                        .OrderByDescending(x => x.Priority)
+                        .FirstOrDefault();
 
-                if (context != null)
+                if (typeCreator == null)
                 {
-                    message = string.Format(CultureInfo.CurrentCulture,
-                        Resources.NoMatchingCreatorOrGeneratorFoundWithNameAndContext,
-                        type.FullName, referenceName, context.GetType().FullName);
-                }
-                else if (string.IsNullOrWhiteSpace(referenceName) == false)
-                {
-                    message = string.Format(CultureInfo.CurrentCulture,
-                        Resources.NoMatchingCreatorOrGeneratorFoundWithName,
-                        type.FullName, referenceName);
-                }
-                else
-                {
-                    message = string.Format(CultureInfo.CurrentCulture, Resources.NoMatchingCreatorOrGeneratorFound,
-                        type.FullName);
+                    string message;
+
+                    if (context != null)
+                    {
+                        message = string.Format(CultureInfo.CurrentCulture,
+                            Resources.NoMatchingCreatorOrGeneratorFoundWithNameAndContext,
+                            type.FullName, referenceName, context.GetType().FullName);
+                    }
+                    else if (string.IsNullOrWhiteSpace(referenceName) == false)
+                    {
+                        message = string.Format(CultureInfo.CurrentCulture,
+                            Resources.NoMatchingCreatorOrGeneratorFoundWithName,
+                            type.FullName, referenceName);
+                    }
+                    else
+                    {
+                        message = string.Format(CultureInfo.CurrentCulture, Resources.NoMatchingCreatorOrGeneratorFound,
+                            type.FullName);
+                    }
+
+                    throw new NotSupportedException(message);
                 }
 
-                throw new NotSupportedException(message);
+                var instance = CreateInstance(typeCreator, type, referenceName, context, args);
+
+                if (instance == null)
+                {
+                    return null;
+                }
+
+                if (typeCreator.AutoPopulate)
+                {
+                    // The type creator has indicated that this type should not be auto populated by the execute strategy
+                    instance = PopulateInstance(instance);
+
+                    Debug.Assert(instance != null, "Populating the instance did not return the original instance");
+                }
+
+                // Allow the type creator to do its own population of the instance
+                instance = typeCreator.Populate(instance, this);
+
+                return instance;
             }
-
-            var instance = CreateInstance(typeCreator, type, referenceName, context, args);
-
-            if (instance == null)
+            finally
             {
-                return null;
+                BuildLog.CreatedType(type, context);
             }
-
-            if (typeCreator.AutoPopulate)
-            {
-                // The type creator has indicated that this type should not be auto populated by the execute strategy
-                instance = PopulateInstance(instance);
-
-                Debug.Assert(instance != null, "Populating the instance did not return the original instance");
-            }
-
-            // Allow the type creator to do its own population of the instance
-            instance = typeCreator.Populate(instance, this);
-
-            return instance;
         }
 
         /// <summary>
@@ -160,52 +172,47 @@ namespace ModelBuilder
                 throw new ArgumentNullException(nameof(instance));
             }
 
-            // We will only set public instance properties that have a setter (the setter must also be public)
-            var flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.SetProperty;
-            var type = instance.GetType();
+            BuildLog.PopulatingInstance(instance);
 
-            var propertyInfos = from x in type.GetProperties(flags)
-                                where x.CanWrite
-                                orderby GetMaximumOrderPrority(x.PropertyType, x.Name) descending
-                                select x;
-            
-            foreach (var propertyInfo in propertyInfos)
+            try
             {
-                if (propertyInfo.SetMethod.IsPublic == false)
+                // We will only set public instance properties that have a setter (the setter must also be public)
+                var flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.SetProperty;
+                var type = instance.GetType();
+
+                var propertyInfos = from x in type.GetProperties(flags)
+                                    where x.CanWrite
+                                    orderby GetMaximumOrderPrority(x.PropertyType, x.Name) descending
+                                    select x;
+
+                foreach (var propertyInfo in propertyInfos)
                 {
-                    // The property is public, but the setter is not
-                    continue;
+                    if (propertyInfo.SetMethod.IsPublic == false)
+                    {
+                        // The property is public, but the setter is not
+                        continue;
+                    }
+
+                    // Check if there is a matching ignore rule
+                    if (IgnoreRules.Any(x => x.TargetType.IsAssignableFrom(type) && x.PropertyName == propertyInfo.Name))
+                    {
+                        // We need to ignore this property
+                        continue;
+                    }
+
+                    BuildLog.CreateProperty(propertyInfo.PropertyType, propertyInfo.Name, instance);
+
+                    var parameterValue = Build(propertyInfo.PropertyType, propertyInfo.Name, instance);
+
+                    propertyInfo.SetValue(instance, parameterValue);
                 }
 
-                // Check if there is a matching ignore rule
-                if (IgnoreRules.Any(x => x.TargetType.IsAssignableFrom(type) && x.PropertyName == propertyInfo.Name))
-                {
-                    // We need to ignore this property
-                    continue;
-                }
-
-                var parameterValue = Build(propertyInfo.PropertyType, propertyInfo.Name, instance);
-
-                propertyInfo.SetValue(instance, parameterValue);
+                return instance;
             }
-
-            return instance;
-        }
-
-        private int GetMaximumOrderPrority(Type type, string propertyName)
-        {
-            var matchingRules = from x in ExecuteOrderRules
-                                where x.IsMatch(type, propertyName)
-                                orderby x.Priority descending
-                                select x;
-            var matchingRule = matchingRules.FirstOrDefault();
-
-            if (matchingRule == null)
+            finally
             {
-                return 0;
+                BuildLog.PopulatedInstance(instance);
             }
-
-            return matchingRule.Priority;
         }
 
         private object CreateInstance(ITypeCreator typeCreator, Type type, string referenceName, object context,
@@ -236,6 +243,8 @@ namespace ModelBuilder
 
                     foreach (var parameterInfo in parameterInfos)
                     {
+                        BuildLog.CreateParameter(type, parameterInfo.ParameterType, parameterInfo.Name, context);
+
                         // Recurse to build this parameter value
                         var parameterValue = Build(parameterInfo.ParameterType, parameterInfo.Name, null);
 
@@ -253,6 +262,25 @@ namespace ModelBuilder
 
             return item;
         }
+
+        private int GetMaximumOrderPrority(Type type, string propertyName)
+        {
+            var matchingRules = from x in ExecuteOrderRules
+                                where x.IsMatch(type, propertyName)
+                                orderby x.Priority descending
+                                select x;
+            var matchingRule = matchingRules.FirstOrDefault();
+
+            if (matchingRule == null)
+            {
+                return 0;
+            }
+
+            return matchingRule.Priority;
+        }
+
+        /// <inheritdoc />
+        public IBuildLog BuildLog { get; set; }
 
         /// <inheritdoc />
         public IConstructorResolver ConstructorResolver { get; set; }

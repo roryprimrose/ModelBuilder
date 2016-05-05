@@ -19,14 +19,17 @@ namespace ModelBuilder
         /// <param name="valueGenerators">The value generators.</param>
         /// <param name="ignoreRules">The ignore rules.</param>
         /// <param name="executeOrderRules">The execute order rules.</param>
+        /// <param name="buildLog">The build log.</param>
         /// <exception cref="ArgumentNullException">The <paramref name="typeCreators"/> parameter is null.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="constructorResolver"/> parameter is null.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="valueGenerators"/> parameter is null.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="ignoreRules"/> parameter is null.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="executeOrderRules"/> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="buildLog"/> parameter is null.</exception>
         protected BuildStrategyBase(IConstructorResolver constructorResolver, IEnumerable<ITypeCreator> typeCreators,
             IEnumerable<IValueGenerator> valueGenerators, IEnumerable<IgnoreRule> ignoreRules,
-            IEnumerable<ExecuteOrderRule> executeOrderRules)
+            IEnumerable<ExecuteOrderRule> executeOrderRules,
+            IBuildLog buildLog)
         {
             if (typeCreators == null)
             {
@@ -53,15 +56,24 @@ namespace ModelBuilder
                 throw new ArgumentNullException(nameof(executeOrderRules));
             }
 
+            if (buildLog == null)
+            {
+                throw new ArgumentNullException(nameof(buildLog));
+            }
+
             ConstructorResolver = constructorResolver;
             TypeCreators = new ReadOnlyCollection<ITypeCreator>(typeCreators.ToList());
             ValueGenerators = new ReadOnlyCollection<IValueGenerator>(valueGenerators.ToList());
             IgnoreRules = new ReadOnlyCollection<IgnoreRule>(ignoreRules.ToList());
             ExecuteOrderRules = new ReadOnlyCollection<ExecuteOrderRule>(executeOrderRules.ToList());
+            BuildLog = buildLog;
         }
 
         /// <inheritdoc />
         public abstract IExecuteStrategy<T> GetExecuteStrategy<T>();
+
+        /// <inheritdoc />
+        public IBuildLog BuildLog { get; }
 
         /// <inheritdoc />
         public IConstructorResolver ConstructorResolver { get; }

@@ -30,8 +30,12 @@ namespace ModelBuilder
                 throw new InvalidOperationException(Resources.BuildStrategyCompiler_NullConstructorResolver);
             }
 
-            return new BuildStrategy(ConstructorResolver, TypeCreators, ValueGenerators, IgnoreRules, ExecuteOrderRules);
+            return new BuildStrategy(ConstructorResolver, TypeCreators, ValueGenerators, IgnoreRules, ExecuteOrderRules,
+                BuildLog);
         }
+
+        /// <inheritdoc />
+        public IBuildLog BuildLog { get; set; }
 
         /// <inheritdoc />
         public IConstructorResolver ConstructorResolver { get; set; }

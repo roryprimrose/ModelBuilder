@@ -17,6 +17,7 @@ namespace ModelBuilder.UnitTests
 
             var actual = target.Clone();
 
+            actual.BuildLog.Should().Be(target.BuildLog);
             actual.ConstructorResolver.Should().Be(target.ConstructorResolver);
             actual.TypeCreators.ShouldBeEquivalentTo(target.TypeCreators);
             actual.ValueGenerators.ShouldBeEquivalentTo(target.ValueGenerators);
@@ -39,16 +40,16 @@ namespace ModelBuilder.UnitTests
         {
             var value = Guid.NewGuid();
 
+            var buildLog = Substitute.For<IBuildLog>();
             var generator = Substitute.For<IValueGenerator>();
             var generators = new List<IValueGenerator> {generator}.AsReadOnly();
             var target = Substitute.For<IBuildStrategy>();
 
             target.ValueGenerators.Returns(generators);
+            target.BuildLog.Returns(buildLog);
             generator.IsSupported(typeof(Guid), null, null).Returns(true);
             generator.Generate(typeof(Guid), null, null).Returns(value);
-
-            target.Create<Guid>().Returns(value);
-
+            
             var actual = target.Create<Guid>();
 
             actual.Should().Be(value);
@@ -76,10 +77,8 @@ namespace ModelBuilder.UnitTests
             target.ValueGenerators.Returns(generators);
             generator.IsSupported(typeof(Guid), null, null).Returns(true);
             generator.Generate(typeof(Guid), null, null).Returns(value);
-
-            target.CreateWith<Guid>(null).Returns(value);
-
-            var actual = target.Create<Guid>();
+            
+            var actual = target.CreateWith<Guid>(null);
 
             actual.Should().Be(value);
         }
@@ -184,6 +183,7 @@ namespace ModelBuilder.UnitTests
 
             var target = Substitute.For<IBuildStrategy>();
 
+            target.BuildLog.Returns(DefaultBuildStrategy.DefaultBuildLog);
             target.ConstructorResolver.Returns(DefaultBuildStrategy.DefaultConstructorResolver);
             target.ExecuteOrderRules.Returns(
                 new ReadOnlyCollection<ExecuteOrderRule>(DefaultBuildStrategy.DefaultExecuteOrderRules.ToList()));
@@ -195,6 +195,7 @@ namespace ModelBuilder.UnitTests
 
             var actual = target.With<DefaultExecuteStrategy<Person>>();
 
+            actual.BuildLog.Should().BeSameAs(target.BuildLog);
             actual.ConstructorResolver.Should().BeSameAs(target.ConstructorResolver);
             actual.ExecuteOrderRules.ShouldAllBeEquivalentTo(target.ExecuteOrderRules);
             actual.IgnoreRules.ShouldAllBeEquivalentTo(target.IgnoreRules);

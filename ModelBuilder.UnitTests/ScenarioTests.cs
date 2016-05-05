@@ -4,28 +4,17 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using FluentAssertions;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace ModelBuilder.UnitTests
 {
     public class ScenarioTests
     {
-        [Fact]
-        public void CanCreateCustomBuildStrategyToCreateModelsTest()
+        private readonly ITestOutputHelper _output;
+
+        public ScenarioTests(ITestOutputHelper output)
         {
-            var strategy =
-                Model.DefaultBuildStrategy.Clone()
-                    .Set(x => x.ValueGenerators.Clear())
-                    .AddValueGenerator<StringValueGenerator>()
-                    .AddValueGenerator<NumericValueGenerator>()
-                    .AddValueGenerator<BooleanValueGenerator>()
-                    .AddValueGenerator<GuidValueGenerator>()
-                    .AddValueGenerator<DateTimeValueGenerator>()
-                    .AddValueGenerator<EnumValueGenerator>()
-                    .Compile();
-
-            var actual = strategy.Create<Person>();
-
-            Guid.Parse(actual.Address.AddressLine1).Should().NotBeEmpty();
+            _output = output;
         }
 
         [Fact]
@@ -46,6 +35,25 @@ namespace ModelBuilder.UnitTests
         }
 
         [Fact]
+        public void CanCreateCustomBuildStrategyToCreateModelsTest()
+        {
+            var strategy =
+                Model.DefaultBuildStrategy.Clone()
+                    .Set(x => x.ValueGenerators.Clear())
+                    .AddValueGenerator<StringValueGenerator>()
+                    .AddValueGenerator<NumericValueGenerator>()
+                    .AddValueGenerator<BooleanValueGenerator>()
+                    .AddValueGenerator<GuidValueGenerator>()
+                    .AddValueGenerator<DateTimeValueGenerator>()
+                    .AddValueGenerator<EnumValueGenerator>()
+                    .Compile();
+
+            var actual = strategy.Create<Person>();
+
+            Guid.Parse(actual.Address.AddressLine1).Should().NotBeEmpty();
+        }
+
+        [Fact]
         public void CreateBuildsAndPopulatesNestedInstancesTest()
         {
             var actual = Model.Create<Person>();
@@ -58,6 +66,34 @@ namespace ModelBuilder.UnitTests
             actual.Address.Country.Should().NotBeNullOrEmpty();
             actual.Address.State.Should().NotBeNullOrEmpty();
             actual.Address.Suburb.Should().NotBeNullOrEmpty();
+        }
+
+        [Fact]
+        public void CreateBuildsLogOfConstructionActionsTest()
+        {
+            var strategy = Model.For<Company>();
+
+            strategy.Create();
+
+            var actual = strategy.BuildLog.Output;
+
+            actual.Should().NotBeNullOrWhiteSpace();
+
+            _output.WriteLine(actual);
+        }
+
+        [Fact]
+        public void CreateBuildsLogOfConstructionActionsWhereModelConstructorsAreUsedTest()
+        {
+            var strategy = Model.For<WithValueParameters>();
+
+            strategy.Create();
+
+            var actual = strategy.BuildLog.Output;
+
+            actual.Should().NotBeNullOrWhiteSpace();
+
+            _output.WriteLine(actual);
         }
 
         [Fact]

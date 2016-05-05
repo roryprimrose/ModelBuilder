@@ -17,15 +17,17 @@ namespace ModelBuilder
         /// <param name="valueGenerators">The value generators.</param>
         /// <param name="ignoreRules">The ignore rules.</param>
         /// <param name="executeOrderRules">The execute order rules.</param>
+        /// <param name="buildLog">The build log.</param>
         /// <exception cref="ArgumentNullException">The <paramref name="typeCreators"/> parameter is null.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="constructorResolver"/> parameter is null.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="valueGenerators"/> parameter is null.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="ignoreRules"/> parameter is null.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="executeOrderRules"/> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="buildLog"/> parameter is null.</exception>
         public BuildStrategy(IConstructorResolver constructorResolver, IEnumerable<ITypeCreator> typeCreators,
             IEnumerable<IValueGenerator> valueGenerators, IEnumerable<IgnoreRule> ignoreRules,
-            IEnumerable<ExecuteOrderRule> executeOrderRules)
-            : base(constructorResolver, typeCreators, valueGenerators, ignoreRules, executeOrderRules)
+            IEnumerable<ExecuteOrderRule> executeOrderRules, IBuildLog buildLog)
+            : base(constructorResolver, typeCreators, valueGenerators, ignoreRules, executeOrderRules, buildLog)
         {
         }
 

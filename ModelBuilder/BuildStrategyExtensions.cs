@@ -24,6 +24,7 @@ namespace ModelBuilder
 
             var compiler = new BuildStrategyCompiler
             {
+                BuildLog = buildStrategy.BuildLog,
                 ConstructorResolver = buildStrategy.ConstructorResolver
             };
 
@@ -142,7 +143,7 @@ namespace ModelBuilder
                 throw new ArgumentNullException(nameof(buildStrategy));
             }
 
-            var executeStrategy = new T {ConstructorResolver = buildStrategy.ConstructorResolver};
+            var executeStrategy = new T { BuildLog = buildStrategy.BuildLog, ConstructorResolver = buildStrategy.ConstructorResolver};
 
             foreach (var ignoreRule in buildStrategy.IgnoreRules)
             {

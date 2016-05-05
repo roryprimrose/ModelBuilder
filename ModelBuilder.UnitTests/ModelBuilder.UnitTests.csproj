@@ -80,6 +80,7 @@
     <Compile Include="BuildStrategyCompilerExtensionsTests.cs" />
     <Compile Include="BuildStrategyCompilerTests.cs" />
     <Compile Include="BuildStrategyTests.cs" />
+    <Compile Include="DefaultBuildLogTests.cs" />
     <Compile Include="Numbers.cs">
       <DependentUpon>Models.cs</DependentUpon>
     </Compile>

@@ -10,12 +10,12 @@ namespace ModelBuilder.UnitTests
             throw new NotImplementedException();
         }
 
-        public string Populate(string instance)
+        public object CreateWith(Type type, params object[] args)
         {
             throw new NotImplementedException();
         }
 
-        public object CreateWith(Type type, params object[] args)
+        public string Populate(string instance)
         {
             throw new NotImplementedException();
         }
@@ -24,6 +24,8 @@ namespace ModelBuilder.UnitTests
         {
             throw new NotImplementedException();
         }
+
+        public IBuildLog BuildLog { get; set;  } = new DefaultBuildLog();
 
         public IConstructorResolver ConstructorResolver { get; set; } = new DefaultConstructorResolver();
         public ICollection<ExecuteOrderRule> ExecuteOrderRules { get; } = new List<ExecuteOrderRule>();

@@ -9,30 +9,9 @@ namespace ModelBuilder.UnitTests
     public class BuildStrategyCompilerTests
     {
         [Fact]
-        public void CreatesDefaultsForPropertiesTest()
-        {
-            var target = new BuildStrategyCompiler();
-
-            target.ConstructorResolver.Should().BeNull();
-            target.ExecuteOrderRules.Should().NotBeNull();
-            target.IgnoreRules.Should().NotBeNull();
-            target.TypeCreators.Should().NotBeNull();
-            target.ValueGenerators.Should().NotBeNull();
-        }
-
-        [Fact]
-        public void CompileThrowsExceptionWithNullConstructorResolverTest()
-        {
-            var target = new BuildStrategyCompiler();
-
-            Action action = () => target.Compile();
-
-            action.ShouldThrow<InvalidOperationException>();
-        }
-
-        [Fact]
         public void CompileReturnsNewBuildStrategyTest()
         {
+            var buildLog = Substitute.For<IBuildLog>();
             var constructorResolver = Substitute.For<IConstructorResolver>();
             var typeCreators = new List<ITypeCreator>
             {
@@ -51,9 +30,8 @@ namespace ModelBuilder.UnitTests
                 new ExecuteOrderRule(typeof(Person), "LastName", int.MinValue)
             };
 
-            var target = new BuildStrategyCompiler();
+            var target = new BuildStrategyCompiler {BuildLog = buildLog, ConstructorResolver = constructorResolver};
 
-            target.ConstructorResolver = constructorResolver;
             target.TypeCreators.Add(typeCreators[0]);
             target.ValueGenerators.Add(valueGenerators[0]);
             target.IgnoreRules.Add(ignoreRules[0]);
@@ -61,11 +39,35 @@ namespace ModelBuilder.UnitTests
 
             var actual = target.Compile();
 
+            actual.BuildLog.Should().Be(buildLog);
             actual.ConstructorResolver.Should().Be(constructorResolver);
             actual.TypeCreators.ShouldBeEquivalentTo(typeCreators);
             actual.ValueGenerators.ShouldBeEquivalentTo(valueGenerators);
             actual.IgnoreRules.ShouldBeEquivalentTo(ignoreRules);
             actual.ExecuteOrderRules.ShouldBeEquivalentTo(executeOrderRules);
+        }
+
+        [Fact]
+        public void CompileThrowsExceptionWithNullConstructorResolverTest()
+        {
+            var target = new BuildStrategyCompiler();
+
+            Action action = () => target.Compile();
+
+            action.ShouldThrow<InvalidOperationException>();
+        }
+
+        [Fact]
+        public void CreatesDefaultsForPropertiesTest()
+        {
+            var target = new BuildStrategyCompiler();
+
+            target.BuildLog.Should().BeNull();
+            target.ConstructorResolver.Should().BeNull();
+            target.ExecuteOrderRules.Should().NotBeNull();
+            target.IgnoreRules.Should().NotBeNull();
+            target.TypeCreators.Should().NotBeNull();
+            target.ValueGenerators.Should().NotBeNull();
         }
     }
 }
