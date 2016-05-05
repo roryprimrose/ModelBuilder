@@ -39,7 +39,7 @@ namespace ModelBuilder.UnitTests
             converted.Should().BeGreaterOrEqualTo(min);
             converted.Should().BeLessOrEqualTo(max);
         }
-        
+
         [Fact]
         public void NextValueThrowsExceptionWhenMinimumGreaterThanMaximumTest()
         {
@@ -48,6 +48,16 @@ namespace ModelBuilder.UnitTests
             Action action = () => target.NextValue(1, 0);
 
             action.ShouldThrow<ArgumentOutOfRangeException>();
+        }
+
+        [Fact]
+        public void NextValueThrowsExceptionWithMinimumAndMaximumWhenGeneratorIsNullTest()
+        {
+            RandomGenerator target = null;
+
+            Action action = () => target.NextValue(1, 10);
+
+            action.ShouldThrow<ArgumentNullException>();
         }
 
         [Fact]

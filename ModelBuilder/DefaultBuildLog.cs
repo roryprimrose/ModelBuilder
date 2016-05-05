@@ -1,9 +1,15 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.Text;
+using ModelBuilder.Properties;
 
 namespace ModelBuilder
 {
+    /// <summary>
+    /// The <see cref="DefaultBuildLog"/>
+    /// class provides default implementation for creating a build log when creating types and values.
+    /// </summary>
     public class DefaultBuildLog : IBuildLog
     {
         private readonly StringBuilder _builder = new StringBuilder();
@@ -25,7 +31,7 @@ namespace ModelBuilder
 
             _indent--;
 
-            WriteMessage("End creating type {0}", type.FullName);
+            WriteMessage(Resources.DefaultBuildLog_CreatedType, type.FullName);
         }
 
         /// <inheritdoc />
@@ -46,7 +52,7 @@ namespace ModelBuilder
                 throw new ArgumentNullException(nameof(parameterName));
             }
 
-            WriteMessage("Creating parameter {0} ({1}) for type {2}", parameterName, parameterType.FullName,
+            WriteMessage(Resources.DefaultBuildLog_CreateParameter, parameterName, parameterType.FullName,
                 instanceType.FullName);
         }
 
@@ -68,7 +74,7 @@ namespace ModelBuilder
                 throw new ArgumentNullException(nameof(context));
             }
 
-            WriteMessage("Creating property {0} ({1}) on type {2}", propertyName, propertyType.FullName,
+            WriteMessage(Resources.DefaultBuildLog_CreateProperty, propertyName, propertyType.FullName,
                 context.GetType().FullName);
         }
 
@@ -80,11 +86,12 @@ namespace ModelBuilder
                 throw new ArgumentNullException(nameof(type));
             }
 
-            WriteMessage("Start creating type {0}", type.FullName);
+            WriteMessage(Resources.DefaultBuildLog_CreatingType, type.FullName);
 
             _indent++;
         }
 
+        /// <inheritdoc />
         public void CreatingValue(Type type, object context)
         {
             if (type == null)
@@ -92,7 +99,7 @@ namespace ModelBuilder
                 throw new ArgumentNullException(nameof(type));
             }
 
-            WriteMessage("Creating {0} value", type.FullName);
+            WriteMessage(Resources.DefaultBuildLog_CreatingValue, type.FullName);
         }
 
         /// <inheritdoc />
@@ -105,7 +112,7 @@ namespace ModelBuilder
 
             _indent--;
 
-            WriteMessage("End populating instance {0}", instance.GetType().FullName);
+            WriteMessage(Resources.DefaultBuildLog_PopulatedInstance, instance.GetType().FullName);
         }
 
         /// <inheritdoc />
@@ -116,7 +123,7 @@ namespace ModelBuilder
                 throw new ArgumentNullException(nameof(instance));
             }
 
-            WriteMessage("Start populating instance {0}", instance.GetType().FullName);
+            WriteMessage(Resources.DefaultBuildLog_PopulatingInstance, instance.GetType().FullName);
 
             _indent++;
         }
@@ -134,11 +141,12 @@ namespace ModelBuilder
                 _builder.Append(indent);
             }
 
-            _builder.AppendFormat(message, args);
+            _builder.AppendFormat(CultureInfo.CurrentCulture, message, args);
 
             _builder.AppendLine();
         }
 
+        /// <inheritdoc />
         public string Output => _builder.ToString();
     }
 }

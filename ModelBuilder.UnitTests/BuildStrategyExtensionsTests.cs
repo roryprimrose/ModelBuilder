@@ -49,7 +49,7 @@ namespace ModelBuilder.UnitTests
             target.BuildLog.Returns(buildLog);
             generator.IsSupported(typeof(Guid), null, null).Returns(true);
             generator.Generate(typeof(Guid), null, null).Returns(value);
-            
+
             var actual = target.Create<Guid>();
 
             actual.Should().Be(value);
@@ -77,7 +77,7 @@ namespace ModelBuilder.UnitTests
             target.ValueGenerators.Returns(generators);
             generator.IsSupported(typeof(Guid), null, null).Returns(true);
             generator.Generate(typeof(Guid), null, null).Returns(value);
-            
+
             var actual = target.CreateWith<Guid>(null);
 
             actual.Should().Be(value);
@@ -94,22 +94,46 @@ namespace ModelBuilder.UnitTests
         }
 
         [Fact]
-        public void IgnoringReturnsNewExecuteStrategyWithIgnoreRuleAppendedTest()
+        public void IgnoringReturnsNewBuildStrategyWithIgnoreRuleAppendedTest()
         {
-            var ignoreRules = new Collection<IgnoreRule>();
-
-            var executeStrategy = Substitute.For<IExecuteStrategy<Person>>();
-            var target = Substitute.For<IBuildStrategy>();
-
-            target.GetExecuteStrategy<Person>().Returns(executeStrategy);
-            executeStrategy.IgnoreRules.Returns(ignoreRules);
+            var target = new DefaultBuildStrategy();
 
             var actual = target.Ignoring<Person>(x => x.Priority);
 
-            actual.Should().BeSameAs(executeStrategy);
-            ignoreRules.Should().NotBeEmpty();
-            ignoreRules.First().PropertyName.Should().Be("Priority");
-            ignoreRules.First().TargetType.Should().Be<Person>();
+            actual.Should().NotBeSameAs(target);
+            actual.IgnoreRules.Should().NotBeEmpty();
+            actual.IgnoreRules.First().PropertyName.Should().Be("Priority");
+            actual.IgnoreRules.First().TargetType.Should().Be<Person>();
+        }
+
+        [Fact]
+        public void IgnoringThrowsExceptionWhenPropertyNotOnTargetTypeTest()
+        {
+            var target = new DefaultBuildStrategy();
+
+            Action action = () => target.Ignoring<Person>(x => x.Priority.ToString().Length);
+
+            action.ShouldThrow<ArgumentException>();
+        }
+
+        [Fact]
+        public void IgnoringThrowsExceptionWithFieldExpressionTest()
+        {
+            var target = new DefaultBuildStrategy();
+
+            Action action = () => target.Ignoring<Person>(x => x.MinAge);
+
+            action.ShouldThrow<ArgumentException>();
+        }
+
+        [Fact]
+        public void IgnoringThrowsExceptionWithMethodExpressionTest()
+        {
+            var target = new DefaultBuildStrategy();
+
+            Action action = () => target.Ignoring<Person>(x => x.DoSomething());
+
+            action.ShouldThrow<ArgumentException>();
         }
 
         [Fact]
@@ -195,12 +219,7 @@ namespace ModelBuilder.UnitTests
 
             var actual = target.With<DefaultExecuteStrategy<Person>>();
 
-            actual.BuildLog.Should().BeSameAs(target.BuildLog);
-            actual.ConstructorResolver.Should().BeSameAs(target.ConstructorResolver);
-            actual.ExecuteOrderRules.ShouldAllBeEquivalentTo(target.ExecuteOrderRules);
-            actual.IgnoreRules.ShouldAllBeEquivalentTo(target.IgnoreRules);
-            actual.TypeCreators.ShouldAllBeEquivalentTo(target.TypeCreators);
-            actual.ValueGenerators.ShouldAllBeEquivalentTo(target.ValueGenerators);
+            actual.BuildStrategy.Should().BeSameAs(target);
         }
 
         [Fact]

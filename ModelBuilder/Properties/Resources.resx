@@ -154,4 +154,25 @@
   <data name="BuildStrategyCompiler_NullConstructorResolver" xml:space="preserve">
     <value>The ConstructorResolver is null. A constructor resolver must be provided in order to create a build strategy.</value>
   </data>
+  <data name="DefaultBuildLog_CreatedType" xml:space="preserve">
+    <value>End creating type {0}</value>
+  </data>
+  <data name="DefaultBuildLog_CreateParameter" xml:space="preserve">
+    <value>Creating parameter {0} ({1}) for type {2}</value>
+  </data>
+  <data name="DefaultBuildLog_CreateProperty" xml:space="preserve">
+    <value>Creating property {0} ({1}) on type {2}</value>
+  </data>
+  <data name="DefaultBuildLog_CreatingType" xml:space="preserve">
+    <value>Start creating type {0}</value>
+  </data>
+  <data name="DefaultBuildLog_CreatingValue" xml:space="preserve">
+    <value>Creating {0} value</value>
+  </data>
+  <data name="DefaultBuildLog_PopulatedInstance" xml:space="preserve">
+    <value>End populating instance {0}</value>
+  </data>
+  <data name="DefaultBuildLog_PopulatingInstance" xml:space="preserve">
+    <value>Start populating instance {0}</value>
+  </data>
 </root>

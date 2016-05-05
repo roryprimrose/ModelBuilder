@@ -2,6 +2,10 @@
 
 namespace ModelBuilder
 {
+    /// <summary>
+    /// The <see cref="IBuildLog"/>
+    /// interface defines the build operations that can be logged.
+    /// </summary>
     public interface IBuildLog
     {
         /// <summary>

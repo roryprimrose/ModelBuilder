@@ -15,12 +15,6 @@ namespace ModelBuilder.UnitTests
             throw new NotImplementedException();
         }
 
-        public IBuildLog BuildLog { get; set; }
-
-        public IConstructorResolver ConstructorResolver { get; set; }
-        public ICollection<ExecuteOrderRule> ExecuteOrderRules { get; }
-        public ICollection<IgnoreRule> IgnoreRules { get; }
-        public ICollection<ITypeCreator> TypeCreators { get; }
-        public ICollection<IValueGenerator> ValueGenerators { get; }
+        public IBuildStrategy BuildStrategy { get; set; }
     }
 }

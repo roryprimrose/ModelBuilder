@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
@@ -21,12 +20,7 @@ namespace ModelBuilder
         /// </summary>
         public DefaultExecuteStrategy()
         {
-            BuildLog = new DefaultBuildLog();
-            ConstructorResolver = new DefaultConstructorResolver();
-            ExecuteOrderRules = new List<ExecuteOrderRule>();
-            IgnoreRules = new List<IgnoreRule>();
-            TypeCreators = new List<ITypeCreator>();
-            ValueGenerators = new List<IValueGenerator>();
+            BuildStrategy = new DefaultBuildStrategy();
         }
 
         /// <inheritdoc />
@@ -42,7 +36,7 @@ namespace ModelBuilder
                 return default(T);
             }
 
-            return (T)instance;
+            return (T) instance;
         }
 
         /// <inheritdoc />
@@ -60,7 +54,7 @@ namespace ModelBuilder
         /// <inheritdoc />
         public virtual T Populate(T instance)
         {
-            return (T)PopulateInstance(instance);
+            return (T) PopulateInstance(instance);
         }
 
         /// <inheritdoc />
@@ -88,23 +82,23 @@ namespace ModelBuilder
 
             // First check if this is a type supported by a value generator
             var valueGenerator =
-                ValueGenerators.Where(x => x.IsSupported(type, referenceName, context))
+                BuildStrategy.ValueGenerators.Where(x => x.IsSupported(type, referenceName, context))
                     .OrderByDescending(x => x.Priority)
                     .FirstOrDefault();
 
             if (valueGenerator != null)
             {
-                BuildLog.CreatingValue(type, context);
+                BuildStrategy.BuildLog.CreatingValue(type, context);
 
                 return valueGenerator.Generate(type, referenceName, context);
             }
 
-            BuildLog.CreatingType(type, context);
+            BuildStrategy.BuildLog.CreatingType(type, context);
 
             try
             {
                 var typeCreator =
-                    TypeCreators.Where(x => x.IsSupported(type, referenceName, context))
+                    BuildStrategy.TypeCreators.Where(x => x.IsSupported(type, referenceName, context))
                         .OrderByDescending(x => x.Priority)
                         .FirstOrDefault();
 
@@ -155,7 +149,7 @@ namespace ModelBuilder
             }
             finally
             {
-                BuildLog.CreatedType(type, context);
+                BuildStrategy.BuildLog.CreatedType(type, context);
             }
         }
 
@@ -172,7 +166,7 @@ namespace ModelBuilder
                 throw new ArgumentNullException(nameof(instance));
             }
 
-            BuildLog.PopulatingInstance(instance);
+            BuildStrategy.BuildLog.PopulatingInstance(instance);
 
             try
             {
@@ -181,9 +175,9 @@ namespace ModelBuilder
                 var type = instance.GetType();
 
                 var propertyInfos = from x in type.GetProperties(flags)
-                                    where x.CanWrite
-                                    orderby GetMaximumOrderPrority(x.PropertyType, x.Name) descending
-                                    select x;
+                    where x.CanWrite
+                    orderby GetMaximumOrderPrority(x.PropertyType, x.Name) descending
+                    select x;
 
                 foreach (var propertyInfo in propertyInfos)
                 {
@@ -194,13 +188,15 @@ namespace ModelBuilder
                     }
 
                     // Check if there is a matching ignore rule
-                    if (IgnoreRules.Any(x => x.TargetType.IsAssignableFrom(type) && x.PropertyName == propertyInfo.Name))
+                    if (
+                        BuildStrategy.IgnoreRules.Any(
+                            x => x.TargetType.IsAssignableFrom(type) && x.PropertyName == propertyInfo.Name))
                     {
                         // We need to ignore this property
                         continue;
                     }
 
-                    BuildLog.CreateProperty(propertyInfo.PropertyType, propertyInfo.Name, instance);
+                    BuildStrategy.BuildLog.CreateProperty(propertyInfo.PropertyType, propertyInfo.Name, instance);
 
                     var parameterValue = Build(propertyInfo.PropertyType, propertyInfo.Name, instance);
 
@@ -211,7 +207,7 @@ namespace ModelBuilder
             }
             finally
             {
-                BuildLog.PopulatedInstance(instance);
+                BuildStrategy.BuildLog.PopulatedInstance(instance);
             }
         }
 
@@ -228,7 +224,7 @@ namespace ModelBuilder
             else if (typeCreator.AutoDetectConstructor)
             {
                 // Use constructor detection to figure out how to create this instance
-                var constructor = ConstructorResolver.Resolve(type, args);
+                var constructor = BuildStrategy.ConstructorResolver.Resolve(type, args);
 
                 var parameterInfos = constructor.GetParameters();
 
@@ -243,7 +239,8 @@ namespace ModelBuilder
 
                     foreach (var parameterInfo in parameterInfos)
                     {
-                        BuildLog.CreateParameter(type, parameterInfo.ParameterType, parameterInfo.Name, context);
+                        BuildStrategy.BuildLog.CreateParameter(type, parameterInfo.ParameterType, parameterInfo.Name,
+                            context);
 
                         // Recurse to build this parameter value
                         var parameterValue = Build(parameterInfo.ParameterType, parameterInfo.Name, null);
@@ -265,10 +262,10 @@ namespace ModelBuilder
 
         private int GetMaximumOrderPrority(Type type, string propertyName)
         {
-            var matchingRules = from x in ExecuteOrderRules
-                                where x.IsMatch(type, propertyName)
-                                orderby x.Priority descending
-                                select x;
+            var matchingRules = from x in BuildStrategy.ExecuteOrderRules
+                where x.IsMatch(type, propertyName)
+                orderby x.Priority descending
+                select x;
             var matchingRule = matchingRules.FirstOrDefault();
 
             if (matchingRule == null)
@@ -280,21 +277,6 @@ namespace ModelBuilder
         }
 
         /// <inheritdoc />
-        public IBuildLog BuildLog { get; set; }
-
-        /// <inheritdoc />
-        public IConstructorResolver ConstructorResolver { get; set; }
-
-        /// <inheritdoc />
-        public ICollection<ExecuteOrderRule> ExecuteOrderRules { get; }
-
-        /// <inheritdoc />
-        public ICollection<IgnoreRule> IgnoreRules { get; }
-
-        /// <inheritdoc />
-        public ICollection<ITypeCreator> TypeCreators { get; }
-
-        /// <inheritdoc />
-        public ICollection<IValueGenerator> ValueGenerators { get; }
+        public IBuildStrategy BuildStrategy { get; set; }
     }
 }

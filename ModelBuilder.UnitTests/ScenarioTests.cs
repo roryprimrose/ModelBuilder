@@ -75,7 +75,7 @@ namespace ModelBuilder.UnitTests
 
             strategy.Create();
 
-            var actual = strategy.BuildLog.Output;
+            var actual = strategy.BuildStrategy.BuildLog.Output;
 
             actual.Should().NotBeNullOrWhiteSpace();
 
@@ -89,7 +89,7 @@ namespace ModelBuilder.UnitTests
 
             strategy.Create();
 
-            var actual = strategy.BuildLog.Output;
+            var actual = strategy.BuildStrategy.BuildLog.Output;
 
             actual.Should().NotBeNullOrWhiteSpace();
 
@@ -195,10 +195,21 @@ namespace ModelBuilder.UnitTests
         }
 
         [Fact]
+        public void IgnoringSkipsPropertyAssignmentOfNestedObjectsTest()
+        {
+            var actual =
+                Model.Ignoring<Person>(x => x.FirstName).Ignoring<Address>(x => x.AddressLine1).Create<Person>();
+
+            actual.Should().NotBeNull();
+            actual.FirstName.Should().BeNull();
+            actual.Address.AddressLine1.Should().BeNull();
+        }
+
+        [Fact]
         public void IgnoringSkipsPropertyAssignmentTest()
         {
             var entity = Model.Create<Person>();
-            var actual = Model.For<Person>().Ignoring(x => x.Id).Ignoring(x => x.IsActive).CreateWith(entity);
+            var actual = Model.Ignoring<Person>(x => x.Id).Ignoring<Person>(x => x.IsActive).CreateWith<Person>(entity);
 
             actual.Should().NotBeNull();
             actual.DOB.Should().NotBe(default(DateTime));

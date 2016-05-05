@@ -36,12 +36,7 @@ namespace ModelBuilder.UnitTests
 
             var actual = target.GetExecuteStrategy<Person>();
 
-            actual.IgnoreRules.ShouldAllBeEquivalentTo(target.IgnoreRules);
-            actual.BuildLog.Should().BeOfType<DefaultBuildLog>();
-            actual.ConstructorResolver.Should().BeOfType<DefaultConstructorResolver>();
-            actual.TypeCreators.ShouldAllBeEquivalentTo(target.TypeCreators);
-            actual.ValueGenerators.ShouldAllBeEquivalentTo(target.ValueGenerators);
-            actual.ExecuteOrderRules.ShouldAllBeEquivalentTo(target.ExecuteOrderRules);
+            actual.BuildStrategy.Should().BeSameAs(target);
         }
     }
 }
