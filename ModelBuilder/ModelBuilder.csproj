@@ -197,6 +197,9 @@
     <Compile Include="TypeCreatorExtensions.cs">
       <DependentUpon>Extensions.cs</DependentUpon>
     </Compile>
+    <Compile Include="UriValueGenerator.cs">
+      <DependentUpon>IValueGenerator.cs</DependentUpon>
+    </Compile>
     <Compile Include="ValueGeneratorBase.cs">
       <DependentUpon>IValueGenerator.cs</DependentUpon>
     </Compile>

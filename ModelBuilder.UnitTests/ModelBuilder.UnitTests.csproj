@@ -85,6 +85,10 @@
     <Compile Include="BuildStrategyTests.cs" />
     <Compile Include="DefaultBuildLogTests.cs" />
     <Compile Include="IncrementingArrayTypeCreator.cs" />
+    <Compile Include="Location.cs">
+      <DependentUpon>Models.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UriValueGeneratorTests.cs" />
     <Compile Include="Numbers.cs">
       <DependentUpon>Models.cs</DependentUpon>
     </Compile>
