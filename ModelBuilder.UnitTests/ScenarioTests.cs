@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using FluentAssertions;
-using NSubstitute;
-using NSubstitute.ExceptionExtensions;
-using Xunit;
-using Xunit.Abstractions;
-
-namespace ModelBuilder.UnitTests
+﻿namespace ModelBuilder.UnitTests
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+    using System.Linq;
+    using FluentAssertions;
+    using NSubstitute;
+    using NSubstitute.ExceptionExtensions;
+    using Xunit;
+    using Xunit.Abstractions;
+
     public class ScenarioTests
     {
         private readonly ITestOutputHelper _output;
@@ -17,22 +17,6 @@ namespace ModelBuilder.UnitTests
         public ScenarioTests(ITestOutputHelper output)
         {
             _output = output;
-        }
-
-        [Fact]
-        public void CanGenerateByteArrayTest()
-        {
-            var actual = Model.Create<byte[]>();
-            
-            actual.Length.Should().BeGreaterThan(0);
-        }
-
-        [Fact]
-        public void CanGenerateArrayOfCustomTypeTest()
-        {
-            var actual = Model.Create<Person[]>();
-
-            actual.Length.Should().BeGreaterThan(0);
         }
 
         [Fact]
@@ -69,6 +53,32 @@ namespace ModelBuilder.UnitTests
             var actual = strategy.Create<Person>();
 
             Guid.Parse(actual.Address.AddressLine1).Should().NotBeEmpty();
+        }
+
+        [Fact]
+        public void CanGenerateArrayOfCustomTypeTest()
+        {
+            var actual = Model.Create<Person[]>();
+
+            actual.Length.Should().BeGreaterThan(0);
+        }
+
+        [Fact]
+        public void CanGenerateByteArrayTest()
+        {
+            var actual = Model.Create<byte[]>();
+
+            actual.Length.Should().BeGreaterThan(0);
+        }
+
+        [Fact]
+        public void CanGenerateUriDataTest()
+        {
+            var actual = Model.Create<Location>();
+
+            actual.First.Should().NotBeNull();
+            actual.SecondUrl.Should().NotBeNullOrWhiteSpace();
+            actual.UriThird.Should().NotBeNullOrWhiteSpace();
         }
 
         [Fact]
@@ -180,6 +190,32 @@ namespace ModelBuilder.UnitTests
         }
 
         [Fact]
+        public void CreateThrowsExceptionWhenPropertyCannotBeCreatedTest()
+        {
+            var typeCreator = Substitute.For<ITypeCreator>();
+
+            typeCreator.IsSupported(typeof(Address), "Address", Arg.Any<object>()).Returns(true);
+            typeCreator.Priority.Returns(int.MaxValue);
+            typeCreator.AutoDetectConstructor.Returns(true);
+            typeCreator.AutoPopulate.Returns(true);
+            typeCreator.Create(typeof(Address), "Address", Arg.Any<object>()).Throws(new InvalidOperationException());
+
+            var buildStrategy = new DefaultBuildStrategy().Clone().Add(typeCreator).Compile();
+
+            var target = new DefaultExecuteStrategy<Company>
+            {
+                BuildStrategy = buildStrategy
+            };
+
+            Action action = () => target.CreateWith();
+
+            var exception =
+                action.ShouldThrow<BuildException>().Where(x => x.Message != null).Where(x => x.BuildLog != null).Which;
+
+            _output.WriteLine(exception.Message);
+        }
+
+        [Fact]
         public void CreateWithReturnsCompanyWithEnumerableTypeCreatorUsageTest()
         {
             var actual = Model.Create<Company>();
@@ -202,28 +238,6 @@ namespace ModelBuilder.UnitTests
             actual.FirstName.Should().NotBeNullOrWhiteSpace();
             actual.LastName.Should().NotBeNullOrWhiteSpace();
             actual.Priority.Should().NotBe(0);
-        }
-
-        [Fact]
-        public void CreateThrowsExceptionWhenPropertyCannotBeCreatedTest()
-        {
-            var typeCreator = Substitute.For<ITypeCreator>();
-
-            typeCreator.IsSupported(typeof(Address), "Address", Arg.Any<object>()).Returns(true);
-            typeCreator.Priority.Returns(int.MaxValue);
-            typeCreator.AutoDetectConstructor.Returns(true);
-            typeCreator.AutoPopulate.Returns(true);
-            typeCreator.Create(typeof(Address), "Address", Arg.Any<object>()).Throws(new InvalidOperationException());
-
-            var buildStrategy = new DefaultBuildStrategy().Clone().Add(typeCreator).Compile();
-
-            var target = new DefaultExecuteStrategy<Company> { BuildStrategy = buildStrategy };
-
-            Action action = () => target.CreateWith();
-
-            var exception = action.ShouldThrow<BuildException>().Where(x => x.Message != null).Where(x => x.BuildLog != null).Which;
-
-            _output.WriteLine(exception.Message);
         }
 
         [Fact]

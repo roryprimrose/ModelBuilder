@@ -111,6 +111,7 @@ namespace ModelBuilder
                 yield return new StringValueGenerator();
                 yield return new SuburbValueGenerator();
                 yield return new TimeZoneValueGenerator();
+                yield return new UriValueGenerator();
             }
         }
     }

@@ -1,12 +1,30 @@
-﻿using System;
-using System.IO;
-using FluentAssertions;
-using Xunit;
-
-namespace ModelBuilder.UnitTests
+﻿namespace ModelBuilder.UnitTests
 {
+    using System;
+    using System.IO;
+    using FluentAssertions;
+    using Xunit;
+
     public class EmailValueGeneratorTests
     {
+        [Fact]
+        public void GenerateReturnsEmailAddressWithNameSpacesRemovedTest()
+        {
+            var person = new Person
+            {
+                FirstName = "De Jour",
+                LastName = "Mc Cormick"
+            };
+
+            var target = new EmailValueGenerator();
+
+            var actual = (string)target.Generate(typeof(string), "email", person);
+
+            var expected = "dejour.mccormick";
+
+            actual.Should().StartWith(expected.ToLowerInvariant());
+        }
+
         [Fact]
         public void GenerateReturnsRandomEmailAddressTest()
         {
@@ -34,9 +52,9 @@ namespace ModelBuilder.UnitTests
 
             var target = new EmailValueGenerator();
 
-            var actual = (string) target.Generate(typeof(string), "email", person);
+            var actual = (string)target.Generate(typeof(string), "email", person);
 
-            var expected = person.FirstName.Substring(0, 1) + person.LastName;
+            var expected = person.FirstName + "." + person.LastName;
 
             actual.Should().StartWith(expected.ToLowerInvariant());
         }
@@ -51,7 +69,7 @@ namespace ModelBuilder.UnitTests
 
             var target = new EmailValueGenerator();
 
-            var actual = (string) target.Generate(typeof(string), "email", person);
+            var actual = (string)target.Generate(typeof(string), "email", person);
 
             var expected = person.FirstName.Substring(0, 1);
 
@@ -68,7 +86,7 @@ namespace ModelBuilder.UnitTests
 
             var target = new EmailValueGenerator();
 
-            var actual = (string) target.Generate(typeof(string), "email", person);
+            var actual = (string)target.Generate(typeof(string), "email", person);
 
             var expected = person.LastName;
 

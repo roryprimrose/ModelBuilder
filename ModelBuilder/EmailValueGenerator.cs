@@ -64,10 +64,9 @@ namespace ModelBuilder
                 lastName = person.LastName;
             }
 
-            var prefix = firstName.Substring(0, 1);
-            var email = prefix + lastName + "@" + person.Domain;
+            var email = firstName + "." + lastName + "@" + person.Domain;
 
-            return email.ToLowerInvariant();
+            return email.Replace(" ", string.Empty).ToLowerInvariant();
         }
 
         /// <inheritdoc />

@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
-using FluentAssertions;
-using NSubstitute;
-using Xunit;
-
-namespace ModelBuilder.UnitTests
+﻿namespace ModelBuilder.UnitTests
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+    using System.IO;
+    using System.Linq;
+    using FluentAssertions;
+    using NSubstitute;
+    using Xunit;
+
     public class ArrayTypeCreatorTests
     {
         [Fact]
@@ -36,7 +36,7 @@ namespace ModelBuilder.UnitTests
 
             actual.Should().NotBeNull();
         }
-        
+
         [Fact]
         public void CreateThrowsExceptionWithNullTypeTest()
         {
@@ -144,7 +144,7 @@ namespace ModelBuilder.UnitTests
 
             actual.Should().BeSameAs(expected);
 
-            var set = (Guid[]) actual;
+            var set = (Guid[])actual;
 
             set.Should().HaveCount(target.MaxCount);
             set.All(x => x != Guid.Empty).Should().BeTrue();
@@ -182,7 +182,7 @@ namespace ModelBuilder.UnitTests
 
             var target = new IncrementingArrayTypeCreator();
 
-            var result = (int[]) target.Populate(actual, executeStrategy);
+            var result = (int[])target.Populate(actual, executeStrategy);
 
             var baseValue = result[0];
             var expected = new int[actual.Length];
@@ -193,6 +193,29 @@ namespace ModelBuilder.UnitTests
             }
 
             result.ShouldAllBeEquivalentTo(expected);
+        }
+
+        [Fact]
+        public void PopulateReturnsEmptyArrayWhenSourceHasZeroLengthTest()
+        {
+            var expected = new Guid[0];
+
+            var strategy = Substitute.For<IExecuteStrategy>();
+
+            strategy.CreateWith(typeof(Guid)).Returns(Guid.NewGuid());
+
+            var target = new ArrayTypeCreator
+            {
+                MaxCount = 15
+            };
+
+            var actual = target.Populate(expected, strategy);
+
+            actual.Should().BeSameAs(expected);
+
+            var set = (Guid[])actual;
+
+            set.Should().BeEmpty();
         }
 
         [Fact]
@@ -243,17 +266,6 @@ namespace ModelBuilder.UnitTests
         }
 
         [Fact]
-        public void SettingMaxCountShouldNotChangeDefaultMaxCountTest()
-        {
-            var target = new ArrayTypeCreator
-            {
-                MaxCount = Environment.TickCount
-            };
-
-            ArrayTypeCreator.DefaultMaxCount.Should().NotBe(target.MaxCount);
-        }
-
-        [Fact]
         public void SettingDefaultMaxCountOnlyAffectsNewInstancesTest()
         {
             var expected = ArrayTypeCreator.DefaultMaxCount;
@@ -273,6 +285,17 @@ namespace ModelBuilder.UnitTests
             {
                 ArrayTypeCreator.DefaultMaxCount = expected;
             }
+        }
+
+        [Fact]
+        public void SettingMaxCountShouldNotChangeDefaultMaxCountTest()
+        {
+            var target = new ArrayTypeCreator
+            {
+                MaxCount = Environment.TickCount
+            };
+
+            ArrayTypeCreator.DefaultMaxCount.Should().NotBe(target.MaxCount);
         }
 
         private class ArrayTypeCreatorWrapper : ArrayTypeCreator
