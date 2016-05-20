@@ -83,6 +83,7 @@
     <Compile Include="BuildStrategyCompilerExtensionsTests.cs" />
     <Compile Include="BuildStrategyCompilerTests.cs" />
     <Compile Include="BuildStrategyTests.cs" />
+    <Compile Include="CreationRuleTests.cs" />
     <Compile Include="DefaultBuildLogTests.cs" />
     <Compile Include="IncrementingArrayTypeCreator.cs" />
     <Compile Include="Location.cs">

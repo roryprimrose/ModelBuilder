@@ -169,24 +169,6 @@ namespace ModelBuilder.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Either targetType or propertyExpression must be supplied..
-        /// </summary>
-        internal static string ExecuteOrderRule_NoTargetTypeOrPropetyExpression {
-            get {
-                return ResourceManager.GetString("ExecuteOrderRule_NoTargetTypeOrPropetyExpression", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Either targetType or propertyName must be supplied..
-        /// </summary>
-        internal static string ExecuteOrderRule_NoTargetTypeOrPropetyName {
-            get {
-                return ResourceManager.GetString("ExecuteOrderRule_NoTargetTypeOrPropetyName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to The expression returned a property {0} that was not defined on type &apos;{1}&apos;..
         /// </summary>
         internal static string ExecuteStrategy_ExpressionTargetsWrongType {
@@ -223,12 +205,39 @@ namespace ModelBuilder.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Either targetType or propertyExpression must be supplied..
+        /// </summary>
+        internal static string NoTargetTypeOrPropertyExpression {
+            get {
+                return ResourceManager.GetString("NoTargetTypeOrPropertyExpression", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Either targetType or propertyName must be supplied..
+        /// </summary>
+        internal static string NoTargetTypeOrPropertyName {
+            get {
+                return ResourceManager.GetString("NoTargetTypeOrPropertyName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
         ///&lt;People xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;&gt;&lt;Person&gt;&lt;Address&gt;997 Emmet Circle&lt;/Address&gt;&lt;City&gt;Newark&lt;/City&gt;&lt;Company&gt;Tanoodle&lt;/Company&gt;&lt;Country&gt;Benin&lt;/Country&gt;&lt;Domain&gt;google.ca&lt;/Domain&gt;&lt;Email&gt;tspencer0@is.gd&lt;/Email&gt;&lt;FirstName&gt;Theresa&lt;/FirstName&gt;&lt;Gender&gt;Female&lt;/Gender&gt;&lt;LastName&gt;Spencer&lt;/LastName&gt;&lt;Phone&gt;1-(302)560-3674&lt;/Phone&gt;&lt;PostCode&gt;19714&lt;/PostCode&gt;&lt;State&gt;Delaware&lt;/State&gt;&lt;TimeZone&gt;America/Mexico_City&lt;/TimeZ [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string People {
             get {
                 return ResourceManager.GetString("People", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The rule {0} does not support type &apos;{1}&apos; for &apos;{2}&apos;..
+        /// </summary>
+        internal static string Rule_InvalidMatch {
+            get {
+                return ResourceManager.GetString("Rule_InvalidMatch", resourceCulture);
             }
         }
     }

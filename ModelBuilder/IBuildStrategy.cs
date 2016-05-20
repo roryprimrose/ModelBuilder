@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-
-namespace ModelBuilder
+﻿namespace ModelBuilder
 {
+    using System.Collections.Generic;
+
     /// <summary>
     /// The <see cref="IBuildStrategy"/>
     /// interface defines the members used to create and populate instances.
@@ -18,31 +18,57 @@ namespace ModelBuilder
         /// <summary>
         /// Gets the build log for items created by this strategy.
         /// </summary>
-        IBuildLog BuildLog { get; }
+        IBuildLog BuildLog
+        {
+            get;
+        }
 
         /// <summary>
         /// Gets the constructor resolver used to create an instance of a type.
         /// </summary>
-        IConstructorResolver ConstructorResolver { get; }
+        IConstructorResolver ConstructorResolver
+        {
+            get;
+        }
+
+        /// <summary>
+        /// Gets the creation rules used to quickly generate values without invoking <see cref="ITypeCreator"/> or <see cref="IValueGenerator"/> instances.
+        /// </summary>
+        IReadOnlyCollection<CreationRule> CreationRules
+        {
+            get;
+        }
 
         /// <summary>
         /// Gets the execute order rules used to determine the order that properties are populated.
         /// </summary>
-        IReadOnlyCollection<ExecuteOrderRule> ExecuteOrderRules { get; }
+        IReadOnlyCollection<ExecuteOrderRule> ExecuteOrderRules
+        {
+            get;
+        }
 
         /// <summary>
         /// Gets the ignore rules used to skip over property population.
         /// </summary>
-        IReadOnlyCollection<IgnoreRule> IgnoreRules { get; }
+        IReadOnlyCollection<IgnoreRule> IgnoreRules
+        {
+            get;
+        }
 
         /// <summary>
         /// Gets the type creators used to create instances.
         /// </summary>
-        IReadOnlyCollection<ITypeCreator> TypeCreators { get; }
+        IReadOnlyCollection<ITypeCreator> TypeCreators
+        {
+            get;
+        }
 
         /// <summary>
         /// Gets the value generators used to generate flat values.
         /// </summary>
-        IReadOnlyCollection<IValueGenerator> ValueGenerators { get; }
+        IReadOnlyCollection<IValueGenerator> ValueGenerators
+        {
+            get;
+        }
     }
 }

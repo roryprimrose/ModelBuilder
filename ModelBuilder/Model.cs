@@ -81,7 +81,7 @@ namespace ModelBuilder
 
             return strategy;
         }
-
+        
         /// <summary>
         /// Returns a new execute strategy using <see cref="ModelBuilder.DefaultBuildStrategy"/>.
         /// </summary>

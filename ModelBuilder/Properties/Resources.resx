@@ -135,7 +135,7 @@
   <data name="NoMatchingCreatorOrGeneratorFoundWithNameAndContext" xml:space="preserve">
     <value>No supporting ITypeCreator or IValueGenerator was found to build the type '{0}' for '{1}' on type '{2}'.</value>
   </data>
-  <data name="ExecuteOrderRule_NoTargetTypeOrPropetyName" xml:space="preserve">
+  <data name="NoTargetTypeOrPropertyName" xml:space="preserve">
     <value>Either targetType or propertyName must be supplied.</value>
   </data>
   <data name="ExecuteStrategy_ExpressionTargetsWrongType" xml:space="preserve">
@@ -145,7 +145,7 @@
   <data name="People" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\People.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
-  <data name="ExecuteOrderRule_NoTargetTypeOrPropetyExpression" xml:space="preserve">
+  <data name="NoTargetTypeOrPropertyExpression" xml:space="preserve">
     <value>Either targetType or propertyExpression must be supplied.</value>
   </data>
   <data name="ArgumentException_NullOrWhiteSpace" xml:space="preserve">
@@ -174,5 +174,8 @@
   </data>
   <data name="DefaultBuildLog_PopulatingInstance" xml:space="preserve">
     <value>Start populating instance {0}</value>
+  </data>
+  <data name="Rule_InvalidMatch" xml:space="preserve">
+    <value>The rule {0} does not support type '{1}' for '{2}'.</value>
   </data>
 </root>

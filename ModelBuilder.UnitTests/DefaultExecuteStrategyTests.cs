@@ -1,16 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
-using FluentAssertions;
-using NSubstitute;
-using NSubstitute.ExceptionExtensions;
-using Xunit;
-using Xunit.Abstractions;
-
-namespace ModelBuilder.UnitTests
+﻿namespace ModelBuilder.UnitTests
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+    using System.IO;
+    using System.Linq;
+    using FluentAssertions;
+    using NSubstitute;
+    using NSubstitute.ExceptionExtensions;
+    using Xunit;
+    using Xunit.Abstractions;
+
     public class DefaultExecuteStrategyTests
     {
         private readonly ITestOutputHelper _output;
@@ -216,7 +216,10 @@ namespace ModelBuilder.UnitTests
             buildStrategy.TypeCreators.Returns(typeCreators);
             buildStrategy.ValueGenerators.Returns(valueGenerators);
 
-            var target = new DefaultExecuteStrategy<SlimModel> {BuildStrategy = buildStrategy};
+            var target = new DefaultExecuteStrategy<SlimModel>
+            {
+                BuildStrategy = buildStrategy
+            };
 
             firstCreator.IsSupported(typeof(SlimModel), null, null).Returns(true);
             firstCreator.Create(typeof(SlimModel), null, null).Returns(firstModel);
@@ -250,7 +253,10 @@ namespace ModelBuilder.UnitTests
 
             buildStrategy.TypeCreators.Returns(typeCreators);
 
-            var target = new DefaultExecuteStrategy<Person> {BuildStrategy = buildStrategy};
+            var target = new DefaultExecuteStrategy<Person>
+            {
+                BuildStrategy = buildStrategy
+            };
 
             typeCreator.IsSupported(typeof(Person), null, null).Returns(true);
             typeCreator.Create(typeof(Person), null, null).Returns(expected);
@@ -278,7 +284,10 @@ namespace ModelBuilder.UnitTests
             buildStrategy.TypeCreators.Returns(typeCreators);
             buildStrategy.ConstructorResolver.Returns(resolver);
 
-            var target = new DefaultExecuteStrategy<Person> {BuildStrategy = buildStrategy};
+            var target = new DefaultExecuteStrategy<Person>
+            {
+                BuildStrategy = buildStrategy
+            };
 
             resolver.Resolve(typeof(Person))
                 .Returns(typeof(Person).GetConstructors().Single(x => x.GetParameters().Length == 0));
@@ -315,7 +324,10 @@ namespace ModelBuilder.UnitTests
             secondGenerator.Generate(typeof(Guid), null, null).Returns(secondValue);
             secondGenerator.Priority.Returns(2);
 
-            var target = new DefaultExecuteStrategy<Guid> {BuildStrategy = buildStrategy};
+            var target = new DefaultExecuteStrategy<Guid>
+            {
+                BuildStrategy = buildStrategy
+            };
 
             var actual = target.CreateWith();
 
@@ -346,7 +358,10 @@ namespace ModelBuilder.UnitTests
             buildStrategy.TypeCreators.Returns(typeCreators);
             buildStrategy.ValueGenerators.Returns(valueGenerators);
 
-            var target = new DefaultExecuteStrategy<ReadOnlyModel> {BuildStrategy = buildStrategy};
+            var target = new DefaultExecuteStrategy<ReadOnlyModel>
+            {
+                BuildStrategy = buildStrategy
+            };
 
             typeCreator.IsSupported(typeof(ReadOnlyModel), null, null).Returns(true);
             typeCreator.Create(typeof(ReadOnlyModel), null, null, value).Returns(expected);
@@ -360,6 +375,58 @@ namespace ModelBuilder.UnitTests
 
             actual.Should().Be(expected);
             actual.Value.Should().Be(value);
+        }
+
+        [Fact]
+        public void CreateWithReturnsValueFromSupportedCreationRuleTest()
+        {
+            var firstValue = Guid.NewGuid().ToString();
+            var secondValue = Guid.NewGuid();
+            var rules = new List<CreationRule>();
+
+            var buildStrategy = Substitute.For<IBuildStrategy>();
+            var firstRule = new CreationRule(typeof(string), (string)null, 100, firstValue);
+            var secondRule = new CreationRule(typeof(Guid), (string)null, 20, secondValue);
+
+            rules.Add(firstRule);
+            rules.Add(secondRule);
+
+            buildStrategy.CreationRules.Returns(rules);
+
+            var target = new DefaultExecuteStrategy<Guid>
+            {
+                BuildStrategy = buildStrategy
+            };
+
+            var actual = target.CreateWith();
+
+            actual.Should().Be(secondValue);
+        }
+
+        [Fact]
+        public void CreateWithReturnsValueFromSupportedCreationRuleWithHigherPriorityTest()
+        {
+            var firstValue = Guid.NewGuid();
+            var secondValue = Guid.NewGuid();
+            var rules = new List<CreationRule>();
+
+            var buildStrategy = Substitute.For<IBuildStrategy>();
+            var firstRule = new CreationRule(typeof(Guid), (string)null, 10, firstValue);
+            var secondRule = new CreationRule(typeof(Guid), (string)null, 20, secondValue);
+
+            rules.Add(firstRule);
+            rules.Add(secondRule);
+
+            buildStrategy.CreationRules.Returns(rules);
+
+            var target = new DefaultExecuteStrategy<Guid>
+            {
+                BuildStrategy = buildStrategy
+            };
+
+            var actual = target.CreateWith();
+
+            actual.Should().Be(secondValue);
         }
 
         [Fact]
@@ -383,7 +450,10 @@ namespace ModelBuilder.UnitTests
             buildStrategy.TypeCreators.Returns(typeCreators);
             buildStrategy.ValueGenerators.Returns(valueGenerators);
 
-            var target = new DefaultExecuteStrategy<SlimModel> {BuildStrategy = buildStrategy};
+            var target = new DefaultExecuteStrategy<SlimModel>
+            {
+                BuildStrategy = buildStrategy
+            };
 
             firstCreator.IsSupported(typeof(SlimModel), null, null).Returns(false);
             firstCreator.Create(typeof(SlimModel), null, null).Returns(firstModel);
@@ -426,7 +496,10 @@ namespace ModelBuilder.UnitTests
             secondGenerator.Generate(typeof(Guid), null, null).Returns(secondValue);
             secondGenerator.Priority.Returns(2);
 
-            var target = new DefaultExecuteStrategy<Guid> {BuildStrategy = buildStrategy};
+            var target = new DefaultExecuteStrategy<Guid>
+            {
+                BuildStrategy = buildStrategy
+            };
 
             var actual = target.CreateWith();
 
@@ -448,7 +521,10 @@ namespace ModelBuilder.UnitTests
             valueGenerator.IsSupported(typeof(string), null, null).Returns(true);
             valueGenerator.Generate(typeof(string), null, null).Returns(expected);
 
-            var target = new DefaultExecuteStrategy<string> {BuildStrategy = buildStrategy};
+            var target = new DefaultExecuteStrategy<string>
+            {
+                BuildStrategy = buildStrategy
+            };
 
             var actual = target.CreateWith();
 
@@ -471,7 +547,10 @@ namespace ModelBuilder.UnitTests
             buildStrategy.ConstructorResolver.Returns(resolver);
             buildStrategy.TypeCreators.Returns(typeCreators);
 
-            var target = new DefaultExecuteStrategy<ReadOnlyModel> {BuildStrategy = buildStrategy};
+            var target = new DefaultExecuteStrategy<ReadOnlyModel>
+            {
+                BuildStrategy = buildStrategy
+            };
 
             Action action = () => target.CreateWith();
 
@@ -491,7 +570,10 @@ namespace ModelBuilder.UnitTests
 
             var buildStrategy = new DefaultBuildStrategy().Clone().Add(typeCreator).Compile();
 
-            var target = new DefaultExecuteStrategy<Person> {BuildStrategy = buildStrategy};
+            var target = new DefaultExecuteStrategy<Person>
+            {
+                BuildStrategy = buildStrategy
+            };
 
             Action action = () => target.CreateWith();
 
@@ -506,7 +588,10 @@ namespace ModelBuilder.UnitTests
         {
             var buildStrategy = Substitute.For<IBuildStrategy>();
 
-            var target = new NullTypeBuildExecuteStrategy<int> {BuildStrategy = buildStrategy};
+            var target = new NullTypeBuildExecuteStrategy<int>
+            {
+                BuildStrategy = buildStrategy
+            };
 
             Action action = () => target.CreateWith();
 
@@ -537,7 +622,10 @@ namespace ModelBuilder.UnitTests
             buildStrategy.ValueGenerators.Returns(generators);
             buildStrategy.BuildLog.Returns(buildLog);
 
-            var target = new DefaultExecuteStrategy<Person> {BuildStrategy = buildStrategy};
+            var target = new DefaultExecuteStrategy<Person>
+            {
+                BuildStrategy = buildStrategy
+            };
 
             Action action = () => target.CreateWith();
 
@@ -570,7 +658,10 @@ namespace ModelBuilder.UnitTests
             buildStrategy.ValueGenerators.Returns(generators);
             buildStrategy.BuildLog.Returns(buildLog);
 
-            var target = new DefaultExecuteStrategy<Person> {BuildStrategy = buildStrategy};
+            var target = new DefaultExecuteStrategy<Person>
+            {
+                BuildStrategy = buildStrategy
+            };
 
             Action action = () => target.CreateWith();
 
@@ -582,7 +673,10 @@ namespace ModelBuilder.UnitTests
         {
             var buildStrategy = Substitute.For<IBuildStrategy>();
 
-            var target = new DefaultExecuteStrategy<string> {BuildStrategy = buildStrategy};
+            var target = new DefaultExecuteStrategy<string>
+            {
+                BuildStrategy = buildStrategy
+            };
 
             Action action = () => target.CreateWith();
 
@@ -604,7 +698,10 @@ namespace ModelBuilder.UnitTests
             buildStrategy.ConstructorResolver.Returns(resolver);
             buildStrategy.TypeCreators.Returns(typeCreators);
 
-            var target = new DefaultExecuteStrategy<SlimModel> {BuildStrategy = buildStrategy};
+            var target = new DefaultExecuteStrategy<SlimModel>
+            {
+                BuildStrategy = buildStrategy
+            };
 
             Action action = () => target.CreateWith();
 
@@ -616,9 +713,12 @@ namespace ModelBuilder.UnitTests
         {
             var buildStrategy = Substitute.For<IBuildStrategy>();
 
-            var target = new DefaultExecuteStrategy<int> {BuildStrategy = buildStrategy};
+            var target = new DefaultExecuteStrategy<int>
+            {
+                BuildStrategy = buildStrategy
+            };
 
-            Action action = () => target.CreateWith((Type) null);
+            Action action = () => target.CreateWith((Type)null);
 
             action.ShouldThrow<ArgumentNullException>();
         }
@@ -651,7 +751,10 @@ namespace ModelBuilder.UnitTests
             buildStrategy.TypeCreators.Returns(typeCreators);
             buildStrategy.ValueGenerators.Returns(valueGenerators);
 
-            var target = new DefaultExecuteStrategy<Company> {BuildStrategy = buildStrategy};
+            var target = new DefaultExecuteStrategy<Company>
+            {
+                BuildStrategy = buildStrategy
+            };
 
             typeCreator.IsSupported(typeof(IEnumerable<Person>), "Staff", expected).Returns(true);
             typeCreator.Create(typeof(IEnumerable<Person>), "Staff", expected).Returns(staff);
@@ -661,7 +764,7 @@ namespace ModelBuilder.UnitTests
             valueGenerator.IsSupported(typeof(string), "Address", expected).Returns(true);
             valueGenerator.Generate(typeof(string), "Address", expected).Returns(address);
 
-            var actual = (Company) target.Populate((object) expected);
+            var actual = (Company)target.Populate((object)expected);
 
             actual.Should().BeSameAs(expected);
             actual.Name.Should().Be(name);
@@ -689,7 +792,10 @@ namespace ModelBuilder.UnitTests
             buildStrategy.TypeCreators.Returns(typeCreators);
             buildStrategy.ValueGenerators.Returns(valueGenerators);
 
-            var target = new DefaultExecuteStrategy<Company> {BuildStrategy = buildStrategy};
+            var target = new DefaultExecuteStrategy<Company>
+            {
+                BuildStrategy = buildStrategy
+            };
 
             typeCreator.IsSupported(typeof(IEnumerable<Person>), "Staff", expected).Returns(true);
             typeCreator.Create(typeof(IEnumerable<Person>), "Staff", expected).Returns(staff);
@@ -730,7 +836,10 @@ namespace ModelBuilder.UnitTests
             buildStrategy.ExecuteOrderRules.Returns(
                 new ReadOnlyCollection<ExecuteOrderRule>(DefaultBuildStrategy.DefaultExecuteOrderRules.ToList()));
 
-            var target = new DefaultExecuteStrategy<PopulateOrderItem> {BuildStrategy = buildStrategy};
+            var target = new DefaultExecuteStrategy<PopulateOrderItem>
+            {
+                BuildStrategy = buildStrategy
+            };
 
             valueGenerator.IsSupported(typeof(SimpleEnum), "Z", expected).Returns(true);
             valueGenerator.Generate(typeof(SimpleEnum), "Z", expected).Returns(first);
@@ -777,7 +886,10 @@ namespace ModelBuilder.UnitTests
             buildStrategy.ValueGenerators.Returns(valueGenerators);
             buildStrategy.IgnoreRules.Returns(ignoreRules);
 
-            var target = new DefaultExecuteStrategy<Company> {BuildStrategy = buildStrategy};
+            var target = new DefaultExecuteStrategy<Company>
+            {
+                BuildStrategy = buildStrategy
+            };
 
             typeCreator.IsSupported(typeof(IEnumerable<Person>), "Staff", expected).Returns(true);
             typeCreator.Create(typeof(IEnumerable<Person>), "Staff", expected).Returns(staff);
@@ -821,7 +933,10 @@ namespace ModelBuilder.UnitTests
             buildStrategy.ValueGenerators.Returns(valueGenerators);
             buildStrategy.IgnoreRules.Returns(ignoreRules);
 
-            var target = new DefaultExecuteStrategy<Company> {BuildStrategy = buildStrategy};
+            var target = new DefaultExecuteStrategy<Company>
+            {
+                BuildStrategy = buildStrategy
+            };
 
             typeCreator.IsSupported(typeof(IEnumerable<Person>), "Staff", expected).Returns(true);
             typeCreator.Create(typeof(IEnumerable<Person>), "Staff", expected).Returns(staff);
@@ -865,7 +980,10 @@ namespace ModelBuilder.UnitTests
             buildStrategy.ValueGenerators.Returns(valueGenerators);
             buildStrategy.IgnoreRules.Returns(ignoreRules);
 
-            var target = new DefaultExecuteStrategy<Company> {BuildStrategy = buildStrategy};
+            var target = new DefaultExecuteStrategy<Company>
+            {
+                BuildStrategy = buildStrategy
+            };
 
             typeCreator.IsSupported(typeof(IEnumerable<Person>), "Staff", expected).Returns(true);
             typeCreator.Create(typeof(IEnumerable<Person>), "Staff", expected).Returns(staff);
@@ -897,7 +1015,10 @@ namespace ModelBuilder.UnitTests
 
             buildStrategy.ValueGenerators.Returns(valueGenerators);
 
-            var target = new DefaultExecuteStrategy<PropertyScopes> {BuildStrategy = buildStrategy};
+            var target = new DefaultExecuteStrategy<PropertyScopes>
+            {
+                BuildStrategy = buildStrategy
+            };
 
             valueGenerator.IsSupported(typeof(Guid), Arg.Any<string>(), Arg.Any<object>()).Returns(true);
             valueGenerator.Generate(typeof(Guid), Arg.Any<string>(), Arg.Any<object>()).Returns(value);
@@ -937,7 +1058,10 @@ namespace ModelBuilder.UnitTests
             buildStrategy.ValueGenerators.Returns(valueGenerators);
             buildStrategy.IgnoreRules.Returns(ignoreRules);
 
-            var target = new DefaultExecuteStrategy<Company> {BuildStrategy = buildStrategy};
+            var target = new DefaultExecuteStrategy<Company>
+            {
+                BuildStrategy = buildStrategy
+            };
 
             typeCreator.IsSupported(typeof(IEnumerable<Person>), "Staff", expected).Returns(true);
             typeCreator.Create(typeof(IEnumerable<Person>), "Staff", expected).Returns(staff);
@@ -980,7 +1104,10 @@ namespace ModelBuilder.UnitTests
             buildStrategy.ValueGenerators.Returns(valueGenerators);
             buildStrategy.IgnoreRules.Returns(ignoreRules);
 
-            var target = new DefaultExecuteStrategy<SpecificCompany> {BuildStrategy = buildStrategy};
+            var target = new DefaultExecuteStrategy<SpecificCompany>
+            {
+                BuildStrategy = buildStrategy
+            };
 
             typeCreator.IsSupported(typeof(IEnumerable<Person>), "Staff", expected).Returns(true);
             typeCreator.Create(typeof(IEnumerable<Person>), "Staff", expected).Returns(staff);

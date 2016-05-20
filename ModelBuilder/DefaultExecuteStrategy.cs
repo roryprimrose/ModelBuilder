@@ -88,7 +88,19 @@ namespace ModelBuilder
                 throw new ArgumentNullException(nameof(type));
             }
 
-            // First check if this is a type supported by a value generator
+            Func<Type, string, object, object> generator = null;
+
+            // First check if there is a creation rule
+            var creationRule = BuildStrategy.CreationRules.Where(x => x.IsMatch(type, referenceName))
+                    .OrderByDescending(x => x.Priority)
+                    .FirstOrDefault();
+
+            if (creationRule != null)
+            {
+                generator = creationRule.Create;
+            }
+
+            // Next check if this is a type supported by a value generator
             var valueGenerator =
                 BuildStrategy.ValueGenerators.Where(x => x.IsSupported(type, referenceName, context))
                     .OrderByDescending(x => x.Priority)
@@ -96,11 +108,16 @@ namespace ModelBuilder
 
             if (valueGenerator != null)
             {
+                generator = valueGenerator.Generate;
+            }
+
+            if (generator != null)
+            {
                 BuildStrategy.BuildLog.CreatingValue(type, context);
 
                 try
                 {
-                    return valueGenerator.Generate(type, referenceName, context);
+                    return generator(type, referenceName, context);
                 }
                 catch (BuildException)
                 {

@@ -1,7 +1,7 @@
-using System.Collections.Generic;
-
 namespace ModelBuilder
 {
+    using System.Collections.Generic;
+
     /// <summary>
     /// The <see cref="DefaultBuildStrategy"/>
     /// class is used to provide the default definition for how to create and update instances of a type.
@@ -13,8 +13,13 @@ namespace ModelBuilder
         /// </summary>
         public DefaultBuildStrategy()
             : base(
-                DefaultConstructorResolver, DefaultTypeCreators, DefaultValueGenerators,
-                DefaultIgnoreRules, DefaultExecuteOrderRules, DefaultBuildLog)
+                DefaultConstructorResolver,
+                DefaultCreationRules,
+                DefaultTypeCreators,
+                DefaultValueGenerators,
+                DefaultIgnoreRules,
+                DefaultExecuteOrderRules,
+                DefaultBuildLog)
         {
         }
 
@@ -37,6 +42,15 @@ namespace ModelBuilder
         public static IConstructorResolver DefaultConstructorResolver => new DefaultConstructorResolver();
 
         /// <summary>
+        /// Gets the default creation rules.
+        /// </summary>
+        /// <value>The creation rules.</value>
+        public static IEnumerable<CreationRule> DefaultCreationRules
+        {
+            get;
+        } = new List<CreationRule>();
+
+        /// <summary>
         /// Gets the default execute order rules.
         /// </summary>
         /// <value>The execute order rules.</value>
@@ -54,7 +68,7 @@ namespace ModelBuilder
                 yield return new ExecuteOrderRule(typeof(string), PropertyExpression.Email, 2540);
 
                 // Populate strings before other reference types
-                yield return new ExecuteOrderRule(typeof(string), (string) null, 2000);
+                yield return new ExecuteOrderRule(typeof(string), (string)null, 2000);
                 yield return new ExecuteOrderRule((type, name) => type.IsClass, 1000);
             }
         }
@@ -63,7 +77,10 @@ namespace ModelBuilder
         /// Gets the default ignore rules.
         /// </summary>
         /// <value>The ignore rules.</value>
-        public static IEnumerable<IgnoreRule> DefaultIgnoreRules { get; } = new List<IgnoreRule>();
+        public static IEnumerable<IgnoreRule> DefaultIgnoreRules
+        {
+            get;
+        } = new List<IgnoreRule>();
 
         /// <summary>
         /// Gets the default type creators.

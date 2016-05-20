@@ -79,6 +79,7 @@
     <Compile Include="CountValueGenerator.cs">
       <DependentUpon>IValueGenerator.cs</DependentUpon>
     </Compile>
+    <Compile Include="CreationRule.cs" />
     <Compile Include="Data\People.cs" />
     <Compile Include="Data\Person.cs" />
     <Compile Include="Data\TestData.cs" />
