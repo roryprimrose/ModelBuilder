@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using FluentAssertions;
-using NSubstitute;
-using Xunit;
-
-namespace ModelBuilder.UnitTests
+﻿namespace ModelBuilder.UnitTests
 {
+    using System;
+    using System.Collections.Generic;
+    using FluentAssertions;
+    using NSubstitute;
+    using Xunit;
+
     public class BuildStrategyCompilerTests
     {
         [Fact]
@@ -13,6 +13,10 @@ namespace ModelBuilder.UnitTests
         {
             var buildLog = Substitute.For<IBuildLog>();
             var constructorResolver = Substitute.For<IConstructorResolver>();
+            var creationRules = new List<CreationRule>
+            {
+                new CreationRule(typeof(string), "Test", int.MaxValue, "Stuff")
+            };
             var typeCreators = new List<ITypeCreator>
             {
                 new DefaultTypeCreator()
@@ -30,8 +34,13 @@ namespace ModelBuilder.UnitTests
                 new ExecuteOrderRule(typeof(Person), "LastName", int.MinValue)
             };
 
-            var target = new BuildStrategyCompiler {BuildLog = buildLog, ConstructorResolver = constructorResolver};
+            var target = new BuildStrategyCompiler
+            {
+                BuildLog = buildLog,
+                ConstructorResolver = constructorResolver
+            };
 
+            target.CreationRules.Add(creationRules[0]);
             target.TypeCreators.Add(typeCreators[0]);
             target.ValueGenerators.Add(valueGenerators[0]);
             target.IgnoreRules.Add(ignoreRules[0]);
@@ -41,6 +50,7 @@ namespace ModelBuilder.UnitTests
 
             actual.BuildLog.Should().Be(buildLog);
             actual.ConstructorResolver.Should().Be(constructorResolver);
+            actual.CreationRules.ShouldBeEquivalentTo(creationRules);
             actual.TypeCreators.ShouldBeEquivalentTo(typeCreators);
             actual.ValueGenerators.ShouldBeEquivalentTo(valueGenerators);
             actual.IgnoreRules.ShouldBeEquivalentTo(ignoreRules);
@@ -64,6 +74,7 @@ namespace ModelBuilder.UnitTests
 
             target.BuildLog.Should().BeNull();
             target.ConstructorResolver.Should().BeNull();
+            target.CreationRules.Should().NotBeNull();
             target.ExecuteOrderRules.Should().NotBeNull();
             target.IgnoreRules.Should().NotBeNull();
             target.TypeCreators.Should().NotBeNull();

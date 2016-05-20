@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using ModelBuilder.Properties;
-
-namespace ModelBuilder
+﻿namespace ModelBuilder
 {
+    using System;
+    using System.Collections.Generic;
+    using ModelBuilder.Properties;
+
     /// <summary>
     /// The <see cref="BuildStrategyCompiler"/>
     /// class is used to assist in creating a new <see cref="IBuildStrategy"/> instance.
@@ -15,6 +15,7 @@ namespace ModelBuilder
         /// </summary>
         public BuildStrategyCompiler()
         {
+            CreationRules = new List<CreationRule>();
             ExecuteOrderRules = new List<ExecuteOrderRule>();
             IgnoreRules = new List<IgnoreRule>();
             TypeCreators = new List<ITypeCreator>();
@@ -30,26 +31,58 @@ namespace ModelBuilder
                 throw new InvalidOperationException(Resources.BuildStrategyCompiler_NullConstructorResolver);
             }
 
-            return new BuildStrategy(ConstructorResolver, TypeCreators, ValueGenerators, IgnoreRules, ExecuteOrderRules,
+            return new BuildStrategy(
+                ConstructorResolver,
+                CreationRules,
+                TypeCreators,
+                ValueGenerators,
+                IgnoreRules,
+                ExecuteOrderRules,
                 BuildLog);
         }
 
         /// <inheritdoc />
-        public IBuildLog BuildLog { get; set; }
+        public IBuildLog BuildLog
+        {
+            get;
+            set;
+        }
 
         /// <inheritdoc />
-        public IConstructorResolver ConstructorResolver { get; set; }
+        public IConstructorResolver ConstructorResolver
+        {
+            get;
+            set;
+        }
 
         /// <inheritdoc />
-        public ICollection<ExecuteOrderRule> ExecuteOrderRules { get; }
+        public ICollection<CreationRule> CreationRules
+        {
+            get;
+        }
 
         /// <inheritdoc />
-        public ICollection<IgnoreRule> IgnoreRules { get; }
+        public ICollection<ExecuteOrderRule> ExecuteOrderRules
+        {
+            get;
+        }
 
         /// <inheritdoc />
-        public ICollection<ITypeCreator> TypeCreators { get; }
+        public ICollection<IgnoreRule> IgnoreRules
+        {
+            get;
+        }
 
         /// <inheritdoc />
-        public ICollection<IValueGenerator> ValueGenerators { get; }
+        public ICollection<ITypeCreator> TypeCreators
+        {
+            get;
+        }
+
+        /// <inheritdoc />
+        public ICollection<IValueGenerator> ValueGenerators
+        {
+            get;
+        }
     }
 }

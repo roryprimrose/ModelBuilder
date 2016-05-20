@@ -13,7 +13,7 @@ namespace ModelBuilder.UnitTests
         [Fact]
         public void CloneReturnsCompilerWithBuildStrategyConfigurationTest()
         {
-            var target = new DefaultBuildStrategy().Clone().AddIgnoreRule(typeof(string), "FirstName").Compile();
+            var target = new DefaultBuildStrategy().Clone().Compile();
 
             var actual = target.Clone();
 
@@ -104,36 +104,6 @@ namespace ModelBuilder.UnitTests
             actual.IgnoreRules.Should().NotBeEmpty();
             actual.IgnoreRules.First().PropertyName.Should().Be("Priority");
             actual.IgnoreRules.First().TargetType.Should().Be<Person>();
-        }
-
-        [Fact]
-        public void IgnoringThrowsExceptionWhenPropertyNotOnTargetTypeTest()
-        {
-            var target = new DefaultBuildStrategy();
-
-            Action action = () => target.Ignoring<Person>(x => x.Priority.ToString().Length);
-
-            action.ShouldThrow<ArgumentException>();
-        }
-
-        [Fact]
-        public void IgnoringThrowsExceptionWithFieldExpressionTest()
-        {
-            var target = new DefaultBuildStrategy();
-
-            Action action = () => target.Ignoring<Person>(x => x.MinAge);
-
-            action.ShouldThrow<ArgumentException>();
-        }
-
-        [Fact]
-        public void IgnoringThrowsExceptionWithMethodExpressionTest()
-        {
-            var target = new DefaultBuildStrategy();
-
-            Action action = () => target.Ignoring<Person>(x => x.DoSomething());
-
-            action.ShouldThrow<ArgumentException>();
         }
 
         [Fact]

@@ -1,17 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using FluentAssertions;
-using Xunit;
-
-namespace ModelBuilder.UnitTests
+﻿namespace ModelBuilder.UnitTests
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using FluentAssertions;
+    using Xunit;
+
     public class BuilderStrategyBaseTests
     {
         [Fact]
         public void ReturnsValuesFromConstructorTest()
         {
             var constructorResolver = DefaultBuildStrategy.DefaultConstructorResolver;
+            var creationRules = DefaultBuildStrategy.DefaultCreationRules.ToList();
             var typeCreators = DefaultBuildStrategy.DefaultTypeCreators.ToList();
             var valueGenerators = DefaultBuildStrategy.DefaultValueGenerators.ToList();
             var ignoreRules = new List<IgnoreRule>
@@ -21,13 +22,19 @@ namespace ModelBuilder.UnitTests
             var executeOrderRules = DefaultBuildStrategy.DefaultExecuteOrderRules.ToList();
             var buildLog = DefaultBuildStrategy.DefaultBuildLog;
 
-            var actual = new BuilderStrategyWrapper(constructorResolver, typeCreators, valueGenerators, ignoreRules,
+            var actual = new BuilderStrategyWrapper(
+                constructorResolver,
+                creationRules,
+                typeCreators,
+                valueGenerators,
+                ignoreRules,
                 executeOrderRules,
                 buildLog);
 
             actual.BuildLog.Should().Be(buildLog);
             actual.ConstructorResolver.Should().Be(constructorResolver);
             actual.ExecuteOrderRules.ShouldAllBeEquivalentTo(executeOrderRules);
+            actual.CreationRules.ShouldAllBeEquivalentTo(creationRules);
             actual.IgnoreRules.ShouldAllBeEquivalentTo(ignoreRules);
             actual.TypeCreators.ShouldAllBeEquivalentTo(typeCreators);
             actual.ValueGenerators.ShouldAllBeEquivalentTo(valueGenerators);
@@ -37,6 +44,7 @@ namespace ModelBuilder.UnitTests
         public void ThrowsExceptionWhenCreatedWithNullBuildLogTest()
         {
             var constructorResolver = DefaultBuildStrategy.DefaultConstructorResolver;
+            var creationRules = DefaultBuildStrategy.DefaultCreationRules;
             var typeCreators = DefaultBuildStrategy.DefaultTypeCreators;
             var valueGenerators = DefaultBuildStrategy.DefaultValueGenerators;
             var ignoreRules = DefaultBuildStrategy.DefaultIgnoreRules;
@@ -44,8 +52,38 @@ namespace ModelBuilder.UnitTests
 
             Action action =
                 () =>
-                    new BuilderStrategyWrapper(constructorResolver, typeCreators, valueGenerators, ignoreRules,
-                        executeOrderRules, null);
+                    new BuilderStrategyWrapper(
+                        constructorResolver,
+                        creationRules,
+                        typeCreators,
+                        valueGenerators,
+                        ignoreRules,
+                        executeOrderRules,
+                        null);
+
+            action.ShouldThrow<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void ThrowsExceptionWhenCreatedWithNullCreationRulesTest()
+        {
+            var constructorResolver = DefaultBuildStrategy.DefaultConstructorResolver;
+            var typeCreators = DefaultBuildStrategy.DefaultTypeCreators;
+            var valueGenerators = DefaultBuildStrategy.DefaultValueGenerators;
+            var ignoreRules = DefaultBuildStrategy.DefaultIgnoreRules;
+            var executeOrderRules = DefaultBuildStrategy.DefaultExecuteOrderRules;
+            var buildLog = DefaultBuildStrategy.DefaultBuildLog;
+
+            Action action =
+                () =>
+                    new BuilderStrategyWrapper(
+                        constructorResolver,
+                        null,
+                        typeCreators,
+                        valueGenerators,
+                        ignoreRules,
+                        executeOrderRules,
+                        buildLog);
 
             action.ShouldThrow<ArgumentNullException>();
         }
@@ -54,6 +92,7 @@ namespace ModelBuilder.UnitTests
         public void ThrowsExceptionWhenCreatedWithNullExecuteOrderRulesTest()
         {
             var constructorResolver = DefaultBuildStrategy.DefaultConstructorResolver;
+            var creationRules = DefaultBuildStrategy.DefaultCreationRules;
             var typeCreators = DefaultBuildStrategy.DefaultTypeCreators;
             var valueGenerators = DefaultBuildStrategy.DefaultValueGenerators;
             var ignoreRules = DefaultBuildStrategy.DefaultIgnoreRules;
@@ -61,7 +100,13 @@ namespace ModelBuilder.UnitTests
 
             Action action =
                 () =>
-                    new BuilderStrategyWrapper(constructorResolver, typeCreators, valueGenerators, ignoreRules, null,
+                    new BuilderStrategyWrapper(
+                        constructorResolver,
+                        creationRules,
+                        typeCreators,
+                        valueGenerators,
+                        ignoreRules,
+                        null,
                         buildLog);
 
             action.ShouldThrow<ArgumentNullException>();
@@ -71,6 +116,7 @@ namespace ModelBuilder.UnitTests
         public void ThrowsExceptionWhenCreatedWithNullIgnoreRulesTest()
         {
             var constructorResolver = DefaultBuildStrategy.DefaultConstructorResolver;
+            var creationRules = DefaultBuildStrategy.DefaultCreationRules;
             var typeCreators = DefaultBuildStrategy.DefaultTypeCreators;
             var valueGenerators = DefaultBuildStrategy.DefaultValueGenerators;
             var executeOrderRules = DefaultBuildStrategy.DefaultExecuteOrderRules;
@@ -78,8 +124,14 @@ namespace ModelBuilder.UnitTests
 
             Action action =
                 () =>
-                    new BuilderStrategyWrapper(constructorResolver, typeCreators, valueGenerators, null,
-                        executeOrderRules, buildLog);
+                    new BuilderStrategyWrapper(
+                        constructorResolver,
+                        creationRules,
+                        typeCreators,
+                        valueGenerators,
+                        null,
+                        executeOrderRules,
+                        buildLog);
 
             action.ShouldThrow<ArgumentNullException>();
         }
@@ -88,6 +140,7 @@ namespace ModelBuilder.UnitTests
         public void ThrowsExceptionWhenCreatedWithNullResolverTest()
         {
             var typeCreators = DefaultBuildStrategy.DefaultTypeCreators;
+            var creationRules = DefaultBuildStrategy.DefaultCreationRules;
             var valueGenerators = DefaultBuildStrategy.DefaultValueGenerators;
             var ignoreRules = DefaultBuildStrategy.DefaultIgnoreRules;
             var executeOrderRules = DefaultBuildStrategy.DefaultExecuteOrderRules;
@@ -95,7 +148,13 @@ namespace ModelBuilder.UnitTests
 
             Action action =
                 () =>
-                    new BuilderStrategyWrapper(null, typeCreators, valueGenerators, ignoreRules, executeOrderRules,
+                    new BuilderStrategyWrapper(
+                        null,
+                        creationRules,
+                        typeCreators,
+                        valueGenerators,
+                        ignoreRules,
+                        executeOrderRules,
                         buildLog);
 
             action.ShouldThrow<ArgumentNullException>();
@@ -105,6 +164,7 @@ namespace ModelBuilder.UnitTests
         public void ThrowsExceptionWhenCreatedWithNullTypeCreatorsTest()
         {
             var constructorResolver = DefaultBuildStrategy.DefaultConstructorResolver;
+            var creationRules = DefaultBuildStrategy.DefaultCreationRules;
             var valueGenerators = DefaultBuildStrategy.DefaultValueGenerators;
             var ignoreRules = DefaultBuildStrategy.DefaultIgnoreRules;
             var executeOrderRules = DefaultBuildStrategy.DefaultExecuteOrderRules;
@@ -112,16 +172,23 @@ namespace ModelBuilder.UnitTests
 
             Action action =
                 () =>
-                    new BuilderStrategyWrapper(constructorResolver, null, valueGenerators, ignoreRules,
-                        executeOrderRules, buildLog);
+                    new BuilderStrategyWrapper(
+                        constructorResolver,
+                        creationRules,
+                        null,
+                        valueGenerators,
+                        ignoreRules,
+                        executeOrderRules,
+                        buildLog);
 
             action.ShouldThrow<ArgumentNullException>();
         }
 
         [Fact]
-        public void ThrowsExceptionWhenCreatedWithNullValueCreatorsTest()
+        public void ThrowsExceptionWhenCreatedWithNullValueGeneratorsTest()
         {
             var constructorResolver = DefaultBuildStrategy.DefaultConstructorResolver;
+            var creationRules = DefaultBuildStrategy.DefaultCreationRules;
             var typeCreators = DefaultBuildStrategy.DefaultTypeCreators;
             var ignoreRules = DefaultBuildStrategy.DefaultIgnoreRules;
             var executeOrderRules = DefaultBuildStrategy.DefaultExecuteOrderRules;
@@ -129,18 +196,36 @@ namespace ModelBuilder.UnitTests
 
             Action action =
                 () =>
-                    new BuilderStrategyWrapper(constructorResolver, typeCreators, null, ignoreRules, executeOrderRules,
+                    new BuilderStrategyWrapper(
+                        constructorResolver,
+                        creationRules,
+                        typeCreators,
+                        null,
+                        ignoreRules,
+                        executeOrderRules,
                         buildLog);
 
             action.ShouldThrow<ArgumentNullException>();
         }
-        
+
         private class BuilderStrategyWrapper : BuildStrategyBase
         {
-            public BuilderStrategyWrapper(IConstructorResolver constructorResolver,
-                IEnumerable<ITypeCreator> typeCreators, IEnumerable<IValueGenerator> valueGenerators,
-                IEnumerable<IgnoreRule> ignoreRules, IEnumerable<ExecuteOrderRule> executeOrderRules, IBuildLog buildLog)
-                : base(constructorResolver, typeCreators, valueGenerators, ignoreRules, executeOrderRules, buildLog)
+            public BuilderStrategyWrapper(
+                IConstructorResolver constructorResolver,
+                IEnumerable<CreationRule> creationRules,
+                IEnumerable<ITypeCreator> typeCreators,
+                IEnumerable<IValueGenerator> valueGenerators,
+                IEnumerable<IgnoreRule> ignoreRules,
+                IEnumerable<ExecuteOrderRule> executeOrderRules,
+                IBuildLog buildLog)
+                : base(
+                    constructorResolver,
+                    creationRules,
+                    typeCreators,
+                    valueGenerators,
+                    ignoreRules,
+                    executeOrderRules,
+                    buildLog)
             {
             }
 

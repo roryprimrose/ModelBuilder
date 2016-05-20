@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-using System.Text.RegularExpressions;
+using System.Linq.Expressions;
 using FluentAssertions;
 using NSubstitute;
 using Xunit;
@@ -10,11 +10,78 @@ namespace ModelBuilder.UnitTests
     public class BuildStrategyCompilerExtensionsTests
     {
         [Fact]
+        public void AddCreationRuleAddsRuleToCompilerTest()
+        {
+            var target = new BuildStrategyCompiler();
+
+            target.AddCreationRule<DummyCreationRule>();
+
+            var actual = target.CreationRules.Single();
+
+            actual.Should().BeOfType<DummyCreationRule>();
+        }
+
+        [Fact]
+        public void AddCreationRuleThrowsExceptionWithNullCompilerTest()
+        {
+            IBuildStrategyCompiler target = null;
+
+            Action action = () => target.AddCreationRule<DummyCreationRule>();
+
+            action.ShouldThrow<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void AddCreationRuleWithExpressionAddsRuleToCompilerTest()
+        {
+            var priority = Environment.TickCount;
+            var value = Guid.NewGuid().ToString();
+
+            var target = new BuildStrategyCompiler();
+
+            target.AddCreationRule<Person>(x => x.FirstName, priority, value);
+
+            var rule = target.CreationRules.Single();
+
+            rule.Priority.Should().Be(priority);
+
+            var actual = rule.Create(typeof(Person), nameof(Person.FirstName), null);
+
+            actual.Should().Be(value);
+        }
+
+        [Fact]
+        public void AddCreationRuleWithExpressionThrowsExceptionWithNullCompilerTest()
+        {
+            var priority = Environment.TickCount;
+            var value = Guid.NewGuid().ToString();
+
+            BuildStrategyCompiler target = null;
+
+            Action action = () => target.AddCreationRule<Person>(x => x.FirstName, priority, value);
+
+            action.ShouldThrow<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void AddCreationRuleWithExpressionThrowsExceptionWithNullExpressionTest()
+        {
+            var priority = Environment.TickCount;
+            var value = Guid.NewGuid().ToString();
+
+            var target = new BuildStrategyCompiler();
+
+            Action action = () => target.AddCreationRule((Expression<Func<Person, object>>) null, priority, value);
+
+            action.ShouldThrow<ArgumentNullException>();
+        }
+
+        [Fact]
         public void AddExecuteOrderRuleAddsRuleToCompilerTest()
         {
             var target = new BuildStrategyCompiler();
 
-            target.AddExecutionOrderRule<ExecuteOrderRuleWrapper>();
+            target.AddExecuteOrderRule<ExecuteOrderRuleWrapper>();
 
             var actual = target.ExecuteOrderRules.Single();
 
@@ -26,56 +93,51 @@ namespace ModelBuilder.UnitTests
         {
             IBuildStrategyCompiler target = null;
 
-            Action action = () => target.AddExecutionOrderRule<ExecuteOrderRuleWrapper>();
+            Action action = () => target.AddExecuteOrderRule<ExecuteOrderRuleWrapper>();
 
             action.ShouldThrow<ArgumentNullException>();
         }
 
         [Fact]
-        public void AddExecuteOrderRuleWithEvaluatorAndPriorityAddsRuleToCompilerTest()
+        public void AddExecuteOrderRuleWithExpressionAddsRuleToCompilerTest()
         {
             var priority = Environment.TickCount;
 
             var target = new BuildStrategyCompiler();
 
-            target.AddExecuteOrderRule((type, propertyName) => type.IsValueType, priority);
+            target.AddExecuteOrderRule<Person>(x => x.FirstName, priority);
 
-            var actual = target.ExecuteOrderRules.Single();
+            var rule = target.ExecuteOrderRules.Single();
 
-            actual.IsMatch(typeof(Guid), null).Should().BeTrue();
-            actual.Priority.Should().Be(priority);
+            rule.Priority.Should().Be(priority);
+
+            var actual = rule.IsMatch(typeof(Person), nameof(Person.FirstName));
+
+            actual.Should().BeTrue();
         }
 
         [Fact]
-        public void AddExecuteOrderRuleWithTargetTypePropertyNameAndPriorityAddsRuleToCompilerTest()
+        public void AddExecuteOrderRuleWithExpressionThrowsExceptionWithNullCompilerTest()
         {
             var priority = Environment.TickCount;
 
-            var target = new BuildStrategyCompiler();
+            BuildStrategyCompiler target = null;
 
-            target.AddExecuteOrderRule(typeof(string), "FirstName", priority);
+            Action action = () => target.AddExecuteOrderRule<Person>(x => x.FirstName, priority);
 
-            var actual = target.ExecuteOrderRules.Single();
-
-            actual.IsMatch(typeof(string), "FirstName").Should().BeTrue();
-            actual.IsMatch(typeof(string), "LastName").Should().BeFalse();
-            actual.Priority.Should().Be(priority);
+            action.ShouldThrow<ArgumentNullException>();
         }
 
         [Fact]
-        public void AddExecuteOrderRuleWithTargetTypeRegExAndPriorityAddsRuleToCompilerTest()
+        public void AddExecuteOrderRuleWithExpressionThrowsExceptionWithNullExpressionTest()
         {
             var priority = Environment.TickCount;
 
             var target = new BuildStrategyCompiler();
 
-            target.AddExecuteOrderRule(typeof(string), new Regex("First.*"), priority);
+            Action action = () => target.AddExecuteOrderRule((Expression<Func<Person, object>>) null, priority);
 
-            var actual = target.ExecuteOrderRules.Single();
-
-            actual.IsMatch(typeof(string), "FirstName").Should().BeTrue();
-            actual.IsMatch(typeof(string), "LastName").Should().BeFalse();
-            actual.Priority.Should().Be(priority);
+            action.ShouldThrow<ArgumentNullException>();
         }
 
         [Fact]
@@ -101,21 +163,37 @@ namespace ModelBuilder.UnitTests
         }
 
         [Fact]
-        public void AddIgnoreRuleWithTargetTypeAndPropertyNameAddsRuleToCompilerTest()
+        public void AddIgnoreRuleWithExpressionAddsRuleToCompilerTest()
         {
-            var targetType = typeof(string);
-            var propertyName = "FirstName";
-
             var target = new BuildStrategyCompiler();
 
-            target.AddIgnoreRule(targetType, propertyName);
+            target.AddIgnoreRule<Person>(x => x.FirstName);
 
-            var actual = target.IgnoreRules.Single();
+            var rule = target.IgnoreRules.Single();
 
-            actual.TargetType.Should().Be(targetType);
-            actual.PropertyName.Should().Be(propertyName);
+            rule.TargetType.Should().Be<Person>();
+            rule.PropertyName.Should().Be(nameof(Person.FirstName));
         }
 
+        [Fact]
+        public void AddIgnoreRuleWithExpressionThrowsExceptionWithNullCompilerTest()
+        {
+            BuildStrategyCompiler target = null;
+
+            Action action = () => target.AddIgnoreRule<Person>(x => x.FirstName);
+
+            action.ShouldThrow<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void AddIgnoreRuleWithExpressionThrowsExceptionWithNullExpressionTest()
+        {
+            var target = new BuildStrategyCompiler();
+
+            Action action = () => target.AddIgnoreRule((Expression<Func<Person, object>>) null);
+
+            action.ShouldThrow<ArgumentNullException>();
+        }
 
         [Fact]
         public void AddTypeCreatorAddsRuleToCompilerTest()
@@ -162,6 +240,40 @@ namespace ModelBuilder.UnitTests
         }
 
         [Fact]
+        public void AddWithCreationRuleAddsRuleToCompilerTest()
+        {
+            var rule = new CreationRule(typeof(Person), "FirstName", Environment.TickCount, (object) null);
+
+            var target = new BuildStrategyCompiler();
+
+            target.Add(rule);
+
+            target.CreationRules.Should().Contain(rule);
+        }
+
+        [Fact]
+        public void AddWithCreationRuleThrowsExceptionWithNullCompilerTest()
+        {
+            var rule = new CreationRule(typeof(Person), "FirstName", Environment.TickCount, (object) null);
+
+            IBuildStrategyCompiler target = null;
+
+            Action action = () => target.Add(rule);
+
+            action.ShouldThrow<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void AddWithCreationRuleThrowsExceptionWithNullRuleTest()
+        {
+            var target = Substitute.For<IBuildStrategyCompiler>();
+
+            Action action = () => target.Add((CreationRule) null);
+
+            action.ShouldThrow<ArgumentNullException>();
+        }
+
+        [Fact]
         public void AddWithExecuteOrderRuleAddsRuleToCompilerTest()
         {
             var rule = new ExecuteOrderRule(typeof(Person), "FirstName", Environment.TickCount);
@@ -196,43 +308,6 @@ namespace ModelBuilder.UnitTests
         }
 
         [Fact]
-        public void AddWithExecuteOrderRuleWithEvaluatorAndPriorityThrowsExceptionWithNullCompilerTest()
-        {
-            var priority = Environment.TickCount;
-
-            IBuildStrategyCompiler target = null;
-
-            Action action = () => target.AddExecuteOrderRule((type, propertyName) => type.IsValueType, priority);
-
-            action.ShouldThrow<ArgumentNullException>();
-        }
-
-        [Fact]
-        public void AddWithExecuteOrderRuleWithTargetTypePropertyNameAndPriorityThrowsExceptionWithNullCompilerTest()
-        {
-            var priority = Environment.TickCount;
-
-            IBuildStrategyCompiler target = null;
-
-            Action action = () => target.AddExecuteOrderRule(typeof(string), "FirstName", priority);
-
-            action.ShouldThrow<ArgumentNullException>();
-        }
-
-        [Fact]
-        public void AddWithExecuteOrderRuleWithTargetTypeRegExAndPriorityThrowsExceptionWithNullCompilerTest()
-        {
-            var priority = Environment.TickCount;
-
-            IBuildStrategyCompiler target = null;
-
-            Action action = () => target.AddExecuteOrderRule(typeof(string), new Regex("First.*"), priority);
-
-            action.ShouldThrow<ArgumentNullException>();
-        }
-
-
-        [Fact]
         public void AddWithIgnoreRuleAddsRuleToCompilerTest()
         {
             var rule = new IgnoreRule(typeof(Person), "FirstName");
@@ -262,16 +337,6 @@ namespace ModelBuilder.UnitTests
             var target = Substitute.For<IBuildStrategyCompiler>();
 
             Action action = () => target.Add((IgnoreRule) null);
-
-            action.ShouldThrow<ArgumentNullException>();
-        }
-
-        [Fact]
-        public void AddWithIgnoreRuleWithTargetTypeAndPropertyNameThrowsExceptionWithNullCompilerTest()
-        {
-            IBuildStrategyCompiler target = null;
-
-            Action action = () => target.AddIgnoreRule(typeof(string), "FirstName");
 
             action.ShouldThrow<ArgumentNullException>();
         }

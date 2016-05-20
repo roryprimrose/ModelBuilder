@@ -65,10 +65,11 @@ organisation.Staff.SetEach(x => x.Email = null);
 
 ## Customizing the process
 
-ModelBuilder is designed with extensibility in mind. There are many ways that the process of building models can be customized. ModelBuilder has many construction configuration items available. These are:
+ModelBuilder is designed with extensibility in mind. There are many ways that the process of building models can be customized. The extensibility points are:
 
 - TypeCreators
 - ValueGenerators
+- CreationRules
 - IgnoreRules
 - ExecuteOrderRules
 - ConstructorResolver
@@ -76,11 +77,11 @@ ModelBuilder is designed with extensibility in mind. There are many ways that th
 ModelBuilder uses a BuildStrategy that defines this configuration and is the source of all model creation requests.
 
 ### BuildStrategy and ExecuteStrategy
-ModelBuilder uses two layers for assisting in creating instances of models. They are BuildStrategy and ExecutionStrategy. These are essentially the same in that they both hold references to the following construction configuration items:
+ModelBuilder uses two layers for assisting in creating instances of models, the BuildStrategy and the ExecutionStrategy. They both hold references to the same construction configuration but have different purposes.
 
-The difference between them is that a BuildStrategy is a higher level construct that provides a read-only view of the construction configuration. It exposes a method for getting an instance of IExecutionStrategy&lt;T&gt;. The purpose here is that code calling ModelBuilder should have a clear understanding of how a model is constructed via the configuration items. The BuildStrategy enforces this by being a read-only source of that configuration.
+A BuildStrategy is a higher level construct that provides a read-only view of the construction configuration. It exposes a method for getting an instance of IExecutionStrategy&lt;T&gt;. The purpose here is that code calling ModelBuilder should have a clear understanding of how a model is constructed via the configuration items. The BuildStrategy enforces this by being a read-only source of that configuration.
 
-You can create a custom BuildStrategy from scratch by creating your own type derived from IBuildStrategy. You can also assign this instance as the default BuildStrategy against Model
+You can create a custom BuildStrategy from scratch by creating your own type that implements IBuildStrategy. You can also assign this instance as the default BuildStrategy against Model.
 
 ```
 Model.BuildStrategy = new CustomBuildStrategy();
@@ -93,8 +94,9 @@ var strategy = ModelBuilder.DefaultBuildStrategy
     .Clone()
     .AddTypeCreator<MyCustomTypeCreator>()
     .AddValueGenerator<MyCustomValueGenerator>()
-    .AddIgnoreRule(typeof(string), "FirstName")
-    .AddExecutionOrderRule(typeof(string), "LastName", 10)
+	.AddCreationRule<Person>(x => x.IsAdministrator, false)
+    .AddIgnoreRule<Person>(x => x.FirstName)
+    .AddExecuteOrderRule<Person>(x => x.LastName, 10)
     .Compile();
 
 Model.BuildStrategy = strategy;
@@ -124,6 +126,7 @@ Value generators are used to create value types. There are many value generators
 - CityValueGenerator
 - CompanyValueGenerator
 - CountryValueGenerator
+- CountValueGenerator
 - DateOfBirthValueGenerator
 - DateTimeValueGenerator
 - DomainNameValueGenerator
@@ -141,8 +144,13 @@ Value generators are used to create value types. There are many value generators
 - StringValueGenerator
 - SuburbValueGenerator
 - TimeZoneValueGenerator
+- UriValueGenerator
 
 Some of these generators create values using random data (string, guid, numbers etc). Entity type properties (names, addresses etc) use an embedded resource of 2,000 records as the data source to then pick pseudo-random information to provide better quality values.
+
+### Creation rules
+
+Creation rules are simple rules that bypass creating values using an IValueGenerator or an ITypeCreator. Most often they are used when creating a custom IBuildStrategy via BuildStrategyCompiler. Implementing a custom IValueGenerator or ITypeCreator is the preferred method if more complexity is required than simple creation rules (such as always making a property on a type a static value).
 
 ### Ignore rules
 
@@ -150,7 +158,7 @@ You may have a model with a property that you do not want to have a value genera
 
 ### Execute order rules
 
-Generating random or pseudo-random data for a model dynamically is never going to be perfect. We can however provide better data when some context is available.  ExecutionOrderRules help with this in that they define the order in which a property is assigned when the model is being created.
+Generating random or pseudo-random data for a model dynamically is never going to be perfect. We can however provide better data when some context is available.  ExecuteOrderRules help with this in that they define the order in which a property is assigned when the model is being created.
 
 For example, if a Person type exposes a Gender property then the FirstName property should ideally match that gender. The DefaultBuildStrategy supports this by defining that the GenderValueGenerator gets executed before the FirstNameValueGenerator which is executed before the StringValueGenerator. Another example of this is that the DefaultBuildStrategy defines the enum properties will be assigned before other property types because they tend to be reference data that might define how other properties are assigned.
 

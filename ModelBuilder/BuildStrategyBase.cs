@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-
-namespace ModelBuilder
+﻿namespace ModelBuilder
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+    using System.Linq;
+
     /// <summary>
     /// The <see cref="BuildStrategyBase"/>
     /// class is used to provide the base framework for a build strategy.
@@ -15,22 +15,33 @@ namespace ModelBuilder
         /// Initializes a new instance of the <see cref="BuildStrategyBase"/> class.
         /// </summary>
         /// <param name="constructorResolver">The constructor resolver.</param>
+        /// <param name="creationRules">The creation rules.</param>
         /// <param name="typeCreators">The type creators.</param>
         /// <param name="valueGenerators">The value generators.</param>
         /// <param name="ignoreRules">The ignore rules.</param>
         /// <param name="executeOrderRules">The execute order rules.</param>
         /// <param name="buildLog">The build log.</param>
-        /// <exception cref="ArgumentNullException">The <paramref name="typeCreators"/> parameter is null.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="constructorResolver"/> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="creationRules"/> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="typeCreators"/> parameter is null.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="valueGenerators"/> parameter is null.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="ignoreRules"/> parameter is null.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="executeOrderRules"/> parameter is null.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="buildLog"/> parameter is null.</exception>
-        protected BuildStrategyBase(IConstructorResolver constructorResolver, IEnumerable<ITypeCreator> typeCreators,
-            IEnumerable<IValueGenerator> valueGenerators, IEnumerable<IgnoreRule> ignoreRules,
+        protected BuildStrategyBase(
+            IConstructorResolver constructorResolver,
+            IEnumerable<CreationRule> creationRules,
+            IEnumerable<ITypeCreator> typeCreators,
+            IEnumerable<IValueGenerator> valueGenerators,
+            IEnumerable<IgnoreRule> ignoreRules,
             IEnumerable<ExecuteOrderRule> executeOrderRules,
             IBuildLog buildLog)
         {
+            if (creationRules == null)
+            {
+                throw new ArgumentNullException(nameof(creationRules));
+            }
+
             if (typeCreators == null)
             {
                 throw new ArgumentNullException(nameof(typeCreators));
@@ -66,6 +77,7 @@ namespace ModelBuilder
             ValueGenerators = new ReadOnlyCollection<IValueGenerator>(valueGenerators.ToList());
             IgnoreRules = new ReadOnlyCollection<IgnoreRule>(ignoreRules.ToList());
             ExecuteOrderRules = new ReadOnlyCollection<ExecuteOrderRule>(executeOrderRules.ToList());
+            CreationRules = new ReadOnlyCollection<CreationRule>(creationRules.ToList());
             BuildLog = buildLog;
         }
 
@@ -73,21 +85,45 @@ namespace ModelBuilder
         public abstract IExecuteStrategy<T> GetExecuteStrategy<T>();
 
         /// <inheritdoc />
-        public IBuildLog BuildLog { get; }
+        public IBuildLog BuildLog
+        {
+            get;
+        }
 
         /// <inheritdoc />
-        public IConstructorResolver ConstructorResolver { get; }
+        public IConstructorResolver ConstructorResolver
+        {
+            get;
+        }
 
         /// <inheritdoc />
-        public IReadOnlyCollection<ExecuteOrderRule> ExecuteOrderRules { get; }
+        public IReadOnlyCollection<CreationRule> CreationRules
+        {
+            get;
+        }
 
         /// <inheritdoc />
-        public IReadOnlyCollection<IgnoreRule> IgnoreRules { get; }
+        public IReadOnlyCollection<ExecuteOrderRule> ExecuteOrderRules
+        {
+            get;
+        }
 
         /// <inheritdoc />
-        public IReadOnlyCollection<ITypeCreator> TypeCreators { get; }
+        public IReadOnlyCollection<IgnoreRule> IgnoreRules
+        {
+            get;
+        }
 
         /// <inheritdoc />
-        public IReadOnlyCollection<IValueGenerator> ValueGenerators { get; }
+        public IReadOnlyCollection<ITypeCreator> TypeCreators
+        {
+            get;
+        }
+
+        /// <inheritdoc />
+        public IReadOnlyCollection<IValueGenerator> ValueGenerators
+        {
+            get;
+        }
     }
 }

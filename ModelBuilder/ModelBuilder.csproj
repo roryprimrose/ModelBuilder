@@ -79,6 +79,7 @@
     <Compile Include="CountValueGenerator.cs">
       <DependentUpon>IValueGenerator.cs</DependentUpon>
     </Compile>
+    <Compile Include="CreationRule.cs" />
     <Compile Include="Data\People.cs" />
     <Compile Include="Data\Person.cs" />
     <Compile Include="Data\TestData.cs" />
@@ -93,6 +94,9 @@
     </Compile>
     <Compile Include="ExecuteOrderRule.cs" />
     <Compile Include="ExecuteStrategyExtensions.cs">
+      <DependentUpon>Extensions.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ExpressionExtensions.cs">
       <DependentUpon>Extensions.cs</DependentUpon>
     </Compile>
     <Compile Include="FirstNameValueGenerator.cs">

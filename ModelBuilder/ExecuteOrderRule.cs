@@ -41,7 +41,7 @@ namespace ModelBuilder
             if (targetType == null &&
                 propertyExpression == null)
             {
-                throw new ArgumentNullException(Resources.ExecuteOrderRule_NoTargetTypeOrPropetyExpression);
+                throw new ArgumentNullException(Resources.NoTargetTypeOrPropertyExpression);
             }
 
             _func = (type, name) =>
@@ -76,7 +76,7 @@ namespace ModelBuilder
             if (targetType == null &&
                 propertyName == null)
             {
-                throw new ArgumentNullException(Resources.ExecuteOrderRule_NoTargetTypeOrPropetyName);
+                throw new ArgumentNullException(Resources.NoTargetTypeOrPropertyName);
             }
 
             _func = (type, name) =>
