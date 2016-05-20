@@ -89,26 +89,39 @@ namespace ModelBuilder
             }
 
             Func<Type, string, object, object> generator = null;
+            Type generatorType = null;
+            var contextType = context?.GetType();
+            Type targetType = null;
 
             // First check if there is a creation rule
-            var creationRule = BuildStrategy.CreationRules.Where(x => x.IsMatch(type, referenceName))
+            var creationRule = BuildStrategy.CreationRules.Where(x => x.IsMatch(contextType, referenceName))
                     .OrderByDescending(x => x.Priority)
                     .FirstOrDefault();
 
             if (creationRule != null)
             {
                 generator = creationRule.Create;
+                generatorType = creationRule.GetType();
+
+                // The creation rule is targeted against the type that owns the reference
+                targetType = contextType;
             }
-
-            // Next check if this is a type supported by a value generator
-            var valueGenerator =
-                BuildStrategy.ValueGenerators.Where(x => x.IsSupported(type, referenceName, context))
-                    .OrderByDescending(x => x.Priority)
-                    .FirstOrDefault();
-
-            if (valueGenerator != null)
+            else
             {
-                generator = valueGenerator.Generate;
+                // Next check if this is a type supported by a value generator
+                var valueGenerator =
+                    BuildStrategy.ValueGenerators.Where(x => x.IsSupported(type, referenceName, context))
+                        .OrderByDescending(x => x.Priority)
+                        .FirstOrDefault();
+
+                if (valueGenerator != null)
+                {
+                    generator = valueGenerator.Generate;
+                    generatorType = valueGenerator.GetType();
+
+                    // The value generator is targeted against the type of the reference being generated for
+                    targetType = type;
+                }
             }
 
             if (generator != null)
@@ -117,7 +130,7 @@ namespace ModelBuilder
 
                 try
                 {
-                    return generator(type, referenceName, context);
+                    return generator(targetType, referenceName, context);
                 }
                 catch (BuildException)
                 {
@@ -130,7 +143,7 @@ namespace ModelBuilder
                     const string messageFormat = "Failed to create value for type {0} using value generator {1}, {2}: {3}{4}{4}At the time of the failure, the build log was:{4}{4}{5}";
                     var buildLog = BuildStrategy.BuildLog.Output;
                     var message = string.Format(CultureInfo.CurrentCulture, messageFormat, type.FullName,
-                        valueGenerator.GetType().FullName, ex.GetType().Name, ex.Message, Environment.NewLine, buildLog);
+                        generatorType.FullName, ex.GetType().Name, ex.Message, Environment.NewLine, buildLog);
 
                     throw new BuildException(message, type, referenceName, context, buildLog, ex);
                 }

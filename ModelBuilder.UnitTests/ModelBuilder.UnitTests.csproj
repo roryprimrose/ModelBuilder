@@ -50,6 +50,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Web.Services" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -85,6 +86,10 @@
     <Compile Include="BuildStrategyTests.cs" />
     <Compile Include="CreationRuleTests.cs" />
     <Compile Include="DefaultBuildLogTests.cs" />
+    <Compile Include="DummyCreationRule.cs">
+      <DependentUpon>DummyTypes.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ExpressionExtensionTests.cs" />
     <Compile Include="IncrementingArrayTypeCreator.cs" />
     <Compile Include="Location.cs">
       <DependentUpon>Models.cs</DependentUpon>

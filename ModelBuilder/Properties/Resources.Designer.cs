@@ -160,20 +160,20 @@ namespace ModelBuilder.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The expression returned a property {0} that was not defined on type &apos;{1}&apos;..
+        /// </summary>
+        internal static string Error_ExpressionTargetsWrongType {
+            get {
+                return ResourceManager.GetString("Error_ExpressionTargetsWrongType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} does not support the {1} type..
         /// </summary>
         internal static string Error_TypeNotSupportedFormat {
             get {
                 return ResourceManager.GetString("Error_TypeNotSupportedFormat", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The expression returned a property {0} that was not defined on type &apos;{1}&apos;..
-        /// </summary>
-        internal static string ExecuteStrategy_ExpressionTargetsWrongType {
-            get {
-                return ResourceManager.GetString("ExecuteStrategy_ExpressionTargetsWrongType", resourceCulture);
             }
         }
         

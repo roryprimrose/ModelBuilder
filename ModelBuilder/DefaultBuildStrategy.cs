@@ -63,9 +63,9 @@ namespace ModelBuilder
 
                 // Populate personal properties in a specific order for scenarios where a value generator may use the values in order to set other values
                 yield return new ExecuteOrderRule(null, PropertyExpression.Gender, 2600);
-                yield return new ExecuteOrderRule(typeof(string), PropertyExpression.FirstName, 2580);
-                yield return new ExecuteOrderRule(typeof(string), PropertyExpression.LastName, 2560);
-                yield return new ExecuteOrderRule(typeof(string), PropertyExpression.Email, 2540);
+                yield return new ExecuteOrderRule(null, PropertyExpression.FirstName, 2580);
+                yield return new ExecuteOrderRule(null, PropertyExpression.LastName, 2560);
+                yield return new ExecuteOrderRule(null, PropertyExpression.Email, 2540);
 
                 // Populate strings before other reference types
                 yield return new ExecuteOrderRule(typeof(string), (string)null, 2000);

@@ -1,10 +1,6 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Reflection;
-using ModelBuilder.Properties;
 
 namespace ModelBuilder
 {
@@ -90,7 +86,7 @@ namespace ModelBuilder
 
             return buildStrategy.With<DefaultExecuteStrategy<T>>().CreateWith(args);
         }
-        
+
         /// <summary>
         /// Appends a new <see cref="IgnoreRule"/> to the specified <see cref="IExecuteStrategy{T}"/> using the specified expression.
         /// </summary>
@@ -117,62 +113,13 @@ namespace ModelBuilder
                 throw new ArgumentNullException(nameof(expression));
             }
 
-            var propInfo = GetPropertyInfo(expression);
+            var targetType = typeof(T);
+            var property = expression.GetProperty();
 
-            if (propInfo == null)
-            {
-                var message = string.Format(CultureInfo.CurrentCulture,
-                    Resources.Error_ExpressionNotPropertyFormat,
-                    expression);
-
-                throw new ArgumentException(message);
-            }
-
-            var type = typeof(T);
-            var typeProperties = type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy);
-
-            if (typeProperties.Any(x => x.DeclaringType == propInfo.DeclaringType && x.PropertyType == propInfo.PropertyType && x.Name == propInfo.Name) == false)
-            {
-                var message = string.Format(CultureInfo.CurrentCulture,
-                    Resources.ExecuteStrategy_ExpressionTargetsWrongType, propInfo.Name, type.FullName);
-
-                throw new ArgumentException(message);
-            }
-
-            var rule = new IgnoreRule(type, propInfo.Name);
+            var rule = new IgnoreRule(targetType, property.Name);
 
             return buildStrategy.Clone().Add(rule).Compile();
         }
-
-        private static PropertyInfo GetPropertyInfo<T>(Expression<Func<T, object>> expression)
-        {
-            PropertyInfo property = null;
-
-            var unaryExpression = expression.Body as UnaryExpression;
-
-            if (unaryExpression != null)
-            {
-                property = ((MemberExpression)unaryExpression.Operand).Member as PropertyInfo;
-            }
-
-            if (property != null)
-            {
-                return property;
-            }
-
-            var memberExpression = expression.Body as MemberExpression;
-
-            if (memberExpression != null)
-            {
-                return memberExpression.Member as PropertyInfo;
-            }
-
-            return null;
-        }
-
-
-
-
 
         /// <summary>
         /// Populates the instance using the specified build strategy.
@@ -206,8 +153,8 @@ namespace ModelBuilder
                 throw new ArgumentNullException(nameof(buildStrategy));
             }
 
-            var executeStrategy = new T { BuildStrategy = buildStrategy };
-            
+            var executeStrategy = new T {BuildStrategy = buildStrategy};
+
             return executeStrategy;
         }
     }

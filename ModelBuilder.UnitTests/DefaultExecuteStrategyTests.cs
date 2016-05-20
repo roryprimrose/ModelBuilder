@@ -382,25 +382,20 @@
         {
             var firstValue = Guid.NewGuid().ToString();
             var secondValue = Guid.NewGuid();
-            var rules = new List<CreationRule>();
 
-            var buildStrategy = Substitute.For<IBuildStrategy>();
-            var firstRule = new CreationRule(typeof(string), (string)null, 100, firstValue);
-            var secondRule = new CreationRule(typeof(Guid), (string)null, 20, secondValue);
+            var buildStrategy = Model.DefaultBuildStrategy.Clone()
+                .Add(new CreationRule(typeof(Address), "Id", 100, firstValue))
+                .Add(new CreationRule(typeof(Person), "Id", 20, secondValue))
+                .Compile();
 
-            rules.Add(firstRule);
-            rules.Add(secondRule);
-
-            buildStrategy.CreationRules.Returns(rules);
-
-            var target = new DefaultExecuteStrategy<Guid>
+            var target = new DefaultExecuteStrategy<Person>
             {
                 BuildStrategy = buildStrategy
             };
 
             var actual = target.CreateWith();
 
-            actual.Should().Be(secondValue);
+            actual.Id.Should().Be(secondValue);
         }
 
         [Fact]
@@ -408,25 +403,20 @@
         {
             var firstValue = Guid.NewGuid();
             var secondValue = Guid.NewGuid();
-            var rules = new List<CreationRule>();
 
-            var buildStrategy = Substitute.For<IBuildStrategy>();
-            var firstRule = new CreationRule(typeof(Guid), (string)null, 10, firstValue);
-            var secondRule = new CreationRule(typeof(Guid), (string)null, 20, secondValue);
+            var buildStrategy = Model.DefaultBuildStrategy.Clone()
+                .Add(new CreationRule(typeof(Person), "Id", 10, firstValue))
+                .Add(new CreationRule(typeof(Person), "Id", 20, secondValue))
+                .Compile();
 
-            rules.Add(firstRule);
-            rules.Add(secondRule);
-
-            buildStrategy.CreationRules.Returns(rules);
-
-            var target = new DefaultExecuteStrategy<Guid>
+            var target = new DefaultExecuteStrategy<Person>
             {
                 BuildStrategy = buildStrategy
             };
 
             var actual = target.CreateWith();
 
-            actual.Should().Be(secondValue);
+            actual.Id.Should().Be(secondValue);
         }
 
         [Fact]
@@ -814,7 +804,7 @@
         }
 
         [Fact]
-        public void PopulateAssignsValueUsingDefaultExecutionOrderRulesTest()
+        public void PopulateAssignsValueUsingDefaultExecuteOrderRulesTest()
         {
             var first = SimpleEnum.Seventh;
             var second = Environment.TickCount;

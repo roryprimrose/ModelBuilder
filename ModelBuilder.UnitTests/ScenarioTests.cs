@@ -1,15 +1,15 @@
-﻿namespace ModelBuilder.UnitTests
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.Linq;
-    using FluentAssertions;
-    using NSubstitute;
-    using NSubstitute.ExceptionExtensions;
-    using Xunit;
-    using Xunit.Abstractions;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using FluentAssertions;
+using NSubstitute;
+using NSubstitute.ExceptionExtensions;
+using Xunit;
+using Xunit.Abstractions;
 
+namespace ModelBuilder.UnitTests
+{
     public class ScenarioTests
     {
         private readonly ITestOutputHelper _output;
@@ -238,6 +238,20 @@
             actual.FirstName.Should().NotBeNullOrWhiteSpace();
             actual.LastName.Should().NotBeNullOrWhiteSpace();
             actual.Priority.Should().NotBe(0);
+        }
+
+        [Fact]
+        public void CreatingRuleAppliesToAllItemsCreatedTest()
+        {
+            var expected = Guid.NewGuid();
+
+            var strategy = Model.DefaultBuildStrategy.Clone()
+                .AddCreationRule<Person>(x => x.Id, 100, expected)
+                .Compile();
+            
+            var actual = strategy.Create<List<Person>>();
+
+            actual.All(x => x.Id == expected).Should().BeTrue();
         }
 
         [Fact]
