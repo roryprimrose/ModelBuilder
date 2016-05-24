@@ -21,8 +21,7 @@ namespace ModelBuilder
         /// <inheritdoc />
         protected override object GenerateValue(Type type, string referenceName, object context)
         {
-            var index = Generator.NextValue(0, TestData.People.Count - 1);
-            var person = TestData.People[index];
+            var person = TestData.NextPerson();
 
             // Many suburbs are named after people so we will just take a random last name
             return person.LastName;

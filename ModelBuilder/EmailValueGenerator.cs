@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text.RegularExpressions;
 using ModelBuilder.Data;
 
 namespace ModelBuilder
@@ -10,13 +8,13 @@ namespace ModelBuilder
     /// The <see cref="EmailValueGenerator"/>
     /// class is used to generate strings that should represent an email.
     /// </summary>
-    public class EmailValueGenerator : ValueGeneratorMatcher
+    public class EmailValueGenerator : RelativeValueGenerator
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="EmailValueGenerator"/> class.
         /// </summary>
         public EmailValueGenerator()
-            : base(new Regex("email", RegexOptions.IgnoreCase), typeof(string))
+            : base(PropertyExpression.Email, null)
         {
         }
 
@@ -25,33 +23,20 @@ namespace ModelBuilder
             Justification = "Email addresses are lower case by convention.")]
         protected override object GenerateValue(Type type, string referenceName, object context)
         {
-            string firstName = null;
-            string lastName = null;
+            var firstName = GetValue(PropertyExpression.FirstName, context);
+            var lastName = GetValue(PropertyExpression.LastName, context);
+            var domain = Domain;
+            var gender = GetValue(PropertyExpression.Gender, context);
 
-            if (context != null)
+            Person person;
+
+            if (string.Equals(gender, "male", StringComparison.OrdinalIgnoreCase))
             {
-                var firstNameProperty = context.FindProperties(PropertyExpression.FirstName).FirstOrDefault();
-
-                if (firstNameProperty != null)
-                {
-                    firstName = (string) firstNameProperty.GetValue(context);
-                }
-
-                var lastNameProperty = context.FindProperties(PropertyExpression.LastName).LastOrDefault();
-
-                if (lastNameProperty != null)
-                {
-                    lastName = (string) lastNameProperty.GetValue(context);
-                }
+                person = TestData.NextMale();
             }
-
-            var index = Generator.NextValue(0, TestData.People.Count - 1);
-            var person = TestData.People[index];
-
-            if (firstName == null &&
-                lastName == null)
+            else
             {
-                return person.Email;
+                person = TestData.NextFemale();
             }
 
             if (firstName == null)
@@ -64,12 +49,23 @@ namespace ModelBuilder
                 lastName = person.LastName;
             }
 
-            var email = firstName + "." + lastName + "@" + person.Domain;
+            if (domain == null)
+            {
+                domain = person.Domain;
+            }
+
+            var email = firstName + "." + lastName + "@" + domain;
 
             return email.Replace(" ", string.Empty).ToLowerInvariant();
         }
 
         /// <inheritdoc />
         public override int Priority { get; } = 1000;
+
+        /// <summary>
+        /// Gets the domain for the email address.
+        /// </summary>
+        /// <value>The domain part of the email address.</value>
+        protected virtual string Domain => null;
     }
 }

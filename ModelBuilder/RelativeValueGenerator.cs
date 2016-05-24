@@ -26,12 +26,7 @@ namespace ModelBuilder
             {
                 throw new ArgumentNullException(nameof(targetNameExpression));
             }
-
-            if (sourceNameExpression == null)
-            {
-                throw new ArgumentNullException(nameof(sourceNameExpression));
-            }
-
+            
             _targetExpression = targetNameExpression;
             _sourceExpression = sourceNameExpression;
         }
@@ -61,6 +56,12 @@ namespace ModelBuilder
             if (_targetExpression.IsMatch(referenceName) == false)
             {
                 return false;
+            }
+
+            if (_sourceExpression == null)
+            {
+                // There is no source expression to validate against the model
+                return true;
             }
 
             // Check if the context has a property matching the source expression
@@ -95,7 +96,10 @@ namespace ModelBuilder
         {
             var property = GetMatchingProperty(expression, context);
 
-            Debug.Assert(property != null, "The property was not found");
+            if (property == null)
+            {
+                return null;
+            }
 
             var value = property.GetValue(context);
 

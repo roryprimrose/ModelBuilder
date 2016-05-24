@@ -47,8 +47,7 @@ namespace ModelBuilder
                 }
             }
 
-            var index = Generator.NextValue(0, TestData.People.Count - 1);
-            var person = TestData.People[index];
+            var person = TestData.NextPerson();
 
             return person.Address;
         }

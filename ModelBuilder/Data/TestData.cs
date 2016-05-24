@@ -41,6 +41,45 @@ namespace ModelBuilder.Data
             Females = new ReadOnlyCollection<Person>(females);
         }
 
+        /// <summary>
+        /// Returns a random female from the test data set.
+        /// </summary>
+        /// <returns>A random female.</returns>
+        public static Person NextFemale()
+        {
+            var generator = new RandomGenerator();
+
+            var index = generator.NextValue(0, Females.Count - 1);
+
+            return Females[index];
+        }
+
+        /// <summary>
+        /// Returns a random male from the test data set.
+        /// </summary>
+        /// <returns>A random male.</returns>
+        public static Person NextMale()
+        {
+            var generator = new RandomGenerator();
+
+            var index = generator.NextValue(0, Males.Count - 1);
+
+            return Males[index];
+        }
+
+        /// <summary>
+        /// Returns a random person from the test data set.
+        /// </summary>
+        /// <returns>A random person.</returns>
+        public static Person NextPerson()
+        {
+            var generator = new RandomGenerator();
+
+            var index = generator.NextValue(0, People.Count - 1);
+
+            return People[index];
+        }
+
         private static ReadOnlyCollection<Person> ReadPeople()
         {
             var serializer = new XmlSerializer(typeof(People));

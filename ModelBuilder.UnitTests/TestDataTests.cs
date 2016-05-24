@@ -26,6 +26,45 @@ namespace ModelBuilder.UnitTests
         }
 
         [Fact]
+        public void NextFemaleReturnsTestDataTest()
+        {
+            var target = TestData.NextFemale();
+
+            target.Should().NotBeNull();
+            target.Gender.Should().Be("Female");
+        }
+
+        [Fact]
+        public void NextMaleReturnsTestDataTest()
+        {
+            var target = TestData.NextMale();
+
+            target.Should().NotBeNull();
+            target.Gender.Should().Be("Male");
+        }
+
+        [Fact]
+        public void NextPersonReturnsTestDataTest()
+        {
+            var target = TestData.NextPerson();
+
+            target.Should().NotBeNull();
+            target.Email.Should().NotBeNullOrWhiteSpace();
+            target.Domain.Should().NotBeNullOrWhiteSpace();
+            target.FirstName.Should().NotBeNullOrWhiteSpace();
+            target.Gender.Should().NotBeNullOrWhiteSpace();
+            target.Address.Should().NotBeNullOrWhiteSpace();
+            target.City.Should().NotBeNullOrWhiteSpace();
+            target.Company.Should().NotBeNullOrWhiteSpace();
+            target.Country.Should().NotBeNullOrWhiteSpace();
+            target.LastName.Should().NotBeNullOrWhiteSpace();
+            target.Phone.Should().NotBeNullOrWhiteSpace();
+            target.PostCode.Should().NotBeNullOrWhiteSpace();
+            target.State.Should().NotBeNullOrWhiteSpace();
+            target.TimeZone.Should().NotBeNullOrWhiteSpace();
+        }
+
+        [Fact]
         public void PeopleReturnsTestDataTest()
         {
             var target = TestData.People;

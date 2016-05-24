@@ -20,6 +20,18 @@ namespace ModelBuilder.UnitTests
             actual.Should().BeNull();
         }
 
+        [Fact]
+        public void GetSourceValueReturnsNullWhenPropertyNotFoundTest()
+        {
+            var context = new SlimModel();
+
+            var target = new GeneratorWrapper(PropertyExpression.FirstName, PropertyExpression.LastName);
+
+            var actual = target.GetValue(context);
+
+            actual.Should().BeNull();
+        }
+
         [Theory]
         [InlineData(Gender.Unknown, "Unknown")]
         [InlineData(Gender.Male, "Male")]
@@ -77,12 +89,15 @@ namespace ModelBuilder.UnitTests
             actual.Should().Be(expected);
         }
 
-        [Fact]
-        public void ThrowsExceptionWithNullSourceExpressionTest()
+        public void IsSupportedReturnsTrueWhenSourceExpressionIsNullAndTargetExpressionMatchesReferenceNameTest()
         {
-            Action action = () => new GeneratorWrapper(PropertyExpression.FirstName, null);
+            var context = new SlimModel();
 
-            action.ShouldThrow<ArgumentException>();
+            var target = new GeneratorWrapper(PropertyExpression.FirstName, null);
+
+            var actual = target.IsSupported(typeof(string), "FirstName", context);
+
+            actual.Should().BeTrue();
         }
 
         [Fact]

@@ -184,11 +184,18 @@
         {
             if (IsMatch(type, propertyName) == false)
             {
+                var typeName = "<null>";
+
+                if (type != null)
+                {
+                    typeName = type.FullName;
+                }
+
                 var message = string.Format(
                     CultureInfo.CurrentCulture,
                     Resources.Rule_InvalidMatch,
                     GetType().Name,
-                    type.FullName,
+                    typeName,
                     propertyName);
 
                 throw new NotSupportedException(message);

@@ -24,15 +24,13 @@ namespace ModelBuilder
             if (string.Equals(gender, "male", StringComparison.OrdinalIgnoreCase))
             {
                 // Use a male first name
-                var maleIndex = Generator.NextValue(0, TestData.Males.Count - 1);
-                var male = TestData.Males[maleIndex];
+                var male = TestData.NextMale();
 
                 return male.FirstName;
             }
 
             // Use a female name
-            var femaleIndex = Generator.NextValue(0, TestData.Females.Count - 1);
-            var female = TestData.Females[femaleIndex];
+            var female = TestData.NextFemale();
 
             return female.FirstName;
         }
