@@ -12,14 +12,14 @@ namespace ModelBuilder
         /// <summary>
         /// Initializes a new instance of the <see cref="LastNameValueGenerator"/>.
         /// </summary>
-        public LastNameValueGenerator() : base(PropertyExpression.LastName, PropertyExpression.Gender)
+        public LastNameValueGenerator() : base(PropertyExpression.LastName, PropertyExpression.Gender, typeof(string))
         {
         }
 
         /// <inheritdoc />
-        public override object Generate(Type type, string referenceName, object context)
+        protected override object GenerateValue(Type type, string referenceName, object context)
         {
-            var gender = GetSourceValue(context);
+            var gender = GetSourceValue<string>(context);
 
             if (string.Equals(gender, "male", StringComparison.OrdinalIgnoreCase))
             {

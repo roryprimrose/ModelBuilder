@@ -15,7 +15,7 @@ namespace ModelBuilder.UnitTests
 
             var target = new GeneratorWrapper(PropertyExpression.FirstName, PropertyExpression.LastName);
 
-            var actual = target.GetValue(context);
+            var actual = target.ReadSourceValue(context);
 
             actual.Should().BeNull();
         }
@@ -27,7 +27,7 @@ namespace ModelBuilder.UnitTests
 
             var target = new GeneratorWrapper(PropertyExpression.FirstName, PropertyExpression.LastName);
 
-            var actual = target.GetValue(context);
+            var actual = target.ReadSourceValue(context);
 
             actual.Should().BeNull();
         }
@@ -45,7 +45,7 @@ namespace ModelBuilder.UnitTests
 
             var target = new GeneratorWrapper(PropertyExpression.FirstName, PropertyExpression.Gender);
 
-            var actual = target.GetValue(context);
+            var actual = target.ReadSourceValue(context);
 
             actual.Should().Be(expected);
         }
@@ -60,9 +60,53 @@ namespace ModelBuilder.UnitTests
 
             var target = new GeneratorWrapper(PropertyExpression.FirstName, PropertyExpression.LastName);
 
-            var actual = target.GetValue(context);
+            var actual = target.ReadSourceValue(context);
 
             actual.Should().Be(context.LastName);
+        }
+
+        [Fact]
+        public void GetSourceValueThrowsExceptionWhenNoSourceExpressionProvidedTest()
+        {
+            var context = new Person();
+
+            var target = new GeneratorWrapper(PropertyExpression.FirstName, null);
+
+            Action action = () => target.ReadSourceValue(context);
+
+            action.ShouldThrow<InvalidOperationException>();
+        }
+
+        [Fact]
+        public void GetSourceValueThrowsExceptionWithNullContextTest()
+        {
+            var target = new GeneratorWrapper(PropertyExpression.FirstName, PropertyExpression.LastName);
+
+            Action action = () => target.ReadSourceValue(null);
+
+            action.ShouldThrow<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void GetValueThrowsExceptionWithNullContextTest()
+        {
+            var target = new GeneratorWrapper(PropertyExpression.FirstName, null);
+
+            Action action = () => target.ReadValue(PropertyExpression.LastName, null);
+
+            action.ShouldThrow<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void GetValueThrowsExceptionWithNullExpressionTest()
+        {
+            var context = new Person();
+
+            var target = new GeneratorWrapper(PropertyExpression.FirstName, null);
+
+            Action action = () => target.ReadValue(null, context);
+
+            action.ShouldThrow<ArgumentNullException>();
         }
 
         [Theory]
@@ -111,13 +155,23 @@ namespace ModelBuilder.UnitTests
         private class GeneratorWrapper : RelativeValueGenerator
         {
             public GeneratorWrapper(Regex targetNameExpression, Regex sourceNameExpression)
-                : base(targetNameExpression, sourceNameExpression)
+                : base(targetNameExpression, sourceNameExpression, typeof(string))
             {
             }
 
-            public string GetValue(object context)
+            public string ReadSourceValue(object context)
             {
-                return GetSourceValue(context);
+                return GetSourceValue<string>(context);
+            }
+
+            public string ReadValue(Regex expression, object context)
+            {
+                return GetValue<string>(expression, context);
+            }
+
+            protected override object GenerateValue(Type type, string referenceName, object context)
+            {
+                throw new NotImplementedException();
             }
         }
     }

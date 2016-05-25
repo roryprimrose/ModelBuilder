@@ -178,4 +178,7 @@
   <data name="Rule_InvalidMatch" xml:space="preserve">
     <value>The rule {0} does not support type '{1}' for '{2}'.</value>
   </data>
+  <data name="RelativeValueGenerator_NoSourceExpression" xml:space="preserve">
+    <value>This generator was not created with a source expression. Call GetValue&lt;T&gt;(expression, context) instead.</value>
+  </data>
 </root>

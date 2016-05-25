@@ -13,6 +13,7 @@
     <Recognized>
       <Word>ITypeCreator</Word>
       <Word>IValueGenerator</Word>
+      <Word>Mailinator</Word>
     </Recognized>
     <DiscreteExceptions>
     </DiscreteExceptions>

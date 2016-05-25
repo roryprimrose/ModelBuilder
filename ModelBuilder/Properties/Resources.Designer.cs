@@ -233,6 +233,15 @@ namespace ModelBuilder.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This generator was not created with a source expression. Call GetValue&lt;T&gt;(expression, context) instead..
+        /// </summary>
+        internal static string RelativeValueGenerator_NoSourceExpression {
+            get {
+                return ResourceManager.GetString("RelativeValueGenerator_NoSourceExpression", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The rule {0} does not support type &apos;{1}&apos; for &apos;{2}&apos;..
         /// </summary>
         internal static string Rule_InvalidMatch {

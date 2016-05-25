@@ -14,7 +14,7 @@ namespace ModelBuilder
         /// Initializes a new instance of the <see cref="EmailValueGenerator"/> class.
         /// </summary>
         public EmailValueGenerator()
-            : base(PropertyExpression.Email, null)
+            : base(PropertyExpression.Email, typeof(string))
         {
         }
 
@@ -23,10 +23,10 @@ namespace ModelBuilder
             Justification = "Email addresses are lower case by convention.")]
         protected override object GenerateValue(Type type, string referenceName, object context)
         {
-            var firstName = GetValue(PropertyExpression.FirstName, context);
-            var lastName = GetValue(PropertyExpression.LastName, context);
+            var firstName = GetValue<string>(PropertyExpression.FirstName, context);
+            var lastName = GetValue<string>(PropertyExpression.LastName, context);
             var domain = Domain;
-            var gender = GetValue(PropertyExpression.Gender, context);
+            var gender = GetValue<string>(PropertyExpression.Gender, context);
 
             Person person;
 
