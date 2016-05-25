@@ -248,7 +248,7 @@ namespace ModelBuilder.UnitTests
             var strategy = Model.DefaultBuildStrategy.Clone()
                 .AddCreationRule<Person>(x => x.Id, 100, expected)
                 .Compile();
-            
+
             var actual = strategy.Create<List<Person>>();
 
             actual.All(x => x.Id == expected).Should().BeTrue();
@@ -286,6 +286,21 @@ namespace ModelBuilder.UnitTests
             actual.Priority.Should().NotBe(0);
             actual.Id.Should().Be(entity.Id);
             actual.IsActive.Should().Be(entity.IsActive);
+        }
+
+        [Fact]
+        public void MailinatorEmailGeneratorIsAssignedAgainstAllInstancesTest()
+        {
+            var strategy = new DefaultBuildStrategy()
+                .Clone()
+                .RemoveValueGenerator<EmailValueGenerator>()
+                .AddValueGenerator<MailinatorEmailValueGenerator>()
+                .Compile();
+
+            var actual = strategy.Create<List<Person>>();
+
+            actual.All(x => x.PersonalEmail.EndsWith("@mailinator.com")).Should().BeTrue();
+            actual.All(x => x.WorkEmail.EndsWith("@mailinator.com")).Should().BeTrue();
         }
 
         [Fact]

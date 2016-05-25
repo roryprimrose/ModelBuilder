@@ -14,7 +14,7 @@ namespace ModelBuilder.UnitTests
         {
             var person = new Person();
 
-            var target = new StaticDomainGenerator();
+            var target = new MailinatorEmailValueGenerator();
 
             var actual = (string) target.Generate(typeof(string), "email", person);
 
@@ -259,11 +259,6 @@ namespace ModelBuilder.UnitTests
             Action action = () => target.IsSupported(null, null, person);
 
             action.ShouldThrow<ArgumentNullException>();
-        }
-
-        public class StaticDomainGenerator : EmailValueGenerator
-        {
-            protected override string Domain => "mailinator.com";
         }
     }
 }

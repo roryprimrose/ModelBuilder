@@ -114,6 +114,9 @@
     <Compile Include="LastNameValueGenerator.cs">
       <DependentUpon>IValueGenerator.cs</DependentUpon>
     </Compile>
+    <Compile Include="MailinatorEmailValueGenerator.cs">
+      <DependentUpon>IValueGenerator.cs</DependentUpon>
+    </Compile>
     <Compile Include="ObjectExtensions.cs">
       <DependentUpon>Extensions.cs</DependentUpon>
     </Compile>

@@ -94,6 +94,8 @@ var strategy = ModelBuilder.DefaultBuildStrategy
     .Clone()
     .AddTypeCreator<MyCustomTypeCreator>()
     .AddValueGenerator<MyCustomValueGenerator>()
+	.RemoveValueGenerator<EmailValueGenerator>()
+	.AddValueGenerator<MailinatorEmailValueGenerator>()
 	.AddCreationRule<Person>(x => x.IsAdministrator, false)
     .AddIgnoreRule<Person>(x => x.FirstName)
     .AddExecuteOrderRule<Person>(x => x.LastName, 10)
@@ -137,6 +139,7 @@ Value generators are used to create value types. There are many value generators
 - GuidValueGenerator
 - IPAddressValueGenerator
 - LastNameValueGenerator
+- MailinatorEmailValueGenerator **(NOTE: This generator is not included in DefaultBuildStrategy by default)**
 - NumericValueGenerator
 - PhoneValueGenerator
 - PostCodeValueGenerator

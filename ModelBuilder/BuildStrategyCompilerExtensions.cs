@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Linq.Expressions;
 
 namespace ModelBuilder
@@ -138,6 +139,7 @@ namespace ModelBuilder
         /// <summary>
         /// Adds a new creation rule to the compiler.
         /// </summary>
+        /// <typeparam name="T">The type of rule to add.</typeparam>
         /// <param name="compiler">The compiler.</param>
         /// <returns>The compiler.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="compiler"/> parameter is <c>null</c>.</exception>
@@ -203,6 +205,7 @@ namespace ModelBuilder
         /// <summary>
         /// Adds a new execute order rule to the compiler.
         /// </summary>
+        /// <typeparam name="T">The type of rule to add.</typeparam>
         /// <param name="compiler">The compiler.</param>
         /// <returns>The compiler.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="compiler"/> parameter is <c>null</c>.</exception>
@@ -267,6 +270,7 @@ namespace ModelBuilder
         /// <summary>
         /// Adds a new ignore rule to the compiler.
         /// </summary>
+        /// <typeparam name="T">The type of rule to add.</typeparam>
         /// <param name="compiler">The compiler.</param>
         /// <returns>The compiler.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="compiler"/> parameter is <c>null</c>.</exception>
@@ -326,6 +330,7 @@ namespace ModelBuilder
         /// <summary>
         /// Adds a new type creator to the compiler.
         /// </summary>
+        /// <typeparam name="T">The type of type creator to add.</typeparam>
         /// <param name="compiler">The compiler.</param>
         /// <returns>The compiler.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="compiler"/> parameter is <c>null</c>.</exception>
@@ -351,6 +356,7 @@ namespace ModelBuilder
         /// <summary>
         /// Adds a new value generator to the compiler.
         /// </summary>
+        /// <typeparam name="T">The type of value generator to add.</typeparam>
         /// <param name="compiler">The compiler.</param>
         /// <returns>The compiler.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="compiler"/> parameter is <c>null</c>.</exception>
@@ -374,8 +380,154 @@ namespace ModelBuilder
         }
 
         /// <summary>
+        /// Removes creation rules from the compiler that match the specified type.
+        /// </summary>
+        /// <typeparam name="T">The type of rule to remove.</typeparam>
+        /// <param name="compiler">The compiler.</param>
+        /// <returns>The compiler.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="compiler"/> parameter is <c>null</c>.</exception>
+        [SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter",
+            Justification =
+                "This signature is designed for ease of use rather than requiring that T is either a parameter or return type."
+            )]
+        public static IBuildStrategyCompiler RemoveCreationRule<T>(this IBuildStrategyCompiler compiler)
+            where T : CreationRule
+        {
+            if (compiler == null)
+            {
+                throw new ArgumentNullException(nameof(compiler));
+            }
+
+            var itemsToRemove = compiler.CreationRules.Where(x => x.GetType().IsAssignableFrom(typeof(T))).ToList();
+
+            foreach (var rule in itemsToRemove)
+            {
+                compiler.CreationRules.Remove(rule);
+            }
+
+            return compiler;
+        }
+
+        /// <summary>
+        /// Removes execute order rules from the compiler that match the specified type.
+        /// </summary>
+        /// <typeparam name="T">The type of rule to remove.</typeparam>
+        /// <param name="compiler">The compiler.</param>
+        /// <returns>The compiler.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="compiler"/> parameter is <c>null</c>.</exception>
+        [SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter",
+            Justification =
+                "This signature is designed for ease of use rather than requiring that T is either a parameter or return type."
+            )]
+        public static IBuildStrategyCompiler RemoveExecuteOrderRule<T>(this IBuildStrategyCompiler compiler)
+            where T : ExecuteOrderRule
+        {
+            if (compiler == null)
+            {
+                throw new ArgumentNullException(nameof(compiler));
+            }
+
+            var itemsToRemove = compiler.ExecuteOrderRules.Where(x => x.GetType().IsAssignableFrom(typeof(T))).ToList();
+
+            foreach (var rule in itemsToRemove)
+            {
+                compiler.ExecuteOrderRules.Remove(rule);
+            }
+
+            return compiler;
+        }
+
+        /// <summary>
+        /// Removes ignore rules from the compiler that match the specified type.
+        /// </summary>
+        /// <typeparam name="T">The type of rule to remove.</typeparam>
+        /// <param name="compiler">The compiler.</param>
+        /// <returns>The compiler.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="compiler"/> parameter is <c>null</c>.</exception>
+        [SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter",
+            Justification =
+                "This signature is designed for ease of use rather than requiring that T is either a parameter or return type."
+            )]
+        public static IBuildStrategyCompiler RemoveIgnoreRule<T>(this IBuildStrategyCompiler compiler)
+            where T : IgnoreRule
+        {
+            if (compiler == null)
+            {
+                throw new ArgumentNullException(nameof(compiler));
+            }
+
+            var itemsToRemove = compiler.IgnoreRules.Where(x => x.GetType().IsAssignableFrom(typeof(T))).ToList();
+
+            foreach (var rule in itemsToRemove)
+            {
+                compiler.IgnoreRules.Remove(rule);
+            }
+
+            return compiler;
+        }
+
+        /// <summary>
+        /// Removes type creators from the compiler that match the specified type.
+        /// </summary>
+        /// <typeparam name="T">The type of type creator to remove.</typeparam>
+        /// <param name="compiler">The compiler.</param>
+        /// <returns>The compiler.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="compiler"/> parameter is <c>null</c>.</exception>
+        [SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter",
+            Justification =
+                "This signature is designed for ease of use rather than requiring that T is either a parameter or return type."
+            )]
+        public static IBuildStrategyCompiler RemoveTypeCreator<T>(this IBuildStrategyCompiler compiler)
+            where T : ITypeCreator
+        {
+            if (compiler == null)
+            {
+                throw new ArgumentNullException(nameof(compiler));
+            }
+
+            var itemsToRemove = compiler.TypeCreators.Where(x => x.GetType().IsAssignableFrom(typeof(T))).ToList();
+
+            foreach (var rule in itemsToRemove)
+            {
+                compiler.TypeCreators.Remove(rule);
+            }
+
+            return compiler;
+        }
+
+        /// <summary>
+        /// Removes value generators from the compiler that match the specified type.
+        /// </summary>
+        /// <typeparam name="T">The type of value generator to remove.</typeparam>
+        /// <param name="compiler">The compiler.</param>
+        /// <returns>The compiler.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="compiler"/> parameter is <c>null</c>.</exception>
+        [SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter",
+            Justification =
+                "This signature is designed for ease of use rather than requiring that T is either a parameter or return type."
+            )]
+        public static IBuildStrategyCompiler RemoveValueGenerator<T>(this IBuildStrategyCompiler compiler)
+            where T : IValueGenerator
+        {
+            if (compiler == null)
+            {
+                throw new ArgumentNullException(nameof(compiler));
+            }
+
+            var itemsToRemove = compiler.ValueGenerators.Where(x => x.GetType().IsAssignableFrom(typeof(T))).ToList();
+
+            foreach (var rule in itemsToRemove)
+            {
+                compiler.ValueGenerators.Remove(rule);
+            }
+
+            return compiler;
+        }
+
+        /// <summary>
         /// Sets the constructor resolver on the compiler.
         /// </summary>
+        /// <typeparam name="T">The type of constructor resolver to use.</typeparam>
         /// <param name="compiler">The compiler.</param>
         /// <returns>The compiler.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="compiler"/> parameter is <c>null</c>.</exception>

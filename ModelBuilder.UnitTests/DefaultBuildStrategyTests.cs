@@ -1,8 +1,9 @@
-﻿namespace ModelBuilder.UnitTests
-{
-    using FluentAssertions;
-    using Xunit;
+﻿using System.Linq;
+using FluentAssertions;
+using Xunit;
 
+namespace ModelBuilder.UnitTests
+{
     public class DefaultBuildStrategyTests
     {
         [Fact]
@@ -39,6 +40,50 @@
             var actual = target.GetExecuteStrategy<Person>();
 
             actual.BuildStrategy.Should().BeSameAs(target);
+        }
+
+        [Fact]
+        public void TypeCreatorsIncludesAllAvailableTypeCreatorsTest()
+        {
+            var types = from x in typeof(DefaultBuildStrategy).Assembly.GetTypes()
+                where typeof(ITypeCreator).IsAssignableFrom(x)
+                      && x.IsAbstract == false
+                      && x.IsInterface == false
+                select x;
+
+            var target = new DefaultBuildStrategy();
+
+            foreach (var type in types)
+            {
+                target.TypeCreators.Should().Contain(x => x.GetType() == type);
+            }
+        }
+
+        [Fact]
+        public void ValueGeneratorsDoesNotIncludeMailinatorEmailValueGeneratorTest()
+        {
+            var target = new DefaultBuildStrategy();
+
+            target.ValueGenerators.Should()
+                .NotContain(x => x.GetType() == typeof(MailinatorEmailValueGenerator));
+        }
+
+        [Fact]
+        public void ValueGeneratorsIncludesAllAvailableValueGeneratorsExceptMailinatorTest()
+        {
+            var types = from x in typeof(DefaultBuildStrategy).Assembly.GetTypes()
+                where typeof(IValueGenerator).IsAssignableFrom(x)
+                      && x.IsAbstract == false
+                      && x.IsInterface == false
+                      && x != typeof(MailinatorEmailValueGenerator)
+                select x;
+
+            var target = new DefaultBuildStrategy();
+
+            foreach (var type in types)
+            {
+                target.ValueGenerators.Should().Contain(x => x.GetType() == type);
+            }
         }
     }
 }

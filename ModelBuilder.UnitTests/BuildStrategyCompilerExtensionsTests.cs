@@ -410,6 +410,177 @@ namespace ModelBuilder.UnitTests
         }
 
         [Fact]
+        public void RemoveCreationRuleRemovesMultipleMatchingRulesFromCompilerTest()
+        {
+            var target = new BuildStrategyCompiler();
+
+            target.AddCreationRule<DummyCreationRule>();
+            target.AddCreationRule<DummyCreationRule>();
+            target.AddCreationRule<DummyCreationRule>();
+            target.RemoveCreationRule<DummyCreationRule>();
+
+            target.CreationRules.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void RemoveCreationRuleRemovesRulesFromCompilerTest()
+        {
+            var target = new BuildStrategyCompiler();
+
+            target.AddCreationRule<DummyCreationRule>();
+            target.RemoveCreationRule<DummyCreationRule>();
+
+            target.CreationRules.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void RemoveCreationRuleThrowsExceptionWithNullCompilerTest()
+        {
+            IBuildStrategyCompiler target = null;
+
+            Action action = () => target.RemoveCreationRule<DummyCreationRule>();
+
+            action.ShouldThrow<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void RemoveExecuteOrderRuleRemovesMultipleMatchingRulesFromCompilerTest()
+        {
+            var target = new BuildStrategyCompiler();
+
+            target.AddExecuteOrderRule<ExecuteOrderRuleWrapper>();
+            target.AddExecuteOrderRule<ExecuteOrderRuleWrapper>();
+            target.AddExecuteOrderRule<ExecuteOrderRuleWrapper>();
+            target.RemoveExecuteOrderRule<ExecuteOrderRuleWrapper>();
+
+            target.ExecuteOrderRules.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void RemoveExecuteOrderRuleRemovesRulesFromCompilerTest()
+        {
+            var target = new BuildStrategyCompiler();
+
+            target.AddExecuteOrderRule<ExecuteOrderRuleWrapper>();
+            target.RemoveExecuteOrderRule<ExecuteOrderRuleWrapper>();
+
+            target.ExecuteOrderRules.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void RemoveExecuteOrderRuleThrowsExceptionWithNullCompilerTest()
+        {
+            IBuildStrategyCompiler target = null;
+
+            Action action = () => target.RemoveExecuteOrderRule<ExecuteOrderRuleWrapper>();
+
+            action.ShouldThrow<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void RemoveIgnoreRuleRemovesMultipleMatchingRulesFromCompilerTest()
+        {
+            var target = new BuildStrategyCompiler();
+
+            target.AddIgnoreRule<IgnoreRuleWrapper>();
+            target.AddIgnoreRule<IgnoreRuleWrapper>();
+            target.AddIgnoreRule<IgnoreRuleWrapper>();
+            target.RemoveIgnoreRule<IgnoreRuleWrapper>();
+
+            target.IgnoreRules.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void RemoveIgnoreRuleRemovesRulesFromCompilerTest()
+        {
+            var target = new BuildStrategyCompiler();
+
+            target.AddIgnoreRule<IgnoreRuleWrapper>();
+            target.RemoveIgnoreRule<IgnoreRuleWrapper>();
+
+            target.IgnoreRules.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void RemoveIgnoreRuleThrowsExceptionWithNullCompilerTest()
+        {
+            IBuildStrategyCompiler target = null;
+
+            Action action = () => target.RemoveIgnoreRule<IgnoreRuleWrapper>();
+
+            action.ShouldThrow<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void RemoveTypeCreatorRemovesMultipleMatchingRulesFromCompilerTest()
+        {
+            var target = new BuildStrategyCompiler();
+
+            target.AddTypeCreator<DefaultTypeCreator>();
+            target.AddTypeCreator<DefaultTypeCreator>();
+            target.AddTypeCreator<DefaultTypeCreator>();
+            target.RemoveTypeCreator<DefaultTypeCreator>();
+
+            target.TypeCreators.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void RemoveTypeCreatorRemovesRulesFromCompilerTest()
+        {
+            var target = new BuildStrategyCompiler();
+
+            target.AddTypeCreator<DefaultTypeCreator>();
+            target.RemoveTypeCreator<DefaultTypeCreator>();
+
+            target.TypeCreators.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void RemoveTypeCreatorThrowsExceptionWithNullCompilerTest()
+        {
+            IBuildStrategyCompiler target = null;
+
+            Action action = () => target.RemoveTypeCreator<DefaultTypeCreator>();
+
+            action.ShouldThrow<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void RemoveValueGeneratorRemovesMultipleMatchingRulesFromCompilerTest()
+        {
+            var target = new BuildStrategyCompiler();
+
+            target.AddValueGenerator<StringValueGenerator>();
+            target.AddValueGenerator<StringValueGenerator>();
+            target.AddValueGenerator<StringValueGenerator>();
+            target.RemoveValueGenerator<StringValueGenerator>();
+
+            target.ValueGenerators.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void RemoveValueGeneratorRemovesRulesFromCompilerTest()
+        {
+            var target = new BuildStrategyCompiler();
+
+            target.AddValueGenerator<StringValueGenerator>();
+            target.RemoveValueGenerator<StringValueGenerator>();
+
+            target.ValueGenerators.Should().BeEmpty();
+        }
+
+
+        [Fact]
+        public void RemoveValueGeneratorThrowsExceptionWithNullCompilerTest()
+        {
+            IBuildStrategyCompiler target = null;
+
+            Action action = () => target.RemoveValueGenerator<StringValueGenerator>();
+
+            action.ShouldThrow<ArgumentNullException>();
+        }
+
+        [Fact]
         public void SetConstructorResolverAssignsResolverToCompilerTest()
         {
             var target = new BuildStrategyCompiler();
