@@ -8,6 +8,9 @@ using ModelBuilder.Properties;
 
 namespace ModelBuilder
 {
+    using System.Collections;
+    using System.Collections.Generic;
+
     /// <summary>
     /// The <see cref="DefaultExecuteStrategy{T}"/>
     /// class is used to create and populate <typeparamref name="T"/> instances.
@@ -15,6 +18,8 @@ namespace ModelBuilder
     /// <typeparam name="T">The type of instance to create and populate.</typeparam>
     public class DefaultExecuteStrategy<T> : IExecuteStrategy<T>
     {
+        private readonly Stack _buildChain = new Stack();
+
         /// <summary>
         /// Initializes a new instance of the <see cref="DefaultExecuteStrategy{T}"/> class.
         /// </summary>
@@ -60,7 +65,7 @@ namespace ModelBuilder
         /// <exception cref="BuildException">Failed to generate a requested type.</exception>
         public virtual T Populate(T instance)
         {
-            return (T)PopulateInstance(instance);
+            return (T)Populate((object)instance);
         }
 
         /// <inheritdoc />
@@ -68,7 +73,21 @@ namespace ModelBuilder
         /// <exception cref="BuildException">Failed to generate a requested type.</exception>
         public object Populate(object instance)
         {
-            return PopulateInstance(instance);
+            if (instance == null)
+            {
+                throw new ArgumentNullException(nameof(instance));
+            }
+
+            _buildChain.Push(instance);
+
+            try
+            {
+                return PopulateInstance(instance);
+            }
+            finally
+            {
+                _buildChain.Pop();
+            }
         }
 
         /// <summary>
@@ -196,23 +215,7 @@ namespace ModelBuilder
 
             try
             {
-                var instance = CreateInstance(typeCreator, type, referenceName, context, args);
-
-                if (instance == null)
-                {
-                    return null;
-                }
-
-                if (typeCreator.AutoPopulate)
-                {
-                    // The type creator has indicated that this type should not be auto populated by the execute strategy
-                    instance = PopulateInstance(instance);
-
-                    Debug.Assert(instance != null, "Populating the instance did not return the original instance");
-                }
-
-                // Allow the type creator to do its own population of the instance
-                instance = typeCreator.Populate(instance, this);
+                var instance = CreateAndPopulate(type, referenceName, context, args, typeCreator);
 
                 return instance;
             }
@@ -235,6 +238,43 @@ namespace ModelBuilder
             finally
             {
                 BuildStrategy.BuildLog.CreatedType(type, context);
+            }
+        }
+
+        private object CreateAndPopulate(
+            Type type,
+            string referenceName,
+            object context,
+            object[] args,
+            ITypeCreator typeCreator)
+        {
+            var instance = CreateInstance(typeCreator, type, referenceName, context, args);
+
+            if (instance == null)
+            {
+                return null;
+            }
+
+            try
+            {
+                _buildChain.Push(instance);
+
+                if (typeCreator.AutoPopulate)
+                {
+                    // The type creator has indicated that this type should not be auto populated by the execute strategy
+                    instance = PopulateInstance(instance);
+
+                    Debug.Assert(instance != null, "Populating the instance did not return the original instance");
+                }
+
+                // Allow the type creator to do its own population of the instance
+                instance = typeCreator.Populate(instance, this);
+
+                return instance;
+            }
+            finally
+            {
+                _buildChain.Pop();
             }
         }
 
@@ -363,5 +403,8 @@ namespace ModelBuilder
 
         /// <inheritdoc />
         public IBuildStrategy BuildStrategy { get; set; }
+
+        /// <inheritdoc />
+        public IEnumerable<object> BuildChain => _buildChain.ToArray();
     }
 }
