@@ -33,7 +33,7 @@ namespace ModelBuilder
         /// <summary>
         /// Gets the build chain for objects up to the current build execution.
         /// </summary>
-        IEnumerable<object> BuildChain
+        LinkedList<object> BuildChain
         {
             get;
         }

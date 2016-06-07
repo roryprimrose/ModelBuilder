@@ -25,7 +25,7 @@
             throw new NotImplementedException();
         }
 
-        public IEnumerable<object> BuildChain
+        public LinkedList<object> BuildChain
         {
             get;
         }

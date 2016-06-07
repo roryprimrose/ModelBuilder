@@ -405,6 +405,19 @@ namespace ModelBuilder
         public IBuildStrategy BuildStrategy { get; set; }
 
         /// <inheritdoc />
-        public IEnumerable<object> BuildChain => _buildChain.ToArray();
+        public LinkedList<object> BuildChain
+        {
+            get
+            {
+                var chain = new LinkedList<object>();
+
+                foreach (var item in _buildChain)
+                {
+                    chain.AddFirst(item);
+                }
+
+                return chain;
+            }
+        }
     }
 }

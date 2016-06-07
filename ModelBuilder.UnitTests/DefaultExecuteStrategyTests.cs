@@ -1,16 +1,16 @@
-﻿namespace ModelBuilder.UnitTests
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.IO;
-    using System.Linq;
-    using FluentAssertions;
-    using NSubstitute;
-    using NSubstitute.ExceptionExtensions;
-    using Xunit;
-    using Xunit.Abstractions;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.IO;
+using System.Linq;
+using FluentAssertions;
+using NSubstitute;
+using NSubstitute.ExceptionExtensions;
+using Xunit;
+using Xunit.Abstractions;
 
+namespace ModelBuilder.UnitTests
+{
     public class DefaultExecuteStrategyTests
     {
         private readonly ITestOutputHelper _output;
@@ -18,6 +18,18 @@
         public DefaultExecuteStrategyTests(ITestOutputHelper output)
         {
             _output = output;
+        }
+
+        [Fact]
+        public void BuildChainShouldBeEmptyAfterCreateCompletedTest()
+        {
+            var target = new DefaultBuildStrategy().GetExecuteStrategy<Company>();
+
+            target.BuildChain.Should().BeEmpty();
+
+            target.Create();
+
+            target.BuildChain.Should().BeEmpty();
         }
 
         [Fact]
@@ -708,9 +720,17 @@
                 BuildStrategy = buildStrategy
             };
 
-            Action action = () => target.CreateWith((Type)null);
+            Action action = () => target.CreateWith((Type) null);
 
             action.ShouldThrow<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void IsCreatedWithBuildChainInstanceTest()
+        {
+            var target = new DefaultExecuteStrategy<Company>();
+
+            target.BuildChain.Should().NotBeNull();
         }
 
         [Fact]
@@ -754,7 +774,7 @@
             valueGenerator.IsSupported(typeof(string), "Address", expected).Returns(true);
             valueGenerator.Generate(typeof(string), "Address", expected).Returns(address);
 
-            var actual = (Company)target.Populate((object)expected);
+            var actual = (Company) target.Populate((object) expected);
 
             actual.Should().BeSameAs(expected);
             actual.Name.Should().Be(name);
@@ -992,6 +1012,16 @@
         }
 
         [Fact]
+        public void PopulateInstanceThrowsExceptionWithNullInstanceTest()
+        {
+            var target = new PopulateInstanceWrapper();
+
+            Action action = () => target.RunTest();
+
+            action.ShouldThrow<ArgumentNullException>();
+        }
+
+        [Fact]
         public void PopulateOnlySetsPublicPropertiesTest()
         {
             var expected = new PropertyScopes();
@@ -1020,6 +1050,113 @@
             actual.InternalSet.Should().BeEmpty();
             actual.ReadOnly.Should().BeEmpty();
             PropertyScopes.GlobalValue.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void PopulatePushesInstanceIntoBuildChainWhileCreatingTest()
+        {
+            var creator = Substitute.For<ITypeCreator>();
+            var generator = Substitute.For<IValueGenerator>();
+            var buildStrategy = Substitute.For<IBuildStrategy>();
+            var log = Substitute.For<IBuildLog>();
+
+            var instance = new SlimModel();
+            var target = new DefaultExecuteStrategy<SlimModel>
+            {
+                BuildStrategy = buildStrategy
+            };
+            var testPassed = false;
+
+            buildStrategy.BuildLog.Returns(log);
+            buildStrategy.CreationRules.Returns(new List<CreationRule>().AsReadOnly());
+            buildStrategy.ValueGenerators.Returns(new List<IValueGenerator> {generator}.AsReadOnly());
+            buildStrategy.TypeCreators.Returns(new List<ITypeCreator> {creator}.AsReadOnly());
+            creator.IsSupported(typeof(SlimModel), null, null).Returns(true);
+            creator.Create(typeof(SlimModel), null, null).Returns(instance);
+            creator.AutoPopulate.Returns(true);
+            generator.When(x => x.Generate(typeof(Guid), nameof(SlimModel.Value), instance)).Do(x =>
+            {
+                target.BuildChain.Should().HaveCount(1);
+                target.BuildChain.First().Should().BeOfType<SlimModel>();
+                testPassed = true;
+            });
+
+            generator.IsSupported(typeof(Guid), nameof(SlimModel.Value), instance).Returns(true);
+
+            target.Create();
+
+            testPassed.Should().BeTrue();
+        }
+
+        [Fact]
+        public void PopulatePushesInstanceIntoBuildChainWhilePopulatingTest()
+        {
+            var generator = Substitute.For<IValueGenerator>();
+            var buildStrategy = Substitute.For<IBuildStrategy>();
+            var log = Substitute.For<IBuildLog>();
+
+            var instance = new SlimModel();
+            var target = new DefaultExecuteStrategy<SlimModel>
+            {
+                BuildStrategy = buildStrategy
+            };
+            var testPassed = false;
+
+            buildStrategy.BuildLog.Returns(log);
+            buildStrategy.CreationRules.Returns(new List<CreationRule>().AsReadOnly());
+            buildStrategy.ValueGenerators.Returns(new List<IValueGenerator> {generator}.AsReadOnly());
+            generator.When(x => x.Generate(typeof(Guid), nameof(SlimModel.Value), instance)).Do(x =>
+            {
+                target.BuildChain.Should().HaveCount(1);
+                target.BuildChain.Should().Contain(instance);
+                testPassed = true;
+            });
+
+            generator.IsSupported(typeof(Guid), nameof(SlimModel.Value), instance).Returns(true);
+
+            target.Populate(instance);
+
+            testPassed.Should().BeTrue();
+        }
+
+        [Fact]
+        public void PopulatePushesNestedInstanceIntoBuildChainWhileCreatingTest()
+        {
+            var creator = Substitute.For<ITypeCreator>();
+            var generator = Substitute.For<IValueGenerator>();
+            var buildStrategy = Substitute.For<IBuildStrategy>();
+            var log = Substitute.For<IBuildLog>();
+
+            var office = new Office();
+            var address = new Address();
+            var target = new DefaultExecuteStrategy<Office>
+            {
+                BuildStrategy = buildStrategy
+            };
+            var testPassed = false;
+
+            buildStrategy.BuildLog.Returns(log);
+            buildStrategy.CreationRules.Returns(new List<CreationRule>().AsReadOnly());
+            buildStrategy.ValueGenerators.Returns(new List<IValueGenerator> {generator}.AsReadOnly());
+            buildStrategy.TypeCreators.Returns(new List<ITypeCreator> {creator}.AsReadOnly());
+            creator.IsSupported(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<object>()).Returns(true);
+            creator.Create(typeof(Office), null, null).Returns(office);
+            creator.Create(typeof(Address), "Address", office).Returns(address);
+            creator.AutoPopulate.Returns(true);
+            generator.When(x => x.Generate(typeof(string), Arg.Any<string>(), address)).Do(x =>
+            {
+                target.BuildChain.Should().HaveCount(2);
+                target.BuildChain.First.Value.Should().Be(office);
+                target.BuildChain.Last.Value.Should().Be(address);
+                testPassed = true;
+            });
+
+            generator.IsSupported(typeof(string), Arg.Any<string>(), Arg.Any<object>()).Returns(true);
+            generator.Generate(typeof(string), Arg.Any<string>(), Arg.Any<object>()).Returns(Guid.NewGuid().ToString());
+
+            target.Create();
+
+            testPassed.Should().BeTrue();
         }
 
         [Fact]
@@ -1120,6 +1257,14 @@
             Action action = () => target.Populate(null);
 
             action.ShouldThrow<ArgumentNullException>();
+        }
+
+        private class PopulateInstanceWrapper : DefaultExecuteStrategy<Company>
+        {
+            public void RunTest()
+            {
+                PopulateInstance(null);
+            }
         }
     }
 }
