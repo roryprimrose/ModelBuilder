@@ -1,6 +1,7 @@
 ﻿namespace ModelBuilder
 {
     using System;
+    using System.Collections.Generic;
     using System.Globalization;
     using System.Text.RegularExpressions;
     using ModelBuilder.Properties;
@@ -179,8 +180,8 @@
         /// </summary>
         /// <param name="type">The type to match.</param>
         /// <param name="propertyName">The property name to match.</param>
-        /// <param name="context">The possible context object the instance is being created for.</param>
-        public object Create(Type type, string propertyName, object context)
+        /// <param name="buildChain">The chain of instances built up to this point.</param>
+        public object Create(Type type, string propertyName, LinkedList<object> buildChain)
         {
             if (IsMatch(type, propertyName) == false)
             {
@@ -200,6 +201,8 @@
 
                 throw new NotSupportedException(message);
             }
+
+            var context = buildChain?.Last.Value;
 
             return _creator(type, propertyName, context);
         }

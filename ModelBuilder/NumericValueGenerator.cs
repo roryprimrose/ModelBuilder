@@ -2,6 +2,8 @@
 
 namespace ModelBuilder
 {
+    using System.Collections.Generic;
+
     /// <summary>
     /// The <see cref="NumericValueGenerator"/>
     /// class is used to generate random numeric values.
@@ -10,7 +12,7 @@ namespace ModelBuilder
     {
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type"/> parameter is null.</exception>
-        public override bool IsSupported(Type type, string referenceName, object context)
+        public override bool IsSupported(Type type, string referenceName, LinkedList<object> buildChain)
         {
             if (type == null)
             {
@@ -29,7 +31,7 @@ namespace ModelBuilder
         }
 
         /// <inheritdoc />
-        protected override object GenerateValue(Type type, string referenceName, object context)
+        protected override object GenerateValue(Type type, string referenceName, LinkedList<object> buildChain)
         {
             var generateType = type;
 
@@ -47,6 +49,7 @@ namespace ModelBuilder
                 generateType = type.GenericTypeArguments[0];
             }
 
+            var context = buildChain.Last.Value;
             var min = GetMinimum(generateType, referenceName, context);
             var max = GetMaximum(generateType, referenceName, context);
 

@@ -1,7 +1,8 @@
-﻿using System;
-
-namespace ModelBuilder
+﻿namespace ModelBuilder
 {
+    using System;
+    using System.Collections.Generic;
+
     /// <summary>
     /// The <see cref="StringValueGenerator"/>
     /// class is used to generate random <see cref="string"/> values.
@@ -16,7 +17,7 @@ namespace ModelBuilder
         }
 
         /// <inheritdoc />
-        protected override object GenerateValue(Type type, string referenceName, object context)
+        protected override object GenerateValue(Type type, string referenceName, LinkedList<object> buildChain)
         {
             return Guid.NewGuid().ToString();
         }

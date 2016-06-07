@@ -1,8 +1,9 @@
-using System;
-using System.Text.RegularExpressions;
-
 namespace ModelBuilder
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Text.RegularExpressions;
+
     /// <summary>
     /// The <see cref="DateOfBirthValueGenerator"/>
     /// class is used to generate random date of birth values.
@@ -13,12 +14,17 @@ namespace ModelBuilder
         /// Initializes a new instance of the <see cref="DateTimeValueGenerator"/> class.
         /// </summary>
         public DateOfBirthValueGenerator()
-            : base(new Regex("dob|dateofbirth|born", RegexOptions.IgnoreCase), typeof(DateTime), typeof(DateTime?), typeof(DateTimeOffset), typeof(DateTimeOffset?))
+            : base(
+                new Regex("dob|dateofbirth|born", RegexOptions.IgnoreCase),
+                typeof(DateTime),
+                typeof(DateTime?),
+                typeof(DateTimeOffset),
+                typeof(DateTimeOffset?))
         {
         }
 
         /// <inheritdoc />
-        protected override object GenerateValue(Type type, string referenceName, object context)
+        protected override object GenerateValue(Type type, string referenceName, LinkedList<object> buildChain)
         {
             var generateType = type;
 
@@ -60,6 +66,9 @@ namespace ModelBuilder
         }
 
         /// <inheritdoc />
-        public override int Priority { get; } = 1000;
+        public override int Priority
+        {
+            get;
+        } = 1000;
     }
 }

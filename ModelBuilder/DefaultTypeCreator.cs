@@ -1,8 +1,9 @@
-﻿using System;
-using System.Linq;
-
-namespace ModelBuilder
+﻿namespace ModelBuilder
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
     /// <summary>
     /// The <see cref="DefaultTypeCreator"/>
     /// class is used to create an instance of a type using the constructors that match any arguments supplied.
@@ -12,14 +13,18 @@ namespace ModelBuilder
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type"/> parameter is null.</exception>
         /// <exception cref="MissingMemberException">The <paramref name="type"/> parameter does not have a constructor matching the specified arguments.</exception>
-        public override object Create(Type type, string referenceName, object context, params object[] args)
+        public override object Create(
+            Type type,
+            string referenceName,
+            LinkedList<object> buildChain,
+            params object[] args)
         {
             if (type == null)
             {
                 throw new ArgumentNullException(nameof(type));
             }
 
-            VerifyCreateRequest(type, referenceName, context);
+            VerifyCreateRequest(type, referenceName, buildChain);
 
             if (args?.Length == 0)
             {

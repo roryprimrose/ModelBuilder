@@ -4,13 +4,15 @@ using System.Text.RegularExpressions;
 
 namespace ModelBuilder
 {
+    using System.Collections.Generic;
+
     /// <summary>
     /// The <see cref="ValueGeneratorMatcher"/>
     /// class is used to provide the common logic for evaluating whether a generator matches a target to generate for.
     /// </summary>
     public abstract class ValueGeneratorMatcher : ValueGeneratorBase
     {
-        private readonly Func<Type, string, object, bool> _matcher;
+        private readonly Func<Type, string, LinkedList<object>, bool> _matcher;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ValueGeneratorMatcher"/> class.
@@ -104,14 +106,14 @@ namespace ModelBuilder
 
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type"/> parameter is null.</exception>
-        public override bool IsSupported(Type type, string referenceName, object context)
+        public override bool IsSupported(Type type, string referenceName, LinkedList<object> buildChain)
         {
             if (type == null)
             {
                 throw new ArgumentNullException(nameof(type));
             }
 
-            return _matcher(type, referenceName, context);
+            return _matcher(type, referenceName, buildChain);
         }
     }
 }

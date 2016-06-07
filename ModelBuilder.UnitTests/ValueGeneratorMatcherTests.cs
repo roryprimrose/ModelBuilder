@@ -1,10 +1,11 @@
-﻿using System;
-using System.Text.RegularExpressions;
-using FluentAssertions;
-using Xunit;
-
-namespace ModelBuilder.UnitTests
+﻿namespace ModelBuilder.UnitTests
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Text.RegularExpressions;
+    using FluentAssertions;
+    using Xunit;
+
     public class ValueGeneratorMatcherTests
     {
         [Theory]
@@ -15,8 +16,11 @@ namespace ModelBuilder.UnitTests
         [InlineData(typeof(bool), "Value|Other", "Other", true)]
         [InlineData(typeof(bool?), "Value|Other", "Value", true)]
         [InlineData(typeof(bool?), "Value|Other", "Other", true)]
-        public void IsSupportedEvaluatesSpecifiedExpressionAndTypesTest(Type type, string expression,
-            string referenceName, bool expected)
+        public void IsSupportedEvaluatesSpecifiedExpressionAndTypesTest(
+            Type type,
+            string expression,
+            string referenceName,
+            bool expected)
         {
             var regex = new Regex(expression);
 
@@ -91,7 +95,7 @@ namespace ModelBuilder.UnitTests
         [Fact]
         public void ThrowsExceptionWithNullExpressionTest()
         {
-            Action action = () => new WrapperGenerator((Regex) null);
+            Action action = () => new WrapperGenerator((Regex)null);
 
             action.ShouldThrow<ArgumentNullException>();
         }
@@ -99,7 +103,7 @@ namespace ModelBuilder.UnitTests
         [Fact]
         public void ThrowsExceptionWithNullReferenceNameTest()
         {
-            Action action = () => new WrapperGenerator((string) null);
+            Action action = () => new WrapperGenerator((string)null);
 
             action.ShouldThrow<ArgumentNullException>();
         }
@@ -107,7 +111,7 @@ namespace ModelBuilder.UnitTests
         [Fact]
         public void ThrowsExceptionWithNullTypesTest()
         {
-            Action action = () => new WrapperGenerator((Type[]) null);
+            Action action = () => new WrapperGenerator((Type[])null);
 
             action.ShouldThrow<ArgumentNullException>();
         }
@@ -126,7 +130,7 @@ namespace ModelBuilder.UnitTests
             {
             }
 
-            protected override object GenerateValue(Type type, string referenceName, object context)
+            protected override object GenerateValue(Type type, string referenceName, LinkedList<object> buildChain)
             {
                 throw new NotImplementedException();
             }

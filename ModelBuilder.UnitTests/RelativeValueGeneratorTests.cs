@@ -169,7 +169,7 @@ namespace ModelBuilder.UnitTests
                 return GetValue<string>(expression, context);
             }
 
-            protected override object GenerateValue(Type type, string referenceName, object context)
+            protected override object GenerateValue(Type type, string referenceName, LinkedList<object> buildChain)
             {
                 throw new NotImplementedException();
             }
