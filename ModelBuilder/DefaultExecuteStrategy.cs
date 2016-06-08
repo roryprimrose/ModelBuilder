@@ -401,7 +401,7 @@
 
                     foreach (var parameterInfo in parameterInfos)
                     {
-                        var context = buildChain.Last.Value;
+                        var context = buildChain.Last?.Value;
 
                         BuildStrategy.BuildLog.CreateParameter(
                             type,

@@ -1,22 +1,26 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using FluentAssertions;
-using ModelBuilder.Data;
-using Xunit;
-
-namespace ModelBuilder.UnitTests
+﻿namespace ModelBuilder.UnitTests
 {
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using FluentAssertions;
+    using ModelBuilder.Data;
+    using Xunit;
+
     public class EmailValueGeneratorTests
     {
         [Fact]
         public void GenerateReturnsDomainFromDerivedClassTest()
         {
             var person = new Person();
+            var buildChain = new LinkedList<object>();
+
+            buildChain.AddFirst(person);
 
             var target = new MailinatorEmailValueGenerator();
 
-            var actual = (string) target.Generate(typeof(string), "email", person);
+            var actual = (string)target.Generate(typeof(string), "email", buildChain);
 
             actual.Should().EndWith("mailinator.com");
         }
@@ -25,10 +29,13 @@ namespace ModelBuilder.UnitTests
         public void GenerateReturnsDomainFromTestDataTest()
         {
             var person = new Person();
+            var buildChain = new LinkedList<object>();
+
+            buildChain.AddFirst(person);
 
             var target = new EmailValueGenerator();
 
-            var actual = (string) target.Generate(typeof(string), "email", person);
+            var actual = (string)target.Generate(typeof(string), "email", buildChain);
 
             var domain = actual.Substring(actual.IndexOf("@") + 1);
 
@@ -43,10 +50,13 @@ namespace ModelBuilder.UnitTests
                 FirstName = "De Jour",
                 LastName = "Mc Cormick"
             };
+            var buildChain = new LinkedList<object>();
+
+            buildChain.AddFirst(person);
 
             var target = new EmailValueGenerator();
 
-            var actual = (string) target.Generate(typeof(string), "email", person);
+            var actual = (string)target.Generate(typeof(string), "email", buildChain);
 
             var expected = "dejour.mccormick";
 
@@ -60,10 +70,13 @@ namespace ModelBuilder.UnitTests
             {
                 Gender = Gender.Female
             };
+            var buildChain = new LinkedList<object>();
+
+            buildChain.AddFirst(person);
 
             var target = new EmailValueGenerator();
 
-            var actual = (string) target.Generate(typeof(string), "email", person);
+            var actual = (string)target.Generate(typeof(string), "email", buildChain);
 
             var firstName = actual.Substring(0, actual.IndexOf("."));
 
@@ -77,10 +90,13 @@ namespace ModelBuilder.UnitTests
             {
                 Gender = Gender.Male
             };
+            var buildChain = new LinkedList<object>();
+
+            buildChain.AddFirst(person);
 
             var target = new EmailValueGenerator();
 
-            var actual = (string) target.Generate(typeof(string), "email", person);
+            var actual = (string)target.Generate(typeof(string), "email", buildChain);
 
             var firstName = actual.Substring(0, actual.IndexOf("."));
 
@@ -95,10 +111,13 @@ namespace ModelBuilder.UnitTests
                 FirstName = "De Jour",
                 LastName = "Mc Cormick"
             };
+            var firstBuildChain = new LinkedList<object>();
+
+            firstBuildChain.AddFirst(firstPerson);
 
             var target = new EmailValueGenerator();
 
-            var first = target.Generate(typeof(string), "email", firstPerson);
+            var first = target.Generate(typeof(string), "email", firstBuildChain);
 
             first.Should().BeOfType<string>();
             first.As<string>().Should().NotBeNullOrWhiteSpace();
@@ -109,8 +128,11 @@ namespace ModelBuilder.UnitTests
                 FirstName = "Sam",
                 LastName = "Johns"
             };
+            var secondBuildChain = new LinkedList<object>();
 
-            var second = target.Generate(typeof(string), "email", secondPerson);
+            secondBuildChain.AddFirst(secondPerson);
+
+            var second = target.Generate(typeof(string), "email", secondBuildChain);
 
             first.Should().NotBe(second);
         }
@@ -123,10 +145,13 @@ namespace ModelBuilder.UnitTests
                 FirstName = Guid.NewGuid().ToString("N"),
                 LastName = Guid.NewGuid().ToString("N")
             };
+            var buildChain = new LinkedList<object>();
+
+            buildChain.AddFirst(person);
 
             var target = new EmailValueGenerator();
 
-            var actual = (string) target.Generate(typeof(string), "email", person);
+            var actual = (string)target.Generate(typeof(string), "email", buildChain);
 
             var expected = person.FirstName + "." + person.LastName;
 
@@ -140,10 +165,13 @@ namespace ModelBuilder.UnitTests
             {
                 FirstName = Guid.NewGuid().ToString("N")
             };
+            var buildChain = new LinkedList<object>();
+
+            buildChain.AddFirst(person);
 
             var target = new EmailValueGenerator();
 
-            var actual = (string) target.Generate(typeof(string), "email", person);
+            var actual = (string)target.Generate(typeof(string), "email", buildChain);
 
             var expected = person.FirstName.Substring(0, 1);
 
@@ -157,10 +185,13 @@ namespace ModelBuilder.UnitTests
             {
                 LastName = Guid.NewGuid().ToString("N")
             };
+            var buildChain = new LinkedList<object>();
+
+            buildChain.AddFirst(person);
 
             var target = new EmailValueGenerator();
 
-            var actual = (string) target.Generate(typeof(string), "email", person);
+            var actual = (string)target.Generate(typeof(string), "email", buildChain);
 
             var expected = person.LastName;
 
@@ -171,10 +202,13 @@ namespace ModelBuilder.UnitTests
         public void GenerateReturnsValueWhenContextLacksNameAndGenderPropertiesTest()
         {
             var model = new SlimModel();
+            var buildChain = new LinkedList<object>();
+
+            buildChain.AddFirst(model);
 
             var target = new EmailValueGenerator();
 
-            var actual = (string) target.Generate(typeof(string), "email", model);
+            var actual = (string)target.Generate(typeof(string), "email", buildChain);
 
             actual.Should().NotBeNullOrWhiteSpace();
         }
@@ -194,16 +228,6 @@ namespace ModelBuilder.UnitTests
         }
 
         [Fact]
-        public void GenerateThrowsExceptionWithNullTypeTest()
-        {
-            var target = new EmailValueGenerator();
-
-            Action action = () => target.Generate(null, null, null);
-
-            action.ShouldThrow<ArgumentNullException>();
-        }
-
-        [Fact]
         public void GenerateThrowsExceptionWithNullContextTest()
         {
             var target = new EmailValueGenerator();
@@ -211,6 +235,16 @@ namespace ModelBuilder.UnitTests
             Action action = () => target.Generate(typeof(string), "email", null);
 
             action.ShouldThrow<NotSupportedException>();
+        }
+
+        [Fact]
+        public void GenerateThrowsExceptionWithNullTypeTest()
+        {
+            var target = new EmailValueGenerator();
+
+            Action action = () => target.Generate(null, null, null);
+
+            action.ShouldThrow<ArgumentNullException>();
         }
 
         [Fact]
@@ -231,10 +265,13 @@ namespace ModelBuilder.UnitTests
         public void IsSupportedTest(Type type, string referenceName, bool expected)
         {
             var person = new Person();
+            var buildChain = new LinkedList<object>();
+
+            buildChain.AddFirst(person);
 
             var target = new EmailValueGenerator();
 
-            var actual = target.IsSupported(type, referenceName, person);
+            var actual = target.IsSupported(type, referenceName, buildChain);
 
             actual.Should().Be(expected);
         }
@@ -253,10 +290,13 @@ namespace ModelBuilder.UnitTests
         public void IsSupportedThrowsExceptionWithNullTypeTest()
         {
             var person = new Person();
+            var buildChain = new LinkedList<object>();
+
+            buildChain.AddFirst(person);
 
             var target = new EmailValueGenerator();
 
-            Action action = () => target.IsSupported(null, null, person);
+            Action action = () => target.IsSupported(null, null, buildChain);
 
             action.ShouldThrow<ArgumentNullException>();
         }

@@ -72,6 +72,12 @@
                 return false;
             }
 
+            if (buildChain.Count == 0)
+            {
+                // This is either a top level item being generated or a constructor parameter
+                return false;
+            }
+
             if (_targetExpression.IsMatch(referenceName) == false)
             {
                 return false;
@@ -83,8 +89,10 @@
                 return true;
             }
 
+            var context = buildChain.Last.Value;
+
             // Check if the context has a property matching the source expression
-            var matchingProperty = GetMatchingProperty(_sourceExpression, buildChain);
+            var matchingProperty = GetMatchingProperty(_sourceExpression, context);
 
             if (matchingProperty == null)
             {

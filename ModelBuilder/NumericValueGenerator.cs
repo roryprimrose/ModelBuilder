@@ -3,6 +3,7 @@
 namespace ModelBuilder
 {
     using System.Collections.Generic;
+    using ModelBuilder.Properties;
 
     /// <summary>
     /// The <see cref="NumericValueGenerator"/>
@@ -49,7 +50,7 @@ namespace ModelBuilder
                 generateType = type.GenericTypeArguments[0];
             }
 
-            var context = buildChain.Last.Value;
+            var context = buildChain?.Last?.Value;
             var min = GetMinimum(generateType, referenceName, context);
             var max = GetMaximum(generateType, referenceName, context);
 

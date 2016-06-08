@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using ModelBuilder.Data;
+    using ModelBuilder.Properties;
 
     /// <summary>
     /// The <see cref="LastNameValueGenerator"/>
@@ -20,7 +21,12 @@
         /// <inheritdoc />
         protected override object GenerateValue(Type type, string referenceName, LinkedList<object> buildChain)
         {
-            var context = buildChain.Last.Value;
+            if (buildChain == null)
+            {
+                throw new ArgumentNullException(nameof(buildChain));
+            }
+            
+            var context = buildChain.Last?.Value;
             var gender = GetSourceValue<string>(context);
 
             if (string.Equals(gender, "male", StringComparison.OrdinalIgnoreCase))

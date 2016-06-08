@@ -1,6 +1,7 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
+    using System.Collections.Generic;
     using FluentAssertions;
     using Xunit;
 
@@ -42,9 +43,13 @@
         [Fact]
         public void GenerateThrowsExceptionWithNullTypeTest()
         {
+            var buildChain = new LinkedList<object>();
+
+            buildChain.AddFirst(Guid.NewGuid().ToString());
+
             var target = new UriValueGenerator();
 
-            Action action = () => target.Generate(null, Guid.NewGuid().ToString(), Guid.NewGuid().ToString());
+            Action action = () => target.Generate(null, Guid.NewGuid().ToString(), buildChain);
 
             action.ShouldThrow<ArgumentNullException>();
         }
@@ -101,9 +106,13 @@
         [Fact]
         public void IsSupportedThrowsExceptionWithNullTypeTest()
         {
+            var buildChain = new LinkedList<object>();
+
+            buildChain.AddFirst(Guid.NewGuid().ToString());
+
             var target = new UriValueGenerator();
 
-            Action action = () => target.IsSupported(null, Guid.NewGuid().ToString(), Guid.NewGuid().ToString());
+            Action action = () => target.IsSupported(null, Guid.NewGuid().ToString(), buildChain);
 
             action.ShouldThrow<ArgumentNullException>();
         }

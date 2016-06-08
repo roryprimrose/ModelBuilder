@@ -66,8 +66,8 @@ namespace ModelBuilder.UnitTests
             var generators = new List<IValueGenerator> {generator}.AsReadOnly();
 
             build.ValueGenerators.Returns(generators);
-            generator.IsSupported(typeof(Guid), null, null).Returns(true);
-            generator.Generate(typeof(Guid), null, null).Returns(value);
+            generator.IsSupported(typeof(Guid), null, Arg.Any<LinkedList<object>>()).Returns(true);
+            generator.Generate(typeof(Guid), null, Arg.Any<LinkedList<object>>()).Returns(value);
 
             try
             {
@@ -94,8 +94,8 @@ namespace ModelBuilder.UnitTests
             var creators = new List<ITypeCreator> {creator}.AsReadOnly();
 
             build.TypeCreators.Returns(creators);
-            creator.IsSupported(typeof(ReadOnlyModel), null, null).Returns(true);
-            creator.Create(typeof(ReadOnlyModel), null, null, value).Returns(expected);
+            creator.IsSupported(typeof(ReadOnlyModel), null, Arg.Any<LinkedList<object>>()).Returns(true);
+            creator.Create(typeof(ReadOnlyModel), null, Arg.Any<LinkedList<object>>(), value).Returns(expected);
             creator.Populate(expected, Arg.Any<IExecuteStrategy>()).Returns(expected);
 
             try
@@ -178,8 +178,8 @@ namespace ModelBuilder.UnitTests
             var generators = new List<IValueGenerator> {generator}.AsReadOnly();
 
             build.ValueGenerators.Returns(generators);
-            generator.IsSupported(typeof(Guid), "Value", expected).Returns(true);
-            generator.Generate(typeof(Guid), "Value", expected).Returns(value);
+            generator.IsSupported(typeof(Guid), "Value", Arg.Any<LinkedList<object>>()).Returns(true);
+            generator.Generate(typeof(Guid), "Value", Arg.Any<LinkedList<object>>()).Returns(value);
 
             try
             {

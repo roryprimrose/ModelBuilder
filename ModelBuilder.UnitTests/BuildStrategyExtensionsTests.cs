@@ -47,8 +47,8 @@ namespace ModelBuilder.UnitTests
 
             target.ValueGenerators.Returns(generators);
             target.BuildLog.Returns(buildLog);
-            generator.IsSupported(typeof(Guid), null, null).Returns(true);
-            generator.Generate(typeof(Guid), null, null).Returns(value);
+            generator.IsSupported(typeof(Guid), null, Arg.Any<LinkedList<object>>()).Returns(true);
+            generator.Generate(typeof(Guid), null, Arg.Any<LinkedList<object>>()).Returns(value);
 
             var actual = target.Create<Guid>();
 
@@ -75,8 +75,8 @@ namespace ModelBuilder.UnitTests
             var target = Substitute.For<IBuildStrategy>();
 
             target.ValueGenerators.Returns(generators);
-            generator.IsSupported(typeof(Guid), null, null).Returns(true);
-            generator.Generate(typeof(Guid), null, null).Returns(value);
+            generator.IsSupported(typeof(Guid), null, Arg.Any<LinkedList<object>>()).Returns(true);
+            generator.Generate(typeof(Guid), null, Arg.Any<LinkedList<object>>()).Returns(value);
 
             var actual = target.CreateWith<Guid>(null);
 

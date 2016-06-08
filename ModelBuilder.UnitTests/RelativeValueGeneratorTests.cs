@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using FluentAssertions;
-using Xunit;
-
-namespace ModelBuilder.UnitTests
+﻿namespace ModelBuilder.UnitTests
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Text.RegularExpressions;
+    using FluentAssertions;
+    using Xunit;
+
     public class RelativeValueGeneratorTests
     {
         [Fact]
@@ -116,19 +116,24 @@ namespace ModelBuilder.UnitTests
         [InlineData(typeof(string), "FirstName", typeof(List<string>), false)]
         [InlineData(typeof(string), "stuff", typeof(Person), false)]
         [InlineData(typeof(string), "FirstName", typeof(Person), true)]
-        public void IsSupportedReturnsFalseForUnsupportedScenariosTest(Type type, string referenceName, Type contextType,
+        public void IsSupportedReturnsFalseForUnsupportedScenariosTest(
+            Type type,
+            string referenceName,
+            Type contextType,
             bool expected)
         {
-            object context = null;
+            var buildChain = new LinkedList<object>();
 
             if (contextType != null)
             {
-                context = Activator.CreateInstance(contextType);
+                var context = Activator.CreateInstance(contextType);
+
+                buildChain.AddFirst(context);
             }
 
             var target = new GeneratorWrapper(PropertyExpression.FirstName, PropertyExpression.Gender);
 
-            var actual = target.IsSupported(type, referenceName, context);
+            var actual = target.IsSupported(type, referenceName, buildChain);
 
             actual.Should().Be(expected);
         }
@@ -136,10 +141,13 @@ namespace ModelBuilder.UnitTests
         public void IsSupportedReturnsTrueWhenSourceExpressionIsNullAndTargetExpressionMatchesReferenceNameTest()
         {
             var context = new SlimModel();
+            var buildChain = new LinkedList<object>();
+
+            buildChain.AddFirst(context);
 
             var target = new GeneratorWrapper(PropertyExpression.FirstName, null);
 
-            var actual = target.IsSupported(typeof(string), "FirstName", context);
+            var actual = target.IsSupported(typeof(string), "FirstName", buildChain);
 
             actual.Should().BeTrue();
         }

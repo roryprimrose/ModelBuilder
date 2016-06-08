@@ -1,9 +1,10 @@
-﻿using System;
-using FluentAssertions;
-using Xunit;
-
-namespace ModelBuilder.UnitTests
+﻿namespace ModelBuilder.UnitTests
 {
+    using System;
+    using System.Collections.Generic;
+    using FluentAssertions;
+    using Xunit;
+
     public class GuidValueGeneratorTests
     {
         [Fact]
@@ -16,7 +17,7 @@ namespace ModelBuilder.UnitTests
 
             for (var index = 0; index < 1000; index++)
             {
-                var value = (Guid?) target.Generate(typeof (Guid?), null, null);
+                var value = (Guid?)target.Generate(typeof(Guid?), null, null);
 
                 if (value == null)
                 {
@@ -38,9 +39,9 @@ namespace ModelBuilder.UnitTests
         }
 
         [Theory]
-        [InlineData(typeof (Guid), true)]
-        [InlineData(typeof (Guid?), true)]
-        [InlineData(typeof (string), false)]
+        [InlineData(typeof(Guid), true)]
+        [InlineData(typeof(Guid?), true)]
+        [InlineData(typeof(string), false)]
         public void GenerateEvaluatesWhetherTypeIsSupportedTest(Type type, bool supportedType)
         {
             var target = new GuidValueGenerator();
@@ -62,8 +63,8 @@ namespace ModelBuilder.UnitTests
         {
             var target = new GuidValueGenerator();
 
-            var first = (Guid) target.Generate(typeof (Guid), null, null);
-            var second = (Guid) target.Generate(typeof (Guid), null, null);
+            var first = (Guid)target.Generate(typeof(Guid), null, null);
+            var second = (Guid)target.Generate(typeof(Guid), null, null);
 
             first.Should().NotBeEmpty();
             second.Should().NotBeEmpty();
@@ -71,9 +72,9 @@ namespace ModelBuilder.UnitTests
         }
 
         [Theory]
-        [InlineData(typeof (Guid), true)]
-        [InlineData(typeof (Guid?), true)]
-        [InlineData(typeof (string), false)]
+        [InlineData(typeof(Guid), true)]
+        [InlineData(typeof(Guid?), true)]
+        [InlineData(typeof(string), false)]
         public void IsSupportedReturnsWhetherTypeIsSupportedTest(Type type, bool supportedType)
         {
             var target = new GuidValueGenerator();
@@ -86,9 +87,13 @@ namespace ModelBuilder.UnitTests
         [Fact]
         public void IsSupportedThrowsExceptionWithNullTypeTest()
         {
+            var buildChain = new LinkedList<object>();
+
+            buildChain.AddFirst(Guid.NewGuid().ToString());
+
             var target = new GuidValueGenerator();
 
-            Action action = () => target.IsSupported(null, Guid.NewGuid().ToString(), Guid.NewGuid().ToString());
+            Action action = () => target.IsSupported(null, Guid.NewGuid().ToString(), buildChain);
 
             action.ShouldThrow<ArgumentNullException>();
         }

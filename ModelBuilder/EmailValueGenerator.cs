@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using ModelBuilder.Data;
+    using ModelBuilder.Properties;
 
     /// <summary>
     /// The <see cref="EmailValueGenerator"/>
@@ -23,7 +24,12 @@
             Justification = "Email addresses are lower case by convention.")]
         protected override object GenerateValue(Type type, string referenceName, LinkedList<object> buildChain)
         {
-            var context = buildChain.Last.Value;
+            if (buildChain == null)
+            {
+                throw new ArgumentNullException(nameof(buildChain));
+            }
+            
+            var context = buildChain.Last?.Value;
             var firstName = GetValue<string>(PropertyExpression.FirstName, context);
             var lastName = GetValue<string>(PropertyExpression.LastName, context);
             var domain = Domain;

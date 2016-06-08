@@ -1,10 +1,11 @@
-﻿using System.Linq;
-using FluentAssertions;
-using ModelBuilder.Data;
-using Xunit;
-
-namespace ModelBuilder.UnitTests
+﻿namespace ModelBuilder.UnitTests
 {
+    using System.Collections.Generic;
+    using System.Linq;
+    using FluentAssertions;
+    using ModelBuilder.Data;
+    using Xunit;
+
     public class LastNameValueGeneratorTests
     {
         [Fact]
@@ -14,10 +15,13 @@ namespace ModelBuilder.UnitTests
             {
                 Gender = Gender.Female
             };
+            var buildChain = new LinkedList<object>();
+
+            buildChain.AddFirst(person);
 
             var target = new LastNameValueGenerator();
 
-            var actual = (string) target.Generate(typeof(string), "LastName", person);
+            var actual = (string)target.Generate(typeof(string), "LastName", buildChain);
 
             TestData.Females.Any(x => x.LastName == actual).Should().BeTrue();
         }
@@ -29,10 +33,13 @@ namespace ModelBuilder.UnitTests
             {
                 Gender = Gender.Unknown
             };
+            var buildChain = new LinkedList<object>();
+
+            buildChain.AddFirst(person);
 
             var target = new LastNameValueGenerator();
 
-            var actual = (string) target.Generate(typeof(string), "LastName", person);
+            var actual = (string)target.Generate(typeof(string), "LastName", buildChain);
 
             TestData.Females.Any(x => x.LastName == actual).Should().BeTrue();
         }
@@ -44,10 +51,13 @@ namespace ModelBuilder.UnitTests
             {
                 Gender = Gender.Male
             };
+            var buildChain = new LinkedList<object>();
+
+            buildChain.AddFirst(person);
 
             var target = new LastNameValueGenerator();
 
-            var actual = (string) target.Generate(typeof(string), "LastName", person);
+            var actual = (string)target.Generate(typeof(string), "LastName", buildChain);
 
             TestData.Males.Any(x => x.LastName == actual).Should().BeTrue();
         }
