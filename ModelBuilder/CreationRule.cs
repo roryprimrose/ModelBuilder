@@ -12,7 +12,7 @@
     /// </summary>
     public class CreationRule
     {
-        private readonly Func<Type, string, object, object> _creator;
+        private readonly Func<Type, string, LinkedList<object>, object> _creator;
         private readonly Func<Type, string, bool> _evaluator;
 
         /// <summary>
@@ -26,7 +26,7 @@
         public CreationRule(
             Func<Type, string, bool> evaluator,
             int priority,
-            Func<Type, string, object, object> creator)
+            Func<Type, string, LinkedList<object>, object> creator)
         {
             if (evaluator == null)
             {
@@ -68,7 +68,7 @@
             Type targetType,
             Regex propertyExpression,
             int priority,
-            Func<Type, string, object, object> creator)
+            Func<Type, string, LinkedList<object>, object> creator)
         {
             if (targetType == null &&
                 propertyExpression == null)
@@ -111,7 +111,7 @@
         /// <param name="value">The static value returned by the rule.</param>
         /// <exception cref="ArgumentNullException">The <paramref name="targetType"/> and <paramref name="propertyExpression"/> parameters are both null.</exception>
         public CreationRule(Type targetType, Regex propertyExpression, int priority, object value)
-            : this(targetType, propertyExpression, priority, (type, name, context) => value)
+            : this(targetType, propertyExpression, priority, (type, name, buildChain) => value)
         {
         }
 
@@ -128,7 +128,7 @@
             Type targetType,
             string propertyName,
             int priority,
-            Func<Type, string, object, object> creator)
+            Func<Type, string, LinkedList<object>, object> creator)
         {
             if (targetType == null &&
                 propertyName == null)
@@ -171,7 +171,7 @@
         /// <param name="value">The static value returned by the rule.</param>
         /// <exception cref="ArgumentNullException">The <paramref name="targetType"/> and <paramref name="propertyName"/> parameters are both null.</exception>
         public CreationRule(Type targetType, string propertyName, int priority, object value)
-            : this(targetType, propertyName, priority, (type, name, context) => value)
+            : this(targetType, propertyName, priority, (type, name, buildChain) => value)
         {
         }
 
@@ -201,10 +201,8 @@
 
                 throw new NotSupportedException(message);
             }
-
-            var context = buildChain?.Last.Value;
-
-            return _creator(type, propertyName, context);
+            
+            return _creator(type, propertyName, buildChain);
         }
 
         /// <summary>

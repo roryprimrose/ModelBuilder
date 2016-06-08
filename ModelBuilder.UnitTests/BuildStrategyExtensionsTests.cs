@@ -159,8 +159,8 @@ namespace ModelBuilder.UnitTests
             var generators = new List<IValueGenerator> {generator}.AsReadOnly();
 
             target.ValueGenerators.Returns(generators);
-            generator.IsSupported(typeof(Guid), "Value", expected).Returns(true);
-            generator.Generate(typeof(Guid), "Value", expected).Returns(value);
+            generator.IsSupported(typeof(Guid), "Value", Arg.Is<LinkedList<object>>(x => x.Last.Value == expected)).Returns(true);
+            generator.Generate(typeof(Guid), "Value", Arg.Is<LinkedList<object>>(x => x.Last.Value == expected)).Returns(value);
 
             var actual = target.Populate(expected);
 

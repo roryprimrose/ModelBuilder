@@ -161,8 +161,8 @@ namespace ModelBuilder.UnitTests
             typeCreator.Create(typeof(SlimModel), null, null).Returns(expected);
             typeCreator.Populate(expected, target).Returns(expected);
             typeCreator.AutoPopulate.Returns(true);
-            generator.IsSupported(typeof(Guid), "Value", expected).Returns(true);
-            generator.Generate(typeof(Guid), "Value", expected).Returns(value);
+            generator.IsSupported(typeof(Guid), "Value", Arg.Is<LinkedList<object>>(x => x.Last.Value == expected)).Returns(true);
+            generator.Generate(typeof(Guid), "Value", Arg.Is<LinkedList<object>>(x => x.Last.Value == expected)).Returns(value);
 
             var actual = target.CreateWith();
 
@@ -243,8 +243,8 @@ namespace ModelBuilder.UnitTests
             secondCreator.Priority.Returns(2);
             secondCreator.AutoPopulate.Returns(true);
             secondCreator.Populate(secondModel, target).Returns(secondModel);
-            generator.IsSupported(typeof(Guid), "Value", secondModel).Returns(true);
-            generator.Generate(typeof(Guid), "Value", secondModel).Returns(value);
+            generator.IsSupported(typeof(Guid), "Value", Arg.Is<LinkedList<object>>(x => x.Last.Value == secondModel)).Returns(true);
+            generator.Generate(typeof(Guid), "Value", Arg.Is<LinkedList<object>>(x => x.Last.Value == secondModel)).Returns(value);
 
             var actual = target.CreateWith();
 
@@ -467,8 +467,8 @@ namespace ModelBuilder.UnitTests
             secondCreator.Priority.Returns(2);
             secondCreator.AutoPopulate.Returns(true);
             secondCreator.Populate(secondModel, target).Returns(secondModel);
-            generator.IsSupported(typeof(Guid), "Value", secondModel).Returns(true);
-            generator.Generate(typeof(Guid), "Value", secondModel).Returns(value);
+            generator.IsSupported(typeof(Guid), "Value", Arg.Is<LinkedList<object>>(x => x.Last.Value == secondModel)).Returns(true);
+            generator.Generate(typeof(Guid), "Value", Arg.Is<LinkedList<object>>(x => x.Last.Value == secondModel)).Returns(value);
 
             var actual = target.CreateWith();
 
