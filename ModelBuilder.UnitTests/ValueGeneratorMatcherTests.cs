@@ -12,6 +12,7 @@
         [InlineData(typeof(string), "Value|Other", "stuff", false)]
         [InlineData(typeof(bool), "Value|Other", "stuff", false)]
         [InlineData(typeof(string), "Value|Other", "Other", false)]
+        [InlineData(typeof(bool), "Value|Other", null, false)]
         [InlineData(typeof(bool), "Value|Other", "Value", true)]
         [InlineData(typeof(bool), "Value|Other", "Other", true)]
         [InlineData(typeof(bool?), "Value|Other", "Value", true)]
@@ -93,9 +94,21 @@
         }
 
         [Fact]
+        public void IsSupportedThrowsExceptionWithNullTypeTest()
+        {
+            var buildChain = new LinkedList<object>();
+
+            var target = new WrapperGenerator("Test");
+
+            Action action = () => target.IsSupported(null, "Test", buildChain);
+
+            action.ShouldThrow<ArgumentNullException>();
+        }
+
+        [Fact]
         public void ThrowsExceptionWithNullExpressionTest()
         {
-            Action action = () => new WrapperGenerator((Regex)null);
+            Action action = () => new WrapperGenerator((Regex) null);
 
             action.ShouldThrow<ArgumentNullException>();
         }
@@ -103,7 +116,7 @@
         [Fact]
         public void ThrowsExceptionWithNullReferenceNameTest()
         {
-            Action action = () => new WrapperGenerator((string)null);
+            Action action = () => new WrapperGenerator((string) null);
 
             action.ShouldThrow<ArgumentNullException>();
         }
@@ -111,7 +124,7 @@
         [Fact]
         public void ThrowsExceptionWithNullTypesTest()
         {
-            Action action = () => new WrapperGenerator((Type[])null);
+            Action action = () => new WrapperGenerator((Type[]) null);
 
             action.ShouldThrow<ArgumentNullException>();
         }

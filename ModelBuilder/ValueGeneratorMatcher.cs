@@ -1,10 +1,9 @@
-﻿using System;
-using System.Linq;
-using System.Text.RegularExpressions;
-
-namespace ModelBuilder
+﻿namespace ModelBuilder
 {
+    using System;
     using System.Collections.Generic;
+    using System.Linq;
+    using System.Text.RegularExpressions;
 
     /// <summary>
     /// The <see cref="ValueGeneratorMatcher"/>
@@ -26,10 +25,7 @@ namespace ModelBuilder
                 throw new ArgumentNullException(nameof(types));
             }
 
-            _matcher = (type, referenceName, context) =>
-            {
-                return types.Any(x => x == type);
-            };
+            _matcher = (type, referenceName, context) => { return types.Any(x => x == type); };
         }
 
         /// <summary>
@@ -96,9 +92,9 @@ namespace ModelBuilder
                 }
 
                 var matches = from x in types
-                              where x == type
-                                    && expression.IsMatch(name)
-                              select x;
+                    where x == type
+                          && expression.IsMatch(name)
+                    select x;
 
                 return matches.Any();
             };
