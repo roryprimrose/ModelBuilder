@@ -1,5 +1,6 @@
 ﻿namespace ModelBuilder.UnitTests
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using FluentAssertions;
@@ -8,6 +9,16 @@
 
     public class LastNameValueGeneratorTests
     {
+        [Fact]
+        public void GenerateThrowsExceptionWithNullBuildChainTest()
+        {
+            var target = new LastNameValueGeneratorWrapper();
+
+            Action action = () => target.RunNullTest();
+
+            action.ShouldThrow<ArgumentNullException>();
+        }
+
         [Fact]
         public void GeneratorReturnsFemaleNameWhenGenderIsFemaleTest()
         {
@@ -69,6 +80,14 @@
             var other = new StringValueGenerator();
 
             target.Priority.Should().BeGreaterThan(other.Priority);
+        }
+
+        private class LastNameValueGeneratorWrapper : LastNameValueGenerator
+        {
+            public void RunNullTest()
+            {
+                GenerateValue(typeof(string), "LastName", null);
+            }
         }
     }
 }

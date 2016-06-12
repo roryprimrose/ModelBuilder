@@ -1,10 +1,10 @@
-﻿using System;
-using System.IO;
-using FluentAssertions;
-using Xunit;
-
-namespace ModelBuilder.UnitTests
+﻿namespace ModelBuilder.UnitTests
 {
+    using System;
+    using System.IO;
+    using FluentAssertions;
+    using Xunit;
+
     public class PostCodeValueGeneratorTests
     {
         [Fact]
@@ -45,7 +45,7 @@ namespace ModelBuilder.UnitTests
         {
             var target = new PostCodeValueGenerator();
 
-            var actual = (string) target.Generate(type, referenceName, null);
+            var actual = (string)target.Generate(type, referenceName, null);
 
             actual.Should().NotBeNullOrEmpty();
         }
@@ -103,6 +103,14 @@ namespace ModelBuilder.UnitTests
             Action action = () => target.IsSupported(null, null, null);
 
             action.ShouldThrow<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void PriorityReturnsPositiveValueTest()
+        {
+            var target = new PostCodeValueGenerator();
+
+            target.Priority.Should().BeGreaterThan(0);
         }
     }
 }

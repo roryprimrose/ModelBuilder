@@ -85,6 +85,28 @@
             }
         }
 
+        [Fact]
+        public void DefaultMaxCountIsPositiveTest()
+        {
+            ArrayTypeCreator.DefaultMaxCount.Should().BeGreaterThan(0);
+        }
+
+        [Fact]
+        public void DisablesAutoConstructorDetectionTest()
+        {
+            var target = new ArrayTypeCreatorWrapper();
+
+            target.AutoDetectConstructor.Should().BeFalse();
+        }
+
+        [Fact]
+        public void DisablesAutoPopulateTest()
+        {
+            var target = new ArrayTypeCreatorWrapper();
+
+            target.AutoPopulate.Should().BeFalse();
+        }
+
         [Theory]
         [InlineData(typeof(string), false)]
         [InlineData(typeof(Stream), false)]
@@ -193,6 +215,19 @@
             }
 
             result.ShouldAllBeEquivalentTo(expected);
+        }
+
+        [Fact]
+        public void PopulateInferesItemTypeByArrayTypeWhenFirstItemIsNullTest()
+        {
+            var actual = new Person[15];
+            var executeStrategy = Model.BuildStrategy.GetExecuteStrategy<List<int>>();
+
+            var target = new ArrayTypeCreator();
+
+            var result = (Person[])target.Populate(actual, executeStrategy);
+
+            result.All(x => x != null).Should().BeTrue();
         }
 
         [Fact]

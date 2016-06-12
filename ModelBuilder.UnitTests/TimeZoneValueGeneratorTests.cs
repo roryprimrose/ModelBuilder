@@ -113,5 +113,13 @@
 
             action.ShouldThrow<ArgumentNullException>();
         }
+
+        [Fact]
+        public void PriorityReturnsPositiveValueTest()
+        {
+            var target = new TimeZoneValueGenerator();
+
+            target.Priority.Should().BeGreaterThan(0);
+        }
     }
 }

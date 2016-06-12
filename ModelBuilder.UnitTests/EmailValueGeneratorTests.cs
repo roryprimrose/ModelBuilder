@@ -228,6 +228,16 @@
         }
 
         [Fact]
+        public void GenerateThrowsExceptionWithNullBuildChainTest()
+        {
+            var target = new EmailValueGeneratorWrapper();
+
+            Action action = () => target.RunNullTest();
+
+            action.ShouldThrow<ArgumentNullException>();
+        }
+
+        [Fact]
         public void GenerateThrowsExceptionWithNullContextTest()
         {
             var target = new EmailValueGenerator();
@@ -299,6 +309,14 @@
             Action action = () => target.IsSupported(null, null, buildChain);
 
             action.ShouldThrow<ArgumentNullException>();
+        }
+
+        private class EmailValueGeneratorWrapper : EmailValueGenerator
+        {
+            public void RunNullTest()
+            {
+                GenerateValue(typeof(string), "Email", null);
+            }
         }
     }
 }

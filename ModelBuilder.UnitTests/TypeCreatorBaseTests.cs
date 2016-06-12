@@ -1,18 +1,51 @@
-﻿using System;
-using System.IO;
-using FluentAssertions;
-using Xunit;
-
-namespace ModelBuilder.UnitTests
+﻿namespace ModelBuilder.UnitTests
 {
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using FluentAssertions;
+    using Xunit;
+
     public class TypeCreatorBaseTests
     {
+        [Fact]
+        public void CreateDoesNotThrowsExceptionWhenCreateVerificationPassesTest()
+        {
+            var buildChain = new LinkedList<object>();
+
+            var target = new TypeCreatorWrapper();
+
+            Action action = () => target.Create(typeof(string), null, buildChain);
+
+            action.ShouldNotThrow();
+        }
+
+        [Fact]
+        public void CreateThrowsExceptionWhenCreateVerificationFailsTest()
+        {
+            var buildChain = new LinkedList<object>();
+
+            var target = new TypeCreatorWrapper();
+
+            Action action = () => target.Create(typeof(bool), null, buildChain);
+
+            action.ShouldThrow<NotSupportedException>();
+        }
+
+        [Fact]
+        public void GeneratorReturnsInstanceTest()
+        {
+            var target = new TypeCreatorWrapper();
+
+            target.Random.Should().NotBeNull();
+        }
+
         [Fact]
         public void IsSupportedReturnsFalseForAbstractTypeTest()
         {
             var target = new DefaultTypeCreator();
 
-            var actual = target.IsSupported(typeof (BuildStrategyBase), null, null);
+            var actual = target.IsSupported(typeof(BuildStrategyBase), null, null);
 
             actual.Should().BeFalse();
         }
@@ -22,7 +55,7 @@ namespace ModelBuilder.UnitTests
         {
             var target = new DefaultTypeCreator();
 
-            var actual = target.IsSupported(typeof (IBuildStrategy), null, null);
+            var actual = target.IsSupported(typeof(IBuildStrategy), null, null);
 
             actual.Should().BeFalse();
         }
@@ -32,7 +65,7 @@ namespace ModelBuilder.UnitTests
         {
             var target = new DefaultTypeCreator();
 
-            var actual = target.IsSupported(typeof (int), null, null);
+            var actual = target.IsSupported(typeof(int), null, null);
 
             actual.Should().BeFalse();
         }
@@ -42,7 +75,7 @@ namespace ModelBuilder.UnitTests
         {
             var target = new DefaultTypeCreator();
 
-            var actual = target.IsSupported(typeof (MemoryStream), null, null);
+            var actual = target.IsSupported(typeof(MemoryStream), null, null);
 
             actual.Should().BeTrue();
         }
@@ -87,6 +120,27 @@ namespace ModelBuilder.UnitTests
             Action action = () => target.VerifyWithNullType();
 
             action.ShouldThrow<ArgumentNullException>();
+        }
+
+        private class TypeCreatorWrapper : TypeCreatorBase
+        {
+            public override object Create(
+                Type type,
+                string referenceName,
+                LinkedList<object> buildChain,
+                params object[] args)
+            {
+                VerifyCreateRequest(type, referenceName, buildChain);
+
+                return null;
+            }
+
+            public override bool IsSupported(Type type, string referenceName, LinkedList<object> buildChain)
+            {
+                return type == typeof(string);
+            }
+
+            public IRandomGenerator Random => Generator;
         }
     }
 }

@@ -70,7 +70,7 @@
         {
             var context = new Person();
 
-            var target = new GeneratorWrapper(PropertyExpression.FirstName, null);
+            var target = new GeneratorWrapper(PropertyExpression.FirstName, (Regex)null, (Type)null);
 
             Action action = () => target.ReadSourceValue(context);
 
@@ -90,7 +90,7 @@
         [Fact]
         public void GetValueThrowsExceptionWithNullContextTest()
         {
-            var target = new GeneratorWrapper(PropertyExpression.FirstName, null);
+            var target = new GeneratorWrapper(PropertyExpression.FirstName, PropertyExpression.FirstName, (Type)null);
 
             Action action = () => target.ReadValue(PropertyExpression.LastName, null);
 
@@ -102,7 +102,7 @@
         {
             var context = new Person();
 
-            var target = new GeneratorWrapper(PropertyExpression.FirstName, null);
+            var target = new GeneratorWrapper(PropertyExpression.FirstName, PropertyExpression.FirstName, (Type)null);
 
             Action action = () => target.ReadValue(null, context);
 
@@ -138,6 +138,22 @@
             actual.Should().Be(expected);
         }
 
+        [Fact]
+        public void IsSupportedReturnsFalseWithNullBuildChainTest()
+        {
+            var context = new SlimModel();
+            var buildChain = new LinkedList<object>();
+
+            buildChain.AddFirst(context);
+
+            var target = new GeneratorWrapper(PropertyExpression.FirstName, typeof(string));
+
+            var actual = target.IsSupported(typeof(string), "FirstName", null);
+
+            actual.Should().BeFalse();
+        }
+
+        [Fact]
         public void IsSupportedReturnsTrueWhenSourceExpressionIsNullAndTargetExpressionMatchesReferenceNameTest()
         {
             var context = new SlimModel();
@@ -145,11 +161,34 @@
 
             buildChain.AddFirst(context);
 
-            var target = new GeneratorWrapper(PropertyExpression.FirstName, null);
+            var target = new GeneratorWrapper(PropertyExpression.FirstName, (Regex)null);
 
             var actual = target.IsSupported(typeof(string), "FirstName", buildChain);
 
             actual.Should().BeTrue();
+        }
+
+        [Fact]
+        public void IsSupportedReturnsTrueWhenTargetExpressionMatchesReferenceNameTest()
+        {
+            var context = new SlimModel();
+            var buildChain = new LinkedList<object>();
+
+            buildChain.AddFirst(context);
+
+            var target = new GeneratorWrapper(PropertyExpression.FirstName, typeof(string));
+
+            var actual = target.IsSupported(typeof(string), "FirstName", buildChain);
+
+            actual.Should().BeTrue();
+        }
+
+        [Fact]
+        public void ThrowsExceptionWithNullTargetExpressionAndTypesTest()
+        {
+            Action action = () => new GeneratorWrapper(null, PropertyExpression.FirstName, typeof(string));
+
+            action.ShouldThrow<ArgumentException>();
         }
 
         [Fact]
@@ -162,6 +201,15 @@
 
         private class GeneratorWrapper : RelativeValueGenerator
         {
+            public GeneratorWrapper(Regex targetNameExpression, params Type[] types) : base(targetNameExpression, types)
+            {
+            }
+
+            public GeneratorWrapper(Regex targetNameExpression, Regex sourceNameExpression, params Type[] types)
+                : base(targetNameExpression, sourceNameExpression, types)
+            {
+            }
+
             public GeneratorWrapper(Regex targetNameExpression, Regex sourceNameExpression)
                 : base(targetNameExpression, sourceNameExpression, typeof(string))
             {
