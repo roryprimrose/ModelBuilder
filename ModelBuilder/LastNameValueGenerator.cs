@@ -1,8 +1,10 @@
-﻿using System;
-using ModelBuilder.Data;
-
-namespace ModelBuilder
+﻿namespace ModelBuilder
 {
+    using System;
+    using System.Collections.Generic;
+    using ModelBuilder.Data;
+    using ModelBuilder.Properties;
+
     /// <summary>
     /// The <see cref="LastNameValueGenerator"/>
     /// class is used to generate random last name values.
@@ -17,8 +19,14 @@ namespace ModelBuilder
         }
 
         /// <inheritdoc />
-        protected override object GenerateValue(Type type, string referenceName, object context)
+        protected override object GenerateValue(Type type, string referenceName, LinkedList<object> buildChain)
         {
+            if (buildChain == null)
+            {
+                throw new ArgumentNullException(nameof(buildChain));
+            }
+            
+            var context = buildChain.Last?.Value;
             var gender = GetSourceValue<string>(context);
 
             if (string.Equals(gender, "male", StringComparison.OrdinalIgnoreCase))
@@ -36,6 +44,9 @@ namespace ModelBuilder
         }
 
         /// <inheritdoc />
-        public override int Priority { get; } = 1000;
+        public override int Priority
+        {
+            get;
+        } = 1000;
     }
 }

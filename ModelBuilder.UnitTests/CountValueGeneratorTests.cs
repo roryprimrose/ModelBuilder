@@ -1,9 +1,9 @@
-﻿using System;
-using FluentAssertions;
-using Xunit;
-
-namespace ModelBuilder.UnitTests
+﻿namespace ModelBuilder.UnitTests
 {
+    using System;
+    using FluentAssertions;
+    using Xunit;
+
     public class CountValueGeneratorTests
     {
         [Theory]
@@ -90,8 +90,7 @@ namespace ModelBuilder.UnitTests
 
             var value = target.Generate(type, "Count", null);
 
-            if (type.IsNullable()
-                &&
+            if (type.IsNullable() &&
                 value == null)
             {
                 // We can't run the assertions because null is a valid outcome
@@ -115,7 +114,11 @@ namespace ModelBuilder.UnitTests
 
         [Theory]
         [ClassData(typeof(NumericTypeDataSource))]
-        public void GenerateThrowsExceptionWhenReferenceNotCountTest(Type type, bool isSupported, double min, double max)
+        public void GenerateThrowsExceptionWhenReferenceNotCountTest(
+            Type type,
+            bool isSupported,
+            double min,
+            double max)
         {
             var target = new CountValueGenerator();
 
@@ -174,7 +177,10 @@ namespace ModelBuilder.UnitTests
 
         [Theory]
         [ClassData(typeof(NumericTypeDataSource))]
-        public void IsSupportedReturnsFalseWhenReferenceNameIsNullTest(Type type, bool isSupported, double min,
+        public void IsSupportedReturnsFalseWhenReferenceNameIsNullTest(
+            Type type,
+            bool isSupported,
+            double min,
             double max)
         {
             if (isSupported == false)
@@ -192,7 +198,10 @@ namespace ModelBuilder.UnitTests
 
         [Theory]
         [ClassData(typeof(NumericTypeDataSource))]
-        public void IsSupportedReturnsFalseWhenReferenceNameNotCountTest(Type type, bool isSupported, double min,
+        public void IsSupportedReturnsFalseWhenReferenceNameNotCountTest(
+            Type type,
+            bool isSupported,
+            double min,
             double max)
         {
             if (isSupported == false)
@@ -210,7 +219,10 @@ namespace ModelBuilder.UnitTests
 
         [Theory]
         [ClassData(typeof(NumericTypeDataSource))]
-        public void IsSupportedReturnsTrueWhenReferenceNameIsCountTest(Type type, bool isSupported, double min,
+        public void IsSupportedReturnsTrueWhenReferenceNameIsCountTest(
+            Type type,
+            bool isSupported,
+            double min,
             double max)
         {
             if (isSupported == false)
@@ -234,6 +246,15 @@ namespace ModelBuilder.UnitTests
             Action action = () => target.IsSupported(null, null, null);
 
             action.ShouldThrow<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void PriorityReturnsGreaterThanNumericValueGeneratorTest()
+        {
+            var target = new CountValueGenerator();
+            var generator = new NumericValueGenerator();
+
+            target.Priority.Should().BeGreaterThan(generator.Priority);
         }
 
         [Fact]

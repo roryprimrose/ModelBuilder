@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using FluentAssertions;
-using NSubstitute;
-using NSubstitute.ExceptionExtensions;
-using Xunit;
-using Xunit.Abstractions;
-
-namespace ModelBuilder.UnitTests
+﻿namespace ModelBuilder.UnitTests
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+    using System.Linq;
+    using FluentAssertions;
+    using NSubstitute;
+    using NSubstitute.ExceptionExtensions;
+    using Xunit;
+    using Xunit.Abstractions;
+
     public class ScenarioTests
     {
         private readonly ITestOutputHelper _output;
@@ -194,11 +194,12 @@ namespace ModelBuilder.UnitTests
         {
             var typeCreator = Substitute.For<ITypeCreator>();
 
-            typeCreator.IsSupported(typeof(Address), "Address", Arg.Any<object>()).Returns(true);
+            typeCreator.IsSupported(typeof(Address), "Address", Arg.Any<LinkedList<object>>()).Returns(true);
             typeCreator.Priority.Returns(int.MaxValue);
             typeCreator.AutoDetectConstructor.Returns(true);
             typeCreator.AutoPopulate.Returns(true);
-            typeCreator.Create(typeof(Address), "Address", Arg.Any<object>()).Throws(new InvalidOperationException());
+            typeCreator.Create(typeof(Address), "Address", Arg.Any<LinkedList<object>>())
+                .Throws(new InvalidOperationException());
 
             var buildStrategy = new DefaultBuildStrategy().Clone().Add(typeCreator).Compile();
 
@@ -245,9 +246,8 @@ namespace ModelBuilder.UnitTests
         {
             var expected = Guid.NewGuid();
 
-            var strategy = Model.DefaultBuildStrategy.Clone()
-                .AddCreationRule<Person>(x => x.Id, 100, expected)
-                .Compile();
+            var strategy =
+                Model.DefaultBuildStrategy.Clone().AddCreationRule<Person>(x => x.Id, 100, expected).Compile();
 
             var actual = strategy.Create<List<Person>>();
 
@@ -291,11 +291,11 @@ namespace ModelBuilder.UnitTests
         [Fact]
         public void MailinatorEmailGeneratorIsAssignedAgainstAllInstancesTest()
         {
-            var strategy = new DefaultBuildStrategy()
-                .Clone()
-                .RemoveValueGenerator<EmailValueGenerator>()
-                .AddValueGenerator<MailinatorEmailValueGenerator>()
-                .Compile();
+            var strategy =
+                new DefaultBuildStrategy().Clone()
+                    .RemoveValueGenerator<EmailValueGenerator>()
+                    .AddValueGenerator<MailinatorEmailValueGenerator>()
+                    .Compile();
 
             var actual = strategy.Create<List<Person>>();
 

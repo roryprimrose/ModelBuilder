@@ -1,6 +1,7 @@
 ﻿namespace ModelBuilder
 {
     using System;
+    using System.Collections.Generic;
     using ModelBuilder.Data;
 
     /// <summary>
@@ -11,7 +12,7 @@
     {
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type"/> parameter is null.</exception>
-        public override bool IsSupported(Type type, string referenceName, object context)
+        public override bool IsSupported(Type type, string referenceName, LinkedList<object> buildChain)
         {
             if (type == null)
             {
@@ -47,7 +48,7 @@
         }
 
         /// <inheritdoc />
-        protected override object GenerateValue(Type type, string referenceName, object context)
+        protected override object GenerateValue(Type type, string referenceName, LinkedList<object> buildChain)
         {
             var person = TestData.NextPerson();
             var value = "https://www." + person.Domain;

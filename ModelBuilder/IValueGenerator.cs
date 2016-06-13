@@ -1,7 +1,8 @@
-﻿using System;
-
-namespace ModelBuilder
+﻿namespace ModelBuilder
 {
+    using System;
+    using System.Collections.Generic;
+
     /// <summary>
     /// The <see cref="IValueGenerator"/>
     /// interface defines the members for generating values.
@@ -17,22 +18,25 @@ namespace ModelBuilder
         /// </summary>
         /// <param name="type">The type of value to generate.</param>
         /// <param name="referenceName">Identifies the possible parameter or property name the value is intended for.</param>
-        /// <param name="context">The possible context object the value is being created for.</param>
+        /// <param name="buildChain">The chain of instances built up to this point.</param>
         /// <returns>A new value of the type.</returns>
-        object Generate(Type type, string referenceName, object context);
+        object Generate(Type type, string referenceName, LinkedList<object> buildChain);
 
         /// <summary>
         /// Returns whether the specified type is supported by this generator.
         /// </summary>
         /// <param name="type">The type to evaulate.</param>
         /// <param name="referenceName">Identifies the possible parameter or property name the value is intended for.</param>
-        /// <param name="context">The possible context object the value is being created for.</param>
+        /// <param name="buildChain">The chain of instances built up to this point.</param>
         /// <returns><c>true</c> if the type is supported; otherwise <c>false</c>.</returns>
-        bool IsSupported(Type type, string referenceName, object context);
+        bool IsSupported(Type type, string referenceName, LinkedList<object> buildChain);
 
         /// <summary>
         /// Gets the priority for this generator.
         /// </summary>
-        int Priority { get; }
+        int Priority
+        {
+            get;
+        }
     }
 }

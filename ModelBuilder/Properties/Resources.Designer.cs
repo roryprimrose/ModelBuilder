@@ -88,6 +88,24 @@ namespace ModelBuilder.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No valid constructors are available for type {0} (copy constructors have been ignored)..
+        /// </summary>
+        internal static string ConstructorResolver_NoValidConstructorFound {
+            get {
+                return ResourceManager.GetString("ConstructorResolver_NoValidConstructorFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Detected circular reference building type {0}, using previously created instance.
+        /// </summary>
+        internal static string DefaultBuildLog_CircularReferenceDetected {
+            get {
+                return ResourceManager.GetString("DefaultBuildLog_CircularReferenceDetected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to End creating type {0}.
         /// </summary>
         internal static string DefaultBuildLog_CreatedType {

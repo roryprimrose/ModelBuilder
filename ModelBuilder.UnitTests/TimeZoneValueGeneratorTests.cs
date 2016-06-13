@@ -1,10 +1,11 @@
-﻿using System;
-using System.IO;
-using FluentAssertions;
-using Xunit;
-
-namespace ModelBuilder.UnitTests
+﻿namespace ModelBuilder.UnitTests
 {
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using FluentAssertions;
+    using Xunit;
+
     public class TimeZoneValueGeneratorTests
     {
         [Fact]
@@ -14,10 +15,13 @@ namespace ModelBuilder.UnitTests
             {
                 Country = "Australia"
             };
+            var buildChain = new LinkedList<object>();
+
+            buildChain.AddFirst(source);
 
             var target = new TimeZoneValueGenerator();
 
-            var actual = (string) target.Generate(typeof(string), "timezone", source);
+            var actual = (string)target.Generate(typeof(string), "timezone", buildChain);
 
             actual.Should().StartWith("Australia/");
         }
@@ -55,7 +59,7 @@ namespace ModelBuilder.UnitTests
         {
             var target = new TimeZoneValueGenerator();
 
-            var actual = (string) target.Generate(type, referenceName, null);
+            var actual = (string)target.Generate(type, referenceName, null);
 
             actual.Should().NotBeNullOrEmpty();
         }
@@ -108,6 +112,14 @@ namespace ModelBuilder.UnitTests
             Action action = () => target.IsSupported(null, null, null);
 
             action.ShouldThrow<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void PriorityReturnsPositiveValueTest()
+        {
+            var target = new TimeZoneValueGenerator();
+
+            target.Priority.Should().BeGreaterThan(0);
         }
     }
 }

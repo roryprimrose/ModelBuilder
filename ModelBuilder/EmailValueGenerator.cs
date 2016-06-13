@@ -1,9 +1,11 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
-using ModelBuilder.Data;
-
-namespace ModelBuilder
+﻿namespace ModelBuilder
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
+    using ModelBuilder.Data;
+    using ModelBuilder.Properties;
+
     /// <summary>
     /// The <see cref="EmailValueGenerator"/>
     /// class is used to generate strings that should represent an email.
@@ -13,16 +15,21 @@ namespace ModelBuilder
         /// <summary>
         /// Initializes a new instance of the <see cref="EmailValueGenerator"/> class.
         /// </summary>
-        public EmailValueGenerator()
-            : base(PropertyExpression.Email, typeof(string))
+        public EmailValueGenerator() : base(PropertyExpression.Email, typeof(string))
         {
         }
 
         /// <inheritdoc />
         [SuppressMessage("Microsoft.Globalization", "CA1308:NormalizeStringsToUppercase",
             Justification = "Email addresses are lower case by convention.")]
-        protected override object GenerateValue(Type type, string referenceName, object context)
+        protected override object GenerateValue(Type type, string referenceName, LinkedList<object> buildChain)
         {
+            if (buildChain == null)
+            {
+                throw new ArgumentNullException(nameof(buildChain));
+            }
+            
+            var context = buildChain.Last?.Value;
             var firstName = GetValue<string>(PropertyExpression.FirstName, context);
             var lastName = GetValue<string>(PropertyExpression.LastName, context);
             var domain = Domain;
@@ -60,7 +67,10 @@ namespace ModelBuilder
         }
 
         /// <inheritdoc />
-        public override int Priority { get; } = 1000;
+        public override int Priority
+        {
+            get;
+        } = 1000;
 
         /// <summary>
         /// Gets the domain for the email address.

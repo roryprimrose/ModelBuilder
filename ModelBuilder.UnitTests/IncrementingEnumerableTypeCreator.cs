@@ -1,12 +1,13 @@
-﻿using System;
-
-namespace ModelBuilder.UnitTests
+﻿namespace ModelBuilder.UnitTests
 {
+    using System;
+    using System.Collections.Generic;
+
     public class IncrementingEnumerableTypeCreator : EnumerableTypeCreator
     {
-        public override bool IsSupported(Type type, string referenceName, object context)
+        public override bool IsSupported(Type type, string referenceName, LinkedList<object> buildChain)
         {
-            if (base.IsSupported(type, referenceName, context) == false)
+            if (base.IsSupported(type, referenceName, buildChain) == false)
             {
                 return false;
             }

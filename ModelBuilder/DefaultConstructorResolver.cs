@@ -1,11 +1,11 @@
-﻿using System;
-using System.Globalization;
-using System.Linq;
-using System.Reflection;
-using ModelBuilder.Properties;
-
-namespace ModelBuilder
+﻿namespace ModelBuilder
 {
+    using System;
+    using System.Globalization;
+    using System.Linq;
+    using System.Reflection;
+    using ModelBuilder.Properties;
+
     /// <summary>
     /// The <see cref="DefaultConstructorResolver"/>
     /// class is used to resolve a constructor for a type.
@@ -25,16 +25,34 @@ namespace ModelBuilder
 
             if (args?.Length == 0)
             {
-                var constructors = from x in type.GetConstructors()
-                    orderby x.GetParameters().Length
-                    select x;
+                var availableConstructors = type.GetConstructors().ToList();
 
-                var bestConstructor = constructors.FirstOrDefault();
+                // Ignore any constructors that have a parameter with the type being created (a copy constructor)
+                var validConstructors =
+                    availableConstructors.Where(x => x.GetParameters().Any(y => y.ParameterType == type) == false)
+                        .OrderBy(x => x.GetParameters().Length)
+                        .ToList();
+
+                var bestConstructor = validConstructors.FirstOrDefault();
 
                 if (bestConstructor == null)
                 {
-                    var message = string.Format(CultureInfo.CurrentCulture,
-                        Resources.ConstructorResolver_NoPublicConstructorFound, type.FullName);
+                    string message;
+
+                    if (availableConstructors.Count > validConstructors.Count)
+                    {
+                        message = string.Format(
+                            CultureInfo.CurrentCulture,
+                            Resources.ConstructorResolver_NoValidConstructorFound,
+                            type.FullName);
+                    }
+                    else
+                    {
+                        message = string.Format(
+                            CultureInfo.CurrentCulture,
+                            Resources.ConstructorResolver_NoPublicConstructorFound,
+                            type.FullName);
+                    }
 
                     throw new MissingMemberException(message);
                 }
@@ -50,8 +68,11 @@ namespace ModelBuilder
             if (constructor == null)
             {
                 var parameterTypes = types.Select(x => x.FullName).Aggregate((current, next) => current + ", " + next);
-                var message = string.Format(CultureInfo.CurrentCulture,
-                    "No constructor found matching type {0} with parameters[{1}].", type.FullName, parameterTypes);
+                var message = string.Format(
+                    CultureInfo.CurrentCulture,
+                    "No constructor found matching type {0} with parameters[{1}].",
+                    type.FullName,
+                    parameterTypes);
 
                 throw new MissingMemberException(message);
             }

@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Globalization;
-using System.Linq;
-using System.Reflection;
-using ModelBuilder.Properties;
-
-namespace ModelBuilder
+﻿namespace ModelBuilder
 {
+    using System;
     using System.Collections;
     using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+    using System.Diagnostics;
+    using System.Globalization;
+    using System.Linq;
+    using System.Reflection;
+    using ModelBuilder.Properties;
 
     /// <summary>
     /// The <see cref="DefaultExecuteStrategy{T}"/>
@@ -61,6 +60,7 @@ namespace ModelBuilder
         }
 
         /// <inheritdoc />
+        /// <exception cref="ArgumentNullException">The <paramref name="instance"/> parameter is null.</exception>
         /// <exception cref="NotSupportedException">No <see cref="IValueGenerator"/> or <see cref="ITypeCreator"/> was found to generate a requested type.</exception>
         /// <exception cref="BuildException">Failed to generate a requested type.</exception>
         public virtual T Populate(T instance)
@@ -69,6 +69,7 @@ namespace ModelBuilder
         }
 
         /// <inheritdoc />
+        /// <exception cref="ArgumentNullException">The <paramref name="instance"/> parameter is null.</exception>
         /// <exception cref="NotSupportedException">No <see cref="IValueGenerator"/> or <see cref="ITypeCreator"/> was found to generate a requested type.</exception>
         /// <exception cref="BuildException">Failed to generate a requested type.</exception>
         public object Populate(object instance)
@@ -107,13 +108,23 @@ namespace ModelBuilder
                 throw new ArgumentNullException(nameof(type));
             }
 
-            Func<Type, string, object, object> generator = null;
+            var circularReference = BuildChain.FirstOrDefault(x => x.GetType() == type);
+
+            if (circularReference != null)
+            {
+                BuildStrategy.BuildLog.CircularReferenceDetected(type);
+
+                return circularReference;
+            }
+
+            Func<Type, string, LinkedList<object>, object> generator = null;
             Type generatorType = null;
             var contextType = context?.GetType();
             Type targetType = null;
 
             // First check if there is a creation rule
-            var creationRule = BuildStrategy.CreationRules.Where(x => x.IsMatch(contextType, referenceName))
+            var creationRule =
+                BuildStrategy.CreationRules.Where(x => x.IsMatch(contextType, referenceName))
                     .OrderByDescending(x => x.Priority)
                     .FirstOrDefault();
 
@@ -129,7 +140,7 @@ namespace ModelBuilder
             {
                 // Next check if this is a type supported by a value generator
                 var valueGenerator =
-                    BuildStrategy.ValueGenerators.Where(x => x.IsSupported(type, referenceName, context))
+                    BuildStrategy.ValueGenerators.Where(x => x.IsSupported(type, referenceName, BuildChain))
                         .OrderByDescending(x => x.Priority)
                         .FirstOrDefault();
 
@@ -149,7 +160,7 @@ namespace ModelBuilder
 
                 try
                 {
-                    return generator(targetType, referenceName, context);
+                    return generator(targetType, referenceName, BuildChain);
                 }
                 catch (BuildException)
                 {
@@ -159,17 +170,25 @@ namespace ModelBuilder
                 {
                     BuildStrategy.BuildLog.BuildFailure(ex);
 
-                    const string messageFormat = "Failed to create value for type {0} using value generator {1}, {2}: {3}{4}{4}At the time of the failure, the build log was:{4}{4}{5}";
+                    const string messageFormat =
+                        "Failed to create value for type {0} using value generator {1}, {2}: {3}{4}{4}At the time of the failure, the build log was:{4}{4}{5}";
                     var buildLog = BuildStrategy.BuildLog.Output;
-                    var message = string.Format(CultureInfo.CurrentCulture, messageFormat, type.FullName,
-                        generatorType.FullName, ex.GetType().Name, ex.Message, Environment.NewLine, buildLog);
+                    var message = string.Format(
+                        CultureInfo.CurrentCulture,
+                        messageFormat,
+                        type.FullName,
+                        generatorType.FullName,
+                        ex.GetType().Name,
+                        ex.Message,
+                        Environment.NewLine,
+                        buildLog);
 
                     throw new BuildException(message, type, referenceName, context, buildLog, ex);
                 }
             }
 
             var typeCreator =
-                BuildStrategy.TypeCreators.Where(x => x.IsSupported(type, referenceName, context))
+                BuildStrategy.TypeCreators.Where(x => x.IsSupported(type, referenceName, BuildChain))
                     .OrderByDescending(x => x.Priority)
                     .FirstOrDefault();
 
@@ -179,19 +198,26 @@ namespace ModelBuilder
 
                 if (context != null)
                 {
-                    message = string.Format(CultureInfo.CurrentCulture,
+                    message = string.Format(
+                        CultureInfo.CurrentCulture,
                         Resources.NoMatchingCreatorOrGeneratorFoundWithNameAndContext,
-                        type.FullName, referenceName, context.GetType().FullName);
+                        type.FullName,
+                        referenceName,
+                        context.GetType().FullName);
                 }
                 else if (string.IsNullOrWhiteSpace(referenceName) == false)
                 {
-                    message = string.Format(CultureInfo.CurrentCulture,
+                    message = string.Format(
+                        CultureInfo.CurrentCulture,
                         Resources.NoMatchingCreatorOrGeneratorFoundWithName,
-                        type.FullName, referenceName);
+                        type.FullName,
+                        referenceName);
                 }
                 else
                 {
-                    message = string.Format(CultureInfo.CurrentCulture, Resources.NoMatchingCreatorOrGeneratorFound,
+                    message = string.Format(
+                        CultureInfo.CurrentCulture,
+                        Resources.NoMatchingCreatorOrGeneratorFound,
                         type.FullName);
                 }
 
@@ -203,9 +229,17 @@ namespace ModelBuilder
                 {
                     BuildStrategy.BuildLog.BuildFailure(ex);
 
-                    const string messageFormat = "Failed to create instance of type {0}, {1}: {2}{3}{3}At the time of the failure, the build log was:{3}{3}{4}";
+                    const string messageFormat =
+                        "Failed to create instance of type {0}, {1}: {2}{3}{3}At the time of the failure, the build log was:{3}{3}{4}";
                     var buildLog = BuildStrategy.BuildLog.Output;
-                    var failureMessage = string.Format(CultureInfo.CurrentCulture, messageFormat, type.FullName, ex.GetType().Name, ex.Message, Environment.NewLine, buildLog);
+                    var failureMessage = string.Format(
+                        CultureInfo.CurrentCulture,
+                        messageFormat,
+                        type.FullName,
+                        ex.GetType().Name,
+                        ex.Message,
+                        Environment.NewLine,
+                        buildLog);
 
                     throw new BuildException(failureMessage, type, referenceName, context, buildLog, ex);
                 }
@@ -215,7 +249,7 @@ namespace ModelBuilder
 
             try
             {
-                var instance = CreateAndPopulate(type, referenceName, context, args, typeCreator);
+                var instance = CreateAndPopulate(type, referenceName, BuildChain, args, typeCreator);
 
                 return instance;
             }
@@ -228,53 +262,24 @@ namespace ModelBuilder
             {
                 BuildStrategy.BuildLog.BuildFailure(ex);
 
-                const string messageFormat = "Failed to create type {0} using type creator {1}, {2}: {3}{4}{4}At the time of the failure, the build log was:{4}{4}{5}";
+                const string messageFormat =
+                    "Failed to create type {0} using type creator {1}, {2}: {3}{4}{4}At the time of the failure, the build log was:{4}{4}{5}";
                 var buildLog = BuildStrategy.BuildLog.Output;
-                var message = string.Format(CultureInfo.CurrentCulture, messageFormat, type.FullName,
-                    typeCreator.GetType().FullName, ex.GetType().Name, ex.Message, Environment.NewLine, buildLog);
+                var message = string.Format(
+                    CultureInfo.CurrentCulture,
+                    messageFormat,
+                    type.FullName,
+                    typeCreator.GetType().FullName,
+                    ex.GetType().Name,
+                    ex.Message,
+                    Environment.NewLine,
+                    buildLog);
 
                 throw new BuildException(message, type, referenceName, context, buildLog, ex);
             }
             finally
             {
                 BuildStrategy.BuildLog.CreatedType(type, context);
-            }
-        }
-
-        private object CreateAndPopulate(
-            Type type,
-            string referenceName,
-            object context,
-            object[] args,
-            ITypeCreator typeCreator)
-        {
-            var instance = CreateInstance(typeCreator, type, referenceName, context, args);
-
-            if (instance == null)
-            {
-                return null;
-            }
-
-            try
-            {
-                _buildChain.Push(instance);
-
-                if (typeCreator.AutoPopulate)
-                {
-                    // The type creator has indicated that this type should not be auto populated by the execute strategy
-                    instance = PopulateInstance(instance);
-
-                    Debug.Assert(instance != null, "Populating the instance did not return the original instance");
-                }
-
-                // Allow the type creator to do its own population of the instance
-                instance = typeCreator.Populate(instance, this);
-
-                return instance;
-            }
-            finally
-            {
-                _buildChain.Pop();
             }
         }
 
@@ -336,7 +341,48 @@ namespace ModelBuilder
             }
         }
 
-        private object CreateInstance(ITypeCreator typeCreator, Type type, string referenceName, object context,
+        private object CreateAndPopulate(
+            Type type,
+            string referenceName,
+            LinkedList<object> buildChain,
+            object[] args,
+            ITypeCreator typeCreator)
+        {
+            var instance = CreateInstance(typeCreator, type, referenceName, buildChain, args);
+
+            if (instance == null)
+            {
+                return null;
+            }
+
+            try
+            {
+                _buildChain.Push(instance);
+
+                if (typeCreator.AutoPopulate)
+                {
+                    // The type creator has indicated that this type should not be auto populated by the execute strategy
+                    instance = PopulateInstance(instance);
+
+                    Debug.Assert(instance != null, "Populating the instance did not return the original instance");
+                }
+
+                // Allow the type creator to do its own population of the instance
+                instance = typeCreator.Populate(instance, this);
+
+                return instance;
+            }
+            finally
+            {
+                _buildChain.Pop();
+            }
+        }
+
+        private object CreateInstance(
+            ITypeCreator typeCreator,
+            Type type,
+            string referenceName,
+            LinkedList<object> buildChain,
             object[] args)
         {
             object item;
@@ -344,7 +390,7 @@ namespace ModelBuilder
             if (args?.Length > 0)
             {
                 // We have arguments so will just let the type creator do the work here
-                item = typeCreator.Create(type, referenceName, context, args);
+                item = typeCreator.Create(type, referenceName, buildChain, args);
             }
             else if (typeCreator.AutoDetectConstructor)
             {
@@ -355,7 +401,7 @@ namespace ModelBuilder
 
                 if (parameterInfos.Length == 0)
                 {
-                    item = typeCreator.Create(type, referenceName, context);
+                    item = typeCreator.Create(type, referenceName, buildChain);
                 }
                 else
                 {
@@ -364,7 +410,12 @@ namespace ModelBuilder
 
                     foreach (var parameterInfo in parameterInfos)
                     {
-                        BuildStrategy.BuildLog.CreateParameter(type, parameterInfo.ParameterType, parameterInfo.Name,
+                        var context = buildChain.Last?.Value;
+
+                        BuildStrategy.BuildLog.CreateParameter(
+                            type,
+                            parameterInfo.ParameterType,
+                            parameterInfo.Name,
                             context);
 
                         // Recurse to build this parameter value
@@ -373,13 +424,13 @@ namespace ModelBuilder
                         parameters.Add(parameterValue);
                     }
 
-                    item = typeCreator.Create(type, referenceName, context, parameters.ToArray());
+                    item = typeCreator.Create(type, referenceName, buildChain, parameters.ToArray());
                 }
             }
             else
             {
                 // The type creator is going to be solely responsible for creating this instance
-                item = typeCreator.Create(type, referenceName, context);
+                item = typeCreator.Create(type, referenceName, buildChain);
             }
 
             return item;
@@ -402,9 +453,6 @@ namespace ModelBuilder
         }
 
         /// <inheritdoc />
-        public IBuildStrategy BuildStrategy { get; set; }
-
-        /// <inheritdoc />
         public LinkedList<object> BuildChain
         {
             get
@@ -418,6 +466,13 @@ namespace ModelBuilder
 
                 return chain;
             }
+        }
+
+        /// <inheritdoc />
+        public IBuildStrategy BuildStrategy
+        {
+            get;
+            set;
         }
     }
 }

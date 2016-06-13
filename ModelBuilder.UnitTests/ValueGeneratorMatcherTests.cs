@@ -1,22 +1,27 @@
-﻿using System;
-using System.Text.RegularExpressions;
-using FluentAssertions;
-using Xunit;
-
-namespace ModelBuilder.UnitTests
+﻿namespace ModelBuilder.UnitTests
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Text.RegularExpressions;
+    using FluentAssertions;
+    using Xunit;
+
     public class ValueGeneratorMatcherTests
     {
         [Theory]
         [InlineData(typeof(string), "Value|Other", "stuff", false)]
         [InlineData(typeof(bool), "Value|Other", "stuff", false)]
         [InlineData(typeof(string), "Value|Other", "Other", false)]
+        [InlineData(typeof(bool), "Value|Other", null, false)]
         [InlineData(typeof(bool), "Value|Other", "Value", true)]
         [InlineData(typeof(bool), "Value|Other", "Other", true)]
         [InlineData(typeof(bool?), "Value|Other", "Value", true)]
         [InlineData(typeof(bool?), "Value|Other", "Other", true)]
-        public void IsSupportedEvaluatesSpecifiedExpressionAndTypesTest(Type type, string expression,
-            string referenceName, bool expected)
+        public void IsSupportedEvaluatesSpecifiedExpressionAndTypesTest(
+            Type type,
+            string expression,
+            string referenceName,
+            bool expected)
         {
             var regex = new Regex(expression);
 
@@ -89,6 +94,18 @@ namespace ModelBuilder.UnitTests
         }
 
         [Fact]
+        public void IsSupportedThrowsExceptionWithNullTypeTest()
+        {
+            var buildChain = new LinkedList<object>();
+
+            var target = new WrapperGenerator("Test");
+
+            Action action = () => target.IsSupported(null, "Test", buildChain);
+
+            action.ShouldThrow<ArgumentNullException>();
+        }
+
+        [Fact]
         public void ThrowsExceptionWithNullExpressionTest()
         {
             Action action = () => new WrapperGenerator((Regex) null);
@@ -126,7 +143,7 @@ namespace ModelBuilder.UnitTests
             {
             }
 
-            protected override object GenerateValue(Type type, string referenceName, object context)
+            protected override object GenerateValue(Type type, string referenceName, LinkedList<object> buildChain)
             {
                 throw new NotImplementedException();
             }

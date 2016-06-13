@@ -1,10 +1,10 @@
-﻿using System;
-using System.IO;
-using FluentAssertions;
-using Xunit;
-
-namespace ModelBuilder.UnitTests
+﻿namespace ModelBuilder.UnitTests
 {
+    using System;
+    using System.IO;
+    using FluentAssertions;
+    using Xunit;
+
     public class GenderValueGeneratorTests
     {
         [Fact]
@@ -17,7 +17,7 @@ namespace ModelBuilder.UnitTests
 
             for (var index = 0; index < 1000; index++)
             {
-                var actual = (string) target.Generate(typeof(string), "Gender", null);
+                var actual = (string)target.Generate(typeof(string), "Gender", null);
 
                 if (actual == "Male")
                 {
@@ -57,7 +57,7 @@ namespace ModelBuilder.UnitTests
         {
             var target = new GenderValueGenerator();
 
-            var actual = (string) target.Generate(type, referenceName, null);
+            var actual = (string)target.Generate(type, referenceName, null);
 
             actual.Should().NotBeNullOrEmpty();
         }
@@ -111,6 +111,14 @@ namespace ModelBuilder.UnitTests
             Action action = () => target.IsSupported(null, null, null);
 
             action.ShouldThrow<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void PriorityReturnsPositiveValueTest()
+        {
+            var target = new GenderValueGenerator();
+
+            target.Priority.Should().BeGreaterThan(0);
         }
     }
 }

@@ -1,12 +1,13 @@
-﻿using System;
-using System.Globalization;
-using System.Linq;
-using System.Reflection;
-using System.Text.RegularExpressions;
-using ModelBuilder.Properties;
-
-namespace ModelBuilder
+﻿namespace ModelBuilder
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Globalization;
+    using System.Linq;
+    using System.Reflection;
+    using System.Text.RegularExpressions;
+    using ModelBuilder.Properties;
+
     /// <summary>
     /// The <see cref="RelativeValueGenerator"/>
     /// class is used to assist in generating a value that is related to another value for a given context.
@@ -50,9 +51,9 @@ namespace ModelBuilder
         }
 
         /// <inheritdoc />
-        public override bool IsSupported(Type type, string referenceName, object context)
+        public override bool IsSupported(Type type, string referenceName, LinkedList<object> buildChain)
         {
-            var baseSupported = base.IsSupported(type, referenceName, context);
+            var baseSupported = base.IsSupported(type, referenceName, buildChain);
 
             if (baseSupported == false)
             {
@@ -65,7 +66,13 @@ namespace ModelBuilder
                 return false;
             }
 
-            if (context == null)
+            if (buildChain == null)
+            {
+                // This is either a top level item being generated or a constructor parameter
+                return false;
+            }
+
+            if (buildChain.Count == 0)
             {
                 // This is either a top level item being generated or a constructor parameter
                 return false;
@@ -81,6 +88,8 @@ namespace ModelBuilder
                 // There is no source expression to validate against the model
                 return true;
             }
+
+            var context = buildChain.Last.Value;
 
             // Check if the context has a property matching the source expression
             var matchingProperty = GetMatchingProperty(_sourceExpression, context);
@@ -151,7 +160,7 @@ namespace ModelBuilder
             {
                 return default(T);
             }
-            
+
             return (T)Convert.ChangeType(value, typeof(T), CultureInfo.CurrentCulture);
         }
 

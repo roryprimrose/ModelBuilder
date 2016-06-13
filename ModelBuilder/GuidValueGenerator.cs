@@ -1,7 +1,8 @@
-﻿using System;
-
-namespace ModelBuilder
+﻿namespace ModelBuilder
 {
+    using System;
+    using System.Collections.Generic;
+
     /// <summary>
     /// The <see cref="GuidValueGenerator"/>
     /// class is used to generate <see cref="Guid"/> values.
@@ -16,7 +17,7 @@ namespace ModelBuilder
         }
 
         /// <inheritdoc />
-        protected override object GenerateValue(Type type, string referenceName, object context)
+        protected override object GenerateValue(Type type, string referenceName, LinkedList<object> buildChain)
         {
             if (type == typeof(Guid))
             {

@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-
-namespace ModelBuilder
+﻿namespace ModelBuilder
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+
     /// <summary>
     /// The <see cref="EnumerableTypeCreator"/>
     /// class is used to create an instance from an <see cref="IEnumerable{T}"/> type.
@@ -12,14 +12,18 @@ namespace ModelBuilder
     {
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type"/> parameter is null.</exception>
-        public override object Create(Type type, string referenceName, object context, params object[] args)
+        public override object Create(
+            Type type,
+            string referenceName,
+            LinkedList<object> buildChain,
+            params object[] args)
         {
             if (type == null)
             {
                 throw new ArgumentNullException(nameof(type));
             }
 
-            VerifyCreateRequest(type, referenceName, context);
+            VerifyCreateRequest(type, referenceName, buildChain);
 
             if (type.IsInterface)
             {
@@ -35,7 +39,7 @@ namespace ModelBuilder
 
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type"/> parameter is null.</exception>
-        public override bool IsSupported(Type type, string referenceName, object context)
+        public override bool IsSupported(Type type, string referenceName, LinkedList<object> buildChain)
         {
             if (type == null)
             {
@@ -102,7 +106,7 @@ namespace ModelBuilder
             var type = instance.GetType();
             var internalType = FindEnumerableTypeArgument(type);
 
-            VerifyCreateRequest(type, null, instance);
+            VerifyCreateRequest(type, null, executeStrategy.BuildChain);
 
             // Get the Add method
             var addMethod = type.GetMethod("Add");
@@ -113,7 +117,12 @@ namespace ModelBuilder
             {
                 var childInstance = CreateChildItem(internalType, executeStrategy, previousItem);
 
-                addMethod.Invoke(instance, new[] {childInstance});
+                addMethod.Invoke(
+                    instance,
+                    new[]
+                    {
+                        childInstance
+                    });
 
                 previousItem = childInstance;
             }
@@ -189,7 +198,11 @@ namespace ModelBuilder
         /// <summary>
         /// Gets or sets how many instances will be auto-populated into the list by default when the <see cref="EnumerableTypeCreator"/> is created.
         /// </summary>
-        public static int DefaultAutoPopulateCount { get; set; } = 10;
+        public static int DefaultAutoPopulateCount
+        {
+            get;
+            set;
+        } = 10;
 
         /// <inheritdoc />
         public override bool AutoDetectConstructor => false;
@@ -200,7 +213,11 @@ namespace ModelBuilder
         /// <summary>
         /// Gets or sets how many instances will be auto-populated into the list.
         /// </summary>
-        public int AutoPopulateCount { get; set; } = DefaultAutoPopulateCount;
+        public int AutoPopulateCount
+        {
+            get;
+            set;
+        } = DefaultAutoPopulateCount;
 
         /// <inheritdoc />
         public override int Priority => 100;

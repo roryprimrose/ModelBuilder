@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using FluentAssertions;
-using Xunit;
-
-namespace ModelBuilder.UnitTests
+﻿namespace ModelBuilder.UnitTests
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Text.RegularExpressions;
+    using FluentAssertions;
+    using Xunit;
+
     public class RelativeValueGeneratorTests
     {
         [Fact]
@@ -70,7 +70,7 @@ namespace ModelBuilder.UnitTests
         {
             var context = new Person();
 
-            var target = new GeneratorWrapper(PropertyExpression.FirstName, null);
+            var target = new GeneratorWrapper(PropertyExpression.FirstName, (Regex)null, (Type)null);
 
             Action action = () => target.ReadSourceValue(context);
 
@@ -90,7 +90,7 @@ namespace ModelBuilder.UnitTests
         [Fact]
         public void GetValueThrowsExceptionWithNullContextTest()
         {
-            var target = new GeneratorWrapper(PropertyExpression.FirstName, null);
+            var target = new GeneratorWrapper(PropertyExpression.FirstName, PropertyExpression.FirstName, (Type)null);
 
             Action action = () => target.ReadValue(PropertyExpression.LastName, null);
 
@@ -102,7 +102,7 @@ namespace ModelBuilder.UnitTests
         {
             var context = new Person();
 
-            var target = new GeneratorWrapper(PropertyExpression.FirstName, null);
+            var target = new GeneratorWrapper(PropertyExpression.FirstName, PropertyExpression.FirstName, (Type)null);
 
             Action action = () => target.ReadValue(null, context);
 
@@ -116,32 +116,79 @@ namespace ModelBuilder.UnitTests
         [InlineData(typeof(string), "FirstName", typeof(List<string>), false)]
         [InlineData(typeof(string), "stuff", typeof(Person), false)]
         [InlineData(typeof(string), "FirstName", typeof(Person), true)]
-        public void IsSupportedReturnsFalseForUnsupportedScenariosTest(Type type, string referenceName, Type contextType,
+        public void IsSupportedReturnsFalseForUnsupportedScenariosTest(
+            Type type,
+            string referenceName,
+            Type contextType,
             bool expected)
         {
-            object context = null;
+            var buildChain = new LinkedList<object>();
 
             if (contextType != null)
             {
-                context = Activator.CreateInstance(contextType);
+                var context = Activator.CreateInstance(contextType);
+
+                buildChain.AddFirst(context);
             }
 
             var target = new GeneratorWrapper(PropertyExpression.FirstName, PropertyExpression.Gender);
 
-            var actual = target.IsSupported(type, referenceName, context);
+            var actual = target.IsSupported(type, referenceName, buildChain);
 
             actual.Should().Be(expected);
         }
 
+        [Fact]
+        public void IsSupportedReturnsFalseWithNullBuildChainTest()
+        {
+            var context = new SlimModel();
+            var buildChain = new LinkedList<object>();
+
+            buildChain.AddFirst(context);
+
+            var target = new GeneratorWrapper(PropertyExpression.FirstName, typeof(string));
+
+            var actual = target.IsSupported(typeof(string), "FirstName", null);
+
+            actual.Should().BeFalse();
+        }
+
+        [Fact]
         public void IsSupportedReturnsTrueWhenSourceExpressionIsNullAndTargetExpressionMatchesReferenceNameTest()
         {
             var context = new SlimModel();
+            var buildChain = new LinkedList<object>();
 
-            var target = new GeneratorWrapper(PropertyExpression.FirstName, null);
+            buildChain.AddFirst(context);
 
-            var actual = target.IsSupported(typeof(string), "FirstName", context);
+            var target = new GeneratorWrapper(PropertyExpression.FirstName, (Regex)null);
+
+            var actual = target.IsSupported(typeof(string), "FirstName", buildChain);
 
             actual.Should().BeTrue();
+        }
+
+        [Fact]
+        public void IsSupportedReturnsTrueWhenTargetExpressionMatchesReferenceNameTest()
+        {
+            var context = new SlimModel();
+            var buildChain = new LinkedList<object>();
+
+            buildChain.AddFirst(context);
+
+            var target = new GeneratorWrapper(PropertyExpression.FirstName, typeof(string));
+
+            var actual = target.IsSupported(typeof(string), "FirstName", buildChain);
+
+            actual.Should().BeTrue();
+        }
+
+        [Fact]
+        public void ThrowsExceptionWithNullTargetExpressionAndTypesTest()
+        {
+            Action action = () => new GeneratorWrapper(null, PropertyExpression.FirstName, typeof(string));
+
+            action.ShouldThrow<ArgumentException>();
         }
 
         [Fact]
@@ -154,6 +201,15 @@ namespace ModelBuilder.UnitTests
 
         private class GeneratorWrapper : RelativeValueGenerator
         {
+            public GeneratorWrapper(Regex targetNameExpression, params Type[] types) : base(targetNameExpression, types)
+            {
+            }
+
+            public GeneratorWrapper(Regex targetNameExpression, Regex sourceNameExpression, params Type[] types)
+                : base(targetNameExpression, sourceNameExpression, types)
+            {
+            }
+
             public GeneratorWrapper(Regex targetNameExpression, Regex sourceNameExpression)
                 : base(targetNameExpression, sourceNameExpression, typeof(string))
             {
@@ -169,7 +225,7 @@ namespace ModelBuilder.UnitTests
                 return GetValue<string>(expression, context);
             }
 
-            protected override object GenerateValue(Type type, string referenceName, object context)
+            protected override object GenerateValue(Type type, string referenceName, LinkedList<object> buildChain)
             {
                 throw new NotImplementedException();
             }
