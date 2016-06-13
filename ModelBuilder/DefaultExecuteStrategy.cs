@@ -108,6 +108,15 @@
                 throw new ArgumentNullException(nameof(type));
             }
 
+            var circularReference = BuildChain.FirstOrDefault(x => x.GetType() == type);
+
+            if (circularReference != null)
+            {
+                BuildStrategy.BuildLog.CircularReferenceDetected(type);
+
+                return circularReference;
+            }
+
             Func<Type, string, LinkedList<object>, object> generator = null;
             Type generatorType = null;
             var contextType = context?.GetType();
@@ -296,9 +305,9 @@
                 var type = instance.GetType();
 
                 var propertyInfos = from x in type.GetProperties(flags)
-                    where x.CanWrite
-                    orderby GetMaximumOrderPrority(x.PropertyType, x.Name) descending
-                    select x;
+                                    where x.CanWrite
+                                    orderby GetMaximumOrderPrority(x.PropertyType, x.Name) descending
+                                    select x;
 
                 foreach (var propertyInfo in propertyInfos)
                 {
@@ -430,9 +439,9 @@
         private int GetMaximumOrderPrority(Type type, string propertyName)
         {
             var matchingRules = from x in BuildStrategy.ExecuteOrderRules
-                where x.IsMatch(type, propertyName)
-                orderby x.Priority descending
-                select x;
+                                where x.IsMatch(type, propertyName)
+                                orderby x.Priority descending
+                                select x;
             var matchingRule = matchingRules.FirstOrDefault();
 
             if (matchingRule == null)

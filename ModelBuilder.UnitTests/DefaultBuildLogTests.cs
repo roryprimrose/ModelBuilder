@@ -1,10 +1,10 @@
-﻿using System;
-using System.Linq;
-using FluentAssertions;
-using Xunit;
-
-namespace ModelBuilder.UnitTests
+﻿namespace ModelBuilder.UnitTests
 {
+    using System;
+    using System.Linq;
+    using FluentAssertions;
+    using Xunit;
+
     public class DefaultBuildLogTests
     {
         [Fact]
@@ -25,6 +25,26 @@ namespace ModelBuilder.UnitTests
             var target = new DefaultBuildLog();
 
             Action action = () => target.BuildFailure(null);
+
+            action.ShouldThrow<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void CircularReferenceDetectedAppendsLogEntryTest()
+        {
+            var target = new DefaultBuildLog();
+
+            target.CircularReferenceDetected(typeof(string));
+
+            target.Output.Should().NotBeNullOrWhiteSpace();
+        }
+
+        [Fact]
+        public void CircularReferenceDetectedThrowsExceptionWithNullTypeTest()
+        {
+            var target = new DefaultBuildLog();
+
+            Action action = () => target.CircularReferenceDetected(null);
 
             action.ShouldThrow<ArgumentNullException>();
         }
@@ -133,33 +153,6 @@ namespace ModelBuilder.UnitTests
         }
 
         [Fact]
-        public void WritingLogEntryIndentsAllLinesOfMessageTest()
-        {
-            var target = new DefaultBuildLog();
-
-            Exception exception;
-
-            try
-            {
-                throw new TimeoutException();
-            }
-            catch (Exception ex)
-            {
-                // Get the exception with a valid stack trace
-                exception = ex;
-            }
-
-            target.CreatingType(typeof(Person), null);
-            target.BuildFailure(exception);
-            target.CreatedType(typeof(Person), null);
-
-            var lines = target.Output.Split(new [] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-            var indentedLines = lines.Skip(1).Take(lines.Length - 2);
-
-            indentedLines.All(x => x.StartsWith("    ")).Should().BeTrue();
-        }
-
-        [Fact]
         public void CreatingTypeAppendsLogEntryTest()
         {
             var target = new DefaultBuildLog();
@@ -257,6 +250,38 @@ namespace ModelBuilder.UnitTests
             Action action = () => target.PopulatingInstance(null);
 
             action.ShouldThrow<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void WritingLogEntryIndentsAllLinesOfMessageTest()
+        {
+            var target = new DefaultBuildLog();
+
+            Exception exception;
+
+            try
+            {
+                throw new TimeoutException();
+            }
+            catch (Exception ex)
+            {
+                // Get the exception with a valid stack trace
+                exception = ex;
+            }
+
+            target.CreatingType(typeof(Person), null);
+            target.BuildFailure(exception);
+            target.CreatedType(typeof(Person), null);
+
+            var lines = target.Output.Split(
+                new[]
+                {
+                    Environment.NewLine
+                },
+                StringSplitOptions.RemoveEmptyEntries);
+            var indentedLines = lines.Skip(1).Take(lines.Length - 2);
+
+            indentedLines.All(x => x.StartsWith("    ")).Should().BeTrue();
         }
     }
 }

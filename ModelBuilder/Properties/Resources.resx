@@ -181,4 +181,7 @@
   <data name="RelativeValueGenerator_NoSourceExpression" xml:space="preserve">
     <value>This generator was not created with a source expression. Call GetValue&lt;T&gt;(expression, context) instead.</value>
   </data>
+  <data name="DefaultBuildLog_CircularReferenceDetected" xml:space="preserve">
+    <value>Detected circular reference building type {0}, using previously created instance</value>
+  </data>
 </root>

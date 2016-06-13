@@ -33,6 +33,36 @@
         }
 
         [Fact]
+        public void CreatesCircularReferenceWithInstanceFromBuildChainTest()
+        {
+            var strategy = new DefaultBuildStrategy();
+            var target = strategy.GetExecuteStrategy<Top>();
+
+            var actual = target.Create();
+
+            actual.Should().NotBeNull();
+            actual.Value.Should().NotBeNullOrWhiteSpace();
+            actual.Next.Should().NotBeNull();
+            actual.Next.Value.Should().NotBeNullOrWhiteSpace();
+            actual.Next.End.Should().NotBeNull();
+            actual.Next.End.Value.Should().NotBeNullOrWhiteSpace();
+            actual.Next.End.Root.Should().BeSameAs(actual);
+        }
+
+        [Fact]
+        public void CreatesPropertyOfSameTypeWithCreatedInstanceTest()
+        {
+            var strategy = new DefaultBuildStrategy();
+            var target = strategy.GetExecuteStrategy<Looper>();
+
+            var actual = target.Create();
+
+            actual.Should().NotBeNull();
+            actual.Stuff.Should().NotBeNullOrWhiteSpace();
+            actual.Other.Should().BeSameAs(actual);
+        }
+
+        [Fact]
         public void CreateWithDoesNotBuildPropertiesWhenTypeCreatorDisablesAutoPopulateTest()
         {
             var model = new SlimModel();
@@ -1433,11 +1463,71 @@
             action.ShouldThrow<ArgumentNullException>();
         }
 
+        private class Bottom
+        {
+            public Top Root
+            {
+                get;
+                set;
+            }
+
+            public string Value
+            {
+                get;
+                set;
+            }
+        }
+
+        private class Child
+        {
+            public Bottom End
+            {
+                get;
+                set;
+            }
+
+            public string Value
+            {
+                get;
+                set;
+            }
+        }
+
+        private class Looper
+        {
+            public Looper Other
+            {
+                get;
+                set;
+            }
+
+            public string Stuff
+            {
+                get;
+                set;
+            }
+        }
+
         private class PopulateInstanceWrapper : DefaultExecuteStrategy<Company>
         {
             public void RunTest()
             {
                 PopulateInstance(null);
+            }
+        }
+
+        private class Top
+        {
+            public Child Next
+            {
+                get;
+                set;
+            }
+
+            public string Value
+            {
+                get;
+                set;
             }
         }
     }

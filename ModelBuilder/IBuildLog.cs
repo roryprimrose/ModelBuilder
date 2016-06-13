@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace ModelBuilder
+﻿namespace ModelBuilder
 {
+    using System;
+
     /// <summary>
     /// The <see cref="IBuildLog"/>
     /// interface defines the build operations that can be logged.
@@ -13,6 +13,12 @@ namespace ModelBuilder
         /// </summary>
         /// <param name="ex">The expception to log.</param>
         void BuildFailure(Exception ex);
+
+        /// <summary>
+        /// Logs that a circular reference was detected in the build chain.
+        /// </summary>
+        /// <param name="type">The type to create.</param>
+        void CircularReferenceDetected(Type type);
 
         /// <summary>
         /// Clears the current build log.
@@ -72,6 +78,9 @@ namespace ModelBuilder
         /// <summary>
         /// Gets the output of the build log.
         /// </summary>
-        string Output { get; }
+        string Output
+        {
+            get;
+        }
     }
 }

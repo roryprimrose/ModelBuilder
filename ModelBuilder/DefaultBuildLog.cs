@@ -1,12 +1,12 @@
-﻿using System;
-using System.Diagnostics;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using ModelBuilder.Properties;
-
-namespace ModelBuilder
+﻿namespace ModelBuilder
 {
+    using System;
+    using System.Diagnostics;
+    using System.Globalization;
+    using System.Linq;
+    using System.Text;
+    using ModelBuilder.Properties;
+
     /// <summary>
     /// The <see cref="DefaultBuildLog"/>
     /// class provides default implementation for creating a build log when creating types and values.
@@ -25,6 +25,18 @@ namespace ModelBuilder
             }
 
             WriteMessage(ex.ToString());
+        }
+
+        /// <inheritdoc />
+        /// <exception cref="ArgumentNullException">The <paramref name="type"/> parameter is null.</exception>
+        public void CircularReferenceDetected(Type type)
+        {
+            if (type == null)
+            {
+                throw new ArgumentNullException(nameof(type));
+            }
+
+            WriteMessage(Resources.DefaultBuildLog_CircularReferenceDetected, type.FullName);
         }
 
         /// <inheritdoc />
@@ -68,7 +80,10 @@ namespace ModelBuilder
                 throw new ArgumentNullException(nameof(parameterName));
             }
 
-            WriteMessage(Resources.DefaultBuildLog_CreateParameter, parameterName, parameterType.FullName,
+            WriteMessage(
+                Resources.DefaultBuildLog_CreateParameter,
+                parameterName,
+                parameterType.FullName,
                 instanceType.FullName);
         }
 
@@ -93,7 +108,10 @@ namespace ModelBuilder
                 throw new ArgumentNullException(nameof(context));
             }
 
-            WriteMessage(Resources.DefaultBuildLog_CreateProperty, propertyName, propertyType.FullName,
+            WriteMessage(
+                Resources.DefaultBuildLog_CreateProperty,
+                propertyName,
+                propertyType.FullName,
                 context.GetType().FullName);
         }
 
@@ -165,8 +183,13 @@ namespace ModelBuilder
 
             if (_indent > 0)
             {
-                var lines = messageToWrite.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-                var indent = new string(' ', _indent*4);
+                var lines = messageToWrite.Split(
+                    new[]
+                    {
+                        Environment.NewLine
+                    },
+                    StringSplitOptions.RemoveEmptyEntries);
+                var indent = new string(' ', _indent * 4);
 
                 // Add the indent to each line and rebuild the message
                 var indentedLines = lines.Select(x => indent + x);
