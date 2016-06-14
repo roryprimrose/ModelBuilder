@@ -1,16 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
-using FluentAssertions;
-using NSubstitute;
-using Xunit;
-
-namespace ModelBuilder.UnitTests
+﻿namespace ModelBuilder.UnitTests
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+    using System.IO;
+    using System.Linq;
+    using FluentAssertions;
+    using NSubstitute;
+    using Xunit;
+
     public class EnumerableTypeCreatorTests
     {
+        [Fact]
+        public void AutoDetectConstructorReturnsFalseTest()
+        {
+            var target = new EnumerableTypeCreator();
+
+            target.AutoDetectConstructor.Should().BeFalse();
+        }
+
+        [Fact]
+        public void AutoPopulateReturnsFalseTest()
+        {
+            var target = new EnumerableTypeCreator();
+
+            target.AutoPopulate.Should().BeFalse();
+        }
+
         [Fact]
         public void CreateChildItemThrowsExceptionWithNullExecuteStrategyTest()
         {
@@ -28,7 +44,7 @@ namespace ModelBuilder.UnitTests
         {
             var target = new IncrementingEnumerableTypeCreator();
 
-            var result = (IList<int>) target.Create(typeof(IList<int>));
+            var result = (IList<int>)target.Create(typeof(IList<int>));
 
             result.Should().BeEmpty();
         }
@@ -162,7 +178,7 @@ namespace ModelBuilder.UnitTests
 
             actual.Should().BeSameAs(expected);
 
-            var set = (Collection<Guid>) actual;
+            var set = (Collection<Guid>)actual;
 
             set.Should().HaveCount(target.AutoPopulateCount);
             set.All(x => x != Guid.Empty).Should().BeTrue();
@@ -186,7 +202,7 @@ namespace ModelBuilder.UnitTests
 
             actual.Should().BeSameAs(expected);
 
-            var set = (List<Guid>) actual;
+            var set = (List<Guid>)actual;
 
             set.Should().HaveCount(target.AutoPopulateCount);
             set.All(x => x != Guid.Empty).Should().BeTrue();
@@ -200,7 +216,7 @@ namespace ModelBuilder.UnitTests
 
             var target = new IncrementingEnumerableTypeCreator();
 
-            var result = (List<int>) target.Populate(actual, executeStrategy);
+            var result = (List<int>)target.Populate(actual, executeStrategy);
 
             var baseValue = result[0];
             var expected = new List<int>(target.AutoPopulateCount);

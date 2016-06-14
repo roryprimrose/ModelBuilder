@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace ModelBuilder.UnitTests
+﻿namespace ModelBuilder.UnitTests
 {
+    using System;
+    using System.Collections.Generic;
+
     public class NullExecuteStrategy : IExecuteStrategy
     {
         public object CreateWith(Type type, params object[] args)
@@ -15,6 +15,15 @@ namespace ModelBuilder.UnitTests
             throw new NotImplementedException();
         }
 
-        public IBuildStrategy BuildStrategy { get; set; }
+        public LinkedList<object> BuildChain
+        {
+            get;
+        }
+
+        public IBuildStrategy BuildStrategy
+        {
+            get;
+            set;
+        }
     }
 }

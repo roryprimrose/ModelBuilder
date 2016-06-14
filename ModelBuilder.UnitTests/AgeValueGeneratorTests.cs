@@ -1,9 +1,9 @@
-﻿using System;
-using FluentAssertions;
-using Xunit;
-
-namespace ModelBuilder.UnitTests
+﻿namespace ModelBuilder.UnitTests
 {
+    using System;
+    using FluentAssertions;
+    using Xunit;
+
     public class AgeValueGeneratorTests
     {
         [Theory]
@@ -22,7 +22,8 @@ namespace ModelBuilder.UnitTests
             {
                 var value = target.Generate(type, "Age", null);
 
-                if (type.IsNullable() && value == null)
+                if (type.IsNullable() &&
+                    value == null)
                 {
                     // Nullable values could be returned so nothing more to assert
                     return;
@@ -96,7 +97,7 @@ namespace ModelBuilder.UnitTests
                 // We can't run the assertions because null is a valid outcome
                 return;
             }
-            
+
             var evaluateType = type;
 
             if (type.IsNullable())
@@ -139,6 +140,15 @@ namespace ModelBuilder.UnitTests
             {
                 action.ShouldThrow<NotSupportedException>();
             }
+        }
+
+        [Fact]
+        public void HasHigherPriorityThanNumericValueGeneratorTest()
+        {
+            var target = new AgeValueGenerator();
+            var other = new NumericValueGenerator();
+
+            target.Priority.Should().BeGreaterThan(other.Priority);
         }
 
         [Theory]

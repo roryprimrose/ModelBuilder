@@ -2,14 +2,16 @@
 
 namespace ModelBuilder.UnitTests
 {
+    using System.Collections.Generic;
+
     public class DummyValueGenerator : ValueGeneratorBase
     {
-        public override bool IsSupported(Type type, string referenceName, object context)
+        public override bool IsSupported(Type type, string referenceName, LinkedList<object> buildChain)
         {
             throw new NotImplementedException();
         }
 
-        protected override object GenerateValue(Type type, string referenceName, object context)
+        protected override object GenerateValue(Type type, string referenceName, LinkedList<object> buildChain)
         {
             throw new NotImplementedException();
         }

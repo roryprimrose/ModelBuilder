@@ -1,7 +1,8 @@
-﻿using System;
-
-namespace ModelBuilder
+﻿namespace ModelBuilder
 {
+    using System;
+    using System.Collections.Generic;
+
     /// <summary>
     /// The <see cref="DateTimeValueGenerator"/>
     /// class is used to generate random date time values.
@@ -12,12 +13,19 @@ namespace ModelBuilder
         /// Initializes a new instance of the <see cref="DateTimeValueGenerator"/> class.
         /// </summary>
         public DateTimeValueGenerator()
-            : base(typeof(DateTime), typeof(DateTime?), typeof(DateTimeOffset), typeof(DateTimeOffset?), typeof(TimeSpan), typeof(TimeSpan?), typeof(TimeZoneInfo))
+            : base(
+                typeof(DateTime),
+                typeof(DateTime?),
+                typeof(DateTimeOffset),
+                typeof(DateTimeOffset?),
+                typeof(TimeSpan),
+                typeof(TimeSpan?),
+                typeof(TimeZoneInfo))
         {
         }
 
         /// <inheritdoc />
-        protected override object GenerateValue(Type type, string referenceName, object context)
+        protected override object GenerateValue(Type type, string referenceName, LinkedList<object> buildChain)
         {
             var generateType = type;
 

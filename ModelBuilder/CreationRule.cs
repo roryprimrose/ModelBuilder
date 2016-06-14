@@ -1,6 +1,7 @@
 ﻿namespace ModelBuilder
 {
     using System;
+    using System.Collections.Generic;
     using System.Globalization;
     using System.Text.RegularExpressions;
     using ModelBuilder.Properties;
@@ -11,7 +12,7 @@
     /// </summary>
     public class CreationRule
     {
-        private readonly Func<Type, string, object, object> _creator;
+        private readonly Func<Type, string, LinkedList<object>, object> _creator;
         private readonly Func<Type, string, bool> _evaluator;
 
         /// <summary>
@@ -25,7 +26,7 @@
         public CreationRule(
             Func<Type, string, bool> evaluator,
             int priority,
-            Func<Type, string, object, object> creator)
+            Func<Type, string, LinkedList<object>, object> creator)
         {
             if (evaluator == null)
             {
@@ -67,7 +68,7 @@
             Type targetType,
             Regex propertyExpression,
             int priority,
-            Func<Type, string, object, object> creator)
+            Func<Type, string, LinkedList<object>, object> creator)
         {
             if (targetType == null &&
                 propertyExpression == null)
@@ -110,7 +111,7 @@
         /// <param name="value">The static value returned by the rule.</param>
         /// <exception cref="ArgumentNullException">The <paramref name="targetType"/> and <paramref name="propertyExpression"/> parameters are both null.</exception>
         public CreationRule(Type targetType, Regex propertyExpression, int priority, object value)
-            : this(targetType, propertyExpression, priority, (type, name, context) => value)
+            : this(targetType, propertyExpression, priority, (type, name, buildChain) => value)
         {
         }
 
@@ -127,7 +128,7 @@
             Type targetType,
             string propertyName,
             int priority,
-            Func<Type, string, object, object> creator)
+            Func<Type, string, LinkedList<object>, object> creator)
         {
             if (targetType == null &&
                 propertyName == null)
@@ -170,7 +171,7 @@
         /// <param name="value">The static value returned by the rule.</param>
         /// <exception cref="ArgumentNullException">The <paramref name="targetType"/> and <paramref name="propertyName"/> parameters are both null.</exception>
         public CreationRule(Type targetType, string propertyName, int priority, object value)
-            : this(targetType, propertyName, priority, (type, name, context) => value)
+            : this(targetType, propertyName, priority, (type, name, buildChain) => value)
         {
         }
 
@@ -179,8 +180,8 @@
         /// </summary>
         /// <param name="type">The type to match.</param>
         /// <param name="propertyName">The property name to match.</param>
-        /// <param name="context">The possible context object the instance is being created for.</param>
-        public object Create(Type type, string propertyName, object context)
+        /// <param name="buildChain">The chain of instances built up to this point.</param>
+        public object Create(Type type, string propertyName, LinkedList<object> buildChain)
         {
             if (IsMatch(type, propertyName) == false)
             {
@@ -200,8 +201,8 @@
 
                 throw new NotSupportedException(message);
             }
-
-            return _creator(type, propertyName, context);
+            
+            return _creator(type, propertyName, buildChain);
         }
 
         /// <summary>

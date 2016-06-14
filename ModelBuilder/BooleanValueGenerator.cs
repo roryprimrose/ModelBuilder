@@ -1,7 +1,8 @@
-﻿using System;
-
-namespace ModelBuilder
+﻿namespace ModelBuilder
 {
+    using System;
+    using System.Collections.Generic;
+
     /// <summary>
     /// The <see cref="BooleanValueGenerator"/>
     /// class is used to generate random <see cref="bool"/> values.
@@ -14,9 +15,9 @@ namespace ModelBuilder
         public BooleanValueGenerator() : base(typeof(bool), typeof(bool?))
         {
         }
-        
+
         /// <inheritdoc />
-        protected override object GenerateValue(Type type, string referenceName, object context)
+        protected override object GenerateValue(Type type, string referenceName, LinkedList<object> buildChain)
         {
             if (type == typeof(bool?))
             {

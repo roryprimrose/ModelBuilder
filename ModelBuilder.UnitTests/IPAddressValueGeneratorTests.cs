@@ -1,11 +1,12 @@
-﻿using System;
-using System.Linq;
-using System.Net;
-using FluentAssertions;
-using Xunit;
-
-namespace ModelBuilder.UnitTests
+﻿namespace ModelBuilder.UnitTests
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Net;
+    using FluentAssertions;
+    using Xunit;
+
     public class IPAddressValueGeneratorTests
     {
         [Fact]
@@ -33,15 +34,19 @@ namespace ModelBuilder.UnitTests
         [Fact]
         public void GenerateThrowsExceptionWithNullTypeTest()
         {
+            var buildChain = new LinkedList<object>();
+
+            buildChain.AddFirst(Guid.NewGuid().ToString());
+
             var target = new IPAddressValueGenerator();
 
-            Action action = () => target.Generate(null, Guid.NewGuid().ToString(), Guid.NewGuid().ToString());
+            Action action = () => target.Generate(null, Guid.NewGuid().ToString(), buildChain);
 
             action.ShouldThrow<ArgumentNullException>();
         }
 
         [Theory]
-        [InlineData(typeof(string), (string) null, false)]
+        [InlineData(typeof(string), (string)null, false)]
         [InlineData(typeof(string), "", false)]
         [InlineData(typeof(string), "Stuff", false)]
         [InlineData(typeof(bool), "IPAddress", false)]
@@ -49,7 +54,7 @@ namespace ModelBuilder.UnitTests
         [InlineData(typeof(string), "IpAddress", true)]
         [InlineData(typeof(string), "ipaddress", true)]
         [InlineData(typeof(string), "IPADDRESS", true)]
-        [InlineData(typeof(IPAddress), (string) null, true)]
+        [InlineData(typeof(IPAddress), (string)null, true)]
         public void GenerateValidatesUnsupportedScenariosTest(Type type, string referenceName, bool supported)
         {
             var target = new IPAddressValueGenerator();
@@ -67,14 +72,14 @@ namespace ModelBuilder.UnitTests
         }
 
         [Theory]
-        [InlineData(typeof(string), (string) null, false)]
+        [InlineData(typeof(string), (string)null, false)]
         [InlineData(typeof(string), "", false)]
         [InlineData(typeof(string), "Stuff", false)]
         [InlineData(typeof(bool), "IPAddress", false)]
         [InlineData(typeof(string), "IPAddress", true)]
         [InlineData(typeof(string), "ipaddress", true)]
         [InlineData(typeof(string), "IPADDRESS", true)]
-        [InlineData(typeof(IPAddress), (string) null, true)]
+        [InlineData(typeof(IPAddress), (string)null, true)]
         public void IsSupportedReturnsWhetherScenarioIsValidTest(Type type, string referenceName, bool supported)
         {
             var target = new IPAddressValueGenerator();
@@ -87,9 +92,13 @@ namespace ModelBuilder.UnitTests
         [Fact]
         public void IsSupportedThrowsExceptionWithNullTypeTest()
         {
+            var buildChain = new LinkedList<object>();
+
+            buildChain.AddFirst(Guid.NewGuid().ToString());
+
             var target = new IPAddressValueGenerator();
 
-            Action action = () => target.IsSupported(null, Guid.NewGuid().ToString(), Guid.NewGuid().ToString());
+            Action action = () => target.IsSupported(null, Guid.NewGuid().ToString(), buildChain);
 
             action.ShouldThrow<ArgumentNullException>();
         }

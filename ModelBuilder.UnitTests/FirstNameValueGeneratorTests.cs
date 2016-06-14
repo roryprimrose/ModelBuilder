@@ -1,12 +1,24 @@
-﻿using System.Linq;
-using FluentAssertions;
-using ModelBuilder.Data;
-using Xunit;
-
-namespace ModelBuilder.UnitTests
+﻿namespace ModelBuilder.UnitTests
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using FluentAssertions;
+    using ModelBuilder.Data;
+    using Xunit;
+
     public class FirstNameValueGeneratorTests
     {
+        [Fact]
+        public void GenerateThrowsExceptionWithNullBuildChainTest()
+        {
+            var target = new FirstNameValueGeneratorWrapper();
+
+            Action action = () => target.RunNullTest();
+
+            action.ShouldThrow<ArgumentNullException>();
+        }
+
         [Fact]
         public void GeneratorReturnsFemaleNameWhenGenderIsFemaleTest()
         {
@@ -14,10 +26,13 @@ namespace ModelBuilder.UnitTests
             {
                 Gender = Gender.Female
             };
+            var buildChain = new LinkedList<object>();
+
+            buildChain.AddFirst(person);
 
             var target = new FirstNameValueGenerator();
 
-            var actual = (string) target.Generate(typeof(string), "FirstName", person);
+            var actual = (string)target.Generate(typeof(string), "FirstName", buildChain);
 
             TestData.Females.Any(x => x.FirstName == actual).Should().BeTrue();
         }
@@ -29,10 +44,13 @@ namespace ModelBuilder.UnitTests
             {
                 Gender = Gender.Unknown
             };
+            var buildChain = new LinkedList<object>();
+
+            buildChain.AddFirst(person);
 
             var target = new FirstNameValueGenerator();
 
-            var actual = (string) target.Generate(typeof(string), "FirstName", person);
+            var actual = (string)target.Generate(typeof(string), "FirstName", buildChain);
 
             TestData.Females.Any(x => x.FirstName == actual).Should().BeTrue();
         }
@@ -44,10 +62,13 @@ namespace ModelBuilder.UnitTests
             {
                 Gender = Gender.Male
             };
+            var buildChain = new LinkedList<object>();
+
+            buildChain.AddFirst(person);
 
             var target = new FirstNameValueGenerator();
 
-            var actual = (string) target.Generate(typeof(string), "FirstName", person);
+            var actual = (string)target.Generate(typeof(string), "FirstName", buildChain);
 
             TestData.Males.Any(x => x.FirstName == actual).Should().BeTrue();
         }
@@ -59,6 +80,14 @@ namespace ModelBuilder.UnitTests
             var other = new StringValueGenerator();
 
             target.Priority.Should().BeGreaterThan(other.Priority);
+        }
+
+        private class FirstNameValueGeneratorWrapper : FirstNameValueGenerator
+        {
+            public void RunNullTest()
+            {
+                GenerateValue(typeof(string), "FirstName", null);
+            }
         }
     }
 }

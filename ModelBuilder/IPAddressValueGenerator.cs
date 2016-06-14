@@ -1,9 +1,10 @@
-﻿using System;
-using System.Globalization;
-using System.Net;
-
-namespace ModelBuilder
+﻿namespace ModelBuilder
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Globalization;
+    using System.Net;
+
     /// <summary>
     /// The <see cref="IPAddressValueGenerator"/>
     /// class is used to generate IP Address values.
@@ -12,7 +13,7 @@ namespace ModelBuilder
     {
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type"/> parameter is null.</exception>
-        public override bool IsSupported(Type type, string referenceName, object context)
+        public override bool IsSupported(Type type, string referenceName, LinkedList<object> buildChain)
         {
             if (type == null)
             {
@@ -43,7 +44,7 @@ namespace ModelBuilder
         }
 
         /// <inheritdoc />
-        protected override object GenerateValue(Type type, string referenceName, object context)
+        protected override object GenerateValue(Type type, string referenceName, LinkedList<object> buildChain)
         {
             var buffer = new byte[4];
 
@@ -56,13 +57,21 @@ namespace ModelBuilder
 
             const string addressFormat = "{0}.{1}.{2}.{3}";
 
-            var address = string.Format(CultureInfo.InvariantCulture, addressFormat, buffer[0], buffer[1], buffer[2],
+            var address = string.Format(
+                CultureInfo.InvariantCulture,
+                addressFormat,
+                buffer[0],
+                buffer[1],
+                buffer[2],
                 buffer[3]);
 
             return address;
         }
 
         /// <inheritdoc />
-        public override int Priority { get; } = 1000;
+        public override int Priority
+        {
+            get;
+        } = 1000;
     }
 }

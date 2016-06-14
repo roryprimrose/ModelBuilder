@@ -4,6 +4,8 @@ using ModelBuilder.Properties;
 
 namespace ModelBuilder
 {
+    using System.Collections.Generic;
+
     /// <summary>
     /// The <see cref="TypeCreatorBase"/>
     /// class is used to provide the common implementation of a type creator.
@@ -13,11 +15,11 @@ namespace ModelBuilder
         private static readonly IRandomGenerator _random = new RandomGenerator();
 
         /// <inheritdoc />
-        public abstract object Create(Type type, string referenceName, object context, params object[] args);
+        public abstract object Create(Type type, string referenceName, LinkedList<object> buildChain, params object[] args);
 
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type"/> parameter is null.</exception>
-        public virtual bool IsSupported(Type type, string referenceName, object context)
+        public virtual bool IsSupported(Type type, string referenceName, LinkedList<object> buildChain)
         {
             if (type == null)
             {
@@ -54,17 +56,17 @@ namespace ModelBuilder
         /// </summary>
         /// <param name="type">The type of value to generate.</param>
         /// <param name="referenceName">Identifies the possible parameter or property name this value is intended for.</param>
-        /// <param name="context">The possible context object this value is being created for.</param>
+        /// <param name="buildChain">The chain of instances built up to this point.</param>
         /// <exception cref="ArgumentNullException">The <paramref name="type"/> parameter is null.</exception>
         /// <exception cref="NotSupportedException">This generator does not support creating the requested value.</exception>
-        protected virtual void VerifyCreateRequest(Type type, string referenceName, object context)
+        protected virtual void VerifyCreateRequest(Type type, string referenceName, LinkedList<object> buildChain)
         {
             if (type == null)
             {
                 throw new ArgumentNullException(nameof(type));
             }
 
-            if (IsSupported(type, referenceName, context) == false)
+            if (IsSupported(type, referenceName, buildChain) == false)
             {
                 var message = string.Format(CultureInfo.CurrentCulture, Resources.Error_TypeNotSupportedFormat,
                     GetType().FullName, type.FullName);

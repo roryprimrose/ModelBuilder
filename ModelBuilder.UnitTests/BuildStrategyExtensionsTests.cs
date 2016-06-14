@@ -1,19 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using FluentAssertions;
-using NSubstitute;
-using Xunit;
-
-namespace ModelBuilder.UnitTests
+﻿namespace ModelBuilder.UnitTests
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+    using System.Linq;
+    using FluentAssertions;
+    using NSubstitute;
+    using Xunit;
+
     public class BuildStrategyExtensionsTests
     {
         [Fact]
         public void CloneReturnsCompilerWithBuildStrategyConfigurationTest()
         {
-            var target = new DefaultBuildStrategy().Clone().Compile();
+            var target = new DefaultBuildStrategy().Clone().AddIgnoreRule<Person>(x => x.Address).Compile();
 
             var actual = target.Clone();
 
@@ -42,13 +42,16 @@ namespace ModelBuilder.UnitTests
 
             var buildLog = Substitute.For<IBuildLog>();
             var generator = Substitute.For<IValueGenerator>();
-            var generators = new List<IValueGenerator> {generator}.AsReadOnly();
+            var generators = new List<IValueGenerator>
+            {
+                generator
+            }.AsReadOnly();
             var target = Substitute.For<IBuildStrategy>();
 
             target.ValueGenerators.Returns(generators);
             target.BuildLog.Returns(buildLog);
-            generator.IsSupported(typeof(Guid), null, null).Returns(true);
-            generator.Generate(typeof(Guid), null, null).Returns(value);
+            generator.IsSupported(typeof(Guid), null, Arg.Any<LinkedList<object>>()).Returns(true);
+            generator.Generate(typeof(Guid), null, Arg.Any<LinkedList<object>>()).Returns(value);
 
             var actual = target.Create<Guid>();
 
@@ -71,12 +74,15 @@ namespace ModelBuilder.UnitTests
             var value = Guid.NewGuid();
 
             var generator = Substitute.For<IValueGenerator>();
-            var generators = new List<IValueGenerator> {generator}.AsReadOnly();
+            var generators = new List<IValueGenerator>
+            {
+                generator
+            }.AsReadOnly();
             var target = Substitute.For<IBuildStrategy>();
 
             target.ValueGenerators.Returns(generators);
-            generator.IsSupported(typeof(Guid), null, null).Returns(true);
-            generator.Generate(typeof(Guid), null, null).Returns(value);
+            generator.IsSupported(typeof(Guid), null, Arg.Any<LinkedList<object>>()).Returns(true);
+            generator.Generate(typeof(Guid), null, Arg.Any<LinkedList<object>>()).Returns(value);
 
             var actual = target.CreateWith<Guid>(null);
 
@@ -156,11 +162,16 @@ namespace ModelBuilder.UnitTests
 
             var target = Substitute.For<IBuildStrategy>();
             var generator = Substitute.For<IValueGenerator>();
-            var generators = new List<IValueGenerator> {generator}.AsReadOnly();
+            var generators = new List<IValueGenerator>
+            {
+                generator
+            }.AsReadOnly();
 
             target.ValueGenerators.Returns(generators);
-            generator.IsSupported(typeof(Guid), "Value", expected).Returns(true);
-            generator.Generate(typeof(Guid), "Value", expected).Returns(value);
+            generator.IsSupported(typeof(Guid), "Value", Arg.Is<LinkedList<object>>(x => x.Last.Value == expected))
+                .Returns(true);
+            generator.Generate(typeof(Guid), "Value", Arg.Is<LinkedList<object>>(x => x.Last.Value == expected))
+                .Returns(value);
 
             var actual = target.Populate(expected);
 

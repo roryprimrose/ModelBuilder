@@ -1,9 +1,10 @@
-﻿using System;
-using System.Text.RegularExpressions;
-using ModelBuilder.Data;
-
-namespace ModelBuilder
+﻿namespace ModelBuilder
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Text.RegularExpressions;
+    using ModelBuilder.Data;
+
     /// <summary>
     /// The <see cref="CityValueGenerator"/>
     /// class is used to generate random city values.
@@ -19,7 +20,7 @@ namespace ModelBuilder
         }
 
         /// <inheritdoc />
-        protected override object GenerateValue(Type type, string referenceName, object context)
+        protected override object GenerateValue(Type type, string referenceName, LinkedList<object> buildChain)
         {
             var person = TestData.NextPerson();
 
@@ -27,6 +28,9 @@ namespace ModelBuilder
         }
 
         /// <inheritdoc />
-        public override int Priority { get; } = 1000;
+        public override int Priority
+        {
+            get;
+        } = 1000;
     }
 }

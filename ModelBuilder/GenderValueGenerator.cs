@@ -1,8 +1,9 @@
-using System;
-using System.Text.RegularExpressions;
-
 namespace ModelBuilder
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Text.RegularExpressions;
+
     /// <summary>
     /// The <see cref="GenderValueGenerator"/>
     /// class is used to generate random gender values.
@@ -18,7 +19,7 @@ namespace ModelBuilder
         }
 
         /// <inheritdoc />
-        protected override object GenerateValue(Type type, string referenceName, object context)
+        protected override object GenerateValue(Type type, string referenceName, LinkedList<object> buildChain)
         {
             var index = Generator.NextValue(0, 1);
 
@@ -31,6 +32,9 @@ namespace ModelBuilder
         }
 
         /// <inheritdoc />
-        public override int Priority { get; } = 1000;
+        public override int Priority
+        {
+            get;
+        } = 1000;
     }
 }

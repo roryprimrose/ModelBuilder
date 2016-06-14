@@ -5,6 +5,8 @@ using ModelBuilder.Data;
 
 namespace ModelBuilder
 {
+    using System.Collections.Generic;
+
     /// <summary>
     /// The <see cref="AddressValueGenerator"/>
     /// class is used to generate postal addressing values.
@@ -22,7 +24,7 @@ namespace ModelBuilder
         }
 
         /// <inheritdoc />
-        protected override object GenerateValue(Type type, string referenceName, object context)
+        protected override object GenerateValue(Type type, string referenceName, LinkedList<object> buildChain)
         {
             var multipleMatch = _multipleAddressExpression.Match(referenceName);
 

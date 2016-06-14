@@ -2,6 +2,8 @@
 
 namespace ModelBuilder
 {
+    using System.Collections.Generic;
+
     /// <summary>
     /// The <see cref="IExecuteStrategy"/>
     /// interface defines the dependencies used to create and populate instances.
@@ -27,5 +29,13 @@ namespace ModelBuilder
         /// Gets or sets the build strategy.
         /// </summary>
         IBuildStrategy BuildStrategy { get; set; }
+
+        /// <summary>
+        /// Gets the build chain for objects up to the current build execution.
+        /// </summary>
+        LinkedList<object> BuildChain
+        {
+            get;
+        }
     }
 }
