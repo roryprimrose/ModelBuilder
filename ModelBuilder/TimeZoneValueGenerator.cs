@@ -33,7 +33,7 @@
 
                 if (property != null)
                 {
-                    country = (string)property.GetValue(context);
+                    country = (string)property.GetValue(context, null);
                 }
             }
 

@@ -3,7 +3,6 @@
 namespace ModelBuilder
 {
     using System.Collections.Generic;
-    using ModelBuilder.Properties;
 
     /// <summary>
     /// The <see cref="NumericValueGenerator"/>
@@ -23,7 +22,7 @@ namespace ModelBuilder
             if (type.IsNullable())
             {
                 // Get the internal type
-                var internalType = type.GenericTypeArguments[0];
+                var internalType = type.GetGenericArguments()[0];
 
                 return Generator.IsSupported(internalType);
             }
@@ -47,7 +46,7 @@ namespace ModelBuilder
                 }
 
                 // Hijack the type to generator so we can continue with the normal code pointed at the correct type to generate
-                generateType = type.GenericTypeArguments[0];
+                generateType = type.GetGenericArguments()[0];
             }
 
             var context = buildChain?.Last?.Value;

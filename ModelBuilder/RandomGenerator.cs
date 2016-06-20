@@ -22,7 +22,7 @@ namespace ModelBuilder
             if (type.IsNullable())
             {
                 // The type is nullable so we need to validate whether we support the type argument
-                checkType = type.GenericTypeArguments[0];
+                checkType = type.GetGenericArguments()[0];
             }
 
             if (checkType == typeof(int))
@@ -88,7 +88,7 @@ namespace ModelBuilder
             if (type.IsNullable())
             {
                 // The type is nullable so we need to validate whether we support the type argument
-                checkType = type.GenericTypeArguments[0];
+                checkType = type.GetGenericArguments()[0];
             }
 
             if (checkType == typeof(int))
@@ -158,7 +158,7 @@ namespace ModelBuilder
             if (type.IsNullable())
             {
                 // The type is nullable so we need to validate whether we support the type argument
-                checkType = type.GenericTypeArguments[0];
+                checkType = type.GetGenericArguments()[0];
             }
 
             if (checkType == typeof(int))
@@ -245,7 +245,7 @@ namespace ModelBuilder
             if (isNullable)
             {
                 // The type is nullable so we need to validate whether we support the type argument
-                checkType = type.GenericTypeArguments[0];
+                checkType = type.GetGenericArguments()[0];
             }
 
             var requiresRounding = RequiresRounding(checkType);

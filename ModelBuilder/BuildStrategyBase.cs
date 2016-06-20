@@ -97,31 +97,31 @@
         }
 
         /// <inheritdoc />
-        public IReadOnlyCollection<CreationRule> CreationRules
+        public ReadOnlyCollection<CreationRule> CreationRules
         {
             get;
         }
 
         /// <inheritdoc />
-        public IReadOnlyCollection<ExecuteOrderRule> ExecuteOrderRules
+        public ReadOnlyCollection<ExecuteOrderRule> ExecuteOrderRules
         {
             get;
         }
 
         /// <inheritdoc />
-        public IReadOnlyCollection<IgnoreRule> IgnoreRules
+        public ReadOnlyCollection<IgnoreRule> IgnoreRules
         {
             get;
         }
 
         /// <inheritdoc />
-        public IReadOnlyCollection<ITypeCreator> TypeCreators
+        public ReadOnlyCollection<ITypeCreator> TypeCreators
         {
             get;
         }
 
         /// <inheritdoc />
-        public IReadOnlyCollection<IValueGenerator> ValueGenerators
+        public ReadOnlyCollection<IValueGenerator> ValueGenerators
         {
             get;
         }

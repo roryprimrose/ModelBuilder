@@ -73,7 +73,7 @@
 
             typeCreators.Add(typeCreator);
 
-            buildStrategy.TypeCreators.Returns(typeCreators);
+            buildStrategy.TypeCreators.Returns(typeCreators.AsReadOnly());
 
             var target = new DefaultExecuteStrategy<SlimModel>
             {
@@ -102,7 +102,7 @@
 
             typeCreators.Add(typeCreator);
 
-            buildStrategy.TypeCreators.Returns(typeCreators);
+            buildStrategy.TypeCreators.Returns(typeCreators.AsReadOnly());
             typeCreator.IsSupported(typeof(SlimModel), null, Arg.Any<LinkedList<object>>()).Returns(true);
 
             var target = new DefaultExecuteStrategy<SlimModel>
@@ -125,7 +125,7 @@
 
             typeCreators.Add(typeCreator);
 
-            buildStrategy.TypeCreators.Returns(typeCreators);
+            buildStrategy.TypeCreators.Returns(typeCreators.AsReadOnly());
             typeCreator.IsSupported(typeof(Stream), null, Arg.Any<LinkedList<object>>()).Returns(true);
             typeCreator.Create(typeof(Stream), null, Arg.Any<LinkedList<object>>()).Returns(null);
 
@@ -149,7 +149,7 @@
 
             valueGenerators.Add(valueGenerator);
 
-            buildStrategy.ValueGenerators.Returns(valueGenerators);
+            buildStrategy.ValueGenerators.Returns(valueGenerators.AsReadOnly());
             valueGenerator.IsSupported(typeof(int), null, Arg.Any<LinkedList<object>>()).Returns(true);
             valueGenerator.Generate(typeof(int), null, Arg.Any<LinkedList<object>>()).Returns(null);
 
@@ -179,8 +179,8 @@
             typeCreators.Add(typeCreator);
             valueGenerators.Add(generator);
 
-            buildStrategy.TypeCreators.Returns(typeCreators);
-            buildStrategy.ValueGenerators.Returns(valueGenerators);
+            buildStrategy.TypeCreators.Returns(typeCreators.AsReadOnly());
+            buildStrategy.ValueGenerators.Returns(valueGenerators.AsReadOnly());
 
             var target = new DefaultExecuteStrategy<SlimModel>
             {
@@ -222,7 +222,7 @@
 
             typeCreators.Add(typeCreator);
 
-            buildStrategy.TypeCreators.Returns(typeCreators);
+            buildStrategy.TypeCreators.Returns(typeCreators.AsReadOnly());
 
             var target = new DefaultExecuteStrategy<Person>
             {
@@ -257,8 +257,8 @@
             typeCreators.Add(secondCreator);
             valueGenerators.Add(generator);
 
-            buildStrategy.TypeCreators.Returns(typeCreators);
-            buildStrategy.ValueGenerators.Returns(valueGenerators);
+            buildStrategy.TypeCreators.Returns(typeCreators.AsReadOnly());
+            buildStrategy.ValueGenerators.Returns(valueGenerators.AsReadOnly());
 
             var target = new DefaultExecuteStrategy<SlimModel>
             {
@@ -297,7 +297,7 @@
 
             typeCreators.Add(typeCreator);
 
-            buildStrategy.TypeCreators.Returns(typeCreators);
+            buildStrategy.TypeCreators.Returns(typeCreators.AsReadOnly());
 
             var target = new DefaultExecuteStrategy<Person>
             {
@@ -327,7 +327,7 @@
 
             typeCreators.Add(typeCreator);
 
-            buildStrategy.TypeCreators.Returns(typeCreators);
+            buildStrategy.TypeCreators.Returns(typeCreators.AsReadOnly());
             buildStrategy.ConstructorResolver.Returns(resolver);
 
             var target = new DefaultExecuteStrategy<Person>
@@ -362,7 +362,7 @@
             valueGenerators.Add(firstGenerator);
             valueGenerators.Add(secondGenerator);
 
-            buildStrategy.ValueGenerators.Returns(valueGenerators);
+            buildStrategy.ValueGenerators.Returns(valueGenerators.AsReadOnly());
             firstGenerator.IsSupported(typeof(Guid), null, Arg.Any<LinkedList<object>>()).Returns(true);
             firstGenerator.Generate(typeof(Guid), null, Arg.Any<LinkedList<object>>()).Returns(firstValue);
             firstGenerator.Priority.Returns(1);
@@ -401,8 +401,8 @@
                 .Returns(typeof(ReadOnlyModel).GetConstructors()[0]);
             buildStrategy.ConstructorResolver.Returns(resolver);
             buildStrategy.BuildLog.Returns(buildLog);
-            buildStrategy.TypeCreators.Returns(typeCreators);
-            buildStrategy.ValueGenerators.Returns(valueGenerators);
+            buildStrategy.TypeCreators.Returns(typeCreators.AsReadOnly());
+            buildStrategy.ValueGenerators.Returns(valueGenerators.AsReadOnly());
 
             var target = new DefaultExecuteStrategy<ReadOnlyModel>
             {
@@ -485,8 +485,8 @@
             typeCreators.Add(secondCreator);
             valueGenerators.Add(generator);
 
-            buildStrategy.TypeCreators.Returns(typeCreators);
-            buildStrategy.ValueGenerators.Returns(valueGenerators);
+            buildStrategy.TypeCreators.Returns(typeCreators.AsReadOnly());
+            buildStrategy.ValueGenerators.Returns(valueGenerators.AsReadOnly());
 
             var target = new DefaultExecuteStrategy<SlimModel>
             {
@@ -528,7 +528,7 @@
             valueGenerators.Add(firstGenerator);
             valueGenerators.Add(secondGenerator);
 
-            buildStrategy.ValueGenerators.Returns(valueGenerators);
+            buildStrategy.ValueGenerators.Returns(valueGenerators.AsReadOnly());
             firstGenerator.IsSupported(typeof(Guid), null, Arg.Any<LinkedList<object>>()).Returns(false);
             firstGenerator.Generate(typeof(Guid), null, Arg.Any<LinkedList<object>>()).Returns(firstValue);
             firstGenerator.Priority.Returns(10);
@@ -557,7 +557,7 @@
 
             valueGenerators.Add(valueGenerator);
 
-            buildStrategy.ValueGenerators.Returns(valueGenerators);
+            buildStrategy.ValueGenerators.Returns(valueGenerators.AsReadOnly());
             valueGenerator.IsSupported(typeof(string), null, Arg.Any<LinkedList<object>>()).Returns(true);
             valueGenerator.Generate(typeof(string), null, Arg.Any<LinkedList<object>>()).Returns(expected);
 
@@ -585,7 +585,7 @@
             resolver.Resolve(typeof(ReadOnlyModel), Arg.Any<object[]>())
                 .Returns(typeof(ReadOnlyModel).GetConstructors()[0]);
             buildStrategy.ConstructorResolver.Returns(resolver);
-            buildStrategy.TypeCreators.Returns(typeCreators);
+            buildStrategy.TypeCreators.Returns(typeCreators.AsReadOnly());
 
             var target = new DefaultExecuteStrategy<ReadOnlyModel>
             {
@@ -659,8 +659,8 @@
             valueGenerator.IsSupported(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<LinkedList<object>>()).Returns(true);
             valueGenerator.Generate(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<LinkedList<object>>())
                 .Throws(new InvalidOperationException());
-            buildStrategy.TypeCreators.Returns(creators);
-            buildStrategy.ValueGenerators.Returns(generators);
+            buildStrategy.TypeCreators.Returns(creators.AsReadOnly());
+            buildStrategy.ValueGenerators.Returns(generators.AsReadOnly());
             buildStrategy.BuildLog.Returns(buildLog);
 
             var target = new DefaultExecuteStrategy<Person>
@@ -696,8 +696,8 @@
             valueGenerator.IsSupported(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<LinkedList<object>>()).Returns(true);
             valueGenerator.Generate(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<LinkedList<object>>())
                 .Throws(new BuildException());
-            buildStrategy.TypeCreators.Returns(creators);
-            buildStrategy.ValueGenerators.Returns(generators);
+            buildStrategy.TypeCreators.Returns(creators.AsReadOnly());
+            buildStrategy.ValueGenerators.Returns(generators.AsReadOnly());
             buildStrategy.BuildLog.Returns(buildLog);
 
             var target = new DefaultExecuteStrategy<Person>
@@ -738,7 +738,7 @@
 
             resolver.Resolve(typeof(SlimModel), Arg.Any<object[]>()).Returns(typeof(SlimModel).GetConstructors()[0]);
             buildStrategy.ConstructorResolver.Returns(resolver);
-            buildStrategy.TypeCreators.Returns(typeCreators);
+            buildStrategy.TypeCreators.Returns(typeCreators.AsReadOnly());
 
             var target = new DefaultExecuteStrategy<SlimModel>
             {
@@ -798,8 +798,8 @@
             typeCreators.Add(typeCreator);
             valueGenerators.Add(valueGenerator);
 
-            buildStrategy.TypeCreators.Returns(typeCreators);
-            buildStrategy.ValueGenerators.Returns(valueGenerators);
+            buildStrategy.TypeCreators.Returns(typeCreators.AsReadOnly());
+            buildStrategy.ValueGenerators.Returns(valueGenerators.AsReadOnly());
 
             var target = new DefaultExecuteStrategy<Company>
             {
@@ -855,8 +855,8 @@
             typeCreators.Add(typeCreator);
             valueGenerators.Add(valueGenerator);
 
-            buildStrategy.TypeCreators.Returns(typeCreators);
-            buildStrategy.ValueGenerators.Returns(valueGenerators);
+            buildStrategy.TypeCreators.Returns(typeCreators.AsReadOnly());
+            buildStrategy.ValueGenerators.Returns(valueGenerators.AsReadOnly());
 
             var target = new DefaultExecuteStrategy<Company>
             {
@@ -913,8 +913,8 @@
             typeCreators.Add(typeCreator);
             valueGenerators.Add(valueGenerator);
 
-            buildStrategy.TypeCreators.Returns(typeCreators);
-            buildStrategy.ValueGenerators.Returns(valueGenerators);
+            buildStrategy.TypeCreators.Returns(typeCreators.AsReadOnly());
+            buildStrategy.ValueGenerators.Returns(valueGenerators.AsReadOnly());
             buildStrategy.ExecuteOrderRules.Returns(
                 new ReadOnlyCollection<ExecuteOrderRule>(DefaultBuildStrategy.DefaultExecuteOrderRules.ToList()));
 
@@ -974,9 +974,9 @@
             typeCreators.Add(typeCreator);
             valueGenerators.Add(valueGenerator);
 
-            buildStrategy.TypeCreators.Returns(typeCreators);
-            buildStrategy.ValueGenerators.Returns(valueGenerators);
-            buildStrategy.IgnoreRules.Returns(ignoreRules);
+            buildStrategy.TypeCreators.Returns(typeCreators.AsReadOnly());
+            buildStrategy.ValueGenerators.Returns(valueGenerators.AsReadOnly());
+            buildStrategy.IgnoreRules.Returns(ignoreRules.AsReadOnly());
 
             var target = new DefaultExecuteStrategy<Company>
             {
@@ -1037,9 +1037,9 @@
             typeCreators.Add(typeCreator);
             valueGenerators.Add(valueGenerator);
 
-            buildStrategy.TypeCreators.Returns(typeCreators);
-            buildStrategy.ValueGenerators.Returns(valueGenerators);
-            buildStrategy.IgnoreRules.Returns(ignoreRules);
+            buildStrategy.TypeCreators.Returns(typeCreators.AsReadOnly());
+            buildStrategy.ValueGenerators.Returns(valueGenerators.AsReadOnly());
+            buildStrategy.IgnoreRules.Returns(ignoreRules.AsReadOnly());
 
             var target = new DefaultExecuteStrategy<Company>
             {
@@ -1100,9 +1100,9 @@
             typeCreators.Add(typeCreator);
             valueGenerators.Add(valueGenerator);
 
-            buildStrategy.TypeCreators.Returns(typeCreators);
-            buildStrategy.ValueGenerators.Returns(valueGenerators);
-            buildStrategy.IgnoreRules.Returns(ignoreRules);
+            buildStrategy.TypeCreators.Returns(typeCreators.AsReadOnly());
+            buildStrategy.ValueGenerators.Returns(valueGenerators.AsReadOnly());
+            buildStrategy.IgnoreRules.Returns(ignoreRules.AsReadOnly());
 
             var target = new DefaultExecuteStrategy<Company>
             {
@@ -1163,7 +1163,7 @@
 
             valueGenerators.Add(valueGenerator);
 
-            buildStrategy.ValueGenerators.Returns(valueGenerators);
+            buildStrategy.ValueGenerators.Returns(valueGenerators.AsReadOnly());
 
             var target = new DefaultExecuteStrategy<PropertyScopes>
             {
@@ -1357,9 +1357,9 @@
             typeCreators.Add(typeCreator);
             valueGenerators.Add(valueGenerator);
 
-            buildStrategy.TypeCreators.Returns(typeCreators);
-            buildStrategy.ValueGenerators.Returns(valueGenerators);
-            buildStrategy.IgnoreRules.Returns(ignoreRules);
+            buildStrategy.TypeCreators.Returns(typeCreators.AsReadOnly());
+            buildStrategy.ValueGenerators.Returns(valueGenerators.AsReadOnly());
+            buildStrategy.IgnoreRules.Returns(ignoreRules.AsReadOnly());
 
             var target = new DefaultExecuteStrategy<Company>
             {
@@ -1419,9 +1419,9 @@
             typeCreators.Add(typeCreator);
             valueGenerators.Add(valueGenerator);
 
-            buildStrategy.TypeCreators.Returns(typeCreators);
-            buildStrategy.ValueGenerators.Returns(valueGenerators);
-            buildStrategy.IgnoreRules.Returns(ignoreRules);
+            buildStrategy.TypeCreators.Returns(typeCreators.AsReadOnly());
+            buildStrategy.ValueGenerators.Returns(valueGenerators.AsReadOnly());
+            buildStrategy.IgnoreRules.Returns(ignoreRules.AsReadOnly());
 
             var target = new DefaultExecuteStrategy<SpecificCompany>
             {

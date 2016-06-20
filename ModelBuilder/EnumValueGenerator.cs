@@ -23,7 +23,7 @@
 
             if (generateType.IsNullable())
             {
-                generateType = type.GenericTypeArguments[0];
+                generateType = type.GetGenericArguments()[0];
             }
 
             if (generateType.IsEnum)
@@ -50,7 +50,7 @@
                 }
 
                 // Hijack the type to generator so we can continue with the normal code pointed at the correct type to generate
-                generateType = type.GenericTypeArguments[0];
+                generateType = type.GetGenericArguments()[0];
             }
 
             var isFlags = generateType.GetCustomAttributes(typeof(FlagsAttribute), true).Any();

@@ -154,7 +154,7 @@
                 return default(T);
             }
 
-            var value = property.GetValue(context);
+            var value = property.GetValue(context, null);
 
             if (value == null)
             {

@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Collections.ObjectModel;
 
     public class NullBuildStrategy : IBuildStrategy
     {
@@ -20,27 +21,27 @@
             get;
         }
 
-        public IReadOnlyCollection<CreationRule> CreationRules
+        public ReadOnlyCollection<CreationRule> CreationRules
         {
             get;
         }
 
-        public IReadOnlyCollection<ExecuteOrderRule> ExecuteOrderRules
+        public ReadOnlyCollection<ExecuteOrderRule> ExecuteOrderRules
         {
             get;
         }
 
-        public IReadOnlyCollection<IgnoreRule> IgnoreRules
+        public ReadOnlyCollection<IgnoreRule> IgnoreRules
         {
             get;
         }
 
-        public IReadOnlyCollection<ITypeCreator> TypeCreators
+        public ReadOnlyCollection<ITypeCreator> TypeCreators
         {
             get;
         }
 
-        public IReadOnlyCollection<IValueGenerator> ValueGenerators
+        public ReadOnlyCollection<IValueGenerator> ValueGenerators
         {
             get;
         }

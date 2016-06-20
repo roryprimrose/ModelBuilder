@@ -192,7 +192,7 @@
                 return null;
             }
 
-            return type.GenericTypeArguments[0];
+            return type.GetGenericArguments()[0];
         }
 
         /// <summary>

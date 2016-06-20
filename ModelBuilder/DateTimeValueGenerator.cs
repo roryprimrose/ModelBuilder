@@ -40,7 +40,7 @@
                 }
 
                 // Hijack the type to generator so we can continue with the normal code pointed at the correct type to generate
-                generateType = type.GenericTypeArguments[0];
+                generateType = type.GetGenericArguments()[0];
             }
 
             var shift = Generator.NextValue<int>();
