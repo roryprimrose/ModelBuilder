@@ -14,7 +14,7 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="LastNameValueGenerator"/>.
         /// </summary>
-        public LastNameValueGenerator() : base(PropertyExpression.LastName, PropertyExpression.Gender, typeof(string))
+        public LastNameValueGenerator() : base(PropertyExpression.LastName, typeof(string))
         {
         }
 
@@ -27,7 +27,7 @@
             }
             
             var context = buildChain.Last?.Value;
-            var gender = GetSourceValue<string>(context);
+            var gender = GetValue<string>(PropertyExpression.Gender, context);
 
             if (string.Equals(gender, "male", StringComparison.OrdinalIgnoreCase))
             {

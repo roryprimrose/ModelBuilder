@@ -2,8 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
-    using ModelBuilder.Data;
-    using ModelBuilder.Properties;
+    using Data;
 
     /// <summary>
     /// The <see cref="FirstNameValueGenerator"/>
@@ -14,7 +13,7 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="FirstNameValueGenerator"/>.
         /// </summary>
-        public FirstNameValueGenerator() : base(PropertyExpression.FirstName, PropertyExpression.Gender, typeof(string))
+        public FirstNameValueGenerator() : base(PropertyExpression.FirstName, typeof(string))
         {
         }
 
@@ -25,9 +24,9 @@
             {
                 throw new ArgumentNullException(nameof(buildChain));
             }
-            
+
             var context = buildChain.Last?.Value;
-            var gender = GetSourceValue<string>(context);
+            var gender = GetValue<string>(PropertyExpression.Gender, context);
 
             if (string.Equals(gender, "male", StringComparison.OrdinalIgnoreCase))
             {
@@ -44,9 +43,6 @@
         }
 
         /// <inheritdoc />
-        public override int Priority
-        {
-            get;
-        } = 1000;
+        public override int Priority { get; } = 1000;
     }
 }

@@ -3,8 +3,8 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Data;
     using FluentAssertions;
-    using ModelBuilder.Data;
     using Xunit;
 
     public class FirstNameValueGeneratorTests
@@ -32,7 +32,7 @@
 
             var target = new FirstNameValueGenerator();
 
-            var actual = (string)target.Generate(typeof(string), "FirstName", buildChain);
+            var actual = (string) target.Generate(typeof(string), "FirstName", buildChain);
 
             TestData.Females.Any(x => x.FirstName == actual).Should().BeTrue();
         }
@@ -50,7 +50,7 @@
 
             var target = new FirstNameValueGenerator();
 
-            var actual = (string)target.Generate(typeof(string), "FirstName", buildChain);
+            var actual = (string) target.Generate(typeof(string), "FirstName", buildChain);
 
             TestData.Females.Any(x => x.FirstName == actual).Should().BeTrue();
         }
@@ -68,9 +68,24 @@
 
             var target = new FirstNameValueGenerator();
 
-            var actual = (string)target.Generate(typeof(string), "FirstName", buildChain);
+            var actual = (string) target.Generate(typeof(string), "FirstName", buildChain);
 
             TestData.Males.Any(x => x.FirstName == actual).Should().BeTrue();
+        }
+
+        [Fact]
+        public void GeneratorReturnsNameWhenTypeLacksGenderTest()
+        {
+            var person = new PersonWithoutGender();
+            var buildChain = new LinkedList<object>();
+
+            buildChain.AddFirst(person);
+
+            var target = new FirstNameValueGenerator();
+
+            var actual = (string) target.Generate(typeof(string), "FirstName", buildChain);
+
+            TestData.People.Any(x => x.FirstName == actual).Should().BeTrue();
         }
 
         [Fact]

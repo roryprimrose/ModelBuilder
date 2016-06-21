@@ -3,8 +3,8 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Data;
     using FluentAssertions;
-    using ModelBuilder.Data;
     using Xunit;
 
     public class LastNameValueGeneratorTests
@@ -32,7 +32,7 @@
 
             var target = new LastNameValueGenerator();
 
-            var actual = (string)target.Generate(typeof(string), "LastName", buildChain);
+            var actual = (string) target.Generate(typeof(string), "LastName", buildChain);
 
             TestData.Females.Any(x => x.LastName == actual).Should().BeTrue();
         }
@@ -50,7 +50,7 @@
 
             var target = new LastNameValueGenerator();
 
-            var actual = (string)target.Generate(typeof(string), "LastName", buildChain);
+            var actual = (string) target.Generate(typeof(string), "LastName", buildChain);
 
             TestData.Females.Any(x => x.LastName == actual).Should().BeTrue();
         }
@@ -68,9 +68,24 @@
 
             var target = new LastNameValueGenerator();
 
-            var actual = (string)target.Generate(typeof(string), "LastName", buildChain);
+            var actual = (string) target.Generate(typeof(string), "LastName", buildChain);
 
             TestData.Males.Any(x => x.LastName == actual).Should().BeTrue();
+        }
+
+        [Fact]
+        public void GeneratorReturnsNameWhenTypeLacksGenderTest()
+        {
+            var person = new PersonWithoutGender();
+            var buildChain = new LinkedList<object>();
+
+            buildChain.AddLast(person);
+
+            var target = new LastNameValueGenerator();
+
+            var actual = (string) target.Generate(typeof(string), "LastName", buildChain);
+
+            TestData.People.Any(x => x.LastName == actual).Should().BeTrue();
         }
 
         [Fact]
