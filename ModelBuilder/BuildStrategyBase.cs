@@ -20,6 +20,7 @@
         /// <param name="valueGenerators">The value generators.</param>
         /// <param name="ignoreRules">The ignore rules.</param>
         /// <param name="executeOrderRules">The execute order rules.</param>
+        /// <param name="postBuildActions">The post build actions.</param>
         /// <param name="buildLog">The build log.</param>
         /// <exception cref="ArgumentNullException">The <paramref name="constructorResolver"/> parameter is null.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="creationRules"/> parameter is null.</exception>
@@ -27,6 +28,7 @@
         /// <exception cref="ArgumentNullException">The <paramref name="valueGenerators"/> parameter is null.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="ignoreRules"/> parameter is null.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="executeOrderRules"/> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="postBuildActions"/> parameter is null.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="buildLog"/> parameter is null.</exception>
         protected BuildStrategyBase(
             IConstructorResolver constructorResolver,
@@ -35,6 +37,7 @@
             IEnumerable<IValueGenerator> valueGenerators,
             IEnumerable<IgnoreRule> ignoreRules,
             IEnumerable<ExecuteOrderRule> executeOrderRules,
+            IEnumerable<IPostBuildAction> postBuildActions,
             IBuildLog buildLog)
         {
             if (creationRules == null)
@@ -67,6 +70,11 @@
                 throw new ArgumentNullException(nameof(executeOrderRules));
             }
 
+            if (postBuildActions == null)
+            {
+                throw new ArgumentNullException(nameof(postBuildActions));
+            }
+
             if (buildLog == null)
             {
                 throw new ArgumentNullException(nameof(buildLog));
@@ -77,6 +85,7 @@
             ValueGenerators = new ReadOnlyCollection<IValueGenerator>(valueGenerators.ToList());
             IgnoreRules = new ReadOnlyCollection<IgnoreRule>(ignoreRules.ToList());
             ExecuteOrderRules = new ReadOnlyCollection<ExecuteOrderRule>(executeOrderRules.ToList());
+            PostBuildActions = new ReadOnlyCollection<IPostBuildAction>(postBuildActions.ToList());
             CreationRules = new ReadOnlyCollection<CreationRule>(creationRules.ToList());
             BuildLog = buildLog;
         }
@@ -85,45 +94,27 @@
         public abstract IExecuteStrategy<T> GetExecuteStrategy<T>();
 
         /// <inheritdoc />
-        public IBuildLog BuildLog
-        {
-            get;
-        }
+        public IBuildLog BuildLog { get; }
 
         /// <inheritdoc />
-        public IConstructorResolver ConstructorResolver
-        {
-            get;
-        }
+        public IConstructorResolver ConstructorResolver { get; }
 
         /// <inheritdoc />
-        public ReadOnlyCollection<CreationRule> CreationRules
-        {
-            get;
-        }
+        public ReadOnlyCollection<CreationRule> CreationRules { get; }
 
         /// <inheritdoc />
-        public ReadOnlyCollection<ExecuteOrderRule> ExecuteOrderRules
-        {
-            get;
-        }
+        public ReadOnlyCollection<ExecuteOrderRule> ExecuteOrderRules { get; }
 
         /// <inheritdoc />
-        public ReadOnlyCollection<IgnoreRule> IgnoreRules
-        {
-            get;
-        }
+        public ReadOnlyCollection<IgnoreRule> IgnoreRules { get; }
 
         /// <inheritdoc />
-        public ReadOnlyCollection<ITypeCreator> TypeCreators
-        {
-            get;
-        }
+        public ReadOnlyCollection<IPostBuildAction> PostBuildActions { get; }
 
         /// <inheritdoc />
-        public ReadOnlyCollection<IValueGenerator> ValueGenerators
-        {
-            get;
-        }
+        public ReadOnlyCollection<ITypeCreator> TypeCreators { get; }
+
+        /// <inheritdoc />
+        public ReadOnlyCollection<IValueGenerator> ValueGenerators { get; }
     }
 }

@@ -19,6 +19,7 @@
             target.TypeCreators.ShouldAllBeEquivalentTo(DefaultBuildStrategy.DefaultTypeCreators);
             target.ValueGenerators.ShouldAllBeEquivalentTo(DefaultBuildStrategy.DefaultValueGenerators);
             target.ExecuteOrderRules.ShouldAllBeEquivalentTo(DefaultBuildStrategy.DefaultExecuteOrderRules);
+            target.PostBuildActions.ShouldAllBeEquivalentTo(DefaultBuildStrategy.DefaultPostBuildActions);
         }
 
         [Fact]
@@ -46,6 +47,7 @@
             DefaultBuildStrategy.DefaultTypeCreators.Should().NotBeEmpty();
             DefaultBuildStrategy.DefaultValueGenerators.Should().NotBeEmpty();
             DefaultBuildStrategy.DefaultExecuteOrderRules.Should().NotBeEmpty();
+            DefaultBuildStrategy.DefaultPostBuildActions.Should().BeEmpty();
         }
 
         [Fact]

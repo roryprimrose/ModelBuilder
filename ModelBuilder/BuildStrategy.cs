@@ -18,6 +18,7 @@
         /// <param name="valueGenerators">The value generators.</param>
         /// <param name="ignoreRules">The ignore rules.</param>
         /// <param name="executeOrderRules">The execute order rules.</param>
+        /// <param name="postBuildActions">The post-build actions.</param>
         /// <param name="buildLog">The build log.</param>
         /// <exception cref="ArgumentNullException">The <paramref name="constructorResolver"/> parameter is null.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="creationRules"/> parameter is null.</exception>
@@ -25,6 +26,7 @@
         /// <exception cref="ArgumentNullException">The <paramref name="valueGenerators"/> parameter is null.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="ignoreRules"/> parameter is null.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="executeOrderRules"/> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="postBuildActions"/> parameter is null.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="buildLog"/> parameter is null.</exception>
         public BuildStrategy(
             IConstructorResolver constructorResolver,
@@ -33,6 +35,7 @@
             IEnumerable<IValueGenerator> valueGenerators,
             IEnumerable<IgnoreRule> ignoreRules,
             IEnumerable<ExecuteOrderRule> executeOrderRules,
+            IEnumerable<IPostBuildAction> postBuildActions,
             IBuildLog buildLog)
             : base(
                 constructorResolver,
@@ -41,6 +44,7 @@
                 valueGenerators,
                 ignoreRules,
                 executeOrderRules,
+                postBuildActions,
                 buildLog)
         {
         }

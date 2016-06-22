@@ -33,6 +33,65 @@
         }
 
         [Fact]
+        public void CreateEvaluatesPostBuildActionsInOrderOfDescendingPriorityTest()
+        {
+            var firstAction = Substitute.For<IPostBuildAction>();
+            var secondAction = Substitute.For<IPostBuildAction>();
+            var buildStrategy = new DefaultBuildStrategy().Clone()
+                .Add(firstAction)
+                .Add(secondAction).Compile();
+            var executeCount = 0;
+
+            firstAction.IsSupported(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<LinkedList<object>>()).Returns(true);
+            secondAction.IsSupported(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<LinkedList<object>>()).Returns(true);
+            firstAction.WhenForAnyArgs(x => x.Execute(null, null, null)).Do(x =>
+            {
+                executeCount++;
+
+                executeCount.Should().Be(1);
+            });
+            secondAction.WhenForAnyArgs(x => x.Execute(null, null, null)).Do(x =>
+            {
+                executeCount++;
+
+                executeCount.Should().Be(2);
+            });
+
+            var target = new DefaultExecuteStrategy<Simple>
+            {
+                BuildStrategy = buildStrategy
+            };
+
+            target.Create();
+
+            firstAction.Received().Execute(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<LinkedList<object>>());
+            secondAction.Received().Execute(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<LinkedList<object>>());
+        }
+
+        [Fact]
+        public void CreateEvaluatesPostBuildActionsThatSupportTheBuildScenarioTest()
+        {
+            var firstAction = Substitute.For<IPostBuildAction>();
+            var secondAction = Substitute.For<IPostBuildAction>();
+            var buildStrategy = new DefaultBuildStrategy().Clone()
+                .Add(firstAction)
+                .Add(secondAction).Compile();
+
+            firstAction.IsSupported(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<LinkedList<object>>()).Returns(false);
+            secondAction.IsSupported(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<LinkedList<object>>()).Returns(true);
+
+            var target = new DefaultExecuteStrategy<Simple>
+            {
+                BuildStrategy = buildStrategy
+            };
+
+            target.Create();
+
+            firstAction.DidNotReceive().Execute(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<LinkedList<object>>());
+            secondAction.Received().Execute(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<LinkedList<object>>());
+        }
+
+        [Fact]
         public void CreatesCircularReferenceWithInstanceFromBuildChainTest()
         {
             var strategy = new DefaultBuildStrategy();
@@ -760,7 +819,7 @@
                 BuildStrategy = buildStrategy
             };
 
-            Action action = () => target.CreateWith((Type)null);
+            Action action = () => target.CreateWith((Type) null);
 
             action.ShouldThrow<ArgumentNullException>();
         }
@@ -830,7 +889,7 @@
                 "Address",
                 Arg.Is<LinkedList<object>>(x => x.Last.Value == expected)).Returns(address);
 
-            var actual = (Company)target.Populate((object)expected);
+            var actual = (Company) target.Populate((object) expected);
 
             actual.Should().BeSameAs(expected);
             actual.Name.Should().Be(name);
@@ -1465,47 +1524,23 @@
 
         private class Bottom
         {
-            public Top Root
-            {
-                get;
-                set;
-            }
+            public Top Root { get; set; }
 
-            public string Value
-            {
-                get;
-                set;
-            }
+            public string Value { get; set; }
         }
 
         private class Child
         {
-            public Bottom End
-            {
-                get;
-                set;
-            }
+            public Bottom End { get; set; }
 
-            public string Value
-            {
-                get;
-                set;
-            }
+            public string Value { get; set; }
         }
 
         private class Looper
         {
-            public Looper Other
-            {
-                get;
-                set;
-            }
+            public Looper Other { get; set; }
 
-            public string Stuff
-            {
-                get;
-                set;
-            }
+            public string Stuff { get; set; }
         }
 
         private class PopulateInstanceWrapper : DefaultExecuteStrategy<Company>
@@ -1518,17 +1553,9 @@
 
         private class Top
         {
-            public Child Next
-            {
-                get;
-                set;
-            }
+            public Child Next { get; set; }
 
-            public string Value
-            {
-                get;
-                set;
-            }
+            public string Value { get; set; }
         }
     }
 }

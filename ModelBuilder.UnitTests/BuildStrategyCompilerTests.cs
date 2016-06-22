@@ -33,6 +33,10 @@
             {
                 new ExecuteOrderRule(typeof(Person), "LastName", int.MinValue)
             };
+            var postBuildActions = new List<IPostBuildAction>
+            {
+                Substitute.For<IPostBuildAction>()
+            };
 
             var target = new BuildStrategyCompiler
             {
@@ -45,6 +49,7 @@
             target.ValueGenerators.Add(valueGenerators[0]);
             target.IgnoreRules.Add(ignoreRules[0]);
             target.ExecuteOrderRules.Add(executeOrderRules[0]);
+            target.PostBuildActions.Add(postBuildActions[0]);
 
             var actual = target.Compile();
 
@@ -55,6 +60,7 @@
             actual.ValueGenerators.ShouldBeEquivalentTo(valueGenerators);
             actual.IgnoreRules.ShouldBeEquivalentTo(ignoreRules);
             actual.ExecuteOrderRules.ShouldBeEquivalentTo(executeOrderRules);
+            actual.PostBuildActions.ShouldBeEquivalentTo(postBuildActions);
         }
 
         [Fact]
@@ -79,6 +85,7 @@
             target.IgnoreRules.Should().NotBeNull();
             target.TypeCreators.Should().NotBeNull();
             target.ValueGenerators.Should().NotBeNull();
+            target.PostBuildActions.Should().NotBeNull();
         }
     }
 }

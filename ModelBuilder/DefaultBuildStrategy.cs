@@ -19,6 +19,7 @@ namespace ModelBuilder
                 DefaultValueGenerators,
                 DefaultIgnoreRules,
                 DefaultExecuteOrderRules,
+                DefaultPostBuildActions,
                 DefaultBuildLog)
         {
         }
@@ -72,6 +73,15 @@ namespace ModelBuilder
                 yield return new ExecuteOrderRule((type, name) => type.IsClass, 1000);
             }
         }
+
+        /// <summary>
+        /// Gets the default post-build actions.
+        /// </summary>
+        /// <value>The post-build actions.</value>
+        public static IEnumerable<IPostBuildAction> DefaultPostBuildActions
+        {
+            get;
+        } = new List<IPostBuildAction>();
 
         /// <summary>
         /// Gets the default ignore rules.

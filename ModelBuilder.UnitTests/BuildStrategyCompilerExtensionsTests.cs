@@ -1,12 +1,13 @@
-﻿using System;
-using System.Linq;
-using System.Linq.Expressions;
-using FluentAssertions;
-using NSubstitute;
-using Xunit;
-
-namespace ModelBuilder.UnitTests
+﻿namespace ModelBuilder.UnitTests
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Linq.Expressions;
+    using FluentAssertions;
+    using NSubstitute;
+    using Xunit;
+
     public class BuildStrategyCompilerExtensionsTests
     {
         [Fact]
@@ -196,6 +197,28 @@ namespace ModelBuilder.UnitTests
         }
 
         [Fact]
+        public void AddPostBuildActionAddsRuleToCompilerTest()
+        {
+            var target = new BuildStrategyCompiler();
+
+            target.AddPostBuildAction<PostBuildActionWrapper>();
+
+            var actual = target.PostBuildActions.Single();
+
+            actual.Should().BeOfType<PostBuildActionWrapper>();
+        }
+
+        [Fact]
+        public void AddPostBuildActionThrowsExceptionWithNullCompilerTest()
+        {
+            IBuildStrategyCompiler target = null;
+
+            Action action = () => target.AddPostBuildAction<PostBuildActionWrapper>();
+
+            action.ShouldThrow<ArgumentNullException>();
+        }
+
+        [Fact]
         public void AddTypeCreatorAddsRuleToCompilerTest()
         {
             var target = new BuildStrategyCompiler();
@@ -337,6 +360,40 @@ namespace ModelBuilder.UnitTests
             var target = Substitute.For<IBuildStrategyCompiler>();
 
             Action action = () => target.Add((IgnoreRule) null);
+
+            action.ShouldThrow<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void AddWithPostBuildActionAddsRuleToCompilerTest()
+        {
+            var postBuildAction = new PostBuildActionWrapper();
+
+            var target = new BuildStrategyCompiler();
+
+            target.Add(postBuildAction);
+
+            target.PostBuildActions.Should().Contain(postBuildAction);
+        }
+
+        [Fact]
+        public void AddWithPostBuildActionThrowsExceptionWithNullCompilerTest()
+        {
+            var postBuildAction = new PostBuildActionWrapper();
+
+            IBuildStrategyCompiler target = null;
+
+            Action action = () => target.Add(postBuildAction);
+
+            action.ShouldThrow<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void AddWithPostBuildActionThrowsExceptionWithNullRuleTest()
+        {
+            var target = Substitute.For<IBuildStrategyCompiler>();
+
+            Action action = () => target.Add((IPostBuildAction) null);
 
             action.ShouldThrow<ArgumentNullException>();
         }
@@ -512,6 +569,40 @@ namespace ModelBuilder.UnitTests
         }
 
         [Fact]
+        public void RemovePostBuildActionRemovesMultipleMatchingRulesFromCompilerTest()
+        {
+            var target = new BuildStrategyCompiler();
+
+            target.AddPostBuildAction<PostBuildActionWrapper>();
+            target.AddPostBuildAction<PostBuildActionWrapper>();
+            target.AddPostBuildAction<PostBuildActionWrapper>();
+            target.RemovePostBuildAction<PostBuildActionWrapper>();
+
+            target.PostBuildActions.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void RemovePostBuildActionRemovesRulesFromCompilerTest()
+        {
+            var target = new BuildStrategyCompiler();
+
+            target.AddPostBuildAction<PostBuildActionWrapper>();
+            target.RemovePostBuildAction<PostBuildActionWrapper>();
+
+            target.PostBuildActions.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void RemovePostBuildActionThrowsExceptionWithNullCompilerTest()
+        {
+            IBuildStrategyCompiler target = null;
+
+            Action action = () => target.RemovePostBuildAction<PostBuildActionWrapper>();
+
+            action.ShouldThrow<ArgumentNullException>();
+        }
+
+        [Fact]
         public void RemoveTypeCreatorRemovesMultipleMatchingRulesFromCompilerTest()
         {
             var target = new BuildStrategyCompiler();
@@ -648,6 +739,21 @@ namespace ModelBuilder.UnitTests
             public IgnoreRuleWrapper() : base(typeof(string), "FirstName")
             {
             }
+        }
+
+        private class PostBuildActionWrapper : IPostBuildAction
+        {
+            public void Execute(Type type, string referenceName, LinkedList<object> buildChain)
+            {
+                throw new NotImplementedException();
+            }
+
+            public bool IsSupported(Type type, string referenceName, LinkedList<object> buildChain)
+            {
+                throw new NotImplementedException();
+            }
+
+            public int Priority { get; }
         }
     }
 }
