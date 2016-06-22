@@ -2,7 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
-    using ModelBuilder.Properties;
+    using Properties;
 
     /// <summary>
     /// The <see cref="BuildStrategyCompiler"/>
@@ -18,6 +18,7 @@
             CreationRules = new List<CreationRule>();
             ExecuteOrderRules = new List<ExecuteOrderRule>();
             IgnoreRules = new List<IgnoreRule>();
+            PostBuildActions = new List<IPostBuildAction>();
             TypeCreators = new List<ITypeCreator>();
             ValueGenerators = new List<IValueGenerator>();
         }
@@ -38,51 +39,32 @@
                 ValueGenerators,
                 IgnoreRules,
                 ExecuteOrderRules,
+                PostBuildActions,
                 BuildLog);
         }
 
         /// <inheritdoc />
-        public IBuildLog BuildLog
-        {
-            get;
-            set;
-        }
+        public IBuildLog BuildLog { get; set; }
 
         /// <inheritdoc />
-        public IConstructorResolver ConstructorResolver
-        {
-            get;
-            set;
-        }
+        public IConstructorResolver ConstructorResolver { get; set; }
 
         /// <inheritdoc />
-        public ICollection<CreationRule> CreationRules
-        {
-            get;
-        }
+        public ICollection<CreationRule> CreationRules { get; }
 
         /// <inheritdoc />
-        public ICollection<ExecuteOrderRule> ExecuteOrderRules
-        {
-            get;
-        }
+        public ICollection<ExecuteOrderRule> ExecuteOrderRules { get; }
 
         /// <inheritdoc />
-        public ICollection<IgnoreRule> IgnoreRules
-        {
-            get;
-        }
+        public ICollection<IgnoreRule> IgnoreRules { get; }
 
         /// <inheritdoc />
-        public ICollection<ITypeCreator> TypeCreators
-        {
-            get;
-        }
+        public ICollection<IPostBuildAction> PostBuildActions { get; }
 
         /// <inheritdoc />
-        public ICollection<IValueGenerator> ValueGenerators
-        {
-            get;
-        }
+        public ICollection<ITypeCreator> TypeCreators { get; }
+
+        /// <inheritdoc />
+        public ICollection<IValueGenerator> ValueGenerators { get; }
     }
 }

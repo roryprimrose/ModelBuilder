@@ -111,6 +111,7 @@
     <Compile Include="IPAddressValueGenerator.cs">
       <DependentUpon>IValueGenerator.cs</DependentUpon>
     </Compile>
+    <Compile Include="IPostBuildAction.cs" />
     <Compile Include="IRandomGenerator.cs" />
     <Compile Include="LastNameValueGenerator.cs">
       <DependentUpon>IValueGenerator.cs</DependentUpon>

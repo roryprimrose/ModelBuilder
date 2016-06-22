@@ -41,6 +41,11 @@
         ReadOnlyCollection<IgnoreRule> IgnoreRules { get; }
 
         /// <summary>
+        /// Gets the post build actions used to modify instances after they have been created or populated.
+        /// </summary>
+        ReadOnlyCollection<IPostBuildAction> PostBuildActions { get; }
+
+        /// <summary>
         /// Gets the type creators used to create instances.
         /// </summary>
         ReadOnlyCollection<ITypeCreator> TypeCreators { get; }
