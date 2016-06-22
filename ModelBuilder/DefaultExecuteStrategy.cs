@@ -11,8 +11,8 @@
     using Properties;
 
     /// <summary>
-    /// The <see cref="DefaultExecuteStrategy{T}"/>
-    /// class is used to create and populate <typeparamref name="T"/> instances.
+    ///     The <see cref="DefaultExecuteStrategy{T}" />
+    ///     class is used to create and populate <typeparamref name="T" /> instances.
     /// </summary>
     /// <typeparam name="T">The type of instance to create and populate.</typeparam>
     public class DefaultExecuteStrategy<T> : IExecuteStrategy<T>
@@ -20,7 +20,7 @@
         private readonly Stack _buildChain = new Stack();
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DefaultExecuteStrategy{T}"/> class.
+        ///     Initializes a new instance of the <see cref="DefaultExecuteStrategy{T}" /> class.
         /// </summary>
         public DefaultExecuteStrategy()
         {
@@ -28,7 +28,10 @@
         }
 
         /// <inheritdoc />
-        /// <exception cref="NotSupportedException">No <see cref="IValueGenerator"/> or <see cref="ITypeCreator"/> was found to generate a requested type.</exception>
+        /// <exception cref="NotSupportedException">
+        ///     No <see cref="IValueGenerator" /> or <see cref="ITypeCreator" /> was found to
+        ///     generate a requested type.
+        /// </exception>
         /// <exception cref="BuildException">Failed to generate a requested type.</exception>
         public virtual T CreateWith(params object[] args)
         {
@@ -46,8 +49,11 @@
         }
 
         /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">The <paramref name="type"/> parameter is null.</exception>
-        /// <exception cref="NotSupportedException">No <see cref="IValueGenerator"/> or <see cref="ITypeCreator"/> was found to generate a requested type.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is null.</exception>
+        /// <exception cref="NotSupportedException">
+        ///     No <see cref="IValueGenerator" /> or <see cref="ITypeCreator" /> was found to
+        ///     generate a requested type.
+        /// </exception>
         /// <exception cref="BuildException">Failed to generate a requested type.</exception>
         public object CreateWith(Type type, params object[] args)
         {
@@ -60,8 +66,11 @@
         }
 
         /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">The <paramref name="instance"/> parameter is null.</exception>
-        /// <exception cref="NotSupportedException">No <see cref="IValueGenerator"/> or <see cref="ITypeCreator"/> was found to generate a requested type.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="instance" /> parameter is null.</exception>
+        /// <exception cref="NotSupportedException">
+        ///     No <see cref="IValueGenerator" /> or <see cref="ITypeCreator" /> was found to
+        ///     generate a requested type.
+        /// </exception>
         /// <exception cref="BuildException">Failed to generate a requested type.</exception>
         public virtual T Populate(T instance)
         {
@@ -69,8 +78,11 @@
         }
 
         /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">The <paramref name="instance"/> parameter is null.</exception>
-        /// <exception cref="NotSupportedException">No <see cref="IValueGenerator"/> or <see cref="ITypeCreator"/> was found to generate a requested type.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="instance" /> parameter is null.</exception>
+        /// <exception cref="NotSupportedException">
+        ///     No <see cref="IValueGenerator" /> or <see cref="ITypeCreator" /> was found to
+        ///     generate a requested type.
+        /// </exception>
         /// <exception cref="BuildException">Failed to generate a requested type.</exception>
         public object Populate(object instance)
         {
@@ -92,15 +104,15 @@
         }
 
         /// <summary>
-        /// Builds an instance of the specified type.
+        ///     Builds an instance of the specified type.
         /// </summary>
         /// <param name="type">The type of instance to create.</param>
         /// <param name="referenceName">Identifies the possible parameter or property name this value is intended for.</param>
         /// <param name="context">The possible context object this value is being created for.</param>
         /// <param name="args">The arguements to create the instance with.</param>
         /// <returns>A new instance.</returns>
-        /// <exception cref="ArgumentNullException">The <paramref name="type"/> parameter is null.</exception>
-        /// <exception cref="NotSupportedException">The <paramref name="type"/> parameter can not be created using this strategy.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is null.</exception>
+        /// <exception cref="NotSupportedException">The <paramref name="type" /> parameter can not be created using this strategy.</exception>
         protected virtual object Build(Type type, string referenceName, object context, params object[] args)
         {
             if (type == null)
@@ -228,11 +240,11 @@
         }
 
         /// <summary>
-        /// Populates the settable properties on the specified instance.
+        ///     Populates the settable properties on the specified instance.
         /// </summary>
         /// <param name="instance">The instance to populate.</param>
         /// <returns>The updated instance.</returns>
-        /// <exception cref="ArgumentNullException">The <paramref name="instance"/> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="instance" /> parameter is null.</exception>
         protected virtual object PopulateInstance(object instance)
         {
             if (instance == null)
@@ -314,6 +326,18 @@
 
                 // Allow the type creator to do its own population of the instance
                 instance = typeCreator.Populate(instance, this);
+
+                var postBuildActions = BuildStrategy.PostBuildActions
+                    ?.Where(x => x.IsSupported(type, referenceName, BuildChain))
+                    .OrderByDescending(x => x.Priority);
+
+                if (postBuildActions != null)
+                {
+                    foreach (var postBuildAction in postBuildActions)
+                    {
+                        postBuildAction.Execute(type, referenceName, BuildChain);
+                    }
+                }
 
                 return instance;
             }
@@ -410,7 +434,7 @@
                     .FirstOrDefault();
 
             if (typeCreator != null)
-            { 
+            {
                 return typeCreator;
             }
 

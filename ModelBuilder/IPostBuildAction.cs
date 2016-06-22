@@ -15,8 +15,7 @@
         /// <param name="type">The type of value to evaluate.</param>
         /// <param name="referenceName">Identifies the possible parameter or property name the value is intended for.</param>
         /// <param name="buildChain">The chain of instances built up to this point.</param>
-        /// <returns>The outcome of the post-build action.</returns>
-        object Execute(Type type, string referenceName, LinkedList<object> buildChain);
+        void Execute(Type type, string referenceName, LinkedList<object> buildChain);
 
         /// <summary>
         /// Returns whether the specified type is supported by this type.
