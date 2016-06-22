@@ -72,6 +72,7 @@ ModelBuilder is designed with extensibility in mind. There are many ways that th
 - CreationRules
 - IgnoreRules
 - ExecuteOrderRules
+- PostBuildActions
 - ConstructorResolver
 
 ModelBuilder uses a BuildStrategy that defines this configuration and is the source of all model creation requests.
@@ -99,6 +100,7 @@ var strategy = ModelBuilder.DefaultBuildStrategy
 	.AddCreationRule<Person>(x => x.IsAdministrator, false)
     .AddIgnoreRule<Person>(x => x.FirstName)
     .AddExecuteOrderRule<Person>(x => x.LastName, 10)
+	.AddPostBuildAction<MyCustomPostBuildAction>()
     .Compile();
 
 Model.BuildStrategy = strategy;
@@ -164,6 +166,10 @@ You may have a model with a property that you do not want to have a value genera
 Generating random or pseudo-random data for a model dynamically is never going to be perfect. We can however provide better data when some context is available.  ExecuteOrderRules help with this in that they define the order in which a property is assigned when the model is being created.
 
 For example, if a Person type exposes a Gender property then the FirstName property should ideally match that gender. The DefaultBuildStrategy supports this by defining that the GenderValueGenerator gets executed before the FirstNameValueGenerator which is executed before the StringValueGenerator. Another example of this is that the DefaultBuildStrategy defines the enum properties will be assigned before other property types because they tend to be reference data that might define how other properties are assigned.
+
+### Post-Build Actions
+
+Post-build actions are much like the Set and SetEach extension methods. They provide the opportunity to tweak an instance after it has been created or populated. Suported post-build actions are evaluated in descending priority order after an instance has been created or populated.
 
 ### Constructor resolver
 
