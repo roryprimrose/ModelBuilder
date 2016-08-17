@@ -108,8 +108,12 @@
 
             actual.Should().NotBeSameAs(target);
             actual.IgnoreRules.Should().NotBeEmpty();
-            actual.IgnoreRules.First().PropertyName.Should().Be("Priority");
-            actual.IgnoreRules.First().TargetType.Should().Be<Person>();
+
+            var matchingRule =
+                actual.IgnoreRules.FirstOrDefault(
+                    x => x.PropertyName == "Priority" && x.TargetType == typeof(Person));
+
+            matchingRule.Should().NotBeNull();
         }
 
         [Fact]

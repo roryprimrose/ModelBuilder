@@ -8,7 +8,7 @@ namespace ModelBuilder.UnitTests
     {
         public override bool IsSupported(Type type, string referenceName, LinkedList<object> buildChain)
         {
-            throw new NotImplementedException();
+            return false;
         }
 
         protected override object GenerateValue(Type type, string referenceName, LinkedList<object> buildChain)

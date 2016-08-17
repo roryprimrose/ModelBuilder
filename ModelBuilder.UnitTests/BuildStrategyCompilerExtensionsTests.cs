@@ -1,7 +1,6 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
-    using System.Collections.Generic;
     using System.Linq;
     using System.Linq.Expressions;
     using FluentAssertions;
@@ -10,6 +9,11 @@
 
     public class BuildStrategyCompilerExtensionsTests
     {
+        public interface ISomeCompilerModule : ICompilerModule
+        {
+            // This verifies that the module scanner does not attempt to use interface modules
+        }
+
         [Fact]
         public void AddCreationRuleAddsRuleToCompilerTest()
         {
@@ -82,11 +86,11 @@
         {
             var target = new BuildStrategyCompiler();
 
-            target.AddExecuteOrderRule<ExecuteOrderRuleWrapper>();
+            target.AddExecuteOrderRule<DummyExecuteOrderRule>();
 
             var actual = target.ExecuteOrderRules.Single();
 
-            actual.Should().BeOfType<ExecuteOrderRuleWrapper>();
+            actual.Should().BeOfType<DummyExecuteOrderRule>();
         }
 
         [Fact]
@@ -94,7 +98,7 @@
         {
             IBuildStrategyCompiler target = null;
 
-            Action action = () => target.AddExecuteOrderRule<ExecuteOrderRuleWrapper>();
+            Action action = () => target.AddExecuteOrderRule<DummyExecuteOrderRule>();
 
             action.ShouldThrow<ArgumentNullException>();
         }
@@ -146,11 +150,11 @@
         {
             var target = new BuildStrategyCompiler();
 
-            target.AddIgnoreRule<IgnoreRuleWrapper>();
+            target.AddIgnoreRule<DummyIgnoreRule>();
 
             var actual = target.IgnoreRules.Single();
 
-            actual.Should().BeOfType<IgnoreRuleWrapper>();
+            actual.Should().BeOfType<DummyIgnoreRule>();
         }
 
         [Fact]
@@ -158,7 +162,7 @@
         {
             IBuildStrategyCompiler target = null;
 
-            Action action = () => target.AddIgnoreRule<IgnoreRuleWrapper>();
+            Action action = () => target.AddIgnoreRule<DummyIgnoreRule>();
 
             action.ShouldThrow<ArgumentNullException>();
         }
@@ -201,11 +205,11 @@
         {
             var target = new BuildStrategyCompiler();
 
-            target.AddPostBuildAction<PostBuildActionWrapper>();
+            target.AddPostBuildAction<DummyPostBuildAction>();
 
             var actual = target.PostBuildActions.Single();
 
-            actual.Should().BeOfType<PostBuildActionWrapper>();
+            actual.Should().BeOfType<DummyPostBuildAction>();
         }
 
         [Fact]
@@ -213,7 +217,7 @@
         {
             IBuildStrategyCompiler target = null;
 
-            Action action = () => target.AddPostBuildAction<PostBuildActionWrapper>();
+            Action action = () => target.AddPostBuildAction<DummyPostBuildAction>();
 
             action.ShouldThrow<ArgumentNullException>();
         }
@@ -367,7 +371,7 @@
         [Fact]
         public void AddWithPostBuildActionAddsRuleToCompilerTest()
         {
-            var postBuildAction = new PostBuildActionWrapper();
+            var postBuildAction = new DummyPostBuildAction();
 
             var target = new BuildStrategyCompiler();
 
@@ -379,7 +383,7 @@
         [Fact]
         public void AddWithPostBuildActionThrowsExceptionWithNullCompilerTest()
         {
-            var postBuildAction = new PostBuildActionWrapper();
+            var postBuildAction = new DummyPostBuildAction();
 
             IBuildStrategyCompiler target = null;
 
@@ -505,10 +509,10 @@
         {
             var target = new BuildStrategyCompiler();
 
-            target.AddExecuteOrderRule<ExecuteOrderRuleWrapper>();
-            target.AddExecuteOrderRule<ExecuteOrderRuleWrapper>();
-            target.AddExecuteOrderRule<ExecuteOrderRuleWrapper>();
-            target.RemoveExecuteOrderRule<ExecuteOrderRuleWrapper>();
+            target.AddExecuteOrderRule<DummyExecuteOrderRule>();
+            target.AddExecuteOrderRule<DummyExecuteOrderRule>();
+            target.AddExecuteOrderRule<DummyExecuteOrderRule>();
+            target.RemoveExecuteOrderRule<DummyExecuteOrderRule>();
 
             target.ExecuteOrderRules.Should().BeEmpty();
         }
@@ -518,8 +522,8 @@
         {
             var target = new BuildStrategyCompiler();
 
-            target.AddExecuteOrderRule<ExecuteOrderRuleWrapper>();
-            target.RemoveExecuteOrderRule<ExecuteOrderRuleWrapper>();
+            target.AddExecuteOrderRule<DummyExecuteOrderRule>();
+            target.RemoveExecuteOrderRule<DummyExecuteOrderRule>();
 
             target.ExecuteOrderRules.Should().BeEmpty();
         }
@@ -529,7 +533,7 @@
         {
             IBuildStrategyCompiler target = null;
 
-            Action action = () => target.RemoveExecuteOrderRule<ExecuteOrderRuleWrapper>();
+            Action action = () => target.RemoveExecuteOrderRule<DummyExecuteOrderRule>();
 
             action.ShouldThrow<ArgumentNullException>();
         }
@@ -539,10 +543,10 @@
         {
             var target = new BuildStrategyCompiler();
 
-            target.AddIgnoreRule<IgnoreRuleWrapper>();
-            target.AddIgnoreRule<IgnoreRuleWrapper>();
-            target.AddIgnoreRule<IgnoreRuleWrapper>();
-            target.RemoveIgnoreRule<IgnoreRuleWrapper>();
+            target.AddIgnoreRule<DummyIgnoreRule>();
+            target.AddIgnoreRule<DummyIgnoreRule>();
+            target.AddIgnoreRule<DummyIgnoreRule>();
+            target.RemoveIgnoreRule<DummyIgnoreRule>();
 
             target.IgnoreRules.Should().BeEmpty();
         }
@@ -552,8 +556,8 @@
         {
             var target = new BuildStrategyCompiler();
 
-            target.AddIgnoreRule<IgnoreRuleWrapper>();
-            target.RemoveIgnoreRule<IgnoreRuleWrapper>();
+            target.AddIgnoreRule<DummyIgnoreRule>();
+            target.RemoveIgnoreRule<DummyIgnoreRule>();
 
             target.IgnoreRules.Should().BeEmpty();
         }
@@ -563,7 +567,7 @@
         {
             IBuildStrategyCompiler target = null;
 
-            Action action = () => target.RemoveIgnoreRule<IgnoreRuleWrapper>();
+            Action action = () => target.RemoveIgnoreRule<DummyIgnoreRule>();
 
             action.ShouldThrow<ArgumentNullException>();
         }
@@ -573,10 +577,10 @@
         {
             var target = new BuildStrategyCompiler();
 
-            target.AddPostBuildAction<PostBuildActionWrapper>();
-            target.AddPostBuildAction<PostBuildActionWrapper>();
-            target.AddPostBuildAction<PostBuildActionWrapper>();
-            target.RemovePostBuildAction<PostBuildActionWrapper>();
+            target.AddPostBuildAction<DummyPostBuildAction>();
+            target.AddPostBuildAction<DummyPostBuildAction>();
+            target.AddPostBuildAction<DummyPostBuildAction>();
+            target.RemovePostBuildAction<DummyPostBuildAction>();
 
             target.PostBuildActions.Should().BeEmpty();
         }
@@ -586,8 +590,8 @@
         {
             var target = new BuildStrategyCompiler();
 
-            target.AddPostBuildAction<PostBuildActionWrapper>();
-            target.RemovePostBuildAction<PostBuildActionWrapper>();
+            target.AddPostBuildAction<DummyPostBuildAction>();
+            target.RemovePostBuildAction<DummyPostBuildAction>();
 
             target.PostBuildActions.Should().BeEmpty();
         }
@@ -597,7 +601,7 @@
         {
             IBuildStrategyCompiler target = null;
 
-            Action action = () => target.RemovePostBuildAction<PostBuildActionWrapper>();
+            Action action = () => target.RemovePostBuildAction<DummyPostBuildAction>();
 
             action.ShouldThrow<ArgumentNullException>();
         }
@@ -672,6 +676,31 @@
         }
 
         [Fact]
+        public void ScanModulesPopulatesCompilerWithDetectedConfigurationTest()
+        {
+            var target = new BuildStrategyCompiler();
+
+            target.ScanModules();
+
+            target.ExecuteOrderRules.Should().ContainItemsAssignableTo<DummyExecuteOrderRule>();
+            target.IgnoreRules.Should().ContainItemsAssignableTo<DummyIgnoreRule>();
+            target.PostBuildActions.Should().ContainItemsAssignableTo<DummyPostBuildAction>();
+            target.CreationRules.Should().ContainItemsAssignableTo<DummyCreationRule>();
+            target.TypeCreators.Should().ContainItemsAssignableTo<DummyTypeCreator>();
+            target.ValueGenerators.Should().ContainItemsAssignableTo<DummyValueGenerator>();
+        }
+
+        [Fact]
+        public void ScanModulesThrowsExceptionWithNullCompilerTest()
+        {
+            var target = (IBuildStrategyCompiler) null;
+
+            Action action = () => target.ScanModules();
+
+            action.ShouldThrow<ArgumentNullException>();
+        }
+
+        [Fact]
         public void SetConstructorResolverAssignsResolverToCompilerTest()
         {
             var target = new BuildStrategyCompiler();
@@ -727,33 +756,13 @@
             action.ShouldThrow<ArgumentNullException>();
         }
 
-        private class ExecuteOrderRuleWrapper : ExecuteOrderRule
+        public abstract class AbstractCompilerModule : ICompilerModule
         {
-            public ExecuteOrderRuleWrapper() : base(typeof(string), "FirstName", Environment.TickCount)
+            public void Configure(IBuildStrategyCompiler compiler)
             {
-            }
-        }
-
-        private class IgnoreRuleWrapper : IgnoreRule
-        {
-            public IgnoreRuleWrapper() : base(typeof(string), "FirstName")
-            {
-            }
-        }
-
-        private class PostBuildActionWrapper : IPostBuildAction
-        {
-            public void Execute(Type type, string referenceName, LinkedList<object> buildChain)
-            {
+                // This verifies that the module scanner does not attempt to use abstract modules
                 throw new NotImplementedException();
             }
-
-            public bool IsSupported(Type type, string referenceName, LinkedList<object> buildChain)
-            {
-                throw new NotImplementedException();
-            }
-
-            public int Priority { get; }
         }
     }
 }

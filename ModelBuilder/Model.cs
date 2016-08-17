@@ -96,6 +96,8 @@
         {
             var compiler = new DefaultBuildStrategyCompiler();
 
+            compiler.ScanModules();
+
             return compiler.Compile();
         }
 
