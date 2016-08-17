@@ -201,7 +201,7 @@
             typeCreator.Create(typeof(Address), "Address", Arg.Any<LinkedList<object>>())
                 .Throws(new InvalidOperationException());
 
-            var buildStrategy = new DefaultBuildStrategy().Clone().Add(typeCreator).Compile();
+            var buildStrategy = new DefaultBuildStrategyCompiler().Add(typeCreator).Compile();
 
             var target = new DefaultExecuteStrategy<Company>
             {
@@ -292,7 +292,7 @@
         public void MailinatorEmailGeneratorIsAssignedAgainstAllInstancesTest()
         {
             var strategy =
-                new DefaultBuildStrategy().Clone()
+                new DefaultBuildStrategyCompiler()
                     .RemoveValueGenerator<EmailValueGenerator>()
                     .AddValueGenerator<MailinatorEmailValueGenerator>()
                     .Compile();

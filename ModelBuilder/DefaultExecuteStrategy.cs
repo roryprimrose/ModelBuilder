@@ -24,7 +24,8 @@
         /// </summary>
         public DefaultExecuteStrategy()
         {
-            BuildStrategy = new DefaultBuildStrategy();
+            // Use the current global build strategy
+            BuildStrategy = Model.BuildStrategy;
         }
 
         /// <inheritdoc />

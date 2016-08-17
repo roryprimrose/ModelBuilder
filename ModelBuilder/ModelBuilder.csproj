@@ -90,6 +90,9 @@
     <Compile Include="DefaultBuildLog.cs">
       <DependentUpon>IBuildLog.cs</DependentUpon>
     </Compile>
+    <Compile Include="DefaultBuildStrategyCompiler.cs">
+      <DependentUpon>IBuildStrategyCompiler.cs</DependentUpon>
+    </Compile>
     <Compile Include="DomainNameValueGenerator.cs">
       <DependentUpon>IValueGenerator.cs</DependentUpon>
     </Compile>
@@ -108,6 +111,7 @@
     </Compile>
     <Compile Include="IBuildLog.cs" />
     <Compile Include="IBuildStrategyCompiler.cs" />
+    <Compile Include="ICompilerModule.cs" />
     <Compile Include="IPAddressValueGenerator.cs">
       <DependentUpon>IValueGenerator.cs</DependentUpon>
     </Compile>
@@ -197,9 +201,6 @@
     <Compile Include="IValueGenerator.cs" />
     <Compile Include="Model.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="DefaultBuildStrategy.cs">
-      <DependentUpon>IBuildStrategy.cs</DependentUpon>
-    </Compile>
     <Compile Include="StringValueGenerator.cs">
       <DependentUpon>IValueGenerator.cs</DependentUpon>
     </Compile>

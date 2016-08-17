@@ -1,19 +1,18 @@
-﻿using System;
-using System.Linq.Expressions;
-
-namespace ModelBuilder
+﻿namespace ModelBuilder
 {
+    using System;
+    using System.Linq.Expressions;
+
     /// <summary>
-    /// The <see cref="Model"/>
-    /// class provides the main entry point into generating model instances.
+    ///     The <see cref="Model" />
+    ///     class provides the main entry point into generating model instances.
     /// </summary>
     public static class Model
     {
-        private static readonly DefaultBuildStrategy _defaultBuildStrategy = new DefaultBuildStrategy();
-        private static IBuildStrategy _buildStrategy = _defaultBuildStrategy;
+        private static IBuildStrategy _buildStrategy;
 
         /// <summary>
-        /// Creates an instance of <typeparamref name="T"/> using the default build and execute strategies.
+        ///     Creates an instance of <typeparamref name="T" /> using the default build and execute strategies.
         /// </summary>
         /// <typeparam name="T">The type of instance to create.</typeparam>
         /// <returns>The new instance.</returns>
@@ -23,7 +22,8 @@ namespace ModelBuilder
         }
 
         /// <summary>
-        /// Creates an instance of <typeparamref name="T"/> using the default build and execute strategies and constructor arguments.
+        ///     Creates an instance of <typeparamref name="T" /> using the default build and execute strategies and constructor
+        ///     arguments.
         /// </summary>
         /// <typeparam name="T">The type of instance to create.</typeparam>
         /// <param name="args">The constructor arguments to create the type with.</param>
@@ -34,7 +34,7 @@ namespace ModelBuilder
         }
 
         /// <summary>
-        /// Returns a default execute strategy with a default build strategy.
+        ///     Returns a default execute strategy with a default build strategy.
         /// </summary>
         /// <typeparam name="T">The type of instance to create using the execute strategy.</typeparam>
         /// <returns>A new execute strategy.</returns>
@@ -44,12 +44,12 @@ namespace ModelBuilder
         }
 
         /// <summary>
-        /// Returns a <see cref="IBuildStrategy"/> with a new <see cref="IgnoreRule"/> that matches the specified expression.
+        ///     Returns a <see cref="IBuildStrategy" /> with a new <see cref="IgnoreRule" /> that matches the specified expression.
         /// </summary>
         /// <typeparam name="T">The type of instance that matches the rule.</typeparam>
-        /// <param name="expression">The expression that identifies a property on <typeparamref name="T"/></param>
+        /// <param name="expression">The expression that identifies a property on <typeparamref name="T" /></param>
         /// <returns>A new build strategy.</returns>
-        /// <exception cref="ArgumentNullException">The <paramref name="expression"/> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="expression" /> parameter is null.</exception>
         public static IBuildStrategy Ignoring<T>(Expression<Func<T, object>> expression)
         {
             if (expression == null)
@@ -61,7 +61,7 @@ namespace ModelBuilder
         }
 
         /// <summary>
-        /// Populates the properties of the specified instance using the default build and execute strategies.
+        ///     Populates the properties of the specified instance using the default build and execute strategies.
         /// </summary>
         /// <typeparam name="T">The type of instance to create.</typeparam>
         /// <returns>The new instance.</returns>
@@ -71,7 +71,7 @@ namespace ModelBuilder
         }
 
         /// <summary>
-        /// Returns a new <see cref="IBuildStrategy"/> of the specified type.
+        ///     Returns a new <see cref="IBuildStrategy" /> of the specified type.
         /// </summary>
         /// <typeparam name="T">The type of build strategy to create.</typeparam>
         /// <returns>A new build strategy.</returns>
@@ -81,9 +81,9 @@ namespace ModelBuilder
 
             return strategy;
         }
-        
+
         /// <summary>
-        /// Returns a new execute strategy using <see cref="ModelBuilder.DefaultBuildStrategy"/>.
+        ///     Returns a new execute strategy using <see cref="ModelBuilder.DefaultBuildStrategy" />.
         /// </summary>
         /// <typeparam name="T">The type of execute strategy to create.</typeparam>
         /// <returns>A new execute strategy.</returns>
@@ -92,13 +92,29 @@ namespace ModelBuilder
             return BuildStrategy.With<T>();
         }
 
+        private static IBuildStrategy CreateDefaultBuildStrategy()
+        {
+            var compiler = new DefaultBuildStrategyCompiler();
+
+            return compiler.Compile();
+        }
+
         /// <summary>
-        /// Gets or sets the current build strategy to use in this application domain.
+        ///     Gets or sets the current build strategy to use in this application domain.
         /// </summary>
-        /// <exception cref="ArgumentNullException">The <paramref name="value"/> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="value" /> parameter is null.</exception>
         public static IBuildStrategy BuildStrategy
         {
-            get { return _buildStrategy; }
+            get
+            {
+                // Handle the edge case where the _buildStrategy may have been assigned in the static before _defaultBuildStrategy
+                if (_buildStrategy == null)
+                {
+                    _buildStrategy = DefaultBuildStrategy;
+                }
+
+                return _buildStrategy;
+            }
             set
             {
                 if (value == null)
@@ -111,8 +127,8 @@ namespace ModelBuilder
         }
 
         /// <summary>
-        /// Gets or sets the default build strategy.
+        ///     Gets or sets the default build strategy.
         /// </summary>
-        public static IBuildStrategy DefaultBuildStrategy => _defaultBuildStrategy;
+        public static IBuildStrategy DefaultBuildStrategy { get; } = CreateDefaultBuildStrategy();
     }
 }
