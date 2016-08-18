@@ -86,7 +86,17 @@
     <Compile Include="BuildStrategyTests.cs" />
     <Compile Include="CreationRuleTests.cs" />
     <Compile Include="DefaultBuildLogTests.cs" />
+    <Compile Include="DefaultBuildStrategyCompilerTests.cs" />
     <Compile Include="DummyCreationRule.cs">
+      <DependentUpon>DummyTypes.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DummyExecuteOrderRule.cs">
+      <DependentUpon>DummyTypes.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DummyIgnoreRule.cs">
+      <DependentUpon>DummyTypes.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DummyPostBuildAction.cs">
       <DependentUpon>DummyTypes.cs</DependentUpon>
     </Compile>
     <Compile Include="ExpressionExtensionTests.cs" />
@@ -100,6 +110,7 @@
     <Compile Include="PersonWithoutGender.cs">
       <DependentUpon>Models.cs</DependentUpon>
     </Compile>
+    <Compile Include="TestCompilerModule.cs" />
     <Compile Include="UriValueGeneratorTests.cs" />
     <Compile Include="Numbers.cs">
       <DependentUpon>Models.cs</DependentUpon>
@@ -145,7 +156,6 @@
     <Compile Include="Company.cs">
       <DependentUpon>Models.cs</DependentUpon>
     </Compile>
-    <Compile Include="DefaultBuildStrategyTests.cs" />
     <Compile Include="DefaultConstructorResolverTests.cs" />
     <Compile Include="DefaultExecuteStrategyTests.cs" />
     <Compile Include="DefaultTypeCreatorTests.cs" />

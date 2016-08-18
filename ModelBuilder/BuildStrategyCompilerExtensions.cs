@@ -4,6 +4,7 @@
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Linq.Expressions;
+    using System.Reflection;
 
     /// <summary>
     ///     The <see cref="BuildStrategyCompilerExtensions" />
@@ -614,6 +615,31 @@
         }
 
         /// <summary>
+        ///     Scans available assemblies for <see cref="ICompilerModule" /> types that can configure the specified compiler.
+        /// </summary>
+        /// <param name="compiler">The compiler to configure.</param>
+        /// <exception cref="ArgumentNullException">The <paramref name="compiler" /> parameter is <c>null</c>.</exception>
+        public static void ScanModules(this IBuildStrategyCompiler compiler)
+        {
+            if (compiler == null)
+            {
+                throw new ArgumentNullException(nameof(compiler));
+            }
+
+            var types = GetAvailableAssemblies().SelectMany(x => x.GetTypes());
+            var modules = from x in types
+                where typeof(ICompilerModule).IsAssignableFrom(x)
+                      && x.IsAbstract == false
+                      && x.IsInterface == false
+                select (ICompilerModule) Activator.CreateInstance(x);
+
+            foreach (var module in modules)
+            {
+                module.Configure(compiler);
+            }
+        }
+
+        /// <summary>
         ///     Sets the constructor resolver on the compiler.
         /// </summary>
         /// <typeparam name="T">The type of constructor resolver to use.</typeparam>
@@ -663,6 +689,13 @@
             compiler.ConstructorResolver = resolver;
 
             return compiler;
+        }
+
+        private static Assembly[] GetAvailableAssemblies()
+        {
+            // NOTE: This is written this way so that a future version can use compiler
+            // constants to provide a different implementation for netstandard
+            return AppDomain.CurrentDomain.GetAssemblies();
         }
     }
 }

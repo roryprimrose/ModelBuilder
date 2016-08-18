@@ -65,7 +65,16 @@ organisation.Staff.SetEach(x => x.Email = null);
 
 ## Customizing the process
 
-ModelBuilder is designed with extensibility in mind. There are many ways that the process of building models can be customized. The extensibility points are:
+ModelBuilder is designed with extensibility in mind. There are many ways that you can customize the build configuration and the process of building models. 
+
+The extensibility points for customizing the build configuration are:
+
+- BuildStrategyCompiler
+- CompilerModule
+- BuildStrategy
+- ExecuteStrategy
+
+The extensibility points controlling how to create models are:
 
 - TypeCreators
 - ValueGenerators
@@ -75,20 +84,43 @@ ModelBuilder is designed with extensibility in mind. There are many ways that th
 - PostBuildActions
 - ConstructorResolver
 
-ModelBuilder uses a BuildStrategy that defines this configuration and is the source of all model creation requests.
+### BuildStrategyCompiler
 
-### BuildStrategy and ExecuteStrategy
-ModelBuilder uses two layers for assisting in creating instances of models, the BuildStrategy and the ExecutionStrategy. They both hold references to the same construction configuration but have different purposes.
+A BuildStrategyCompiler provides the ability to define the configuration options of the above extensibility points and can compile a BuildStrategy. There is an inbuilt compiler that provides a default configuration to provide an out of the box BuildStrategy.
+    
+### CompilerModules
+The behaviour of ModelBuilder is to create a BuildStrategy using a pre-defined BuildStrategyCompiler that includes a default configuration. It then scans for CompilerModules in the loaded assemblies to support additional configuration of the BuildStrategyCompiler before compiling a BuildStrategy.
 
-A BuildStrategy is a higher level construct that provides a read-only view of the construction configuration. It exposes a method for getting an instance of IExecutionStrategy&lt;T&gt;. The purpose here is that code calling ModelBuilder should have a clear understanding of how a model is constructed via the configuration items. The BuildStrategy enforces this by being a read-only source of that configuration.
+Using a CompilerModule is the easiest mechanism of configuring the default BuildStrategy. Simply by creating a class that implements ICompilerModule will cause the class to be executed on the first call to Model.Create&lt;T&gt;.
 
-You can create a custom BuildStrategy from scratch by creating your own type that implements IBuildStrategy. You can also assign this instance as the default BuildStrategy against Model.
+```
+public class MyCustomCompilerModule : ICompilerModule
+{
+    public void Configure(IBuildStrategyCompiler compiler)
+    {
+        compiler.Add(new MyCustomExecuteOrderRule());
+        compiler.Add(new MyCustomIgnoreRule());
+        compiler.Add(new MyCustomPostBuildAction());
+        compiler.Add(new MyCustomCreationRule());
+        compiler.Add(new MyCustomTypeCreator());
+        compiler.Add(new MyCustomValueGenerator());
+    }
+}
+```
+
+### BuildStrategy 
+
+A BuildStrategy contains the configuration of how to create models via all the above extesibility points. It exposes this configuration in a read-only manner. This ensures a consistent behaviour for creating models. BuildStrategy exposes an ExecuteStrategy instance via the GetExecuteStrategy&lt;T&gt; method.
+    
+Creating a model ultimately starts with a BuildStrategy configuration. There are a couple of options for building this configuration. 
+
+You can create a custom BuildStrategy from scratch by creating your own type that implements IBuildStrategy. You can then assign this instance as the default BuildStrategy against Model which is then used in calls to Model.Create&lt;T&gt;.
 
 ```
 Model.BuildStrategy = new CustomBuildStrategy();
 ```
 
-Most often you will want to enhance the existing build strategy. This can be done by cloning, customizing and compiling a new build strategy.
+The other option is to use a BuildStrategyCompiler which compiles a new BuildStrategy instance with a custom configuration. You can get a compiler from an existing BuildStrategy using the IBuildStrategy.Clone() extension method. A new BuildStrategy compiled from the BuildStrategyCompiler can then also be assigned against Model.BuildStrategy.
 
 ```
 var strategy = ModelBuilder.DefaultBuildStrategy
@@ -106,12 +138,16 @@ var strategy = ModelBuilder.DefaultBuildStrategy
 Model.BuildStrategy = strategy;
 ```
 
-You may want to create multiple build strategies that support different model constructor designs. These can be used on the fly as well.
+You may want to create multiple build strategies that support different model construction designs. These can be used on the fly as well.
 
 ```
 var model = Model.Using<CustomBuildStrategy>().Create<Person>();
 ```
 
+### ExecuteStrategy
+
+ExecuteStrategy provides the logic that creates a model instance from the configuration in a provided BuildStrategy.
+    
 ### Type creators
 
 Type creators are used to create instances of classes, or reference types with the exception of System.String. There are two type creators that ModelBuilder provides out of the box. DefaultTypeCreator and EnumerableTypeCreator.

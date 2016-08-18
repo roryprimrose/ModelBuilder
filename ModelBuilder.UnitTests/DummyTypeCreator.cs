@@ -14,6 +14,11 @@
             throw new NotImplementedException();
         }
 
+        public override bool IsSupported(Type type, string referenceName, LinkedList<object> buildChain)
+        {
+            return false;
+        }
+
         public void VerifyWithNullType()
         {
             VerifyCreateRequest(null, null, null);

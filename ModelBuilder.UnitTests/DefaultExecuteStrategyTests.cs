@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Collections.ObjectModel;
     using System.IO;
     using System.Linq;
     using FluentAssertions;
@@ -23,7 +22,7 @@
         [Fact]
         public void BuildChainShouldBeEmptyAfterCreateCompletedTest()
         {
-            var target = new DefaultBuildStrategy().GetExecuteStrategy<Company>();
+            var target = new DefaultExecuteStrategy<Company>();
 
             target.BuildChain.Should().BeEmpty();
 
@@ -37,7 +36,7 @@
         {
             var firstAction = Substitute.For<IPostBuildAction>();
             var secondAction = Substitute.For<IPostBuildAction>();
-            var buildStrategy = new DefaultBuildStrategy().Clone()
+            var buildStrategy = new DefaultBuildStrategyCompiler()
                 .Add(firstAction)
                 .Add(secondAction).Compile();
             var executeCount = 0;
@@ -73,7 +72,7 @@
         {
             var firstAction = Substitute.For<IPostBuildAction>();
             var secondAction = Substitute.For<IPostBuildAction>();
-            var buildStrategy = new DefaultBuildStrategy().Clone()
+            var buildStrategy = new DefaultBuildStrategyCompiler()
                 .Add(firstAction)
                 .Add(secondAction).Compile();
 
@@ -94,8 +93,7 @@
         [Fact]
         public void CreatesCircularReferenceWithInstanceFromBuildChainTest()
         {
-            var strategy = new DefaultBuildStrategy();
-            var target = strategy.GetExecuteStrategy<Top>();
+            var target = new DefaultExecuteStrategy<Top>();
 
             var actual = target.Create();
 
@@ -111,8 +109,7 @@
         [Fact]
         public void CreatesPropertyOfSameTypeWithCreatedInstanceTest()
         {
-            var strategy = new DefaultBuildStrategy();
-            var target = strategy.GetExecuteStrategy<Looper>();
+            var target = new DefaultExecuteStrategy<Looper>();
 
             var actual = target.Create();
 
@@ -668,7 +665,7 @@
             typeCreator.Create(typeof(Address), "Address", Arg.Any<LinkedList<object>>())
                 .Throws(new InvalidOperationException());
 
-            var buildStrategy = new DefaultBuildStrategy().Clone().Add(typeCreator).Compile();
+            var buildStrategy = new DefaultBuildStrategyCompiler().Add(typeCreator).Compile();
 
             var target = new DefaultExecuteStrategy<Person>
             {
@@ -837,7 +834,7 @@
         {
             var target = new DefaultExecuteStrategy<string>();
 
-            target.BuildStrategy.Should().BeOfType<DefaultBuildStrategy>();
+            target.BuildStrategy.Should().NotBeNull();
         }
 
         [Fact]
@@ -964,6 +961,7 @@
             var expected = new PopulateOrderItem();
             var valueGenerators = new List<IValueGenerator>();
             var typeCreators = new List<ITypeCreator>();
+            var executeOrderRules = Model.BuildStrategy.ExecuteOrderRules;
 
             var buildStrategy = Substitute.For<IBuildStrategy>();
             var typeCreator = Substitute.For<ITypeCreator>();
@@ -974,8 +972,7 @@
 
             buildStrategy.TypeCreators.Returns(typeCreators.AsReadOnly());
             buildStrategy.ValueGenerators.Returns(valueGenerators.AsReadOnly());
-            buildStrategy.ExecuteOrderRules.Returns(
-                new ReadOnlyCollection<ExecuteOrderRule>(DefaultBuildStrategy.DefaultExecuteOrderRules.ToList()));
+            buildStrategy.ExecuteOrderRules.Returns(executeOrderRules);
 
             var target = new DefaultExecuteStrategy<PopulateOrderItem>
             {

@@ -13,7 +13,7 @@
         [Fact]
         public void CloneReturnsCompilerWithBuildStrategyConfigurationTest()
         {
-            var target = new DefaultBuildStrategy().Clone().AddIgnoreRule<Person>(x => x.Address).Compile();
+            var target = new DefaultBuildStrategyCompiler().AddIgnoreRule<Person>(x => x.Address).Compile();
 
             var actual = target.Clone();
 
@@ -102,14 +102,18 @@
         [Fact]
         public void IgnoringReturnsNewBuildStrategyWithIgnoreRuleAppendedTest()
         {
-            var target = new DefaultBuildStrategy();
+            var target = Model.BuildStrategy;
 
             var actual = target.Ignoring<Person>(x => x.Priority);
 
             actual.Should().NotBeSameAs(target);
             actual.IgnoreRules.Should().NotBeEmpty();
-            actual.IgnoreRules.First().PropertyName.Should().Be("Priority");
-            actual.IgnoreRules.First().TargetType.Should().Be<Person>();
+
+            var matchingRule =
+                actual.IgnoreRules.FirstOrDefault(
+                    x => x.PropertyName == "Priority" && x.TargetType == typeof(Person));
+
+            matchingRule.Should().NotBeNull();
         }
 
         [Fact]
@@ -181,6 +185,7 @@
         [Fact]
         public void WithReturnsExecuteStrategyWithBuildStrategyConfigurationsTest()
         {
+            var strategy = Model.BuildStrategy;
             var ignoreRules = new List<IgnoreRule>
             {
                 new IgnoreRule(typeof(string), "Stuff")
@@ -188,14 +193,14 @@
 
             var target = Substitute.For<IBuildStrategy>();
 
-            target.BuildLog.Returns(DefaultBuildStrategy.DefaultBuildLog);
-            target.ConstructorResolver.Returns(DefaultBuildStrategy.DefaultConstructorResolver);
+            target.BuildLog.Returns(strategy.BuildLog);
+            target.ConstructorResolver.Returns(strategy.ConstructorResolver);
             target.ExecuteOrderRules.Returns(
-                new ReadOnlyCollection<ExecuteOrderRule>(DefaultBuildStrategy.DefaultExecuteOrderRules.ToList()));
+                new ReadOnlyCollection<ExecuteOrderRule>(strategy.ExecuteOrderRules.ToList()));
             target.TypeCreators.Returns(
-                new ReadOnlyCollection<ITypeCreator>(DefaultBuildStrategy.DefaultTypeCreators.ToList()));
+                new ReadOnlyCollection<ITypeCreator>(strategy.TypeCreators.ToList()));
             target.ValueGenerators.Returns(
-                new ReadOnlyCollection<IValueGenerator>(DefaultBuildStrategy.DefaultValueGenerators.ToList()));
+                new ReadOnlyCollection<IValueGenerator>(strategy.ValueGenerators.ToList()));
             target.IgnoreRules.Returns(new ReadOnlyCollection<IgnoreRule>(ignoreRules));
 
             var actual = target.With<DefaultExecuteStrategy<Person>>();
