@@ -83,7 +83,7 @@
         }
 
         /// <summary>
-        ///     Returns a new execute strategy using <see cref="ModelBuilder.DefaultBuildStrategy" />.
+        ///     Returns a new execute strategy using <see cref="ModelBuilder.BuildStrategy" />.
         /// </summary>
         /// <typeparam name="T">The type of execute strategy to create.</typeparam>
         /// <returns>A new execute strategy.</returns>
