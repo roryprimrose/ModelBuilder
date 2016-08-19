@@ -93,6 +93,12 @@
     <Compile Include="DefaultBuildStrategyCompiler.cs">
       <DependentUpon>IBuildStrategyCompiler.cs</DependentUpon>
     </Compile>
+    <Compile Include="DefaultExecuteStrategy.cs">
+      <DependentUpon>IExecuteStrategy.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DefaultExecuteStrategyT.cs">
+      <DependentUpon>IExecuteStrategy.cs</DependentUpon>
+    </Compile>
     <Compile Include="DomainNameValueGenerator.cs">
       <DependentUpon>IValueGenerator.cs</DependentUpon>
     </Compile>
@@ -167,9 +173,6 @@
     </Compile>
     <Compile Include="DefaultConstructorResolver.cs">
       <DependentUpon>IConstructorResolver.cs</DependentUpon>
-    </Compile>
-    <Compile Include="DefaultExecuteStrategy.cs">
-      <DependentUpon>IExecuteStrategy.cs</DependentUpon>
     </Compile>
     <Compile Include="DefaultTypeCreator.cs">
       <DependentUpon>ITypeCreator.cs</DependentUpon>
