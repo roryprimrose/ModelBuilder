@@ -32,6 +32,7 @@ namespace ModelBuilder
         /// <param name="instanceType">The type of instance to create.</param>
         /// <returns>The new instance.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="instanceType" /> parameter is null.</exception>
         public static object Create(this IExecuteStrategy executeStrategy, Type instanceType)
         {
             if (executeStrategy == null)

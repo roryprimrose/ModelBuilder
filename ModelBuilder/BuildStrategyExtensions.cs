@@ -1,21 +1,21 @@
-using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq.Expressions;
-
 namespace ModelBuilder
 {
+    using System;
+    using System.Diagnostics.CodeAnalysis;
+    using System.Linq.Expressions;
+
     /// <summary>
-    /// The <see cref="Extensions"/>
-    /// class provides extension methods for the <see cref="IBuildStrategy"/> interface.
+    ///     The <see cref="Extensions" />
+    ///     class provides extension methods for the <see cref="IBuildStrategy" /> interface.
     /// </summary>
     public static class BuildStrategyExtensions
     {
         /// <summary>
-        /// Clones the specified builder strategy and returns a compiler.
+        ///     Clones the specified builder strategy and returns a compiler.
         /// </summary>
         /// <param name="buildStrategy">The build strategy to create the instance with.</param>
         /// <returns>The new build strategy compiler.</returns>
-        /// <exception cref="ArgumentNullException">The <paramref name="buildStrategy"/> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="buildStrategy" /> parameter is null.</exception>
         public static IBuildStrategyCompiler Clone(this IBuildStrategy buildStrategy)
         {
             if (buildStrategy == null)
@@ -53,12 +53,12 @@ namespace ModelBuilder
         }
 
         /// <summary>
-        /// Creates an instance of <typeparamref name="T"/> using the specified build strategy.
+        ///     Creates an instance of <typeparamref name="T" /> using the specified build strategy.
         /// </summary>
         /// <typeparam name="T">The type of instance to create.</typeparam>
         /// <param name="buildStrategy">The build strategy to create the instance with.</param>
         /// <returns>The new instance.</returns>
-        /// <exception cref="ArgumentNullException">The <paramref name="buildStrategy"/> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="buildStrategy" /> parameter is null.</exception>
         public static T Create<T>(this IBuildStrategy buildStrategy)
         {
             if (buildStrategy == null)
@@ -70,13 +70,36 @@ namespace ModelBuilder
         }
 
         /// <summary>
-        /// Creates an instance of <typeparamref name="T"/> using the specified build strategy and constructor arguments.
+        ///     Creates an instance of a type using the specified build strategy.
+        /// </summary>
+        /// <param name="buildStrategy">The build strategy to create the instance with.</param>
+        /// <param name="instanceType">The type of instance to create.</param>
+        /// <returns>The new instance.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="buildStrategy" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="instanceType" /> parameter is null.</exception>
+        public static object Create(this IBuildStrategy buildStrategy, Type instanceType)
+        {
+            if (buildStrategy == null)
+            {
+                throw new ArgumentNullException(nameof(buildStrategy));
+            }
+
+            if (instanceType == null)
+            {
+                throw new ArgumentNullException(nameof(instanceType));
+            }
+
+            return buildStrategy.CreateWith(instanceType);
+        }
+
+        /// <summary>
+        ///     Creates an instance of <typeparamref name="T" /> using the specified build strategy and constructor arguments.
         /// </summary>
         /// <typeparam name="T">The type of instance to create.</typeparam>
         /// <param name="buildStrategy">The build strategy to create the instance with.</param>
         /// <param name="args">The constructor arguments to create the type with.</param>
         /// <returns>The new instance.</returns>
-        /// <exception cref="ArgumentNullException">The <paramref name="buildStrategy"/> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="buildStrategy" /> parameter is null.</exception>
         public static T CreateWith<T>(this IBuildStrategy buildStrategy, params object[] args)
         {
             if (buildStrategy == null)
@@ -88,18 +111,46 @@ namespace ModelBuilder
         }
 
         /// <summary>
-        /// Appends a new <see cref="IgnoreRule"/> to the specified <see cref="IExecuteStrategy{T}"/> using the specified expression.
+        ///     Creates an instance of a type using the specified build strategy and constructor arguments.
+        /// </summary>
+        /// <param name="buildStrategy">The build strategy to create the instance with.</param>
+        /// <param name="instanceType">The type of instance to create.</param>
+        /// <param name="args">The constructor arguments to create the type with.</param>
+        /// <returns>The new instance.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="buildStrategy" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="instanceType" /> parameter is null.</exception>
+        public static object CreateWith(this IBuildStrategy buildStrategy, Type instanceType, params object[] args)
+        {
+            if (buildStrategy == null)
+            {
+                throw new ArgumentNullException(nameof(buildStrategy));
+            }
+
+            if (instanceType == null)
+            {
+                throw new ArgumentNullException(nameof(instanceType));
+            }
+
+            return buildStrategy.With<DefaultExecuteStrategy>().CreateWith(instanceType, args);
+        }
+
+        /// <summary>
+        ///     Appends a new <see cref="IgnoreRule" /> to the specified <see cref="IExecuteStrategy{T}" /> using the specified
+        ///     expression.
         /// </summary>
         /// <typeparam name="T">The type of instance that matches the rule.</typeparam>
         /// <param name="buildStrategy">The build strategy to clone.</param>
-        /// <param name="expression">The expression that identifies a property on <typeparamref name="T"/></param>
+        /// <param name="expression">The expression that identifies a property on <typeparamref name="T" /></param>
         /// <returns>A cloned build strategy with the new rule.</returns>
-        /// <exception cref="ArgumentNullException">The <paramref name="buildStrategy"/> parameter is null.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="expression"/> parameter is null.</exception>
-        /// <exception cref="ArgumentException">The <paramref name="expression"/> parameter does not represent a property.</exception>
-        /// <exception cref="ArgumentException">The <paramref name="expression"/> parameter does not match a property on the type to generate.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="buildStrategy" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="expression" /> parameter is null.</exception>
+        /// <exception cref="ArgumentException">The <paramref name="expression" /> parameter does not represent a property.</exception>
+        /// <exception cref="ArgumentException">
+        ///     The <paramref name="expression" /> parameter does not match a property on the type
+        ///     to generate.
+        /// </exception>
         [SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters",
-            Justification = "This type is required in order to support the fluent syntax of call sites.")]
+             Justification = "This type is required in order to support the fluent syntax of call sites.")]
         public static IBuildStrategy Ignoring<T>(this IBuildStrategy buildStrategy,
             Expression<Func<T, object>> expression)
         {
@@ -122,13 +173,13 @@ namespace ModelBuilder
         }
 
         /// <summary>
-        /// Populates the instance using the specified build strategy.
+        ///     Populates the instance using the specified build strategy.
         /// </summary>
         /// <typeparam name="T">The type of instance to populate.</typeparam>
         /// <param name="buildStrategy">The build strategy.</param>
         /// <param name="instance">The instance to populate.</param>
         /// <returns>The updated instance.</returns>
-        /// <exception cref="ArgumentNullException">The <paramref name="buildStrategy"/> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="buildStrategy" /> parameter is null.</exception>
         public static T Populate<T>(this IBuildStrategy buildStrategy, T instance)
         {
             if (buildStrategy == null)
@@ -140,12 +191,12 @@ namespace ModelBuilder
         }
 
         /// <summary>
-        /// Returns a new <see cref="IExecuteStrategy{T}"/> for the specified build strategy.
+        ///     Returns a new <see cref="IExecuteStrategy{T}" /> for the specified build strategy.
         /// </summary>
         /// <typeparam name="T">The type of execute strategy to return.</typeparam>
         /// <param name="buildStrategy">The build strategy.</param>
         /// <returns>A new execute strategy.</returns>
-        /// <exception cref="ArgumentNullException">The <paramref name="buildStrategy"/> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="buildStrategy" /> parameter is null.</exception>
         public static T With<T>(this IBuildStrategy buildStrategy) where T : IExecuteStrategy, new()
         {
             if (buildStrategy == null)
