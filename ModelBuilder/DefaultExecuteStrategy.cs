@@ -12,41 +12,19 @@
 
     /// <summary>
     ///     The <see cref="DefaultExecuteStrategy{T}" />
-    ///     class is used to create and populate <typeparamref name="T" /> instances.
+    ///     class is used to create types and populate instances.
     /// </summary>
-    /// <typeparam name="T">The type of instance to create and populate.</typeparam>
-    public class DefaultExecuteStrategy<T> : IExecuteStrategy<T>
+    public class DefaultExecuteStrategy : IExecuteStrategy
     {
         private readonly Stack _buildChain = new Stack();
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="DefaultExecuteStrategy{T}" /> class.
+        ///     Initializes a new instance of the <see cref="DefaultExecuteStrategy" /> class.
         /// </summary>
         public DefaultExecuteStrategy()
         {
             // Use the current global build strategy
             BuildStrategy = Model.BuildStrategy;
-        }
-
-        /// <inheritdoc />
-        /// <exception cref="NotSupportedException">
-        ///     No <see cref="IValueGenerator" /> or <see cref="ITypeCreator" /> was found to
-        ///     generate a requested type.
-        /// </exception>
-        /// <exception cref="BuildException">Failed to generate a requested type.</exception>
-        public virtual T CreateWith(params object[] args)
-        {
-            var requestedType = typeof(T);
-
-            var instance = Build(requestedType, null, null, args);
-
-            if (instance == null)
-            {
-                // We can't populate a null instance
-                return default(T);
-            }
-
-            return (T) instance;
         }
 
         /// <inheritdoc />
@@ -64,18 +42,6 @@
             }
 
             return Build(type, null, null, args);
-        }
-
-        /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">The <paramref name="instance" /> parameter is null.</exception>
-        /// <exception cref="NotSupportedException">
-        ///     No <see cref="IValueGenerator" /> or <see cref="ITypeCreator" /> was found to
-        ///     generate a requested type.
-        /// </exception>
-        /// <exception cref="BuildException">Failed to generate a requested type.</exception>
-        public virtual T Populate(T instance)
-        {
-            return (T) Populate((object) instance);
         }
 
         /// <inheritdoc />
@@ -103,6 +69,7 @@
                 _buildChain.Pop();
             }
         }
+
 
         /// <summary>
         ///     Builds an instance of the specified type.
@@ -276,7 +243,7 @@
 
                     // Check if there is a matching ignore rule
                     var ignoreRule = BuildStrategy.IgnoreRules?.FirstOrDefault(
-                        x => x.TargetType.IsAssignableFrom(type) && x.PropertyName == propertyInfo.Name);
+                        x => x.TargetType.IsAssignableFrom(type) && (x.PropertyName == propertyInfo.Name));
 
                     if (ignoreRule != null)
                     {

@@ -22,11 +22,11 @@
         [Fact]
         public void BuildChainShouldBeEmptyAfterCreateCompletedTest()
         {
-            var target = new DefaultExecuteStrategy<Company>();
+            var target = new DefaultExecuteStrategy();
 
             target.BuildChain.Should().BeEmpty();
 
-            target.Create();
+            target.Create(typeof(Company));
 
             target.BuildChain.Should().BeEmpty();
         }
@@ -56,12 +56,12 @@
                 executeCount.Should().Be(2);
             });
 
-            var target = new DefaultExecuteStrategy<Simple>
+            var target = new DefaultExecuteStrategy
             {
                 BuildStrategy = buildStrategy
             };
 
-            target.Create();
+            target.Create(typeof(Simple));
 
             firstAction.Received().Execute(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<LinkedList<object>>());
             secondAction.Received().Execute(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<LinkedList<object>>());
@@ -79,12 +79,12 @@
             firstAction.IsSupported(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<LinkedList<object>>()).Returns(false);
             secondAction.IsSupported(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<LinkedList<object>>()).Returns(true);
 
-            var target = new DefaultExecuteStrategy<Simple>
+            var target = new DefaultExecuteStrategy
             {
                 BuildStrategy = buildStrategy
             };
 
-            target.Create();
+            target.Create(typeof(Simple));
 
             firstAction.DidNotReceive().Execute(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<LinkedList<object>>());
             secondAction.Received().Execute(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<LinkedList<object>>());
@@ -93,9 +93,9 @@
         [Fact]
         public void CreatesCircularReferenceWithInstanceFromBuildChainTest()
         {
-            var target = new DefaultExecuteStrategy<Top>();
+            var target = new DefaultExecuteStrategy();
 
-            var actual = target.Create();
+            var actual = (Top) target.Create(typeof(Top));
 
             actual.Should().NotBeNull();
             actual.Value.Should().NotBeNullOrWhiteSpace();
@@ -109,9 +109,9 @@
         [Fact]
         public void CreatesPropertyOfSameTypeWithCreatedInstanceTest()
         {
-            var target = new DefaultExecuteStrategy<Looper>();
+            var target = new DefaultExecuteStrategy();
 
-            var actual = target.Create();
+            var actual = (Looper) target.Create(typeof(Looper));
 
             actual.Should().NotBeNull();
             actual.Stuff.Should().NotBeNullOrWhiteSpace();
@@ -131,7 +131,7 @@
 
             buildStrategy.TypeCreators.Returns(typeCreators.AsReadOnly());
 
-            var target = new DefaultExecuteStrategy<SlimModel>
+            var target = new DefaultExecuteStrategy
             {
                 BuildStrategy = buildStrategy
             };
@@ -142,14 +142,14 @@
             typeCreator.AutoPopulate.Returns(false);
             typeCreator.Populate(model, target).Returns(model);
 
-            var actual = target.CreateWith();
+            var actual = (SlimModel) target.CreateWith(typeof(SlimModel));
 
             actual.Should().BeSameAs(model);
             actual.Value.Should().BeEmpty();
         }
 
         [Fact]
-        public void CreateWithReturnsDefaultValueWhenInstanceFailsToBeCreatedTest()
+        public void CreateWithReturnsNullWhenInstanceFailsToBeCreatedTest()
         {
             var typeCreators = new List<ITypeCreator>();
 
@@ -161,18 +161,18 @@
             buildStrategy.TypeCreators.Returns(typeCreators.AsReadOnly());
             typeCreator.IsSupported(typeof(SlimModel), null, Arg.Any<LinkedList<object>>()).Returns(true);
 
-            var target = new DefaultExecuteStrategy<SlimModel>
+            var target = new DefaultExecuteStrategy
             {
                 BuildStrategy = buildStrategy
             };
 
-            var actual = target.CreateWith();
+            var actual = target.CreateWith(typeof(SlimModel));
 
             actual.Should().BeNull();
         }
 
         [Fact]
-        public void CreateWithReturnsDefaultValueWhenNoReferenceTypeCreatedTest()
+        public void CreateWithReturnsNullWhenNoReferenceTypeCreatedTest()
         {
             var typeCreators = new List<ITypeCreator>();
 
@@ -185,18 +185,18 @@
             typeCreator.IsSupported(typeof(Stream), null, Arg.Any<LinkedList<object>>()).Returns(true);
             typeCreator.Create(typeof(Stream), null, Arg.Any<LinkedList<object>>()).Returns(null);
 
-            var target = new DefaultExecuteStrategy<Stream>
+            var target = new DefaultExecuteStrategy
             {
                 BuildStrategy = buildStrategy
             };
 
-            var actual = target.CreateWith();
+            var actual = target.CreateWith(typeof(Stream));
 
             actual.Should().BeNull();
         }
 
         [Fact]
-        public void CreateWithReturnsDefaultValueWhenNoValueTypeCreatedTest()
+        public void CreateWithReturnsNullWhenNoValueTypeCreatedTest()
         {
             var valueGenerators = new List<IValueGenerator>();
 
@@ -209,14 +209,14 @@
             valueGenerator.IsSupported(typeof(int), null, Arg.Any<LinkedList<object>>()).Returns(true);
             valueGenerator.Generate(typeof(int), null, Arg.Any<LinkedList<object>>()).Returns(null);
 
-            var target = new DefaultExecuteStrategy<int>
+            var target = new DefaultExecuteStrategy
             {
                 BuildStrategy = buildStrategy
             };
 
-            var actual = target.CreateWith();
+            var actual = target.CreateWith(typeof(int));
 
-            actual.Should().Be(0);
+            actual.Should().BeNull();
         }
 
         [Fact]
@@ -238,7 +238,7 @@
             buildStrategy.TypeCreators.Returns(typeCreators.AsReadOnly());
             buildStrategy.ValueGenerators.Returns(valueGenerators.AsReadOnly());
 
-            var target = new DefaultExecuteStrategy<SlimModel>
+            var target = new DefaultExecuteStrategy
             {
                 BuildStrategy = buildStrategy
             };
@@ -252,7 +252,7 @@
             generator.Generate(typeof(Guid), "Value", Arg.Is<LinkedList<object>>(x => x.Last.Value == expected))
                 .Returns(value);
 
-            var actual = target.CreateWith();
+            var actual = (SlimModel) target.CreateWith(typeof(SlimModel));
 
             actual.Should().Be(expected);
             actual.Value.Should().Be(value);
@@ -280,7 +280,7 @@
 
             buildStrategy.TypeCreators.Returns(typeCreators.AsReadOnly());
 
-            var target = new DefaultExecuteStrategy<Person>
+            var target = new DefaultExecuteStrategy
             {
                 BuildStrategy = buildStrategy
             };
@@ -290,7 +290,7 @@
             typeCreator.Populate(expected, target).Returns(expected);
             typeCreator.AutoPopulate.Returns(false);
 
-            var actual = target.CreateWith(args);
+            var actual = target.CreateWith(typeof(Person), args);
 
             actual.Should().BeSameAs(expected);
         }
@@ -316,7 +316,7 @@
             buildStrategy.TypeCreators.Returns(typeCreators.AsReadOnly());
             buildStrategy.ValueGenerators.Returns(valueGenerators.AsReadOnly());
 
-            var target = new DefaultExecuteStrategy<SlimModel>
+            var target = new DefaultExecuteStrategy
             {
                 BuildStrategy = buildStrategy
             };
@@ -336,7 +336,7 @@
             generator.Generate(typeof(Guid), "Value", Arg.Is<LinkedList<object>>(x => x.Last.Value == secondModel))
                 .Returns(value);
 
-            var actual = target.CreateWith();
+            var actual = (SlimModel) target.CreateWith(typeof(SlimModel));
 
             actual.Should().BeSameAs(secondModel);
             actual.Value.Should().Be(value);
@@ -355,7 +355,7 @@
 
             buildStrategy.TypeCreators.Returns(typeCreators.AsReadOnly());
 
-            var target = new DefaultExecuteStrategy<Person>
+            var target = new DefaultExecuteStrategy
             {
                 BuildStrategy = buildStrategy
             };
@@ -366,7 +366,7 @@
             typeCreator.AutoPopulate.Returns(false);
             typeCreator.AutoDetectConstructor.Returns(false);
 
-            var actual = target.CreateWith();
+            var actual = target.CreateWith(typeof(Person));
 
             actual.Should().BeSameAs(expected);
         }
@@ -386,7 +386,7 @@
             buildStrategy.TypeCreators.Returns(typeCreators.AsReadOnly());
             buildStrategy.ConstructorResolver.Returns(resolver);
 
-            var target = new DefaultExecuteStrategy<Person>
+            var target = new DefaultExecuteStrategy
             {
                 BuildStrategy = buildStrategy
             };
@@ -399,7 +399,7 @@
             typeCreator.AutoPopulate.Returns(false);
             typeCreator.AutoDetectConstructor.Returns(true);
 
-            var actual = target.CreateWith();
+            var actual = target.CreateWith(typeof(Person));
 
             actual.Should().BeSameAs(expected);
         }
@@ -426,12 +426,12 @@
             secondGenerator.Generate(typeof(Guid), null, Arg.Any<LinkedList<object>>()).Returns(secondValue);
             secondGenerator.Priority.Returns(2);
 
-            var target = new DefaultExecuteStrategy<Guid>
+            var target = new DefaultExecuteStrategy
             {
                 BuildStrategy = buildStrategy
             };
 
-            var actual = target.CreateWith();
+            var actual = target.CreateWith(typeof(Guid));
 
             actual.Should().Be(secondValue);
         }
@@ -460,7 +460,7 @@
             buildStrategy.TypeCreators.Returns(typeCreators.AsReadOnly());
             buildStrategy.ValueGenerators.Returns(valueGenerators.AsReadOnly());
 
-            var target = new DefaultExecuteStrategy<ReadOnlyModel>
+            var target = new DefaultExecuteStrategy
             {
                 BuildStrategy = buildStrategy
             };
@@ -473,7 +473,7 @@
             generator.IsSupported(typeof(Guid), "value", Arg.Any<LinkedList<object>>()).Returns(true);
             generator.Generate(typeof(Guid), "value", Arg.Any<LinkedList<object>>()).Returns(value);
 
-            var actual = target.CreateWith();
+            var actual = (ReadOnlyModel) target.CreateWith(typeof(ReadOnlyModel));
 
             actual.Should().Be(expected);
             actual.Value.Should().Be(value);
@@ -491,12 +491,12 @@
                     .Add(new CreationRule(typeof(Person), "Id", 20, secondValue))
                     .Compile();
 
-            var target = new DefaultExecuteStrategy<Person>
+            var target = new DefaultExecuteStrategy
             {
                 BuildStrategy = buildStrategy
             };
 
-            var actual = target.CreateWith();
+            var actual = (Person) target.CreateWith(typeof(Person));
 
             actual.Id.Should().Be(secondValue);
         }
@@ -513,12 +513,12 @@
                     .Add(new CreationRule(typeof(Person), "Id", 20, secondValue))
                     .Compile();
 
-            var target = new DefaultExecuteStrategy<Person>
+            var target = new DefaultExecuteStrategy
             {
                 BuildStrategy = buildStrategy
             };
 
-            var actual = target.CreateWith();
+            var actual = (Person) target.CreateWith(typeof(Person));
 
             actual.Id.Should().Be(secondValue);
         }
@@ -544,7 +544,7 @@
             buildStrategy.TypeCreators.Returns(typeCreators.AsReadOnly());
             buildStrategy.ValueGenerators.Returns(valueGenerators.AsReadOnly());
 
-            var target = new DefaultExecuteStrategy<SlimModel>
+            var target = new DefaultExecuteStrategy
             {
                 BuildStrategy = buildStrategy
             };
@@ -564,7 +564,7 @@
             generator.Generate(typeof(Guid), "Value", Arg.Is<LinkedList<object>>(x => x.Last.Value == secondModel))
                 .Returns(value);
 
-            var actual = target.CreateWith();
+            var actual = (SlimModel) target.CreateWith(typeof(SlimModel));
 
             actual.Should().BeSameAs(secondModel);
             actual.Value.Should().Be(value);
@@ -592,12 +592,12 @@
             secondGenerator.Generate(typeof(Guid), null, Arg.Any<LinkedList<object>>()).Returns(secondValue);
             secondGenerator.Priority.Returns(2);
 
-            var target = new DefaultExecuteStrategy<Guid>
+            var target = new DefaultExecuteStrategy
             {
                 BuildStrategy = buildStrategy
             };
 
-            var actual = target.CreateWith();
+            var actual = target.CreateWith(typeof(Guid));
 
             actual.Should().Be(secondValue);
         }
@@ -617,12 +617,12 @@
             valueGenerator.IsSupported(typeof(string), null, Arg.Any<LinkedList<object>>()).Returns(true);
             valueGenerator.Generate(typeof(string), null, Arg.Any<LinkedList<object>>()).Returns(expected);
 
-            var target = new DefaultExecuteStrategy<string>
+            var target = new DefaultExecuteStrategy
             {
                 BuildStrategy = buildStrategy
             };
 
-            var actual = target.CreateWith();
+            var actual = target.CreateWith(typeof(string));
 
             actual.Should().Be(expected);
         }
@@ -643,12 +643,12 @@
             buildStrategy.ConstructorResolver.Returns(resolver);
             buildStrategy.TypeCreators.Returns(typeCreators.AsReadOnly());
 
-            var target = new DefaultExecuteStrategy<ReadOnlyModel>
+            var target = new DefaultExecuteStrategy
             {
                 BuildStrategy = buildStrategy
             };
 
-            Action action = () => target.CreateWith();
+            Action action = () => target.CreateWith(typeof(ReadOnlyModel));
 
             action.ShouldThrow<BuildException>();
         }
@@ -667,12 +667,12 @@
 
             var buildStrategy = new DefaultBuildStrategyCompiler().Add(typeCreator).Compile();
 
-            var target = new DefaultExecuteStrategy<Person>
+            var target = new DefaultExecuteStrategy
             {
                 BuildStrategy = buildStrategy
             };
 
-            Action action = () => target.CreateWith();
+            Action action = () => target.CreateWith(typeof(Person));
 
             var exception =
                 action.ShouldThrow<BuildException>().Where(x => x.Message != null).Where(x => x.BuildLog != null).Which;
@@ -685,12 +685,12 @@
         {
             var buildStrategy = Substitute.For<IBuildStrategy>();
 
-            var target = new NullTypeBuildExecuteStrategy<int>
+            var target = new NullTypeBuildExecuteStrategy
             {
                 BuildStrategy = buildStrategy
             };
 
-            Action action = () => target.CreateWith();
+            Action action = () => target.CreateWith(typeof(int));
 
             action.ShouldThrow<ArgumentNullException>();
         }
@@ -719,12 +719,12 @@
             buildStrategy.ValueGenerators.Returns(generators.AsReadOnly());
             buildStrategy.BuildLog.Returns(buildLog);
 
-            var target = new DefaultExecuteStrategy<Person>
+            var target = new DefaultExecuteStrategy
             {
                 BuildStrategy = buildStrategy
             };
 
-            Action action = () => target.CreateWith();
+            Action action = () => target.CreateWith(typeof(Person));
 
             var exception =
                 action.ShouldThrow<BuildException>().Where(x => x.Message != null).Where(x => x.BuildLog != null).Which;
@@ -756,12 +756,12 @@
             buildStrategy.ValueGenerators.Returns(generators.AsReadOnly());
             buildStrategy.BuildLog.Returns(buildLog);
 
-            var target = new DefaultExecuteStrategy<Person>
+            var target = new DefaultExecuteStrategy
             {
                 BuildStrategy = buildStrategy
             };
 
-            Action action = () => target.CreateWith();
+            Action action = () => target.CreateWith(typeof(Person));
 
             action.ShouldThrow<BuildException>();
         }
@@ -771,12 +771,12 @@
         {
             var buildStrategy = Substitute.For<IBuildStrategy>();
 
-            var target = new DefaultExecuteStrategy<string>
+            var target = new DefaultExecuteStrategy
             {
                 BuildStrategy = buildStrategy
             };
 
-            Action action = () => target.CreateWith();
+            Action action = () => target.CreateWith(typeof(string));
 
             action.ShouldThrow<BuildException>();
         }
@@ -796,12 +796,12 @@
             buildStrategy.ConstructorResolver.Returns(resolver);
             buildStrategy.TypeCreators.Returns(typeCreators.AsReadOnly());
 
-            var target = new DefaultExecuteStrategy<SlimModel>
+            var target = new DefaultExecuteStrategy
             {
                 BuildStrategy = buildStrategy
             };
 
-            Action action = () => target.CreateWith();
+            Action action = () => target.CreateWith(typeof(SlimModel));
 
             action.ShouldThrow<BuildException>();
         }
@@ -811,12 +811,12 @@
         {
             var buildStrategy = Substitute.For<IBuildStrategy>();
 
-            var target = new DefaultExecuteStrategy<int>
+            var target = new DefaultExecuteStrategy
             {
                 BuildStrategy = buildStrategy
             };
 
-            Action action = () => target.CreateWith((Type) null);
+            Action action = () => target.CreateWith(null);
 
             action.ShouldThrow<ArgumentNullException>();
         }
@@ -824,7 +824,7 @@
         [Fact]
         public void IsCreatedWithBuildChainInstanceTest()
         {
-            var target = new DefaultExecuteStrategy<Company>();
+            var target = new DefaultExecuteStrategy();
 
             target.BuildChain.Should().NotBeNull();
         }
@@ -832,7 +832,7 @@
         [Fact]
         public void IsCreatedWithBuildStrategyTest()
         {
-            var target = new DefaultExecuteStrategy<string>();
+            var target = new DefaultExecuteStrategy();
 
             target.BuildStrategy.Should().NotBeNull();
         }
@@ -857,7 +857,7 @@
             buildStrategy.TypeCreators.Returns(typeCreators.AsReadOnly());
             buildStrategy.ValueGenerators.Returns(valueGenerators.AsReadOnly());
 
-            var target = new DefaultExecuteStrategy<Company>
+            var target = new DefaultExecuteStrategy
             {
                 BuildStrategy = buildStrategy
             };
@@ -886,7 +886,7 @@
                 "Address",
                 Arg.Is<LinkedList<object>>(x => x.Last.Value == expected)).Returns(address);
 
-            var actual = (Company) target.Populate((object) expected);
+            var actual = (Company) target.Populate(expected);
 
             actual.Should().BeSameAs(expected);
             actual.Name.Should().Be(name);
@@ -914,7 +914,7 @@
             buildStrategy.TypeCreators.Returns(typeCreators.AsReadOnly());
             buildStrategy.ValueGenerators.Returns(valueGenerators.AsReadOnly());
 
-            var target = new DefaultExecuteStrategy<Company>
+            var target = new DefaultExecuteStrategy
             {
                 BuildStrategy = buildStrategy
             };
@@ -943,7 +943,7 @@
                 "Address",
                 Arg.Is<LinkedList<object>>(x => x.Last.Value == expected)).Returns(address);
 
-            var actual = target.Populate(expected);
+            var actual = (Company) target.Populate(expected);
 
             actual.Should().BeSameAs(expected);
             actual.Name.Should().Be(name);
@@ -974,7 +974,7 @@
             buildStrategy.ValueGenerators.Returns(valueGenerators.AsReadOnly());
             buildStrategy.ExecuteOrderRules.Returns(executeOrderRules);
 
-            var target = new DefaultExecuteStrategy<PopulateOrderItem>
+            var target = new DefaultExecuteStrategy
             {
                 BuildStrategy = buildStrategy
             };
@@ -999,7 +999,7 @@
                 .Returns(fourth);
             typeCreator.Populate(fourth, target).Returns(fourth);
 
-            var actual = target.Populate(expected);
+            var actual = (PopulateOrderItem) target.Populate(expected);
 
             actual.Should().BeSameAs(expected);
             actual.Z.Should().Be(first);
@@ -1034,7 +1034,7 @@
             buildStrategy.ValueGenerators.Returns(valueGenerators.AsReadOnly());
             buildStrategy.IgnoreRules.Returns(ignoreRules.AsReadOnly());
 
-            var target = new DefaultExecuteStrategy<Company>
+            var target = new DefaultExecuteStrategy
             {
                 BuildStrategy = buildStrategy
             };
@@ -1063,7 +1063,7 @@
                 "Address",
                 Arg.Is<LinkedList<object>>(x => x.Last.Value == expected)).Returns(address);
 
-            var actual = target.Populate(expected);
+            var actual = (Company) target.Populate(expected);
 
             actual.Should().BeSameAs(expected);
             actual.Name.Should().Be(name);
@@ -1097,7 +1097,7 @@
             buildStrategy.ValueGenerators.Returns(valueGenerators.AsReadOnly());
             buildStrategy.IgnoreRules.Returns(ignoreRules.AsReadOnly());
 
-            var target = new DefaultExecuteStrategy<Company>
+            var target = new DefaultExecuteStrategy
             {
                 BuildStrategy = buildStrategy
             };
@@ -1126,7 +1126,7 @@
                 "Address",
                 Arg.Is<LinkedList<object>>(x => x.Last.Value == expected)).Returns(address);
 
-            var actual = target.Populate(expected);
+            var actual = (Company) target.Populate(expected);
 
             actual.Should().BeSameAs(expected);
             actual.Name.Should().Be(name);
@@ -1160,7 +1160,7 @@
             buildStrategy.ValueGenerators.Returns(valueGenerators.AsReadOnly());
             buildStrategy.IgnoreRules.Returns(ignoreRules.AsReadOnly());
 
-            var target = new DefaultExecuteStrategy<Company>
+            var target = new DefaultExecuteStrategy
             {
                 BuildStrategy = buildStrategy
             };
@@ -1189,7 +1189,7 @@
                 "Address",
                 Arg.Is<LinkedList<object>>(x => x.Last.Value == expected)).Returns(address);
 
-            var actual = target.Populate(expected);
+            var actual = (Company) target.Populate(expected);
 
             actual.Should().BeSameAs(expected);
             actual.Name.Should().Be(name);
@@ -1221,7 +1221,7 @@
 
             buildStrategy.ValueGenerators.Returns(valueGenerators.AsReadOnly());
 
-            var target = new DefaultExecuteStrategy<PropertyScopes>
+            var target = new DefaultExecuteStrategy
             {
                 BuildStrategy = buildStrategy
             };
@@ -1229,7 +1229,7 @@
             valueGenerator.IsSupported(typeof(Guid), Arg.Any<string>(), Arg.Any<LinkedList<object>>()).Returns(true);
             valueGenerator.Generate(typeof(Guid), Arg.Any<string>(), Arg.Any<LinkedList<object>>()).Returns(value);
 
-            var actual = target.Populate(expected);
+            var actual = (PropertyScopes) target.Populate(expected);
 
             actual.Should().BeSameAs(expected);
             actual.Public.Should().Be(value);
@@ -1247,7 +1247,7 @@
             var log = Substitute.For<IBuildLog>();
 
             var instance = new SlimModel();
-            var target = new DefaultExecuteStrategy<SlimModel>
+            var target = new DefaultExecuteStrategy
             {
                 BuildStrategy = buildStrategy
             };
@@ -1274,19 +1274,19 @@
                         typeof(Guid),
                         nameof(SlimModel.Value),
                         Arg.Is<LinkedList<object>>(y => y.Last.Value == instance))).Do(
-                            x =>
-                            {
-                                target.BuildChain.Should().HaveCount(1);
-                                target.BuildChain.First().Should().BeOfType<SlimModel>();
-                                testPassed = true;
-                            });
+                x =>
+                {
+                    target.BuildChain.Should().HaveCount(1);
+                    target.BuildChain.First().Should().BeOfType<SlimModel>();
+                    testPassed = true;
+                });
 
             generator.IsSupported(
                 typeof(Guid),
                 nameof(SlimModel.Value),
                 Arg.Is<LinkedList<object>>(x => x.Last.Value == instance)).Returns(true);
 
-            target.Create();
+            target.Create(typeof(SlimModel));
 
             testPassed.Should().BeTrue();
         }
@@ -1299,7 +1299,7 @@
             var log = Substitute.For<IBuildLog>();
 
             var instance = new SlimModel();
-            var target = new DefaultExecuteStrategy<SlimModel>
+            var target = new DefaultExecuteStrategy
             {
                 BuildStrategy = buildStrategy
             };
@@ -1318,12 +1318,12 @@
                         typeof(Guid),
                         nameof(SlimModel.Value),
                         Arg.Is<LinkedList<object>>(y => y.Last.Value == instance))).Do(
-                            x =>
-                            {
-                                target.BuildChain.Should().HaveCount(1);
-                                target.BuildChain.Should().Contain(instance);
-                                testPassed = true;
-                            });
+                x =>
+                {
+                    target.BuildChain.Should().HaveCount(1);
+                    target.BuildChain.Should().Contain(instance);
+                    testPassed = true;
+                });
 
             generator.IsSupported(
                 typeof(Guid),
@@ -1345,7 +1345,7 @@
 
             var office = new Office();
             var address = new Address();
-            var target = new DefaultExecuteStrategy<Office>
+            var target = new DefaultExecuteStrategy
             {
                 BuildStrategy = buildStrategy
             };
@@ -1374,19 +1374,19 @@
                         typeof(string),
                         Arg.Any<string>(),
                         Arg.Is<LinkedList<object>>(y => y.Last.Value == address))).Do(
-                            x =>
-                            {
-                                target.BuildChain.Should().HaveCount(2);
-                                target.BuildChain.First.Value.Should().Be(office);
-                                target.BuildChain.Last.Value.Should().Be(address);
-                                testPassed = true;
-                            });
+                x =>
+                {
+                    target.BuildChain.Should().HaveCount(2);
+                    target.BuildChain.First.Value.Should().Be(office);
+                    target.BuildChain.Last.Value.Should().Be(address);
+                    testPassed = true;
+                });
 
             generator.IsSupported(typeof(string), Arg.Any<string>(), Arg.Any<LinkedList<object>>()).Returns(true);
             generator.Generate(typeof(string), Arg.Any<string>(), Arg.Any<LinkedList<object>>())
                 .Returns(Guid.NewGuid().ToString());
 
-            target.Create();
+            target.Create(typeof(Office));
 
             testPassed.Should().BeTrue();
         }
@@ -1417,7 +1417,7 @@
             buildStrategy.ValueGenerators.Returns(valueGenerators.AsReadOnly());
             buildStrategy.IgnoreRules.Returns(ignoreRules.AsReadOnly());
 
-            var target = new DefaultExecuteStrategy<Company>
+            var target = new DefaultExecuteStrategy
             {
                 BuildStrategy = buildStrategy
             };
@@ -1446,7 +1446,7 @@
                 "Address",
                 Arg.Is<LinkedList<object>>(x => x.Last.Value == expected)).Returns(address);
 
-            var actual = target.Populate(expected);
+            var actual = (Company) target.Populate(expected);
 
             actual.Should().BeSameAs(expected);
             actual.Name.Should().BeNullOrEmpty();
@@ -1479,7 +1479,7 @@
             buildStrategy.ValueGenerators.Returns(valueGenerators.AsReadOnly());
             buildStrategy.IgnoreRules.Returns(ignoreRules.AsReadOnly());
 
-            var target = new DefaultExecuteStrategy<SpecificCompany>
+            var target = new DefaultExecuteStrategy
             {
                 BuildStrategy = buildStrategy
             };
@@ -1502,7 +1502,7 @@
                 Arg.Any<string>(),
                 Arg.Is<LinkedList<object>>(x => x.Last.Value == expected)).Returns(name);
 
-            var actual = target.Populate(expected);
+            var actual = (SpecificCompany) target.Populate(expected);
 
             actual.Should().BeSameAs(expected);
             actual.Name.Should().BeNullOrEmpty();
@@ -1540,7 +1540,7 @@
             public string Stuff { get; set; }
         }
 
-        private class PopulateInstanceWrapper : DefaultExecuteStrategy<Company>
+        private class PopulateInstanceWrapper : DefaultExecuteStrategy
         {
             public void RunTest()
             {
