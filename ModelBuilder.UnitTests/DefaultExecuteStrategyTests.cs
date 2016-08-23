@@ -91,6 +91,19 @@
         }
 
         [Fact]
+        public void CreatePopulatesReadOnlyReferencePropertiesTest()
+        {
+            var target = new DefaultExecuteStrategy<ReadOnlyParent>();
+
+            var actual = target.Create();
+
+            actual.Company.Address.Should().NotBeNullOrWhiteSpace();
+            actual.AssignablePeople.Should().NotBeEmpty();
+            actual.People.Should().NotBeEmpty();
+            actual.RestrictedPeople.Should().BeEmpty();
+        }
+
+        [Fact]
         public void CreatesCircularReferenceWithInstanceFromBuildChainTest()
         {
             var target = new DefaultExecuteStrategy<Top>();
@@ -1239,6 +1252,21 @@
         }
 
         [Fact]
+        public void PopulatePopulatesReadOnlyReferencePropertiesTest()
+        {
+            var target = new DefaultExecuteStrategy<ReadOnlyParent>();
+
+            var actual = new ReadOnlyParent();
+
+            actual = target.Populate(actual);
+
+            actual.Company.Address.Should().NotBeNullOrWhiteSpace();
+            actual.AssignablePeople.Should().NotBeEmpty();
+            actual.People.Should().NotBeEmpty();
+            actual.RestrictedPeople.Should().BeEmpty();
+        }
+
+        [Fact]
         public void PopulatePushesInstanceIntoBuildChainWhileCreatingTest()
         {
             var creator = Substitute.For<ITypeCreator>();
@@ -1274,12 +1302,12 @@
                         typeof(Guid),
                         nameof(SlimModel.Value),
                         Arg.Is<LinkedList<object>>(y => y.Last.Value == instance))).Do(
-                            x =>
-                            {
-                                target.BuildChain.Should().HaveCount(1);
-                                target.BuildChain.First().Should().BeOfType<SlimModel>();
-                                testPassed = true;
-                            });
+                x =>
+                {
+                    target.BuildChain.Should().HaveCount(1);
+                    target.BuildChain.First().Should().BeOfType<SlimModel>();
+                    testPassed = true;
+                });
 
             generator.IsSupported(
                 typeof(Guid),
@@ -1318,12 +1346,12 @@
                         typeof(Guid),
                         nameof(SlimModel.Value),
                         Arg.Is<LinkedList<object>>(y => y.Last.Value == instance))).Do(
-                            x =>
-                            {
-                                target.BuildChain.Should().HaveCount(1);
-                                target.BuildChain.Should().Contain(instance);
-                                testPassed = true;
-                            });
+                x =>
+                {
+                    target.BuildChain.Should().HaveCount(1);
+                    target.BuildChain.Should().Contain(instance);
+                    testPassed = true;
+                });
 
             generator.IsSupported(
                 typeof(Guid),
@@ -1374,13 +1402,13 @@
                         typeof(string),
                         Arg.Any<string>(),
                         Arg.Is<LinkedList<object>>(y => y.Last.Value == address))).Do(
-                            x =>
-                            {
-                                target.BuildChain.Should().HaveCount(2);
-                                target.BuildChain.First.Value.Should().Be(office);
-                                target.BuildChain.Last.Value.Should().Be(address);
-                                testPassed = true;
-                            });
+                x =>
+                {
+                    target.BuildChain.Should().HaveCount(2);
+                    target.BuildChain.First.Value.Should().Be(office);
+                    target.BuildChain.Last.Value.Should().Be(address);
+                    testPassed = true;
+                });
 
             generator.IsSupported(typeof(string), Arg.Any<string>(), Arg.Any<LinkedList<object>>()).Returns(true);
             generator.Generate(typeof(string), Arg.Any<string>(), Arg.Any<LinkedList<object>>())

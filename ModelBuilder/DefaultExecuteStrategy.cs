@@ -202,6 +202,11 @@
 
             var typeCreator = GetTypeCreator(type, referenceName, context);
 
+            if (typeCreator == null)
+            {
+                ThrowUnsupportedGenerationType(type, referenceName, context);
+            }
+
             BuildStrategy.BuildLog.CreatingType(type, context);
 
             try
@@ -268,27 +273,7 @@
 
                 foreach (var propertyInfo in propertyInfos)
                 {
-                    if (propertyInfo.GetSetMethod(true).IsPublic == false)
-                    {
-                        // The property is public, but the setter is not
-                        continue;
-                    }
-
-                    // Check if there is a matching ignore rule
-                    var ignoreRule = BuildStrategy.IgnoreRules?.FirstOrDefault(
-                        x => x.TargetType.IsAssignableFrom(type) && x.PropertyName == propertyInfo.Name);
-
-                    if (ignoreRule != null)
-                    {
-                        // We need to ignore this property
-                        continue;
-                    }
-
-                    BuildStrategy.BuildLog.CreateProperty(propertyInfo.PropertyType, propertyInfo.Name, instance);
-
-                    var parameterValue = Build(propertyInfo.PropertyType, propertyInfo.Name, instance);
-
-                    propertyInfo.SetValue(instance, parameterValue, null);
+                    PopulateProperty(type, instance, propertyInfo);
                 }
 
                 return instance;
@@ -319,7 +304,7 @@
 
                 if (typeCreator.AutoPopulate)
                 {
-                    // The type creator has indicated that this type should not be auto populated by the execute strategy
+                    // The type creator has indicated that this type should be auto populated by the execute strategy
                     instance = PopulateInstance(instance);
 
                     Debug.Assert(instance != null, "Populating the instance did not return the original instance");
@@ -434,11 +419,57 @@
                     .OrderByDescending(x => x.Priority)
                     .FirstOrDefault();
 
-            if (typeCreator != null)
+            return typeCreator;
+        }
+
+        private void PopulateProperty(Type type, object instance, PropertyInfo propertyInfo)
+        {
+            // Check if there is a matching ignore rule
+            var ignoreRule = BuildStrategy.IgnoreRules?.FirstOrDefault(
+                x => x.TargetType.IsAssignableFrom(type) && (x.PropertyName == propertyInfo.Name));
+
+            if (ignoreRule != null)
             {
-                return typeCreator;
+                // We need to ignore this property
+                return;
             }
 
+            if (propertyInfo.GetSetMethod(true).IsPublic)
+            {
+                BuildStrategy.BuildLog.CreateProperty(propertyInfo.PropertyType, propertyInfo.Name, instance);
+
+                var parameterValue = Build(propertyInfo.PropertyType, propertyInfo.Name, instance);
+
+                propertyInfo.SetValue(instance, parameterValue, null);
+
+                return;
+            }
+
+            // Attempt to find a type creator for this type that will help us figure out how it should be populated
+            var typeCreator = GetTypeCreator(propertyInfo.PropertyType, propertyInfo.Name, instance);
+
+            if (typeCreator == null)
+            {
+                // This is either not supported or it is a value type
+                return;
+            }
+
+            // The property is public, but the setter is not
+            // We might still be able to populate this instance if it has a value
+            var originalValue = propertyInfo.GetValue(instance, null);
+
+            if (typeCreator.AutoPopulate)
+            {
+                // The type creator has indicated that this type should be auto populated by the execute strategy
+                PopulateInstance(originalValue);
+            }
+
+            // Allow the type creator to do its own population of the instance
+            typeCreator.Populate(originalValue, this);
+        }
+
+        private void ThrowUnsupportedGenerationType(Type type, string referenceName, object context)
+        {
             string message;
 
             if (context != null)
