@@ -46,7 +46,7 @@
                 return default(T);
             }
 
-            return (T) instance;
+            return (T)instance;
         }
 
         /// <inheritdoc />
@@ -75,7 +75,7 @@
         /// <exception cref="BuildException">Failed to generate a requested type.</exception>
         public virtual T Populate(T instance)
         {
-            return (T) Populate((object) instance);
+            return (T)Populate((object)instance);
         }
 
         /// <inheritdoc />
@@ -200,7 +200,15 @@
                 }
             }
 
-            var typeCreator = GetTypeCreator(type, referenceName, context);
+            var typeCreator =
+                BuildStrategy.TypeCreators?.Where(x => x.CanCreate(type, referenceName, BuildChain))
+                    .OrderByDescending(x => x.Priority)
+                    .FirstOrDefault();
+
+            if (typeCreator == null)
+            {
+                throw BuildFailureException(type, referenceName, context);
+            }
 
             BuildStrategy.BuildLog.CreatingType(type, context);
 
@@ -262,9 +270,9 @@
                 var type = instance.GetType();
 
                 var propertyInfos = from x in type.GetProperties(flags)
-                    where x.CanWrite
-                    orderby GetMaximumOrderPrority(x.PropertyType, x.Name) descending
-                    select x;
+                                    where x.CanWrite
+                                    orderby GetMaximumOrderPrority(x.PropertyType, x.Name) descending
+                                    select x;
 
                 foreach (var propertyInfo in propertyInfos)
                 {
@@ -276,7 +284,7 @@
 
                     // Check if there is a matching ignore rule
                     var ignoreRule = BuildStrategy.IgnoreRules?.FirstOrDefault(
-                        x => x.TargetType.IsAssignableFrom(type) && x.PropertyName == propertyInfo.Name);
+                        x => x.TargetType.IsAssignableFrom(type) && (x.PropertyName == propertyInfo.Name));
 
                     if (ignoreRule != null)
                     {
@@ -414,9 +422,9 @@
             }
 
             var matchingRules = from x in BuildStrategy.ExecuteOrderRules
-                where x.IsMatch(type, propertyName)
-                orderby x.Priority descending
-                select x;
+                                where x.IsMatch(type, propertyName)
+                                orderby x.Priority descending
+                                select x;
             var matchingRule = matchingRules.FirstOrDefault();
 
             if (matchingRule == null)
@@ -427,36 +435,29 @@
             return matchingRule.Priority;
         }
 
-        private ITypeCreator GetTypeCreator(Type type, string referenceName, object context)
+        private Exception BuildFailureException(Type type, string referenceName, object context)
         {
-            var typeCreator =
-                BuildStrategy.TypeCreators?.Where(x => x.IsSupported(type, referenceName, BuildChain))
-                    .OrderByDescending(x => x.Priority)
-                    .FirstOrDefault();
-
-            if (typeCreator != null)
-            {
-                return typeCreator;
-            }
-
             string message;
 
-            if (context != null)
+            if (string.IsNullOrWhiteSpace(referenceName) == false)
             {
-                message = string.Format(
-                    CultureInfo.CurrentCulture,
-                    Resources.NoMatchingCreatorOrGeneratorFoundWithNameAndContext,
-                    type.FullName,
-                    referenceName,
-                    context.GetType().FullName);
-            }
-            else if (string.IsNullOrWhiteSpace(referenceName) == false)
-            {
-                message = string.Format(
-                    CultureInfo.CurrentCulture,
-                    Resources.NoMatchingCreatorOrGeneratorFoundWithName,
-                    type.FullName,
-                    referenceName);
+                if (context != null)
+                {
+                    message = string.Format(
+                        CultureInfo.CurrentCulture,
+                        Resources.NoMatchingCreatorOrGeneratorFoundWithNameAndContext,
+                        type.FullName,
+                        referenceName,
+                        context.GetType().FullName);
+                }
+                else
+                {
+                    message = string.Format(
+                        CultureInfo.CurrentCulture,
+                        Resources.NoMatchingCreatorOrGeneratorFoundWithName,
+                        type.FullName,
+                        referenceName);
+                }
             }
             else
             {
@@ -466,28 +467,23 @@
                     type.FullName);
             }
 
-            try
-            {
-                throw new NotSupportedException(message);
-            }
-            catch (Exception ex)
-            {
-                BuildStrategy.BuildLog.BuildFailure(ex);
+            var ex = new NotSupportedException(message);
 
-                const string messageFormat =
-                    "Failed to create instance of type {0}, {1}: {2}{3}{3}At the time of the failure, the build log was:{3}{3}{4}";
-                var buildLog = BuildStrategy.BuildLog.Output;
-                var failureMessage = string.Format(
-                    CultureInfo.CurrentCulture,
-                    messageFormat,
-                    type.FullName,
-                    ex.GetType().Name,
-                    ex.Message,
-                    Environment.NewLine,
-                    buildLog);
+            BuildStrategy.BuildLog.BuildFailure(ex);
 
-                throw new BuildException(failureMessage, type, referenceName, context, buildLog, ex);
-            }
+            const string messageFormat =
+                "Failed to create instance of type {0}, {1}: {2}{3}{3}At the time of the failure, the build log was:{3}{3}{4}";
+            var buildLog = BuildStrategy.BuildLog.Output;
+            var failureMessage = string.Format(
+                CultureInfo.CurrentCulture,
+                messageFormat,
+                type.FullName,
+                ex.GetType().Name,
+                ex.Message,
+                Environment.NewLine,
+                buildLog);
+
+            return new BuildException(failureMessage, type, referenceName, context, buildLog, ex);
         }
 
         /// <inheritdoc />

@@ -1,6 +1,7 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
+    using System.Collections;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.IO;
@@ -27,6 +28,84 @@
             target.AutoPopulate.Should().BeFalse();
         }
 
+        [Theory]
+        [InlineData(typeof(string), false)]
+        [InlineData(typeof(Stream), false)]
+        [InlineData(typeof(int), false)]
+        [InlineData(typeof(ReadOnlyCollection<int>), false)]
+        [InlineData(typeof(IDictionary<string, int>), false)]
+        [InlineData(typeof(Tuple<string, bool>), false)]
+        [InlineData(typeof(AbstractCollection<Person>), false)]
+        [InlineData(typeof(IReadOnlyCollection<int>), false)]
+        [InlineData(typeof(IReadOnlyList<int>), false)]
+        [InlineData(typeof(ArraySegment<string>), false)]
+        [InlineData(typeof(Dictionary<string, int>), true)]
+        [InlineData(typeof(IEnumerable<string>), true)]
+        [InlineData(typeof(ICollection<string>), true)]
+        [InlineData(typeof(Collection<string>), true)]
+        [InlineData(typeof(IList<string>), true)]
+        [InlineData(typeof(List<string>), true)]
+        [InlineData(typeof(HashSet<string>), true)]
+        [InlineData(typeof(LinkedList<string>), true)]
+        [InlineData(typeof(InheritedGenericCollection), true)]
+        public void CanCreateReturnsWhetherTypeIsSupportedTest(Type type, bool supported)
+        {
+            var target = new EnumerableTypeCreator();
+
+            var actual = target.CanCreate(type, null, null);
+
+            actual.Should().Be(supported);
+        }
+
+        [Fact]
+        public void CanCreateThrowsExceptionWithNullTypeTest()
+        {
+            var target = new EnumerableTypeCreator();
+
+            Action action = () => target.CanCreate(null, null, null);
+
+            action.ShouldThrow<ArgumentNullException>();
+        }
+
+        [Theory]
+        [InlineData(typeof(string), false)]
+        [InlineData(typeof(Stream), false)]
+        [InlineData(typeof(int), false)]
+        [InlineData(typeof(ReadOnlyCollection<int>), false)]
+        [InlineData(typeof(Tuple<string, bool>), false)]
+        [InlineData(typeof(IReadOnlyCollection<int>), false)]
+        [InlineData(typeof(IReadOnlyList<int>), false)]
+        [InlineData(typeof(IEnumerable<string>), false)]
+        [InlineData(typeof(ArraySegment<string>), false)]
+        [InlineData(typeof(AbstractCollection<Person>), true)]
+        [InlineData(typeof(IDictionary<string, int>), true)]
+        [InlineData(typeof(Dictionary<string, int>), true)]
+        [InlineData(typeof(ICollection<string>), true)]
+        [InlineData(typeof(Collection<string>), true)]
+        [InlineData(typeof(IList<string>), true)]
+        [InlineData(typeof(List<string>), true)]
+        [InlineData(typeof(HashSet<string>), true)]
+        [InlineData(typeof(LinkedList<string>), true)]
+        [InlineData(typeof(InheritedGenericCollection), true)]
+        public void CanPopulateReturnsWhetherTypeIsSupportedTest(Type type, bool supported)
+        {
+            var target = new EnumerableTypeCreator();
+
+            var actual = target.CanPopulate(type, null, null);
+
+            actual.Should().Be(supported);
+        }
+
+        [Fact]
+        public void CanPopulateThrowsExceptionWithNullTypeTest()
+        {
+            var target = new EnumerableTypeCreator();
+
+            Action action = () => target.CanPopulate(null, null, null);
+
+            action.ShouldThrow<ArgumentNullException>();
+        }
+
         [Fact]
         public void CreateChildItemThrowsExceptionWithNullExecuteStrategyTest()
         {
@@ -44,7 +123,7 @@
         {
             var target = new IncrementingEnumerableTypeCreator();
 
-            var result = (IList<int>)target.Create(typeof(IList<int>));
+            var result = (IList<int>) target.Create(typeof(IList<int>), null, null);
 
             result.Should().BeEmpty();
         }
@@ -53,12 +132,11 @@
         [InlineData(typeof(Dictionary<string, int>))]
         [InlineData(typeof(IEnumerable<string>))]
         [InlineData(typeof(ICollection<string>))]
-        [InlineData(typeof(IList<string>))]
         [InlineData(typeof(Collection<string>))]
+        [InlineData(typeof(IList<string>))]
         [InlineData(typeof(List<string>))]
-        [InlineData(typeof(HashSet<string>))]
         [InlineData(typeof(LinkedList<string>))]
-        [InlineData(typeof(ArraySegment<string>))]
+        [InlineData(typeof(InheritedGenericCollection))]
         public void CreateReturnsInstanceTest(Type type)
         {
             var target = new EnumerableTypeCreator();
@@ -68,12 +146,15 @@
             actual.Should().NotBeNull();
         }
 
-        [Fact]
-        public void CreateReturnsNewListOfSpecfiedTypeTest()
+        [Theory]
+        [InlineData(typeof(IEnumerable<int>))]
+        [InlineData(typeof(ICollection<int>))]
+        [InlineData(typeof(IList<int>))]
+        public void CreateReturnsNewListOfSpecfiedTypeTest(Type targetType)
         {
             var target = new EnumerableTypeCreator();
 
-            var actual = target.Create(typeof(IEnumerable<int>), null, null);
+            var actual = target.Create(targetType, null, null);
 
             actual.Should().BeOfType<List<int>>();
             actual.As<List<int>>().Should().BeEmpty();
@@ -96,17 +177,19 @@
         [InlineData(typeof(ReadOnlyCollection<int>), false)]
         [InlineData(typeof(IDictionary<string, int>), false)]
         [InlineData(typeof(Tuple<string, bool>), false)]
+        [InlineData(typeof(AbstractCollection<Person>), false)]
+        [InlineData(typeof(IReadOnlyCollection<int>), false)]
+        [InlineData(typeof(IReadOnlyList<int>), false)]
+        [InlineData(typeof(ArraySegment<string>), false)]
         [InlineData(typeof(Dictionary<string, int>), true)]
         [InlineData(typeof(IEnumerable<string>), true)]
         [InlineData(typeof(ICollection<string>), true)]
         [InlineData(typeof(Collection<string>), true)]
         [InlineData(typeof(IList<string>), true)]
         [InlineData(typeof(List<string>), true)]
-        [InlineData(typeof(IReadOnlyCollection<int>), true)]
-        [InlineData(typeof(IReadOnlyList<int>), true)]
-        [InlineData(typeof(HashSet<string>), true)]
         [InlineData(typeof(LinkedList<string>), true)]
-        [InlineData(typeof(ArraySegment<string>), true)]
+        [InlineData(typeof(HashSet<string>), true)]
+        [InlineData(typeof(InheritedGenericCollection), true)]
         public void CreateValidatesWhetherTypeIsSupportedTest(Type type, bool supported)
         {
             var target = new EnumerableTypeCreator();
@@ -121,43 +204,6 @@
             {
                 action.ShouldThrow<NotSupportedException>();
             }
-        }
-
-        [Theory]
-        [InlineData(typeof(string), false)]
-        [InlineData(typeof(Stream), false)]
-        [InlineData(typeof(int), false)]
-        [InlineData(typeof(ReadOnlyCollection<int>), false)]
-        [InlineData(typeof(IDictionary<string, int>), false)]
-        [InlineData(typeof(Tuple<string, bool>), false)]
-        [InlineData(typeof(Dictionary<string, int>), true)]
-        [InlineData(typeof(IEnumerable<string>), true)]
-        [InlineData(typeof(ICollection<string>), true)]
-        [InlineData(typeof(Collection<string>), true)]
-        [InlineData(typeof(IList<string>), true)]
-        [InlineData(typeof(List<string>), true)]
-        [InlineData(typeof(IReadOnlyCollection<int>), true)]
-        [InlineData(typeof(IReadOnlyList<int>), true)]
-        [InlineData(typeof(HashSet<string>), true)]
-        [InlineData(typeof(LinkedList<string>), true)]
-        [InlineData(typeof(ArraySegment<string>), true)]
-        public void IsSupportedReturnsWhetherTypeIsSupportedTest(Type type, bool supported)
-        {
-            var target = new EnumerableTypeCreator();
-
-            var actual = target.IsSupported(type, null, null);
-
-            actual.Should().Be(supported);
-        }
-
-        [Fact]
-        public void IsSupportedThrowsExceptionWithNullTypeTest()
-        {
-            var target = new EnumerableTypeCreator();
-
-            Action action = () => target.IsSupported(null, null, null);
-
-            action.ShouldThrow<ArgumentNullException>();
         }
 
         [Fact]
@@ -178,10 +224,33 @@
 
             actual.Should().BeSameAs(expected);
 
-            var set = (Collection<Guid>)actual;
+            var set = (Collection<Guid>) actual;
 
             set.Should().HaveCount(target.AutoPopulateCount);
             set.All(x => x != Guid.Empty).Should().BeTrue();
+        }
+
+        [Theory]
+        [InlineData(typeof(Dictionary<string, int>))]
+        [InlineData(typeof(IEnumerable<string>))]
+        [InlineData(typeof(ICollection<string>))]
+        [InlineData(typeof(Collection<string>))]
+        [InlineData(typeof(IList<string>))]
+        [InlineData(typeof(List<string>))]
+        [InlineData(typeof(LinkedList<string>))]
+        [InlineData(typeof(InheritedGenericCollection))]
+        public void PopulateAddsItemsToInstancesTest(Type type)
+        {
+            var target = new EnumerableTypeCreator();
+            var executeStrategy = new DefaultExecuteStrategy<int>();
+
+            var actual = target.Create(type, null, null);
+
+            target.Populate(actual, executeStrategy);
+
+            var converted = (IEnumerable) actual;
+
+            converted.Should().NotBeEmpty();
         }
 
         [Fact]
@@ -202,7 +271,7 @@
 
             actual.Should().BeSameAs(expected);
 
-            var set = (List<Guid>)actual;
+            var set = (List<Guid>) actual;
 
             set.Should().HaveCount(target.AutoPopulateCount);
             set.All(x => x != Guid.Empty).Should().BeTrue();
@@ -216,7 +285,7 @@
 
             var target = new IncrementingEnumerableTypeCreator();
 
-            var result = (List<int>)target.Populate(actual, executeStrategy);
+            var result = (List<int>) target.Populate(actual, executeStrategy);
 
             var baseValue = result[0];
             var expected = new List<int>(target.AutoPopulateCount);

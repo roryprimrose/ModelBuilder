@@ -94,7 +94,7 @@ namespace ModelBuilder.UnitTests
             var creators = new List<ITypeCreator> {creator}.AsReadOnly();
 
             build.TypeCreators.Returns(creators);
-            creator.IsSupported(typeof(ReadOnlyModel), null, Arg.Any<LinkedList<object>>()).Returns(true);
+            creator.CanCreate(typeof(ReadOnlyModel), null, Arg.Any<LinkedList<object>>()).Returns(true);
             creator.Create(typeof(ReadOnlyModel), null, Arg.Any<LinkedList<object>>(), value).Returns(expected);
             creator.Populate(expected, Arg.Any<IExecuteStrategy>()).Returns(expected);
 

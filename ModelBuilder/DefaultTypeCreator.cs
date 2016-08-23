@@ -5,27 +5,15 @@
     using System.Linq;
 
     /// <summary>
-    /// The <see cref="DefaultTypeCreator"/>
-    /// class is used to create an instance of a type using the constructors that match any arguments supplied.
+    ///     The <see cref="DefaultTypeCreator" />
+    ///     class is used to create an instance of a type using the constructors that match any arguments supplied.
     /// </summary>
     public class DefaultTypeCreator : TypeCreatorBase
     {
         /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">The <paramref name="type"/> parameter is null.</exception>
-        /// <exception cref="MissingMemberException">The <paramref name="type"/> parameter does not have a constructor matching the specified arguments.</exception>
-        public override object Create(
-            Type type,
-            string referenceName,
-            LinkedList<object> buildChain,
+        protected override object CreateInstance(Type type, string referenceName, LinkedList<object> buildChain,
             params object[] args)
         {
-            if (type == null)
-            {
-                throw new ArgumentNullException(nameof(type));
-            }
-
-            VerifyCreateRequest(type, referenceName, buildChain);
-
             if (args?.Length == 0)
             {
                 return Activator.CreateInstance(type);
@@ -41,6 +29,13 @@
             }
 
             return constructor.Invoke(args);
+        }
+
+        /// <inheritdoc />
+        protected override object PopulateInstance(object instance, IExecuteStrategy executeStrategy)
+        {
+            // There is no out of the box population and this is left up to the execution strategy
+            return instance;
         }
     }
 }

@@ -5,9 +5,28 @@
 
     public class IncrementingEnumerableTypeCreator : EnumerableTypeCreator
     {
-        public override bool IsSupported(Type type, string referenceName, LinkedList<object> buildChain)
+        public override bool CanCreate(Type type, string referenceName, LinkedList<object> buildChain)
         {
-            if (base.IsSupported(type, referenceName, buildChain) == false)
+            if (base.CanCreate(type, referenceName, buildChain) == false)
+            {
+                return false;
+            }
+
+            var baseType = type.GenericTypeArguments[0];
+
+            if (baseType.IsNullable())
+            {
+                return false;
+            }
+
+            var generator = new RandomGenerator();
+
+            return generator.IsSupported(baseType);
+        }
+
+        public override bool CanPopulate(Type type, string referenceName, LinkedList<object> buildChain)
+        {
+            if (base.CanPopulate(type, referenceName, buildChain) == false)
             {
                 return false;
             }
