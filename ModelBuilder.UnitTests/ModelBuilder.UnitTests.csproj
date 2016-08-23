@@ -94,6 +94,7 @@
     <Compile Include="CreationRuleTests.cs" />
     <Compile Include="DefaultBuildLogTests.cs" />
     <Compile Include="DefaultBuildStrategyCompilerTests.cs" />
+    <Compile Include="DefaultExecuteStrategyTests.cs" />
     <Compile Include="DummyCreationRule.cs">
       <DependentUpon>DummyTypes.cs</DependentUpon>
     </Compile>
@@ -168,7 +169,7 @@
       <DependentUpon>Models.cs</DependentUpon>
     </Compile>
     <Compile Include="DefaultConstructorResolverTests.cs" />
-    <Compile Include="DefaultExecuteStrategyTests.cs" />
+    <Compile Include="DefaultExecuteStrategyTTests.cs" />
     <Compile Include="DefaultTypeCreatorTests.cs" />
     <Compile Include="DummyBuildStrategy.cs">
       <DependentUpon>DummyTypes.cs</DependentUpon>

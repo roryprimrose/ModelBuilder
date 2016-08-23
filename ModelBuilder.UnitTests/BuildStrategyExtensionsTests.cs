@@ -53,13 +53,56 @@
             generator.IsSupported(typeof(Guid), null, Arg.Any<LinkedList<object>>()).Returns(true);
             generator.Generate(typeof(Guid), null, Arg.Any<LinkedList<object>>()).Returns(value);
 
+            var actual = target.Create(typeof(Guid));
+
+            actual.Should().Be(value);
+        }
+
+        [Fact]
+        public void CreateThrowsExceptionWithNullInstanceTypeTest()
+        {
+            var target = Substitute.For<IBuildStrategy>();
+
+            Action action = () => target.Create(null);
+
+            action.ShouldThrow<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void CreateThrowsExceptionWithNullStrategyTest()
+        {
+            IBuildStrategy target = null;
+
+            Action action = () => target.Create(typeof(Guid));
+
+            action.ShouldThrow<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void CreateTReturnsInstanceCreatedByDefaultExecuteStrategyTest()
+        {
+            var value = Guid.NewGuid();
+
+            var buildLog = Substitute.For<IBuildLog>();
+            var generator = Substitute.For<IValueGenerator>();
+            var generators = new List<IValueGenerator>
+            {
+                generator
+            }.AsReadOnly();
+            var target = Substitute.For<IBuildStrategy>();
+
+            target.ValueGenerators.Returns(generators);
+            target.BuildLog.Returns(buildLog);
+            generator.IsSupported(typeof(Guid), null, Arg.Any<LinkedList<object>>()).Returns(true);
+            generator.Generate(typeof(Guid), null, Arg.Any<LinkedList<object>>()).Returns(value);
+
             var actual = target.Create<Guid>();
 
             actual.Should().Be(value);
         }
 
         [Fact]
-        public void CreateThrowsExceptionWithNullStrategyTest()
+        public void CreateTThrowsExceptionWithNullStrategyTest()
         {
             IBuildStrategy target = null;
 
@@ -84,13 +127,54 @@
             generator.IsSupported(typeof(Guid), null, Arg.Any<LinkedList<object>>()).Returns(true);
             generator.Generate(typeof(Guid), null, Arg.Any<LinkedList<object>>()).Returns(value);
 
+            var actual = target.CreateWith(typeof(Guid));
+
+            actual.Should().Be(value);
+        }
+
+        [Fact]
+        public void CreateWithThrowsExceptionWithNullInstanceTypeTest()
+        {
+            var target = Substitute.For<IBuildStrategy>();
+
+            Action action = () => target.CreateWith(null);
+
+            action.ShouldThrow<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void CreateWithThrowsExceptionWithNullStrategyTest()
+        {
+            IBuildStrategy target = null;
+
+            Action action = () => target.CreateWith(typeof(Guid));
+
+            action.ShouldThrow<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void CreateWithTReturnsInstanceCreatedByDefaultExecuteStrategyTest()
+        {
+            var value = Guid.NewGuid();
+
+            var generator = Substitute.For<IValueGenerator>();
+            var generators = new List<IValueGenerator>
+            {
+                generator
+            }.AsReadOnly();
+            var target = Substitute.For<IBuildStrategy>();
+
+            target.ValueGenerators.Returns(generators);
+            generator.IsSupported(typeof(Guid), null, Arg.Any<LinkedList<object>>()).Returns(true);
+            generator.Generate(typeof(Guid), null, Arg.Any<LinkedList<object>>()).Returns(value);
+
             var actual = target.CreateWith<Guid>(null);
 
             actual.Should().Be(value);
         }
 
         [Fact]
-        public void CreateWithThrowsExceptionWithNullStrategyTest()
+        public void CreateWithTThrowsExceptionWithNullStrategyTest()
         {
             IBuildStrategy target = null;
 
@@ -111,7 +195,7 @@
 
             var matchingRule =
                 actual.IgnoreRules.FirstOrDefault(
-                    x => x.PropertyName == "Priority" && x.TargetType == typeof(Person));
+                    x => (x.PropertyName == "Priority") && (x.TargetType == typeof(Person)));
 
             matchingRule.Should().NotBeNull();
         }

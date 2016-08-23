@@ -12,6 +12,22 @@
         private static IBuildStrategy _buildStrategy;
 
         /// <summary>
+        ///     Creates an instance of a type using the default build and execute strategies.
+        /// </summary>
+        /// <param name="instanceType">The type of instance to create.</param>
+        /// <returns>The new instance.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="instanceType" /> parameter is null.</exception>
+        public static object Create(Type instanceType)
+        {
+            if (instanceType == null)
+            {
+                throw new ArgumentNullException(nameof(instanceType));
+            }
+
+            return With<DefaultExecuteStrategy>().Create(instanceType);
+        }
+
+        /// <summary>
         ///     Creates an instance of <typeparamref name="T" /> using the default build and execute strategies.
         /// </summary>
         /// <typeparam name="T">The type of instance to create.</typeparam>
@@ -19,6 +35,24 @@
         public static T Create<T>()
         {
             return For<T>().Create();
+        }
+
+        /// <summary>
+        ///     Creates an instance of a type using the default build and execute strategies and constructor
+        ///     arguments.
+        /// </summary>
+        /// <param name="instanceType">The type of instance to create.</param>
+        /// <param name="args">The constructor arguments to create the type with.</param>
+        /// <returns>The new instance.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="instanceType" /> parameter is null.</exception>
+        public static object CreateWith(Type instanceType, params object[] args)
+        {
+            if (instanceType == null)
+            {
+                throw new ArgumentNullException(nameof(instanceType));
+            }
+
+            return With<DefaultExecuteStrategy>().CreateWith(instanceType, args);
         }
 
         /// <summary>
