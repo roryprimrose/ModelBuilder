@@ -242,7 +242,7 @@
         public void PopulateAddsItemsToInstancesTest(Type type)
         {
             var target = new EnumerableTypeCreator();
-            var executeStrategy = new DefaultExecuteStrategy<int>();
+            var executeStrategy = new DefaultExecuteStrategy();
 
             var actual = target.Create(type, null, null);
 

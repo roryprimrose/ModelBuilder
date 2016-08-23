@@ -28,7 +28,8 @@
             typeCreators.Add(typeCreator);
 
             buildStrategy.TypeCreators.Returns(typeCreators.AsReadOnly());
-            typeCreator.IsSupported(typeof(SlimModel), null, Arg.Any<LinkedList<object>>()).Returns(true);
+            typeCreator.CanCreate(typeof(SlimModel), null, Arg.Any<LinkedList<object>>()).Returns(true);
+            typeCreator.CanPopulate(typeof(SlimModel), null, Arg.Any<LinkedList<object>>()).Returns(true);
 
             var target = new DefaultExecuteStrategy<SlimModel>
             {
@@ -39,7 +40,7 @@
 
             actual.Should().BeNull();
         }
-        
+
         [Fact]
         public void CreateWithReturnsDefaultValueWhenNoReferenceTypeCreatedTest()
         {
@@ -51,7 +52,8 @@
             typeCreators.Add(typeCreator);
 
             buildStrategy.TypeCreators.Returns(typeCreators.AsReadOnly());
-            typeCreator.IsSupported(typeof(Stream), null, Arg.Any<LinkedList<object>>()).Returns(true);
+            typeCreator.CanCreate(typeof(Stream), null, Arg.Any<LinkedList<object>>()).Returns(true);
+            typeCreator.CanPopulate(typeof(Stream), null, Arg.Any<LinkedList<object>>()).Returns(true);
             typeCreator.Create(typeof(Stream), null, Arg.Any<LinkedList<object>>()).Returns(null);
 
             var target = new DefaultExecuteStrategy<Stream>
@@ -112,7 +114,8 @@
                 BuildStrategy = buildStrategy
             };
 
-            typeCreator.IsSupported(typeof(SlimModel), null, Arg.Any<LinkedList<object>>()).Returns(true);
+            typeCreator.CanCreate(typeof(SlimModel), null, Arg.Any<LinkedList<object>>()).Returns(true);
+            typeCreator.CanPopulate(typeof(SlimModel), null, Arg.Any<LinkedList<object>>()).Returns(true);
             typeCreator.Create(typeof(SlimModel), null, Arg.Any<LinkedList<object>>()).Returns(expected);
             typeCreator.Populate(expected, target).Returns(expected);
             typeCreator.AutoPopulate.Returns(true);
@@ -154,7 +157,8 @@
                 BuildStrategy = buildStrategy
             };
 
-            typeCreator.IsSupported(typeof(Person), null, Arg.Any<LinkedList<object>>()).Returns(true);
+            typeCreator.CanCreate(typeof(Person), null, Arg.Any<LinkedList<object>>()).Returns(true);
+            typeCreator.CanPopulate(typeof(Person), null, Arg.Any<LinkedList<object>>()).Returns(true);
             typeCreator.Create(typeof(Person), null, Arg.Any<LinkedList<object>>(), args).Returns(expected);
             typeCreator.Populate(expected, target).Returns(expected);
             typeCreator.AutoPopulate.Returns(false);
@@ -189,7 +193,11 @@
                 BuildStrategy = buildStrategy
             };
 
-            typeCreator.IsSupported(
+            typeCreator.CanCreate(
+                typeof(IEnumerable<Person>),
+                "Staff",
+                Arg.Is<LinkedList<object>>(x => x.Last.Value == expected)).Returns(true);
+            typeCreator.CanPopulate(
                 typeof(IEnumerable<Person>),
                 "Staff",
                 Arg.Is<LinkedList<object>>(x => x.Last.Value == expected)).Returns(true);

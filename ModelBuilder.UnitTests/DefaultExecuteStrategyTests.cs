@@ -790,12 +790,12 @@
             buildStrategy.ValueGenerators.Returns(generators.AsReadOnly());
             buildStrategy.BuildLog.Returns(buildLog);
 
-            var target = new DefaultExecuteStrategy<Person>
+            var target = new DefaultExecuteStrategy
             {
                 BuildStrategy = buildStrategy
             };
 
-            Action action = () => target.CreateWith();
+            Action action = () => target.CreateWith(typeof(Person));
 
             action.ShouldThrow<BuildException>();
         }
@@ -825,12 +825,12 @@
             buildStrategy.ConstructorResolver.Returns(constructorResolver);
             buildStrategy.BuildLog.Returns(buildLog);
 
-            var target = new DefaultExecuteStrategy<KeyValuePair<string, Person>>
+            var target = new DefaultExecuteStrategy
             {
                 BuildStrategy = buildStrategy
             };
 
-            Action action = () => target.CreateWith();
+            Action action = () => target.CreateWith(typeof(KeyValuePair<string, Person>));
 
             action.ShouldThrow<BuildException>();
         }
@@ -1581,7 +1581,7 @@
         [Fact]
         public void PopulateThrowsExceptionWithNullInstanceTest()
         {
-            var target = new DefaultExecuteStrategy<int>();
+            var target = new DefaultExecuteStrategy();
 
             Action action = () => target.Populate(null);
 
