@@ -23,7 +23,6 @@
 
             if (instance == null)
             {
-                // We can't populate a null instance
                 return default(T);
             }
 

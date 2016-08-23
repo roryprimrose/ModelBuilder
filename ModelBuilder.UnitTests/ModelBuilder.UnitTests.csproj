@@ -14,6 +14,7 @@
     <FileAlignment>512</FileAlignment>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -24,6 +25,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -34,6 +36,7 @@
     <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <CodeAnalysisRuleSet>..\Solution Items\UnitTest.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="FluentAssertions, Version=4.9.0.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a, processorArchitecture=MSIL">
@@ -50,6 +53,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -75,6 +79,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AbstractCollection.cs">
+      <DependentUpon>Models.cs</DependentUpon>
+    </Compile>
     <Compile Include="Address.cs">
       <DependentUpon>Models.cs</DependentUpon>
     </Compile>
@@ -100,8 +107,12 @@
     <Compile Include="DummyPostBuildAction.cs">
       <DependentUpon>DummyTypes.cs</DependentUpon>
     </Compile>
+    <Compile Include="EnumerableParent.cs">
+      <DependentUpon>Models.cs</DependentUpon>
+    </Compile>
     <Compile Include="ExpressionExtensionTests.cs" />
     <Compile Include="IncrementingArrayTypeCreator.cs" />
+    <Compile Include="InheritedGenericCollection.cs" />
     <Compile Include="Location.cs">
       <DependentUpon>Models.cs</DependentUpon>
     </Compile>
@@ -228,9 +239,7 @@
     <Compile Include="StringValueGeneratorTests.cs" />
     <Compile Include="TestDataTests.cs" />
     <Compile Include="TypeCreatorBaseTests.cs" />
-    <Compile Include="TypeCreatorExtensionsTests.cs" />
     <Compile Include="ValueGeneratorBaseTests.cs" />
-    <Compile Include="ValueGeneratorExtensionsTests.cs" />
     <Compile Include="ValueGeneratorMatcherTests.cs" />
     <Compile Include="WithInterfaceAndAbstractParameters.cs">
       <DependentUpon>Models.cs</DependentUpon>

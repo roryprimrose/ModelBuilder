@@ -2,57 +2,39 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Collections.ObjectModel;
 
     /// <summary>
-    /// The <see cref="EnumerableTypeCreator"/>
-    /// class is used to create an instance from an <see cref="IEnumerable{T}"/> type.
+    ///     The <see cref="EnumerableTypeCreator" />
+    ///     class is used to create an instance from an <see cref="IEnumerable{T}" /> type.
     /// </summary>
     public class EnumerableTypeCreator : TypeCreatorBase
     {
+        private static readonly List<Type> _unsupportedTypes = new List<Type>
+        {
+            typeof(ArraySegment<>)
+        };
+
         /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">The <paramref name="type"/> parameter is null.</exception>
-        public override object Create(
-            Type type,
-            string referenceName,
-            LinkedList<object> buildChain,
-            params object[] args)
+        /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is null.</exception>
+        public override bool CanCreate(Type type, string referenceName, LinkedList<object> buildChain)
         {
             if (type == null)
             {
                 throw new ArgumentNullException(nameof(type));
             }
 
-            VerifyCreateRequest(type, referenceName, buildChain);
-
-            if (type.IsInterface)
+            if (type.IsClass &&
+                type.IsAbstract)
             {
-                var internalType = FindEnumerableTypeArgument(type);
-                var listGenericType = typeof(List<string>).GetGenericTypeDefinition();
-                var genericType = listGenericType.MakeGenericType(internalType);
-
-                return Activator.CreateInstance(genericType);
+                // This is an abstract class so we can't create it
+                return false;
             }
 
-            return Activator.CreateInstance(type, args);
-        }
-
-        /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">The <paramref name="type"/> parameter is null.</exception>
-        public override bool IsSupported(Type type, string referenceName, LinkedList<object> buildChain)
-        {
-            if (type == null)
-            {
-                throw new ArgumentNullException(nameof(type));
-            }
-
-            if (type.IsGenericType == false)
+            if (IsReadOnlyType(type) == false)
             {
                 return false;
             }
 
-            // The type may implementation multiple interfaces including IEnumerable<T> where the type generic definition of the type itself is not the same as the IEnumerable<T> definition
-            // Dictionary<TKey, TValue> is an example of this where it implements IEnumerable<KeyValuePair<TKey, TValue>>
             var internalType = FindEnumerableTypeArgument(type);
 
             if (internalType == null)
@@ -61,27 +43,24 @@
                 return false;
             }
 
-            var readOnlyGenericType = typeof(ReadOnlyCollection<string>).GetGenericTypeDefinition();
-            var readOnlyType = readOnlyGenericType.MakeGenericType(internalType);
-
-            if (type == readOnlyType)
+            if (type.IsInterface)
             {
-                // The type is ReadOnlyCollection<T> which should be supported by DefaultTypeCreator as it will determine the data to build for its constructor
+                var listGenericType = typeof(List<string>).GetGenericTypeDefinition();
+                var listType = listGenericType.MakeGenericType(internalType);
+
+                if (type.IsAssignableFrom(listType))
+                {
+                    // The instance is assignable from List<T> and therefore can be both created and populated by this type creator
+                    return true;
+                }
+
                 return false;
             }
 
-            if (type.IsInterface == false)
+            // This is a class that we can presumably create so we need to check if it can be populated
+            if (CanPopulate(type, referenceName, buildChain) == false)
             {
-                // Other known collection concrete types are expected to be supported
-                return true;
-            }
-
-            var listGenericType = typeof(List<string>).GetGenericTypeDefinition();
-            var listType = listGenericType.MakeGenericType(internalType);
-
-            if (type.IsAssignableFrom(listType) == false)
-            {
-                // The instance is not List<T> and therefore cannot be created or populated by this type creator
+                // There is no point trying to create something that we can't populate
                 return false;
             }
 
@@ -89,27 +68,89 @@
         }
 
         /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">The <paramref name="instance"/> parameter is null.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy"/> parameter is null.</exception>
-        public override object Populate(object instance, IExecuteStrategy executeStrategy)
+        /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is null.</exception>
+        public override bool CanPopulate(Type type, string referenceName, LinkedList<object> buildChain)
         {
-            if (instance == null)
+            if (type == null)
             {
-                throw new ArgumentNullException(nameof(instance));
+                throw new ArgumentNullException(nameof(type));
             }
 
+            if (IsReadOnlyType(type) == false)
+            {
+                return false;
+            }
+
+            var internalType = FindEnumerableTypeArgument(type);
+
+            if (internalType == null)
+            {
+                // The type does not implement IEnumerable<T>
+                return false;
+            }
+
+            if (IsUnsupportedType(type, internalType))
+            {
+                return false;
+            }
+
+            var genericTypeDefinition = typeof(ICollection<string>).GetGenericTypeDefinition();
+            var genericType = genericTypeDefinition.MakeGenericType(internalType);
+
+            if (genericType.IsAssignableFrom(type))
+            {
+                // The instance is ICollection<T> and therefore can be created by this type creator
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        ///     Creates a child item given the context of a possible previous item being created.
+        /// </summary>
+        /// <param name="type">The type of value to generate.</param>
+        /// <param name="executeStrategy">The execute strategy.</param>
+        /// <param name="previousItem">The previous item generated, or <c>null</c>.</param>
+        /// <returns>The new item generated.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is null.</exception>
+        protected virtual object CreateChildItem(Type type, IExecuteStrategy executeStrategy, object previousItem)
+        {
             if (executeStrategy == null)
             {
                 throw new ArgumentNullException(nameof(executeStrategy));
             }
 
-            var type = instance.GetType();
-            var internalType = FindEnumerableTypeArgument(type);
+            return executeStrategy.CreateWith(type);
+        }
 
-            VerifyCreateRequest(type, null, executeStrategy.BuildChain);
+        /// <inheritdoc />
+        protected override object CreateInstance(Type type, string referenceName, LinkedList<object> buildChain,
+            params object[] args)
+        {
+            if (type.IsInterface)
+            {
+                var internalType = FindEnumerableTypeArgument(type);
+                var genericTypeDefinition = typeof(List<string>).GetGenericTypeDefinition();
+                var genericType = genericTypeDefinition.MakeGenericType(internalType);
+
+                return Activator.CreateInstance(genericType);
+            }
+
+            return Activator.CreateInstance(type, args);
+        }
+
+        /// <inheritdoc />
+        protected override object PopulateInstance(object instance, IExecuteStrategy executeStrategy)
+        {
+            var type = instance.GetType();
+
+            var internalType = FindEnumerableTypeArgument(type);
+            var collectionGenericTypeDefinition = typeof(ICollection<string>).GetGenericTypeDefinition();
+            var collectionType = collectionGenericTypeDefinition.MakeGenericType(internalType);
 
             // Get the Add method
-            var addMethod = type.GetMethod("Add");
+            var addMethod = collectionType.GetMethod("Add");
 
             object previousItem = null;
 
@@ -127,29 +168,13 @@
                 previousItem = childInstance;
             }
 
-            return base.Populate(instance, executeStrategy);
-        }
-
-        /// <summary>
-        /// Creates a child item given the context of a possible previous item being created.
-        /// </summary>
-        /// <param name="type">The type of value to generate.</param>
-        /// <param name="executeStrategy">The execute strategy.</param>
-        /// <param name="previousItem">The previous item generated, or <c>null</c>.</param>
-        /// <returns>The new item generated.</returns>
-        /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy"/> parameter is null.</exception>
-        protected virtual object CreateChildItem(Type type, IExecuteStrategy executeStrategy, object previousItem)
-        {
-            if (executeStrategy == null)
-            {
-                throw new ArgumentNullException(nameof(executeStrategy));
-            }
-
-            return executeStrategy.CreateWith(type);
+            return instance;
         }
 
         private static Type FindEnumerableTypeArgument(Type type)
         {
+            // The type may implement multiple interfaces including IEnumerable<T> where the type generic definition of the type itself is not the same as the IEnumerable<T> definition
+            // Dictionary<TKey, TValue> is an example of this where it implements IEnumerable<KeyValuePair<TKey, TValue>>
             var topLevelTypeArgument = GetEnumerableTypeArgument(type);
 
             if (topLevelTypeArgument != null)
@@ -195,14 +220,49 @@
             return type.GetGenericArguments()[0];
         }
 
-        /// <summary>
-        /// Gets or sets how many instances will be auto-populated into the list by default when the <see cref="EnumerableTypeCreator"/> is created.
-        /// </summary>
-        public static int DefaultAutoPopulateCount
+        private static bool IsReadOnlyType(Type type)
         {
-            get;
-            set;
-        } = 10;
+            // Check if the type is a ReadOnly type
+            // We can't check for the implementation of IReadOnlyCollection<T> because this was introduced in .Net 4.5 
+            // however this library targets 4.0
+            if (type.Name.Contains("ReadOnly"))
+            {
+                // Looks like this is read only type
+                // This covers ReadOnlyCollection in .Net 4.0 and above
+                // and also covers IReadOnlyCollection<T> and IReadOnlyList<T> in .net 4.5 and above
+                return false;
+            }
+
+            return true;
+        }
+
+        private static bool IsUnsupportedType(Type type, Type internalType)
+        {
+            foreach (var unsupportedType in _unsupportedTypes)
+            {
+                if (unsupportedType.IsGenericTypeDefinition)
+                {
+                    var genericType = unsupportedType.MakeGenericType(internalType);
+
+                    if (type == genericType)
+                    {
+                        return true;
+                    }
+                }
+                else if (type == unsupportedType)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        ///     Gets or sets how many instances will be auto-populated into the list by default when the
+        ///     <see cref="EnumerableTypeCreator" /> is created.
+        /// </summary>
+        public static int DefaultAutoPopulateCount { get; set; } = 10;
 
         /// <inheritdoc />
         public override bool AutoDetectConstructor => false;
@@ -211,13 +271,9 @@
         public override bool AutoPopulate => false;
 
         /// <summary>
-        /// Gets or sets how many instances will be auto-populated into the list.
+        ///     Gets or sets how many instances will be auto-populated into the list.
         /// </summary>
-        public int AutoPopulateCount
-        {
-            get;
-            set;
-        } = DefaultAutoPopulateCount;
+        public int AutoPopulateCount { get; set; } = DefaultAutoPopulateCount;
 
         /// <inheritdoc />
         public override int Priority => 100;

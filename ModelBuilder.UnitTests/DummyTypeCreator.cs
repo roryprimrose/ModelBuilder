@@ -5,23 +5,35 @@
 
     public class DummyTypeCreator : TypeCreatorBase
     {
-        public override object Create(
-            Type type,
-            string referenceName,
-            LinkedList<object> buildChain,
+        public override bool CanCreate(Type type, string referenceName, LinkedList<object> buildChain)
+        {
+            return false;
+        }
+
+        public override bool CanPopulate(Type type, string referenceName, LinkedList<object> buildChain)
+        {
+            return false;
+        }
+
+        public void VerifyCreateRequestWithNullType()
+        {
+            VerifyCreateRequest(null, null, null);
+        }
+
+        public void VerifyPopulateRequestWithNullType()
+        {
+            VerifyPopulateRequest(null, null, null);
+        }
+
+        protected override object CreateInstance(Type type, string referenceName, LinkedList<object> buildChain,
             params object[] args)
         {
             throw new NotImplementedException();
         }
 
-        public override bool IsSupported(Type type, string referenceName, LinkedList<object> buildChain)
+        protected override object PopulateInstance(object instance, IExecuteStrategy executeStrategy)
         {
-            return false;
-        }
-
-        public void VerifyWithNullType()
-        {
-            VerifyCreateRequest(null, null, null);
+            throw new NotImplementedException();
         }
     }
 }

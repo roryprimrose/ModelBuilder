@@ -56,6 +56,18 @@
         }
 
         [Fact]
+        public void CanCreateEnumerableTypesTest()
+        {
+            var actual = Model.Create<EnumerableParent>();
+
+            actual.Collection.Should().NotBeEmpty();
+            actual.Enumerable.Should().NotBeEmpty();
+            actual.InterfaceCollection.Should().NotBeEmpty();
+            actual.InterfaceList.Should().NotBeEmpty();
+            actual.List.Should().NotBeEmpty();
+        }
+
+        [Fact]
         public void CanGenerateArrayOfCustomTypeTest()
         {
             var actual = Model.Create<Person[]>();
@@ -194,7 +206,7 @@
         {
             var typeCreator = Substitute.For<ITypeCreator>();
 
-            typeCreator.IsSupported(typeof(Address), "Address", Arg.Any<LinkedList<object>>()).Returns(true);
+            typeCreator.CanCreate(typeof(Address), "Address", Arg.Any<LinkedList<object>>()).Returns(true);
             typeCreator.Priority.Returns(int.MaxValue);
             typeCreator.AutoDetectConstructor.Returns(true);
             typeCreator.AutoPopulate.Returns(true);
