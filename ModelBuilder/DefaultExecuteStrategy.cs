@@ -242,7 +242,7 @@
 
                 foreach (var propertyInfo in propertyInfos)
                 {
-                    PopulateProperty(type, instance, propertyInfo);
+                    PopulateProperty(instance, propertyInfo);
                 }
 
                 return instance;
@@ -432,8 +432,9 @@
             return new BuildException(failureMessage, type, referenceName, context, buildLog, ex);
         }
 
-        private void PopulateProperty(Type type, object instance, PropertyInfo propertyInfo)
+        private void PopulateProperty(object instance, PropertyInfo propertyInfo)
         {
+            var type = instance.GetType();
             // Check if there is a matching ignore rule
             var ignoreRule = BuildStrategy.IgnoreRules?.FirstOrDefault(
                 x => x.TargetType.IsAssignableFrom(type) && (x.PropertyName == propertyInfo.Name));
@@ -455,8 +456,25 @@
                 return;
             }
 
+            // The property is read-only
+            // We need to try to populate the property using a type creator that can populate it
+            // To determine the correct type creator, we will use the type of the property instance value
+            // rather than the property type because it may be more accurate
+            var value = propertyInfo.GetValue(instance, null);
+
+            if (value == null)
+            {
+                // We don't have a value to work with
+                return;
+            }
+
+            var propertyType = value.GetType();
+
             // Attempt to find a type creator for this type that will help us figure out how it should be populated
-            var typeCreator = GetTypeCreator(propertyInfo.PropertyType, propertyInfo.Name, instance);
+            var typeCreator =
+                BuildStrategy.TypeCreators?.Where(x => x.CanPopulate(propertyType, propertyInfo.Name, BuildChain))
+                    .OrderByDescending(x => x.Priority)
+                    .FirstOrDefault();
 
             if (typeCreator == null)
             {

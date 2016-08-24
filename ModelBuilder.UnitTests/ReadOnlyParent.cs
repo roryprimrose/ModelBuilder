@@ -25,5 +25,7 @@
         public ICollection<Person> People { get; private set; }
 
         public IEnumerable<Person> RestrictedPeople { get; private set; }
+
+        public Person Unassigned { get; private set; }
     }
 }

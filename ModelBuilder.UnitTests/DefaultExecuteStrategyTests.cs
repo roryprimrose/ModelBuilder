@@ -101,6 +101,7 @@
             actual.AssignablePeople.Should().NotBeEmpty();
             actual.People.Should().NotBeEmpty();
             actual.RestrictedPeople.Should().BeEmpty();
+            actual.Unassigned.Should().BeNull();
         }
 
         [Fact]
@@ -1333,6 +1334,7 @@
             actual.AssignablePeople.Should().NotBeEmpty();
             actual.People.Should().NotBeEmpty();
             actual.RestrictedPeople.Should().BeEmpty();
+            actual.Unassigned.Should().BeNull();
         }
 
         [Fact]
