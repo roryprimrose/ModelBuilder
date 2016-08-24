@@ -2,6 +2,8 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
 
     /// <summary>
@@ -11,9 +13,12 @@
     public class DefaultTypeCreator : TypeCreatorBase
     {
         /// <inheritdoc />
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0", Justification = "Type is validated by the base class")]
         protected override object CreateInstance(Type type, string referenceName, LinkedList<object> buildChain,
             params object[] args)
         {
+            Debug.Assert(type != null, "type != null");
+
             if (args?.Length == 0)
             {
                 return Activator.CreateInstance(type);

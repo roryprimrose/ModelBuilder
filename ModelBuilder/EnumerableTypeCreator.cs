@@ -2,6 +2,8 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Diagnostics.CodeAnalysis;
     using System.Net.NetworkInformation;
 
     /// <summary>
@@ -135,9 +137,12 @@
         }
 
         /// <inheritdoc />
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0", Justification = "Type is validated by the base class")]
         protected override object CreateInstance(Type type, string referenceName, LinkedList<object> buildChain,
             params object[] args)
         {
+            Debug.Assert(type != null, "type != null");
+
             if (type.IsInterface)
             {
                 var internalType = FindEnumerableTypeArgument(type);
@@ -151,8 +156,11 @@
         }
 
         /// <inheritdoc />
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0", Justification = "Instance is validated by the base class")]
         protected override object PopulateInstance(object instance, IExecuteStrategy executeStrategy)
         {
+            Debug.Assert(instance != null, "instance != null");
+
             var type = instance.GetType();
 
             var internalType = FindEnumerableTypeArgument(type);
