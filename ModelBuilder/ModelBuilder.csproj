@@ -40,6 +40,9 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime">
+      <HintPath>..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.6.1\Facades\System.Runtime.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
@@ -92,6 +95,12 @@
     </Compile>
     <Compile Include="DefaultBuildStrategyCompiler.cs">
       <DependentUpon>IBuildStrategyCompiler.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DefaultExecuteStrategy.cs">
+      <DependentUpon>IExecuteStrategy.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DefaultExecuteStrategyT.cs">
+      <DependentUpon>IExecuteStrategy.cs</DependentUpon>
     </Compile>
     <Compile Include="DomainNameValueGenerator.cs">
       <DependentUpon>IValueGenerator.cs</DependentUpon>
@@ -168,9 +177,6 @@
     <Compile Include="DefaultConstructorResolver.cs">
       <DependentUpon>IConstructorResolver.cs</DependentUpon>
     </Compile>
-    <Compile Include="DefaultExecuteStrategy.cs">
-      <DependentUpon>IExecuteStrategy.cs</DependentUpon>
-    </Compile>
     <Compile Include="DefaultTypeCreator.cs">
       <DependentUpon>ITypeCreator.cs</DependentUpon>
     </Compile>
@@ -204,17 +210,11 @@
     <Compile Include="StringValueGenerator.cs">
       <DependentUpon>IValueGenerator.cs</DependentUpon>
     </Compile>
-    <Compile Include="TypeCreatorExtensions.cs">
-      <DependentUpon>Extensions.cs</DependentUpon>
-    </Compile>
     <Compile Include="UriValueGenerator.cs">
       <DependentUpon>IValueGenerator.cs</DependentUpon>
     </Compile>
     <Compile Include="ValueGeneratorBase.cs">
       <DependentUpon>IValueGenerator.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ValueGeneratorExtensions.cs">
-      <DependentUpon>Extensions.cs</DependentUpon>
     </Compile>
     <Compile Include="ValueGeneratorMatcher.cs">
       <DependentUpon>IValueGenerator.cs</DependentUpon>

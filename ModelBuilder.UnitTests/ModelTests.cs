@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using FluentAssertions;
-using NSubstitute;
-using Xunit;
-
-namespace ModelBuilder.UnitTests
+﻿namespace ModelBuilder.UnitTests
 {
+    using System;
+    using System.Collections.Generic;
+    using FluentAssertions;
+    using NSubstitute;
+    using Xunit;
+
     public class ModelTests
     {
         [Fact]
@@ -57,7 +57,15 @@ namespace ModelBuilder.UnitTests
         }
 
         [Fact]
-        public void CreateUsesBuildStrategyToCreateInstanceTest()
+        public void CreateThrowsExceptionWithNullInstanceTypeTest()
+        {
+            Action action = () => Model.Create(null);
+
+            action.ShouldThrow<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void CreateTUsesBuildStrategyToCreateInstanceTest()
         {
             var value = Guid.NewGuid();
 
@@ -84,6 +92,41 @@ namespace ModelBuilder.UnitTests
         }
 
         [Fact]
+        public void CreateUsesBuildStrategyToCreateInstanceTest()
+        {
+            var value = Guid.NewGuid();
+
+            var build = Substitute.For<IBuildStrategy>();
+            var generator = Substitute.For<IValueGenerator>();
+            var generators = new List<IValueGenerator> {generator}.AsReadOnly();
+
+            build.ValueGenerators.Returns(generators);
+            generator.IsSupported(typeof(Guid), null, Arg.Any<LinkedList<object>>()).Returns(true);
+            generator.Generate(typeof(Guid), null, Arg.Any<LinkedList<object>>()).Returns(value);
+
+            try
+            {
+                Model.BuildStrategy = build;
+
+                var actual = Model.Create(typeof(Guid));
+
+                actual.Should().Be(value);
+            }
+            finally
+            {
+                Model.BuildStrategy = Model.DefaultBuildStrategy;
+            }
+        }
+
+        [Fact]
+        public void CreateWithThrowsExceptionWithNullInstanceTypeTest()
+        {
+            Action action = () => Model.CreateWith(null);
+
+            action.ShouldThrow<ArgumentNullException>();
+        }
+
+        [Fact]
         public void CreateWithUsesBuildStrategyToCreateInstanceWithParametersTest()
         {
             var value = Guid.NewGuid();
@@ -94,7 +137,37 @@ namespace ModelBuilder.UnitTests
             var creators = new List<ITypeCreator> {creator}.AsReadOnly();
 
             build.TypeCreators.Returns(creators);
-            creator.IsSupported(typeof(ReadOnlyModel), null, Arg.Any<LinkedList<object>>()).Returns(true);
+            creator.CanCreate(typeof(ReadOnlyModel), null, Arg.Any<LinkedList<object>>()).Returns(true);
+            creator.Create(typeof(ReadOnlyModel), null, Arg.Any<LinkedList<object>>(), value).Returns(expected);
+            creator.Populate(expected, Arg.Any<IExecuteStrategy>()).Returns(expected);
+
+            try
+            {
+                Model.BuildStrategy = build;
+
+                var actual = (ReadOnlyModel) Model.CreateWith(typeof(ReadOnlyModel), value);
+
+                actual.Value.Should().Be(value);
+            }
+            finally
+            {
+                Model.BuildStrategy = Model.DefaultBuildStrategy;
+            }
+        }
+
+        [Fact]
+        public void CreateWitThUsesBuildStrategyToCreateInstanceWithParametersTest()
+        {
+            var value = Guid.NewGuid();
+            var expected = new ReadOnlyModel(value);
+
+            var build = Substitute.For<IBuildStrategy>();
+            var creator = Substitute.For<ITypeCreator>();
+            var creators = new List<ITypeCreator> {creator}.AsReadOnly();
+
+            build.TypeCreators.Returns(creators);
+            creator.CanCreate(typeof(ReadOnlyModel), null, Arg.Any<LinkedList<object>>()).Returns(true);
+            creator.CanPopulate(typeof(ReadOnlyModel), null, Arg.Any<LinkedList<object>>()).Returns(true);
             creator.Create(typeof(ReadOnlyModel), null, Arg.Any<LinkedList<object>>(), value).Returns(expected);
             creator.Populate(expected, Arg.Any<IExecuteStrategy>()).Returns(expected);
 

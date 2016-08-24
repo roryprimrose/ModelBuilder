@@ -1,10 +1,10 @@
-﻿using System;
-using System.IO;
-using FluentAssertions;
-using Xunit;
-
-namespace ModelBuilder.UnitTests
+﻿namespace ModelBuilder.UnitTests
 {
+    using System;
+    using System.IO;
+    using FluentAssertions;
+    using Xunit;
+
     public class EnumValueGeneratorTests
     {
         [Fact]
@@ -43,7 +43,7 @@ namespace ModelBuilder.UnitTests
         {
             var target = new EnumValueGenerator();
 
-            var first = target.Generate(typeof(SingleEnum));
+            var first = target.Generate(typeof(SingleEnum), null, null);
 
             first.Should().BeOfType<SingleEnum>();
             first.Should().Be(SingleEnum.First);
@@ -54,11 +54,11 @@ namespace ModelBuilder.UnitTests
         {
             var target = new EnumValueGenerator();
 
-            var first = target.Generate(typeof(FileAttributes));
+            var first = target.Generate(typeof(FileAttributes), null, null);
 
             first.Should().BeOfType<FileAttributes>();
 
-            var second = target.Generate(typeof(FileAttributes));
+            var second = target.Generate(typeof(FileAttributes), null, null);
 
             first.Should().NotBe(second);
         }
@@ -68,7 +68,7 @@ namespace ModelBuilder.UnitTests
         {
             var target = new EnumValueGenerator();
 
-            var first = target.Generate(typeof(BigFlagsEnum));
+            var first = target.Generate(typeof(BigFlagsEnum), null, null);
 
             first.Should().BeOfType<BigFlagsEnum>();
 
@@ -76,7 +76,7 @@ namespace ModelBuilder.UnitTests
 
             values.Should().NotContain(first);
 
-            var second = target.Generate(typeof(BigFlagsEnum));
+            var second = target.Generate(typeof(BigFlagsEnum), null, null);
 
             first.Should().NotBe(second);
         }
@@ -86,12 +86,12 @@ namespace ModelBuilder.UnitTests
         {
             var target = new EnumValueGenerator();
 
-            var first = target.Generate(typeof(BigEnum));
+            var first = target.Generate(typeof(BigEnum), null, null);
 
             first.Should().BeOfType<BigEnum>();
             Enum.IsDefined(typeof(BigEnum), first).Should().BeTrue();
 
-            var second = target.Generate(typeof(BigEnum));
+            var second = target.Generate(typeof(BigEnum), null, null);
 
             first.Should().NotBe(second);
         }
@@ -106,7 +106,7 @@ namespace ModelBuilder.UnitTests
 
             for (var index = 0; index < 1000; index++)
             {
-                var actual = (SmallFlags) target.Generate(typeof(SmallFlags));
+                var actual = (SmallFlags) target.Generate(typeof(SmallFlags), null, null);
 
                 if (actual == SmallFlags.First)
                 {
@@ -139,7 +139,7 @@ namespace ModelBuilder.UnitTests
         {
             var target = new EnumValueGenerator();
 
-            var first = target.Generate(typeof(EmptyEnum));
+            var first = target.Generate(typeof(EmptyEnum), null, null);
 
             first.Should().BeOfType<EmptyEnum>();
             first.Should().Be((EmptyEnum) 0);
@@ -162,7 +162,7 @@ namespace ModelBuilder.UnitTests
         {
             var target = new EnumValueGenerator();
 
-            Action action = () => target.Generate(null);
+            Action action = () => target.Generate(null, null, null);
 
             action.ShouldThrow<ArgumentNullException>();
         }
@@ -190,7 +190,7 @@ namespace ModelBuilder.UnitTests
         {
             var target = new EnumValueGenerator();
 
-            Action action = () => target.IsSupported(null);
+            Action action = () => target.IsSupported(null, null, null);
 
             action.ShouldThrow<ArgumentNullException>();
         }

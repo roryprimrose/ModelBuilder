@@ -12,41 +12,19 @@
 
     /// <summary>
     ///     The <see cref="DefaultExecuteStrategy{T}" />
-    ///     class is used to create and populate <typeparamref name="T" /> instances.
+    ///     class is used to create types and populate instances.
     /// </summary>
-    /// <typeparam name="T">The type of instance to create and populate.</typeparam>
-    public class DefaultExecuteStrategy<T> : IExecuteStrategy<T>
+    public class DefaultExecuteStrategy : IExecuteStrategy
     {
         private readonly Stack _buildChain = new Stack();
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="DefaultExecuteStrategy{T}" /> class.
+        ///     Initializes a new instance of the <see cref="DefaultExecuteStrategy" /> class.
         /// </summary>
         public DefaultExecuteStrategy()
         {
             // Use the current global build strategy
             BuildStrategy = Model.BuildStrategy;
-        }
-
-        /// <inheritdoc />
-        /// <exception cref="NotSupportedException">
-        ///     No <see cref="IValueGenerator" /> or <see cref="ITypeCreator" /> was found to
-        ///     generate a requested type.
-        /// </exception>
-        /// <exception cref="BuildException">Failed to generate a requested type.</exception>
-        public virtual T CreateWith(params object[] args)
-        {
-            var requestedType = typeof(T);
-
-            var instance = Build(requestedType, null, null, args);
-
-            if (instance == null)
-            {
-                // We can't populate a null instance
-                return default(T);
-            }
-
-            return (T) instance;
         }
 
         /// <inheritdoc />
@@ -64,18 +42,6 @@
             }
 
             return Build(type, null, null, args);
-        }
-
-        /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">The <paramref name="instance" /> parameter is null.</exception>
-        /// <exception cref="NotSupportedException">
-        ///     No <see cref="IValueGenerator" /> or <see cref="ITypeCreator" /> was found to
-        ///     generate a requested type.
-        /// </exception>
-        /// <exception cref="BuildException">Failed to generate a requested type.</exception>
-        public virtual T Populate(T instance)
-        {
-            return (T) Populate((object) instance);
         }
 
         /// <inheritdoc />
@@ -200,11 +166,14 @@
                 }
             }
 
-            var typeCreator = GetTypeCreator(type, referenceName, context);
+            var typeCreator =
+                BuildStrategy.TypeCreators?.Where(x => x.CanCreate(type, referenceName, BuildChain))
+                    .OrderByDescending(x => x.Priority)
+                    .FirstOrDefault();
 
             if (typeCreator == null)
             {
-                ThrowUnsupportedGenerationType(type, referenceName, context);
+                throw BuildFailureException(type, referenceName, context);
             }
 
             BuildStrategy.BuildLog.CreatingType(type, context);
@@ -267,9 +236,9 @@
                 var type = instance.GetType();
 
                 var propertyInfos = from x in type.GetProperties(flags)
-                    where x.CanWrite
-                    orderby GetMaximumOrderPrority(x.PropertyType, x.Name) descending
-                    select x;
+                                    where x.CanWrite
+                                    orderby GetMaximumOrderPrority(x.PropertyType, x.Name) descending
+                                    select x;
 
                 foreach (var propertyInfo in propertyInfos)
                 {
@@ -399,9 +368,9 @@
             }
 
             var matchingRules = from x in BuildStrategy.ExecuteOrderRules
-                where x.IsMatch(type, propertyName)
-                orderby x.Priority descending
-                select x;
+                                where x.IsMatch(type, propertyName)
+                                orderby x.Priority descending
+                                select x;
             var matchingRule = matchingRules.FirstOrDefault();
 
             if (matchingRule == null)
@@ -412,14 +381,55 @@
             return matchingRule.Priority;
         }
 
-        private ITypeCreator GetTypeCreator(Type type, string referenceName, object context)
+        private Exception BuildFailureException(Type type, string referenceName, object context)
         {
-            var typeCreator =
-                BuildStrategy.TypeCreators?.Where(x => x.IsSupported(type, referenceName, BuildChain))
-                    .OrderByDescending(x => x.Priority)
-                    .FirstOrDefault();
+            string message;
 
-            return typeCreator;
+            if (string.IsNullOrWhiteSpace(referenceName) == false)
+            {
+                if (context != null)
+                {
+                    message = string.Format(
+                        CultureInfo.CurrentCulture,
+                        Resources.NoMatchingCreatorOrGeneratorFoundWithNameAndContext,
+                        type.FullName,
+                        referenceName,
+                        context.GetType().FullName);
+                }
+                else
+                {
+                    message = string.Format(
+                        CultureInfo.CurrentCulture,
+                        Resources.NoMatchingCreatorOrGeneratorFoundWithName,
+                        type.FullName,
+                        referenceName);
+                }
+            }
+            else
+            {
+                message = string.Format(
+                    CultureInfo.CurrentCulture,
+                    Resources.NoMatchingCreatorOrGeneratorFound,
+                    type.FullName);
+            }
+
+            var ex = new NotSupportedException(message);
+
+            BuildStrategy.BuildLog.BuildFailure(ex);
+
+            const string messageFormat =
+                "Failed to create instance of type {0}, {1}: {2}{3}{3}At the time of the failure, the build log was:{3}{3}{4}";
+            var buildLog = BuildStrategy.BuildLog.Output;
+            var failureMessage = string.Format(
+                CultureInfo.CurrentCulture,
+                messageFormat,
+                type.FullName,
+                ex.GetType().Name,
+                ex.Message,
+                Environment.NewLine,
+                buildLog);
+
+            return new BuildException(failureMessage, type, referenceName, context, buildLog, ex);
         }
 
         private void PopulateProperty(Type type, object instance, PropertyInfo propertyInfo)
@@ -466,59 +476,6 @@
 
             // Allow the type creator to do its own population of the instance
             typeCreator.Populate(originalValue, this);
-        }
-
-        private void ThrowUnsupportedGenerationType(Type type, string referenceName, object context)
-        {
-            string message;
-
-            if (context != null)
-            {
-                message = string.Format(
-                    CultureInfo.CurrentCulture,
-                    Resources.NoMatchingCreatorOrGeneratorFoundWithNameAndContext,
-                    type.FullName,
-                    referenceName,
-                    context.GetType().FullName);
-            }
-            else if (string.IsNullOrWhiteSpace(referenceName) == false)
-            {
-                message = string.Format(
-                    CultureInfo.CurrentCulture,
-                    Resources.NoMatchingCreatorOrGeneratorFoundWithName,
-                    type.FullName,
-                    referenceName);
-            }
-            else
-            {
-                message = string.Format(
-                    CultureInfo.CurrentCulture,
-                    Resources.NoMatchingCreatorOrGeneratorFound,
-                    type.FullName);
-            }
-
-            try
-            {
-                throw new NotSupportedException(message);
-            }
-            catch (Exception ex)
-            {
-                BuildStrategy.BuildLog.BuildFailure(ex);
-
-                const string messageFormat =
-                    "Failed to create instance of type {0}, {1}: {2}{3}{3}At the time of the failure, the build log was:{3}{3}{4}";
-                var buildLog = BuildStrategy.BuildLog.Output;
-                var failureMessage = string.Format(
-                    CultureInfo.CurrentCulture,
-                    messageFormat,
-                    type.FullName,
-                    ex.GetType().Name,
-                    ex.Message,
-                    Environment.NewLine,
-                    buildLog);
-
-                throw new BuildException(failureMessage, type, referenceName, context, buildLog, ex);
-            }
         }
 
         /// <inheritdoc />

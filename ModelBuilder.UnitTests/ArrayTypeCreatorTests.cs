@@ -11,6 +11,88 @@
 
     public class ArrayTypeCreatorTests
     {
+        [Theory]
+        [InlineData(typeof(string), false)]
+        [InlineData(typeof(Stream), false)]
+        [InlineData(typeof(int), false)]
+        [InlineData(typeof(ReadOnlyCollection<int>), false)]
+        [InlineData(typeof(IDictionary<string, int>), false)]
+        [InlineData(typeof(Tuple<string, bool>), false)]
+        [InlineData(typeof(Dictionary<string, int>), false)]
+        [InlineData(typeof(IEnumerable<string>), false)]
+        [InlineData(typeof(ICollection<string>), false)]
+        [InlineData(typeof(Collection<string>), false)]
+        [InlineData(typeof(IList<string>), false)]
+        [InlineData(typeof(List<string>), false)]
+        [InlineData(typeof(IReadOnlyCollection<int>), false)]
+        [InlineData(typeof(IReadOnlyList<int>), false)]
+        [InlineData(typeof(HashSet<string>), false)]
+        [InlineData(typeof(LinkedList<string>), false)]
+        [InlineData(typeof(ArraySegment<string>), false)]
+        [InlineData(typeof(byte[]), true)]
+        [InlineData(typeof(int[]), true)]
+        [InlineData(typeof(Guid[]), true)]
+        [InlineData(typeof(Person[]), true)]
+        public void CanCreateReturnsWhetherTypeIsSupportedTest(Type type, bool supported)
+        {
+            var target = new ArrayTypeCreator();
+
+            var actual = target.CanCreate(type, null, null);
+
+            actual.Should().Be(supported);
+        }
+
+        [Fact]
+        public void CanCreateThrowsExceptionWithNullTypeTest()
+        {
+            var target = new ArrayTypeCreator();
+
+            Action action = () => target.CanCreate(null, null, null);
+
+            action.ShouldThrow<ArgumentNullException>();
+        }
+
+        [Theory]
+        [InlineData(typeof(string), false)]
+        [InlineData(typeof(Stream), false)]
+        [InlineData(typeof(int), false)]
+        [InlineData(typeof(ReadOnlyCollection<int>), false)]
+        [InlineData(typeof(IDictionary<string, int>), false)]
+        [InlineData(typeof(Tuple<string, bool>), false)]
+        [InlineData(typeof(Dictionary<string, int>), false)]
+        [InlineData(typeof(IEnumerable<string>), false)]
+        [InlineData(typeof(ICollection<string>), false)]
+        [InlineData(typeof(Collection<string>), false)]
+        [InlineData(typeof(IList<string>), false)]
+        [InlineData(typeof(List<string>), false)]
+        [InlineData(typeof(IReadOnlyCollection<int>), false)]
+        [InlineData(typeof(IReadOnlyList<int>), false)]
+        [InlineData(typeof(HashSet<string>), false)]
+        [InlineData(typeof(LinkedList<string>), false)]
+        [InlineData(typeof(ArraySegment<string>), false)]
+        [InlineData(typeof(byte[]), true)]
+        [InlineData(typeof(int[]), true)]
+        [InlineData(typeof(Guid[]), true)]
+        [InlineData(typeof(Person[]), true)]
+        public void CanPopulateReturnsWhetherTypeIsSupportedTest(Type type, bool supported)
+        {
+            var target = new ArrayTypeCreator();
+
+            var actual = target.CanPopulate(type, null, null);
+
+            actual.Should().Be(supported);
+        }
+
+        [Fact]
+        public void CanPopulateThrowsExceptionWithNullTypeTest()
+        {
+            var target = new ArrayTypeCreator();
+
+            Action action = () => target.CanPopulate(null, null, null);
+
+            action.ShouldThrow<ArgumentNullException>();
+        }
+
         [Fact]
         public void CreateChildItemThrowsExceptionWithNullExecuteStrategyTest()
         {
@@ -107,47 +189,6 @@
             target.AutoPopulate.Should().BeFalse();
         }
 
-        [Theory]
-        [InlineData(typeof(string), false)]
-        [InlineData(typeof(Stream), false)]
-        [InlineData(typeof(int), false)]
-        [InlineData(typeof(ReadOnlyCollection<int>), false)]
-        [InlineData(typeof(IDictionary<string, int>), false)]
-        [InlineData(typeof(Tuple<string, bool>), false)]
-        [InlineData(typeof(Dictionary<string, int>), false)]
-        [InlineData(typeof(IEnumerable<string>), false)]
-        [InlineData(typeof(ICollection<string>), false)]
-        [InlineData(typeof(Collection<string>), false)]
-        [InlineData(typeof(IList<string>), false)]
-        [InlineData(typeof(List<string>), false)]
-        [InlineData(typeof(IReadOnlyCollection<int>), false)]
-        [InlineData(typeof(IReadOnlyList<int>), false)]
-        [InlineData(typeof(HashSet<string>), false)]
-        [InlineData(typeof(LinkedList<string>), false)]
-        [InlineData(typeof(ArraySegment<string>), false)]
-        [InlineData(typeof(byte[]), true)]
-        [InlineData(typeof(int[]), true)]
-        [InlineData(typeof(Guid[]), true)]
-        [InlineData(typeof(Person[]), true)]
-        public void IsSupportedReturnsWhetherTypeIsSupportedTest(Type type, bool supported)
-        {
-            var target = new ArrayTypeCreator();
-
-            var actual = target.IsSupported(type, null, null);
-
-            actual.Should().Be(supported);
-        }
-
-        [Fact]
-        public void IsSupportedThrowsExceptionWithNullTypeTest()
-        {
-            var target = new ArrayTypeCreator();
-
-            Action action = () => target.IsSupported(null, null, null);
-
-            action.ShouldThrow<ArgumentNullException>();
-        }
-
         [Fact]
         public void PopulateAddsItemsToCollectionFromExecuteStrategyTest()
         {
@@ -166,7 +207,7 @@
 
             actual.Should().BeSameAs(expected);
 
-            var set = (Guid[])actual;
+            var set = (Guid[]) actual;
 
             set.Should().HaveCount(target.MaxCount);
             set.All(x => x != Guid.Empty).Should().BeTrue();
@@ -190,7 +231,7 @@
 
             actual.Should().BeSameAs(expected);
 
-            var set = (Guid[])actual;
+            var set = (Guid[]) actual;
 
             set.Should().HaveCount(target.MaxCount);
             set.All(x => x != Guid.Empty).Should().BeTrue();
@@ -204,7 +245,7 @@
 
             var target = new IncrementingArrayTypeCreator();
 
-            var result = (int[])target.Populate(actual, executeStrategy);
+            var result = (int[]) target.Populate(actual, executeStrategy);
 
             var baseValue = result[0];
             var expected = new int[actual.Length];
@@ -225,7 +266,7 @@
 
             var target = new ArrayTypeCreator();
 
-            var result = (Person[])target.Populate(actual, executeStrategy);
+            var result = (Person[]) target.Populate(actual, executeStrategy);
 
             result.All(x => x != null).Should().BeTrue();
         }
@@ -248,7 +289,7 @@
 
             actual.Should().BeSameAs(expected);
 
-            var set = (Guid[])actual;
+            var set = (Guid[]) actual;
 
             set.Should().BeEmpty();
         }
