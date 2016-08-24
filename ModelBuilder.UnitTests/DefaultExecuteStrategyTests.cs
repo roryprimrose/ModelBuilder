@@ -91,6 +91,20 @@
         }
 
         [Fact]
+        public void CreatePopulatesReadOnlyReferencePropertiesTest()
+        {
+            var target = new DefaultExecuteStrategy<ReadOnlyParent>();
+
+            var actual = target.Create();
+
+            actual.Company.Address.Should().NotBeNullOrWhiteSpace();
+            actual.AssignablePeople.Should().NotBeEmpty();
+            actual.People.Should().NotBeEmpty();
+            actual.RestrictedPeople.Should().BeEmpty();
+            actual.Unassigned.Should().BeNull();
+        }
+
+        [Fact]
         public void CreatesCircularReferenceWithInstanceFromBuildChainTest()
         {
             var target = new DefaultExecuteStrategy();
@@ -1305,6 +1319,22 @@
             actual.InternalSet.Should().BeEmpty();
             actual.ReadOnly.Should().BeEmpty();
             PropertyScopes.GlobalValue.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void PopulatePopulatesReadOnlyReferencePropertiesTest()
+        {
+            var target = new DefaultExecuteStrategy<ReadOnlyParent>();
+
+            var actual = new ReadOnlyParent();
+
+            actual = target.Populate(actual);
+
+            actual.Company.Address.Should().NotBeNullOrWhiteSpace();
+            actual.AssignablePeople.Should().NotBeEmpty();
+            actual.People.Should().NotBeEmpty();
+            actual.RestrictedPeople.Should().BeEmpty();
+            actual.Unassigned.Should().BeNull();
         }
 
         [Fact]

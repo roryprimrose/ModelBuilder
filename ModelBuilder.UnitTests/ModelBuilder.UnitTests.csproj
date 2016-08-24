@@ -122,6 +122,9 @@
     <Compile Include="PersonWithoutGender.cs">
       <DependentUpon>Models.cs</DependentUpon>
     </Compile>
+    <Compile Include="ReadOnlyParent.cs">
+      <DependentUpon>Models.cs</DependentUpon>
+    </Compile>
     <Compile Include="TestCompilerModule.cs" />
     <Compile Include="UriValueGeneratorTests.cs" />
     <Compile Include="Numbers.cs">

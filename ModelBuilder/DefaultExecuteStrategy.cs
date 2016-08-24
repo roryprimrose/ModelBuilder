@@ -242,27 +242,7 @@
 
                 foreach (var propertyInfo in propertyInfos)
                 {
-                    if (propertyInfo.GetSetMethod(true).IsPublic == false)
-                    {
-                        // The property is public, but the setter is not
-                        continue;
-                    }
-
-                    // Check if there is a matching ignore rule
-                    var ignoreRule = BuildStrategy.IgnoreRules?.FirstOrDefault(
-                        x => x.TargetType.IsAssignableFrom(type) && x.PropertyName == propertyInfo.Name);
-
-                    if (ignoreRule != null)
-                    {
-                        // We need to ignore this property
-                        continue;
-                    }
-
-                    BuildStrategy.BuildLog.CreateProperty(propertyInfo.PropertyType, propertyInfo.Name, instance);
-
-                    var parameterValue = Build(propertyInfo.PropertyType, propertyInfo.Name, instance);
-
-                    propertyInfo.SetValue(instance, parameterValue, null);
+                    PopulateProperty(instance, propertyInfo);
                 }
 
                 return instance;
@@ -293,7 +273,7 @@
 
                 if (typeCreator.AutoPopulate)
                 {
-                    // The type creator has indicated that this type should not be auto populated by the execute strategy
+                    // The type creator has indicated that this type should be auto populated by the execute strategy
                     instance = PopulateInstance(instance);
 
                     Debug.Assert(instance != null, "Populating the instance did not return the original instance");
@@ -450,6 +430,70 @@
                 buildLog);
 
             return new BuildException(failureMessage, type, referenceName, context, buildLog, ex);
+        }
+
+        private void PopulateProperty(object instance, PropertyInfo propertyInfo)
+        {
+            var type = instance.GetType();
+            // Check if there is a matching ignore rule
+            var ignoreRule = BuildStrategy.IgnoreRules?.FirstOrDefault(
+                x => x.TargetType.IsAssignableFrom(type) && (x.PropertyName == propertyInfo.Name));
+
+            if (ignoreRule != null)
+            {
+                // We need to ignore this property
+                return;
+            }
+
+            if (propertyInfo.GetSetMethod(true).IsPublic)
+            {
+                BuildStrategy.BuildLog.CreateProperty(propertyInfo.PropertyType, propertyInfo.Name, instance);
+
+                var parameterValue = Build(propertyInfo.PropertyType, propertyInfo.Name, instance);
+
+                propertyInfo.SetValue(instance, parameterValue, null);
+
+                return;
+            }
+
+            // The property is read-only
+            // We need to try to populate the property using a type creator that can populate it
+            // To determine the correct type creator, we will use the type of the property instance value
+            // rather than the property type because it may be more accurate
+            var value = propertyInfo.GetValue(instance, null);
+
+            if (value == null)
+            {
+                // We don't have a value to work with
+                return;
+            }
+
+            var propertyType = value.GetType();
+
+            // Attempt to find a type creator for this type that will help us figure out how it should be populated
+            var typeCreator =
+                BuildStrategy.TypeCreators?.Where(x => x.CanPopulate(propertyType, propertyInfo.Name, BuildChain))
+                    .OrderByDescending(x => x.Priority)
+                    .FirstOrDefault();
+
+            if (typeCreator == null)
+            {
+                // This is either not supported or it is a value type
+                return;
+            }
+
+            // The property is public, but the setter is not
+            // We might still be able to populate this instance if it has a value
+            var originalValue = propertyInfo.GetValue(instance, null);
+
+            if (typeCreator.AutoPopulate)
+            {
+                // The type creator has indicated that this type should be auto populated by the execute strategy
+                PopulateInstance(originalValue);
+            }
+
+            // Allow the type creator to do its own population of the instance
+            typeCreator.Populate(originalValue, this);
         }
 
         /// <inheritdoc />

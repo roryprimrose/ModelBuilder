@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Net.NetworkInformation;
 
     /// <summary>
     ///     The <see cref="EnumerableTypeCreator" />
@@ -11,7 +12,16 @@
     {
         private static readonly List<Type> _unsupportedTypes = new List<Type>
         {
-            typeof(ArraySegment<>)
+            typeof(ArraySegment<>),
+            typeof(GatewayIPAddressInformationCollection),
+            typeof(IPAddressCollection),
+            typeof(IPAddressInformationCollection),
+            typeof(MulticastIPAddressInformationCollection),
+            typeof(UnicastIPAddressInformationCollection),
+            typeof(Dictionary<,>.KeyCollection),
+            typeof(Dictionary<,>.ValueCollection),
+            typeof(SortedDictionary<,>.KeyCollection),
+            typeof(SortedDictionary<,>.ValueCollection),
         };
 
         /// <inheritdoc />
@@ -89,7 +99,7 @@
                 return false;
             }
 
-            if (IsUnsupportedType(type, internalType))
+            if (IsUnsupportedType(type))
             {
                 return false;
             }
@@ -236,15 +246,15 @@
             return true;
         }
 
-        private static bool IsUnsupportedType(Type type, Type internalType)
+        private static bool IsUnsupportedType(Type type)
         {
             foreach (var unsupportedType in _unsupportedTypes)
             {
-                if (unsupportedType.IsGenericTypeDefinition)
+                if (unsupportedType.IsGenericTypeDefinition && type.IsGenericType)
                 {
-                    var genericType = unsupportedType.MakeGenericType(internalType);
+                    var typeDefinition = type.GetGenericTypeDefinition();
 
-                    if (type == genericType)
+                    if (typeDefinition == unsupportedType)
                     {
                         return true;
                     }

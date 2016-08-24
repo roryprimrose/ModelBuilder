@@ -6,6 +6,7 @@
     using System.Collections.ObjectModel;
     using System.IO;
     using System.Linq;
+    using System.Net.NetworkInformation;
     using FluentAssertions;
     using NSubstitute;
     using Xunit;
@@ -39,7 +40,16 @@
         [InlineData(typeof(IReadOnlyCollection<int>), false)]
         [InlineData(typeof(IReadOnlyList<int>), false)]
         [InlineData(typeof(ArraySegment<string>), false)]
+        [InlineData(typeof(GatewayIPAddressInformationCollection), false)]
+        [InlineData(typeof(IPAddressCollection), false)]
+        [InlineData(typeof(IPAddressInformationCollection), false)]
+        [InlineData(typeof(MulticastIPAddressInformationCollection), false)]
+        [InlineData(typeof(UnicastIPAddressInformationCollection), false)]
+        [InlineData(typeof(Dictionary<,>.KeyCollection), false)]
+        [InlineData(typeof(Dictionary<,>.ValueCollection), false)]
         [InlineData(typeof(Dictionary<string, int>), true)]
+        [InlineData(typeof(SortedDictionary<,>.KeyCollection), false)]
+        [InlineData(typeof(SortedDictionary<,>.ValueCollection), false)]
         [InlineData(typeof(IEnumerable<string>), true)]
         [InlineData(typeof(ICollection<string>), true)]
         [InlineData(typeof(Collection<string>), true)]
@@ -77,6 +87,15 @@
         [InlineData(typeof(IReadOnlyList<int>), false)]
         [InlineData(typeof(IEnumerable<string>), false)]
         [InlineData(typeof(ArraySegment<string>), false)]
+        [InlineData(typeof(GatewayIPAddressInformationCollection), false)]
+        [InlineData(typeof(IPAddressCollection), false)]
+        [InlineData(typeof(IPAddressInformationCollection), false)]
+        [InlineData(typeof(MulticastIPAddressInformationCollection), false)]
+        [InlineData(typeof(UnicastIPAddressInformationCollection), false)]
+        [InlineData(typeof(Dictionary<,>.KeyCollection), false)]
+        [InlineData(typeof(Dictionary<,>.ValueCollection), false)]
+        [InlineData(typeof(SortedDictionary<,>.KeyCollection), false)]
+        [InlineData(typeof(SortedDictionary<,>.ValueCollection), false)]
         [InlineData(typeof(AbstractCollection<Person>), true)]
         [InlineData(typeof(IDictionary<string, int>), true)]
         [InlineData(typeof(Dictionary<string, int>), true)]
@@ -181,6 +200,15 @@
         [InlineData(typeof(IReadOnlyCollection<int>), false)]
         [InlineData(typeof(IReadOnlyList<int>), false)]
         [InlineData(typeof(ArraySegment<string>), false)]
+        [InlineData(typeof(GatewayIPAddressInformationCollection), false)]
+        [InlineData(typeof(IPAddressCollection), false)]
+        [InlineData(typeof(IPAddressInformationCollection), false)]
+        [InlineData(typeof(MulticastIPAddressInformationCollection), false)]
+        [InlineData(typeof(UnicastIPAddressInformationCollection), false)]
+        [InlineData(typeof(Dictionary<,>.KeyCollection), false)]
+        [InlineData(typeof(Dictionary<,>.ValueCollection), false)]
+        [InlineData(typeof(SortedDictionary<,>.KeyCollection), false)]
+        [InlineData(typeof(SortedDictionary<,>.ValueCollection), false)]
         [InlineData(typeof(Dictionary<string, int>), true)]
         [InlineData(typeof(IEnumerable<string>), true)]
         [InlineData(typeof(ICollection<string>), true)]
