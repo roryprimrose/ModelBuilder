@@ -26,8 +26,11 @@
             }
         }
 
-        [Fact]
-        public void GenerateCanReturnNullAndRandomValuesTest()
+        [Theory]
+        [InlineData(typeof(DateTime?))]
+        [InlineData(typeof(DateTimeOffset?))]
+        [InlineData(typeof(TimeSpan?))]
+        public void GenerateCanReturnNullAndRandomValuesTest(Type targetType)
         {
             var nullFound = false;
             var valueFound = false;
@@ -36,7 +39,7 @@
 
             for (var index = 0; index < 1000; index++)
             {
-                var value = (DateTime?)target.Generate(typeof(DateTime?), null, null);
+                var value = target.Generate(targetType, null, null);
 
                 if (value == null)
                 {
