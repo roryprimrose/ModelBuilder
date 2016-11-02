@@ -4,13 +4,13 @@
     using System.Collections.Generic;
 
     /// <summary>
-    /// The <see cref="DateTimeValueGenerator"/>
-    /// class is used to generate random date time values.
+    ///     The <see cref="DateTimeValueGenerator" />
+    ///     class is used to generate random date time values.
     /// </summary>
     public class DateTimeValueGenerator : ValueGeneratorMatcher
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="DateTimeValueGenerator"/> class.
+        ///     Initializes a new instance of the <see cref="DateTimeValueGenerator" /> class.
         /// </summary>
         public DateTimeValueGenerator()
             : base(
@@ -43,7 +43,16 @@
                 generateType = type.GetGenericArguments()[0];
             }
 
-            var shift = Generator.NextValue<int>();
+            if (generateType == typeof(TimeZoneInfo))
+            {
+                var zones = TimeZoneInfo.GetSystemTimeZones();
+                var zoneIndex = Generator.NextValue(0, zones.Count - 1);
+
+                return zones[zoneIndex];
+            }
+
+            var tenYears = TimeSpan.FromDays(3650);
+            var shift = Generator.NextValue(0, tenYears.TotalSeconds);
 
             if (generateType == typeof(DateTime))
             {
@@ -53,14 +62,6 @@
             if (generateType == typeof(TimeSpan))
             {
                 return TimeSpan.FromSeconds(shift);
-            }
-
-            if (generateType == typeof(TimeZoneInfo))
-            {
-                var zones = TimeZoneInfo.GetSystemTimeZones();
-                var zoneIndex = Generator.NextValue(0, zones.Count - 1);
-
-                return zones[zoneIndex];
             }
 
             return DateTimeOffset.UtcNow.AddSeconds(shift);
