@@ -43,7 +43,8 @@
                 generateType = type.GetGenericArguments()[0];
             }
 
-            var shift = Generator.NextValue<int>();
+            var tenYears = TimeSpan.FromDays(3650);
+            var shift = Generator.NextValue(0, tenYears.TotalSeconds);
 
             if (generateType == typeof(DateTime))
             {

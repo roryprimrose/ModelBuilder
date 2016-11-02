@@ -1,12 +1,31 @@
-﻿using System;
-using System.IO;
-using FluentAssertions;
-using Xunit;
-
-namespace ModelBuilder.UnitTests
+﻿namespace ModelBuilder.UnitTests
 {
+    using System;
+    using System.IO;
+    using FluentAssertions;
+    using Xunit;
+
     public class DateTimeValueGeneratorTests
     {
+        [Fact]
+        public void GenerateAlwaysReturnsFutureValuesWithin10YearsTest()
+        {
+            var target = new DateTimeValueGenerator();
+
+            for (var index = 0; index < 1000; index++)
+            {
+                var value = (DateTime?)target.Generate(typeof(DateTime?), null, null);
+
+                if (value == null)
+                {
+                    continue;
+                }
+
+                value.Should().BeAfter(DateTime.UtcNow);
+                value.Should().BeBefore(DateTime.UtcNow.AddYears(10));
+            }
+        }
+
         [Fact]
         public void GenerateCanReturnNullAndRandomValuesTest()
         {
@@ -17,7 +36,7 @@ namespace ModelBuilder.UnitTests
 
             for (var index = 0; index < 1000; index++)
             {
-                var value = (DateTime?) target.Generate(typeof(DateTime?), null, null);
+                var value = (DateTime?)target.Generate(typeof(DateTime?), null, null);
 
                 if (value == null)
                 {
@@ -73,8 +92,8 @@ namespace ModelBuilder.UnitTests
         {
             var target = new DateTimeValueGenerator();
 
-            var first = (TimeSpan) target.Generate(typeof(TimeSpan), null, null);
-            var second = (TimeSpan) target.Generate(typeof(TimeSpan), null, null);
+            var first = (TimeSpan)target.Generate(typeof(TimeSpan), null, null);
+            var second = (TimeSpan)target.Generate(typeof(TimeSpan), null, null);
 
             first.Should().NotBe(second);
         }
@@ -84,8 +103,8 @@ namespace ModelBuilder.UnitTests
         {
             var target = new DateTimeValueGenerator();
 
-            var first = (TimeZoneInfo) target.Generate(typeof(TimeZoneInfo), null, null);
-            var second = (TimeZoneInfo) target.Generate(typeof(TimeZoneInfo), null, null);
+            var first = (TimeZoneInfo)target.Generate(typeof(TimeZoneInfo), null, null);
+            var second = (TimeZoneInfo)target.Generate(typeof(TimeZoneInfo), null, null);
 
             first.Should().NotBe(second);
         }
