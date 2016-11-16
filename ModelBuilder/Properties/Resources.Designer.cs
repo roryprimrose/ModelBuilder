@@ -70,6 +70,15 @@ namespace ModelBuilder.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} did not return an {1} instance. A build log is required to create an {2} instance..
+        /// </summary>
+        internal static string BuildStrategy_BuildLogRequired {
+            get {
+                return ResourceManager.GetString("BuildStrategy_BuildLogRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The ConstructorResolver is null. A constructor resolver must be provided in order to create a build strategy..
         /// </summary>
         internal static string BuildStrategyCompiler_NullConstructorResolver {

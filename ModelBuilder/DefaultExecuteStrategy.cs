@@ -8,7 +8,7 @@
     using System.Globalization;
     using System.Linq;
     using System.Reflection;
-    using Properties;
+    using ModelBuilder.Properties;
 
     /// <summary>
     ///     The <see cref="DefaultExecuteStrategy{T}" />
@@ -17,15 +17,6 @@
     public class DefaultExecuteStrategy : IExecuteStrategy
     {
         private readonly Stack _buildChain = new Stack();
-
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="DefaultExecuteStrategy" /> class.
-        /// </summary>
-        public DefaultExecuteStrategy()
-        {
-            // Use the current global build strategy
-            BuildStrategy = Model.BuildStrategy;
-        }
 
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is null.</exception>
@@ -41,7 +32,28 @@
                 throw new ArgumentNullException(nameof(type));
             }
 
+            EnsureInitialized();
+
             return Build(type, null, null, args);
+        }
+
+        /// <inheritdoc />
+        /// <exception cref="ArgumentNullException">The <paramref name="configuration" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="buildLog" /> parameter is null.</exception>
+        public void Initialize(IBuildConfiguration configuration, IBuildLog buildLog)
+        {
+            if (configuration == null)
+            {
+                throw new ArgumentNullException(nameof(configuration));
+            }
+
+            if (buildLog == null)
+            {
+                throw new ArgumentNullException(nameof(buildLog));
+            }
+
+            Configuration = configuration;
+            Log = buildLog;
         }
 
         /// <inheritdoc />
@@ -57,6 +69,8 @@
             {
                 throw new ArgumentNullException(nameof(instance));
             }
+
+            EnsureInitialized();
 
             _buildChain.Push(instance);
 
@@ -87,11 +101,13 @@
                 throw new ArgumentNullException(nameof(type));
             }
 
+            EnsureInitialized();
+
             var circularReference = BuildChain.FirstOrDefault(x => x.GetType() == type);
 
             if (circularReference != null)
             {
-                BuildStrategy.BuildLog.CircularReferenceDetected(type);
+                Log.CircularReferenceDetected(type);
 
                 return circularReference;
             }
@@ -103,7 +119,7 @@
 
             // First check if there is a creation rule
             var creationRule =
-                BuildStrategy.CreationRules?.Where(x => x.IsMatch(contextType, referenceName))
+                Configuration.CreationRules?.Where(x => x.IsMatch(contextType, referenceName))
                     .OrderByDescending(x => x.Priority)
                     .FirstOrDefault();
 
@@ -119,7 +135,7 @@
             {
                 // Next check if this is a type supported by a value generator
                 var valueGenerator =
-                    BuildStrategy.ValueGenerators?.Where(x => x.IsSupported(type, referenceName, BuildChain))
+                    Configuration.ValueGenerators?.Where(x => x.IsSupported(type, referenceName, BuildChain))
                         .OrderByDescending(x => x.Priority)
                         .FirstOrDefault();
 
@@ -135,7 +151,7 @@
 
             if (generator != null)
             {
-                BuildStrategy.BuildLog.CreatingValue(type, context);
+                Log.CreatingValue(type, context);
 
                 try
                 {
@@ -147,14 +163,14 @@
                 }
                 catch (Exception ex)
                 {
-                    BuildStrategy.BuildLog.BuildFailure(ex);
+                    Log.BuildFailure(ex);
 
-                    const string messageFormat =
+                    const string MessageFormat =
                         "Failed to create value for type {0} using value generator {1}, {2}: {3}{4}{4}At the time of the failure, the build log was:{4}{4}{5}";
-                    var buildLog = BuildStrategy.BuildLog.Output;
+                    var buildLog = Log.Output;
                     var message = string.Format(
                         CultureInfo.CurrentCulture,
-                        messageFormat,
+                        MessageFormat,
                         type.FullName,
                         generatorType.FullName,
                         ex.GetType().Name,
@@ -167,7 +183,7 @@
             }
 
             var typeCreator =
-                BuildStrategy.TypeCreators?.Where(x => x.CanCreate(type, referenceName, BuildChain))
+                Configuration.TypeCreators?.Where(x => x.CanCreate(type, referenceName, BuildChain))
                     .OrderByDescending(x => x.Priority)
                     .FirstOrDefault();
 
@@ -176,7 +192,7 @@
                 throw BuildFailureException(type, referenceName, context);
             }
 
-            BuildStrategy.BuildLog.CreatingType(type, context);
+            Log.CreatingType(type, context);
 
             try
             {
@@ -191,14 +207,14 @@
             }
             catch (Exception ex)
             {
-                BuildStrategy.BuildLog.BuildFailure(ex);
+                Log.BuildFailure(ex);
 
-                const string messageFormat =
+                const string MessageFormat =
                     "Failed to create type {0} using type creator {1}, {2}: {3}{4}{4}At the time of the failure, the build log was:{4}{4}{5}";
-                var buildLog = BuildStrategy.BuildLog.Output;
+                var buildLog = Log.Output;
                 var message = string.Format(
                     CultureInfo.CurrentCulture,
-                    messageFormat,
+                    MessageFormat,
                     type.FullName,
                     typeCreator.GetType().FullName,
                     ex.GetType().Name,
@@ -210,7 +226,7 @@
             }
             finally
             {
-                BuildStrategy.BuildLog.CreatedType(type, context);
+                Log.CreatedType(type, context);
             }
         }
 
@@ -227,7 +243,9 @@
                 throw new ArgumentNullException(nameof(instance));
             }
 
-            BuildStrategy.BuildLog.PopulatingInstance(instance);
+            EnsureInitialized();
+
+            Log.PopulatingInstance(instance);
 
             try
             {
@@ -236,9 +254,9 @@
                 var type = instance.GetType();
 
                 var propertyInfos = from x in type.GetProperties(flags)
-                                    where x.CanWrite
-                                    orderby GetMaximumOrderPrority(x.PropertyType, x.Name) descending
-                                    select x;
+                    where x.CanWrite
+                    orderby GetMaximumOrderPrority(x.PropertyType, x.Name) descending
+                    select x;
 
                 foreach (var propertyInfo in propertyInfos)
                 {
@@ -249,136 +267,8 @@
             }
             finally
             {
-                BuildStrategy.BuildLog.PopulatedInstance(instance);
+                Log.PopulatedInstance(instance);
             }
-        }
-
-        private object CreateAndPopulate(
-            Type type,
-            string referenceName,
-            LinkedList<object> buildChain,
-            object[] args,
-            ITypeCreator typeCreator)
-        {
-            var instance = CreateInstance(typeCreator, type, referenceName, buildChain, args);
-
-            if (instance == null)
-            {
-                return null;
-            }
-
-            try
-            {
-                _buildChain.Push(instance);
-
-                if (typeCreator.AutoPopulate)
-                {
-                    // The type creator has indicated that this type should be auto populated by the execute strategy
-                    instance = PopulateInstance(instance);
-
-                    Debug.Assert(instance != null, "Populating the instance did not return the original instance");
-                }
-
-                // Allow the type creator to do its own population of the instance
-                instance = typeCreator.Populate(instance, this);
-
-                var postBuildActions = BuildStrategy.PostBuildActions
-                    ?.Where(x => x.IsSupported(type, referenceName, BuildChain))
-                    .OrderByDescending(x => x.Priority);
-
-                if (postBuildActions != null)
-                {
-                    foreach (var postBuildAction in postBuildActions)
-                    {
-                        postBuildAction.Execute(type, referenceName, BuildChain);
-                    }
-                }
-
-                return instance;
-            }
-            finally
-            {
-                _buildChain.Pop();
-            }
-        }
-
-        private object CreateInstance(
-            ITypeCreator typeCreator,
-            Type type,
-            string referenceName,
-            LinkedList<object> buildChain,
-            object[] args)
-        {
-            object item;
-
-            if (args?.Length > 0)
-            {
-                // We have arguments so will just let the type creator do the work here
-                item = typeCreator.Create(type, referenceName, buildChain, args);
-            }
-            else if (typeCreator.AutoDetectConstructor)
-            {
-                // Use constructor detection to figure out how to create this instance
-                var constructor = BuildStrategy.ConstructorResolver.Resolve(type, args);
-
-                var parameterInfos = constructor.GetParameters();
-
-                if (parameterInfos.Length == 0)
-                {
-                    item = typeCreator.Create(type, referenceName, buildChain);
-                }
-                else
-                {
-                    // Get values for each of the constructor parameters
-                    var parameters = new Collection<object>();
-
-                    foreach (var parameterInfo in parameterInfos)
-                    {
-                        var context = buildChain.Last?.Value;
-
-                        BuildStrategy.BuildLog.CreateParameter(
-                            type,
-                            parameterInfo.ParameterType,
-                            parameterInfo.Name,
-                            context);
-
-                        // Recurse to build this parameter value
-                        var parameterValue = Build(parameterInfo.ParameterType, parameterInfo.Name, null);
-
-                        parameters.Add(parameterValue);
-                    }
-
-                    item = typeCreator.Create(type, referenceName, buildChain, parameters.ToArray());
-                }
-            }
-            else
-            {
-                // The type creator is going to be solely responsible for creating this instance
-                item = typeCreator.Create(type, referenceName, buildChain);
-            }
-
-            return item;
-        }
-
-        private int GetMaximumOrderPrority(Type type, string propertyName)
-        {
-            if (BuildStrategy.ExecuteOrderRules == null)
-            {
-                return 0;
-            }
-
-            var matchingRules = from x in BuildStrategy.ExecuteOrderRules
-                                where x.IsMatch(type, propertyName)
-                                orderby x.Priority descending
-                                select x;
-            var matchingRule = matchingRules.FirstOrDefault();
-
-            if (matchingRule == null)
-            {
-                return 0;
-            }
-
-            return matchingRule.Priority;
         }
 
         private Exception BuildFailureException(Type type, string referenceName, object context)
@@ -415,14 +305,14 @@
 
             var ex = new NotSupportedException(message);
 
-            BuildStrategy.BuildLog.BuildFailure(ex);
+            Log.BuildFailure(ex);
 
-            const string messageFormat =
+            const string MessageFormat =
                 "Failed to create instance of type {0}, {1}: {2}{3}{3}At the time of the failure, the build log was:{3}{3}{4}";
-            var buildLog = BuildStrategy.BuildLog.Output;
+            var buildLog = Log.Output;
             var failureMessage = string.Format(
                 CultureInfo.CurrentCulture,
-                messageFormat,
+                MessageFormat,
                 type.FullName,
                 ex.GetType().Name,
                 ex.Message,
@@ -432,12 +322,152 @@
             return new BuildException(failureMessage, type, referenceName, context, buildLog, ex);
         }
 
+        private object CreateAndPopulate(
+            Type type,
+            string referenceName,
+            LinkedList<object> buildChain,
+            object[] args,
+            ITypeCreator typeCreator)
+        {
+            var instance = CreateInstance(typeCreator, type, referenceName, buildChain, args);
+
+            if (instance == null)
+            {
+                return null;
+            }
+
+            try
+            {
+                _buildChain.Push(instance);
+
+                if (typeCreator.AutoPopulate)
+                {
+                    // The type creator has indicated that this type should be auto populated by the execute strategy
+                    instance = PopulateInstance(instance);
+
+                    Debug.Assert(instance != null, "Populating the instance did not return the original instance");
+                }
+
+                // Allow the type creator to do its own population of the instance
+                instance = typeCreator.Populate(instance, this);
+
+                var postBuildActions =
+                    Configuration.PostBuildActions?.Where(x => x.IsSupported(type, referenceName, BuildChain))
+                        .OrderByDescending(x => x.Priority);
+
+                if (postBuildActions != null)
+                {
+                    foreach (var postBuildAction in postBuildActions)
+                    {
+                        postBuildAction.Execute(type, referenceName, BuildChain);
+                    }
+                }
+
+                return instance;
+            }
+            finally
+            {
+                _buildChain.Pop();
+            }
+        }
+
+        private object CreateInstance(
+            ITypeCreator typeCreator,
+            Type type,
+            string referenceName,
+            LinkedList<object> buildChain,
+            object[] args)
+        {
+            object item;
+
+            if (args?.Length > 0)
+            {
+                // We have arguments so will just let the type creator do the work here
+                item = typeCreator.Create(type, referenceName, buildChain, args);
+            }
+            else if (typeCreator.AutoDetectConstructor)
+            {
+                // Use constructor detection to figure out how to create this instance
+                var constructor = Configuration.ConstructorResolver.Resolve(type, args);
+
+                var parameterInfos = constructor.GetParameters();
+
+                if (parameterInfos.Length == 0)
+                {
+                    item = typeCreator.Create(type, referenceName, buildChain);
+                }
+                else
+                {
+                    // Get values for each of the constructor parameters
+                    var parameters = new Collection<object>();
+
+                    foreach (var parameterInfo in parameterInfos)
+                    {
+                        var context = buildChain.Last?.Value;
+
+                        Log.CreateParameter(type, parameterInfo.ParameterType, parameterInfo.Name, context);
+
+                        // Recurse to build this parameter value
+                        var parameterValue = Build(parameterInfo.ParameterType, parameterInfo.Name, null);
+
+                        parameters.Add(parameterValue);
+                    }
+
+                    item = typeCreator.Create(type, referenceName, buildChain, parameters.ToArray());
+                }
+            }
+            else
+            {
+                // The type creator is going to be solely responsible for creating this instance
+                item = typeCreator.Create(type, referenceName, buildChain);
+            }
+
+            return item;
+        }
+
+        private void EnsureInitialized()
+        {
+            if (Configuration == null)
+            {
+                var message = string.Format(
+                    CultureInfo.CurrentCulture,
+                    "The {0} has not be initialized. You must invoke {1} first to provide the build configuration and the build log.",
+                    GetType().FullName,
+                    MethodBase.GetCurrentMethod().Name);
+
+                throw new InvalidOperationException(message);
+            }
+        }
+
+        private int GetMaximumOrderPrority(Type type, string propertyName)
+        {
+            if (Configuration.ExecuteOrderRules == null)
+            {
+                return 0;
+            }
+
+            var matchingRules = from x in Configuration.ExecuteOrderRules
+                where x.IsMatch(type, propertyName)
+                orderby x.Priority descending
+                select x;
+            var matchingRule = matchingRules.FirstOrDefault();
+
+            if (matchingRule == null)
+            {
+                return 0;
+            }
+
+            return matchingRule.Priority;
+        }
+
         private void PopulateProperty(object instance, PropertyInfo propertyInfo)
         {
             var type = instance.GetType();
+
             // Check if there is a matching ignore rule
-            var ignoreRule = BuildStrategy.IgnoreRules?.FirstOrDefault(
-                x => x.TargetType.IsAssignableFrom(type) && (x.PropertyName == propertyInfo.Name));
+            var ignoreRule =
+                Configuration.IgnoreRules?.FirstOrDefault(
+                    x => x.TargetType.IsAssignableFrom(type) && (x.PropertyName == propertyInfo.Name));
 
             if (ignoreRule != null)
             {
@@ -447,7 +477,7 @@
 
             if (propertyInfo.GetSetMethod(true).IsPublic)
             {
-                BuildStrategy.BuildLog.CreateProperty(propertyInfo.PropertyType, propertyInfo.Name, instance);
+                Log.CreateProperty(propertyInfo.PropertyType, propertyInfo.Name, instance);
 
                 var parameterValue = Build(propertyInfo.PropertyType, propertyInfo.Name, instance);
 
@@ -472,7 +502,7 @@
 
             // Attempt to find a type creator for this type that will help us figure out how it should be populated
             var typeCreator =
-                BuildStrategy.TypeCreators?.Where(x => x.CanPopulate(propertyType, propertyInfo.Name, BuildChain))
+                Configuration.TypeCreators?.Where(x => x.CanPopulate(propertyType, propertyInfo.Name, BuildChain))
                     .OrderByDescending(x => x.Priority)
                     .FirstOrDefault();
 
@@ -513,6 +543,9 @@
         }
 
         /// <inheritdoc />
-        public IBuildStrategy BuildStrategy { get; set; }
+        public IBuildConfiguration Configuration { get; private set; }
+
+        /// <inheritdoc />
+        public IBuildLog Log { get; private set; }
     }
 }

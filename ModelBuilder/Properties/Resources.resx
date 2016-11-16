@@ -187,4 +187,7 @@
   <data name="ConstructorResolver_NoValidConstructorFound" xml:space="preserve">
     <value>No valid constructors are available for type {0} (copy constructors have been ignored).</value>
   </data>
+  <data name="BuildStrategy_BuildLogRequired" xml:space="preserve">
+    <value>{0} did not return an {1} instance. A build log is required to create an {2} instance.</value>
+  </data>
 </root>

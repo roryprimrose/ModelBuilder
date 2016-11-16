@@ -216,7 +216,7 @@
 
                 var actual = Model.For<ReadOnlyModel>();
 
-                actual.BuildStrategy.Should().Be(build);
+                actual.Configuration.Should().Be(build);
             }
             finally
             {

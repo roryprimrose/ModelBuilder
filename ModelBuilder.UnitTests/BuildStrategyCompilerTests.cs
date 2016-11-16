@@ -11,7 +11,6 @@
         [Fact]
         public void CompileReturnsNewBuildStrategyTest()
         {
-            var buildLog = Substitute.For<IBuildLog>();
             var constructorResolver = Substitute.For<IConstructorResolver>();
             var creationRules = new List<CreationRule>
             {
@@ -40,7 +39,6 @@
 
             var target = new BuildStrategyCompiler
             {
-                BuildLog = buildLog,
                 ConstructorResolver = constructorResolver
             };
 
@@ -52,8 +50,7 @@
             target.PostBuildActions.Add(postBuildActions[0]);
 
             var actual = target.Compile();
-
-            actual.BuildLog.Should().Be(buildLog);
+            
             actual.ConstructorResolver.Should().Be(constructorResolver);
             actual.CreationRules.ShouldBeEquivalentTo(creationRules);
             actual.TypeCreators.ShouldBeEquivalentTo(typeCreators);
@@ -77,8 +74,7 @@
         public void CreatesDefaultsForPropertiesTest()
         {
             var target = new BuildStrategyCompiler();
-
-            target.BuildLog.Should().BeNull();
+            
             target.ConstructorResolver.Should().BeNull();
             target.CreationRules.Should().NotBeNull();
             target.ExecuteOrderRules.Should().NotBeNull();

@@ -52,6 +52,7 @@
     <Compile Include="ArrayTypeCreator.cs">
       <DependentUpon>ITypeCreator.cs</DependentUpon>
     </Compile>
+    <Compile Include="BuildConfigurationExtensions.cs" />
     <Compile Include="BuildException.cs" />
     <Compile Include="BuildStrategyCompiler.cs">
       <DependentUpon>IBuildStrategyCompiler.cs</DependentUpon>
@@ -115,6 +116,7 @@
     <Compile Include="GenderValueGenerator.cs">
       <DependentUpon>IValueGenerator.cs</DependentUpon>
     </Compile>
+    <Compile Include="IBuildConfiguration.cs" />
     <Compile Include="IBuildLog.cs" />
     <Compile Include="IBuildStrategyCompiler.cs" />
     <Compile Include="ICompilerModule.cs" />

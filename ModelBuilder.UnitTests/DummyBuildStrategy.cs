@@ -5,12 +5,15 @@
 
     public class DummyBuildStrategy : IBuildStrategy
     {
-        public IExecuteStrategy<T> GetExecuteStrategy<T>()
+        public IBuildLog GetBuildLog()
         {
             throw new NotImplementedException();
         }
 
-        public IBuildLog BuildLog { get; }
+        public IExecuteStrategy<T> GetExecuteStrategy<T>()
+        {
+            throw new NotImplementedException();
+        }
 
         public IConstructorResolver ConstructorResolver { get; }
 

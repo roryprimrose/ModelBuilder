@@ -2,7 +2,9 @@ namespace ModelBuilder
 {
     using System;
     using System.Diagnostics.CodeAnalysis;
+    using System.Globalization;
     using System.Linq.Expressions;
+    using ModelBuilder.Properties;
 
     /// <summary>
     ///     The <see cref="Extensions" />
@@ -10,48 +12,6 @@ namespace ModelBuilder
     /// </summary>
     public static class BuildStrategyExtensions
     {
-        /// <summary>
-        ///     Clones the specified builder strategy and returns a compiler.
-        /// </summary>
-        /// <param name="buildStrategy">The build strategy to create the instance with.</param>
-        /// <returns>The new build strategy compiler.</returns>
-        /// <exception cref="ArgumentNullException">The <paramref name="buildStrategy" /> parameter is null.</exception>
-        public static IBuildStrategyCompiler Clone(this IBuildStrategy buildStrategy)
-        {
-            if (buildStrategy == null)
-            {
-                throw new ArgumentNullException(nameof(buildStrategy));
-            }
-
-            var compiler = new BuildStrategyCompiler
-            {
-                BuildLog = buildStrategy.BuildLog,
-                ConstructorResolver = buildStrategy.ConstructorResolver
-            };
-
-            foreach (var executeOrderRule in buildStrategy.ExecuteOrderRules)
-            {
-                compiler.ExecuteOrderRules.Add(executeOrderRule);
-            }
-
-            foreach (var ignoreRule in buildStrategy.IgnoreRules)
-            {
-                compiler.IgnoreRules.Add(ignoreRule);
-            }
-
-            foreach (var typeCreator in buildStrategy.TypeCreators)
-            {
-                compiler.TypeCreators.Add(typeCreator);
-            }
-
-            foreach (var valueGenerator in buildStrategy.ValueGenerators)
-            {
-                compiler.ValueGenerators.Add(valueGenerator);
-            }
-
-            return compiler;
-        }
-
         /// <summary>
         ///     Creates an instance of <typeparamref name="T" /> using the specified build strategy.
         /// </summary>
@@ -151,7 +111,8 @@ namespace ModelBuilder
         /// </exception>
         [SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters",
              Justification = "This type is required in order to support the fluent syntax of call sites.")]
-        public static IBuildStrategy Ignoring<T>(this IBuildStrategy buildStrategy,
+        public static IBuildStrategy Ignoring<T>(
+            this IBuildStrategy buildStrategy,
             Expression<Func<T, object>> expression)
         {
             if (buildStrategy == null)
@@ -204,7 +165,23 @@ namespace ModelBuilder
                 throw new ArgumentNullException(nameof(buildStrategy));
             }
 
-            var executeStrategy = new T {BuildStrategy = buildStrategy};
+            var buildLog = buildStrategy.GetBuildLog();
+
+            if (buildLog == null)
+            {
+                var message = string.Format(
+                    CultureInfo.CurrentCulture,
+                    Resources.BuildStrategy_BuildLogRequired,
+                    buildStrategy.GetType().FullName,
+                    nameof(IBuildLog),
+                    nameof(IExecuteStrategy<T>));
+
+                throw new InvalidOperationException(message);
+            }
+
+            var executeStrategy = new T();
+
+            executeStrategy.Initialize(buildStrategy, buildLog);
 
             return executeStrategy;
         }

@@ -4,6 +4,8 @@
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Linq;
+    using System.Threading;
+    using System.Threading.Tasks;
     using FluentAssertions;
     using NSubstitute;
     using NSubstitute.ExceptionExtensions;
@@ -68,6 +70,14 @@
         }
 
         [Fact]
+        public void CanCreateInstanceWithoutPropertiesTest()
+        {
+            var actual = Model.Create<Empty>();
+
+            actual.Should().NotBeNull();
+        }
+
+        [Fact]
         public void CanGenerateArrayOfCustomTypeTest()
         {
             var actual = Model.Create<Person[]>();
@@ -115,7 +125,7 @@
 
             strategy.Create();
 
-            var actual = strategy.BuildStrategy.BuildLog.Output;
+            var actual = strategy.Log.Output;
 
             actual.Should().NotBeNullOrWhiteSpace();
 
@@ -129,7 +139,7 @@
 
             strategy.Create();
 
-            var actual = strategy.BuildStrategy.BuildLog.Output;
+            var actual = strategy.Log.Output;
 
             actual.Should().NotBeNullOrWhiteSpace();
 
@@ -215,10 +225,9 @@
 
             var buildStrategy = new DefaultBuildStrategyCompiler().Add(typeCreator).Compile();
 
-            var target = new DefaultExecuteStrategy<Company>
-            {
-                BuildStrategy = buildStrategy
-            };
+            var target = new DefaultExecuteStrategy<Company>();
+
+            target.Initialize(buildStrategy, buildStrategy.GetBuildLog());
 
             Action action = () => target.CreateWith();
 
@@ -304,8 +313,7 @@
         public void MailinatorEmailGeneratorIsAssignedAgainstAllInstancesTest()
         {
             var strategy =
-                new DefaultBuildStrategyCompiler()
-                    .RemoveValueGenerator<EmailValueGenerator>()
+                new DefaultBuildStrategyCompiler().RemoveValueGenerator<EmailValueGenerator>()
                     .AddValueGenerator<MailinatorEmailValueGenerator>()
                     .Compile();
 
@@ -327,6 +335,49 @@
             actual.LastName.Should().NotBeNullOrWhiteSpace();
             actual.Id.Should().NotBeEmpty();
             actual.Priority.Should().NotBe(0);
+        }
+
+        [Fact]
+        public void PopulateIgnoresEmptyInstanceTest()
+        {
+            var expected = new Empty();
+
+            var actual = Model.Populate(expected);
+
+            actual.Should().BeSameAs(expected);
+        }
+
+        [Fact]
+        public void UsesBuildLogInstancePerExecutionPipelineTest()
+        {
+            var buildStrategy = Model.BuildStrategy;
+
+            const int MaxTasks = 100;
+            var tasks = new List<Task<string>>(MaxTasks);
+
+            for (var index = 0; index < MaxTasks; index++)
+            {
+                var loopIndex = index;
+                var task = Task<string>.Factory.StartNew(
+                    () =>
+                    {
+                        var strategy = buildStrategy.GetExecuteStrategy<Empty>();
+
+                        strategy.CreateWith();
+
+                        return "Iteration " + loopIndex + " on thread " + Thread.CurrentThread.ManagedThreadId +
+                               Environment.NewLine + strategy.Log.Output;
+                    });
+
+                tasks.Add(task);
+            }
+
+            Task.WhenAll(tasks).Wait();
+
+            for (var index = 0; index < MaxTasks; index++)
+            {
+                _output.WriteLine(tasks[index].Result + Environment.NewLine);
+            }
         }
     }
 }

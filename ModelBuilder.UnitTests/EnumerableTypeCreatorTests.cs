@@ -269,8 +269,13 @@
         [InlineData(typeof(InheritedGenericCollection))]
         public void PopulateAddsItemsToInstancesTest(Type type)
         {
+            var configuration = Model.BuildStrategy;
+            var buildLog = configuration.GetBuildLog();
+
             var target = new EnumerableTypeCreator();
             var executeStrategy = new DefaultExecuteStrategy();
+
+            executeStrategy.Initialize(configuration, buildLog);
 
             var actual = target.Create(type, null, null);
 

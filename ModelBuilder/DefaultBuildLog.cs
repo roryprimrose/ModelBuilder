@@ -11,6 +11,7 @@
     /// The <see cref="DefaultBuildLog"/>
     /// class provides default implementation for creating a build log when creating types and values.
     /// </summary>
+    /// <threadsafety instance="false"/>
     public class DefaultBuildLog : IBuildLog
     {
         private readonly StringBuilder _builder = new StringBuilder();

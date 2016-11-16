@@ -25,7 +25,6 @@
             {
                 Substitute.For<IPostBuildAction>()
             };
-            var buildLog = Model.BuildStrategy.BuildLog;
 
             var actual = new BuilderStrategyWrapper(
                 constructorResolver,
@@ -33,10 +32,8 @@
                 typeCreators,
                 valueGenerators,
                 ignoreRules,
-                executeOrderRules, postBuildActions,
-                buildLog);
-
-            actual.BuildLog.Should().Be(buildLog);
+                executeOrderRules, postBuildActions);
+            
             actual.ConstructorResolver.Should().Be(constructorResolver);
             actual.ExecuteOrderRules.ShouldAllBeEquivalentTo(executeOrderRules);
             actual.PostBuildActions.ShouldAllBeEquivalentTo(postBuildActions);
@@ -45,32 +42,7 @@
             actual.TypeCreators.ShouldAllBeEquivalentTo(typeCreators);
             actual.ValueGenerators.ShouldAllBeEquivalentTo(valueGenerators);
         }
-
-        [Fact]
-        public void ThrowsExceptionWhenCreatedWithNullBuildLogTest()
-        {
-            var constructorResolver = Model.BuildStrategy.ConstructorResolver;
-            var creationRules = Model.BuildStrategy.CreationRules;
-            var typeCreators = Model.BuildStrategy.TypeCreators;
-            var valueGenerators = Model.BuildStrategy.ValueGenerators;
-            var ignoreRules = Model.BuildStrategy.IgnoreRules;
-            var executeOrderRules = Model.BuildStrategy.ExecuteOrderRules;
-            var postBuildActions = Model.BuildStrategy.PostBuildActions;
-
-            Action action =
-                () =>
-                    new BuilderStrategyWrapper(
-                        constructorResolver,
-                        creationRules,
-                        typeCreators,
-                        valueGenerators,
-                        ignoreRules,
-                        executeOrderRules, postBuildActions,
-                        null);
-
-            action.ShouldThrow<ArgumentNullException>();
-        }
-
+        
         [Fact]
         public void ThrowsExceptionWhenCreatedWithNullCreationRulesTest()
         {
@@ -80,7 +52,6 @@
             var ignoreRules = Model.BuildStrategy.IgnoreRules;
             var executeOrderRules = Model.BuildStrategy.ExecuteOrderRules;
             var postBuildActions = Model.BuildStrategy.PostBuildActions;
-            var buildLog = Model.BuildStrategy.BuildLog;
 
             Action action =
                 () =>
@@ -90,8 +61,7 @@
                         typeCreators,
                         valueGenerators,
                         ignoreRules,
-                        executeOrderRules, postBuildActions,
-                        buildLog);
+                        executeOrderRules, postBuildActions);
 
             action.ShouldThrow<ArgumentNullException>();
         }
@@ -105,7 +75,6 @@
             var valueGenerators = Model.BuildStrategy.ValueGenerators;
             var ignoreRules = Model.BuildStrategy.IgnoreRules;
             var postBuildActions = Model.BuildStrategy.PostBuildActions;
-            var buildLog = Model.BuildStrategy.BuildLog;
 
             Action action =
                 () =>
@@ -116,8 +85,7 @@
                         valueGenerators,
                         ignoreRules,
                         null,
-                        postBuildActions,
-                        buildLog);
+                        postBuildActions);
 
             action.ShouldThrow<ArgumentNullException>();
         }
@@ -131,7 +99,6 @@
             var valueGenerators = Model.BuildStrategy.ValueGenerators;
             var executeOrderRules = Model.BuildStrategy.ExecuteOrderRules;
             var postBuildActions = Model.BuildStrategy.PostBuildActions;
-            var buildLog = Model.BuildStrategy.BuildLog;
 
             Action action =
                 () =>
@@ -141,8 +108,7 @@
                         typeCreators,
                         valueGenerators,
                         null,
-                        executeOrderRules, postBuildActions,
-                        buildLog);
+                        executeOrderRules, postBuildActions);
 
             action.ShouldThrow<ArgumentNullException>();
         }
@@ -156,7 +122,6 @@
             var valueGenerators = Model.BuildStrategy.ValueGenerators;
             var ignoreRules = Model.BuildStrategy.IgnoreRules;
             var executeOrderRules = Model.BuildStrategy.ExecuteOrderRules;
-            var buildLog = Model.BuildStrategy.BuildLog;
 
             Action action =
                 () =>
@@ -167,8 +132,7 @@
                         valueGenerators,
                         ignoreRules,
                         executeOrderRules,
-                        null,
-                        buildLog);
+                        null);
 
             action.ShouldThrow<ArgumentNullException>();
         }
@@ -182,7 +146,6 @@
             var ignoreRules = Model.BuildStrategy.IgnoreRules;
             var executeOrderRules = Model.BuildStrategy.ExecuteOrderRules;
             var postBuildActions = Model.BuildStrategy.PostBuildActions;
-            var buildLog = Model.BuildStrategy.BuildLog;
 
             Action action =
                 () =>
@@ -192,8 +155,7 @@
                         typeCreators,
                         valueGenerators,
                         ignoreRules,
-                        executeOrderRules, postBuildActions,
-                        buildLog);
+                        executeOrderRules, postBuildActions);
 
             action.ShouldThrow<ArgumentNullException>();
         }
@@ -207,7 +169,6 @@
             var ignoreRules = Model.BuildStrategy.IgnoreRules;
             var executeOrderRules = Model.BuildStrategy.ExecuteOrderRules;
             var postBuildActions = Model.BuildStrategy.PostBuildActions;
-            var buildLog = Model.BuildStrategy.BuildLog;
 
             Action action =
                 () =>
@@ -217,8 +178,7 @@
                         null,
                         valueGenerators,
                         ignoreRules,
-                        executeOrderRules, postBuildActions,
-                        buildLog);
+                        executeOrderRules, postBuildActions);
 
             action.ShouldThrow<ArgumentNullException>();
         }
@@ -232,7 +192,6 @@
             var ignoreRules = Model.BuildStrategy.IgnoreRules;
             var executeOrderRules = Model.BuildStrategy.ExecuteOrderRules;
             var postBuildActions = Model.BuildStrategy.PostBuildActions;
-            var buildLog = Model.BuildStrategy.BuildLog;
 
             Action action =
                 () =>
@@ -242,8 +201,7 @@
                         typeCreators,
                         null,
                         ignoreRules,
-                        executeOrderRules, postBuildActions,
-                        buildLog);
+                        executeOrderRules, postBuildActions);
 
             action.ShouldThrow<ArgumentNullException>();
         }
@@ -257,8 +215,7 @@
                 IEnumerable<IValueGenerator> valueGenerators,
                 IEnumerable<IgnoreRule> ignoreRules,
                 IEnumerable<ExecuteOrderRule> executeOrderRules,
-                IEnumerable<IPostBuildAction> postBuildActions,
-                IBuildLog buildLog)
+                IEnumerable<IPostBuildAction> postBuildActions)
                 : base(
                     constructorResolver,
                     creationRules,
@@ -266,9 +223,13 @@
                     valueGenerators,
                     ignoreRules,
                     executeOrderRules,
-                    postBuildActions,
-                    buildLog)
+                    postBuildActions)
             {
+            }
+
+            public override IBuildLog GetBuildLog()
+            {
+                throw new NotImplementedException();
             }
 
             public override IExecuteStrategy<T> GetExecuteStrategy<T>()

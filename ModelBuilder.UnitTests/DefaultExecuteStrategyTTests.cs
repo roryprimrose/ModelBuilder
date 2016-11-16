@@ -30,11 +30,10 @@
             buildStrategy.TypeCreators.Returns(typeCreators.AsReadOnly());
             typeCreator.CanCreate(typeof(SlimModel), null, Arg.Any<LinkedList<object>>()).Returns(true);
             typeCreator.CanPopulate(typeof(SlimModel), null, Arg.Any<LinkedList<object>>()).Returns(true);
+            
+            var target = new DefaultExecuteStrategy<SlimModel>();
 
-            var target = new DefaultExecuteStrategy<SlimModel>
-            {
-                BuildStrategy = buildStrategy
-            };
+            target.Initialize(buildStrategy, buildStrategy.GetBuildLog());
 
             var actual = target.CreateWith();
 
@@ -56,10 +55,9 @@
             typeCreator.CanPopulate(typeof(Stream), null, Arg.Any<LinkedList<object>>()).Returns(true);
             typeCreator.Create(typeof(Stream), null, Arg.Any<LinkedList<object>>()).Returns(null);
 
-            var target = new DefaultExecuteStrategy<Stream>
-            {
-                BuildStrategy = buildStrategy
-            };
+            var target = new DefaultExecuteStrategy<Stream>();
+
+            target.Initialize(buildStrategy, buildStrategy.GetBuildLog());
 
             var actual = target.CreateWith();
 
@@ -80,10 +78,9 @@
             valueGenerator.IsSupported(typeof(int), null, Arg.Any<LinkedList<object>>()).Returns(true);
             valueGenerator.Generate(typeof(int), null, Arg.Any<LinkedList<object>>()).Returns(null);
 
-            var target = new DefaultExecuteStrategy<int>
-            {
-                BuildStrategy = buildStrategy
-            };
+            var target = new DefaultExecuteStrategy<int>();
+
+            target.Initialize(buildStrategy, buildStrategy.GetBuildLog());
 
             var actual = target.CreateWith();
 
@@ -109,10 +106,9 @@
             buildStrategy.TypeCreators.Returns(typeCreators.AsReadOnly());
             buildStrategy.ValueGenerators.Returns(valueGenerators.AsReadOnly());
 
-            var target = new DefaultExecuteStrategy<SlimModel>
-            {
-                BuildStrategy = buildStrategy
-            };
+            var target = new DefaultExecuteStrategy<SlimModel>();
+
+            target.Initialize(buildStrategy, buildStrategy.GetBuildLog());
 
             typeCreator.CanCreate(typeof(SlimModel), null, Arg.Any<LinkedList<object>>()).Returns(true);
             typeCreator.CanPopulate(typeof(SlimModel), null, Arg.Any<LinkedList<object>>()).Returns(true);
@@ -152,10 +148,9 @@
 
             buildStrategy.TypeCreators.Returns(typeCreators.AsReadOnly());
 
-            var target = new DefaultExecuteStrategy<Person>
-            {
-                BuildStrategy = buildStrategy
-            };
+            var target = new DefaultExecuteStrategy<Person>();
+
+            target.Initialize(buildStrategy, buildStrategy.GetBuildLog());
 
             typeCreator.CanCreate(typeof(Person), null, Arg.Any<LinkedList<object>>()).Returns(true);
             typeCreator.CanPopulate(typeof(Person), null, Arg.Any<LinkedList<object>>()).Returns(true);
@@ -188,10 +183,9 @@
             buildStrategy.TypeCreators.Returns(typeCreators.AsReadOnly());
             buildStrategy.ValueGenerators.Returns(valueGenerators.AsReadOnly());
 
-            var target = new DefaultExecuteStrategy<Company>
-            {
-                BuildStrategy = buildStrategy
-            };
+            var target = new DefaultExecuteStrategy<Company>();
+
+            target.Initialize(buildStrategy, buildStrategy.GetBuildLog());
 
             typeCreator.CanCreate(
                 typeof(IEnumerable<Person>),

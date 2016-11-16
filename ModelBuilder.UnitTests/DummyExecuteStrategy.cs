@@ -15,6 +15,10 @@
             throw new NotImplementedException();
         }
 
+        public void Initialize(IBuildConfiguration configuration, IBuildLog buildLog)
+        {
+        }
+
         public string Populate(string instance)
         {
             throw new NotImplementedException();
@@ -25,15 +29,9 @@
             throw new NotImplementedException();
         }
 
-        public LinkedList<object> BuildChain
-        {
-            get;
-        }
+        public LinkedList<object> BuildChain { get; }
 
-        public IBuildStrategy BuildStrategy
-        {
-            get;
-            set;
-        }
+        public IBuildConfiguration Configuration { get; }
+        public IBuildLog Log { get; }
     }
 }
