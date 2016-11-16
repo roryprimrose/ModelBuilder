@@ -6,13 +6,13 @@
     using System.Linq;
 
     /// <summary>
-    /// The <see cref="BuildStrategyBase"/>
-    /// class is used to provide the base framework for a build strategy.
+    ///     The <see cref="BuildStrategyBase" />
+    ///     class is used to provide the base framework for a build strategy.
     /// </summary>
     public abstract class BuildStrategyBase : IBuildStrategy
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="BuildStrategyBase"/> class.
+        ///     Initializes a new instance of the <see cref="BuildStrategyBase" /> class.
         /// </summary>
         /// <param name="constructorResolver">The constructor resolver.</param>
         /// <param name="creationRules">The creation rules.</param>
@@ -21,15 +21,13 @@
         /// <param name="ignoreRules">The ignore rules.</param>
         /// <param name="executeOrderRules">The execute order rules.</param>
         /// <param name="postBuildActions">The post build actions.</param>
-        /// <param name="buildLog">The build log.</param>
-        /// <exception cref="ArgumentNullException">The <paramref name="constructorResolver"/> parameter is null.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="creationRules"/> parameter is null.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="typeCreators"/> parameter is null.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="valueGenerators"/> parameter is null.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="ignoreRules"/> parameter is null.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="executeOrderRules"/> parameter is null.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="postBuildActions"/> parameter is null.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="buildLog"/> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="constructorResolver" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="creationRules" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="typeCreators" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="valueGenerators" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="ignoreRules" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="executeOrderRules" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="postBuildActions" /> parameter is null.</exception>
         protected BuildStrategyBase(
             IConstructorResolver constructorResolver,
             IEnumerable<CreationRule> creationRules,
@@ -37,8 +35,7 @@
             IEnumerable<IValueGenerator> valueGenerators,
             IEnumerable<IgnoreRule> ignoreRules,
             IEnumerable<ExecuteOrderRule> executeOrderRules,
-            IEnumerable<IPostBuildAction> postBuildActions,
-            IBuildLog buildLog)
+            IEnumerable<IPostBuildAction> postBuildActions)
         {
             if (creationRules == null)
             {
@@ -75,11 +72,6 @@
                 throw new ArgumentNullException(nameof(postBuildActions));
             }
 
-            if (buildLog == null)
-            {
-                throw new ArgumentNullException(nameof(buildLog));
-            }
-
             ConstructorResolver = constructorResolver;
             TypeCreators = new ReadOnlyCollection<ITypeCreator>(typeCreators.ToList());
             ValueGenerators = new ReadOnlyCollection<IValueGenerator>(valueGenerators.ToList());
@@ -87,14 +79,13 @@
             ExecuteOrderRules = new ReadOnlyCollection<ExecuteOrderRule>(executeOrderRules.ToList());
             PostBuildActions = new ReadOnlyCollection<IPostBuildAction>(postBuildActions.ToList());
             CreationRules = new ReadOnlyCollection<CreationRule>(creationRules.ToList());
-            BuildLog = buildLog;
         }
 
         /// <inheritdoc />
-        public abstract IExecuteStrategy<T> GetExecuteStrategy<T>();
+        public abstract IBuildLog GetBuildLog();
 
         /// <inheritdoc />
-        public IBuildLog BuildLog { get; }
+        public abstract IExecuteStrategy<T> GetExecuteStrategy<T>();
 
         /// <inheritdoc />
         public IConstructorResolver ConstructorResolver { get; }

@@ -2,7 +2,9 @@ namespace ModelBuilder
 {
     using System;
     using System.Diagnostics.CodeAnalysis;
+    using System.Globalization;
     using System.Linq.Expressions;
+    using ModelBuilder.Properties;
 
     /// <summary>
     ///     The <see cref="Extensions" />
@@ -25,7 +27,6 @@ namespace ModelBuilder
 
             var compiler = new BuildStrategyCompiler
             {
-                BuildLog = buildStrategy.BuildLog,
                 ConstructorResolver = buildStrategy.ConstructorResolver
             };
 
@@ -151,7 +152,8 @@ namespace ModelBuilder
         /// </exception>
         [SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters",
              Justification = "This type is required in order to support the fluent syntax of call sites.")]
-        public static IBuildStrategy Ignoring<T>(this IBuildStrategy buildStrategy,
+        public static IBuildStrategy Ignoring<T>(
+            this IBuildStrategy buildStrategy,
             Expression<Func<T, object>> expression)
         {
             if (buildStrategy == null)
@@ -204,7 +206,23 @@ namespace ModelBuilder
                 throw new ArgumentNullException(nameof(buildStrategy));
             }
 
-            var executeStrategy = new T {BuildStrategy = buildStrategy};
+            var buildLog = buildStrategy.GetBuildLog();
+
+            if (buildLog == null)
+            {
+                var message = string.Format(
+                    CultureInfo.CurrentCulture,
+                    Resources.BuildStrategy_BuildLogRequired,
+                    buildStrategy.GetType().FullName,
+                    nameof(IBuildLog),
+                    nameof(IExecuteStrategy<T>));
+
+                throw new InvalidOperationException(message);
+            }
+
+            var executeStrategy = new T();
+
+            executeStrategy.Initialize(buildStrategy, buildLog);
 
             return executeStrategy;
         }

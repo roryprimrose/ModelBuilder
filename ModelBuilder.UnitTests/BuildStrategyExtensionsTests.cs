@@ -17,7 +17,6 @@
 
             var actual = target.Clone();
 
-            actual.BuildLog.Should().Be(target.BuildLog);
             actual.ConstructorResolver.Should().Be(target.ConstructorResolver);
             actual.TypeCreators.ShouldBeEquivalentTo(target.TypeCreators);
             actual.ValueGenerators.ShouldBeEquivalentTo(target.ValueGenerators);
@@ -40,7 +39,6 @@
         {
             var value = Guid.NewGuid();
 
-            var buildLog = Substitute.For<IBuildLog>();
             var generator = Substitute.For<IValueGenerator>();
             var generators = new List<IValueGenerator>
             {
@@ -49,7 +47,6 @@
             var target = Substitute.For<IBuildStrategy>();
 
             target.ValueGenerators.Returns(generators);
-            target.BuildLog.Returns(buildLog);
             generator.IsSupported(typeof(Guid), null, Arg.Any<LinkedList<object>>()).Returns(true);
             generator.Generate(typeof(Guid), null, Arg.Any<LinkedList<object>>()).Returns(value);
 
@@ -83,7 +80,6 @@
         {
             var value = Guid.NewGuid();
 
-            var buildLog = Substitute.For<IBuildLog>();
             var generator = Substitute.For<IValueGenerator>();
             var generators = new List<IValueGenerator>
             {
@@ -92,7 +88,6 @@
             var target = Substitute.For<IBuildStrategy>();
 
             target.ValueGenerators.Returns(generators);
-            target.BuildLog.Returns(buildLog);
             generator.IsSupported(typeof(Guid), null, Arg.Any<LinkedList<object>>()).Returns(true);
             generator.Generate(typeof(Guid), null, Arg.Any<LinkedList<object>>()).Returns(value);
 
@@ -275,21 +270,34 @@
                 new IgnoreRule(typeof(string), "Stuff")
             };
 
+            var buildLog = Substitute.For<IBuildLog>();
             var target = Substitute.For<IBuildStrategy>();
 
-            target.BuildLog.Returns(strategy.BuildLog);
+            target.GetBuildLog().Returns(buildLog);
+
             target.ConstructorResolver.Returns(strategy.ConstructorResolver);
             target.ExecuteOrderRules.Returns(
                 new ReadOnlyCollection<ExecuteOrderRule>(strategy.ExecuteOrderRules.ToList()));
-            target.TypeCreators.Returns(
-                new ReadOnlyCollection<ITypeCreator>(strategy.TypeCreators.ToList()));
-            target.ValueGenerators.Returns(
-                new ReadOnlyCollection<IValueGenerator>(strategy.ValueGenerators.ToList()));
+            target.TypeCreators.Returns(new ReadOnlyCollection<ITypeCreator>(strategy.TypeCreators.ToList()));
+            target.ValueGenerators.Returns(new ReadOnlyCollection<IValueGenerator>(strategy.ValueGenerators.ToList()));
             target.IgnoreRules.Returns(new ReadOnlyCollection<IgnoreRule>(ignoreRules));
 
             var actual = target.With<DefaultExecuteStrategy<Person>>();
 
-            actual.BuildStrategy.Should().BeSameAs(target);
+            actual.Configuration.Should().BeSameAs(target);
+            actual.Log.Should().BeSameAs(buildLog);
+        }
+
+        [Fact]
+        public void WithThrowsExceptionWhenStrategyReturnsNullBuildLogTest()
+        {
+            var target = Substitute.For<IBuildStrategy>();
+
+            target.GetBuildLog().Returns((IBuildLog)null);
+
+            Action action = () => target.With<DefaultExecuteStrategy>();
+
+            action.ShouldThrow<InvalidOperationException>();
         }
 
         [Fact]

@@ -10,20 +10,18 @@
             throw new NotImplementedException();
         }
 
+        public void Initialize(IBuildConfiguration configuration, IBuildLog buildLog)
+        {
+        }
+
         public object Populate(object instance)
         {
             throw new NotImplementedException();
         }
 
-        public LinkedList<object> BuildChain
-        {
-            get;
-        }
+        public LinkedList<object> BuildChain { get; }
 
-        public IBuildStrategy BuildStrategy
-        {
-            get;
-            set;
-        }
+        public IBuildConfiguration Configuration { get; }
+        public IBuildLog Log { get; }
     }
 }

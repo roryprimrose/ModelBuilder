@@ -107,6 +107,9 @@
     <Compile Include="DummyPostBuildAction.cs">
       <DependentUpon>DummyTypes.cs</DependentUpon>
     </Compile>
+    <Compile Include="Empty.cs">
+      <DependentUpon>Models.cs</DependentUpon>
+    </Compile>
     <Compile Include="EnumerableParent.cs">
       <DependentUpon>Models.cs</DependentUpon>
     </Compile>

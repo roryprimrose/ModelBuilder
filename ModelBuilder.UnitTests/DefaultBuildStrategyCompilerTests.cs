@@ -13,7 +13,6 @@
             var target = new DefaultBuildStrategyCompiler();
 
             target.IgnoreRules.Should().BeEmpty();
-            target.BuildLog.Should().BeOfType<DefaultBuildLog>();
             target.ConstructorResolver.Should().BeOfType<DefaultConstructorResolver>();
             target.CreationRules.Should().BeEmpty();
             target.TypeCreators.Should().NotBeEmpty();
@@ -21,7 +20,7 @@
             target.ExecuteOrderRules.Should().NotBeEmpty();
             target.PostBuildActions.Should().BeEmpty();
         }
-
+        
         [Fact]
         public void DefaultExecuteOrderRulesReturnsExecutableRulesTest()
         {

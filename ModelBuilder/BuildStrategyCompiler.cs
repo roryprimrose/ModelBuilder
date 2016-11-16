@@ -39,13 +39,9 @@
                 ValueGenerators,
                 IgnoreRules,
                 ExecuteOrderRules,
-                PostBuildActions,
-                BuildLog);
+                PostBuildActions);
         }
-
-        /// <inheritdoc />
-        public IBuildLog BuildLog { get; set; }
-
+        
         /// <inheritdoc />
         public IConstructorResolver ConstructorResolver { get; set; }
 

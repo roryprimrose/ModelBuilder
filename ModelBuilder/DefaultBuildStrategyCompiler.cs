@@ -14,7 +14,6 @@
         /// </summary>
         public DefaultBuildStrategyCompiler()
         {
-            BuildLog = new DefaultBuildLog();
             ConstructorResolver = new DefaultConstructorResolver();
 
             foreach (var creator in DefaultTypeCreators)
