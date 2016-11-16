@@ -433,7 +433,7 @@
                     CultureInfo.CurrentCulture,
                     "The {0} has not be initialized. You must invoke {1} first to provide the build configuration and the build log.",
                     GetType().FullName,
-                    nameof(EnsureInitialized));
+                    MethodBase.GetCurrentMethod().Name);
 
                 throw new InvalidOperationException(message);
             }

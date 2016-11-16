@@ -1,5 +1,7 @@
 ﻿namespace ModelBuilder
 {
+    using System.Diagnostics.CodeAnalysis;
+
     /// <summary>
     ///     The <see cref="IBuildStrategy" />
     ///     interface defines the members used to create and populate instances.
@@ -9,6 +11,8 @@
         /// <summary>
         ///     Gets the build log for items created by this strategy.
         /// </summary>
+        [SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate",
+             Justification = "A method is used to encourage returning a new instance for each invocation.")]
         IBuildLog GetBuildLog();
 
         /// <summary>

@@ -86,6 +86,7 @@
       <DependentUpon>Models.cs</DependentUpon>
     </Compile>
     <Compile Include="ArrayTypeCreatorTests.cs" />
+    <Compile Include="BuildConfigurationExtensionsTests.cs" />
     <Compile Include="CountValueGeneratorTests.cs" />
     <Compile Include="BuildExceptionTests.cs" />
     <Compile Include="BuildStrategyCompilerExtensionsTests.cs" />
