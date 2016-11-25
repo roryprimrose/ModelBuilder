@@ -427,6 +427,7 @@
 	<s:String x:Key="/Default/FilterSettingsManager/AttributeFilterXml/@EntryValue">&lt;data /&gt;</s:String>
 	
 	
+	
 	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=EEF7F4F32877834FAF86E3EEBFE6B820/Comment/@EntryValue">Find old guard clause usage</s:String>
 	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=EEF7F4F32877834FAF86E3EEBFE6B820/CustomPatternPlaceholder/=param/Properties/=CaseSensitive/@EntryIndexedValue">True</s:String>
 	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=EEF7F4F32877834FAF86E3EEBFE6B820/CustomPatternPlaceholder/=param/Properties/=ExactType/@EntryIndexedValue">False</s:String>

@@ -27,6 +27,25 @@
         }
 
         [Fact]
+        public void GenerateReturnsRandomValueWhenNoMatchingCountryFoundTest()
+        {
+            var source = new Address
+            {
+                Country = Guid.NewGuid().ToString()
+            };
+            var buildChain = new LinkedList<object>();
+
+            buildChain.AddFirst(source);
+
+            var target = new TimeZoneValueGenerator();
+
+            var first = (string)target.Generate(typeof(string), "timezone", buildChain);
+            var second = (string)target.Generate(typeof(string), "timezone", buildChain);
+
+            first.Should().NotBe(second);
+        }
+
+        [Fact]
         public void GenerateReturnsRandomValueTest()
         {
             var target = new TimeZoneValueGenerator();

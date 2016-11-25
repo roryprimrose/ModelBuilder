@@ -48,6 +48,14 @@
                 TestData.People.Where(x => x.TimeZone.IndexOf(country, StringComparison.OrdinalIgnoreCase) > -1)
                     .ToList();
 
+            if (people.Count == 0)
+            {
+                // There are no people that have the timezone matching the current build objects country
+                var person = TestData.NextPerson();
+
+                return person.TimeZone;
+            }
+
             var filteredIndex = Generator.NextValue(0, people.Count - 1);
             var filteredPerson = people[filteredIndex];
 
