@@ -109,7 +109,7 @@
         /// <param name="type">The type to create.</param>
         /// <param name="postBuildType">The type of the post build action.</param>
         /// <param name="context">The possible context object the value is being created for.</param>
-        void PostBuildType(Type type, Type postBuildType, object context);
+        void PostBuildAction(Type type, Type postBuildType, object context);
 
         /// <summary>
         ///     Gets the output of the build log.

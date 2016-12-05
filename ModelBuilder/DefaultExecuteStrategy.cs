@@ -359,7 +359,7 @@
                 {
                     foreach (var postBuildAction in postBuildActions)
                     {
-                        Log.PostBuildType(type, postBuildAction.GetType(), instance);
+                        Log.PostBuildAction(type, postBuildAction.GetType(), instance);
 
                         postBuildAction.Execute(type, referenceName, BuildChain);
                     }

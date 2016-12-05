@@ -284,7 +284,7 @@
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is null.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="postBuildType" /> parameter is null.</exception>
-        public void PostBuildType(Type type, Type postBuildType, object context)
+        public void PostBuildAction(Type type, Type postBuildType, object context)
         {
             if (type == null)
             {

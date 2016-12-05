@@ -390,37 +390,37 @@
         }
 
         [Fact]
-        public void PostBuildTypeAppendsLogEntryTest()
+        public void PostBuildActionAppendsLogEntryTest()
         {
             var postBuildType = typeof(DummyPostBuildAction);
 
             var target = new DefaultBuildLog();
 
-            target.PostBuildType(typeof(string), postBuildType, null);
+            target.PostBuildAction(typeof(string), postBuildType, null);
 
             target.Output.Should().NotBeNullOrWhiteSpace();
         }
 
         [Fact]
-        public void PostBuildTypeThrowsExceptionWithNullPostBuildTypeTest()
+        public void PostBuildActionThrowsExceptionWithNullPostBuildTypeTest()
         {
             var type = typeof(string);
 
             var target = new DefaultBuildLog();
 
-            Action action = () => target.PostBuildType(type, null, null);
+            Action action = () => target.PostBuildAction(type, null, null);
 
             action.ShouldThrow<ArgumentNullException>();
         }
 
         [Fact]
-        public void PostBuildTypeThrowsExceptionWithNullTypeTest()
+        public void PostBuildActionThrowsExceptionWithNullTypeTest()
         {
             var creatorType = typeof(DefaultTypeCreator);
 
             var target = new DefaultBuildLog();
 
-            Action action = () => target.PostBuildType(null, creatorType, null);
+            Action action = () => target.PostBuildAction(null, creatorType, null);
 
             action.ShouldThrow<ArgumentNullException>();
         }
