@@ -151,7 +151,7 @@
 
             if (generator != null)
             {
-                Log.CreatingValue(type, context);
+                Log.CreatingValue(type, generatorType, context);
 
                 try
                 {
@@ -192,7 +192,7 @@
                 throw BuildFailureException(type, referenceName, context);
             }
 
-            Log.CreatingType(type, context);
+            Log.CreatingType(type, typeCreator.GetType(), context);
 
             try
             {
@@ -359,6 +359,8 @@
                 {
                     foreach (var postBuildAction in postBuildActions)
                     {
+                        Log.PostBuildType(type, postBuildAction.GetType(), instance);
+
                         postBuildAction.Execute(type, referenceName, BuildChain);
                     }
                 }
@@ -405,12 +407,14 @@
                     {
                         var context = buildChain.Last?.Value;
 
-                        Log.CreateParameter(type, parameterInfo.ParameterType, parameterInfo.Name, context);
+                        Log.CreatingParameter(type, parameterInfo.ParameterType, parameterInfo.Name, context);
 
                         // Recurse to build this parameter value
                         var parameterValue = Build(parameterInfo.ParameterType, parameterInfo.Name, null);
 
                         parameters.Add(parameterValue);
+
+                        Log.CreatedParameter(type, parameterInfo.ParameterType, parameterInfo.Name, context);
                     }
 
                     item = typeCreator.Create(type, referenceName, buildChain, parameters.ToArray());
@@ -471,17 +475,21 @@
 
             if (ignoreRule != null)
             {
+                Log.IgnoringProperty(propertyInfo.PropertyType, propertyInfo.Name, ignoreRule.GetType(), instance);
+
                 // We need to ignore this property
                 return;
             }
 
             if (propertyInfo.GetSetMethod(true).IsPublic)
             {
-                Log.CreateProperty(propertyInfo.PropertyType, propertyInfo.Name, instance);
+                Log.CreatingProperty(propertyInfo.PropertyType, propertyInfo.Name, instance);
 
                 var parameterValue = Build(propertyInfo.PropertyType, propertyInfo.Name, instance);
 
                 propertyInfo.SetValue(instance, parameterValue, null);
+
+                Log.CreatedProperty(propertyInfo.PropertyType, propertyInfo.Name, instance);
 
                 return;
             }

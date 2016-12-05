@@ -115,6 +115,24 @@ namespace ModelBuilder.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Created parameter {0} ({1}) for type {2}.
+        /// </summary>
+        internal static string DefaultBuildLog_CreatedParameter {
+            get {
+                return ResourceManager.GetString("DefaultBuildLog_CreatedParameter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Created property {0} ({1}) on type {2}.
+        /// </summary>
+        internal static string DefaultBuildLog_CreatedProperty {
+            get {
+                return ResourceManager.GetString("DefaultBuildLog_CreatedProperty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to End creating type {0}.
         /// </summary>
         internal static string DefaultBuildLog_CreatedType {
@@ -126,23 +144,23 @@ namespace ModelBuilder.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Creating parameter {0} ({1}) for type {2}.
         /// </summary>
-        internal static string DefaultBuildLog_CreateParameter {
+        internal static string DefaultBuildLog_CreatingParameter {
             get {
-                return ResourceManager.GetString("DefaultBuildLog_CreateParameter", resourceCulture);
+                return ResourceManager.GetString("DefaultBuildLog_CreatingParameter", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Creating property {0} ({1}) on type {2}.
         /// </summary>
-        internal static string DefaultBuildLog_CreateProperty {
+        internal static string DefaultBuildLog_CreatingProperty {
             get {
-                return ResourceManager.GetString("DefaultBuildLog_CreateProperty", resourceCulture);
+                return ResourceManager.GetString("DefaultBuildLog_CreatingProperty", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Start creating type {0}.
+        ///   Looks up a localized string similar to Start creating type {0} using {1}.
         /// </summary>
         internal static string DefaultBuildLog_CreatingType {
             get {
@@ -151,11 +169,20 @@ namespace ModelBuilder.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Creating {0} value.
+        ///   Looks up a localized string similar to Creating {0} value using {1}.
         /// </summary>
         internal static string DefaultBuildLog_CreatingValue {
             get {
                 return ResourceManager.GetString("DefaultBuildLog_CreatingValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ignoring property {0} ({1}) on type {2} using {3}.
+        /// </summary>
+        internal static string DefaultBuildLog_IgnoringProperty {
+            get {
+                return ResourceManager.GetString("DefaultBuildLog_IgnoringProperty", resourceCulture);
             }
         }
         
@@ -174,6 +201,15 @@ namespace ModelBuilder.Properties {
         internal static string DefaultBuildLog_PopulatingInstance {
             get {
                 return ResourceManager.GetString("DefaultBuildLog_PopulatingInstance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Running PostBuild on {0} using {1}.
+        /// </summary>
+        internal static string DefaultBuildLog_PostBuild {
+            get {
+                return ResourceManager.GetString("DefaultBuildLog_PostBuild", resourceCulture);
             }
         }
         

@@ -52,15 +52,73 @@
         [Fact]
         public void ClearRemovesExistingBuildLogDataTest()
         {
+            var generatorType = typeof(StateValueGenerator);
+            var type = typeof(string);
+
             var target = new DefaultBuildLog();
 
-            target.CreatingValue(typeof(string), null);
+            target.CreatingValue(type, generatorType, null);
 
             target.Output.Should().NotBeNullOrWhiteSpace();
 
             target.Clear();
 
             target.Output.Should().BeNullOrWhiteSpace();
+        }
+
+        [Fact]
+        public void CreatedParameterAppendsLogEntryTest()
+        {
+            var target = new DefaultBuildLog();
+
+            target.CreatedParameter(typeof(Person), typeof(string), "FirstName", null);
+
+            target.Output.Should().NotBeNullOrWhiteSpace();
+        }
+
+        [Theory]
+        [InlineData(null, typeof(string), "FirstName")]
+        [InlineData(typeof(Person), null, "FirstName")]
+        [InlineData(typeof(Person), typeof(string), null)]
+        public void CreatedParameterValidatesParametersTest(Type instanceType, Type parameterType, string parameterName)
+        {
+            var target = new DefaultBuildLog();
+
+            Action action = () => target.CreatedParameter(instanceType, parameterType, parameterName, null);
+
+            action.ShouldThrow<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void CreatedPropertyAppendsLogEntryTest()
+        {
+            var context = new Person();
+
+            var target = new DefaultBuildLog();
+
+            target.CreatedProperty(typeof(string), "FirstName", context);
+
+            target.Output.Should().NotBeNullOrWhiteSpace();
+        }
+
+        [Theory]
+        [InlineData(null, "FirstName", true)]
+        [InlineData(typeof(string), null, true)]
+        [InlineData(typeof(string), "FirstName", false)]
+        public void CreatedPropertyValidatesPropertysTest(Type propertyType, string propertyName, bool includeContext)
+        {
+            Person context = null;
+
+            if (includeContext)
+            {
+                context = new Person();
+            }
+
+            var target = new DefaultBuildLog();
+
+            Action action = () => target.CreatedProperty(propertyType, propertyName, context);
+
+            action.ShouldThrow<ArgumentNullException>();
         }
 
         [Fact]
@@ -84,11 +142,28 @@
         }
 
         [Fact]
-        public void CreateParameterAppendsLogEntryTest()
+        public void CreateTypeIndentsChildMessagesTest()
+        {
+            var generatorType = typeof(StateValueGenerator);
+            var creatorType = typeof(DefaultTypeCreator);
+
+            var target = new DefaultBuildLog();
+
+            target.CreatingType(typeof(Person), creatorType, null);
+            target.CreatingValue(typeof(string), generatorType, null);
+            target.CreatedType(typeof(Person), null);
+
+            var actual = target.Output;
+
+            actual.Should().Contain("    ");
+        }
+
+        [Fact]
+        public void CreatingParameterAppendsLogEntryTest()
         {
             var target = new DefaultBuildLog();
 
-            target.CreateParameter(typeof(Person), typeof(string), "FirstName", null);
+            target.CreatingParameter(typeof(Person), typeof(string), "FirstName", null);
 
             target.Output.Should().NotBeNullOrWhiteSpace();
         }
@@ -97,23 +172,26 @@
         [InlineData(null, typeof(string), "FirstName")]
         [InlineData(typeof(Person), null, "FirstName")]
         [InlineData(typeof(Person), typeof(string), null)]
-        public void CreateParameterValidatesParametersTest(Type instanceType, Type parameterType, string parameterName)
+        public void CreatingParameterValidatesParametersTest(
+            Type instanceType,
+            Type parameterType,
+            string parameterName)
         {
             var target = new DefaultBuildLog();
 
-            Action action = () => target.CreateParameter(instanceType, parameterType, parameterName, null);
+            Action action = () => target.CreatingParameter(instanceType, parameterType, parameterName, null);
 
             action.ShouldThrow<ArgumentNullException>();
         }
 
         [Fact]
-        public void CreatePropertyAppendsLogEntryTest()
+        public void CreatingPropertyAppendsLogEntryTest()
         {
             var context = new Person();
 
             var target = new DefaultBuildLog();
 
-            target.CreateProperty(typeof(string), "FirstName", context);
+            target.CreatingProperty(typeof(string), "FirstName", context);
 
             target.Output.Should().NotBeNullOrWhiteSpace();
         }
@@ -122,7 +200,7 @@
         [InlineData(null, "FirstName", true)]
         [InlineData(typeof(string), null, true)]
         [InlineData(typeof(string), "FirstName", false)]
-        public void CreatePropertyValidatesPropertysTest(Type propertyType, string propertyName, bool includeContext)
+        public void CreatingPropertyValidatesPropertysTest(Type propertyType, string propertyName, bool includeContext)
         {
             Person context = null;
 
@@ -133,41 +211,43 @@
 
             var target = new DefaultBuildLog();
 
-            Action action = () => target.CreateProperty(propertyType, propertyName, context);
+            Action action = () => target.CreatingProperty(propertyType, propertyName, context);
 
             action.ShouldThrow<ArgumentNullException>();
         }
 
         [Fact]
-        public void CreateTypeIndentsChildMessagesTest()
-        {
-            var target = new DefaultBuildLog();
-
-            target.CreatingType(typeof(Person), null);
-            target.CreatingValue(typeof(string), null);
-            target.CreatedType(typeof(Person), null);
-
-            var actual = target.Output;
-
-            actual.Should().Contain("    ");
-        }
-
-        [Fact]
         public void CreatingTypeAppendsLogEntryTest()
         {
+            var creatorType = typeof(DefaultTypeCreator);
+
             var target = new DefaultBuildLog();
 
-            target.CreatingType(typeof(string), null);
+            target.CreatingType(typeof(string), creatorType, null);
 
             target.Output.Should().NotBeNullOrWhiteSpace();
         }
 
         [Fact]
-        public void CreatingTypeThrowsExceptionWithNullTypeTest()
+        public void CreatingTypeThrowsExceptionWithNullCreatorTypeTest()
         {
+            var type = typeof(string);
+
             var target = new DefaultBuildLog();
 
-            Action action = () => target.CreatingType(null, null);
+            Action action = () => target.CreatingType(type, null, null);
+
+            action.ShouldThrow<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void CreatingTypeThrowsExceptionWithNullTypeTest()
+        {
+            var creatorType = typeof(DefaultTypeCreator);
+
+            var target = new DefaultBuildLog();
+
+            Action action = () => target.CreatingType(null, creatorType, null);
 
             action.ShouldThrow<ArgumentNullException>();
         }
@@ -175,19 +255,73 @@
         [Fact]
         public void CreatingValueAppendsLogEntryTest()
         {
+            var generatorType = typeof(StateValueGenerator);
+            var type = typeof(string);
+
             var target = new DefaultBuildLog();
 
-            target.CreatingValue(typeof(string), null);
+            target.CreatingValue(type, generatorType, null);
 
             target.Output.Should().NotBeNullOrWhiteSpace();
         }
 
         [Fact]
-        public void CreatingValueThrowsExceptionWithNullValueTest()
+        public void CreatingValueThrowsExceptionWithNullGeneratorTypeTest()
         {
+            var type = typeof(string);
+
             var target = new DefaultBuildLog();
 
-            Action action = () => target.CreatingValue(null, null);
+            Action action = () => target.CreatingValue(type, null, null);
+
+            action.ShouldThrow<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void CreatingValueThrowsExceptionWithNullTypeTest()
+        {
+            var generatorType = typeof(StateValueGenerator);
+
+            var target = new DefaultBuildLog();
+
+            Action action = () => target.CreatingValue(null, generatorType, null);
+
+            action.ShouldThrow<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void IgnoringPropertyAppendsLogEntryTest()
+        {
+            var context = new Person();
+
+            var target = new DefaultBuildLog();
+
+            target.IgnoringProperty(typeof(string), "FirstName", typeof(DummyIgnoreRule), context);
+
+            target.Output.Should().NotBeNullOrWhiteSpace();
+        }
+
+        [Theory]
+        [InlineData(null, "FirstName", typeof(DummyIgnoreRule), true)]
+        [InlineData(typeof(string), null, typeof(DummyIgnoreRule), true)]
+        [InlineData(typeof(string), "FirstName", null, true)]
+        [InlineData(typeof(string), "FirstName", typeof(DummyIgnoreRule), false)]
+        public void IgnoringPropertyValidatesPropertysTest(
+            Type propertyType,
+            string propertyName,
+            Type ignoreRuleType,
+            bool includeContext)
+        {
+            Person context = null;
+
+            if (includeContext)
+            {
+                context = new Person();
+            }
+
+            var target = new DefaultBuildLog();
+
+            Action action = () => target.IgnoringProperty(propertyType, propertyName, ignoreRuleType, context);
 
             action.ShouldThrow<ArgumentNullException>();
         }
@@ -217,12 +351,15 @@
         [Fact]
         public void PopulateInstanceIndentsChildMessagesTest()
         {
+            var generatorType = typeof(StateValueGenerator);
+            var type = typeof(string);
+
             var instance = new Person();
 
             var target = new DefaultBuildLog();
 
             target.PopulatingInstance(instance);
-            target.CreatingValue(typeof(string), null);
+            target.CreatingValue(type, generatorType, null);
             target.PopulatedInstance(instance);
 
             var actual = target.Output;
@@ -253,8 +390,46 @@
         }
 
         [Fact]
+        public void PostBuildTypeAppendsLogEntryTest()
+        {
+            var postBuildType = typeof(DummyPostBuildAction);
+
+            var target = new DefaultBuildLog();
+
+            target.PostBuildType(typeof(string), postBuildType, null);
+
+            target.Output.Should().NotBeNullOrWhiteSpace();
+        }
+
+        [Fact]
+        public void PostBuildTypeThrowsExceptionWithNullPostBuildTypeTest()
+        {
+            var type = typeof(string);
+
+            var target = new DefaultBuildLog();
+
+            Action action = () => target.PostBuildType(type, null, null);
+
+            action.ShouldThrow<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void PostBuildTypeThrowsExceptionWithNullTypeTest()
+        {
+            var creatorType = typeof(DefaultTypeCreator);
+
+            var target = new DefaultBuildLog();
+
+            Action action = () => target.PostBuildType(null, creatorType, null);
+
+            action.ShouldThrow<ArgumentNullException>();
+        }
+
+        [Fact]
         public void WritingLogEntryIndentsAllLinesOfMessageTest()
         {
+            var creatorType = typeof(DefaultTypeCreator);
+
             var target = new DefaultBuildLog();
 
             Exception exception;
@@ -269,7 +444,7 @@
                 exception = ex;
             }
 
-            target.CreatingType(typeof(Person), null);
+            target.CreatingType(typeof(Person), creatorType, null);
             target.BuildFailure(exception);
             target.CreatedType(typeof(Person), null);
 

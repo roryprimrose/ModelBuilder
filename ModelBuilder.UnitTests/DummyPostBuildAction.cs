@@ -7,11 +7,15 @@ namespace ModelBuilder.UnitTests
     {
         public void Execute(Type type, string referenceName, LinkedList<object> buildChain)
         {
-            throw new NotImplementedException();
         }
 
         public bool IsSupported(Type type, string referenceName, LinkedList<object> buildChain)
         {
+            if (type == typeof(Company))
+            {
+                return true;
+            }
+
             return false;
         }
 
