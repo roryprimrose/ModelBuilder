@@ -157,17 +157,17 @@
   <data name="DefaultBuildLog_CreatedType" xml:space="preserve">
     <value>End creating type {0}</value>
   </data>
-  <data name="DefaultBuildLog_CreateParameter" xml:space="preserve">
+  <data name="DefaultBuildLog_CreatingParameter" xml:space="preserve">
     <value>Creating parameter {0} ({1}) for type {2}</value>
   </data>
-  <data name="DefaultBuildLog_CreateProperty" xml:space="preserve">
+  <data name="DefaultBuildLog_CreatingProperty" xml:space="preserve">
     <value>Creating property {0} ({1}) on type {2}</value>
   </data>
   <data name="DefaultBuildLog_CreatingType" xml:space="preserve">
-    <value>Start creating type {0}</value>
+    <value>Start creating type {0} using {1}</value>
   </data>
   <data name="DefaultBuildLog_CreatingValue" xml:space="preserve">
-    <value>Creating {0} value</value>
+    <value>Creating {0} value using {1}</value>
   </data>
   <data name="DefaultBuildLog_PopulatedInstance" xml:space="preserve">
     <value>End populating instance {0}</value>
@@ -189,5 +189,17 @@
   </data>
   <data name="BuildStrategy_BuildLogRequired" xml:space="preserve">
     <value>{0} did not return an {1} instance. A build log is required to create an {2} instance.</value>
+  </data>
+  <data name="DefaultBuildLog_PostBuild" xml:space="preserve">
+    <value>Running PostBuild on {0} using {1}</value>
+  </data>
+  <data name="DefaultBuildLog_CreatedProperty" xml:space="preserve">
+    <value>Created property {0} ({1}) on type {2}</value>
+  </data>
+  <data name="DefaultBuildLog_CreatedParameter" xml:space="preserve">
+    <value>Created parameter {0} ({1}) for type {2}</value>
+  </data>
+  <data name="DefaultBuildLog_IgnoringProperty" xml:space="preserve">
+    <value>Ignoring property {0} ({1}) on type {2} using {3}</value>
   </data>
 </root>

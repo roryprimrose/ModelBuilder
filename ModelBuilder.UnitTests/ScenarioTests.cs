@@ -147,6 +147,35 @@
         }
 
         [Fact]
+        public void CreateBuildsLogOfPostActionsTest()
+        {
+            var strategy = Model.For<Company>();
+
+            strategy.Create();
+
+            var actual = strategy.Log.Output;
+
+            actual.Should().Contain(typeof(DummyPostBuildAction).FullName);
+
+            _output.WriteLine(actual);
+        }
+
+        [Fact]
+        public void CreateBuildsLogOfIgnoreRuleTest()
+        {
+            var builder = Model.BuildStrategy.Clone().AddIgnoreRule<Company>(x => x.Address).Compile();
+            var strategy = builder.GetExecuteStrategy<Company>();
+
+            strategy.Create();
+
+            var actual = strategy.Log.Output;
+
+            actual.Should().Contain("Ignoring");
+
+            _output.WriteLine(actual);
+        }
+
+        [Fact]
         public void CreateReadOnlyCollectionWithAutoPopulatedItemsTest()
         {
             var actual = Model.Create<ReadOnlyCollection<int>>();
