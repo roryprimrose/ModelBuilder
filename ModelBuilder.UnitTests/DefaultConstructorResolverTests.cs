@@ -16,6 +16,16 @@
         }
 
         [Fact]
+        public void ResolveMatchesConstructorMatchingParameterLengthWhereParameterValueIsNullTest()
+        {
+            var target = new DefaultConstructorResolver();
+
+            var constructor = target.Resolve(typeof(Person), (Person)null);
+
+            constructor.GetParameters().Length.Should().Be(1);
+        }
+
+        [Fact]
         public void ResolveMatchesConstructorWithDerivedParameterTypesTest()
         {
             var person = new Person
@@ -33,18 +43,37 @@
         [Fact]
         public void ResolveMatchesConstructorWithMatchingParametersTypesTest()
         {
-            var target = new DefaultConstructorResolver();
-
-            var constructor = target.Resolve(
-                typeof(WithValueParameters),
+            var args = new object[]
+            {
                 "first",
                 "last",
                 DateTime.UtcNow,
                 true,
                 Guid.NewGuid(),
-                Environment.TickCount);
+                Environment.TickCount
+            };
+
+            var target = new DefaultConstructorResolver();
+
+            var constructor = target.Resolve(typeof(WithValueParameters), args);
 
             constructor.GetParameters().Length.Should().Be(6);
+        }
+
+        [Fact]
+        public void ResolveReturnsConstructorMatchingParameterSetWhereSomeParametersAreNullTest()
+        {
+            var target = new DefaultConstructorResolver();
+
+            var constructor = target.Resolve(
+                typeof(WithMixedValueParameters),
+                null,
+                null,
+                DateTime.Now,
+                true,
+                Guid.NewGuid());
+
+            constructor.GetParameters().Should().HaveCount(5);
         }
 
         [Fact]

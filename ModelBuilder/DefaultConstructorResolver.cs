@@ -23,7 +23,7 @@
                 throw new ArgumentNullException(nameof(type));
             }
 
-            if (args?.Length == 0)
+            if (args == null || args.Length == 0)
             {
                 var availableConstructors = type.GetConstructors().ToList();
 

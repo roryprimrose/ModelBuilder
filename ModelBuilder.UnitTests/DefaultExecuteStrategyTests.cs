@@ -1703,7 +1703,7 @@
         {
             public void RunTest(object instance = null)
             {
-                PopulateInstance(instance);
+                PopulateInstance(instance, null);
             }
         }
 

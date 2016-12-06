@@ -8,11 +8,23 @@
     public class DefaultTypeCreatorTests
     {
         [Fact]
-        public void CreateReturnsInstanceCreatedWithDefaultConstructorTest()
+        public void CreateReturnsInstanceCreatedWithDefaultConstructorWhenArgumentsAreNullTest()
         {
             var target = new DefaultTypeCreator();
 
             var actual = target.Create(typeof(Person), null, null);
+
+            actual.Should().NotBeNull();
+        }
+
+        [Fact]
+        public void CreateReturnsInstanceCreatedWithDefaultConstructorWhenArgumentsAreEmptyTest()
+        {
+            var args = new object[]{ };
+
+            var target = new DefaultTypeCreator();
+
+            var actual = target.Create(typeof(Person), null, null, args);
 
             actual.Should().NotBeNull();
         }

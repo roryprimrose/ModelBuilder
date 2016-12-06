@@ -19,7 +19,12 @@
         {
             Debug.Assert(type != null, "type != null");
 
-            if (args?.Length == 0)
+            if (args == null)
+            {
+                return Activator.CreateInstance(type);
+            }
+
+            if (args.Length == 0)
             {
                 return Activator.CreateInstance(type);
             }

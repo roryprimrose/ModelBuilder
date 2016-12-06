@@ -76,7 +76,7 @@
 
             try
             {
-                return PopulateInstance(instance);
+                return PopulateInstance(instance, null);
             }
             finally
             {
@@ -234,9 +234,10 @@
         ///     Populates the settable properties on the specified instance.
         /// </summary>
         /// <param name="instance">The instance to populate.</param>
+        /// <param name="args">The constructor parameters for the instance.</param>
         /// <returns>The updated instance.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="instance" /> parameter is null.</exception>
-        protected virtual object PopulateInstance(object instance)
+        protected virtual object PopulateInstance(object instance, object[] args)
         {
             if (instance == null)
             {
@@ -260,7 +261,10 @@
 
                 foreach (var propertyInfo in propertyInfos)
                 {
-                    PopulateProperty(instance, propertyInfo);
+                    if (ShouldPopulateProperty(instance, propertyInfo, args))
+                    {
+                        PopulateProperty(instance, propertyInfo);
+                    }
                 }
 
                 return instance;
@@ -343,7 +347,7 @@
                 if (typeCreator.AutoPopulate)
                 {
                     // The type creator has indicated that this type should be auto populated by the execute strategy
-                    instance = PopulateInstance(instance);
+                    instance = PopulateInstance(instance, args);
 
                     Debug.Assert(instance != null, "Populating the instance did not return the original instance");
                 }
@@ -464,7 +468,14 @@
             return matchingRule.Priority;
         }
 
-        private void PopulateProperty(object instance, PropertyInfo propertyInfo)
+        /// <summary>
+        /// Determines whether the property should be populated with a value.
+        /// </summary>
+        /// <param name="instance">The instance being populated.</param>
+        /// <param name="propertyInfo">The property to evaluate.</param>
+        /// <param name="args">The constructor parameters for the instance.</param>
+        /// <returns><c>true</c> if the property should be populated; otherwise <c>false</c>.</returns>
+        protected virtual bool ShouldPopulateProperty(object instance, PropertyInfo propertyInfo, object[] args)
         {
             var type = instance.GetType();
 
@@ -478,9 +489,110 @@
                 Log.IgnoringProperty(propertyInfo.PropertyType, propertyInfo.Name, ignoreRule.GetType(), instance);
 
                 // We need to ignore this property
-                return;
+                return false;
             }
 
+            if (args == null)
+            {
+                // No constructor arguments
+                // Assume that constructor has not defined a value for this property
+                return true;
+            }
+
+            if (args.Length == 0)
+            {
+                // No constructor arguments
+                // Assume that constructor has not defined a value for this property
+                return true;
+            }
+
+            var matchingParameterTypes =
+                args.Where(x => x != null && propertyInfo.PropertyType.IsInstanceOfType(x)).ToList();
+
+            if (matchingParameterTypes.Count == 0)
+            {
+                // There are no constructor types that match the property type
+                // Assume that no constructor parameter has defined this value
+                return true;
+            }
+
+            var propertyValue = propertyInfo.GetValue(instance, null);
+            var defaultValue = GetDefaultValue(propertyInfo.PropertyType);
+
+            if (propertyValue == defaultValue)
+            {
+                // The property matches the default value of its type
+                // A constructor parameter could have assigned the default type value or no constructor parameter
+                // was assigned to the property
+                // In either case we want to build a value for this property
+                return true;
+            }
+
+            var instanceParameters = matchingParameterTypes.Where(x => x.GetType().IsValueType == false);
+
+            if (instanceParameters.Any(x => ReferenceEquals(x, propertyValue)))
+            {
+                // The constructor parameter matches the property value
+                // We don't want to overwrite this
+                return false;
+            }
+            
+            var valueParameters = matchingParameterTypes.Where(x => x.GetType().IsValueType).ToList();
+
+            if (valueParameters.Count == 0)
+            {
+                // There are no value type constructor parameters to try to check against this property
+                // Build a new value for this property
+                return true;
+            }
+
+            // Get the constructor matching the arguments so that we can try to match constructor parameter names against the property name
+            var constructor = Configuration.ConstructorResolver.Resolve(type, args);
+            var parameters = constructor.GetParameters();
+
+            for (var index = 0; index < parameters.Length; index++)
+            {
+                var parameter = parameters[index];
+
+                if (propertyInfo.PropertyType.IsInstanceOfType(parameter.ParameterType) == false)
+                {
+                    // The constructor parameter type does not match the property value, keep looking
+                    continue;
+                }
+
+                var parameterValue = args[index];
+
+                if (parameterValue != propertyValue)
+                {
+                    // This constructor parameter does not match property value, keep looking
+                    continue;
+                }
+
+                if (string.Equals(propertyInfo.Name, parameter.Name, StringComparison.OrdinalIgnoreCase))
+                {
+                    // We have found that the property name and type are equivalent and the value is not the default value
+                    // This is good enough to assume that the property value came from the constructor and we should not overwrite it
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private static object GetDefaultValue(Type type)
+        {
+            try
+            {
+                return Activator.CreateInstance(type);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        private void PopulateProperty(object instance, PropertyInfo propertyInfo)
+        {
             if (propertyInfo.GetSetMethod(true).IsPublic)
             {
                 Log.CreatingProperty(propertyInfo.PropertyType, propertyInfo.Name, instance);
@@ -527,7 +639,7 @@
             if (typeCreator.AutoPopulate)
             {
                 // The type creator has indicated that this type should be auto populated by the execute strategy
-                PopulateInstance(originalValue);
+                PopulateInstance(originalValue, null);
             }
 
             // Allow the type creator to do its own population of the instance

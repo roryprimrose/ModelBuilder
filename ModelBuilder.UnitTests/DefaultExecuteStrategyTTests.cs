@@ -268,7 +268,7 @@
         {
             public void RunTest()
             {
-                PopulateInstance(null);
+                PopulateInstance(null, null);
             }
         }
 
