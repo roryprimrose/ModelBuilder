@@ -91,9 +91,21 @@
             first.Should().BeOfType<BigEnum>();
             Enum.IsDefined(typeof(BigEnum), first).Should().BeTrue();
 
-            var second = target.Generate(typeof(BigEnum), null, null);
+            var otherValueFound = false;
 
-            first.Should().NotBe(second);
+            for (var index = 0; index < 50; index++)
+            {
+                var second = target.Generate(typeof(BigEnum), null, null);
+
+                if (first != second)
+                {
+                    otherValueFound = true;
+
+                    break;
+                }
+            }
+
+            otherValueFound.Should().BeTrue();
         }
 
         [Fact]

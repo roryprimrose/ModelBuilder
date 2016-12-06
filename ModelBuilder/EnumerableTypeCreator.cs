@@ -137,8 +137,12 @@
         }
 
         /// <inheritdoc />
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0", Justification = "Type is validated by the base class")]
-        protected override object CreateInstance(Type type, string referenceName, LinkedList<object> buildChain,
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0",
+             Justification = "Type is validated by the base class")]
+        protected override object CreateInstance(
+            Type type,
+            string referenceName,
+            IExecuteStrategy executeStrategy,
             params object[] args)
         {
             Debug.Assert(type != null, "type != null");
@@ -156,7 +160,8 @@
         }
 
         /// <inheritdoc />
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0", Justification = "Instance is validated by the base class")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0",
+             Justification = "Instance is validated by the base class")]
         protected override object PopulateInstance(object instance, IExecuteStrategy executeStrategy)
         {
             Debug.Assert(instance != null, "instance != null");
@@ -258,7 +263,8 @@
         {
             foreach (var unsupportedType in _unsupportedTypes)
             {
-                if (unsupportedType.IsGenericTypeDefinition && type.IsGenericType)
+                if (unsupportedType.IsGenericTypeDefinition &&
+                    type.IsGenericType)
                 {
                     var typeDefinition = type.GetGenericTypeDefinition();
 

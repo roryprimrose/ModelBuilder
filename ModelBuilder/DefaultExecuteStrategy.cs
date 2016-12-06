@@ -385,7 +385,7 @@
             if (args?.Length > 0)
             {
                 // We have arguments so will just let the type creator do the work here
-                item = typeCreator.Create(type, referenceName, buildChain, args);
+                item = typeCreator.Create(type, referenceName, this, args);
             }
             else if (typeCreator.AutoDetectConstructor)
             {
@@ -396,7 +396,7 @@
 
                 if (parameterInfos.Length == 0)
                 {
-                    item = typeCreator.Create(type, referenceName, buildChain);
+                    item = typeCreator.Create(type, referenceName, this);
                 }
                 else
                 {
@@ -417,13 +417,13 @@
                         Log.CreatedParameter(type, parameterInfo.ParameterType, parameterInfo.Name, context);
                     }
 
-                    item = typeCreator.Create(type, referenceName, buildChain, parameters.ToArray());
+                    item = typeCreator.Create(type, referenceName, this, parameters.ToArray());
                 }
             }
             else
             {
                 // The type creator is going to be solely responsible for creating this instance
-                item = typeCreator.Create(type, referenceName, buildChain);
+                item = typeCreator.Create(type, referenceName, this);
             }
 
             return item;

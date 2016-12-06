@@ -112,19 +112,33 @@
         [InlineData(typeof(Person[]))]
         public void CreateReturnsInstanceTest(Type type)
         {
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
             var target = new ArrayTypeCreator();
 
-            var actual = target.Create(type, null, null);
+            var actual = target.Create(type, null, executeStrategy);
 
             actual.Should().NotBeNull();
         }
 
         [Fact]
-        public void CreateThrowsExceptionWithNullTypeTest()
+        public void CreateThrowsExceptionWithNullExecuteStrategyTest()
         {
             var target = new ArrayTypeCreator();
 
-            Action action = () => target.Create(null, null, null);
+            Action action = () => target.Create(typeof(byte[]), null, null);
+
+            action.ShouldThrow<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void CreateThrowsExceptionWithNullTypeTest()
+        {
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            var target = new ArrayTypeCreator();
+
+            Action action = () => target.Create(null, null, executeStrategy);
 
             action.ShouldThrow<ArgumentNullException>();
         }
@@ -153,9 +167,11 @@
         [InlineData(typeof(Person[]), true)]
         public void CreateValidatesWhetherTypeIsSupportedTest(Type type, bool supported)
         {
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
             var target = new ArrayTypeCreator();
 
-            Action action = () => target.Create(type, null, null);
+            Action action = () => target.Create(type, null, executeStrategy);
 
             if (supported)
             {
@@ -207,7 +223,7 @@
 
             actual.Should().BeSameAs(expected);
 
-            var set = (Guid[]) actual;
+            var set = (Guid[])actual;
 
             set.Should().HaveCount(target.MaxCount);
             set.All(x => x != Guid.Empty).Should().BeTrue();
@@ -231,7 +247,7 @@
 
             actual.Should().BeSameAs(expected);
 
-            var set = (Guid[]) actual;
+            var set = (Guid[])actual;
 
             set.Should().HaveCount(target.MaxCount);
             set.All(x => x != Guid.Empty).Should().BeTrue();
@@ -245,7 +261,7 @@
 
             var target = new IncrementingArrayTypeCreator();
 
-            var result = (int[]) target.Populate(actual, executeStrategy);
+            var result = (int[])target.Populate(actual, executeStrategy);
 
             var baseValue = result[0];
             var expected = new int[actual.Length];
@@ -266,7 +282,7 @@
 
             var target = new ArrayTypeCreator();
 
-            var result = (Person[]) target.Populate(actual, executeStrategy);
+            var result = (Person[])target.Populate(actual, executeStrategy);
 
             result.All(x => x != null).Should().BeTrue();
         }
@@ -289,7 +305,7 @@
 
             actual.Should().BeSameAs(expected);
 
-            var set = (Guid[]) actual;
+            var set = (Guid[])actual;
 
             set.Should().BeEmpty();
         }

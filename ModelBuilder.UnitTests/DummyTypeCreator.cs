@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using NSubstitute;
 
     public class DummyTypeCreator : TypeCreatorBase
     {
@@ -15,17 +16,34 @@
             return false;
         }
 
+        public void VerifyCreateRequestWithNullExecuteStrategy()
+        {
+            VerifyCreateRequest(typeof(Company), null, null);
+        }
+
         public void VerifyCreateRequestWithNullType()
         {
-            VerifyCreateRequest(null, null, null);
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            VerifyCreateRequest(null, null, executeStrategy);
+        }
+
+        public void VerifyPopulateRequestWithNullExecuteStrategy()
+        {
+            VerifyPopulateRequest(typeof(Company), null, null);
         }
 
         public void VerifyPopulateRequestWithNullType()
         {
-            VerifyPopulateRequest(null, null, null);
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            VerifyPopulateRequest(null, null, executeStrategy);
         }
 
-        protected override object CreateInstance(Type type, string referenceName, LinkedList<object> buildChain,
+        protected override object CreateInstance(
+            Type type,
+            string referenceName,
+            IExecuteStrategy executeStrategy,
             params object[] args)
         {
             throw new NotImplementedException();

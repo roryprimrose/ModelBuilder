@@ -32,10 +32,10 @@
         /// </summary>
         /// <param name="type">The type of instance to create.</param>
         /// <param name="referenceName">Identifies the possible parameter or property name the instance is intended for.</param>
-        /// <param name="buildChain">The chain of instances built up to this point.</param>
+        /// <param name="executeStrategy">The execution strategy.</param>
         /// <param name="args">The constructor parameters to create the instance with.</param>
         /// <returns>A new instance.</returns>
-        object Create(Type type, string referenceName, LinkedList<object> buildChain, params object[] args);
+        object Create(Type type, string referenceName, IExecuteStrategy executeStrategy, params object[] args);
 
         /// <summary>
         ///     Populates the specified instance using an execution strategy.

@@ -138,7 +138,7 @@
 
             build.TypeCreators.Returns(creators);
             creator.CanCreate(typeof(ReadOnlyModel), null, Arg.Any<LinkedList<object>>()).Returns(true);
-            creator.Create(typeof(ReadOnlyModel), null, Arg.Any<LinkedList<object>>(), value).Returns(expected);
+            creator.Create(typeof(ReadOnlyModel), null, Arg.Any<IExecuteStrategy>(), value).Returns(expected);
             creator.Populate(expected, Arg.Any<IExecuteStrategy>()).Returns(expected);
 
             try
@@ -168,7 +168,7 @@
             build.TypeCreators.Returns(creators);
             creator.CanCreate(typeof(ReadOnlyModel), null, Arg.Any<LinkedList<object>>()).Returns(true);
             creator.CanPopulate(typeof(ReadOnlyModel), null, Arg.Any<LinkedList<object>>()).Returns(true);
-            creator.Create(typeof(ReadOnlyModel), null, Arg.Any<LinkedList<object>>(), value).Returns(expected);
+            creator.Create(typeof(ReadOnlyModel), null, Arg.Any<IExecuteStrategy>(), value).Returns(expected);
             creator.Populate(expected, Arg.Any<IExecuteStrategy>()).Returns(expected);
 
             try

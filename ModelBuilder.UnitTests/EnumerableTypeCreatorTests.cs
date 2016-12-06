@@ -140,9 +140,11 @@
         [Fact]
         public void CreateDoesNotPopulateListTest()
         {
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
             var target = new IncrementingEnumerableTypeCreator();
 
-            var result = (IList<int>) target.Create(typeof(IList<int>), null, null);
+            var result = (IList<int>) target.Create(typeof(IList<int>), null, executeStrategy);
 
             result.Should().BeEmpty();
         }
@@ -158,9 +160,11 @@
         [InlineData(typeof(InheritedGenericCollection))]
         public void CreateReturnsInstanceTest(Type type)
         {
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
             var target = new EnumerableTypeCreator();
 
-            var actual = target.Create(type, null, null);
+            var actual = target.Create(type, null, executeStrategy);
 
             actual.Should().NotBeNull();
         }
@@ -171,9 +175,11 @@
         [InlineData(typeof(IList<int>))]
         public void CreateReturnsNewListOfSpecfiedTypeTest(Type targetType)
         {
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
             var target = new EnumerableTypeCreator();
 
-            var actual = target.Create(targetType, null, null);
+            var actual = target.Create(targetType, null, executeStrategy);
 
             actual.Should().BeOfType<List<int>>();
             actual.As<List<int>>().Should().BeEmpty();
@@ -220,9 +226,11 @@
         [InlineData(typeof(InheritedGenericCollection), true)]
         public void CreateValidatesWhetherTypeIsSupportedTest(Type type, bool supported)
         {
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
             var target = new EnumerableTypeCreator();
 
-            Action action = () => target.Create(type, null, null);
+            Action action = () => target.Create(type, null, executeStrategy);
 
             if (supported)
             {
@@ -277,7 +285,7 @@
 
             executeStrategy.Initialize(configuration, buildLog);
 
-            var actual = target.Create(type, null, null);
+            var actual = target.Create(type, null, executeStrategy);
 
             target.Populate(actual, executeStrategy);
 
