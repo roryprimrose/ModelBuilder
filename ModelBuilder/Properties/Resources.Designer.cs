@@ -61,7 +61,7 @@ namespace ModelBuilder.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The value cannot be null, white space or empty..
+        ///   Looks up a localized string similar to The value cannot be null, white space or empty.
         /// </summary>
         internal static string ArgumentException_NullOrWhiteSpace {
             get {
@@ -70,7 +70,7 @@ namespace ModelBuilder.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} did not return an {1} instance. A build log is required to create an {2} instance..
+        ///   Looks up a localized string similar to {0} did not return an {1} instance. A build log is required to create an {2} instance.
         /// </summary>
         internal static string BuildStrategy_BuildLogRequired {
             get {
@@ -79,7 +79,7 @@ namespace ModelBuilder.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The ConstructorResolver is null. A constructor resolver must be provided in order to create a build strategy..
+        ///   Looks up a localized string similar to The ConstructorResolver is null. A constructor resolver must be provided in order to create a build strategy.
         /// </summary>
         internal static string BuildStrategyCompiler_NullConstructorResolver {
             get {
@@ -88,7 +88,7 @@ namespace ModelBuilder.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No public constructor is available for type {0}..
+        ///   Looks up a localized string similar to No public constructor is available for type {0}.
         /// </summary>
         internal static string ConstructorResolver_NoPublicConstructorFound {
             get {
@@ -97,7 +97,7 @@ namespace ModelBuilder.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No valid constructors are available for type {0} (copy constructors have been ignored)..
+        ///   Looks up a localized string similar to No valid constructors are available for type {0}.
         /// </summary>
         internal static string ConstructorResolver_NoValidConstructorFound {
             get {
@@ -214,7 +214,7 @@ namespace ModelBuilder.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Expression &apos;{0}&apos; does not refer to a property..
+        ///   Looks up a localized string similar to Expression &apos;{0}&apos; does not refer to a property.
         /// </summary>
         internal static string Error_ExpressionNotPropertyFormat {
             get {
@@ -223,7 +223,7 @@ namespace ModelBuilder.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The expression returned a property {0} that was not defined on type &apos;{1}&apos;..
+        ///   Looks up a localized string similar to The expression returned a property {0} that was not defined on type &apos;{1}&apos;.
         /// </summary>
         internal static string Error_ExpressionTargetsWrongType {
             get {
@@ -232,7 +232,7 @@ namespace ModelBuilder.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} does not support the {1} type and reference name {2} in the context of the current build chain..
+        ///   Looks up a localized string similar to {0} does not support the {1} type and reference name {2} in the context of the current build chain.
         /// </summary>
         internal static string Error_GenerationNotSupportedFormat {
             get {
@@ -241,7 +241,7 @@ namespace ModelBuilder.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} does not support the {1} type..
+        ///   Looks up a localized string similar to {0} does not support the {1} type.
         /// </summary>
         internal static string Error_TypeNotSupportedFormat {
             get {
@@ -250,7 +250,7 @@ namespace ModelBuilder.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The BuildChain property on the execution strategy is null..
+        ///   Looks up a localized string similar to The BuildChain property on the execution strategy is null.
         /// </summary>
         internal static string ExecuteStrategy_NoBuildChain {
             get {
@@ -259,7 +259,7 @@ namespace ModelBuilder.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No supporting ITypeCreator or IValueGenerator was found to build the type &apos;{0}&apos;..
+        ///   Looks up a localized string similar to No supporting ITypeCreator or IValueGenerator was found to build the type &apos;{0}&apos;.
         /// </summary>
         internal static string NoMatchingCreatorOrGeneratorFound {
             get {
@@ -268,7 +268,7 @@ namespace ModelBuilder.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No supporting ITypeCreator or IValueGenerator was found to build the type &apos;{0}&apos; for &apos;{1}&apos;..
+        ///   Looks up a localized string similar to No supporting ITypeCreator or IValueGenerator was found to build the type &apos;{0}&apos; for &apos;{1}&apos;.
         /// </summary>
         internal static string NoMatchingCreatorOrGeneratorFoundWithName {
             get {
@@ -277,7 +277,7 @@ namespace ModelBuilder.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No supporting ITypeCreator or IValueGenerator was found to build the type &apos;{0}&apos; for &apos;{1}&apos; on type &apos;{2}&apos;..
+        ///   Looks up a localized string similar to No supporting ITypeCreator or IValueGenerator was found to build the type &apos;{0}&apos; for &apos;{1}&apos; on type &apos;{2}&apos;.
         /// </summary>
         internal static string NoMatchingCreatorOrGeneratorFoundWithNameAndContext {
             get {
@@ -286,7 +286,7 @@ namespace ModelBuilder.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Either targetType or propertyExpression must be supplied..
+        ///   Looks up a localized string similar to Either targetType or propertyExpression must be supplied.
         /// </summary>
         internal static string NoTargetTypeOrPropertyExpression {
             get {
@@ -295,7 +295,7 @@ namespace ModelBuilder.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Either targetType or propertyName must be supplied..
+        ///   Looks up a localized string similar to Either targetType or propertyName must be supplied.
         /// </summary>
         internal static string NoTargetTypeOrPropertyName {
             get {
@@ -314,7 +314,7 @@ namespace ModelBuilder.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This generator was not created with a source expression. Call GetValue&lt;T&gt;(expression, context) instead..
+        ///   Looks up a localized string similar to This generator was not created with a source expression. Call GetValue&lt;T&gt;(expression, context) instead.
         /// </summary>
         internal static string RelativeValueGenerator_NoSourceExpression {
             get {
@@ -323,7 +323,7 @@ namespace ModelBuilder.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The rule {0} does not support type &apos;{1}&apos; for &apos;{2}&apos;..
+        ///   Looks up a localized string similar to The rule {0} does not support type &apos;{1}&apos; for &apos;{2}&apos;.
         /// </summary>
         internal static string Rule_InvalidMatch {
             get {

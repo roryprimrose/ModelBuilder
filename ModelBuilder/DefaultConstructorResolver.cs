@@ -1,21 +1,29 @@
 ﻿namespace ModelBuilder
 {
     using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Globalization;
     using System.Linq;
     using System.Reflection;
     using ModelBuilder.Properties;
 
     /// <summary>
-    /// The <see cref="DefaultConstructorResolver"/>
-    /// class is used to resolve a constructor for a type.
+    ///     The <see cref="DefaultConstructorResolver" />
+    ///     class is used to resolve a constructor for a type.
     /// </summary>
     public class DefaultConstructorResolver : IConstructorResolver
     {
         /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">The <paramref name="type"/> parameter is null.</exception>
-        /// <exception cref="MissingMemberException">The <paramref name="type"/> parameter does not have a public constructor and no arguments are supplied.</exception>
-        /// <exception cref="MissingMemberException">The <paramref name="type"/> parameter does not have a constructor that matches the supplied arguments.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is null.</exception>
+        /// <exception cref="MissingMemberException">
+        ///     The <paramref name="type" /> parameter does not have a public constructor and
+        ///     no arguments are supplied.
+        /// </exception>
+        /// <exception cref="MissingMemberException">
+        ///     The <paramref name="type" /> parameter does not have a constructor that
+        ///     matches the supplied arguments.
+        /// </exception>
         public ConstructorInfo Resolve(Type type, params object[] args)
         {
             if (type == null)
@@ -23,43 +31,49 @@
                 throw new ArgumentNullException(nameof(type));
             }
 
-            if (args?.Length == 0)
+            if (args == null)
             {
-                var availableConstructors = type.GetConstructors().ToList();
-
-                // Ignore any constructors that have a parameter with the type being created (a copy constructor)
-                var validConstructors =
-                    availableConstructors.Where(x => x.GetParameters().Any(y => y.ParameterType == type) == false)
-                        .OrderBy(x => x.GetParameters().Length)
-                        .ToList();
-
-                var bestConstructor = validConstructors.FirstOrDefault();
-
-                if (bestConstructor == null)
-                {
-                    string message;
-
-                    if (availableConstructors.Count > validConstructors.Count)
-                    {
-                        message = string.Format(
-                            CultureInfo.CurrentCulture,
-                            Resources.ConstructorResolver_NoValidConstructorFound,
-                            type.FullName);
-                    }
-                    else
-                    {
-                        message = string.Format(
-                            CultureInfo.CurrentCulture,
-                            Resources.ConstructorResolver_NoPublicConstructorFound,
-                            type.FullName);
-                    }
-
-                    throw new MissingMemberException(message);
-                }
-
-                return bestConstructor;
+                return FindSmallestConstructor(type);
             }
 
+            if (args.Length == 0)
+            {
+                return FindSmallestConstructor(type);
+            }
+
+            if (args.Any(x => x == null))
+            {
+                return FindConstructorMatchingArguments(type, args);
+            }
+
+            return FindConstructorMatchingTypes(type, args);
+        }
+
+        private static ConstructorInfo FindConstructorMatchingArguments(Type type, IList<object> args)
+        {
+            // Parameters are consulsted a lot here so get it into a dictionary first
+            var availableConstructors = type.GetConstructors().ToDictionary(x => x, x => x.GetParameters());
+            var possibleConstructors =
+                availableConstructors.Where(x => x.Value.Length >= args.Count).OrderBy(x => x.Value.Length);
+
+            foreach (var constructor in possibleConstructors)
+            {
+                if (ParametersMatchArguments(constructor.Value, args))
+                {
+                    return constructor.Key;
+                }
+            }
+
+            var message = string.Format(
+                CultureInfo.CurrentCulture,
+                Resources.ConstructorResolver_NoValidConstructorFound,
+                type.FullName);
+
+            throw new MissingMemberException(message);
+        }
+
+        private static ConstructorInfo FindConstructorMatchingTypes(Type type, object[] args)
+        {
             // Search for a matching constructor
             var types = args.Select(x => x.GetType()).ToArray();
 
@@ -78,6 +92,95 @@
             }
 
             return constructor;
+        }
+
+        private static ConstructorInfo FindSmallestConstructor(Type type)
+        {
+            var availableConstructors = type.GetConstructors().ToList();
+
+            // Ignore any constructors that have a parameter with the type being created (a copy constructor)
+            var validConstructors =
+                availableConstructors.Where(x => x.GetParameters().Any(y => y.ParameterType == type) == false)
+                    .OrderBy(x => x.GetParameters().Length)
+                    .ToList();
+
+            var bestConstructor = validConstructors.FirstOrDefault();
+
+            if (bestConstructor != null)
+            {
+                return bestConstructor;
+            }
+
+            string message;
+
+            if (availableConstructors.Count > validConstructors.Count)
+            {
+                message = string.Format(
+                    CultureInfo.CurrentCulture,
+                    Resources.ConstructorResolver_NoValidConstructorFound,
+                    type.FullName);
+            }
+            else
+            {
+                message = string.Format(
+                    CultureInfo.CurrentCulture,
+                    Resources.ConstructorResolver_NoPublicConstructorFound,
+                    type.FullName);
+            }
+
+            throw new MissingMemberException(message);
+        }
+
+        private static bool ParametersMatchArguments(IList<ParameterInfo> parameters, IList<object> args)
+        {
+            Debug.Assert(
+                args.Count <= parameters.Count,
+                "To many arguments have been provided to match with this constructor, check previous LINQ filter");
+
+            var firstOptionalIndex = parameters.ToList().FindIndex(x => x.IsOptional);
+
+            if ((firstOptionalIndex == -1) &&
+                (parameters.Count != args.Count))
+            {
+                // There are no optional parameters on this constructor and a mismatch between the number of parameters <-> arguments
+                return false;
+            }
+
+            if (firstOptionalIndex > args.Count)
+            {
+                // There are more required parameters on the constructor than there are arguments provided
+                return false;
+            }
+
+            for (var index = 0; index < args.Count; index++)
+            {
+                var parameter = parameters[index];
+                var argument = args[index];
+
+                if (argument == null)
+                {
+                    if (parameter.ParameterType.IsValueType)
+                    {
+                        // This is a null argument which is not equivalent to a value type
+                        // This is not a matching constructor
+                        return false;
+                    }
+
+                    // Else case here is that we have to assume that this parameter is a possible match because a null could be provided to a non-value type parameter
+                    continue;
+                }
+
+                if (parameter.ParameterType.IsInstanceOfType(argument) == false)
+                {
+                    // This parameter type does not support the argument
+                    return false;
+                }
+
+                // This parameter matches the argument type, keep checking other parameters
+            }
+
+            // All the parameters match the arguments supplied, this looks like a good constructor
+            return true;
         }
     }
 }
