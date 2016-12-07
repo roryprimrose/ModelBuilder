@@ -1,6 +1,7 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
+    using System.Collections.Generic;
     using System.IO;
     using FluentAssertions;
     using NSubstitute;
@@ -11,7 +12,10 @@
         [Fact]
         public void CreateReturnsInstanceCreatedWithDefaultConstructorTest()
         {
+            var buildChain = new LinkedList<object>();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
 
             var target = new DefaultTypeCreator();
 
@@ -23,7 +27,11 @@
         [Fact]
         public void CreateReturnsInstanceCreatedWithMatchingParameterConstructorTest()
         {
+            var buildChain = new LinkedList<object>();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var args = new object[]
             {
                 Guid.NewGuid().ToString(),
@@ -53,7 +61,11 @@
         [Fact]
         public void CreateThrowsExceptionWhenNoAppropriateConstructorFoundTest()
         {
+            var buildChain = new LinkedList<object>();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var args = new object[]
             {
                 Guid.NewGuid().ToString(),
@@ -72,35 +84,16 @@
         [Fact]
         public void CreateThrowsExceptionWhenNoTypeNotSupportedTest()
         {
+            var buildChain = new LinkedList<object>();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
 
             var target = new DefaultTypeCreator();
 
             Action action = () => target.Create(typeof(Stream), null, executeStrategy);
 
             action.ShouldThrow<NotSupportedException>();
-        }
-
-        [Fact]
-        public void CreateThrowsExceptionWithNullExecuteStrategyTest()
-        {
-            var target = new DefaultTypeCreator();
-
-            Action action = () => target.Create(typeof(Company), null, null);
-
-            action.ShouldThrow<ArgumentNullException>();
-        }
-
-        [Fact]
-        public void CreateThrowsExceptionWithNullTypeTest()
-        {
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            var target = new DefaultTypeCreator();
-
-            Action action = () => target.Create(null, null, executeStrategy);
-
-            action.ShouldThrow<ArgumentNullException>();
         }
     }
 }

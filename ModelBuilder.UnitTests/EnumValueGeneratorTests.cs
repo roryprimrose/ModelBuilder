@@ -1,8 +1,10 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
+    using System.Collections.Generic;
     using System.IO;
     using FluentAssertions;
+    using NSubstitute;
     using Xunit;
 
     public class EnumValueGeneratorTests
@@ -10,6 +12,11 @@
         [Fact]
         public void GenerateCanReturnNullAndRandomValuesTest()
         {
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var nullFound = false;
             var valueFound = false;
 
@@ -17,7 +24,7 @@
 
             for (var index = 0; index < 1000; index++)
             {
-                var value = (SingleEnum?) target.Generate(typeof(SingleEnum?), null, null);
+                var value = (SingleEnum?) target.Generate(typeof(SingleEnum?), null, executeStrategy);
 
                 if (value == null)
                 {
@@ -41,9 +48,14 @@
         [Fact]
         public void GenerateReturnsOnlyAvailableEnumValueWhenSingleValueDefinedTest()
         {
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var target = new EnumValueGenerator();
 
-            var first = target.Generate(typeof(SingleEnum), null, null);
+            var first = target.Generate(typeof(SingleEnum), null, executeStrategy);
 
             first.Should().BeOfType<SingleEnum>();
             first.Should().Be(SingleEnum.First);
@@ -52,13 +64,18 @@
         [Fact]
         public void GenerateReturnsRandomFileAttributesValueTest()
         {
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var target = new EnumValueGenerator();
 
-            var first = target.Generate(typeof(FileAttributes), null, null);
+            var first = target.Generate(typeof(FileAttributes), null, executeStrategy);
 
             first.Should().BeOfType<FileAttributes>();
 
-            var second = target.Generate(typeof(FileAttributes), null, null);
+            var second = target.Generate(typeof(FileAttributes), null, executeStrategy);
 
             first.Should().NotBe(second);
         }
@@ -66,9 +83,14 @@
         [Fact]
         public void GenerateReturnsRandomFlagsEnumValueTest()
         {
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var target = new EnumValueGenerator();
 
-            var first = target.Generate(typeof(BigFlagsEnum), null, null);
+            var first = target.Generate(typeof(BigFlagsEnum), null, executeStrategy);
 
             first.Should().BeOfType<BigFlagsEnum>();
 
@@ -76,7 +98,7 @@
 
             values.Should().NotContain(first);
 
-            var second = target.Generate(typeof(BigFlagsEnum), null, null);
+            var second = target.Generate(typeof(BigFlagsEnum), null, executeStrategy);
 
             first.Should().NotBe(second);
         }
@@ -84,9 +106,14 @@
         [Fact]
         public void GenerateReturnsRandomValueWhenTypeIsEnumTest()
         {
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var target = new EnumValueGenerator();
 
-            var first = target.Generate(typeof(BigEnum), null, null);
+            var first = target.Generate(typeof(BigEnum), null, executeStrategy);
 
             first.Should().BeOfType<BigEnum>();
             Enum.IsDefined(typeof(BigEnum), first).Should().BeTrue();
@@ -95,7 +122,7 @@
 
             for (var index = 0; index < 50; index++)
             {
-                var second = target.Generate(typeof(BigEnum), null, null);
+                var second = target.Generate(typeof(BigEnum), null, executeStrategy);
 
                 if (first != second)
                 {
@@ -111,6 +138,11 @@
         [Fact]
         public void GenerateReturnsSmallFlagsEnumTest()
         {
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var target = new EnumValueGenerator();
             var first = false;
             var second = false;
@@ -118,7 +150,7 @@
 
             for (var index = 0; index < 1000; index++)
             {
-                var actual = (SmallFlags) target.Generate(typeof(SmallFlags), null, null);
+                var actual = (SmallFlags) target.Generate(typeof(SmallFlags), null, executeStrategy);
 
                 if (actual == SmallFlags.First)
                 {
@@ -149,9 +181,14 @@
         [Fact]
         public void GenerateReturnsZeroForEmptyEnumTest()
         {
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var target = new EnumValueGenerator();
 
-            var first = target.Generate(typeof(EmptyEnum), null, null);
+            var first = target.Generate(typeof(EmptyEnum), null, executeStrategy);
 
             first.Should().BeOfType<EmptyEnum>();
             first.Should().Be((EmptyEnum) 0);
@@ -162,23 +199,18 @@
         [InlineData(typeof(string))]
         public void GenerateThrowsExceptionWithInvalidParametersTest(Type type)
         {
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var target = new EnumValueGenerator();
 
-            Action action = () => target.Generate(type, null, null);
+            Action action = () => target.Generate(type, null, executeStrategy);
 
             action.ShouldThrow<NotSupportedException>();
         }
-
-        [Fact]
-        public void GenerateThrowsExceptionWithNullTypeTest()
-        {
-            var target = new EnumValueGenerator();
-
-            Action action = () => target.Generate(null, null, null);
-
-            action.ShouldThrow<ArgumentNullException>();
-        }
-
+        
         [Theory]
         [InlineData(typeof(Stream), false)]
         [InlineData(typeof(string), false)]

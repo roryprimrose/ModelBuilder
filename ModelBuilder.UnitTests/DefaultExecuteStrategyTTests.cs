@@ -76,7 +76,7 @@
 
             buildStrategy.ValueGenerators.Returns(valueGenerators.AsReadOnly());
             valueGenerator.IsSupported(typeof(int), null, Arg.Any<LinkedList<object>>()).Returns(true);
-            valueGenerator.Generate(typeof(int), null, Arg.Any<LinkedList<object>>()).Returns(null);
+            valueGenerator.Generate(typeof(int), null, Arg.Any<IExecuteStrategy>()).Returns(null);
 
             var target = new DefaultExecuteStrategy<int>();
 
@@ -117,7 +117,7 @@
             typeCreator.AutoPopulate.Returns(true);
             generator.IsSupported(typeof(Guid), "Value", Arg.Is<LinkedList<object>>(x => x.Last.Value == expected))
                 .Returns(true);
-            generator.Generate(typeof(Guid), "Value", Arg.Is<LinkedList<object>>(x => x.Last.Value == expected))
+            generator.Generate(typeof(Guid), "Value", Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last.Value == expected))
                 .Returns(value);
 
             var actual = target.CreateWith();
@@ -204,7 +204,7 @@
                 typeof(string),
                 "Name",
                 Arg.Is<LinkedList<object>>(x => x.Last.Value == expected)).Returns(true);
-            valueGenerator.Generate(typeof(string), "Name", Arg.Is<LinkedList<object>>(x => x.Last.Value == expected))
+            valueGenerator.Generate(typeof(string), "Name", Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last.Value == expected))
                 .Returns(name);
             valueGenerator.IsSupported(
                 typeof(string),
@@ -213,7 +213,7 @@
             valueGenerator.Generate(
                 typeof(string),
                 "Address",
-                Arg.Is<LinkedList<object>>(x => x.Last.Value == expected)).Returns(address);
+                Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last.Value == expected)).Returns(address);
 
             var actual = (Company) target.Populate((object) expected);
 

@@ -1,8 +1,10 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
+    using System.Collections.Generic;
     using System.IO;
     using FluentAssertions;
+    using NSubstitute;
     using Xunit;
 
     public class PostCodeValueGeneratorTests
@@ -10,14 +12,19 @@
         [Fact]
         public void GenerateReturnsRandomValueTest()
         {
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var target = new PostCodeValueGenerator();
 
-            var first = target.Generate(typeof(string), "zip", null);
+            var first = target.Generate(typeof(string), "zip", executeStrategy);
 
             first.Should().BeOfType<string>();
             first.As<string>().Should().NotBeNullOrWhiteSpace();
 
-            var second = target.Generate(typeof(string), "zip", null);
+            var second = target.Generate(typeof(string), "zip", executeStrategy);
 
             first.Should().NotBe(second);
         }
@@ -25,9 +32,14 @@
         [Fact]
         public void GenerateReturnsValueForPostCodeTypeTest()
         {
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var target = new PostCodeValueGenerator();
 
-            var actual = target.Generate(typeof(string), "Zip", null);
+            var actual = target.Generate(typeof(string), "Zip", executeStrategy);
 
             actual.Should().BeOfType<string>();
         }
@@ -43,9 +55,14 @@
         [InlineData(typeof(string), "Zipcode", true)]
         public void GenerateReturnsValuesForSeveralNameFormatsTest(Type type, string referenceName, bool expected)
         {
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var target = new PostCodeValueGenerator();
 
-            var actual = (string)target.Generate(type, referenceName, null);
+            var actual = (string)target.Generate(type, referenceName, executeStrategy);
 
             actual.Should().NotBeNullOrEmpty();
         }
@@ -56,9 +73,14 @@
         [InlineData(typeof(string), "Stuff")]
         public void GenerateThrowsExceptionWithInvalidParametersTest(Type type, string referenceName)
         {
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var target = new PostCodeValueGenerator();
 
-            Action action = () => target.Generate(type, referenceName, null);
+            Action action = () => target.Generate(type, referenceName, executeStrategy);
 
             action.ShouldThrow<NotSupportedException>();
         }
@@ -66,9 +88,14 @@
         [Fact]
         public void GenerateThrowsExceptionWithNullTypeTest()
         {
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var target = new PostCodeValueGenerator();
 
-            Action action = () => target.Generate(null, null, null);
+            Action action = () => target.Generate(null, null, executeStrategy);
 
             action.ShouldThrow<ArgumentNullException>();
         }

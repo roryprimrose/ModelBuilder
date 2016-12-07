@@ -1,14 +1,21 @@
-﻿using System;
-using FluentAssertions;
-using Xunit;
-
-namespace ModelBuilder.UnitTests
+﻿namespace ModelBuilder.UnitTests
 {
+    using System;
+    using System.Collections.Generic;
+    using FluentAssertions;
+    using NSubstitute;
+    using Xunit;
+
     public class BooleanValueGeneratorTests
     {
         [Fact]
         public void GenerateReturnsRandomValuesForBooleanTypeTest()
         {
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var target = new BooleanValueGenerator();
 
             var trueFound = false;
@@ -16,7 +23,7 @@ namespace ModelBuilder.UnitTests
 
             for (var index = 0; index < 1000; index++)
             {
-                var actual = (bool) target.Generate(typeof (bool), null, null);
+                var actual = (bool)target.Generate(typeof(bool), null, executeStrategy);
 
                 if (actual)
                 {
@@ -40,6 +47,11 @@ namespace ModelBuilder.UnitTests
         [Fact]
         public void GenerateReturnsRandomValuesForNullabeBooleanTypeTest()
         {
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var target = new BooleanValueGenerator();
 
             var nullFound = false;
@@ -48,7 +60,7 @@ namespace ModelBuilder.UnitTests
 
             for (var index = 0; index < 1000; index++)
             {
-                var actual = (bool?) target.Generate(typeof (bool?), null, null);
+                var actual = (bool?)target.Generate(typeof(bool?), null, executeStrategy);
 
                 if (actual == null)
                 {
@@ -79,9 +91,14 @@ namespace ModelBuilder.UnitTests
         [Fact]
         public void GenerateReturnsValueForBooleanTypeTest()
         {
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var target = new BooleanValueGenerator();
 
-            var actual = target.Generate(typeof (bool), null, null);
+            var actual = target.Generate(typeof(bool), null, executeStrategy);
 
             actual.Should().BeOfType<bool>();
         }
@@ -89,9 +106,14 @@ namespace ModelBuilder.UnitTests
         [Fact]
         public void GenerateReturnsValueForNullableBooleanTypeTest()
         {
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var target = new BooleanValueGenerator();
 
-            var actual = target.Generate(typeof (bool?), null, null);
+            var actual = target.Generate(typeof(bool?), null, executeStrategy);
 
             if (actual != null)
             {
@@ -102,46 +124,6 @@ namespace ModelBuilder.UnitTests
         }
 
         [Fact]
-        public void GenerateThrowsExceptionWithNullTypeTest()
-        {
-            var target = new BooleanValueGenerator();
-
-            Action action = () => target.Generate(null, null, null);
-
-            action.ShouldThrow<ArgumentNullException>();
-        }
-
-        [Fact]
-        public void IsSupportedReturnsFalseForUnsupportedTypeTest()
-        {
-            var target = new BooleanValueGenerator();
-
-            var actual = target.IsSupported(typeof (string), null, null);
-
-            actual.Should().BeFalse();
-        }
-
-        [Fact]
-        public void IsSupportedReturnsTrueForBooleanTypeTest()
-        {
-            var target = new BooleanValueGenerator();
-
-            var actual = target.IsSupported(typeof (bool), null, null);
-
-            actual.Should().BeTrue();
-        }
-
-        [Fact]
-        public void IsSupportedReturnsTrueForNullableBooleanTypeTest()
-        {
-            var target = new BooleanValueGenerator();
-
-            var actual = target.IsSupported(typeof (bool?), null, null);
-
-            actual.Should().BeTrue();
-        }
-
-        [Fact]
         public void IsSupportedThrowsExceptionWithNullTypeTest()
         {
             var target = new BooleanValueGenerator();
@@ -149,6 +131,19 @@ namespace ModelBuilder.UnitTests
             Action action = () => target.IsSupported(null, null, null);
 
             action.ShouldThrow<ArgumentNullException>();
+        }
+
+        [Theory]
+        [InlineData(typeof(bool), true)]
+        [InlineData(typeof(bool?), true)]
+        [InlineData(typeof(string), false)]
+        public void IsSupportedValidatesSupportedTypesTest(Type type, bool expected)
+        {
+            var target = new BooleanValueGenerator();
+
+            var actual = target.IsSupported(type, null, null);
+
+            actual.Should().Be(expected);
         }
     }
 }

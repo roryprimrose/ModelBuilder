@@ -1,7 +1,9 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
+    using System.Collections.Generic;
     using FluentAssertions;
+    using NSubstitute;
     using Xunit;
 
     public class AgeValueGeneratorTests
@@ -16,14 +18,20 @@
                 return;
             }
 
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            var buildChain = new LinkedList<object>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var target = new AgeValueGenerator();
 
             for (var index = 0; index < 10000; index++)
             {
-                var value = target.Generate(type, "Age", null);
+                var value = target.Generate(type, "Age", executeStrategy);
 
                 if (type.IsNullable() &&
-                    value == null)
+                    (value == null))
                 {
                     // Nullable values could be returned so nothing more to assert
                     return;
@@ -48,6 +56,12 @@
         [Fact]
         public void GenerateCanReturnNullAndNonNullValuesTest()
         {
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            var buildChain = new LinkedList<object>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var nullFound = false;
             var valueFound = false;
 
@@ -55,7 +69,7 @@
 
             for (var index = 0; index < 1000; index++)
             {
-                var value = (int?) target.Generate(typeof(int?), "Age", null);
+                var value = (int?)target.Generate(typeof(int?), "Age", executeStrategy);
 
                 if (value == null)
                 {
@@ -86,13 +100,18 @@
                 return;
             }
 
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            var buildChain = new LinkedList<object>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var target = new AgeValueGenerator();
 
-            var value = target.Generate(type, "Age", null);
+            var value = target.Generate(type, "Age", executeStrategy);
 
-            if (type.IsNullable()
-                &&
-                value == null)
+            if (type.IsNullable() &&
+                (value == null))
             {
                 // We can't run the assertions because null is a valid outcome
                 return;
@@ -115,22 +134,37 @@
 
         [Theory]
         [ClassData(typeof(NumericTypeDataSource))]
-        public void GenerateThrowsExceptionWhenReferenceNotAgeTest(Type type, bool typeSupported, double min, double max)
+        public void GenerateThrowsExceptionWhenReferenceNotAgeTest(
+            Type type,
+            bool typeSupported,
+            double min,
+            double max)
         {
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var target = new AgeValueGenerator();
 
-            Action action = () => target.Generate(type, "Stuff", null);
+            Action action = () => target.Generate(type, "Stuff", executeStrategy);
 
             action.ShouldThrow<NotSupportedException>();
         }
-
+        
         [Theory]
         [ClassData(typeof(NumericTypeDataSource))]
         public void GenerateValidatesRequestedTypeTest(Type type, bool typeSupported, double min, double max)
         {
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            var buildChain = new LinkedList<object>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var target = new AgeValueGenerator();
 
-            Action action = () => target.Generate(type, "Age", null);
+            Action action = () => target.Generate(type, "Age", executeStrategy);
 
             if (typeSupported)
             {
@@ -164,7 +198,10 @@
 
         [Theory]
         [ClassData(typeof(NumericTypeDataSource))]
-        public void IsSupportedReturnsFalseWhenReferenceNameIsNullTest(Type type, bool typeSupported, double min,
+        public void IsSupportedReturnsFalseWhenReferenceNameIsNullTest(
+            Type type,
+            bool typeSupported,
+            double min,
             double max)
         {
             if (typeSupported == false)
@@ -182,7 +219,10 @@
 
         [Theory]
         [ClassData(typeof(NumericTypeDataSource))]
-        public void IsSupportedReturnsFalseWhenReferenceNameNotAgeTest(Type type, bool typeSupported, double min,
+        public void IsSupportedReturnsFalseWhenReferenceNameNotAgeTest(
+            Type type,
+            bool typeSupported,
+            double min,
             double max)
         {
             if (typeSupported == false)
@@ -200,7 +240,10 @@
 
         [Theory]
         [ClassData(typeof(NumericTypeDataSource))]
-        public void IsSupportedReturnsTrueWhenReferenceNameIncludesAgeTest(Type type, bool typeSupported, double min,
+        public void IsSupportedReturnsTrueWhenReferenceNameIncludesAgeTest(
+            Type type,
+            bool typeSupported,
+            double min,
             double max)
         {
             if (typeSupported == false)

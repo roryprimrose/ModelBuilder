@@ -49,6 +49,7 @@ namespace ModelBuilder
 
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is null.</exception>
         public virtual object Create(
             Type type,
             string referenceName,
@@ -63,6 +64,11 @@ namespace ModelBuilder
             if (executeStrategy == null)
             {
                 throw new ArgumentNullException(nameof(executeStrategy));
+            }
+
+            if (executeStrategy.BuildChain == null)
+            {
+                throw new InvalidOperationException(Resources.ExecuteStrategy_NoBuildChain);
             }
 
             VerifyCreateRequest(type, referenceName, executeStrategy);
@@ -83,6 +89,11 @@ namespace ModelBuilder
             if (executeStrategy == null)
             {
                 throw new ArgumentNullException(nameof(executeStrategy));
+            }
+
+            if (executeStrategy.BuildChain == null)
+            {
+                throw new InvalidOperationException(Resources.ExecuteStrategy_NoBuildChain);
             }
 
             VerifyPopulateRequest(instance.GetType(), null, executeStrategy);
@@ -120,6 +131,7 @@ namespace ModelBuilder
         /// <param name="referenceName">Identifies the possible parameter or property name this value is intended for.</param>
         /// <param name="executeStrategy">The execution strategy.</param>
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is null.</exception>
         /// <exception cref="NotSupportedException">This generator does not support creating the requested value.</exception>
         protected virtual void VerifyCreateRequest(Type type, string referenceName, IExecuteStrategy executeStrategy)
         {
@@ -133,6 +145,11 @@ namespace ModelBuilder
                 throw new ArgumentNullException(nameof(executeStrategy));
             }
 
+            if (executeStrategy.BuildChain == null)
+            {
+                throw new InvalidOperationException(Resources.ExecuteStrategy_NoBuildChain);
+            }
+
             if (CanCreate(type, referenceName, executeStrategy.BuildChain))
             {
                 return;
@@ -140,9 +157,10 @@ namespace ModelBuilder
 
             var message = string.Format(
                 CultureInfo.CurrentCulture,
-                Resources.Error_TypeNotSupportedFormat,
+                Resources.Error_GenerationNotSupportedFormat,
                 GetType().FullName,
-                type.FullName);
+                type.FullName,
+                referenceName ?? "<null>");
 
             throw new NotSupportedException(message);
         }
@@ -154,6 +172,7 @@ namespace ModelBuilder
         /// <param name="referenceName">Identifies the possible parameter or property name the instance is intended for.</param>
         /// <param name="executeStrategy">The execution strategy.</param>
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is null.</exception>
         /// <exception cref="NotSupportedException">This generator does not support creating the requested value.</exception>
         protected virtual void VerifyPopulateRequest(Type type, string referenceName, IExecuteStrategy executeStrategy)
         {
@@ -167,6 +186,11 @@ namespace ModelBuilder
                 throw new ArgumentNullException(nameof(executeStrategy));
             }
 
+            if (executeStrategy.BuildChain == null)
+            {
+                throw new InvalidOperationException(Resources.ExecuteStrategy_NoBuildChain);
+            }
+
             if (CanPopulate(type, referenceName, executeStrategy.BuildChain))
             {
                 return;
@@ -174,9 +198,10 @@ namespace ModelBuilder
 
             var message = string.Format(
                 CultureInfo.CurrentCulture,
-                Resources.Error_TypeNotSupportedFormat,
+                Resources.Error_GenerationNotSupportedFormat,
                 GetType().FullName,
-                type.FullName);
+                type.FullName,
+                referenceName ?? "<null>");
 
             throw new NotSupportedException(message);
         }

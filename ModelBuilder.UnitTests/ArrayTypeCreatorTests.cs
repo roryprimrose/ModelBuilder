@@ -112,7 +112,10 @@
         [InlineData(typeof(Person[]))]
         public void CreateReturnsInstanceTest(Type type)
         {
+            var buildChain = new LinkedList<object>();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
 
             var target = new ArrayTypeCreator();
 
@@ -120,29 +123,7 @@
 
             actual.Should().NotBeNull();
         }
-
-        [Fact]
-        public void CreateThrowsExceptionWithNullExecuteStrategyTest()
-        {
-            var target = new ArrayTypeCreator();
-
-            Action action = () => target.Create(typeof(byte[]), null, null);
-
-            action.ShouldThrow<ArgumentNullException>();
-        }
-
-        [Fact]
-        public void CreateThrowsExceptionWithNullTypeTest()
-        {
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            var target = new ArrayTypeCreator();
-
-            Action action = () => target.Create(null, null, executeStrategy);
-
-            action.ShouldThrow<ArgumentNullException>();
-        }
-
+        
         [Theory]
         [InlineData(typeof(string), false)]
         [InlineData(typeof(Stream), false)]
@@ -167,7 +148,10 @@
         [InlineData(typeof(Person[]), true)]
         public void CreateValidatesWhetherTypeIsSupportedTest(Type type, bool supported)
         {
+            var buildChain = new LinkedList<object>();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
 
             var target = new ArrayTypeCreator();
 
@@ -210,16 +194,18 @@
         {
             var expected = new Guid[15];
 
-            var strategy = Substitute.For<IExecuteStrategy>();
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
 
-            strategy.CreateWith(typeof(Guid)).Returns(Guid.NewGuid());
+            executeStrategy.BuildChain.Returns(buildChain);
+            executeStrategy.CreateWith(typeof(Guid)).Returns(Guid.NewGuid());
 
             var target = new ArrayTypeCreator
             {
                 MaxCount = 15
             };
 
-            var actual = target.Populate(expected, strategy);
+            var actual = target.Populate(expected, executeStrategy);
 
             actual.Should().BeSameAs(expected);
 
@@ -234,16 +220,18 @@
         {
             var expected = new Guid[15];
 
-            var strategy = Substitute.For<IExecuteStrategy>();
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
 
-            strategy.CreateWith(typeof(Guid)).Returns(Guid.NewGuid());
+            executeStrategy.BuildChain.Returns(buildChain);
+            executeStrategy.CreateWith(typeof(Guid)).Returns(Guid.NewGuid());
 
             var target = new ArrayTypeCreator
             {
                 MaxCount = 15
             };
 
-            var actual = target.Populate(expected, strategy);
+            var actual = target.Populate(expected, executeStrategy);
 
             actual.Should().BeSameAs(expected);
 
@@ -292,16 +280,18 @@
         {
             var expected = new Guid[0];
 
-            var strategy = Substitute.For<IExecuteStrategy>();
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
 
-            strategy.CreateWith(typeof(Guid)).Returns(Guid.NewGuid());
+            executeStrategy.BuildChain.Returns(buildChain);
+            executeStrategy.CreateWith(typeof(Guid)).Returns(Guid.NewGuid());
 
             var target = new ArrayTypeCreator
             {
                 MaxCount = 15
             };
 
-            var actual = target.Populate(expected, strategy);
+            var actual = target.Populate(expected, executeStrategy);
 
             actual.Should().BeSameAs(expected);
 
@@ -339,11 +329,14 @@
         {
             var instance = new Lazy<bool>(() => true);
 
-            var strategy = Substitute.For<IExecuteStrategy>();
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
 
             var target = new ArrayTypeCreator();
 
-            Action action = () => target.Populate(instance, strategy);
+            Action action = () => target.Populate(instance, executeStrategy);
 
             action.ShouldThrow<NotSupportedException>();
         }

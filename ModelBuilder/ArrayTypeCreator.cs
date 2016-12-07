@@ -43,16 +43,6 @@
             IExecuteStrategy executeStrategy,
             params object[] args)
         {
-            if (type == null)
-            {
-                throw new ArgumentNullException(nameof(type));
-            }
-
-            if (executeStrategy == null)
-            {
-                throw new ArgumentNullException(nameof(executeStrategy));
-            }
-
             VerifyCreateRequest(type, referenceName, executeStrategy);
 
             var count = Generator.NextValue(1, MaxCount);

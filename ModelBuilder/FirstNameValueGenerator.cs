@@ -1,31 +1,25 @@
 ﻿namespace ModelBuilder
 {
     using System;
-    using System.Collections.Generic;
-    using Data;
+    using ModelBuilder.Data;
 
     /// <summary>
-    /// The <see cref="FirstNameValueGenerator"/>
-    /// class is used to generate random first name values.
+    ///     The <see cref="FirstNameValueGenerator" />
+    ///     class is used to generate random first name values.
     /// </summary>
     public class FirstNameValueGenerator : RelativeValueGenerator
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="FirstNameValueGenerator"/>.
+        ///     Initializes a new instance of the <see cref="FirstNameValueGenerator" />.
         /// </summary>
         public FirstNameValueGenerator() : base(PropertyExpression.FirstName, typeof(string))
         {
         }
 
         /// <inheritdoc />
-        protected override object GenerateValue(Type type, string referenceName, LinkedList<object> buildChain)
+        protected override object GenerateValue(Type type, string referenceName, IExecuteStrategy executeStrategy)
         {
-            if (buildChain == null)
-            {
-                throw new ArgumentNullException(nameof(buildChain));
-            }
-
-            var context = buildChain.Last?.Value;
+            var context = executeStrategy.BuildChain?.Last?.Value;
             var gender = GetValue<string>(PropertyExpression.Gender, context);
 
             if (string.Equals(gender, "male", StringComparison.OrdinalIgnoreCase))

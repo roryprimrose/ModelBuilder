@@ -232,11 +232,29 @@ namespace ModelBuilder.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} does not support the {1} type and reference name {2} in the context of the current build chain..
+        /// </summary>
+        internal static string Error_GenerationNotSupportedFormat {
+            get {
+                return ResourceManager.GetString("Error_GenerationNotSupportedFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} does not support the {1} type..
         /// </summary>
         internal static string Error_TypeNotSupportedFormat {
             get {
                 return ResourceManager.GetString("Error_TypeNotSupportedFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The BuildChain property on the execution strategy is null..
+        /// </summary>
+        internal static string ExecuteStrategy_NoBuildChain {
+            get {
+                return ResourceManager.GetString("ExecuteStrategy_NoBuildChain", resourceCulture);
             }
         }
         

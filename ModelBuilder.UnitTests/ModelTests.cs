@@ -75,7 +75,7 @@
 
             build.ValueGenerators.Returns(generators);
             generator.IsSupported(typeof(Guid), null, Arg.Any<LinkedList<object>>()).Returns(true);
-            generator.Generate(typeof(Guid), null, Arg.Any<LinkedList<object>>()).Returns(value);
+            generator.Generate(typeof(Guid), null, Arg.Any<IExecuteStrategy>()).Returns(value);
 
             try
             {
@@ -102,7 +102,7 @@
 
             build.ValueGenerators.Returns(generators);
             generator.IsSupported(typeof(Guid), null, Arg.Any<LinkedList<object>>()).Returns(true);
-            generator.Generate(typeof(Guid), null, Arg.Any<LinkedList<object>>()).Returns(value);
+            generator.Generate(typeof(Guid), null, Arg.Any<IExecuteStrategy>()).Returns(value);
 
             try
             {
@@ -252,7 +252,7 @@
 
             build.ValueGenerators.Returns(generators);
             generator.IsSupported(typeof(Guid), "Value", Arg.Any<LinkedList<object>>()).Returns(true);
-            generator.Generate(typeof(Guid), "Value", Arg.Any<LinkedList<object>>()).Returns(value);
+            generator.Generate(typeof(Guid), "Value", Arg.Any<IExecuteStrategy>()).Returns(value);
 
             try
             {

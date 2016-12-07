@@ -24,7 +24,7 @@
 
             target.ValueGenerators.Returns(generators);
             generator.IsSupported(typeof(Guid), null, Arg.Any<LinkedList<object>>()).Returns(true);
-            generator.Generate(typeof(Guid), null, Arg.Any<LinkedList<object>>()).Returns(value);
+            generator.Generate(typeof(Guid), null, Arg.Any<IExecuteStrategy>()).Returns(value);
 
             var actual = target.Create(typeof(Guid));
 
@@ -65,7 +65,7 @@
 
             target.ValueGenerators.Returns(generators);
             generator.IsSupported(typeof(Guid), null, Arg.Any<LinkedList<object>>()).Returns(true);
-            generator.Generate(typeof(Guid), null, Arg.Any<LinkedList<object>>()).Returns(value);
+            generator.Generate(typeof(Guid), null, Arg.Any<IExecuteStrategy>()).Returns(value);
 
             var actual = target.Create<Guid>();
 
@@ -96,7 +96,7 @@
 
             target.ValueGenerators.Returns(generators);
             generator.IsSupported(typeof(Guid), null, Arg.Any<LinkedList<object>>()).Returns(true);
-            generator.Generate(typeof(Guid), null, Arg.Any<LinkedList<object>>()).Returns(value);
+            generator.Generate(typeof(Guid), null, Arg.Any<IExecuteStrategy>()).Returns(value);
 
             var actual = target.CreateWith(typeof(Guid));
 
@@ -137,7 +137,7 @@
 
             target.ValueGenerators.Returns(generators);
             generator.IsSupported(typeof(Guid), null, Arg.Any<LinkedList<object>>()).Returns(true);
-            generator.Generate(typeof(Guid), null, Arg.Any<LinkedList<object>>()).Returns(value);
+            generator.Generate(typeof(Guid), null, Arg.Any<IExecuteStrategy>()).Returns(value);
 
             var actual = target.CreateWith<Guid>(null);
 
@@ -229,7 +229,7 @@
             target.ValueGenerators.Returns(generators);
             generator.IsSupported(typeof(Guid), "Value", Arg.Is<LinkedList<object>>(x => x.Last.Value == expected))
                 .Returns(true);
-            generator.Generate(typeof(Guid), "Value", Arg.Is<LinkedList<object>>(x => x.Last.Value == expected))
+            generator.Generate(typeof(Guid), "Value", Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last.Value == expected))
                 .Returns(value);
 
             var actual = target.Populate(expected);

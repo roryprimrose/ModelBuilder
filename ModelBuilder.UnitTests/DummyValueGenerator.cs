@@ -1,7 +1,6 @@
-﻿using System;
-
-namespace ModelBuilder.UnitTests
+﻿namespace ModelBuilder.UnitTests
 {
+    using System;
     using System.Collections.Generic;
 
     public class DummyValueGenerator : ValueGeneratorBase
@@ -11,7 +10,7 @@ namespace ModelBuilder.UnitTests
             return false;
         }
 
-        protected override object GenerateValue(Type type, string referenceName, LinkedList<object> buildChain)
+        protected override object GenerateValue(Type type, string referenceName, IExecuteStrategy executeStrategy)
         {
             throw new NotImplementedException();
         }

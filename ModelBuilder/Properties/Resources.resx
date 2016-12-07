@@ -202,4 +202,10 @@
   <data name="DefaultBuildLog_IgnoringProperty" xml:space="preserve">
     <value>Ignoring property {0} ({1}) on type {2} using {3}</value>
   </data>
+  <data name="ExecuteStrategy_NoBuildChain" xml:space="preserve">
+    <value>The BuildChain property on the execution strategy is null.</value>
+  </data>
+  <data name="Error_GenerationNotSupportedFormat" xml:space="preserve">
+    <value>{0} does not support the {1} type and reference name {2} in the context of the current build chain.</value>
+  </data>
 </root>

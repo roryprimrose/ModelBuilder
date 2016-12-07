@@ -1,23 +1,22 @@
 ﻿namespace ModelBuilder
 {
     using System;
-    using System.Collections.Generic;
 
     /// <summary>
-    /// The <see cref="BooleanValueGenerator"/>
-    /// class is used to generate random <see cref="bool"/> values.
+    ///     The <see cref="BooleanValueGenerator" />
+    ///     class is used to generate random <see cref="bool" /> values.
     /// </summary>
     public class BooleanValueGenerator : ValueGeneratorMatcher
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="BooleanValueGenerator"/> class.
+        ///     Initializes a new instance of the <see cref="BooleanValueGenerator" /> class.
         /// </summary>
         public BooleanValueGenerator() : base(typeof(bool), typeof(bool?))
         {
         }
 
         /// <inheritdoc />
-        protected override object GenerateValue(Type type, string referenceName, LinkedList<object> buildChain)
+        protected override object GenerateValue(Type type, string referenceName, IExecuteStrategy executeStrategy)
         {
             if (type == typeof(bool?))
             {

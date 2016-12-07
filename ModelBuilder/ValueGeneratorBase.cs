@@ -6,72 +6,93 @@
     using ModelBuilder.Properties;
 
     /// <summary>
-    /// The <see cref="ValueGeneratorBase"/>
-    /// class provides the base implementation for generating values.
+    ///     The <see cref="ValueGeneratorBase" />
+    ///     class provides the base implementation for generating values.
     /// </summary>
     public abstract class ValueGeneratorBase : IValueGenerator
     {
         private static readonly IRandomGenerator _random = new RandomGenerator();
 
         /// <inheritdoc />
-        public virtual object Generate(Type type, string referenceName, LinkedList<object> buildChain)
-        {
-            VerifyGenerateRequest(type, referenceName, buildChain);
-
-            return GenerateValue(type, referenceName, buildChain);
-        }
-
-        /// <inheritdoc />
-        public abstract bool IsSupported(Type type, string referenceName, LinkedList<object> buildChain);
-
-        /// <summary>
-        /// Generates a new value with the provided context.
-        /// </summary>
-        /// <param name="type">The type of value to generate.</param>
-        /// <param name="referenceName">Identifies the possible parameter or property name the value is intended for.</param>
-        /// <param name="buildChain">The chain of instances built up to this point.</param>
-        /// <returns>A new value of the type.</returns>
-        protected abstract object GenerateValue(Type type, string referenceName, LinkedList<object> buildChain);
-
-        /// <summary>
-        /// Verifies that the minimum required information has been provided in order to generate a value.
-        /// </summary>
-        /// <param name="type">The type of value to generate.</param>
-        /// <param name="referenceName">Identifies the possible parameter or property name this value is intended for.</param>
-        /// <param name="buildChain">The chain of instances built up to this point.</param>
-        /// <exception cref="ArgumentNullException">The <paramref name="type"/> parameter is null.</exception>
-        /// <exception cref="NotSupportedException">This generator does not support creating the requested value.</exception>
-        protected virtual void VerifyGenerateRequest(Type type, string referenceName, LinkedList<object> buildChain)
+        public virtual object Generate(Type type, string referenceName, IExecuteStrategy executeStrategy)
         {
             if (type == null)
             {
                 throw new ArgumentNullException(nameof(type));
             }
 
-            if (IsSupported(type, referenceName, buildChain) == false)
+            if (executeStrategy == null)
+            {
+                throw new ArgumentNullException(nameof(executeStrategy));
+            }
+
+            if (executeStrategy.BuildChain == null)
+            {
+                throw new InvalidOperationException(Resources.ExecuteStrategy_NoBuildChain);
+            }
+
+            VerifyGenerateRequest(type, referenceName, executeStrategy);
+
+            return GenerateValue(type, referenceName, executeStrategy);
+        }
+
+        /// <inheritdoc />
+        public abstract bool IsSupported(Type type, string referenceName, LinkedList<object> buildChain);
+
+        /// <summary>
+        ///     Generates a new value with the provided context.
+        /// </summary>
+        /// <param name="type">The type of value to generate.</param>
+        /// <param name="referenceName">Identifies the possible parameter or property name the value is intended for.</param>
+        /// <param name="executeStrategy">The execution strategy.</param>
+        /// <returns>A new value of the type.</returns>
+        protected abstract object GenerateValue(Type type, string referenceName, IExecuteStrategy executeStrategy);
+
+        /// <summary>
+        ///     Verifies that the minimum required information has been provided in order to generate a value.
+        /// </summary>
+        /// <param name="type">The type of value to generate.</param>
+        /// <param name="referenceName">Identifies the possible parameter or property name this value is intended for.</param>
+        /// <param name="executeStrategy">The execution strategy.</param>
+        /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is null.</exception>
+        /// <exception cref="NotSupportedException">This generator does not support creating the requested value.</exception>
+        protected virtual void VerifyGenerateRequest(Type type, string referenceName, IExecuteStrategy executeStrategy)
+        {
+            if (type == null)
+            {
+                throw new ArgumentNullException(nameof(type));
+            }
+
+            if (executeStrategy == null)
+            {
+                throw new ArgumentNullException(nameof(executeStrategy));
+            }
+
+            if (executeStrategy.BuildChain == null)
+            {
+                throw new InvalidOperationException(Resources.ExecuteStrategy_NoBuildChain);
+            }
+
+            if (IsSupported(type, referenceName, executeStrategy.BuildChain) == false)
             {
                 var message = string.Format(
                     CultureInfo.CurrentCulture,
-                    Resources.Error_TypeNotSupportedFormat,
+                    Resources.Error_GenerationNotSupportedFormat,
                     GetType().FullName,
-                    type.FullName);
+                    type.FullName,
+                    referenceName ?? "<null>");
 
                 throw new NotSupportedException(message);
             }
         }
 
         /// <inheritdoc />
-        public virtual int Priority
-        {
-            get;
-        } = int.MinValue;
+        public virtual int Priority { get; } = int.MinValue;
 
         /// <summary>
-        /// Gets the random generator for this instance.
+        ///     Gets the random generator for this instance.
         /// </summary>
-        protected virtual IRandomGenerator Generator
-        {
-            get;
-        } = _random;
+        protected virtual IRandomGenerator Generator { get; } = _random;
     }
 }

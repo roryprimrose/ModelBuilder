@@ -61,7 +61,10 @@
         [Fact]
         public void CreateDoesNotThrowsExceptionWhenCreateVerificationPassesTest()
         {
+            var buildChain = new LinkedList<object>();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
 
             var target = new TypeCreatorWrapper();
 
@@ -73,7 +76,10 @@
         [Fact]
         public void CreateThrowsExceptionWhenCreateVerificationFailsTest()
         {
+            var buildChain = new LinkedList<object>();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
 
             var target = new TypeCreatorWrapper();
 
@@ -85,7 +91,10 @@
         [Fact]
         public void CreateThrowsExceptionWithNullTypeTest()
         {
+            var buildChain = new LinkedList<object>();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
 
             var target = new DefaultTypeCreator();
 
@@ -105,7 +114,11 @@
         [Fact]
         public void PopulateDoesNotThrowsExceptionWhenPopulateVerificationPassesTest()
         {
-            var executeStrategy = new DummyExecuteStrategy();
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var value = new List<string>();
 
             var target = new TypeCreatorWrapper();
@@ -118,7 +131,11 @@
         [Fact]
         public void PopulateReturnsProvidedInstanceTest()
         {
-            var executeStrategy = new DummyExecuteStrategy();
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var expected = new SlimModel();
 
             var target = new DefaultTypeCreator();
@@ -131,7 +148,10 @@
         [Fact]
         public void PopulateThrowsExceptionWhenPopulateVerificationFailsTest()
         {
-            var executeStrategy = new DummyExecuteStrategy();
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
 
             var target = new TypeCreatorWrapper();
 
@@ -155,7 +175,10 @@
         [Fact]
         public void PopulateThrowsExceptionWithNullInstanceTest()
         {
-            var executeStrategy = new DummyExecuteStrategy();
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
 
             var target = new TypeCreatorWrapper();
 
@@ -167,7 +190,10 @@
         [Fact]
         public void PopulateThrowsExceptionWithNullTypeTest()
         {
-            var executeStrategy = new DummyExecuteStrategy();
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
 
             var target = new DefaultTypeCreator();
 

@@ -140,7 +140,10 @@
         [Fact]
         public void CreateDoesNotPopulateListTest()
         {
+            var buildChain = new LinkedList<object>();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
 
             var target = new IncrementingEnumerableTypeCreator();
 
@@ -160,7 +163,10 @@
         [InlineData(typeof(InheritedGenericCollection))]
         public void CreateReturnsInstanceTest(Type type)
         {
+            var buildChain = new LinkedList<object>();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
 
             var target = new EnumerableTypeCreator();
 
@@ -175,7 +181,10 @@
         [InlineData(typeof(IList<int>))]
         public void CreateReturnsNewListOfSpecfiedTypeTest(Type targetType)
         {
+            var buildChain = new LinkedList<object>();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
 
             var target = new EnumerableTypeCreator();
 
@@ -184,17 +193,7 @@
             actual.Should().BeOfType<List<int>>();
             actual.As<List<int>>().Should().BeEmpty();
         }
-
-        [Fact]
-        public void CreateThrowsExceptionWithNullTypeTest()
-        {
-            var target = new EnumerableTypeCreator();
-
-            Action action = () => target.Create(null, null, null);
-
-            action.ShouldThrow<ArgumentNullException>();
-        }
-
+        
         [Theory]
         [InlineData(typeof(string), false)]
         [InlineData(typeof(Stream), false)]
@@ -226,7 +225,10 @@
         [InlineData(typeof(InheritedGenericCollection), true)]
         public void CreateValidatesWhetherTypeIsSupportedTest(Type type, bool supported)
         {
+            var buildChain = new LinkedList<object>();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
 
             var target = new EnumerableTypeCreator();
 
@@ -247,16 +249,18 @@
         {
             var expected = new Collection<Guid>();
 
-            var strategy = Substitute.For<IExecuteStrategy>();
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
 
-            strategy.CreateWith(typeof(Guid)).Returns(Guid.NewGuid());
+            executeStrategy.BuildChain.Returns(buildChain);
+            executeStrategy.CreateWith(typeof(Guid)).Returns(Guid.NewGuid());
 
             var target = new EnumerableTypeCreator
             {
                 AutoPopulateCount = 15
             };
 
-            var actual = target.Populate(expected, strategy);
+            var actual = target.Populate(expected, executeStrategy);
 
             actual.Should().BeSameAs(expected);
 
@@ -281,6 +285,7 @@
             var buildLog = configuration.GetBuildLog();
 
             var target = new EnumerableTypeCreator();
+
             var executeStrategy = new DefaultExecuteStrategy();
 
             executeStrategy.Initialize(configuration, buildLog);
@@ -299,16 +304,18 @@
         {
             var expected = new List<Guid>();
 
-            var strategy = Substitute.For<IExecuteStrategy>();
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
 
-            strategy.CreateWith(typeof(Guid)).Returns(Guid.NewGuid());
+            executeStrategy.BuildChain.Returns(buildChain);
+            executeStrategy.CreateWith(typeof(Guid)).Returns(Guid.NewGuid());
 
             var target = new EnumerableTypeCreator
             {
                 AutoPopulateCount = 15
             };
 
-            var actual = target.Populate(expected, strategy);
+            var actual = target.Populate(expected, executeStrategy);
 
             actual.Should().BeSameAs(expected);
 
@@ -338,41 +345,20 @@
 
             result.ShouldAllBeEquivalentTo(expected);
         }
-
-        [Fact]
-        public void PopulateThrowsExceptionWithNullInstanceTest()
-        {
-            var strategy = Substitute.For<IExecuteStrategy>();
-
-            var target = new EnumerableTypeCreator();
-
-            Action action = () => target.Populate(null, strategy);
-
-            action.ShouldThrow<ArgumentNullException>();
-        }
-
-        [Fact]
-        public void PopulateThrowsExceptionWithNullStrategyTest()
-        {
-            var instance = new List<string>();
-
-            var target = new EnumerableTypeCreator();
-
-            Action action = () => target.Populate(instance, null);
-
-            action.ShouldThrow<ArgumentNullException>();
-        }
-
+        
         [Fact]
         public void PopulateThrowsExceptionWithUnsupportedTypeTest()
         {
             var instance = new Lazy<bool>(() => true);
 
-            var strategy = Substitute.For<IExecuteStrategy>();
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
 
             var target = new EnumerableTypeCreator();
 
-            Action action = () => target.Populate(instance, strategy);
+            Action action = () => target.Populate(instance, executeStrategy);
 
             action.ShouldThrow<NotSupportedException>();
         }

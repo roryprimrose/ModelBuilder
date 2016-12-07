@@ -1,17 +1,16 @@
 namespace ModelBuilder
 {
     using System;
-    using System.Collections.Generic;
     using System.Text.RegularExpressions;
 
     /// <summary>
-    /// The <see cref="DateOfBirthValueGenerator"/>
-    /// class is used to generate random date of birth values.
+    ///     The <see cref="DateOfBirthValueGenerator" />
+    ///     class is used to generate random date of birth values.
     /// </summary>
     public class DateOfBirthValueGenerator : ValueGeneratorMatcher
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="DateTimeValueGenerator"/> class.
+        ///     Initializes a new instance of the <see cref="DateTimeValueGenerator" /> class.
         /// </summary>
         public DateOfBirthValueGenerator()
             : base(
@@ -24,7 +23,7 @@ namespace ModelBuilder
         }
 
         /// <inheritdoc />
-        protected override object GenerateValue(Type type, string referenceName, LinkedList<object> buildChain)
+        protected override object GenerateValue(Type type, string referenceName, IExecuteStrategy executeStrategy)
         {
             var generateType = type;
 
@@ -66,9 +65,6 @@ namespace ModelBuilder
         }
 
         /// <inheritdoc />
-        public override int Priority
-        {
-            get;
-        } = 1000;
+        public override int Priority { get; } = 1000;
     }
 }
