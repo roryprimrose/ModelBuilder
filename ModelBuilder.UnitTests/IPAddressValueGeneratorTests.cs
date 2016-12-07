@@ -5,6 +5,7 @@
     using System.Linq;
     using System.Net;
     using FluentAssertions;
+    using NSubstitute;
     using Xunit;
 
     public class IPAddressValueGeneratorTests
@@ -12,9 +13,14 @@
         [Fact]
         public void GenerateReturnsIPAddressTest()
         {
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var target = new IPAddressValueGenerator();
 
-            var actual = target.Generate(typeof(IPAddress), null, null);
+            var actual = target.Generate(typeof(IPAddress), null, executeStrategy);
 
             actual.Should().NotBeNull();
             actual.As<IPAddress>().GetAddressBytes().Any(x => x != 0).Should().BeTrue();
@@ -23,30 +29,21 @@
         [Fact]
         public void GenerateReturnsStringTest()
         {
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var target = new IPAddressValueGenerator();
 
-            var actual = target.Generate(typeof(string), "IpAddress", null);
+            var actual = target.Generate(typeof(string), "IpAddress", executeStrategy);
 
             actual.Should().NotBeNull();
             actual.As<string>().Should().MatchRegex(@"\d+(\.\d+){3}");
         }
 
-        [Fact]
-        public void GenerateThrowsExceptionWithNullTypeTest()
-        {
-            var buildChain = new LinkedList<object>();
-
-            buildChain.AddFirst(Guid.NewGuid().ToString());
-
-            var target = new IPAddressValueGenerator();
-
-            Action action = () => target.Generate(null, Guid.NewGuid().ToString(), buildChain);
-
-            action.ShouldThrow<ArgumentNullException>();
-        }
-
         [Theory]
-        [InlineData(typeof(string), (string)null, false)]
+        [InlineData(typeof(string), null, false)]
         [InlineData(typeof(string), "", false)]
         [InlineData(typeof(string), "Stuff", false)]
         [InlineData(typeof(bool), "IPAddress", false)]
@@ -54,12 +51,17 @@
         [InlineData(typeof(string), "IpAddress", true)]
         [InlineData(typeof(string), "ipaddress", true)]
         [InlineData(typeof(string), "IPADDRESS", true)]
-        [InlineData(typeof(IPAddress), (string)null, true)]
+        [InlineData(typeof(IPAddress), null, true)]
         public void GenerateValidatesUnsupportedScenariosTest(Type type, string referenceName, bool supported)
         {
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var target = new IPAddressValueGenerator();
 
-            Action action = () => target.Generate(type, referenceName, null);
+            Action action = () => target.Generate(type, referenceName, executeStrategy);
 
             if (supported)
             {

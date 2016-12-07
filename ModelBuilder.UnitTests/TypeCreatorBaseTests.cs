@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.IO;
     using FluentAssertions;
+    using NSubstitute;
     using Xunit;
 
     public class TypeCreatorBaseTests
@@ -61,10 +62,13 @@
         public void CreateDoesNotThrowsExceptionWhenCreateVerificationPassesTest()
         {
             var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
 
             var target = new TypeCreatorWrapper();
 
-            Action action = () => target.Create(typeof(List<string>), null, buildChain);
+            Action action = () => target.Create(typeof(List<string>), null, executeStrategy);
 
             action.ShouldNotThrow();
         }
@@ -73,10 +77,13 @@
         public void CreateThrowsExceptionWhenCreateVerificationFailsTest()
         {
             var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
 
             var target = new TypeCreatorWrapper();
 
-            Action action = () => target.Create(typeof(bool), null, buildChain);
+            Action action = () => target.Create(typeof(bool), null, executeStrategy);
 
             action.ShouldThrow<NotSupportedException>();
         }
@@ -85,10 +92,13 @@
         public void CreateThrowsExceptionWithNullTypeTest()
         {
             var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
 
             var target = new DefaultTypeCreator();
 
-            Action action = () => target.Create(null, "Name", buildChain);
+            Action action = () => target.Create(null, "Name", executeStrategy);
 
             action.ShouldThrow<ArgumentNullException>();
         }
@@ -104,7 +114,11 @@
         [Fact]
         public void PopulateDoesNotThrowsExceptionWhenPopulateVerificationPassesTest()
         {
-            var executeStrategy = new DummyExecuteStrategy();
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var value = new List<string>();
 
             var target = new TypeCreatorWrapper();
@@ -117,7 +131,11 @@
         [Fact]
         public void PopulateReturnsProvidedInstanceTest()
         {
-            var executeStrategy = new DummyExecuteStrategy();
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var expected = new SlimModel();
 
             var target = new DefaultTypeCreator();
@@ -130,7 +148,10 @@
         [Fact]
         public void PopulateThrowsExceptionWhenPopulateVerificationFailsTest()
         {
-            var executeStrategy = new DummyExecuteStrategy();
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
 
             var target = new TypeCreatorWrapper();
 
@@ -154,7 +175,10 @@
         [Fact]
         public void PopulateThrowsExceptionWithNullInstanceTest()
         {
-            var executeStrategy = new DummyExecuteStrategy();
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
 
             var target = new TypeCreatorWrapper();
 
@@ -166,7 +190,10 @@
         [Fact]
         public void PopulateThrowsExceptionWithNullTypeTest()
         {
-            var executeStrategy = new DummyExecuteStrategy();
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
 
             var target = new DefaultTypeCreator();
 
@@ -186,11 +213,31 @@
         }
 
         [Fact]
+        public void VerifyCreateRequestThrowsExceptionWithNullExecuteStrategyTest()
+        {
+            var target = new DummyTypeCreator();
+
+            Action action = () => target.VerifyCreateRequestWithNullExecuteStrategy();
+
+            action.ShouldThrow<ArgumentNullException>();
+        }
+
+        [Fact]
         public void VerifyCreateRequestThrowsExceptionWithNullTypeTest()
         {
             var target = new DummyTypeCreator();
 
             Action action = () => target.VerifyCreateRequestWithNullType();
+
+            action.ShouldThrow<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void VerifyPopulateRequestThrowsExceptionWithNullExecuteStrategyTest()
+        {
+            var target = new DummyTypeCreator();
+
+            Action action = () => target.VerifyPopulateRequestWithNullExecuteStrategy();
 
             action.ShouldThrow<ArgumentNullException>();
         }
@@ -231,7 +278,10 @@
                 return type == typeof(List<string>);
             }
 
-            protected override object CreateInstance(Type type, string referenceName, LinkedList<object> buildChain,
+            protected override object CreateInstance(
+                Type type,
+                string referenceName,
+                IExecuteStrategy executeStrategy,
                 params object[] args)
             {
                 return new List<string>();

@@ -5,20 +5,11 @@
     using System.Linq;
     using Data;
     using FluentAssertions;
+    using NSubstitute;
     using Xunit;
 
     public class FirstNameValueGeneratorTests
     {
-        [Fact]
-        public void GenerateThrowsExceptionWithNullBuildChainTest()
-        {
-            var target = new FirstNameValueGeneratorWrapper();
-
-            Action action = () => target.RunNullTest();
-
-            action.ShouldThrow<ArgumentNullException>();
-        }
-
         [Fact]
         public void GeneratorReturnsFemaleNameWhenGenderIsFemaleTest()
         {
@@ -27,12 +18,15 @@
                 Gender = Gender.Female
             };
             var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
 
             buildChain.AddFirst(person);
 
             var target = new FirstNameValueGenerator();
 
-            var actual = (string) target.Generate(typeof(string), "FirstName", buildChain);
+            var actual = (string) target.Generate(typeof(string), "FirstName", executeStrategy);
 
             TestData.Females.Any(x => x.FirstName == actual).Should().BeTrue();
         }
@@ -45,12 +39,15 @@
                 Gender = Gender.Unknown
             };
             var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
 
             buildChain.AddFirst(person);
 
             var target = new FirstNameValueGenerator();
 
-            var actual = (string) target.Generate(typeof(string), "FirstName", buildChain);
+            var actual = (string) target.Generate(typeof(string), "FirstName", executeStrategy);
 
             TestData.Females.Any(x => x.FirstName == actual).Should().BeTrue();
         }
@@ -63,12 +60,15 @@
                 Gender = Gender.Male
             };
             var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
 
             buildChain.AddFirst(person);
 
             var target = new FirstNameValueGenerator();
 
-            var actual = (string) target.Generate(typeof(string), "FirstName", buildChain);
+            var actual = (string) target.Generate(typeof(string), "FirstName", executeStrategy);
 
             TestData.Males.Any(x => x.FirstName == actual).Should().BeTrue();
         }
@@ -78,12 +78,15 @@
         {
             var person = new PersonWithoutGender();
             var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
 
             buildChain.AddFirst(person);
 
             var target = new FirstNameValueGenerator();
 
-            var actual = (string) target.Generate(typeof(string), "FirstName", buildChain);
+            var actual = (string) target.Generate(typeof(string), "FirstName", executeStrategy);
 
             TestData.People.Any(x => x.FirstName == actual).Should().BeTrue();
         }
@@ -95,14 +98,6 @@
             var other = new StringValueGenerator();
 
             target.Priority.Should().BeGreaterThan(other.Priority);
-        }
-
-        private class FirstNameValueGeneratorWrapper : FirstNameValueGenerator
-        {
-            public void RunNullTest()
-            {
-                GenerateValue(typeof(string), "FirstName", null);
-            }
         }
     }
 }

@@ -9,8 +9,8 @@
     using ModelBuilder.Properties;
 
     /// <summary>
-    /// The <see cref="RelativeValueGenerator"/>
-    /// class is used to assist in generating a value that is related to another value for a given context.
+    ///     The <see cref="RelativeValueGenerator" />
+    ///     class is used to assist in generating a value that is related to another value for a given context.
     /// </summary>
     public abstract class RelativeValueGenerator : ValueGeneratorMatcher
     {
@@ -18,26 +18,26 @@
         private readonly Regex _targetExpression;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="RelativeValueGenerator"/> class.
+        ///     Initializes a new instance of the <see cref="RelativeValueGenerator" /> class.
         /// </summary>
         /// <param name="targetNameExpression">The expression to match the target property or parameter.</param>
         /// <param name="types">The types the generator can match.</param>
-        /// <exception cref="ArgumentNullException">The <paramref name="targetNameExpression"/> parameter is null.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="types"/> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="targetNameExpression" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="types" /> parameter is null.</exception>
         protected RelativeValueGenerator(Regex targetNameExpression, params Type[] types)
             : this(targetNameExpression, null, types)
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="RelativeValueGenerator"/> class.
+        ///     Initializes a new instance of the <see cref="RelativeValueGenerator" /> class.
         /// </summary>
         /// <param name="targetNameExpression">The expression to match the target property or parameter.</param>
         /// <param name="sourceNameExpression">The expression to match the source property.</param>
         /// <param name="types">The types the generator can match.</param>
-        /// <exception cref="ArgumentNullException">The <paramref name="targetNameExpression"/> parameter is null.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="sourceNameExpression"/> parameter is null.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="types"/> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="targetNameExpression" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="sourceNameExpression" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="types" /> parameter is null.</exception>
         protected RelativeValueGenerator(Regex targetNameExpression, Regex sourceNameExpression, params Type[] types)
             : base(types)
         {
@@ -104,13 +104,13 @@
         }
 
         /// <summary>
-        /// Gets the source property value for the specified context.
+        ///     Gets the source property value for the specified context.
         /// </summary>
         /// <typeparam name="T">The type of value to return.</typeparam>
         /// <param name="context">The context to use for reference informamtion.</param>
         /// <returns>The string value of the source property.</returns>
         /// <exception cref="InvalidOperationException">The generator was not created with a source expression.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="context"/> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="context" /> parameter is null.</exception>
         protected virtual T GetSourceValue<T>(object context)
         {
             if (_sourceExpression == null)
@@ -127,14 +127,14 @@
         }
 
         /// <summary>
-        /// Gets the property value using the specified expression and context.
+        ///     Gets the property value using the specified expression and context.
         /// </summary>
         /// <typeparam name="T">The type of value to return.</typeparam>
         /// <param name="expression">The expression used to identify the property.</param>
         /// <param name="context">The context to use for reference informamtion.</param>
         /// <returns>The string value of the source property.</returns>
-        /// <exception cref="ArgumentNullException">The <paramref name="expression"/> parameter is null.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="context"/> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="expression" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="context" /> parameter is null.</exception>
         protected virtual T GetValue<T>(Regex expression, object context)
         {
             if (expression == null)

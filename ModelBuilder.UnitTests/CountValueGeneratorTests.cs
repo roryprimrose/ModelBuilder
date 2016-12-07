@@ -1,7 +1,9 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
+    using System.Collections.Generic;
     using FluentAssertions;
+    using NSubstitute;
     using Xunit;
 
     public class CountValueGeneratorTests
@@ -10,6 +12,11 @@
         [ClassData(typeof(NumericTypeDataSource))]
         public void GenerateCanEvalutateManyTimesTest(Type type, bool isSupported, double min, double max)
         {
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             if (isSupported == false)
             {
                 // Ignore this test
@@ -20,10 +27,10 @@
 
             for (var index = 0; index < 10000; index++)
             {
-                var value = target.Generate(type, "Count", null);
+                var value = target.Generate(type, "Count", executeStrategy);
 
                 if (type.IsNullable() &&
-                    value == null)
+                    (value == null))
                 {
                     // Nullable values could be returned so nothing more to assert
                     return;
@@ -48,6 +55,11 @@
         [Fact]
         public void GenerateCanReturnNullAndNonNullValuesTest()
         {
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var nullFound = false;
             var valueFound = false;
 
@@ -55,7 +67,7 @@
 
             for (var index = 0; index < 1000; index++)
             {
-                var value = (int?)target.Generate(typeof(int?), "Count", null);
+                var value = (int?)target.Generate(typeof(int?), "Count", executeStrategy);
 
                 if (value == null)
                 {
@@ -86,12 +98,17 @@
                 return;
             }
 
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var target = new CountValueGenerator();
 
-            var value = target.Generate(type, "Count", null);
+            var value = target.Generate(type, "Count", executeStrategy);
 
             if (type.IsNullable() &&
-                value == null)
+                (value == null))
             {
                 // We can't run the assertions because null is a valid outcome
                 return;
@@ -120,20 +137,30 @@
             double min,
             double max)
         {
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var target = new CountValueGenerator();
 
-            Action action = () => target.Generate(type, "Stuff", null);
+            Action action = () => target.Generate(type, "Stuff", executeStrategy);
 
             action.ShouldThrow<NotSupportedException>();
         }
-
+        
         [Theory]
         [ClassData(typeof(NumericTypeDataSource))]
         public void GenerateValidatesRequestedTypeTest(Type type, bool isSupported, double min, double max)
         {
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var target = new CountValueGenerator();
 
-            Action action = () => target.Generate(type, "Count", null);
+            Action action = () => target.Generate(type, "Count", executeStrategy);
 
             if (isSupported)
             {

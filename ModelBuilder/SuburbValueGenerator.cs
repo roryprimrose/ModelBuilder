@@ -1,18 +1,17 @@
 ﻿namespace ModelBuilder
 {
     using System;
-    using System.Collections.Generic;
     using System.Text.RegularExpressions;
     using ModelBuilder.Data;
 
     /// <summary>
-    /// The <see cref="SuburbValueGenerator"/>
-    /// class is used to generate random suburb values.
+    ///     The <see cref="SuburbValueGenerator" />
+    ///     class is used to generate random suburb values.
     /// </summary>
     public class SuburbValueGenerator : ValueGeneratorMatcher
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="SuburbValueGenerator"/> class.
+        ///     Initializes a new instance of the <see cref="SuburbValueGenerator" /> class.
         /// </summary>
         public SuburbValueGenerator()
             : base(new Regex("Suburb", RegexOptions.Compiled | RegexOptions.IgnoreCase), typeof(string))
@@ -20,7 +19,7 @@
         }
 
         /// <inheritdoc />
-        protected override object GenerateValue(Type type, string referenceName, LinkedList<object> buildChain)
+        protected override object GenerateValue(Type type, string referenceName, IExecuteStrategy executeStrategy)
         {
             var person = TestData.NextPerson();
 
@@ -29,9 +28,6 @@
         }
 
         /// <inheritdoc />
-        public override int Priority
-        {
-            get;
-        } = 1000;
+        public override int Priority { get; } = 1000;
     }
 }

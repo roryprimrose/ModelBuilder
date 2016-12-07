@@ -1,18 +1,17 @@
 ﻿namespace ModelBuilder
 {
     using System;
-    using System.Collections.Generic;
     using System.Text.RegularExpressions;
     using ModelBuilder.Data;
 
     /// <summary>
-    /// The <see cref="CompanyValueGenerator"/>
-    /// class is used to generate random company name values.
+    ///     The <see cref="CompanyValueGenerator" />
+    ///     class is used to generate random company name values.
     /// </summary>
     public class CompanyValueGenerator : ValueGeneratorMatcher
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="CompanyValueGenerator"/> class.
+        ///     Initializes a new instance of the <see cref="CompanyValueGenerator" /> class.
         /// </summary>
         public CompanyValueGenerator()
             : base(new Regex("Company", RegexOptions.Compiled | RegexOptions.IgnoreCase), typeof(string))
@@ -20,7 +19,7 @@
         }
 
         /// <inheritdoc />
-        protected override object GenerateValue(Type type, string referenceName, LinkedList<object> buildChain)
+        protected override object GenerateValue(Type type, string referenceName, IExecuteStrategy executeStrategy)
         {
             var person = TestData.NextPerson();
 
@@ -28,9 +27,6 @@
         }
 
         /// <inheritdoc />
-        public override int Priority
-        {
-            get;
-        } = 1000;
+        public override int Priority { get; } = 1000;
     }
 }

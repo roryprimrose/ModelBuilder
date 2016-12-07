@@ -5,13 +5,13 @@
     using ModelBuilder.Data;
 
     /// <summary>
-    /// The <see cref="UriValueGenerator"/>
-    /// class is used to generate random uri values.
+    ///     The <see cref="UriValueGenerator" />
+    ///     class is used to generate random uri values.
     /// </summary>
     public class UriValueGenerator : ValueGeneratorBase
     {
         /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">The <paramref name="type"/> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is null.</exception>
         public override bool IsSupported(Type type, string referenceName, LinkedList<object> buildChain)
         {
             if (type == null)
@@ -48,7 +48,7 @@
         }
 
         /// <inheritdoc />
-        protected override object GenerateValue(Type type, string referenceName, LinkedList<object> buildChain)
+        protected override object GenerateValue(Type type, string referenceName, IExecuteStrategy executeStrategy)
         {
             var person = TestData.NextPerson();
             var value = "https://www." + person.Domain;
@@ -62,9 +62,6 @@
         }
 
         /// <inheritdoc />
-        public override int Priority
-        {
-            get;
-        } = 1000;
+        public override int Priority { get; } = 1000;
     }
 }

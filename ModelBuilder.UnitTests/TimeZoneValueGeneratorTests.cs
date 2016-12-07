@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.IO;
     using FluentAssertions;
+    using NSubstitute;
     using Xunit;
 
     public class TimeZoneValueGeneratorTests
@@ -16,12 +17,15 @@
                 Country = "Australia"
             };
             var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
 
             buildChain.AddFirst(source);
 
             var target = new TimeZoneValueGenerator();
 
-            var actual = (string)target.Generate(typeof(string), "timezone", buildChain);
+            var actual = (string)target.Generate(typeof(string), "timezone", executeStrategy);
 
             actual.Should().StartWith("Australia/");
         }
@@ -34,13 +38,16 @@
                 Country = Guid.NewGuid().ToString()
             };
             var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
 
             buildChain.AddFirst(source);
 
             var target = new TimeZoneValueGenerator();
 
-            var first = (string)target.Generate(typeof(string), "timezone", buildChain);
-            var second = (string)target.Generate(typeof(string), "timezone", buildChain);
+            var first = (string)target.Generate(typeof(string), "timezone", executeStrategy);
+            var second = (string)target.Generate(typeof(string), "timezone", executeStrategy);
 
             first.Should().NotBe(second);
         }
@@ -48,14 +55,19 @@
         [Fact]
         public void GenerateReturnsRandomValueTest()
         {
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var target = new TimeZoneValueGenerator();
 
-            var first = target.Generate(typeof(string), "timezone", null);
+            var first = target.Generate(typeof(string), "timezone", executeStrategy);
 
             first.Should().BeOfType<string>();
             first.As<string>().Should().NotBeNullOrWhiteSpace();
 
-            var second = target.Generate(typeof(string), "timezone", null);
+            var second = target.Generate(typeof(string), "timezone", executeStrategy);
 
             first.Should().NotBe(second);
         }
@@ -63,9 +75,14 @@
         [Fact]
         public void GenerateReturnsValueForTimeZoneTypeTest()
         {
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var target = new TimeZoneValueGenerator();
 
-            var actual = target.Generate(typeof(string), "TimeZone", null);
+            var actual = target.Generate(typeof(string), "TimeZone", executeStrategy);
 
             actual.Should().BeOfType<string>();
         }
@@ -76,9 +93,14 @@
         [InlineData(typeof(string), "timeZone", true)]
         public void GenerateReturnsValuesForSeveralNameFormatsTest(Type type, string referenceName, bool expected)
         {
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var target = new TimeZoneValueGenerator();
 
-            var actual = (string)target.Generate(type, referenceName, null);
+            var actual = (string)target.Generate(type, referenceName, executeStrategy);
 
             actual.Should().NotBeNullOrEmpty();
         }
@@ -89,23 +111,18 @@
         [InlineData(typeof(string), "Stuff")]
         public void GenerateThrowsExceptionWithInvalidParametersTest(Type type, string referenceName)
         {
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var target = new TimeZoneValueGenerator();
 
-            Action action = () => target.Generate(type, referenceName, null);
+            Action action = () => target.Generate(type, referenceName, executeStrategy);
 
             action.ShouldThrow<NotSupportedException>();
         }
-
-        [Fact]
-        public void GenerateThrowsExceptionWithNullTypeTest()
-        {
-            var target = new TimeZoneValueGenerator();
-
-            Action action = () => target.Generate(null, null, null);
-
-            action.ShouldThrow<ArgumentNullException>();
-        }
-
+        
         [Theory]
         [InlineData(typeof(Stream), "timezone", false)]
         [InlineData(typeof(string), null, false)]

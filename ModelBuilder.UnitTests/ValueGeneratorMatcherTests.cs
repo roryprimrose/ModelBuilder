@@ -108,7 +108,7 @@
         [Fact]
         public void ThrowsExceptionWithNullExpressionTest()
         {
-            Action action = () => new WrapperGenerator((Regex) null);
+            Action action = () => new WrapperGenerator((Regex)null);
 
             action.ShouldThrow<ArgumentNullException>();
         }
@@ -116,7 +116,7 @@
         [Fact]
         public void ThrowsExceptionWithNullReferenceNameTest()
         {
-            Action action = () => new WrapperGenerator((string) null);
+            Action action = () => new WrapperGenerator((string)null);
 
             action.ShouldThrow<ArgumentNullException>();
         }
@@ -124,7 +124,7 @@
         [Fact]
         public void ThrowsExceptionWithNullTypesTest()
         {
-            Action action = () => new WrapperGenerator((Type[]) null);
+            Action action = () => new WrapperGenerator((Type[])null);
 
             action.ShouldThrow<ArgumentNullException>();
         }
@@ -143,7 +143,7 @@
             {
             }
 
-            protected override object GenerateValue(Type type, string referenceName, LinkedList<object> buildChain)
+            protected override object GenerateValue(Type type, string referenceName, IExecuteStrategy executeStrategy)
             {
                 throw new NotImplementedException();
             }

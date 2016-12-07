@@ -1,19 +1,18 @@
 ﻿namespace ModelBuilder
 {
     using System;
-    using System.Collections.Generic;
     using System.Linq;
     using System.Text.RegularExpressions;
     using ModelBuilder.Data;
 
     /// <summary>
-    /// The <see cref="TimeZoneValueGenerator"/>
-    /// class is used to generate IANA time zone values.
+    ///     The <see cref="TimeZoneValueGenerator" />
+    ///     class is used to generate IANA time zone values.
     /// </summary>
     public class TimeZoneValueGenerator : ValueGeneratorMatcher
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="TimeZoneValueGenerator"/> class.
+        ///     Initializes a new instance of the <see cref="TimeZoneValueGenerator" /> class.
         /// </summary>
         public TimeZoneValueGenerator()
             : base(new Regex("TimeZone", RegexOptions.Compiled | RegexOptions.IgnoreCase), typeof(string))
@@ -21,10 +20,10 @@
         }
 
         /// <inheritdoc />
-        protected override object GenerateValue(Type type, string referenceName, LinkedList<object> buildChain)
+        protected override object GenerateValue(Type type, string referenceName, IExecuteStrategy executeStrategy)
         {
             string country = null;
-            var context = buildChain?.Last.Value;
+            var context = executeStrategy.BuildChain?.Last?.Value;
 
             if (context != null)
             {
@@ -63,9 +62,6 @@
         }
 
         /// <inheritdoc />
-        public override int Priority
-        {
-            get;
-        } = 1000;
+        public override int Priority { get; } = 1000;
     }
 }

@@ -1,8 +1,10 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
+    using System.Collections.Generic;
     using System.IO;
     using FluentAssertions;
+    using NSubstitute;
     using Xunit;
 
     public class GenderValueGeneratorTests
@@ -10,6 +12,11 @@
         [Fact]
         public void GenerateReturnsRandomValuesForGenderTypeTest()
         {
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var target = new GenderValueGenerator();
 
             var maleFound = false;
@@ -17,7 +24,7 @@
 
             for (var index = 0; index < 1000; index++)
             {
-                var actual = (string)target.Generate(typeof(string), "Gender", null);
+                var actual = (string)target.Generate(typeof(string), "Gender", executeStrategy);
 
                 if (actual == "Male")
                 {
@@ -41,9 +48,14 @@
         [Fact]
         public void GenerateReturnsValueForGenderTypeTest()
         {
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var target = new GenderValueGenerator();
 
-            var actual = target.Generate(typeof(string), "Sex", null);
+            var actual = target.Generate(typeof(string), "Sex", executeStrategy);
 
             actual.Should().BeOfType<string>();
         }
@@ -55,9 +67,14 @@
         [InlineData(typeof(string), "Sex", true)]
         public void GenerateReturnsValuesForSeveralNameFormatsTest(Type type, string referenceName, bool expected)
         {
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var target = new GenderValueGenerator();
 
-            var actual = (string)target.Generate(type, referenceName, null);
+            var actual = (string)target.Generate(type, referenceName, executeStrategy);
 
             actual.Should().NotBeNullOrEmpty();
         }
@@ -68,23 +85,18 @@
         [InlineData(typeof(string), "Stuff")]
         public void GenerateThrowsExceptionWithInvalidParametersTest(Type type, string referenceName)
         {
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var target = new GenderValueGenerator();
 
-            Action action = () => target.Generate(type, referenceName, null);
+            Action action = () => target.Generate(type, referenceName, executeStrategy);
 
             action.ShouldThrow<NotSupportedException>();
         }
-
-        [Fact]
-        public void GenerateThrowsExceptionWithNullTypeTest()
-        {
-            var target = new GenderValueGenerator();
-
-            Action action = () => target.Generate(null, null, null);
-
-            action.ShouldThrow<ArgumentNullException>();
-        }
-
+        
         [Theory]
         [InlineData(typeof(Stream), "gender", false)]
         [InlineData(typeof(string), null, false)]

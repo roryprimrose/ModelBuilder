@@ -1,32 +1,25 @@
 ﻿namespace ModelBuilder
 {
     using System;
-    using System.Collections.Generic;
     using ModelBuilder.Data;
-    using ModelBuilder.Properties;
 
     /// <summary>
-    /// The <see cref="LastNameValueGenerator"/>
-    /// class is used to generate random last name values.
+    ///     The <see cref="LastNameValueGenerator" />
+    ///     class is used to generate random last name values.
     /// </summary>
     public class LastNameValueGenerator : RelativeValueGenerator
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="LastNameValueGenerator"/>.
+        ///     Initializes a new instance of the <see cref="LastNameValueGenerator" />.
         /// </summary>
         public LastNameValueGenerator() : base(PropertyExpression.LastName, typeof(string))
         {
         }
 
         /// <inheritdoc />
-        protected override object GenerateValue(Type type, string referenceName, LinkedList<object> buildChain)
+        protected override object GenerateValue(Type type, string referenceName, IExecuteStrategy executeStrategy)
         {
-            if (buildChain == null)
-            {
-                throw new ArgumentNullException(nameof(buildChain));
-            }
-            
-            var context = buildChain.Last?.Value;
+            var context = executeStrategy.BuildChain?.Last?.Value;
             var gender = GetValue<string>(PropertyExpression.Gender, context);
 
             if (string.Equals(gender, "male", StringComparison.OrdinalIgnoreCase))
@@ -44,9 +37,6 @@
         }
 
         /// <inheritdoc />
-        public override int Priority
-        {
-            get;
-        } = 1000;
+        public override int Priority { get; } = 1000;
     }
 }

@@ -4,15 +4,23 @@ using Xunit;
 
 namespace ModelBuilder.UnitTests
 {
+    using System.Collections.Generic;
+    using NSubstitute;
+
     public class StringValueGeneratorTests
     {
         [Fact]
         public void GenerateReturnsRandomValueTest()
         {
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var target = new StringValueGenerator();
 
-            var first = target.Generate(typeof(string), null, null);
-            var second = target.Generate(typeof(string), null, null);
+            var first = target.Generate(typeof(string), null, executeStrategy);
+            var second = target.Generate(typeof(string), null, executeStrategy);
 
             first.Should().NotBeNull();
             second.Should().NotBeNull();
@@ -24,9 +32,14 @@ namespace ModelBuilder.UnitTests
         [InlineData(typeof(string), true)]
         public void GenerateReturnsValidatesTypeSupportTest(Type type, bool supported)
         {
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var target = new StringValueGenerator();
 
-            Action action = () => target.Generate(type, null, null);
+            Action action = () => target.Generate(type, null, executeStrategy);
 
             if (supported)
             {
@@ -37,17 +50,7 @@ namespace ModelBuilder.UnitTests
                 action.ShouldThrow<NotSupportedException>();
             }
         }
-
-        [Fact]
-        public void GenerateThrowsExceptionWithNullTypeTest()
-        {
-            var target = new StringValueGenerator();
-
-            Action action = () => target.Generate(null, null, null);
-
-            action.ShouldThrow<ArgumentNullException>();
-        }
-
+        
         [Theory]
         [InlineData(typeof(bool), false)]
         [InlineData(typeof(string), true)]

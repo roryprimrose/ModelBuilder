@@ -1,9 +1,11 @@
-﻿using System;
-using FluentAssertions;
-using Xunit;
-
-namespace ModelBuilder.UnitTests
+﻿namespace ModelBuilder.UnitTests
 {
+    using System;
+    using System.Collections.Generic;
+    using FluentAssertions;
+    using NSubstitute;
+    using Xunit;
+
     public class DateOfBirthValueGeneratorTests
     {
         [Fact]
@@ -12,11 +14,16 @@ namespace ModelBuilder.UnitTests
             var nullFound = false;
             var valueFound = false;
 
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var target = new DateOfBirthValueGenerator();
 
             for (var index = 0; index < 1000; index++)
             {
-                var value = (DateTime?) target.Generate(typeof(DateTime?), "dob", null);
+                var value = (DateTime?)target.Generate(typeof(DateTime?), "dob", executeStrategy);
 
                 if (value == null)
                 {
@@ -40,16 +47,21 @@ namespace ModelBuilder.UnitTests
         [Fact]
         public void GenerateReturnsRandomDateTimeOffsetValueWithinLast100YearsTest()
         {
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var target = new DateOfBirthValueGenerator();
 
-            var first = target.Generate(typeof(DateTimeOffset), "dob", null);
+            var first = target.Generate(typeof(DateTimeOffset), "dob", executeStrategy);
 
             first.Should().BeOfType<DateTimeOffset>();
             first.As<DateTimeOffset>().Should().BeBefore(DateTimeOffset.UtcNow);
             first.As<DateTimeOffset>().Should().BeAfter(DateTimeOffset.UtcNow.AddYears(-100));
             first.As<DateTimeOffset>().Offset.Should().Be(TimeSpan.Zero);
 
-            var second = target.Generate(typeof(DateTimeOffset), "dob", null);
+            var second = target.Generate(typeof(DateTimeOffset), "dob", executeStrategy);
 
             first.Should().NotBe(second);
         }
@@ -57,16 +69,21 @@ namespace ModelBuilder.UnitTests
         [Fact]
         public void GenerateReturnsRandomDateTimeValueWithinLast100YearsTest()
         {
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var target = new DateOfBirthValueGenerator();
 
-            var first = target.Generate(typeof(DateTime), "dob", null);
+            var first = target.Generate(typeof(DateTime), "dob", executeStrategy);
 
             first.Should().BeOfType<DateTime>();
             first.As<DateTime>().Should().BeBefore(DateTime.UtcNow);
             first.As<DateTime>().Should().BeAfter(DateTime.UtcNow.AddYears(-100));
             first.As<DateTime>().Kind.Should().Be(DateTimeKind.Utc);
 
-            var second = target.Generate(typeof(DateTime), "dob", null);
+            var second = target.Generate(typeof(DateTime), "dob", executeStrategy);
 
             first.Should().NotBe(second);
         }
@@ -80,23 +97,18 @@ namespace ModelBuilder.UnitTests
         [InlineData(typeof(DateTime), "Stuff")]
         public void GenerateThrowsExceptionWithInvalidParametersTest(Type type, string referenceName)
         {
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var target = new DateOfBirthValueGenerator();
 
-            Action action = () => target.Generate(type, referenceName, null);
+            Action action = () => target.Generate(type, referenceName, executeStrategy);
 
             action.ShouldThrow<NotSupportedException>();
         }
-
-        [Fact]
-        public void GenerateThrowsExceptionWithNullTypeTest()
-        {
-            var target = new DateOfBirthValueGenerator();
-
-            Action action = () => target.Generate(null, null, null);
-
-            action.ShouldThrow<ArgumentNullException>();
-        }
-
+        
         [Fact]
         public void HasHigherPriorityThanDateTimeValueGeneratorTest()
         {

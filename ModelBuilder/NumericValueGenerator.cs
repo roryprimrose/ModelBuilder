@@ -1,17 +1,16 @@
-﻿using System;
-
-namespace ModelBuilder
+﻿namespace ModelBuilder
 {
+    using System;
     using System.Collections.Generic;
 
     /// <summary>
-    /// The <see cref="NumericValueGenerator"/>
-    /// class is used to generate random numeric values.
+    ///     The <see cref="NumericValueGenerator" />
+    ///     class is used to generate random numeric values.
     /// </summary>
     public class NumericValueGenerator : ValueGeneratorBase
     {
         /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">The <paramref name="type"/> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is null.</exception>
         public override bool IsSupported(Type type, string referenceName, LinkedList<object> buildChain)
         {
             if (type == null)
@@ -31,7 +30,7 @@ namespace ModelBuilder
         }
 
         /// <inheritdoc />
-        protected override object GenerateValue(Type type, string referenceName, LinkedList<object> buildChain)
+        protected override object GenerateValue(Type type, string referenceName, IExecuteStrategy executeStrategy)
         {
             var generateType = type;
 
@@ -49,7 +48,7 @@ namespace ModelBuilder
                 generateType = type.GetGenericArguments()[0];
             }
 
-            var context = buildChain?.Last?.Value;
+            var context = executeStrategy.BuildChain?.Last?.Value;
             var min = GetMinimum(generateType, referenceName, context);
             var max = GetMaximum(generateType, referenceName, context);
 
@@ -57,7 +56,7 @@ namespace ModelBuilder
         }
 
         /// <summary>
-        /// Returns the maximum value for the specified generation target.
+        ///     Returns the maximum value for the specified generation target.
         /// </summary>
         /// <param name="type">The type of value to generate.</param>
         /// <param name="referenceName">Identifies the possible parameter or property name the value is intended for.</param>
@@ -69,7 +68,7 @@ namespace ModelBuilder
         }
 
         /// <summary>
-        /// Returns the minimum value for the specified generation target.
+        ///     Returns the minimum value for the specified generation target.
         /// </summary>
         /// <param name="type">The type of value to generate.</param>
         /// <param name="referenceName">Identifies the possible parameter or property name the value is intended for.</param>

@@ -1,23 +1,22 @@
 ﻿namespace ModelBuilder
 {
     using System;
-    using System.Collections.Generic;
 
     /// <summary>
-    /// The <see cref="GuidValueGenerator"/>
-    /// class is used to generate <see cref="Guid"/> values.
+    ///     The <see cref="GuidValueGenerator" />
+    ///     class is used to generate <see cref="Guid" /> values.
     /// </summary>
     public class GuidValueGenerator : ValueGeneratorMatcher
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="GuidValueGenerator"/> class.
+        ///     Initializes a new instance of the <see cref="GuidValueGenerator" /> class.
         /// </summary>
         public GuidValueGenerator() : base(typeof(Guid), typeof(Guid?))
         {
         }
 
         /// <inheritdoc />
-        protected override object GenerateValue(Type type, string referenceName, LinkedList<object> buildChain)
+        protected override object GenerateValue(Type type, string referenceName, IExecuteStrategy executeStrategy)
         {
             if (type == typeof(Guid))
             {

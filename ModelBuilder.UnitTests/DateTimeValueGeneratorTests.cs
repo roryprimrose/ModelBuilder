@@ -1,8 +1,10 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
+    using System.Collections.Generic;
     using System.IO;
     using FluentAssertions;
+    using NSubstitute;
     using Xunit;
 
     public class DateTimeValueGeneratorTests
@@ -10,11 +12,16 @@
         [Fact]
         public void GenerateAlwaysReturnsFutureValuesWithin10YearsTest()
         {
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var target = new DateTimeValueGenerator();
 
             for (var index = 0; index < 1000; index++)
             {
-                var value = (DateTime?)target.Generate(typeof(DateTime?), null, null);
+                var value = (DateTime?)target.Generate(typeof(DateTime?), null, executeStrategy);
 
                 if (value == null)
                 {
@@ -35,11 +42,16 @@
             var nullFound = false;
             var valueFound = false;
 
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var target = new DateTimeValueGenerator();
 
             for (var index = 0; index < 1000; index++)
             {
-                var value = target.Generate(targetType, null, null);
+                var value = target.Generate(targetType, null, executeStrategy);
 
                 if (value == null)
                 {
@@ -63,14 +75,19 @@
         [Fact]
         public void GenerateReturnsRandomDateTimeOffsetValueTest()
         {
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var target = new DateTimeValueGenerator();
 
-            var first = target.Generate(typeof(DateTimeOffset), null, null);
+            var first = target.Generate(typeof(DateTimeOffset), null, executeStrategy);
 
             first.Should().BeOfType<DateTimeOffset>();
             first.As<DateTimeOffset>().Offset.Should().Be(TimeSpan.Zero);
 
-            var second = target.Generate(typeof(DateTimeOffset), null, null);
+            var second = target.Generate(typeof(DateTimeOffset), null, executeStrategy);
 
             first.Should().NotBe(second);
         }
@@ -78,14 +95,19 @@
         [Fact]
         public void GenerateReturnsRandomDateTimeValueTest()
         {
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var target = new DateTimeValueGenerator();
 
-            var first = target.Generate(typeof(DateTime), null, null);
+            var first = target.Generate(typeof(DateTime), null, executeStrategy);
 
             first.Should().BeOfType<DateTime>();
             first.As<DateTime>().Kind.Should().Be(DateTimeKind.Utc);
 
-            var second = target.Generate(typeof(DateTime), null, null);
+            var second = target.Generate(typeof(DateTime), null, executeStrategy);
 
             first.Should().NotBe(second);
         }
@@ -93,10 +115,15 @@
         [Fact]
         public void GenerateReturnsRandomTimeSpanValueTest()
         {
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var target = new DateTimeValueGenerator();
 
-            var first = (TimeSpan)target.Generate(typeof(TimeSpan), null, null);
-            var second = (TimeSpan)target.Generate(typeof(TimeSpan), null, null);
+            var first = (TimeSpan)target.Generate(typeof(TimeSpan), null, executeStrategy);
+            var second = (TimeSpan)target.Generate(typeof(TimeSpan), null, executeStrategy);
 
             first.Should().NotBe(second);
         }
@@ -104,10 +131,15 @@
         [Fact]
         public void GenerateReturnsRandomTimeZoneInfoValueTest()
         {
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var target = new DateTimeValueGenerator();
 
-            var first = (TimeZoneInfo)target.Generate(typeof(TimeZoneInfo), null, null);
-            var second = (TimeZoneInfo)target.Generate(typeof(TimeZoneInfo), null, null);
+            var first = (TimeZoneInfo)target.Generate(typeof(TimeZoneInfo), null, executeStrategy);
+            var second = (TimeZoneInfo)target.Generate(typeof(TimeZoneInfo), null, executeStrategy);
 
             first.Should().NotBe(second);
         }
@@ -117,23 +149,18 @@
         [InlineData(typeof(string))]
         public void GenerateThrowsExceptionWithInvalidParametersTest(Type type)
         {
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var target = new DateTimeValueGenerator();
 
-            Action action = () => target.Generate(type, null, null);
+            Action action = () => target.Generate(type, null, executeStrategy);
 
             action.ShouldThrow<NotSupportedException>();
         }
-
-        [Fact]
-        public void GenerateThrowsExceptionWithNullTypeTest()
-        {
-            var target = new DateTimeValueGenerator();
-
-            Action action = () => target.Generate(null, null, null);
-
-            action.ShouldThrow<ArgumentNullException>();
-        }
-
+        
         [Theory]
         [InlineData(typeof(string), false)]
         [InlineData(typeof(Stream), false)]

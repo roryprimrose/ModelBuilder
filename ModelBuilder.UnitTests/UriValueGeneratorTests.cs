@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using FluentAssertions;
+    using NSubstitute;
     using Xunit;
 
     public class UriValueGeneratorTests
@@ -10,9 +11,14 @@
         [Fact]
         public void GenerateReturnsStringForUriParameterNameTest()
         {
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var target = new UriValueGenerator();
 
-            var actual = target.Generate(typeof(string), "uri", null);
+            var actual = target.Generate(typeof(string), "uri", executeStrategy);
 
             actual.Should().NotBeNull();
             actual.As<string>().Should().NotBeNullOrEmpty();
@@ -21,9 +27,14 @@
         [Fact]
         public void GenerateReturnsStringForUrlParameterNameTest()
         {
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var target = new UriValueGenerator();
 
-            var actual = target.Generate(typeof(string), "url", null);
+            var actual = target.Generate(typeof(string), "url", executeStrategy);
 
             actual.Should().NotBeNull();
             actual.As<string>().Should().NotBeNullOrEmpty();
@@ -32,28 +43,19 @@
         [Fact]
         public void GenerateReturnsUriTest()
         {
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var target = new UriValueGenerator();
 
-            var actual = target.Generate(typeof(Uri), null, null);
+            var actual = target.Generate(typeof(Uri), null, executeStrategy);
 
             actual.Should().NotBeNull();
             actual.As<Uri>().ToString().Should().NotBeNullOrEmpty();
         }
-
-        [Fact]
-        public void GenerateThrowsExceptionWithNullTypeTest()
-        {
-            var buildChain = new LinkedList<object>();
-
-            buildChain.AddFirst(Guid.NewGuid().ToString());
-
-            var target = new UriValueGenerator();
-
-            Action action = () => target.Generate(null, Guid.NewGuid().ToString(), buildChain);
-
-            action.ShouldThrow<ArgumentNullException>();
-        }
-
+        
         [Theory]
         [InlineData(typeof(string), (string)null, false)]
         [InlineData(typeof(string), "", false)]
@@ -68,9 +70,14 @@
         [InlineData(typeof(Uri), (string)null, true)]
         public void GenerateValidatesUnsupportedScenariosTest(Type type, string referenceName, bool supported)
         {
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var target = new UriValueGenerator();
 
-            Action action = () => target.Generate(type, referenceName, null);
+            Action action = () => target.Generate(type, referenceName, executeStrategy);
 
             if (supported)
             {

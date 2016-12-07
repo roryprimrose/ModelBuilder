@@ -6,13 +6,13 @@
     using System.Net;
 
     /// <summary>
-    /// The <see cref="IPAddressValueGenerator"/>
-    /// class is used to generate IP Address values.
+    ///     The <see cref="IPAddressValueGenerator" />
+    ///     class is used to generate IP Address values.
     /// </summary>
     public class IPAddressValueGenerator : ValueGeneratorBase
     {
         /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">The <paramref name="type"/> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is null.</exception>
         public override bool IsSupported(Type type, string referenceName, LinkedList<object> buildChain)
         {
             if (type == null)
@@ -44,7 +44,7 @@
         }
 
         /// <inheritdoc />
-        protected override object GenerateValue(Type type, string referenceName, LinkedList<object> buildChain)
+        protected override object GenerateValue(Type type, string referenceName, IExecuteStrategy executeStrategy)
         {
             var buffer = new byte[4];
 
@@ -69,9 +69,6 @@
         }
 
         /// <inheritdoc />
-        public override int Priority
-        {
-            get;
-        } = 1000;
+        public override int Priority { get; } = 1000;
     }
 }

@@ -249,7 +249,7 @@
             typeCreator.Priority.Returns(int.MaxValue);
             typeCreator.AutoDetectConstructor.Returns(true);
             typeCreator.AutoPopulate.Returns(true);
-            typeCreator.Create(typeof(Address), "Address", Arg.Any<LinkedList<object>>())
+            typeCreator.Create(typeof(Address), "Address", Arg.Any<IExecuteStrategy>())
                 .Throws(new InvalidOperationException());
 
             var buildStrategy = new DefaultBuildStrategyCompiler().Add(typeCreator).Compile();
