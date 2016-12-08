@@ -71,6 +71,24 @@
         }
 
         [Fact]
+        public void ResolveReturnsConstructorWhenArgsContainsNullableParameterWithNullValueTest()
+        {
+            var source = Clone.Create();
+
+            var target = new DefaultConstructorResolver();
+
+            var actual = target.Resolve(
+                typeof(WithConstructorParameters),
+                null,
+                Guid.NewGuid(),
+                null,
+                123,
+                true);
+
+            actual.GetParameters().Length.Should().Be(5);
+        }
+
+        [Fact]
         public void ResolveReturnsConstructorWhenArgsContainsNullAndArgCountFillsNonOptionalParamTest()
         {
             var target = new DefaultConstructorResolver();

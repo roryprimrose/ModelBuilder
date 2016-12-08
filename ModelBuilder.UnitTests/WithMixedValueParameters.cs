@@ -8,6 +8,11 @@ namespace ModelBuilder.UnitTests
         {
         }
 
+        public WithMixedValueParameters(string someIgnoredValue)
+        {
+            FirstName = Guid.NewGuid().ToString();
+        }
+
         public WithMixedValueParameters(string firstName, string lastName)
         {
             FirstName = firstName;

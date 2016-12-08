@@ -32,9 +32,7 @@
                 return Activator.CreateInstance(type);
             }
 
-            var types = args.Select(x => x.GetType()).ToArray();
-
-            var constructor = type.GetConstructor(types);
+            var constructor = executeStrategy?.Configuration?.ConstructorResolver?.Resolve(type, args);
 
             if (constructor == null)
             {

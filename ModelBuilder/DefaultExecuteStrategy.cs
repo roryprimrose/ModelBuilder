@@ -5,6 +5,7 @@
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Diagnostics;
+    using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
     using System.Linq;
     using System.Reflection;
@@ -275,6 +276,156 @@
             }
         }
 
+        /// <summary>
+        ///     Determines whether the property should be populated with a value.
+        /// </summary>
+        /// <param name="instance">The instance being populated.</param>
+        /// <param name="propertyInfo">The property to evaluate.</param>
+        /// <param name="args">The constructor parameters for the instance.</param>
+        /// <returns><c>true</c> if the property should be populated; otherwise <c>false</c>.</returns>
+        protected virtual bool ShouldPopulateProperty(object instance, PropertyInfo propertyInfo, object[] args)
+        {
+            if (instance == null)
+            {
+                throw new ArgumentNullException(nameof(instance));
+            }
+
+            var type = instance.GetType();
+
+            // Check if there is a matching ignore rule
+            var ignoreRule =
+                Configuration.IgnoreRules?.FirstOrDefault(
+                    x => x.TargetType.IsAssignableFrom(type) && (x.PropertyName == propertyInfo.Name));
+
+            if (ignoreRule != null)
+            {
+                Log.IgnoringProperty(propertyInfo.PropertyType, propertyInfo.Name, ignoreRule.GetType(), instance);
+
+                // We need to ignore this property
+                return false;
+            }
+
+            if (args == null)
+            {
+                // No constructor arguments
+                // Assume that constructor has not defined a value for this property
+                return true;
+            }
+
+            if (args.Length == 0)
+            {
+                // No constructor arguments
+                // Assume that constructor has not defined a value for this property
+                return true;
+            }
+
+            var matchingParameters =
+                args.Where(x => (x != null) && propertyInfo.PropertyType.IsInstanceOfType(x)).ToList();
+
+            if (matchingParameters.Count == 0)
+            {
+                // There are no constructor types that match the property type
+                // Assume that no constructor parameter has defined this value
+                return true;
+            }
+
+            var propertyValue = propertyInfo.GetValue(instance, null);
+            var defaultValue = GetDefaultValue(propertyInfo.PropertyType);
+
+            if (AreEqual(propertyValue, defaultValue))
+            {
+                // The property matches the default value of its type
+                // A constructor parameter could have assigned the default type value or no constructor parameter
+                // was assigned to the property
+                // In either case we want to build a value for this property
+                return true;
+            }
+
+            // Check for instance types (ignoring strings)
+            if ((propertyInfo.PropertyType.IsValueType == false) &&
+                (propertyInfo.PropertyType != typeof(string)))
+            {
+                // This is an interface or class type
+                // Look for a matching instance
+                if (matchingParameters.Any(x => ReferenceEquals(x, propertyValue)))
+                {
+                    // This is a direct between the property value and a constructor parameter
+                    return false;
+                }
+
+                // There is no instance match between this property value and a constructor parameter
+                return true;
+            }
+
+            // Get the constructor matching the arguments so that we can try to match constructor parameter names against the property name
+            var constructor = Configuration.ConstructorResolver.Resolve(type, args);
+            var parameters = constructor.GetParameters();
+
+            for (var index = 0; index < parameters.Length; index++)
+            {
+                var parameter = parameters[index];
+
+                if (parameter.ParameterType.IsInstanceOfType(propertyValue) == false)
+                {
+                    // The constructor parameter type does not match the property value, keep looking
+                    continue;
+                }
+
+                var parameterValue = args[index];
+
+                if (AreEqual(propertyValue, parameterValue) == false)
+                {
+                    // This constructor parameter does not match property value, keep looking
+                    continue;
+                }
+
+                if (string.Equals(propertyInfo.Name, parameter.Name, StringComparison.OrdinalIgnoreCase))
+                {
+                    // We have found that the property type, name and value are equivalent
+                    // This is good enough to assume that the property value came from the constructor and we should not overwrite it
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private static bool AreEqual(object first, object second)
+        {
+            var comparer = first as IComparable;
+
+            if (comparer != null)
+            {
+                if (comparer.CompareTo(second) == 0)
+                {
+                    return true;
+                }
+
+                // This constructor parameter does not match property value, keep looking
+                return false;
+            }
+
+            if (first == second)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "Any failure to create the value will default to null for value comparisons.")]
+        private static object GetDefaultValue(Type type)
+        {
+            try
+            {
+                return Activator.CreateInstance(type);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
         private Exception BuildFailureException(Type type, string referenceName, object context)
         {
             string message;
@@ -466,125 +617,6 @@
             }
 
             return matchingRule.Priority;
-        }
-
-        /// <summary>
-        /// Determines whether the property should be populated with a value.
-        /// </summary>
-        /// <param name="instance">The instance being populated.</param>
-        /// <param name="propertyInfo">The property to evaluate.</param>
-        /// <param name="args">The constructor parameters for the instance.</param>
-        /// <returns><c>true</c> if the property should be populated; otherwise <c>false</c>.</returns>
-        protected virtual bool ShouldPopulateProperty(object instance, PropertyInfo propertyInfo, object[] args)
-        {
-            var type = instance.GetType();
-
-            // Check if there is a matching ignore rule
-            var ignoreRule =
-                Configuration.IgnoreRules?.FirstOrDefault(
-                    x => x.TargetType.IsAssignableFrom(type) && (x.PropertyName == propertyInfo.Name));
-
-            if (ignoreRule != null)
-            {
-                Log.IgnoringProperty(propertyInfo.PropertyType, propertyInfo.Name, ignoreRule.GetType(), instance);
-
-                // We need to ignore this property
-                return false;
-            }
-
-            if (args == null)
-            {
-                // No constructor arguments
-                // Assume that constructor has not defined a value for this property
-                return true;
-            }
-
-            if (args.Length == 0)
-            {
-                // No constructor arguments
-                // Assume that constructor has not defined a value for this property
-                return true;
-            }
-
-            var matchingParameters =
-                args.Where(x => x != null && propertyInfo.PropertyType.IsInstanceOfType(x)).ToList();
-
-            if (matchingParameters.Count == 0)
-            {
-                // There are no constructor types that match the property type
-                // Assume that no constructor parameter has defined this value
-                return true;
-            }
-
-            var propertyValue = propertyInfo.GetValue(instance, null);
-            var defaultValue = GetDefaultValue(propertyInfo.PropertyType);
-
-            if (propertyValue == defaultValue)
-            {
-                // The property matches the default value of its type
-                // A constructor parameter could have assigned the default type value or no constructor parameter
-                // was assigned to the property
-                // In either case we want to build a value for this property
-                return true;
-            }
-
-            if (propertyInfo.PropertyType.IsValueType == false)
-            {
-                // This is an interface or class type
-                // Look for a matching instance
-                if (matchingParameters.Any(x => ReferenceEquals(x, propertyValue)))
-                {
-                    // This is a direct between the property value and a constructor parameter
-                    return false;
-                }
-
-                // There is no instance match between this property value and a constructor parameter
-                return true;
-            }
-            
-            // Get the constructor matching the arguments so that we can try to match constructor parameter names against the property name
-            var constructor = Configuration.ConstructorResolver.Resolve(type, args);
-            var parameters = constructor.GetParameters();
-
-            for (var index = 0; index < parameters.Length; index++)
-            {
-                var parameter = parameters[index];
-
-                if (propertyInfo.PropertyType.IsInstanceOfType(parameter.ParameterType) == false)
-                {
-                    // The constructor parameter type does not match the property value, keep looking
-                    continue;
-                }
-
-                var parameterValue = args[index];
-
-                if (parameterValue != propertyValue)
-                {
-                    // This constructor parameter does not match property value, keep looking
-                    continue;
-                }
-
-                if (string.Equals(propertyInfo.Name, parameter.Name, StringComparison.OrdinalIgnoreCase))
-                {
-                    // We have found that the property type, name and value are equivalent
-                    // This is good enough to assume that the property value came from the constructor and we should not overwrite it
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        private static object GetDefaultValue(Type type)
-        {
-            try
-            {
-                return Activator.CreateInstance(type);
-            }
-            catch
-            {
-                return null;
-            }
         }
 
         private void PopulateProperty(object instance, PropertyInfo propertyInfo)

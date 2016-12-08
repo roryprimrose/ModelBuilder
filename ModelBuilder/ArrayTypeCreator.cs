@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.Diagnostics.CodeAnalysis;
 
     /// <summary>
     ///     The <see cref="ArrayTypeCreator" />
@@ -37,6 +38,8 @@
 
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is null.</exception>
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0",
+             Justification = "The parameter is validated in the call to VerifyCreateRequest.")]
         public override object Create(
             Type type,
             string referenceName,

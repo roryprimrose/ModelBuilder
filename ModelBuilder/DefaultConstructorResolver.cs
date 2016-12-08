@@ -159,6 +159,13 @@
 
                 if (argument == null)
                 {
+                    if (parameter.ParameterType.IsNullable())
+                    {
+                        // This is a special known case where nullable types can be null but are also value types
+                        // This is a valid match of null against this parameter type
+                        continue;
+                    }
+
                     if (parameter.ParameterType.IsValueType)
                     {
                         // This is a null argument which is not equivalent to a value type

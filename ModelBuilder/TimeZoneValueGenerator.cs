@@ -23,7 +23,7 @@
         protected override object GenerateValue(Type type, string referenceName, IExecuteStrategy executeStrategy)
         {
             string country = null;
-            var context = executeStrategy.BuildChain?.Last?.Value;
+            var context = executeStrategy?.BuildChain?.Last?.Value;
 
             if (context != null)
             {

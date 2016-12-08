@@ -19,7 +19,7 @@
 
             var target = new DefaultTypeCreator();
 
-            var actual = target.Create(typeof(Person), null, executeStrategy);
+            var actual = target.Create(typeof(Person), null, executeStrategy, null);
 
             actual.Should().NotBeNull();
         }
@@ -45,7 +45,13 @@
         public void CreateReturnsInstanceCreatedWithMatchingParameterConstructorTest()
         {
             var buildChain = new LinkedList<object>();
+            var resolver = new DefaultConstructorResolver();
+
             var executeStrategy = Substitute.For<IExecuteStrategy>();
+            var config = Substitute.For<IBuildConfiguration>();
+
+            executeStrategy.Configuration.Returns(config);
+            config.ConstructorResolver.Returns(resolver);
 
             executeStrategy.BuildChain.Returns(buildChain);
 

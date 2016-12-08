@@ -22,7 +22,7 @@
              Justification = "Email addresses are lower case by convention.")]
         protected override object GenerateValue(Type type, string referenceName, IExecuteStrategy executeStrategy)
         {
-            var context = executeStrategy.BuildChain?.Last?.Value;
+            var context = executeStrategy?.BuildChain?.Last?.Value;
             var firstName = GetValue<string>(PropertyExpression.FirstName, context);
             var lastName = GetValue<string>(PropertyExpression.LastName, context);
             var domain = Domain;

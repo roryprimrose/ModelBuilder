@@ -132,6 +132,54 @@
         }
 
         [Fact]
+        public void CreateSetsPropertyValuesWhenConstructorParametersHaveDefaultValuesTest()
+        {
+            var buildLog = Substitute.For<IBuildLog>();
+            var configuration = Model.DefaultBuildStrategy;
+
+            var target = new DefaultExecuteStrategy();
+
+            target.Initialize(configuration, buildLog);
+
+            var args = new object[]
+            {
+                null,
+                Guid.Empty,
+                null,
+                0,
+                false
+            };
+
+            var actual = (WithConstructorParameters)target.CreateWith(typeof(WithConstructorParameters), args);
+
+            actual.First.Should().NotBeNull();
+            actual.Id.Should().NotBeEmpty();
+            actual.RefNumber.Should().HaveValue();
+            actual.Number.Should().NotBe(0);
+        }
+
+        [Fact]
+        public void CreateSetsPropertyValueWhenNoMatchOnConstructorParameterTest()
+        {
+            var buildLog = Substitute.For<IBuildLog>();
+            var configuration = Model.DefaultBuildStrategy;
+
+            var target = new DefaultExecuteStrategy();
+
+            target.Initialize(configuration, buildLog);
+
+            var args = new object[]
+            {
+                Guid.NewGuid().ToString()
+            };
+
+            var actual = (WithMixedValueParameters)target.CreateWith(typeof(WithMixedValueParameters), args);
+
+            actual.FirstName.Should().NotBe((string)args[0]);
+            actual.LastName.Should().NotBe((string)args[0]);
+        }
+
+        [Fact]
         public void CreatesPropertyOfSameTypeWithCreatedInstanceTest()
         {
             var configuration = Model.BuildStrategy;
@@ -187,6 +235,34 @@
 
             actual.Should().BeSameAs(model);
             actual.Value.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void CreateWithDoesNotSetPropertysProvidedByConstructorTest()
+        {
+            var buildLog = Substitute.For<IBuildLog>();
+            var configuration = Model.DefaultBuildStrategy;
+
+            var target = new DefaultExecuteStrategy();
+
+            target.Initialize(configuration, buildLog);
+
+            var args = new object[]
+            {
+                new Company(),
+                Guid.NewGuid(),
+                123,
+                456,
+                true
+            };
+
+            var actual = (WithConstructorParameters)target.CreateWith(typeof(WithConstructorParameters), args);
+
+            actual.First.Should().BeSameAs(args[0]);
+            actual.Id.Should().Be((Guid)args[1]);
+            actual.RefNumber.Should().Be((int?)args[2]);
+            actual.Number.Should().Be((int)args[3]);
+            actual.Value.Should().Be((bool)args[4]);
         }
 
         [Fact]
