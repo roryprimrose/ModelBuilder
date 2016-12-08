@@ -390,7 +390,7 @@
             else if (typeCreator.AutoDetectConstructor)
             {
                 // Use constructor detection to figure out how to create this instance
-                var constructor = Configuration.ConstructorResolver.Resolve(type, args);
+                var constructor = Configuration.ConstructorResolver.Resolve(type);
 
                 var parameterInfos = constructor.GetParameters();
 

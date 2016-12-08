@@ -24,9 +24,21 @@
             first.Should().BeOfType<string>();
             first.As<string>().Should().NotBeNullOrWhiteSpace();
 
-            var second = target.Generate(typeof(string), "city", executeStrategy);
+            var otherValueFound = false;
 
-            first.Should().NotBe(second);
+            for (var index = 0; index < 100; index++)
+            {
+                var second = target.Generate(typeof(string), "city", executeStrategy);
+
+                if (first != second)
+                {
+                    otherValueFound = true;
+
+                    break;
+                }
+            }
+
+            otherValueFound.Should().BeTrue();
         }
 
         [Theory]
@@ -63,7 +75,7 @@
 
             action.ShouldThrow<NotSupportedException>();
         }
-        
+
         [Fact]
         public void HasHigherPriorityThanStringValueGeneratorTest()
         {

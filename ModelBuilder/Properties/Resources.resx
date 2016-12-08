@@ -118,41 +118,41 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ConstructorResolver_NoPublicConstructorFound" xml:space="preserve">
-    <value>No public constructor is available for type {0}.</value>
+    <value>No public constructor is available for type {0}</value>
   </data>
   <data name="Error_ExpressionNotPropertyFormat" xml:space="preserve">
-    <value>Expression '{0}' does not refer to a property.</value>
+    <value>Expression '{0}' does not refer to a property</value>
   </data>
   <data name="Error_TypeNotSupportedFormat" xml:space="preserve">
-    <value>{0} does not support the {1} type.</value>
+    <value>{0} does not support the {1} type</value>
   </data>
   <data name="NoMatchingCreatorOrGeneratorFound" xml:space="preserve">
-    <value>No supporting ITypeCreator or IValueGenerator was found to build the type '{0}'.</value>
+    <value>No supporting ITypeCreator or IValueGenerator was found to build the type '{0}'</value>
   </data>
   <data name="NoMatchingCreatorOrGeneratorFoundWithName" xml:space="preserve">
-    <value>No supporting ITypeCreator or IValueGenerator was found to build the type '{0}' for '{1}'.</value>
+    <value>No supporting ITypeCreator or IValueGenerator was found to build the type '{0}' for '{1}'</value>
   </data>
   <data name="NoMatchingCreatorOrGeneratorFoundWithNameAndContext" xml:space="preserve">
-    <value>No supporting ITypeCreator or IValueGenerator was found to build the type '{0}' for '{1}' on type '{2}'.</value>
+    <value>No supporting ITypeCreator or IValueGenerator was found to build the type '{0}' for '{1}' on type '{2}'</value>
   </data>
   <data name="NoTargetTypeOrPropertyName" xml:space="preserve">
-    <value>Either targetType or propertyName must be supplied.</value>
+    <value>Either targetType or propertyName must be supplied</value>
   </data>
   <data name="Error_ExpressionTargetsWrongType" xml:space="preserve">
-    <value>The expression returned a property {0} that was not defined on type '{1}'.</value>
+    <value>The expression returned a property {0} that was not defined on type '{1}'</value>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="People" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\People.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
   <data name="NoTargetTypeOrPropertyExpression" xml:space="preserve">
-    <value>Either targetType or propertyExpression must be supplied.</value>
+    <value>Either targetType or propertyExpression must be supplied</value>
   </data>
   <data name="ArgumentException_NullOrWhiteSpace" xml:space="preserve">
-    <value>The value cannot be null, white space or empty.</value>
+    <value>The value cannot be null, white space or empty</value>
   </data>
   <data name="BuildStrategyCompiler_NullConstructorResolver" xml:space="preserve">
-    <value>The ConstructorResolver is null. A constructor resolver must be provided in order to create a build strategy.</value>
+    <value>The ConstructorResolver is null. A constructor resolver must be provided in order to create a build strategy</value>
   </data>
   <data name="DefaultBuildLog_CreatedType" xml:space="preserve">
     <value>End creating type {0}</value>
@@ -176,19 +176,19 @@
     <value>Start populating instance {0}</value>
   </data>
   <data name="Rule_InvalidMatch" xml:space="preserve">
-    <value>The rule {0} does not support type '{1}' for '{2}'.</value>
+    <value>The rule {0} does not support type '{1}' for '{2}'</value>
   </data>
   <data name="RelativeValueGenerator_NoSourceExpression" xml:space="preserve">
-    <value>This generator was not created with a source expression. Call GetValue&lt;T&gt;(expression, context) instead.</value>
+    <value>This generator was not created with a source expression. Call GetValue&lt;T&gt;(expression, context) instead</value>
   </data>
   <data name="DefaultBuildLog_CircularReferenceDetected" xml:space="preserve">
     <value>Detected circular reference building type {0}, using previously created instance</value>
   </data>
   <data name="ConstructorResolver_NoValidConstructorFound" xml:space="preserve">
-    <value>No valid constructors are available for type {0} (copy constructors have been ignored).</value>
+    <value>No valid constructors are available for type {0}</value>
   </data>
   <data name="BuildStrategy_BuildLogRequired" xml:space="preserve">
-    <value>{0} did not return an {1} instance. A build log is required to create an {2} instance.</value>
+    <value>{0} did not return an {1} instance. A build log is required to create an {2} instance</value>
   </data>
   <data name="DefaultBuildLog_PostBuild" xml:space="preserve">
     <value>Running PostBuild on {0} using {1}</value>
@@ -203,9 +203,9 @@
     <value>Ignoring property {0} ({1}) on type {2} using {3}</value>
   </data>
   <data name="ExecuteStrategy_NoBuildChain" xml:space="preserve">
-    <value>The BuildChain property on the execution strategy is null.</value>
+    <value>The BuildChain property on the execution strategy is null</value>
   </data>
   <data name="Error_GenerationNotSupportedFormat" xml:space="preserve">
-    <value>{0} does not support the {1} type and reference name {2} in the context of the current build chain.</value>
+    <value>{0} does not support the {1} type and reference name {2} in the context of the current build chain</value>
   </data>
 </root>
