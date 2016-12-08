@@ -506,10 +506,10 @@
                 return true;
             }
 
-            var matchingParameterTypes =
+            var matchingParameters =
                 args.Where(x => x != null && propertyInfo.PropertyType.IsInstanceOfType(x)).ToList();
 
-            if (matchingParameterTypes.Count == 0)
+            if (matchingParameters.Count == 0)
             {
                 // There are no constructor types that match the property type
                 // Assume that no constructor parameter has defined this value
@@ -528,24 +528,20 @@
                 return true;
             }
 
-            var instanceParameters = matchingParameterTypes.Where(x => x.GetType().IsValueType == false);
-
-            if (instanceParameters.Any(x => ReferenceEquals(x, propertyValue)))
+            if (propertyInfo.PropertyType.IsValueType == false)
             {
-                // The constructor parameter matches the property value
-                // We don't want to overwrite this
-                return false;
-            }
-            
-            var valueParameters = matchingParameterTypes.Where(x => x.GetType().IsValueType).ToList();
+                // This is an interface or class type
+                // Look for a matching instance
+                if (matchingParameters.Any(x => ReferenceEquals(x, propertyValue)))
+                {
+                    // This is a direct between the property value and a constructor parameter
+                    return false;
+                }
 
-            if (valueParameters.Count == 0)
-            {
-                // There are no value type constructor parameters to try to check against this property
-                // Build a new value for this property
+                // There is no instance match between this property value and a constructor parameter
                 return true;
             }
-
+            
             // Get the constructor matching the arguments so that we can try to match constructor parameter names against the property name
             var constructor = Configuration.ConstructorResolver.Resolve(type, args);
             var parameters = constructor.GetParameters();
@@ -570,7 +566,7 @@
 
                 if (string.Equals(propertyInfo.Name, parameter.Name, StringComparison.OrdinalIgnoreCase))
                 {
-                    // We have found that the property name and type are equivalent and the value is not the default value
+                    // We have found that the property type, name and value are equivalent
                     // This is good enough to assume that the property value came from the constructor and we should not overwrite it
                     return false;
                 }

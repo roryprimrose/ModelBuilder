@@ -27,11 +27,16 @@
         [Fact]
         public void CreateReturnsInstanceCreatedWithDefaultConstructorWhenArgumentsAreEmptyTest()
         {
+            var buildChain = new LinkedList<object>();
             var args = new object[]{ };
+
+            var strategy = Substitute.For<IExecuteStrategy>();
+
+            strategy.BuildChain.Returns(buildChain);
 
             var target = new DefaultTypeCreator();
 
-            var actual = target.Create(typeof(Person), null, null, args);
+            var actual = target.Create(typeof(Person), null, strategy, args);
 
             actual.Should().NotBeNull();
         }
