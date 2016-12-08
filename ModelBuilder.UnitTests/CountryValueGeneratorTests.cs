@@ -1,37 +1,47 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using FluentAssertions;
-using ModelBuilder.Data;
-using Xunit;
-
-namespace ModelBuilder.UnitTests
+﻿namespace ModelBuilder.UnitTests
 {
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using FluentAssertions;
+    using NSubstitute;
+    using Xunit;
+
     public class CountryValueGeneratorTests
     {
         [Fact]
         public void GenerateReturnsRandomCountryTest()
         {
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var target = new CountryValueGenerator();
 
-            var first = target.Generate(typeof(string), "country", null);
+            var first = target.Generate(typeof(string), "country", executeStrategy);
 
             first.Should().BeOfType<string>();
             first.As<string>().Should().NotBeNullOrWhiteSpace();
 
-            var second = target.Generate(typeof(string), "country", null);
+            var second = target.Generate(typeof(string), "country", executeStrategy);
 
             first.Should().NotBe(second);
         }
-        
+
         [Theory]
         [InlineData(typeof(string), "country", true)]
         [InlineData(typeof(string), "Country", true)]
         public void GenerateReturnsValuesForSeveralNameFormatsTest(Type type, string referenceName, bool expected)
         {
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var target = new CountryValueGenerator();
 
-            var actual = (string) target.Generate(type, referenceName, null);
+            var actual = (string)target.Generate(type, referenceName, executeStrategy);
 
             actual.Should().NotBeNullOrEmpty();
         }
@@ -42,21 +52,16 @@ namespace ModelBuilder.UnitTests
         [InlineData(typeof(string), "Stuff")]
         public void GenerateThrowsExceptionWithInvalidParametersTest(Type type, string referenceName)
         {
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var target = new CountryValueGenerator();
 
-            Action action = () => target.Generate(type, referenceName, null);
+            Action action = () => target.Generate(type, referenceName, executeStrategy);
 
             action.ShouldThrow<NotSupportedException>();
-        }
-
-        [Fact]
-        public void GenerateThrowsExceptionWithNullTypeTest()
-        {
-            var target = new CountryValueGenerator();
-
-            Action action = () => target.Generate(null, null, null);
-
-            action.ShouldThrow<ArgumentNullException>();
         }
 
         [Fact]

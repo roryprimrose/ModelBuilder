@@ -5,19 +5,27 @@ using Xunit;
 
 namespace ModelBuilder.UnitTests
 {
+    using System.Collections.Generic;
+    using NSubstitute;
+
     public class StateValueGeneratorTests
     {
         [Fact]
         public void GenerateReturnsRandomStateTest()
         {
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var target = new StateValueGenerator();
 
-            var first = target.Generate(typeof(string), "state", null);
+            var first = target.Generate(typeof(string), "state", executeStrategy);
 
             first.Should().BeOfType<string>();
             first.As<string>().Should().NotBeNullOrWhiteSpace();
 
-            var second = target.Generate(typeof(string), "state", null);
+            var second = target.Generate(typeof(string), "state", executeStrategy);
 
             first.Should().NotBe(second);
         }
@@ -29,9 +37,14 @@ namespace ModelBuilder.UnitTests
         [InlineData(typeof(string), "Region", true)]
         public void GenerateReturnsValuesForSeveralNameFormatsTest(Type type, string referenceName, bool expected)
         {
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var target = new StateValueGenerator();
 
-            var actual = (string) target.Generate(type, referenceName, null);
+            var actual = (string) target.Generate(type, referenceName, executeStrategy);
 
             actual.Should().NotBeNullOrEmpty();
         }
@@ -42,23 +55,18 @@ namespace ModelBuilder.UnitTests
         [InlineData(typeof(string), "Stuff")]
         public void GenerateThrowsExceptionWithInvalidParametersTest(Type type, string referenceName)
         {
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var target = new StateValueGenerator();
 
-            Action action = () => target.Generate(type, referenceName, null);
+            Action action = () => target.Generate(type, referenceName, executeStrategy);
 
             action.ShouldThrow<NotSupportedException>();
         }
-
-        [Fact]
-        public void GenerateThrowsExceptionWithNullTypeTest()
-        {
-            var target = new StateValueGenerator();
-
-            Action action = () => target.Generate(null, null, null);
-
-            action.ShouldThrow<ArgumentNullException>();
-        }
-
+        
         [Fact]
         public void HasHigherPriorityThanStringValueGeneratorTest()
         {

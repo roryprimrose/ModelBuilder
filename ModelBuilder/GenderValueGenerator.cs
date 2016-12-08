@@ -1,17 +1,16 @@
 namespace ModelBuilder
 {
     using System;
-    using System.Collections.Generic;
     using System.Text.RegularExpressions;
 
     /// <summary>
-    /// The <see cref="GenderValueGenerator"/>
-    /// class is used to generate random gender values.
+    ///     The <see cref="GenderValueGenerator" />
+    ///     class is used to generate random gender values.
     /// </summary>
     public class GenderValueGenerator : ValueGeneratorMatcher
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="GenderValueGenerator"/> class.
+        ///     Initializes a new instance of the <see cref="GenderValueGenerator" /> class.
         /// </summary>
         public GenderValueGenerator()
             : base(new Regex("Gender|Sex", RegexOptions.Compiled | RegexOptions.IgnoreCase), typeof(string))
@@ -19,7 +18,7 @@ namespace ModelBuilder
         }
 
         /// <inheritdoc />
-        protected override object GenerateValue(Type type, string referenceName, LinkedList<object> buildChain)
+        protected override object GenerateValue(Type type, string referenceName, IExecuteStrategy executeStrategy)
         {
             var index = Generator.NextValue(0, 1);
 
@@ -32,9 +31,6 @@ namespace ModelBuilder
         }
 
         /// <inheritdoc />
-        public override int Priority
-        {
-            get;
-        } = 1000;
+        public override int Priority { get; } = 1000;
     }
 }

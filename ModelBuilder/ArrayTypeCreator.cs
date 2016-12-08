@@ -40,15 +40,10 @@
         public override object Create(
             Type type,
             string referenceName,
-            LinkedList<object> buildChain,
+            IExecuteStrategy executeStrategy,
             params object[] args)
         {
-            if (type == null)
-            {
-                throw new ArgumentNullException(nameof(type));
-            }
-
-            VerifyCreateRequest(type, referenceName, buildChain);
+            VerifyCreateRequest(type, referenceName, executeStrategy);
 
             var count = Generator.NextValue(1, MaxCount);
 
@@ -86,7 +81,7 @@
 
             var instanceType = instance.GetType();
 
-            VerifyCreateRequest(instanceType, null, executeStrategy.BuildChain);
+            VerifyCreateRequest(instanceType, null, executeStrategy);
 
             var target = instance as Array;
 

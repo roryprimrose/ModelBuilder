@@ -1,25 +1,44 @@
-﻿using System;
-using System.IO;
-using FluentAssertions;
-using Xunit;
-
-namespace ModelBuilder.UnitTests
+﻿namespace ModelBuilder.UnitTests
 {
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using FluentAssertions;
+    using NSubstitute;
+    using Xunit;
+
     public class CityValueGeneratorTests
     {
         [Fact]
         public void GenerateReturnsRandomCityTest()
         {
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var target = new CityValueGenerator();
 
-            var first = target.Generate(typeof(string), "city", null);
+            var first = target.Generate(typeof(string), "city", executeStrategy);
 
             first.Should().BeOfType<string>();
             first.As<string>().Should().NotBeNullOrWhiteSpace();
 
-            var second = target.Generate(typeof(string), "city", null);
+            var otherValueFound = false;
 
-            first.Should().NotBe(second);
+            for (var index = 0; index < 100; index++)
+            {
+                var second = target.Generate(typeof(string), "city", executeStrategy);
+
+                if (first != second)
+                {
+                    otherValueFound = true;
+
+                    break;
+                }
+            }
+
+            otherValueFound.Should().BeTrue();
         }
 
         [Theory]
@@ -27,9 +46,14 @@ namespace ModelBuilder.UnitTests
         [InlineData(typeof(string), "City", true)]
         public void GenerateReturnsValuesForSeveralNameFormatsTest(Type type, string referenceName, bool expected)
         {
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var target = new CityValueGenerator();
 
-            var actual = (string) target.Generate(type, referenceName, null);
+            var actual = (string)target.Generate(type, referenceName, executeStrategy);
 
             actual.Should().NotBeNullOrEmpty();
         }
@@ -40,21 +64,16 @@ namespace ModelBuilder.UnitTests
         [InlineData(typeof(string), "Stuff")]
         public void GenerateThrowsExceptionWithInvalidParametersTest(Type type, string referenceName)
         {
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var target = new CityValueGenerator();
 
-            Action action = () => target.Generate(type, referenceName, null);
+            Action action = () => target.Generate(type, referenceName, executeStrategy);
 
             action.ShouldThrow<NotSupportedException>();
-        }
-
-        [Fact]
-        public void GenerateThrowsExceptionWithNullTypeTest()
-        {
-            var target = new CityValueGenerator();
-
-            Action action = () => target.Generate(null, null, null);
-
-            action.ShouldThrow<ArgumentNullException>();
         }
 
         [Fact]

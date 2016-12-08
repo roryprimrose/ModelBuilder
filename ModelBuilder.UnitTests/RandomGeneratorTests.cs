@@ -123,7 +123,7 @@ namespace ModelBuilder.UnitTests
 
             var target = new RandomGenerator();
 
-            for (var index = 0; index < 100000; index++)
+            for (var index = 0; index < 10000; index++)
             {
                 var value = target.NextValue(type, min, max);
 

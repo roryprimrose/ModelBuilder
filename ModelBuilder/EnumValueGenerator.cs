@@ -5,13 +5,13 @@
     using System.Linq;
 
     /// <summary>
-    /// The <see cref="EnumValueGenerator"/>
-    /// class is used to generate random enum values.
+    ///     The <see cref="EnumValueGenerator" />
+    ///     class is used to generate random enum values.
     /// </summary>
     public class EnumValueGenerator : ValueGeneratorBase
     {
         /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">The <paramref name="type"/> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is null.</exception>
         public override bool IsSupported(Type type, string referenceName, LinkedList<object> buildChain)
         {
             if (type == null)
@@ -35,7 +35,7 @@
         }
 
         /// <inheritdoc />
-        protected override object GenerateValue(Type type, string referenceName, LinkedList<object> buildChain)
+        protected override object GenerateValue(Type type, string referenceName, IExecuteStrategy executeStrategy)
         {
             var generateType = type;
 

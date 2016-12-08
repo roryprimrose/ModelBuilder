@@ -225,7 +225,7 @@
                 return GetValue<string>(expression, context);
             }
 
-            protected override object GenerateValue(Type type, string referenceName, LinkedList<object> buildChain)
+            protected override object GenerateValue(Type type, string referenceName, IExecuteStrategy executeStrategy)
             {
                 throw new NotImplementedException();
             }

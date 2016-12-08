@@ -1,8 +1,10 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
+    using System.Collections.Generic;
     using System.IO;
     using FluentAssertions;
+    using NSubstitute;
     using Xunit;
 
     public class PhoneValueGeneratorTests
@@ -10,14 +12,19 @@
         [Fact]
         public void GenerateReturnsRandomValueTest()
         {
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var target = new PhoneValueGenerator();
 
-            var first = target.Generate(typeof(string), "cell", null);
+            var first = target.Generate(typeof(string), "cell", executeStrategy);
 
             first.Should().BeOfType<string>();
             first.As<string>().Should().NotBeNullOrWhiteSpace();
 
-            var second = target.Generate(typeof(string), "cell", null);
+            var second = target.Generate(typeof(string), "cell", executeStrategy);
 
             first.Should().NotBe(second);
         }
@@ -25,9 +32,14 @@
         [Fact]
         public void GenerateReturnsValueForPhoneTypeTest()
         {
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var target = new PhoneValueGenerator();
 
-            var actual = target.Generate(typeof(string), "Cell", null);
+            var actual = target.Generate(typeof(string), "Cell", executeStrategy);
 
             actual.Should().BeOfType<string>();
         }
@@ -59,9 +71,14 @@
         [InlineData(typeof(string), "Faxnumber", true)]
         public void GenerateReturnsValuesForSeveralNameFormatsTest(Type type, string referenceName, bool expected)
         {
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var target = new PhoneValueGenerator();
 
-            var actual = (string)target.Generate(type, referenceName, null);
+            var actual = (string)target.Generate(type, referenceName, executeStrategy);
 
             actual.Should().NotBeNullOrEmpty();
         }
@@ -72,23 +89,18 @@
         [InlineData(typeof(string), "Stuff")]
         public void GenerateThrowsExceptionWithInvalidParametersTest(Type type, string referenceName)
         {
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var target = new PhoneValueGenerator();
 
-            Action action = () => target.Generate(type, referenceName, null);
+            Action action = () => target.Generate(type, referenceName, executeStrategy);
 
             action.ShouldThrow<NotSupportedException>();
         }
-
-        [Fact]
-        public void GenerateThrowsExceptionWithNullTypeTest()
-        {
-            var target = new PhoneValueGenerator();
-
-            Action action = () => target.Generate(null, null, null);
-
-            action.ShouldThrow<ArgumentNullException>();
-        }
-
+        
         [Theory]
         [InlineData(typeof(Stream), "phonenumber", false)]
         [InlineData(typeof(string), null, false)]

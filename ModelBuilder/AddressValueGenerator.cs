@@ -1,30 +1,29 @@
-﻿using System;
-using System.Globalization;
-using System.Text.RegularExpressions;
-using ModelBuilder.Data;
-
-namespace ModelBuilder
+﻿namespace ModelBuilder
 {
-    using System.Collections.Generic;
+    using System;
+    using System.Globalization;
+    using System.Text.RegularExpressions;
+    using ModelBuilder.Data;
 
     /// <summary>
-    /// The <see cref="AddressValueGenerator"/>
-    /// class is used to generate postal addressing values.
+    ///     The <see cref="AddressValueGenerator" />
+    ///     class is used to generate postal addressing values.
     /// </summary>
     public class AddressValueGenerator : ValueGeneratorMatcher
     {
-        private static readonly Regex _multipleAddressExpression = new Regex("Address(Line)?(?<Number>\\d+)",
+        private static readonly Regex _multipleAddressExpression = new Regex(
+            "Address(Line)?(?<Number>\\d+)",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AddressValueGenerator"/> class.
+        ///     Initializes a new instance of the <see cref="AddressValueGenerator" /> class.
         /// </summary>
         public AddressValueGenerator() : base(new Regex("(?<!email.*)address", RegexOptions.IgnoreCase), typeof(string))
         {
         }
 
         /// <inheritdoc />
-        protected override object GenerateValue(Type type, string referenceName, LinkedList<object> buildChain)
+        protected override object GenerateValue(Type type, string referenceName, IExecuteStrategy executeStrategy)
         {
             var multipleMatch = _multipleAddressExpression.Match(referenceName);
 
@@ -37,7 +36,7 @@ namespace ModelBuilder
                 {
                     var floor = Generator.NextValue(1, 15);
                     var unitIndex = Generator.NextValue(0, 15);
-                    var unit = (char) (65 + unitIndex);
+                    var unit = (char)(65 + unitIndex);
 
                     // Return a Unit Xy, Floor X style value
                     return "Unit " + floor + unit + ", Floor " + floor;

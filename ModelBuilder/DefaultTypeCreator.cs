@@ -1,7 +1,6 @@
 ﻿namespace ModelBuilder
 {
     using System;
-    using System.Collections.Generic;
     using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
@@ -13,8 +12,12 @@
     public class DefaultTypeCreator : TypeCreatorBase
     {
         /// <inheritdoc />
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0", Justification = "Type is validated by the base class")]
-        protected override object CreateInstance(Type type, string referenceName, LinkedList<object> buildChain,
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0",
+             Justification = "Type is validated by the base class")]
+        protected override object CreateInstance(
+            Type type,
+            string referenceName,
+            IExecuteStrategy executeStrategy,
             params object[] args)
         {
             Debug.Assert(type != null, "type != null");

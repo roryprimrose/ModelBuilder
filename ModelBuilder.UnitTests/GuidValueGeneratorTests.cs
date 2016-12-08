@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using FluentAssertions;
+    using NSubstitute;
     using Xunit;
 
     public class GuidValueGeneratorTests
@@ -10,6 +11,11 @@
         [Fact]
         public void GenerateCanReturnNullAndRandomValuesTest()
         {
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var nullFound = false;
             var valueFound = false;
 
@@ -17,7 +23,7 @@
 
             for (var index = 0; index < 1000; index++)
             {
-                var value = (Guid?)target.Generate(typeof(Guid?), null, null);
+                var value = (Guid?)target.Generate(typeof(Guid?), null, executeStrategy);
 
                 if (value == null)
                 {
@@ -44,9 +50,14 @@
         [InlineData(typeof(string), false)]
         public void GenerateEvaluatesWhetherTypeIsSupportedTest(Type type, bool supportedType)
         {
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var target = new GuidValueGenerator();
 
-            Action action = () => target.Generate(type, null, null);
+            Action action = () => target.Generate(type, null, executeStrategy);
 
             if (supportedType)
             {
@@ -61,10 +72,15 @@
         [Fact]
         public void GenerateReturnsRandomGuidValueTest()
         {
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var target = new GuidValueGenerator();
 
-            var first = (Guid)target.Generate(typeof(Guid), null, null);
-            var second = (Guid)target.Generate(typeof(Guid), null, null);
+            var first = (Guid)target.Generate(typeof(Guid), null, executeStrategy);
+            var second = (Guid)target.Generate(typeof(Guid), null, executeStrategy);
 
             first.Should().NotBeEmpty();
             second.Should().NotBeEmpty();

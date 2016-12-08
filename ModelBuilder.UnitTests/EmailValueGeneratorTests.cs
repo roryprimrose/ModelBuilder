@@ -6,6 +6,7 @@
     using System.Linq;
     using FluentAssertions;
     using ModelBuilder.Data;
+    using NSubstitute;
     using Xunit;
 
     public class EmailValueGeneratorTests
@@ -15,12 +16,15 @@
         {
             var person = new Person();
             var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
 
             buildChain.AddFirst(person);
 
             var target = new MailinatorEmailValueGenerator();
 
-            var actual = (string)target.Generate(typeof(string), "email", buildChain);
+            var actual = (string)target.Generate(typeof(string), "email", executeStrategy);
 
             actual.Should().EndWith("mailinator.com");
         }
@@ -30,12 +34,15 @@
         {
             var person = new Person();
             var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
 
             buildChain.AddFirst(person);
 
             var target = new EmailValueGenerator();
 
-            var actual = (string)target.Generate(typeof(string), "email", buildChain);
+            var actual = (string)target.Generate(typeof(string), "email", executeStrategy);
 
             var domain = actual.Substring(actual.IndexOf("@") + 1);
 
@@ -51,12 +58,15 @@
                 LastName = "Mc Cormick"
             };
             var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
 
             buildChain.AddFirst(person);
 
             var target = new EmailValueGenerator();
 
-            var actual = (string)target.Generate(typeof(string), "email", buildChain);
+            var actual = (string)target.Generate(typeof(string), "email", executeStrategy);
 
             var expected = "dejour.mccormick";
 
@@ -71,12 +81,15 @@
                 Gender = Gender.Female
             };
             var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
 
             buildChain.AddFirst(person);
 
             var target = new EmailValueGenerator();
 
-            var actual = (string)target.Generate(typeof(string), "email", buildChain);
+            var actual = (string)target.Generate(typeof(string), "email", executeStrategy);
 
             var firstName = actual.Substring(0, actual.IndexOf("."));
 
@@ -91,12 +104,15 @@
                 Gender = Gender.Male
             };
             var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
 
             buildChain.AddFirst(person);
 
             var target = new EmailValueGenerator();
 
-            var actual = (string)target.Generate(typeof(string), "email", buildChain);
+            var actual = (string)target.Generate(typeof(string), "email", executeStrategy);
 
             var firstName = actual.Substring(0, actual.IndexOf("."));
 
@@ -112,12 +128,15 @@
                 LastName = "Mc Cormick"
             };
             var firstBuildChain = new LinkedList<object>();
+            var firstExecuteStrategy = Substitute.For<IExecuteStrategy>();
+
+            firstExecuteStrategy.BuildChain.Returns(firstBuildChain);
 
             firstBuildChain.AddFirst(firstPerson);
 
             var target = new EmailValueGenerator();
 
-            var first = target.Generate(typeof(string), "email", firstBuildChain);
+            var first = target.Generate(typeof(string), "email", firstExecuteStrategy);
 
             first.Should().BeOfType<string>();
             first.As<string>().Should().NotBeNullOrWhiteSpace();
@@ -129,10 +148,13 @@
                 LastName = "Johns"
             };
             var secondBuildChain = new LinkedList<object>();
+            var secondExecuteStrategy = Substitute.For<IExecuteStrategy>();
+
+            secondExecuteStrategy.BuildChain.Returns(secondBuildChain);
 
             secondBuildChain.AddFirst(secondPerson);
 
-            var second = target.Generate(typeof(string), "email", secondBuildChain);
+            var second = target.Generate(typeof(string), "email", secondExecuteStrategy);
 
             first.Should().NotBe(second);
         }
@@ -146,12 +168,15 @@
                 LastName = Guid.NewGuid().ToString("N")
             };
             var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
 
             buildChain.AddFirst(person);
 
             var target = new EmailValueGenerator();
 
-            var actual = (string)target.Generate(typeof(string), "email", buildChain);
+            var actual = (string)target.Generate(typeof(string), "email", executeStrategy);
 
             var expected = person.FirstName + "." + person.LastName;
 
@@ -166,12 +191,15 @@
                 FirstName = Guid.NewGuid().ToString("N")
             };
             var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
 
             buildChain.AddFirst(person);
 
             var target = new EmailValueGenerator();
 
-            var actual = (string)target.Generate(typeof(string), "email", buildChain);
+            var actual = (string)target.Generate(typeof(string), "email", executeStrategy);
 
             var expected = person.FirstName.Substring(0, 1);
 
@@ -186,12 +214,15 @@
                 LastName = Guid.NewGuid().ToString("N")
             };
             var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
 
             buildChain.AddFirst(person);
 
             var target = new EmailValueGenerator();
 
-            var actual = (string)target.Generate(typeof(string), "email", buildChain);
+            var actual = (string)target.Generate(typeof(string), "email", executeStrategy);
 
             var expected = person.LastName;
 
@@ -203,12 +234,15 @@
         {
             var model = new SlimModel();
             var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
 
             buildChain.AddFirst(model);
 
             var target = new EmailValueGenerator();
 
-            var actual = (string)target.Generate(typeof(string), "email", buildChain);
+            var actual = (string)target.Generate(typeof(string), "email", executeStrategy);
 
             actual.Should().NotBeNullOrWhiteSpace();
         }
@@ -220,43 +254,18 @@
         [InlineData(typeof(string), "Stuff")]
         public void GenerateThrowsExceptionWithInvalidParametersTest(Type type, string referenceName)
         {
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
             var target = new EmailValueGenerator();
 
-            Action action = () => target.Generate(type, referenceName, null);
+            Action action = () => target.Generate(type, referenceName, executeStrategy);
 
             action.ShouldThrow<NotSupportedException>();
         }
-
-        [Fact]
-        public void GenerateThrowsExceptionWithNullBuildChainTest()
-        {
-            var target = new EmailValueGeneratorWrapper();
-
-            Action action = () => target.RunNullTest();
-
-            action.ShouldThrow<ArgumentNullException>();
-        }
-
-        [Fact]
-        public void GenerateThrowsExceptionWithNullContextTest()
-        {
-            var target = new EmailValueGenerator();
-
-            Action action = () => target.Generate(typeof(string), "email", null);
-
-            action.ShouldThrow<NotSupportedException>();
-        }
-
-        [Fact]
-        public void GenerateThrowsExceptionWithNullTypeTest()
-        {
-            var target = new EmailValueGenerator();
-
-            Action action = () => target.Generate(null, null, null);
-
-            action.ShouldThrow<ArgumentNullException>();
-        }
-
+        
         [Fact]
         public void HasHigherPriorityThanStringValueGeneratorTest()
         {
@@ -309,14 +318,6 @@
             Action action = () => target.IsSupported(null, null, buildChain);
 
             action.ShouldThrow<ArgumentNullException>();
-        }
-
-        private class EmailValueGeneratorWrapper : EmailValueGenerator
-        {
-            public void RunNullTest()
-            {
-                GenerateValue(typeof(string), "Email", null);
-            }
         }
     }
 }
