@@ -41,6 +41,17 @@ var customer = new Person();
 var customerModel = Model.Populate(customer);
 ```
 
+### Constructor parameter matching
+
+From version 3.0, ModelBuilder will attempt to match constructor parameters to property values when building a new instance to avoid a new random value overwriting the constructor value.
+
+The following rules define how a match is made between a constructor parameter and a property value:
+
+- No match if property type does not match the constructor parameter type (inheritance supported)
+- No match if property value is the default value for its type
+- Match reference types (except for strings) where the property value matches the same instance as the constructor parameter (using Object.ReferenceEquals)
+- Match value types and strings that have the same value and the constructor parameter name is a case insensitive match to the property name
+
 ## Changing the model after creation
 
 Sometimes you need to tweak a model after it has been created. This can be done easily using the Set extension method on any object.

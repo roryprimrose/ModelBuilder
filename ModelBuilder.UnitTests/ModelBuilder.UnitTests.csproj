@@ -87,6 +87,9 @@
     </Compile>
     <Compile Include="ArrayTypeCreatorTests.cs" />
     <Compile Include="BuildConfigurationExtensionsTests.cs" />
+    <Compile Include="ConstructorParameterMatchingTests.cs">
+      <DependentUpon>ScenarioTests.cs</DependentUpon>
+    </Compile>
     <Compile Include="CountValueGeneratorTests.cs" />
     <Compile Include="BuildExceptionTests.cs" />
     <Compile Include="BuildStrategyCompilerExtensionsTests.cs" />
@@ -248,6 +251,9 @@
     <Compile Include="TypeCreatorBaseTests.cs" />
     <Compile Include="ValueGeneratorBaseTests.cs" />
     <Compile Include="ValueGeneratorMatcherTests.cs" />
+    <Compile Include="WithConstructorParameters.cs">
+      <DependentUpon>Models.cs</DependentUpon>
+    </Compile>
     <Compile Include="WithInterfaceAndAbstractParameters.cs">
       <DependentUpon>Models.cs</DependentUpon>
     </Compile>

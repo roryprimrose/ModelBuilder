@@ -48,7 +48,7 @@
                 generateType = type.GetGenericArguments()[0];
             }
 
-            var context = executeStrategy.BuildChain?.Last?.Value;
+            var context = executeStrategy?.BuildChain?.Last?.Value;
             var min = GetMinimum(generateType, referenceName, context);
             var max = GetMaximum(generateType, referenceName, context);
 

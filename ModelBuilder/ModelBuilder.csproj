@@ -239,6 +239,18 @@
     <None Include="Resources\People.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <BuildDependsOn>
+      $(BuildDependsOn);
+      SetPackVersion;
+    </BuildDependsOn>
+  </PropertyGroup>
+  <Target Name="SetPackVersion">
+    <Message Text="Setting package version to $(GitVersion_NuGetVersion)" Importance="high" />
+    <PropertyGroup>
+      <PackageVersion>$(GitVersion_NuGetVersion)</PackageVersion>
+    </PropertyGroup>
+  </Target>
   <Import Project="..\packages\GitVersionTask.3.5.4\build\portable-net+sl+win+wpa+wp\GitVersionTask.targets" Condition="Exists('..\packages\GitVersionTask.3.5.4\build\portable-net+sl+win+wpa+wp\GitVersionTask.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

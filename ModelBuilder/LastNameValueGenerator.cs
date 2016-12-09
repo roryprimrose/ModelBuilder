@@ -19,7 +19,7 @@
         /// <inheritdoc />
         protected override object GenerateValue(Type type, string referenceName, IExecuteStrategy executeStrategy)
         {
-            var context = executeStrategy.BuildChain?.Last?.Value;
+            var context = executeStrategy?.BuildChain?.Last?.Value;
             var gender = GetValue<string>(PropertyExpression.Gender, context);
 
             if (string.Equals(gender, "male", StringComparison.OrdinalIgnoreCase))

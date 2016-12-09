@@ -22,14 +22,17 @@
         {
             Debug.Assert(type != null, "type != null");
 
-            if (args?.Length == 0)
+            if (args == null)
             {
                 return Activator.CreateInstance(type);
             }
 
-            var types = args.Select(x => x.GetType()).ToArray();
+            if (args.Length == 0)
+            {
+                return Activator.CreateInstance(type);
+            }
 
-            var constructor = type.GetConstructor(types);
+            var constructor = executeStrategy?.Configuration?.ConstructorResolver?.Resolve(type, args);
 
             if (constructor == null)
             {

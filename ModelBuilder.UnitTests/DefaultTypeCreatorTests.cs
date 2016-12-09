@@ -10,7 +10,7 @@
     public class DefaultTypeCreatorTests
     {
         [Fact]
-        public void CreateReturnsInstanceCreatedWithDefaultConstructorTest()
+        public void CreateReturnsInstanceCreatedWithDefaultConstructorWhenArgumentsAreNullTest()
         {
             var buildChain = new LinkedList<object>();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -19,7 +19,24 @@
 
             var target = new DefaultTypeCreator();
 
-            var actual = target.Create(typeof(Person), null, executeStrategy);
+            var actual = target.Create(typeof(Person), null, executeStrategy, null);
+
+            actual.Should().NotBeNull();
+        }
+
+        [Fact]
+        public void CreateReturnsInstanceCreatedWithDefaultConstructorWhenArgumentsAreEmptyTest()
+        {
+            var buildChain = new LinkedList<object>();
+            var args = new object[]{ };
+
+            var strategy = Substitute.For<IExecuteStrategy>();
+
+            strategy.BuildChain.Returns(buildChain);
+
+            var target = new DefaultTypeCreator();
+
+            var actual = target.Create(typeof(Person), null, strategy, args);
 
             actual.Should().NotBeNull();
         }
@@ -28,7 +45,13 @@
         public void CreateReturnsInstanceCreatedWithMatchingParameterConstructorTest()
         {
             var buildChain = new LinkedList<object>();
+            var resolver = new DefaultConstructorResolver();
+
             var executeStrategy = Substitute.For<IExecuteStrategy>();
+            var config = Substitute.For<IBuildConfiguration>();
+
+            executeStrategy.Configuration.Returns(config);
+            config.ConstructorResolver.Returns(resolver);
 
             executeStrategy.BuildChain.Returns(buildChain);
 
