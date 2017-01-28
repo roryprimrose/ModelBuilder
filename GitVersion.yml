@@ -1,0 +1,6 @@
+mode: ContinuousDeployment
+branches:
+  hotfix(es)?[/-]:
+    tag: useBranchName
+ignore:
+  sha: []
