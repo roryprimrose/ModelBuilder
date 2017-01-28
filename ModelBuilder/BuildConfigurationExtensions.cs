@@ -36,6 +36,11 @@
                 compiler.IgnoreRules.Add(ignoreRule);
             }
 
+            foreach (var creationRule in configuration.CreationRules)
+            {
+                compiler.CreationRules.Add(creationRule);
+            }
+
             foreach (var typeCreator in configuration.TypeCreators)
             {
                 compiler.TypeCreators.Add(typeCreator);
