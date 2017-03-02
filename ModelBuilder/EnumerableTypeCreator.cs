@@ -4,7 +4,11 @@
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
+    using System.Reflection;
+
+#if NET40
     using System.Net.NetworkInformation;
+#endif
 
     /// <summary>
     ///     The <see cref="EnumerableTypeCreator" />
@@ -15,11 +19,13 @@
         private static readonly List<Type> _unsupportedTypes = new List<Type>
         {
             typeof(ArraySegment<>),
+#if NET40
             typeof(GatewayIPAddressInformationCollection),
             typeof(IPAddressCollection),
             typeof(IPAddressInformationCollection),
             typeof(MulticastIPAddressInformationCollection),
             typeof(UnicastIPAddressInformationCollection),
+#endif
             typeof(Dictionary<,>.KeyCollection),
             typeof(Dictionary<,>.ValueCollection),
             typeof(SortedDictionary<,>.KeyCollection),
@@ -35,8 +41,8 @@
                 throw new ArgumentNullException(nameof(type));
             }
 
-            if (type.IsClass &&
-                type.IsAbstract)
+            if (type.TypeIsClass() &&
+                type.TypeIsAbstract())
             {
                 // This is an abstract class so we can't create it
                 return false;
@@ -55,7 +61,7 @@
                 return false;
             }
 
-            if (type.IsInterface)
+            if (type.TypeIsInterface())
             {
                 var listGenericType = typeof(List<string>).GetGenericTypeDefinition();
                 var listType = listGenericType.MakeGenericType(internalType);
@@ -147,7 +153,7 @@
         {
             Debug.Assert(type != null, "type != null");
 
-            if (type.IsInterface)
+            if (type.TypeIsInterface())
             {
                 var internalType = FindEnumerableTypeArgument(type);
                 var genericTypeDefinition = typeof(List<string>).GetGenericTypeDefinition();
@@ -208,10 +214,8 @@
 
             var interfaces = type.GetInterfaces();
 
-            for (var index = 0; index < interfaces.Length; index++)
+            foreach (var internalType in interfaces)
             {
-                var internalType = interfaces[index];
-
                 var genericTypeArgument = GetEnumerableTypeArgument(internalType);
 
                 if (genericTypeArgument != null)
@@ -225,7 +229,7 @@
 
         private static Type GetEnumerableTypeArgument(Type type)
         {
-            if (type.IsGenericType == false)
+            if (type.TypeIsGenericType() == false)
             {
                 return null;
             }
@@ -263,8 +267,8 @@
         {
             foreach (var unsupportedType in _unsupportedTypes)
             {
-                if (unsupportedType.IsGenericTypeDefinition &&
-                    type.IsGenericType)
+                if (unsupportedType.TypeIsGenericTypeDefinition() &&
+                    type.TypeIsGenericType())
                 {
                     var typeDefinition = type.GetGenericTypeDefinition();
 

@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
+    using System.Reflection;
 
     /// <summary>
     ///     The <see cref="ArrayTypeCreator" />
@@ -28,7 +29,7 @@
                 throw new ArgumentNullException(nameof(type));
             }
 
-            if (type.BaseType == typeof(Array))
+            if (type.TypeIsArray())
             {
                 return true;
             }

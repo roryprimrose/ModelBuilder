@@ -1,12 +1,13 @@
-﻿using System;
-using System.Globalization;
-using ModelBuilder.Properties;
-
-namespace ModelBuilder
+﻿namespace ModelBuilder
 {
+    using System;
+    using System.Globalization;
+    using System.Reflection;
+    using ModelBuilder.Properties;
+
     /// <summary>
-    /// The <see cref="RandomGenerator"/>
-    /// class is used to build random numeric values and byte arrays.
+    ///     The <see cref="RandomGenerator" />
+    ///     class is used to build random numeric values and byte arrays.
     /// </summary>
     public class RandomGenerator : IRandomGenerator
     {
@@ -145,7 +146,7 @@ namespace ModelBuilder
         }
 
         /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">The <paramref name="type"/> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is null.</exception>
         public virtual bool IsSupported(Type type)
         {
             if (type == null)
@@ -218,10 +219,10 @@ namespace ModelBuilder
 
             return false;
         }
-        
+
         /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">The <paramref name="min"/> parameter is null.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="max"/> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="min" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="max" /> parameter is null.</exception>
         public object NextValue(Type type, object min, object max)
         {
             ValidateRequestedType(type);
@@ -266,7 +267,7 @@ namespace ModelBuilder
         }
 
         /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">The <paramref name="buffer"/> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="buffer" /> parameter is null.</exception>
         public void NextValue(byte[] buffer)
         {
             if (buffer == null)
@@ -308,7 +309,7 @@ namespace ModelBuilder
                 }
             }
 
-            var pointInRange = variance*range;
+            var pointInRange = variance * range;
 
             double value;
 
@@ -323,7 +324,7 @@ namespace ModelBuilder
 
             var shiftedPoint = value + min;
 
-            return (T) Convert.ChangeType(shiftedPoint, typeof(T), CultureInfo.InvariantCulture);
+            return (T)Convert.ChangeType(shiftedPoint, typeof(T), CultureInfo.InvariantCulture);
         }
 
         private bool RequiresRounding(Type type)
@@ -352,8 +353,11 @@ namespace ModelBuilder
 
             if (IsSupported(type) == false)
             {
-                var message = string.Format(CultureInfo.CurrentCulture, Resources.Error_TypeNotSupportedFormat,
-                    GetType().FullName, type.FullName);
+                var message = string.Format(
+                    CultureInfo.CurrentCulture,
+                    Resources.Error_TypeNotSupportedFormat,
+                    GetType().FullName,
+                    type.FullName);
 
                 throw new NotSupportedException(message);
             }

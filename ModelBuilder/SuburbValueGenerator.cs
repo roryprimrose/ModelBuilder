@@ -14,7 +14,7 @@
         ///     Initializes a new instance of the <see cref="SuburbValueGenerator" /> class.
         /// </summary>
         public SuburbValueGenerator()
-            : base(new Regex("Suburb", RegexOptions.Compiled | RegexOptions.IgnoreCase), typeof(string))
+            : base(new Regex("Suburb", RegexOptions.IgnoreCase), typeof(string))
         {
         }
 

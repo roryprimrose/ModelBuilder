@@ -127,23 +127,7 @@
 
             first.Should().NotBe(second);
         }
-
-        [Fact]
-        public void GenerateReturnsRandomTimeZoneInfoValueTest()
-        {
-            var buildChain = new LinkedList<object>();
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            executeStrategy.BuildChain.Returns(buildChain);
-
-            var target = new DateTimeValueGenerator();
-
-            var first = (TimeZoneInfo)target.Generate(typeof(TimeZoneInfo), null, executeStrategy);
-            var second = (TimeZoneInfo)target.Generate(typeof(TimeZoneInfo), null, executeStrategy);
-
-            first.Should().NotBe(second);
-        }
-
+        
         [Theory]
         [InlineData(typeof(Stream))]
         [InlineData(typeof(string))]
@@ -164,9 +148,9 @@
         [Theory]
         [InlineData(typeof(string), false)]
         [InlineData(typeof(Stream), false)]
+        [InlineData(typeof(TimeZoneInfo), false)]
         [InlineData(typeof(TimeSpan), true)]
         [InlineData(typeof(TimeSpan?), true)]
-        [InlineData(typeof(TimeZoneInfo), true)]
         [InlineData(typeof(DateTimeOffset), true)]
         [InlineData(typeof(DateTimeOffset?), true)]
         [InlineData(typeof(DateTime), true)]

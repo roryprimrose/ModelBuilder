@@ -42,12 +42,13 @@ namespace ModelBuilder
 
             var type = typeof(T);
             var typeProperties =
-                type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy);
+                type.GetProperties();
 
             if (
                 typeProperties.Any(
                     x =>
-                        x.DeclaringType == propInfo.DeclaringType && x.PropertyType == propInfo.PropertyType &&
+                        x.IsInstanceProperty()
+                        && x.DeclaringType == propInfo.DeclaringType && x.PropertyType == propInfo.PropertyType &&
                         x.Name == propInfo.Name) == false)
             {
                 var message = string.Format(CultureInfo.CurrentCulture,
@@ -67,7 +68,7 @@ namespace ModelBuilder
 
             if (unaryExpression != null)
             {
-                property = ((MemberExpression) unaryExpression.Operand).Member as PropertyInfo;
+                property = ((MemberExpression)unaryExpression.Operand).Member as PropertyInfo;
             }
 
             if (property != null)

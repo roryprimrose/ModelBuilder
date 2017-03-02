@@ -195,6 +195,7 @@ Value generators are used to create value types. There are many value generators
 - StateValueGenerator
 - StringValueGenerator
 - SuburbValueGenerator
+- TimeZoneInfoValueGenerator
 - TimeZoneValueGenerator
 - UriValueGenerator
 

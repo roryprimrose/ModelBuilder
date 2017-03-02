@@ -14,7 +14,7 @@
         ///     Initializes a new instance of the <see cref="CompanyValueGenerator" /> class.
         /// </summary>
         public CompanyValueGenerator()
-            : base(new Regex("Company", RegexOptions.Compiled | RegexOptions.IgnoreCase), typeof(string))
+            : base(new Regex("Company", RegexOptions.IgnoreCase), typeof(string))
         {
         }
 

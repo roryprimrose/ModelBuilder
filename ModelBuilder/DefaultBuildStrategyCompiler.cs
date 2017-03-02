@@ -36,8 +36,8 @@
         {
             get
             {
-                yield return new ExecuteOrderRule((type, name) => type.IsEnum, 4000);
-                yield return new ExecuteOrderRule((type, name) => type.IsValueType, 3000);
+                yield return new ExecuteOrderRule((type, name) => type.TypeIsEnum(), 4000);
+                yield return new ExecuteOrderRule((type, name) => type.TypeIsValueType(), 3000);
 
                 // Populate personal properties in a specific order for scenarios where a value generator may use the values in order to set other values
                 yield return new ExecuteOrderRule(null, PropertyExpression.Gender, 2600);
@@ -47,7 +47,7 @@
 
                 // Populate strings before other reference types
                 yield return new ExecuteOrderRule(typeof(string), (string) null, 2000);
-                yield return new ExecuteOrderRule((type, name) => type.IsClass, 1000);
+                yield return new ExecuteOrderRule((type, name) => type.TypeIsClass(), 1000);
             }
         }
 
@@ -89,6 +89,7 @@
                 yield return new StringValueGenerator();
                 yield return new SuburbValueGenerator();
                 yield return new TimeZoneValueGenerator();
+                yield return new TimeZoneInfoValueGenerator();
                 yield return new UriValueGenerator();
             }
         }

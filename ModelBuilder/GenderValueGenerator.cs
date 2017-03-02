@@ -13,7 +13,7 @@ namespace ModelBuilder
         ///     Initializes a new instance of the <see cref="GenderValueGenerator" /> class.
         /// </summary>
         public GenderValueGenerator()
-            : base(new Regex("Gender|Sex", RegexOptions.Compiled | RegexOptions.IgnoreCase), typeof(string))
+            : base(new Regex("Gender|Sex", RegexOptions.IgnoreCase), typeof(string))
         {
         }
 

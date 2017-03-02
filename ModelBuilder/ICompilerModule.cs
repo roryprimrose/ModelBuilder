@@ -1,4 +1,5 @@
-﻿namespace ModelBuilder
+﻿#if !NETSTANDARD1_2
+namespace ModelBuilder
 {
     /// <summary>
     ///     The <see cref="ICompilerModule" />
@@ -14,3 +15,4 @@
         void Configure(IBuildStrategyCompiler compiler);
     }
 }
+#endif

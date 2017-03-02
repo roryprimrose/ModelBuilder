@@ -10,8 +10,8 @@
 
 namespace ModelBuilder.Properties {
     using System;
-    
-    
+    using System.Reflection;
+
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
     /// </summary>
@@ -39,7 +39,13 @@ namespace ModelBuilder.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ModelBuilder.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ModelBuilder.Properties.Resources",
+#if NET40
+                        typeof(Resources).Assembly
+#else                        
+                        typeof(Resources).GetTypeInfo().Assembly
+#endif
+                        );
                     resourceMan = temp;
                 }
                 return resourceMan;

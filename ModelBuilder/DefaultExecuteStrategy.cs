@@ -1,7 +1,6 @@
 ﻿namespace ModelBuilder
 {
     using System;
-    using System.Collections;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Diagnostics;
@@ -17,7 +16,7 @@
     /// </summary>
     public class DefaultExecuteStrategy : IExecuteStrategy
     {
-        private readonly Stack _buildChain = new Stack();
+        private readonly Stack<object> _buildChain = new Stack<object>();
 
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is null.</exception>
@@ -251,14 +250,13 @@
 
             try
             {
-                // We will only set public instance properties that have a setter (the setter must also be public)
-                var flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.SetProperty;
+                // We will only set public instance properties
                 var type = instance.GetType();
 
-                var propertyInfos = from x in type.GetProperties(flags)
-                    where x.CanWrite
-                    orderby GetMaximumOrderPrority(x.PropertyType, x.Name) descending
-                    select x;
+                var propertyInfos = from x in type.GetProperties()
+                                    where x.IsInstanceProperty()
+                                    orderby GetMaximumOrderPrority(x.PropertyType, x.Name) descending
+                                    select x;
 
                 foreach (var propertyInfo in propertyInfos)
                 {
@@ -288,6 +286,17 @@
             if (instance == null)
             {
                 throw new ArgumentNullException(nameof(instance));
+            }
+
+            var getMethod = propertyInfo.GetGetMethod();
+            var setMethod = propertyInfo.GetSetMethod();
+
+            // There must be either a public set or public get
+            if (getMethod == null
+                && setMethod == null)
+            {
+                // We can't get or set the property to we can't populate it
+                return false;
             }
 
             var type = instance.GetType();
@@ -329,6 +338,17 @@
                 return true;
             }
 
+            if (getMethod == null)
+            {
+                // The remainder of these checks attempt to see if the current property value is:
+                // - the default value of the property type
+                // - a reference value already provided as a constructor parameter
+                // - a value already provided as a value type constructor parameter
+                // We can't get the value from a public getter so we can't evaluate the value against these scenarios
+                // We will assign a value against the setter
+                return true;
+            }
+
             var propertyValue = propertyInfo.GetValue(instance, null);
             var defaultValue = GetDefaultValue(propertyInfo.PropertyType);
 
@@ -342,14 +362,14 @@
             }
 
             // Check for instance types (ignoring strings)
-            if ((propertyInfo.PropertyType.IsValueType == false) &&
+            if ((propertyInfo.PropertyType.TypeIsValueType() == false) &&
                 (propertyInfo.PropertyType != typeof(string)))
             {
                 // This is an interface or class type
                 // Look for a matching instance
                 if (matchingParameters.Any(x => ReferenceEquals(x, propertyValue)))
                 {
-                    // This is a direct between the property value and a constructor parameter
+                    // This is a direct reference between the property value and a constructor parameter
                     return false;
                 }
 
@@ -357,7 +377,7 @@
                 return true;
             }
 
-            // Get the constructor matching the arguments so that we can try to match constructor parameter names against the property name
+            // Get the constructor matching the arguments so that we can try to match value type constructor parameter names against the property name
             var constructor = Configuration.ConstructorResolver.Resolve(type, args);
             var parameters = constructor.GetParameters();
 
@@ -484,7 +504,10 @@
             object[] args,
             ITypeCreator typeCreator)
         {
-            var instance = CreateInstance(typeCreator, type, referenceName, buildChain, args);
+            var output = CreateInstance(typeCreator, type, referenceName, buildChain, args);
+
+            var instance = output.Item1;
+            var constructorParameters = output.Item2;
 
             if (instance == null)
             {
@@ -498,7 +521,7 @@
                 if (typeCreator.AutoPopulate)
                 {
                     // The type creator has indicated that this type should be auto populated by the execute strategy
-                    instance = PopulateInstance(instance, args);
+                    instance = PopulateInstance(instance, constructorParameters);
 
                     Debug.Assert(instance != null, "Populating the instance did not return the original instance");
                 }
@@ -528,7 +551,7 @@
             }
         }
 
-        private object CreateInstance(
+        private Tuple<object, object[]> CreateInstance(
             ITypeCreator typeCreator,
             Type type,
             string referenceName,
@@ -541,8 +564,11 @@
             {
                 // We have arguments so will just let the type creator do the work here
                 item = typeCreator.Create(type, referenceName, this, args);
+
+                return new Tuple<object, object[]>(item, args);
             }
-            else if (typeCreator.AutoDetectConstructor)
+
+            if (typeCreator.AutoDetectConstructor)
             {
                 // Use constructor detection to figure out how to create this instance
                 var constructor = Configuration.ConstructorResolver.Resolve(type);
@@ -552,36 +578,38 @@
                 if (parameterInfos.Length == 0)
                 {
                     item = typeCreator.Create(type, referenceName, this);
+
+                    return new Tuple<object, object[]>(item, null);
                 }
-                else
+
+                // Get values for each of the constructor parameters
+                var parameters = new Collection<object>();
+
+                foreach (var parameterInfo in parameterInfos)
                 {
-                    // Get values for each of the constructor parameters
-                    var parameters = new Collection<object>();
+                    var context = buildChain.Last?.Value;
 
-                    foreach (var parameterInfo in parameterInfos)
-                    {
-                        var context = buildChain.Last?.Value;
+                    Log.CreatingParameter(type, parameterInfo.ParameterType, parameterInfo.Name, context);
 
-                        Log.CreatingParameter(type, parameterInfo.ParameterType, parameterInfo.Name, context);
+                    // Recurse to build this parameter value
+                    var parameterValue = Build(parameterInfo.ParameterType, parameterInfo.Name, null);
 
-                        // Recurse to build this parameter value
-                        var parameterValue = Build(parameterInfo.ParameterType, parameterInfo.Name, null);
+                    parameters.Add(parameterValue);
 
-                        parameters.Add(parameterValue);
-
-                        Log.CreatedParameter(type, parameterInfo.ParameterType, parameterInfo.Name, context);
-                    }
-
-                    item = typeCreator.Create(type, referenceName, this, parameters.ToArray());
+                    Log.CreatedParameter(type, parameterInfo.ParameterType, parameterInfo.Name, context);
                 }
-            }
-            else
-            {
-                // The type creator is going to be solely responsible for creating this instance
-                item = typeCreator.Create(type, referenceName, this);
+
+                var constructorParameters = parameters.ToArray();
+
+                item = typeCreator.Create(type, referenceName, this, constructorParameters);
+
+                return new Tuple<object, object[]>(item, constructorParameters);
             }
 
-            return item;
+            // The type creator is going to be solely responsible for creating this instance
+            item = typeCreator.Create(type, referenceName, this);
+
+            return new Tuple<object, object[]>(item, null);
         }
 
         private void EnsureInitialized()
@@ -592,7 +620,7 @@
                     CultureInfo.CurrentCulture,
                     "The {0} has not be initialized. You must invoke {1} first to provide the build configuration and the build log.",
                     GetType().FullName,
-                    MethodBase.GetCurrentMethod().Name);
+                    nameof(EnsureInitialized));
 
                 throw new InvalidOperationException(message);
             }
@@ -606,9 +634,9 @@
             }
 
             var matchingRules = from x in Configuration.ExecuteOrderRules
-                where x.IsMatch(type, propertyName)
-                orderby x.Priority descending
-                select x;
+                                where x.IsMatch(type, propertyName)
+                                orderby x.Priority descending
+                                select x;
             var matchingRule = matchingRules.FirstOrDefault();
 
             if (matchingRule == null)
@@ -621,7 +649,9 @@
 
         private void PopulateProperty(object instance, PropertyInfo propertyInfo)
         {
-            if (propertyInfo.GetSetMethod(true).IsPublic)
+            var setMethod = propertyInfo.GetSetMethod(false);
+
+            if (setMethod != null)
             {
                 Log.CreatingProperty(propertyInfo.PropertyType, propertyInfo.Name, instance);
 
@@ -635,6 +665,20 @@
             }
 
             // The property is read-only
+            // Check if it is a value type (they cannot be populated)
+            if (propertyInfo.PropertyType.TypeIsValueType())
+            {
+                // This is a value type (or string) for which we cannot populate
+                return;
+            }
+
+            if (propertyInfo.PropertyType == typeof(string))
+            {
+                // This is a string which is treated like a value type
+                // We will not populate the properties of the string instance
+                return;
+            }
+
             // We need to try to populate the property using a type creator that can populate it
             // To determine the correct type creator, we will use the type of the property instance value
             // rather than the property type because it may be more accurate

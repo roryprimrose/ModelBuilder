@@ -14,7 +14,7 @@
         ///     Initializes a new instance of the <see cref="CountryValueGenerator" /> class.
         /// </summary>
         public CountryValueGenerator()
-            : base(new Regex("Country", RegexOptions.Compiled | RegexOptions.IgnoreCase), typeof(string))
+            : base(new Regex("Country", RegexOptions.IgnoreCase), typeof(string))
         {
         }
 

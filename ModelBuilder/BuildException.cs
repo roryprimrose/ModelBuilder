@@ -1,5 +1,7 @@
 ﻿using System;
+#if NET40
 using System.Runtime.Serialization;
+#endif
 
 namespace ModelBuilder
 {
@@ -7,7 +9,9 @@ namespace ModelBuilder
     /// The <see cref="BuildException"/>
     /// class is used to describe a failure to build an instance of a type. 
     /// </summary>
+#if NET40
     [Serializable]
+#endif
     public class BuildException : Exception
     {
         /// <summary>
@@ -65,6 +69,7 @@ namespace ModelBuilder
             BuildLog = buildLog;
         }
 
+#if NET40
         /// <summary>
         /// Initializes a new instance of the <see cref="BuildException"/> class.
         /// </summary>
@@ -103,6 +108,7 @@ namespace ModelBuilder
 
             base.GetObjectData(info, context);
         }
+#endif
 
         /// <summary>
         /// Gets or sets the build log.

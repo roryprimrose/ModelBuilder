@@ -615,6 +615,7 @@
             return compiler;
         }
 
+#if !NETSTANDARD1_3
         /// <summary>
         ///     Scans available assemblies for <see cref="ICompilerModule" /> types that can configure the specified compiler.
         /// </summary>
@@ -630,8 +631,8 @@
             var types = GetAvailableAssemblies().SelectMany(x => x.GetLoadableTypes());
             var modules = from x in types
                 where typeof(ICompilerModule).IsAssignableFrom(x)
-                      && (x.IsAbstract == false)
-                      && (x.IsInterface == false)
+                      && (x.TypeIsAbstract() == false)
+                      && (x.TypeIsInterface() == false)
                 select (ICompilerModule) Activator.CreateInstance(x);
 
             foreach (var module in modules)
@@ -639,6 +640,33 @@
                 module.Configure(compiler);
             }
         }
+        private static Assembly[] GetAvailableAssemblies()
+        {
+            // NOTE: This is written this way so that a future version can use compiler
+            // constants to provide a different implementation for netstandard
+            var appDomain = AppDomain.CurrentDomain;
+
+            appDomain.ReflectionOnlyAssemblyResolve += (sender, args) => Assembly.ReflectionOnlyLoad(args.Name);
+
+            return appDomain.GetAssemblies();
+        }
+
+        private static IEnumerable<Type> GetLoadableTypes(this Assembly assembly)
+        {
+            IEnumerable<Type> types;
+
+            try
+            {
+                types = assembly.GetTypes();
+            }
+            catch (ReflectionTypeLoadException ex)
+            {
+                types = ex.Types.Where(x => x != null);
+            }
+
+            return types;
+        }
+#endif
 
         /// <summary>
         ///     Sets the constructor resolver on the compiler.
@@ -690,33 +718,6 @@
             compiler.ConstructorResolver = resolver;
 
             return compiler;
-        }
-
-        private static Assembly[] GetAvailableAssemblies()
-        {
-            // NOTE: This is written this way so that a future version can use compiler
-            // constants to provide a different implementation for netstandard
-            var appDomain = AppDomain.CurrentDomain;
-
-            appDomain.ReflectionOnlyAssemblyResolve += (sender, args) => Assembly.ReflectionOnlyLoad(args.Name);
-
-            return appDomain.GetAssemblies();
-        }
-
-        private static IEnumerable<Type> GetLoadableTypes(this Assembly assembly)
-        {
-            IEnumerable<Type> types;
-
-            try
-            {
-                types = assembly.GetTypes();
-            }
-            catch (ReflectionTypeLoadException ex)
-            {
-                types = ex.Types.Where(x => x != null);
-            }
-
-            return types;
         }
     }
 }
