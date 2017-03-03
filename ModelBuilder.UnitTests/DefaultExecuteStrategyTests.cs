@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using System.Reflection;
     using FluentAssertions;
     using NSubstitute;
     using NSubstitute.ExceptionExtensions;
@@ -34,6 +35,37 @@
             target.Create(typeof(Company));
 
             target.BuildChain.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void CreateDoesNotPopulateReadOnlyValueTypePropertiesTest()
+        {
+            var configuration = Model.BuildStrategy;
+            var buildLog = configuration.GetBuildLog();
+
+            var target = new DefaultExecuteStrategy<ReadOnlyParent>();
+
+            target.Initialize(configuration, buildLog);
+
+            var actual = target.Create();
+
+            actual.PrivateValue.Should().Be(0);
+        }
+
+        [Fact]
+        public void CreateDoesNotPopulateStaticPropertiesTest()
+        {
+            var configuration = Model.BuildStrategy;
+            var buildLog = configuration.GetBuildLog();
+
+            var target = new DefaultExecuteStrategy<WithStatic>();
+
+            target.Initialize(configuration, buildLog);
+
+            var actual = target.Create();
+
+            actual.First.Should().NotBeNullOrWhiteSpace();
+            WithStatic.Second.Should().BeNullOrWhiteSpace();
         }
 
         [Fact]
@@ -72,6 +104,25 @@
         }
 
         [Fact]
+        public void CreateEvaluatesPostBuildActionsOfNestedInstancesExposedAsReadOnlyPropertiesTest()
+        {
+            var postBuildAction = Substitute.For<IPostBuildAction>();
+            var buildStrategy = new DefaultBuildStrategyCompiler().Add(postBuildAction).Compile();
+
+            postBuildAction.IsSupported(typeof(Company), nameof(ReadOnlyParent.Company), Arg.Any<LinkedList<object>>())
+                .Returns(true);
+
+            var target = new DefaultExecuteStrategy();
+
+            target.Initialize(buildStrategy, buildStrategy.GetBuildLog());
+
+            target.Create(typeof(ReadOnlyParent));
+
+            postBuildAction.Received()
+                .Execute(typeof(Company), nameof(ReadOnlyParent.Company), Arg.Any<LinkedList<object>>());
+        }
+
+        [Fact]
         public void CreateEvaluatesPostBuildActionsThatSupportTheBuildScenarioTest()
         {
             var firstAction = Substitute.For<IPostBuildAction>();
@@ -92,7 +143,23 @@
         }
 
         [Fact]
-        public void CreatePopulatesReadOnlyReferencePropertiesTest()
+        public void CreatePopulatesBaseClassPropertiesTest()
+        {
+            var configuration = Model.BuildStrategy;
+            var buildLog = configuration.GetBuildLog();
+
+            var target = new DefaultExecuteStrategy<SpecificCompany>();
+
+            target.Initialize(configuration, buildLog);
+
+            var actual = target.Create();
+
+            actual.Email.Should().NotBeNullOrWhiteSpace();
+            actual.Address.Should().NotBeNullOrWhiteSpace();
+        }
+
+        [Fact]
+        public void CreatePopulatesReadOnlyReferenceTypePropertiesTest()
         {
             var configuration = Model.BuildStrategy;
             var buildLog = configuration.GetBuildLog();
@@ -104,6 +171,7 @@
             var actual = target.Create();
 
             actual.Company.Address.Should().NotBeNullOrWhiteSpace();
+            actual.ReadOnlyPerson.FirstName.Should().NotBeNullOrWhiteSpace();
             actual.AssignablePeople.Should().NotBeEmpty();
             actual.People.Should().NotBeEmpty();
             actual.RestrictedPeople.Should().BeEmpty();
@@ -116,7 +184,7 @@
             var configuration = Model.BuildStrategy;
             var buildLog = configuration.GetBuildLog();
 
-            var target = new DefaultExecuteStrategy<ReadOnlyParent>();
+            var target = new DefaultExecuteStrategy<Top>();
 
             target.Initialize(configuration, buildLog);
 
@@ -129,6 +197,23 @@
             actual.Next.End.Should().NotBeNull();
             actual.Next.End.Value.Should().NotBeNullOrWhiteSpace();
             actual.Next.End.Root.Should().BeSameAs(actual);
+        }
+
+        [Fact]
+        public void CreatesDirectCircularReferenceWithInstanceFromBuildChainTest()
+        {
+            var configuration = Model.BuildStrategy;
+            var buildLog = configuration.GetBuildLog();
+
+            var target = new DefaultExecuteStrategy<SelfReferrer>();
+
+            target.Initialize(configuration, buildLog);
+
+            var actual = target.Create();
+
+            actual.Should().NotBeNull();
+            actual.Id.Should().NotBeEmpty();
+            actual.Self.Should().BeSameAs(actual);
         }
 
         [Fact]
@@ -1419,6 +1504,25 @@
         }
 
         [Fact]
+        public void PopulateHandlesDirectCircularReferenceWithInstanceFromBuildChainTest()
+        {
+            var configuration = Model.BuildStrategy;
+            var buildLog = configuration.GetBuildLog();
+
+            var actual = new SelfReferrer();
+
+            var target = new DefaultExecuteStrategy<SelfReferrer>();
+
+            target.Initialize(configuration, buildLog);
+
+            actual = target.Populate(actual);
+
+            actual.Should().NotBeNull();
+            actual.Id.Should().NotBeEmpty();
+            actual.Self.Should().BeSameAs(actual);
+        }
+
+        [Fact]
         public void PopulateInstanceThrowsExceptionWhenNotInitializedTest()
         {
             var value = new Person();
@@ -1778,6 +1882,41 @@
             action.ShouldThrow<ArgumentNullException>();
         }
 
+        [Fact]
+        public void ShouldPopulatePropertyThrowsExceptionWhenNotInitializedTest()
+        {
+            var value = new Person();
+            var property = typeof(Person).GetProperty(nameof(Person.FirstName));
+
+            var target = new ShouldPopulatePropertyWrapper();
+
+            Action action = () => target.RunTest(value, property);
+
+            action.ShouldThrow<InvalidOperationException>();
+        }
+
+        [Fact]
+        public void ShouldPopulatePropertyThrowsExceptionWithNullInstanceTest()
+        {
+            var target = new ShouldPopulatePropertyWrapper();
+
+            var property = typeof(Person).GetProperty("FirstName");
+
+            Action action = () => target.RunTest(null, property);
+
+            action.ShouldThrow<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void ShouldPopulatePropertyThrowsExceptionWithNullPropertyInfoTest()
+        {
+            var target = new ShouldPopulatePropertyWrapper();
+
+            Action action = () => target.RunTest(target);
+
+            action.ShouldThrow<ArgumentNullException>();
+        }
+
         private class Bottom
         {
             public Top Root { get; set; }
@@ -1804,6 +1943,14 @@
             public void RunTest(object instance = null)
             {
                 PopulateInstance(instance, null);
+            }
+        }
+
+        private class ShouldPopulatePropertyWrapper : DefaultExecuteStrategy
+        {
+            public void RunTest(object instance = null, PropertyInfo propertyInfo = null)
+            {
+                ShouldPopulateProperty(instance, propertyInfo, null);
             }
         }
 

@@ -11,6 +11,8 @@
             RestrictedPeople = EmptySet();
             AssignablePeople = new List<Person>();
             People = new Collection<Person>();
+            ReadOnlyPerson = new Person();
+            PrivateValue = 0;
         }
 
         private IEnumerable<Person> EmptySet()
@@ -23,6 +25,9 @@
         public Company Company { get; private set; }
 
         public ICollection<Person> People { get; private set; }
+        public int PrivateValue { get; }
+
+        public Person ReadOnlyPerson { get; }
 
         public IEnumerable<Person> RestrictedPeople { get; private set; }
 
