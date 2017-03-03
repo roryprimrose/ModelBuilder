@@ -232,7 +232,7 @@
         }
 
         /// <summary>
-        ///     Populates the settable properties on the specified instance.
+        ///     Populates the properties on the specified instance.
         /// </summary>
         /// <param name="instance">The instance to populate.</param>
         /// <param name="args">The constructor parameters for the instance.</param>
@@ -247,33 +247,22 @@
 
             EnsureInitialized();
 
-            Log.PopulatingInstance(instance);
+            var type = instance.GetType();
 
-            try
+            var propertyInfos = from x in type.GetProperties()
+                where x.CanPopulate()
+                orderby GetMaximumOrderPrority(x.PropertyType, x.Name) descending
+                select x;
+
+            foreach (var propertyInfo in propertyInfos)
             {
-                // We will only set public instance properties that have a setter (the setter must also be public)
-                var flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.SetProperty;
-                var type = instance.GetType();
-
-                var propertyInfos = from x in type.GetProperties(flags)
-                    where x.CanWrite
-                    orderby GetMaximumOrderPrority(x.PropertyType, x.Name) descending
-                    select x;
-
-                foreach (var propertyInfo in propertyInfos)
+                if (ShouldPopulateProperty(instance, propertyInfo, args))
                 {
-                    if (ShouldPopulateProperty(instance, propertyInfo, args))
-                    {
-                        PopulateProperty(instance, propertyInfo);
-                    }
+                    PopulateProperty(instance, propertyInfo);
                 }
+            }
 
-                return instance;
-            }
-            finally
-            {
-                Log.PopulatedInstance(instance);
-            }
+            return instance;
         }
 
         /// <summary>
@@ -290,12 +279,19 @@
                 throw new ArgumentNullException(nameof(instance));
             }
 
+            if (propertyInfo == null)
+            {
+                throw new ArgumentNullException(nameof(propertyInfo));
+            }
+
+            EnsureInitialized();
+
             var type = instance.GetType();
 
             // Check if there is a matching ignore rule
             var ignoreRule =
                 Configuration.IgnoreRules?.FirstOrDefault(
-                    x => x.TargetType.IsAssignableFrom(type) && (x.PropertyName == propertyInfo.Name));
+                    x => x.TargetType.IsAssignableFrom(type) && x.PropertyName == propertyInfo.Name);
 
             if (ignoreRule != null)
             {
@@ -320,7 +316,7 @@
             }
 
             var matchingParameters =
-                args.Where(x => (x != null) && propertyInfo.PropertyType.IsInstanceOfType(x)).ToList();
+                args.Where(x => x != null && propertyInfo.PropertyType.IsInstanceOfType(x)).ToList();
 
             if (matchingParameters.Count == 0)
             {
@@ -342,8 +338,8 @@
             }
 
             // Check for instance types (ignoring strings)
-            if ((propertyInfo.PropertyType.IsValueType == false) &&
-                (propertyInfo.PropertyType != typeof(string)))
+            if (propertyInfo.PropertyType.IsValueType == false &&
+                propertyInfo.PropertyType != typeof(string))
             {
                 // This is an interface or class type
                 // Look for a matching instance
@@ -413,7 +409,8 @@
             return false;
         }
 
-        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "Any failure to create the value will default to null for value comparisons.")]
+        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes",
+            Justification = "Any failure to create the value will default to null for value comparisons.")]
         private static object GetDefaultValue(Type type)
         {
             try
@@ -491,36 +488,11 @@
                 return null;
             }
 
+            _buildChain.Push(instance);
+
             try
             {
-                _buildChain.Push(instance);
-
-                if (typeCreator.AutoPopulate)
-                {
-                    // The type creator has indicated that this type should be auto populated by the execute strategy
-                    instance = PopulateInstance(instance, args);
-
-                    Debug.Assert(instance != null, "Populating the instance did not return the original instance");
-                }
-
-                // Allow the type creator to do its own population of the instance
-                instance = typeCreator.Populate(instance, this);
-
-                var postBuildActions =
-                    Configuration.PostBuildActions?.Where(x => x.IsSupported(type, referenceName, BuildChain))
-                        .OrderByDescending(x => x.Priority);
-
-                if (postBuildActions != null)
-                {
-                    foreach (var postBuildAction in postBuildActions)
-                    {
-                        Log.PostBuildAction(type, postBuildAction.GetType(), instance);
-
-                        postBuildAction.Execute(type, referenceName, BuildChain);
-                    }
-                }
-
-                return instance;
+                return PopulateInternal(type, referenceName, args, typeCreator, instance);
             }
             finally
             {
@@ -619,10 +591,55 @@
             return matchingRule.Priority;
         }
 
+        private object PopulateInternal(
+            Type type,
+            string referenceName,
+            object[] args,
+            ITypeCreator typeCreator,
+            object instance)
+        {
+            Log.PopulatingInstance(instance);
+
+            try
+            {
+                if (typeCreator.AutoPopulate)
+                {
+                    // The type creator has indicated that this type should be auto populated by the execute strategy
+                    instance = PopulateInstance(instance, args);
+
+                    Debug.Assert(instance != null, "Populating the instance did not return the original instance");
+                }
+
+                // Allow the type creator to do its own population of the instance
+                instance = typeCreator.Populate(instance, this);
+
+                var postBuildActions =
+                    Configuration.PostBuildActions?.Where(x => x.IsSupported(type, referenceName, BuildChain))
+                        .OrderByDescending(x => x.Priority);
+
+                if (postBuildActions != null)
+                {
+                    foreach (var postBuildAction in postBuildActions)
+                    {
+                        Log.PostBuildAction(type, postBuildAction.GetType(), instance);
+
+                        postBuildAction.Execute(type, referenceName, BuildChain);
+                    }
+                }
+
+                return instance;
+            }
+            finally
+            {
+                Log.PopulatedInstance(instance);
+            }
+        }
+
         private void PopulateProperty(object instance, PropertyInfo propertyInfo)
         {
-            if (propertyInfo.GetSetMethod(true).IsPublic)
+            if (propertyInfo.GetSetMethod() != null)
             {
+                // We can assign to this property
                 Log.CreatingProperty(propertyInfo.PropertyType, propertyInfo.Name, instance);
 
                 var parameterValue = Build(propertyInfo.PropertyType, propertyInfo.Name, instance);
@@ -635,9 +652,7 @@
             }
 
             // The property is read-only
-            // We need to try to populate the property using a type creator that can populate it
-            // To determine the correct type creator, we will use the type of the property instance value
-            // rather than the property type because it may be more accurate
+            // Because of prior filtering, we should have a property that is a reference type that we can populate
             var value = propertyInfo.GetValue(instance, null);
 
             if (value == null)
@@ -646,6 +661,9 @@
                 return;
             }
 
+            // We need to try to populate the property using a type creator that can populate it
+            // To determine the correct type creator, we will use the type of the property instance value
+            // rather than the property type because it may be more accurate due to inheritance chains
             var propertyType = value.GetType();
 
             // Attempt to find a type creator for this type that will help us figure out how it should be populated
@@ -664,14 +682,7 @@
             // We might still be able to populate this instance if it has a value
             var originalValue = propertyInfo.GetValue(instance, null);
 
-            if (typeCreator.AutoPopulate)
-            {
-                // The type creator has indicated that this type should be auto populated by the execute strategy
-                PopulateInstance(originalValue, null);
-            }
-
-            // Allow the type creator to do its own population of the instance
-            typeCreator.Populate(originalValue, this);
+            PopulateInternal(propertyType, propertyInfo.Name, null, typeCreator, originalValue);
         }
 
         /// <inheritdoc />
