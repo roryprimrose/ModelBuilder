@@ -99,6 +99,7 @@
     <Compile Include="DefaultBuildLogTests.cs" />
     <Compile Include="DefaultBuildStrategyCompilerTests.cs" />
     <Compile Include="DefaultExecuteStrategyTests.cs" />
+    <Compile Include="DefaultPropertyResolverTests.cs" />
     <Compile Include="DummyCreationRule.cs">
       <DependentUpon>DummyTypes.cs</DependentUpon>
     </Compile>

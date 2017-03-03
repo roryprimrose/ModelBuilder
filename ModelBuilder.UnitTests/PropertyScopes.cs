@@ -6,11 +6,11 @@ namespace ModelBuilder.UnitTests
     {
         public PropertyScopes()
         {
-            InternalSet = Guid.Empty;
+            PrivateSet = Guid.Empty;
             GlobalValue = Guid.Empty;
         }
 
-        public Guid InternalSet { get; private set; }
+        public Guid PrivateSet { get; private set; }
 
         public Guid Public { get; set; }
 

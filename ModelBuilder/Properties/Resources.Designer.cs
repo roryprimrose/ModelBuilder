@@ -88,6 +88,15 @@ namespace ModelBuilder.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The PropertyResolver is null. A property resolver must be provided in order to create a build strategy.
+        /// </summary>
+        internal static string BuildStrategyCompiler_NullPropertyResolver {
+            get {
+                return ResourceManager.GetString("BuildStrategyCompiler_NullPropertyResolver", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No public constructor is available for type {0}.
         /// </summary>
         internal static string ConstructorResolver_NoPublicConstructorFound {
@@ -178,7 +187,7 @@ namespace ModelBuilder.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Ignoring property {0} ({1}) on type {2} using {3}.
+        ///   Looks up a localized string similar to Ignoring property {0} ({1}) on type {2}.
         /// </summary>
         internal static string DefaultBuildLog_IgnoringProperty {
             get {
