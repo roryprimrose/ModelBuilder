@@ -32,8 +32,14 @@
                 throw new InvalidOperationException(Resources.BuildStrategyCompiler_NullConstructorResolver);
             }
 
+            if (PropertyResolver == null)
+            {
+                throw new InvalidOperationException(Resources.BuildStrategyCompiler_NullPropertyResolver);
+            }
+
             return new BuildStrategy(
                 ConstructorResolver,
+                PropertyResolver,
                 CreationRules,
                 TypeCreators,
                 ValueGenerators,
@@ -44,6 +50,9 @@
         
         /// <inheritdoc />
         public IConstructorResolver ConstructorResolver { get; set; }
+
+        /// <inheritdoc />
+        public IPropertyResolver PropertyResolver { get; set; }
 
         /// <inheritdoc />
         public ICollection<CreationRule> CreationRules { get; }

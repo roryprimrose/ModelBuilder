@@ -147,6 +147,21 @@
         }
 
         [Fact]
+        public void CreateBuildsLogOfIgnoreRuleTest()
+        {
+            var builder = Model.BuildStrategy.Clone().AddIgnoreRule<Company>(x => x.Address).Compile();
+            var strategy = builder.GetExecuteStrategy<Company>();
+
+            strategy.Create();
+
+            var actual = strategy.Log.Output;
+
+            actual.Should().Contain("Ignoring");
+
+            _output.WriteLine(actual);
+        }
+
+        [Fact]
         public void CreateBuildsLogOfPostActionsTest()
         {
             var strategy = Model.For<Company>();
@@ -161,18 +176,42 @@
         }
 
         [Fact]
-        public void CreateBuildsLogOfIgnoreRuleTest()
+        public void CreateDoesNotPopulateReadOnlyValueTypePropertiesTest()
         {
-            var builder = Model.BuildStrategy.Clone().AddIgnoreRule<Company>(x => x.Address).Compile();
-            var strategy = builder.GetExecuteStrategy<Company>();
+            var actual = Model.Create<ReadOnlyParent>();
 
-            strategy.Create();
+            actual.PrivateValue.Should().Be(0);
+        }
 
-            var actual = strategy.Log.Output;
+        [Fact]
+        public void CreateDoesNotPopulateStaticPropertiesTest()
+        {
+            var actual = Model.Create<WithStatic>();
 
-            actual.Should().Contain("Ignoring");
+            actual.First.Should().NotBeNullOrWhiteSpace();
+            WithStatic.Second.Should().BeNullOrWhiteSpace();
+        }
 
-            _output.WriteLine(actual);
+        [Fact]
+        public void CreatePopulatesBaseClassPropertiesTest()
+        {
+            var actual = Model.Create<SpecificCompany>();
+
+            actual.Email.Should().NotBeNullOrWhiteSpace();
+            actual.Address.Should().NotBeNullOrWhiteSpace();
+        }
+
+        [Fact]
+        public void CreatePopulatesReadOnlyReferenceTypePropertiesTest()
+        {
+            var actual = Model.Create<ReadOnlyParent>();
+
+            actual.Company.Address.Should().NotBeNullOrWhiteSpace();
+            actual.ReadOnlyPerson.FirstName.Should().NotBeNullOrWhiteSpace();
+            actual.AssignablePeople.Should().NotBeEmpty();
+            actual.People.Should().NotBeEmpty();
+            actual.RestrictedPeople.Should().BeEmpty();
+            actual.Unassigned.Should().BeNull();
         }
 
         [Fact]
@@ -241,6 +280,40 @@
         }
 
         [Fact]
+        public void CreatesCircularReferenceWithInstanceFromBuildChainTest()
+        {
+            var actual = Model.Create<Top>();
+
+            actual.Should().NotBeNull();
+            actual.Value.Should().NotBeNullOrWhiteSpace();
+            actual.Next.Should().NotBeNull();
+            actual.Next.Value.Should().NotBeNullOrWhiteSpace();
+            actual.Next.End.Should().NotBeNull();
+            actual.Next.End.Value.Should().NotBeNullOrWhiteSpace();
+            actual.Next.End.Root.Should().BeSameAs(actual);
+        }
+
+        [Fact]
+        public void CreatesDirectCircularReferenceWithInstanceFromBuildChainTest()
+        {
+            var actual = Model.Create<SelfReferrer>();
+
+            actual.Should().NotBeNull();
+            actual.Id.Should().NotBeEmpty();
+            actual.Self.Should().BeSameAs(actual);
+        }
+
+        [Fact]
+        public void CreatesPropertyOfSameTypeWithCreatedInstanceTest()
+        {
+            var actual = Model.Create<Looper>();
+
+            actual.Should().NotBeNull();
+            actual.Stuff.Should().NotBeNullOrWhiteSpace();
+            actual.Other.Should().BeSameAs(actual);
+        }
+
+        [Fact]
         public void CreateThrowsExceptionWhenPropertyCannotBeCreatedTest()
         {
             var typeCreator = Substitute.For<ITypeCreator>();
@@ -267,6 +340,27 @@
         }
 
         [Fact]
+        public void CreateWithDoesNotSetPropertiesProvidedByConstructorTest()
+        {
+            var args = new object[]
+            {
+                new Company(),
+                Guid.NewGuid(),
+                123,
+                456,
+                true
+            };
+
+            var actual = Model.CreateWith<WithConstructorParameters>(args);
+
+            actual.First.Should().BeSameAs(args[0]);
+            actual.Id.Should().Be((Guid)args[1]);
+            actual.RefNumber.Should().Be((int?)args[2]);
+            actual.Number.Should().Be((int)args[3]);
+            actual.Value.Should().Be((bool)args[4]);
+        }
+
+        [Fact]
         public void CreateWithReturnsCompanyWithEnumerableTypeCreatorUsageTest()
         {
             var actual = Model.Create<Company>();
@@ -289,6 +383,54 @@
             actual.FirstName.Should().NotBeNullOrWhiteSpace();
             actual.LastName.Should().NotBeNullOrWhiteSpace();
             actual.Priority.Should().NotBe(0);
+        }
+
+        [Fact]
+        public void CreateWithSetsPropertyValuesWhenConstructorParametersHaveDefaultValuesTest()
+        {
+            var buildLog = Substitute.For<IBuildLog>();
+            var configuration = Model.DefaultBuildStrategy;
+
+            var target = new DefaultExecuteStrategy();
+
+            target.Initialize(configuration, buildLog);
+
+            var args = new object[]
+            {
+                null,
+                Guid.Empty,
+                null,
+                0,
+                false
+            };
+
+            var actual = Model.CreateWith<WithConstructorParameters>(args);
+
+            actual.First.Should().NotBeNull();
+            actual.Id.Should().NotBeEmpty();
+            actual.RefNumber.Should().HaveValue();
+            actual.Number.Should().NotBe(0);
+        }
+
+        [Fact]
+        public void CreateWithSetsPropertyValueWhenNoMatchOnConstructorParameterTest()
+        {
+            var buildLog = Substitute.For<IBuildLog>();
+            var configuration = Model.DefaultBuildStrategy;
+
+            var target = new DefaultExecuteStrategy();
+
+            target.Initialize(configuration, buildLog);
+
+            var args = new object[]
+            {
+                Guid.NewGuid().ToString()
+            };
+
+            var actual = Model.CreateWith<WithMixedValueParameters>(args);
+
+            actual.FirstName.Should().NotBe((string)args[0]);
+            actual.LastName.Should().NotBe((string)args[0]);
         }
 
         [Fact]
@@ -367,6 +509,18 @@
         }
 
         [Fact]
+        public void PopulateHandlesDirectCircularReferenceWithInstanceFromBuildChainTest()
+        {
+            var expected = new SelfReferrer();
+
+            var actual = Model.Populate(expected);
+
+            actual.Should().BeSameAs(expected);
+            actual.Id.Should().NotBeEmpty();
+            actual.Self.Should().BeSameAs(actual);
+        }
+
+        [Fact]
         public void PopulateIgnoresEmptyInstanceTest()
         {
             var expected = new Empty();
@@ -374,6 +528,34 @@
             var actual = Model.Populate(expected);
 
             actual.Should().BeSameAs(expected);
+        }
+
+        [Fact]
+        public void PopulateOnlySetsPublicInstancePropertiesOnlyTest()
+        {
+            var expected = new PropertyScopes();
+
+            var actual = Model.Populate(expected);
+
+            actual.Should().BeSameAs(expected);
+            actual.Public.Should().NotBeEmpty();
+            actual.PrivateSet.Should().BeEmpty();
+            actual.ReadOnly.Should().BeEmpty();
+            PropertyScopes.GlobalValue.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void PopulatePopulatesReadOnlyReferencePropertiesTest()
+        {
+            var actual = new ReadOnlyParent();
+
+            actual = Model.Populate(actual);
+
+            actual.Company.Address.Should().NotBeNullOrWhiteSpace();
+            actual.AssignablePeople.Should().NotBeEmpty();
+            actual.People.Should().NotBeEmpty();
+            actual.RestrictedPeople.Should().BeEmpty();
+            actual.Unassigned.Should().BeNull();
         }
 
         [Fact]
@@ -407,6 +589,34 @@
             {
                 _output.WriteLine(tasks[index].Result + Environment.NewLine);
             }
+        }
+
+        private class Bottom
+        {
+            public Top Root { get; set; }
+
+            public string Value { get; set; }
+        }
+
+        private class Child
+        {
+            public Bottom End { get; set; }
+
+            public string Value { get; set; }
+        }
+
+        private class Looper
+        {
+            public Looper Other { get; set; }
+
+            public string Stuff { get; set; }
+        }
+
+        private class Top
+        {
+            public Child Next { get; set; }
+
+            public string Value { get; set; }
         }
     }
 }

@@ -14,6 +14,7 @@
             var actual = target.Clone();
 
             actual.ConstructorResolver.Should().Be(target.ConstructorResolver);
+            actual.PropertyResolver.Should().Be(target.PropertyResolver);
             actual.CreationRules.ShouldBeEquivalentTo(target.CreationRules);
             actual.TypeCreators.ShouldBeEquivalentTo(target.TypeCreators);
             actual.ValueGenerators.ShouldBeEquivalentTo(target.ValueGenerators);
