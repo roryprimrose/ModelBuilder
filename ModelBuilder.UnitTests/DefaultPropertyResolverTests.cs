@@ -118,6 +118,233 @@
         }
 
         [Fact]
+        public void ShouldPopulatePropertyReturnsFalseWhenParametersMatchPropertyReferenceTypeTest()
+        {
+            var configuration = new DefaultBuildStrategyCompiler().Compile();
+            var instance = Model.Create<WithConstructorParameters>();
+            var args = new object[]
+            {
+                instance.First,
+                instance.Id,
+                instance.RefNumber,
+                instance.Number,
+                instance.Value
+            };
+
+            var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.First));
+
+            var sut = new DefaultPropertyResolver();
+
+            var actual = sut.ShouldPopulateProperty(configuration, instance, propertyInfo, args);
+
+            actual.Should().BeFalse();
+        }
+
+        [Fact]
+        public void ShouldPopulatePropertyReturnsFalseWhenParametersMatchPropertyValueTypeTest()
+        {
+            var configuration = new DefaultBuildStrategyCompiler().Compile();
+            var instance = Model.Create<WithConstructorParameters>();
+            var args = new object[]
+            {
+                instance.First,
+                instance.Id,
+                instance.RefNumber,
+                instance.Number,
+                instance.Value
+            };
+
+            var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.Number));
+
+            var sut = new DefaultPropertyResolver();
+
+            var actual = sut.ShouldPopulateProperty(configuration, instance, propertyInfo, args);
+
+            actual.Should().BeFalse();
+        }
+
+        [Fact]
+        public void ShouldPopulatePropertyReturnsTrueWhenNoParameterMatchesArgumentListTest()
+        {
+            var configuration = new DefaultBuildStrategyCompiler().Compile();
+            var instance = Model.Create<WithConstructorParameters>();
+            var args = new object[]
+            {
+                new Company(),
+                instance.Id,
+                instance.RefNumber,
+                instance.Number,
+                instance.Value
+            };
+
+            var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.First));
+
+            var sut = new DefaultPropertyResolver();
+
+            var actual = sut.ShouldPopulateProperty(configuration, instance, propertyInfo, args);
+
+            actual.Should().BeTrue();
+        }
+
+        [Fact]
+        public void ShouldPopulatePropertyReturnsTrueWhenNoParametersMatchPropertyValueTypeTest()
+        {
+            var configuration = new DefaultBuildStrategyCompiler().Compile();
+            var instance = Model.Create<WithConstructorParameters>();
+            var args = new object[]
+            {
+                instance.First,
+                Guid.NewGuid(),
+                null,
+                int.MinValue,
+                false
+            };
+
+            var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.Number));
+
+            var sut = new DefaultPropertyResolver();
+
+            var actual = sut.ShouldPopulateProperty(configuration, instance, propertyInfo, args);
+
+            actual.Should().BeTrue();
+        }
+
+        [Fact]
+        public void ShouldPopulatePropertyReturnsTrueWhenNoParameterTypesMatchPropertyTypeTest()
+        {
+            var configuration = new DefaultBuildStrategyCompiler().Compile();
+            var instance = Model.Create<WithConstructorParameters>();
+            var args = new object[]
+            {
+                new Person(),
+                instance.Id,
+                instance.RefNumber,
+                instance.Number,
+                instance.Value
+            };
+
+            var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.First));
+
+            var sut = new DefaultPropertyResolver();
+
+            var actual = sut.ShouldPopulateProperty(configuration, instance, propertyInfo, args);
+
+            actual.Should().BeTrue();
+        }
+
+        [Fact]
+        public void ShouldPopulatePropertyReturnsTrueWhenParametersDoNotMatchPropertyReferenceTypeTest()
+        {
+            var configuration = new DefaultBuildStrategyCompiler().Compile();
+            var instance = Model.Create<WithConstructorParameters>();
+            var args = new object[]
+            {
+                new Company(),
+                instance.Id,
+                instance.RefNumber,
+                instance.Number,
+                instance.Value
+            };
+
+            var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.First));
+
+            var sut = new DefaultPropertyResolver();
+
+            var actual = sut.ShouldPopulateProperty(configuration, instance, propertyInfo, args);
+
+            actual.Should().BeTrue();
+        }
+
+        [Fact]
+        public void ShouldPopulatePropertyReturnsTrueWhenPropertyContainsDefaultValueTypeValueTest()
+        {
+            var configuration = new DefaultBuildStrategyCompiler().Compile();
+            var instance = Model.Create<WithConstructorParameters>().Set(x => x.Id = Guid.Empty);
+            var args = new object[]
+            {
+                new Company(),
+                instance.Id,
+                instance.RefNumber,
+                instance.Number,
+                instance.Value
+            };
+
+            var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.Id));
+
+            var sut = new DefaultPropertyResolver();
+
+            var actual = sut.ShouldPopulateProperty(configuration, instance, propertyInfo, args);
+
+            actual.Should().BeTrue();
+        }
+
+        [Fact]
+        public void
+            ShouldPopulatePropertyReturnsTrueWhenPropertyContainsNullAndPropertyTypeCannotBeCreatedForEqualityCheckingTest
+            ()
+        {
+            var configuration = new DefaultBuildStrategyCompiler().Compile();
+            var instance = Model.Create<ReadOnlyModelParent>().Set(x => x.Child = null);
+            var args = new object[]
+            {
+                Guid.NewGuid()
+            };
+
+            var propertyInfo = typeof(ReadOnlyModelParent).GetProperty(nameof(ReadOnlyModelParent.Child));
+
+            var sut = new DefaultPropertyResolver();
+
+            var actual = sut.ShouldPopulateProperty(configuration, instance, propertyInfo, args);
+
+            actual.Should().BeTrue();
+        }
+
+        [Fact]
+        public void ShouldPopulatePropertyReturnsTrueWhenPropertyContainsNullReferenceTypeValueTest()
+        {
+            var configuration = new DefaultBuildStrategyCompiler().Compile();
+            var instance = Model.Create<WithConstructorParameters>().Set(x => x.First = null);
+            var args = new object[]
+            {
+                instance.Id,
+                instance.RefNumber,
+                instance.Number,
+                instance.Value
+            };
+
+            var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.First));
+
+            var sut = new DefaultPropertyResolver();
+
+            var actual = sut.ShouldPopulateProperty(configuration, instance, propertyInfo, args);
+
+            actual.Should().BeTrue();
+        }
+
+        [Fact]
+        public void ShouldPopulatePropertyReturnsTrueWhenPropertyContainsValueTypeValueNotMatchingConstructorTest()
+        {
+            var configuration = new DefaultBuildStrategyCompiler().Compile();
+            var instance = Model.Create<WithConstructorParameters>();
+            var args = new object[]
+            {
+                new Company(),
+                Guid.NewGuid(),
+                instance.RefNumber,
+                instance.Number,
+                instance.Value
+            };
+
+            var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.Id));
+
+            var sut = new DefaultPropertyResolver();
+
+            var actual = sut.ShouldPopulateProperty(configuration, instance, propertyInfo, args);
+
+            actual.Should().BeTrue();
+        }
+
+        [Fact]
         public void ShouldPopulatePropertyReturnsTrueWhenPropertyNotIgnoredAndEmptyArgumentsProvidedTest()
         {
             var configuration = new DefaultBuildStrategyCompiler().Compile();
@@ -141,6 +368,30 @@
             var sut = new DefaultPropertyResolver();
 
             var actual = sut.ShouldPopulateProperty(configuration, instance, propertyInfo, null);
+
+            actual.Should().BeTrue();
+        }
+
+        [Fact]
+        public void ShouldPopulatePropertySkipsNullValuesTest()
+        {
+            var configuration = new DefaultBuildStrategyCompiler().Compile();
+            var instance = Model.Create<WithConstructorParameters>();
+            var args = new object[]
+            {
+                null,
+                new Company(),
+                instance.Id,
+                instance.RefNumber,
+                instance.Number,
+                instance.Value
+            };
+
+            var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.First));
+
+            var sut = new DefaultPropertyResolver();
+
+            var actual = sut.ShouldPopulateProperty(configuration, instance, propertyInfo, args);
 
             actual.Should().BeTrue();
         }
@@ -197,6 +448,11 @@
         private class PrivateValue
         {
             public Guid Id { get; }
+        }
+
+        private class ReadOnlyModelParent
+        {
+            public ReadOnlyModel Child { get; set; }
         }
 
         private class StaticGetter

@@ -104,9 +104,9 @@
             var propertyResolver = Configuration.PropertyResolver;
 
             var propertyInfos = from x in type.GetProperties()
-                where propertyResolver.CanPopulate(x)
-                orderby GetMaximumOrderPrority(x.PropertyType, x.Name) descending
-                select x;
+                                where propertyResolver.CanPopulate(x)
+                                orderby GetMaximumOrderPrority(x.PropertyType, x.Name) descending
+                                select x;
 
             foreach (var propertyInfo in propertyInfos)
             {
@@ -394,7 +394,10 @@
             object[] args,
             ITypeCreator typeCreator)
         {
-            var instance = CreateInstance(typeCreator, type, referenceName, buildChain, args);
+            var outcome = CreateInstance(typeCreator, type, referenceName, buildChain, args);
+
+            var instance = outcome.Item1;
+            var arguments = outcome.Item2;
 
             if (instance == null)
             {
@@ -405,7 +408,7 @@
 
             try
             {
-                return PopulateInternal(type, referenceName, args, typeCreator, instance);
+                return PopulateInternal(type, referenceName, arguments, typeCreator, instance);
             }
             finally
             {
@@ -413,21 +416,24 @@
             }
         }
 
-        private object CreateInstance(
+        private Tuple<object, object[]> CreateInstance(
             ITypeCreator typeCreator,
             Type type,
             string referenceName,
             LinkedList<object> buildChain,
             object[] args)
         {
-            object item;
+            object instance;
 
             if (args?.Length > 0)
             {
                 // We have arguments so will just let the type creator do the work here
-                item = typeCreator.Create(type, referenceName, this, args);
+                instance = typeCreator.Create(type, referenceName, this, args);
+
+                return new Tuple<object, object[]>(instance, args);
             }
-            else if (typeCreator.AutoDetectConstructor)
+
+            if (typeCreator.AutoDetectConstructor)
             {
                 // Use constructor detection to figure out how to create this instance
                 var constructor = Configuration.ConstructorResolver.Resolve(type);
@@ -436,37 +442,39 @@
 
                 if (parameterInfos.Length == 0)
                 {
-                    item = typeCreator.Create(type, referenceName, this);
+                    instance = typeCreator.Create(type, referenceName, this);
+
+                    return new Tuple<object, object[]>(instance, args);
                 }
-                else
+
+                // Get values for each of the constructor parameters
+                var parameters = new Collection<object>();
+
+                foreach (var parameterInfo in parameterInfos)
                 {
-                    // Get values for each of the constructor parameters
-                    var parameters = new Collection<object>();
+                    var context = buildChain.Last?.Value;
 
-                    foreach (var parameterInfo in parameterInfos)
-                    {
-                        var context = buildChain.Last?.Value;
+                    Log.CreatingParameter(type, parameterInfo.ParameterType, parameterInfo.Name, context);
 
-                        Log.CreatingParameter(type, parameterInfo.ParameterType, parameterInfo.Name, context);
+                    // Recurse to build this parameter value
+                    var parameterValue = Build(parameterInfo.ParameterType, parameterInfo.Name, null);
 
-                        // Recurse to build this parameter value
-                        var parameterValue = Build(parameterInfo.ParameterType, parameterInfo.Name, null);
+                    parameters.Add(parameterValue);
 
-                        parameters.Add(parameterValue);
-
-                        Log.CreatedParameter(type, parameterInfo.ParameterType, parameterInfo.Name, context);
-                    }
-
-                    item = typeCreator.Create(type, referenceName, this, parameters.ToArray());
+                    Log.CreatedParameter(type, parameterInfo.ParameterType, parameterInfo.Name, context);
                 }
-            }
-            else
-            {
-                // The type creator is going to be solely responsible for creating this instance
-                item = typeCreator.Create(type, referenceName, this);
+
+                var arguments = parameters.ToArray();
+
+                instance = typeCreator.Create(type, referenceName, this, arguments);
+
+                return new Tuple<object, object[]>(instance, arguments);
             }
 
-            return item;
+            // The type creator is going to be solely responsible for creating this instance
+            instance = typeCreator.Create(type, referenceName, this);
+
+            return new Tuple<object, object[]>(instance, args);
         }
 
         private void EnsureInitialized()
@@ -491,9 +499,9 @@
             }
 
             var matchingRules = from x in Configuration.ExecuteOrderRules
-                where x.IsMatch(type, propertyName)
-                orderby x.Priority descending
-                select x;
+                                where x.IsMatch(type, propertyName)
+                                orderby x.Priority descending
+                                select x;
             var matchingRule = matchingRules.FirstOrDefault();
 
             if (matchingRule == null)

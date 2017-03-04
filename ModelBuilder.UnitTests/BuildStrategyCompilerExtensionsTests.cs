@@ -76,7 +76,7 @@
 
             var target = new BuildStrategyCompiler();
 
-            Action action = () => target.AddCreationRule((Expression<Func<Person, object>>) null, priority, value);
+            Action action = () => target.AddCreationRule((Expression<Func<Person, object>>)null, priority, value);
 
             action.ShouldThrow<ArgumentNullException>();
         }
@@ -140,7 +140,7 @@
 
             var target = new BuildStrategyCompiler();
 
-            Action action = () => target.AddExecuteOrderRule((Expression<Func<Person, object>>) null, priority);
+            Action action = () => target.AddExecuteOrderRule((Expression<Func<Person, object>>)null, priority);
 
             action.ShouldThrow<ArgumentNullException>();
         }
@@ -195,7 +195,7 @@
         {
             var target = new BuildStrategyCompiler();
 
-            Action action = () => target.AddIgnoreRule((Expression<Func<Person, object>>) null);
+            Action action = () => target.AddIgnoreRule((Expression<Func<Person, object>>)null);
 
             action.ShouldThrow<ArgumentNullException>();
         }
@@ -269,7 +269,7 @@
         [Fact]
         public void AddWithCreationRuleAddsRuleToCompilerTest()
         {
-            var rule = new CreationRule(typeof(Person), "FirstName", Environment.TickCount, (object) null);
+            var rule = new CreationRule(typeof(Person), "FirstName", Environment.TickCount, (object)null);
 
             var target = new BuildStrategyCompiler();
 
@@ -281,7 +281,7 @@
         [Fact]
         public void AddWithCreationRuleThrowsExceptionWithNullCompilerTest()
         {
-            var rule = new CreationRule(typeof(Person), "FirstName", Environment.TickCount, (object) null);
+            var rule = new CreationRule(typeof(Person), "FirstName", Environment.TickCount, (object)null);
 
             IBuildStrategyCompiler target = null;
 
@@ -295,7 +295,7 @@
         {
             var target = Substitute.For<IBuildStrategyCompiler>();
 
-            Action action = () => target.Add((CreationRule) null);
+            Action action = () => target.Add((CreationRule)null);
 
             action.ShouldThrow<ArgumentNullException>();
         }
@@ -329,7 +329,7 @@
         {
             var target = Substitute.For<IBuildStrategyCompiler>();
 
-            Action action = () => target.Add((ExecuteOrderRule) null);
+            Action action = () => target.Add((ExecuteOrderRule)null);
 
             action.ShouldThrow<ArgumentNullException>();
         }
@@ -363,7 +363,7 @@
         {
             var target = Substitute.For<IBuildStrategyCompiler>();
 
-            Action action = () => target.Add((IgnoreRule) null);
+            Action action = () => target.Add((IgnoreRule)null);
 
             action.ShouldThrow<ArgumentNullException>();
         }
@@ -397,7 +397,7 @@
         {
             var target = Substitute.For<IBuildStrategyCompiler>();
 
-            Action action = () => target.Add((IPostBuildAction) null);
+            Action action = () => target.Add((IPostBuildAction)null);
 
             action.ShouldThrow<ArgumentNullException>();
         }
@@ -431,7 +431,7 @@
         {
             var target = Substitute.For<IBuildStrategyCompiler>();
 
-            Action action = () => target.Add((ITypeCreator) null);
+            Action action = () => target.Add((ITypeCreator)null);
 
             action.ShouldThrow<ArgumentNullException>();
         }
@@ -465,7 +465,7 @@
         {
             var target = Substitute.For<IBuildStrategyCompiler>();
 
-            Action action = () => target.Add((IValueGenerator) null);
+            Action action = () => target.Add((IValueGenerator)null);
 
             action.ShouldThrow<ArgumentNullException>();
         }
@@ -664,7 +664,6 @@
             target.ValueGenerators.Should().BeEmpty();
         }
 
-
         [Fact]
         public void RemoveValueGeneratorThrowsExceptionWithNullCompilerTest()
         {
@@ -693,7 +692,7 @@
         [Fact]
         public void ScanModulesThrowsExceptionWithNullCompilerTest()
         {
-            var target = (IBuildStrategyCompiler) null;
+            var target = (IBuildStrategyCompiler)null;
 
             Action action = () => target.ScanModules();
 
@@ -752,6 +751,62 @@
             IBuildStrategyCompiler target = null;
 
             Action action = () => target.SetConstructorResolver(resolver);
+
+            action.ShouldThrow<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void SetPropertyResolverAssignsResolverToCompilerTest()
+        {
+            var target = new BuildStrategyCompiler();
+
+            target.SetPropertyResolver<DefaultPropertyResolver>();
+
+            var actual = target.PropertyResolver;
+
+            actual.Should().BeOfType<DefaultPropertyResolver>();
+        }
+
+        [Fact]
+        public void SetPropertyResolverThrowsExceptionWithNullCompilerTest()
+        {
+            IBuildStrategyCompiler target = null;
+
+            Action action = () => target.SetPropertyResolver<DefaultPropertyResolver>();
+
+            action.ShouldThrow<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void SetPropertyResolverThrowsExceptionWithNullResolverTest()
+        {
+            var target = Substitute.For<IBuildStrategyCompiler>();
+
+            Action action = () => target.SetPropertyResolver(null);
+
+            action.ShouldThrow<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void SetPropertyResolverWithResolverAssignsResolverToCompilerTest()
+        {
+            var resolver = new DefaultPropertyResolver();
+
+            var target = new BuildStrategyCompiler();
+
+            target.SetPropertyResolver(resolver);
+
+            target.PropertyResolver.Should().Be(resolver);
+        }
+
+        [Fact]
+        public void SetPropertyResolverWithResolverThrowsExceptionWithNullCompilerTest()
+        {
+            var resolver = new DefaultPropertyResolver();
+
+            IBuildStrategyCompiler target = null;
+
+            Action action = () => target.SetPropertyResolver(resolver);
 
             action.ShouldThrow<ArgumentNullException>();
         }

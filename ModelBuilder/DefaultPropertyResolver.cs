@@ -12,7 +12,7 @@ namespace ModelBuilder
     public class DefaultPropertyResolver : IPropertyResolver
     {
         /// <inheritdoc />
-        public bool CanPopulate(PropertyInfo propertyInfo)
+        public virtual bool CanPopulate(PropertyInfo propertyInfo)
         {
             if (propertyInfo == null)
             {
@@ -65,7 +65,7 @@ namespace ModelBuilder
         }
 
         /// <inheritdoc />
-        public bool ShouldPopulateProperty(
+        public virtual bool ShouldPopulateProperty(
             IBuildConfiguration configuration,
             object instance,
             PropertyInfo propertyInfo,
@@ -99,6 +99,18 @@ namespace ModelBuilder
                 return false;
             }
 
+            var propertyValue = propertyInfo.GetValue(instance, null);
+            var defaultValue = GetDefaultValue(propertyInfo.PropertyType);
+
+            if (AreEqual(propertyValue, defaultValue))
+            {
+                // The property matches the default value of its type
+                // A constructor parameter could have assigned the default type value or no constructor parameter
+                // was assigned to the property
+                // In either case we want to build a value for this property
+                return true;
+            }
+
             if (args == null)
             {
                 // No constructor arguments
@@ -123,18 +135,6 @@ namespace ModelBuilder
                 return true;
             }
 
-            var propertyValue = propertyInfo.GetValue(instance, null);
-            var defaultValue = GetDefaultValue(propertyInfo.PropertyType);
-
-            if (AreEqual(propertyValue, defaultValue))
-            {
-                // The property matches the default value of its type
-                // A constructor parameter could have assigned the default type value or no constructor parameter
-                // was assigned to the property
-                // In either case we want to build a value for this property
-                return true;
-            }
-
             // Check for instance types (ignoring strings)
             if (propertyInfo.PropertyType.IsValueType == false &&
                 propertyInfo.PropertyType != typeof(string))
@@ -154,8 +154,9 @@ namespace ModelBuilder
             // Get the constructor matching the arguments so that we can try to match constructor parameter names against the property name
             var constructor = configuration.ConstructorResolver.Resolve(type, args);
             var parameters = constructor.GetParameters();
+            var maxLength = Math.Min(parameters.Length, args.Length);
 
-            for (var index = 0; index < parameters.Length; index++)
+            for (var index = 0; index < maxLength; index++)
             {
                 var parameter = parameters[index];
 

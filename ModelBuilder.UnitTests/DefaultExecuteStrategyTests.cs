@@ -144,6 +144,80 @@
         }
 
         [Fact]
+        public void CreateWithDeterminesPropertiesToCreateByProvidingConstructorArgsForNestedTypeTest()
+        {
+            var number = Environment.TickCount;
+            var value = Guid.NewGuid();
+            var valueGenerators = new List<IValueGenerator>();
+            var typeCreators = new List<ITypeCreator>();
+
+            var buildStrategy = Substitute.For<IBuildStrategy>();
+            var typeCreator = Substitute.For<ITypeCreator>();
+            var valueGenerator = Substitute.For<IValueGenerator>();
+            var propertyResolver = Substitute.For<IPropertyResolver>();
+
+            typeCreators.Add(typeCreator);
+            valueGenerators.Add(valueGenerator);
+
+            buildStrategy.PropertyResolver.Returns(propertyResolver);
+            propertyResolver.CanPopulate(Arg.Any<PropertyInfo>()).Returns(true);
+            propertyResolver.ShouldPopulateProperty(
+                Arg.Any<IBuildConfiguration>(),
+                Arg.Any<object>(),
+                Arg.Any<PropertyInfo>(),
+                Arg.Any<object[]>()).Returns(true);
+            propertyResolver.ShouldPopulateProperty(
+                Arg.Any<IBuildConfiguration>(),
+                Arg.Any<object>(),
+                Arg.Is<PropertyInfo>(x => x.Name == nameof(AdditionalWrapper.Number)),
+                Arg.Any<object[]>()).Returns(false);
+            propertyResolver.ShouldPopulateProperty(
+                Arg.Any<IBuildConfiguration>(),
+                Arg.Any<object>(),
+                Arg.Is<PropertyInfo>(x => x.Name == nameof(ReadOnlyModel.Value)),
+                Arg.Any<object[]>()).Returns(false);
+            propertyResolver.ShouldPopulateProperty(
+                Arg.Any<IBuildConfiguration>(),
+                Arg.Is<object>(x => x.GetType() == typeof(ReadOnlyModelWrapper)),
+                Arg.Any<PropertyInfo>(),
+                Arg.Any<object[]>()).Returns(false);
+            buildStrategy.TypeCreators.Returns(typeCreators.AsReadOnly());
+            buildStrategy.ValueGenerators.Returns(valueGenerators.AsReadOnly());
+            buildStrategy.IgnoreRules.Returns(new List<IgnoreRule>().AsReadOnly());
+            buildStrategy.ConstructorResolver.Returns(new DefaultConstructorResolver());
+
+            var target = new DefaultExecuteStrategy();
+
+            target.Initialize(buildStrategy, buildStrategy.GetBuildLog());
+
+            typeCreator.AutoPopulate.Returns(true);
+            typeCreator.AutoDetectConstructor.Returns(true);
+            typeCreator.CanCreate(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<LinkedList<object>>()).Returns(true);
+            typeCreator.Create(typeof(AdditionalWrapper), null, Arg.Any<IExecuteStrategy>(), Arg.Any<object[]>())
+                .Returns(x => new AdditionalWrapper((int)((object[])x[3])[0]));
+            typeCreator.Create(typeof(ReadOnlyModel), "model", Arg.Any<IExecuteStrategy>(), value)
+                .Returns(x => new ReadOnlyModel((Guid)((object[])x[3])[0]));
+            typeCreator.Create(
+                typeof(ReadOnlyModelWrapper),
+                nameof(AdditionalWrapper.Child),
+                Arg.Any<IExecuteStrategy>(),
+                Arg.Any<object[]>()).Returns(x => new ReadOnlyModelWrapper((ReadOnlyModel)((object[])x[3])[0]));
+            typeCreator.Populate(Arg.Any<object>(), Arg.Any<IExecuteStrategy>()).Returns(x => x[0]);
+            valueGenerator.IsSupported(typeof(Guid), "value", Arg.Any<LinkedList<object>>()).Returns(true);
+            valueGenerator.Generate(typeof(Guid), "value", Arg.Any<IExecuteStrategy>()).Returns(value);
+
+            var actual = target.CreateWith(typeof(AdditionalWrapper), number);
+
+            actual.Should().NotBeNull();
+            propertyResolver.Received(1)
+                .ShouldPopulateProperty(
+                    buildStrategy,
+                    Arg.Is<object>(x => x.GetType() == typeof(ReadOnlyModel)),
+                    Arg.Is<PropertyInfo>(x => x.Name == nameof(ReadOnlyModel.Value)),
+                    Arg.Is<object[]>(x => (Guid)x[0] == value));
+        }
+
+        [Fact]
         public void CreateWithDoesNotBuildPropertiesWhenTypeCreatorDisablesAutoPopulateTest()
         {
             var model = new SlimModel();
@@ -1944,6 +2018,18 @@
             action.ShouldThrow<ArgumentNullException>();
         }
 
+        private class AdditionalWrapper
+        {
+            public AdditionalWrapper(int number)
+            {
+                Number = number;
+            }
+
+            public ReadOnlyModelWrapper Child { get; set; }
+
+            public int Number { get; set; }
+        }
+
         private class BuildWrapper : DefaultExecuteStrategy
         {
             public void RunTest(Type type)
@@ -1966,6 +2052,18 @@
             {
                 PopulateProperty(instance, propertyInfo);
             }
+        }
+
+        private class ReadOnlyModelWrapper
+        {
+            public ReadOnlyModelWrapper(ReadOnlyModel model)
+            {
+                Model = model;
+            }
+
+            public ReadOnlyModel Model { get; set; }
+
+            public ReadOnlyModel Other { get; set; }
         }
 
         private class SimpleReadOnlyParent
