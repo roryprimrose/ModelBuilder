@@ -15,6 +15,7 @@
         ///     Initializes a new instance of the <see cref="BuildStrategyBase" /> class.
         /// </summary>
         /// <param name="constructorResolver">The constructor resolver.</param>
+        /// <param name="propertyResolver">The property resolver.</param>
         /// <param name="creationRules">The creation rules.</param>
         /// <param name="typeCreators">The type creators.</param>
         /// <param name="valueGenerators">The value generators.</param>
@@ -22,6 +23,7 @@
         /// <param name="executeOrderRules">The execute order rules.</param>
         /// <param name="postBuildActions">The post build actions.</param>
         /// <exception cref="ArgumentNullException">The <paramref name="constructorResolver" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="propertyResolver" /> parameter is null.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="creationRules" /> parameter is null.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="typeCreators" /> parameter is null.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="valueGenerators" /> parameter is null.</exception>
@@ -30,6 +32,7 @@
         /// <exception cref="ArgumentNullException">The <paramref name="postBuildActions" /> parameter is null.</exception>
         protected BuildStrategyBase(
             IConstructorResolver constructorResolver,
+            IPropertyResolver propertyResolver,
             IEnumerable<CreationRule> creationRules,
             IEnumerable<ITypeCreator> typeCreators,
             IEnumerable<IValueGenerator> valueGenerators,
@@ -50,6 +53,11 @@
             if (constructorResolver == null)
             {
                 throw new ArgumentNullException(nameof(constructorResolver));
+            }
+
+            if (propertyResolver == null)
+            {
+                throw new ArgumentNullException(nameof(propertyResolver));
             }
 
             if (valueGenerators == null)
@@ -73,6 +81,7 @@
             }
 
             ConstructorResolver = constructorResolver;
+            PropertyResolver = propertyResolver;
             TypeCreators = new ReadOnlyCollection<ITypeCreator>(typeCreators.ToList());
             ValueGenerators = new ReadOnlyCollection<IValueGenerator>(valueGenerators.ToList());
             IgnoreRules = new ReadOnlyCollection<IgnoreRule>(ignoreRules.ToList());
@@ -101,6 +110,9 @@
 
         /// <inheritdoc />
         public ReadOnlyCollection<IPostBuildAction> PostBuildActions { get; }
+
+        /// <inheritdoc />
+        public IPropertyResolver PropertyResolver { get; }
 
         /// <inheritdoc />
         public ReadOnlyCollection<ITypeCreator> TypeCreators { get; }

@@ -35,6 +35,11 @@
         ReadOnlyCollection<IPostBuildAction> PostBuildActions { get; }
 
         /// <summary>
+        ///     Gets the property resolver used to populate an instance of a type.
+        /// </summary>
+        IPropertyResolver PropertyResolver { get; }
+
+        /// <summary>
         ///     Gets the type creators used to create instances.
         /// </summary>
         ReadOnlyCollection<ITypeCreator> TypeCreators { get; }

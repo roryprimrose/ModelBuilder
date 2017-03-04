@@ -14,6 +14,7 @@
 
             target.IgnoreRules.Should().BeEmpty();
             target.ConstructorResolver.Should().BeOfType<DefaultConstructorResolver>();
+            target.PropertyResolver.Should().BeOfType<DefaultPropertyResolver>();
             target.CreationRules.Should().BeEmpty();
             target.TypeCreators.Should().NotBeEmpty();
             target.ValueGenerators.Should().NotBeEmpty();

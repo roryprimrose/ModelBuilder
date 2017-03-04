@@ -87,9 +87,8 @@
         /// </summary>
         /// <param name="propertyType">The property type being ignored.</param>
         /// <param name="propertyName">The name of the property.</param>
-        /// <param name="ignoreRuleType">The type of ignore rule.</param>
         /// <param name="context">The possible context object the value is being created for.</param>
-        void IgnoringProperty(Type propertyType, string propertyName, Type ignoreRuleType, object context);
+        void IgnoringProperty(Type propertyType, string propertyName, object context);
 
         /// <summary>
         ///     Logs that an instance has been populated.

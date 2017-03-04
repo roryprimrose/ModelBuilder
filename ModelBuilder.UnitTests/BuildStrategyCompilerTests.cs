@@ -12,6 +12,7 @@
         public void CompileReturnsNewBuildStrategyTest()
         {
             var constructorResolver = Substitute.For<IConstructorResolver>();
+            var propertyResolver = Substitute.For<IPropertyResolver>();
             var creationRules = new List<CreationRule>
             {
                 new CreationRule(typeof(string), "Test", int.MaxValue, "Stuff")
@@ -39,7 +40,8 @@
 
             var target = new BuildStrategyCompiler
             {
-                ConstructorResolver = constructorResolver
+                ConstructorResolver = constructorResolver,
+                PropertyResolver = propertyResolver
             };
 
             target.CreationRules.Add(creationRules[0]);
@@ -50,8 +52,9 @@
             target.PostBuildActions.Add(postBuildActions[0]);
 
             var actual = target.Compile();
-            
+
             actual.ConstructorResolver.Should().Be(constructorResolver);
+            actual.PropertyResolver.Should().Be(propertyResolver);
             actual.CreationRules.ShouldBeEquivalentTo(creationRules);
             actual.TypeCreators.ShouldBeEquivalentTo(typeCreators);
             actual.ValueGenerators.ShouldBeEquivalentTo(valueGenerators);
@@ -63,7 +66,27 @@
         [Fact]
         public void CompileThrowsExceptionWithNullConstructorResolverTest()
         {
-            var target = new BuildStrategyCompiler();
+            var propertyResolver = Substitute.For<IPropertyResolver>();
+
+            var target = new BuildStrategyCompiler
+            {
+                PropertyResolver = propertyResolver
+            };
+
+            Action action = () => target.Compile();
+
+            action.ShouldThrow<InvalidOperationException>();
+        }
+
+        [Fact]
+        public void CompileThrowsExceptionWithNullPropertyResolverTest()
+        {
+            var constructorResolver = Substitute.For<IConstructorResolver>();
+
+            var target = new BuildStrategyCompiler
+            {
+                ConstructorResolver = constructorResolver
+            };
 
             Action action = () => target.Compile();
 
@@ -74,8 +97,9 @@
         public void CreatesDefaultsForPropertiesTest()
         {
             var target = new BuildStrategyCompiler();
-            
+
             target.ConstructorResolver.Should().BeNull();
+            target.PropertyResolver.Should().BeNull();
             target.CreationRules.Should().NotBeNull();
             target.ExecuteOrderRules.Should().NotBeNull();
             target.IgnoreRules.Should().NotBeNull();

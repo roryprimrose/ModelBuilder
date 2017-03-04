@@ -23,7 +23,8 @@
 
             var compiler = new BuildStrategyCompiler
             {
-                ConstructorResolver = configuration.ConstructorResolver
+                ConstructorResolver = configuration.ConstructorResolver,
+                PropertyResolver = configuration.PropertyResolver
             };
 
             foreach (var executeOrderRule in configuration.ExecuteOrderRules)

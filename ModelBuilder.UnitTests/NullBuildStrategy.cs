@@ -25,6 +25,8 @@
 
         public ReadOnlyCollection<IPostBuildAction> PostBuildActions { get; }
 
+        public IPropertyResolver PropertyResolver { get; }
+
         public ReadOnlyCollection<ITypeCreator> TypeCreators { get; }
 
         public ReadOnlyCollection<IValueGenerator> ValueGenerators { get; }

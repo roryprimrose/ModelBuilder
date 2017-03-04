@@ -38,34 +38,25 @@
         }
 
         [Fact]
-        public void CreateDoesNotPopulateReadOnlyValueTypePropertiesTest()
+        public void BuildThrowsExceptionWhenNotInitializedTest()
         {
-            var configuration = Model.BuildStrategy;
-            var buildLog = configuration.GetBuildLog();
+            var type = typeof(Person);
 
-            var target = new DefaultExecuteStrategy<ReadOnlyParent>();
+            var target = new BuildWrapper();
 
-            target.Initialize(configuration, buildLog);
+            Action action = () => target.RunTest(type);
 
-            var actual = target.Create();
-
-            actual.PrivateValue.Should().Be(0);
+            action.ShouldThrow<InvalidOperationException>();
         }
 
         [Fact]
-        public void CreateDoesNotPopulateStaticPropertiesTest()
+        public void BuildThrowsExceptionWithNullTypeTest()
         {
-            var configuration = Model.BuildStrategy;
-            var buildLog = configuration.GetBuildLog();
+            var target = new BuildWrapper();
 
-            var target = new DefaultExecuteStrategy<WithStatic>();
+            Action action = () => target.RunTest(null);
 
-            target.Initialize(configuration, buildLog);
-
-            var actual = target.Create();
-
-            actual.First.Should().NotBeNullOrWhiteSpace();
-            WithStatic.Second.Should().BeNullOrWhiteSpace();
+            action.ShouldThrow<ArgumentNullException>();
         }
 
         [Fact]
@@ -143,145 +134,6 @@
         }
 
         [Fact]
-        public void CreatePopulatesBaseClassPropertiesTest()
-        {
-            var configuration = Model.BuildStrategy;
-            var buildLog = configuration.GetBuildLog();
-
-            var target = new DefaultExecuteStrategy<SpecificCompany>();
-
-            target.Initialize(configuration, buildLog);
-
-            var actual = target.Create();
-
-            actual.Email.Should().NotBeNullOrWhiteSpace();
-            actual.Address.Should().NotBeNullOrWhiteSpace();
-        }
-
-        [Fact]
-        public void CreatePopulatesReadOnlyReferenceTypePropertiesTest()
-        {
-            var configuration = Model.BuildStrategy;
-            var buildLog = configuration.GetBuildLog();
-
-            var target = new DefaultExecuteStrategy<ReadOnlyParent>();
-
-            target.Initialize(configuration, buildLog);
-
-            var actual = target.Create();
-
-            actual.Company.Address.Should().NotBeNullOrWhiteSpace();
-            actual.ReadOnlyPerson.FirstName.Should().NotBeNullOrWhiteSpace();
-            actual.AssignablePeople.Should().NotBeEmpty();
-            actual.People.Should().NotBeEmpty();
-            actual.RestrictedPeople.Should().BeEmpty();
-            actual.Unassigned.Should().BeNull();
-        }
-
-        [Fact]
-        public void CreatesCircularReferenceWithInstanceFromBuildChainTest()
-        {
-            var configuration = Model.BuildStrategy;
-            var buildLog = configuration.GetBuildLog();
-
-            var target = new DefaultExecuteStrategy<Top>();
-
-            target.Initialize(configuration, buildLog);
-
-            var actual = (Top)target.Create(typeof(Top));
-
-            actual.Should().NotBeNull();
-            actual.Value.Should().NotBeNullOrWhiteSpace();
-            actual.Next.Should().NotBeNull();
-            actual.Next.Value.Should().NotBeNullOrWhiteSpace();
-            actual.Next.End.Should().NotBeNull();
-            actual.Next.End.Value.Should().NotBeNullOrWhiteSpace();
-            actual.Next.End.Root.Should().BeSameAs(actual);
-        }
-
-        [Fact]
-        public void CreatesDirectCircularReferenceWithInstanceFromBuildChainTest()
-        {
-            var configuration = Model.BuildStrategy;
-            var buildLog = configuration.GetBuildLog();
-
-            var target = new DefaultExecuteStrategy<SelfReferrer>();
-
-            target.Initialize(configuration, buildLog);
-
-            var actual = target.Create();
-
-            actual.Should().NotBeNull();
-            actual.Id.Should().NotBeEmpty();
-            actual.Self.Should().BeSameAs(actual);
-        }
-
-        [Fact]
-        public void CreateSetsPropertyValuesWhenConstructorParametersHaveDefaultValuesTest()
-        {
-            var buildLog = Substitute.For<IBuildLog>();
-            var configuration = Model.DefaultBuildStrategy;
-
-            var target = new DefaultExecuteStrategy();
-
-            target.Initialize(configuration, buildLog);
-
-            var args = new object[]
-            {
-                null,
-                Guid.Empty,
-                null,
-                0,
-                false
-            };
-
-            var actual = (WithConstructorParameters)target.CreateWith(typeof(WithConstructorParameters), args);
-
-            actual.First.Should().NotBeNull();
-            actual.Id.Should().NotBeEmpty();
-            actual.RefNumber.Should().HaveValue();
-            actual.Number.Should().NotBe(0);
-        }
-
-        [Fact]
-        public void CreateSetsPropertyValueWhenNoMatchOnConstructorParameterTest()
-        {
-            var buildLog = Substitute.For<IBuildLog>();
-            var configuration = Model.DefaultBuildStrategy;
-
-            var target = new DefaultExecuteStrategy();
-
-            target.Initialize(configuration, buildLog);
-
-            var args = new object[]
-            {
-                Guid.NewGuid().ToString()
-            };
-
-            var actual = (WithMixedValueParameters)target.CreateWith(typeof(WithMixedValueParameters), args);
-
-            actual.FirstName.Should().NotBe((string)args[0]);
-            actual.LastName.Should().NotBe((string)args[0]);
-        }
-
-        [Fact]
-        public void CreatesPropertyOfSameTypeWithCreatedInstanceTest()
-        {
-            var configuration = Model.BuildStrategy;
-            var buildLog = configuration.GetBuildLog();
-
-            var target = new DefaultExecuteStrategy<ReadOnlyParent>();
-
-            target.Initialize(configuration, buildLog);
-
-            var actual = (Looper)target.Create(typeof(Looper));
-
-            actual.Should().NotBeNull();
-            actual.Stuff.Should().NotBeNullOrWhiteSpace();
-            actual.Other.Should().BeSameAs(actual);
-        }
-
-        [Fact]
         public void CreateThrowsExceptionWhenNotInitializedTest()
         {
             var target = new DefaultExecuteStrategy();
@@ -289,6 +141,80 @@
             Action action = () => target.Create(typeof(Person));
 
             action.ShouldThrow<InvalidOperationException>();
+        }
+
+        [Fact]
+        public void CreateWithDeterminesPropertiesToCreateByProvidingConstructorArgsForNestedTypeTest()
+        {
+            var number = Environment.TickCount;
+            var value = Guid.NewGuid();
+            var valueGenerators = new List<IValueGenerator>();
+            var typeCreators = new List<ITypeCreator>();
+
+            var buildStrategy = Substitute.For<IBuildStrategy>();
+            var typeCreator = Substitute.For<ITypeCreator>();
+            var valueGenerator = Substitute.For<IValueGenerator>();
+            var propertyResolver = Substitute.For<IPropertyResolver>();
+
+            typeCreators.Add(typeCreator);
+            valueGenerators.Add(valueGenerator);
+
+            buildStrategy.PropertyResolver.Returns(propertyResolver);
+            propertyResolver.CanPopulate(Arg.Any<PropertyInfo>()).Returns(true);
+            propertyResolver.ShouldPopulateProperty(
+                Arg.Any<IBuildConfiguration>(),
+                Arg.Any<object>(),
+                Arg.Any<PropertyInfo>(),
+                Arg.Any<object[]>()).Returns(true);
+            propertyResolver.ShouldPopulateProperty(
+                Arg.Any<IBuildConfiguration>(),
+                Arg.Any<object>(),
+                Arg.Is<PropertyInfo>(x => x.Name == nameof(AdditionalWrapper.Number)),
+                Arg.Any<object[]>()).Returns(false);
+            propertyResolver.ShouldPopulateProperty(
+                Arg.Any<IBuildConfiguration>(),
+                Arg.Any<object>(),
+                Arg.Is<PropertyInfo>(x => x.Name == nameof(ReadOnlyModel.Value)),
+                Arg.Any<object[]>()).Returns(false);
+            propertyResolver.ShouldPopulateProperty(
+                Arg.Any<IBuildConfiguration>(),
+                Arg.Is<object>(x => x.GetType() == typeof(ReadOnlyModelWrapper)),
+                Arg.Any<PropertyInfo>(),
+                Arg.Any<object[]>()).Returns(false);
+            buildStrategy.TypeCreators.Returns(typeCreators.AsReadOnly());
+            buildStrategy.ValueGenerators.Returns(valueGenerators.AsReadOnly());
+            buildStrategy.IgnoreRules.Returns(new List<IgnoreRule>().AsReadOnly());
+            buildStrategy.ConstructorResolver.Returns(new DefaultConstructorResolver());
+
+            var target = new DefaultExecuteStrategy();
+
+            target.Initialize(buildStrategy, buildStrategy.GetBuildLog());
+
+            typeCreator.AutoPopulate.Returns(true);
+            typeCreator.AutoDetectConstructor.Returns(true);
+            typeCreator.CanCreate(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<LinkedList<object>>()).Returns(true);
+            typeCreator.Create(typeof(AdditionalWrapper), null, Arg.Any<IExecuteStrategy>(), Arg.Any<object[]>())
+                .Returns(x => new AdditionalWrapper((int)((object[])x[3])[0]));
+            typeCreator.Create(typeof(ReadOnlyModel), "model", Arg.Any<IExecuteStrategy>(), value)
+                .Returns(x => new ReadOnlyModel((Guid)((object[])x[3])[0]));
+            typeCreator.Create(
+                typeof(ReadOnlyModelWrapper),
+                nameof(AdditionalWrapper.Child),
+                Arg.Any<IExecuteStrategy>(),
+                Arg.Any<object[]>()).Returns(x => new ReadOnlyModelWrapper((ReadOnlyModel)((object[])x[3])[0]));
+            typeCreator.Populate(Arg.Any<object>(), Arg.Any<IExecuteStrategy>()).Returns(x => x[0]);
+            valueGenerator.IsSupported(typeof(Guid), "value", Arg.Any<LinkedList<object>>()).Returns(true);
+            valueGenerator.Generate(typeof(Guid), "value", Arg.Any<IExecuteStrategy>()).Returns(value);
+
+            var actual = target.CreateWith(typeof(AdditionalWrapper), number);
+
+            actual.Should().NotBeNull();
+            propertyResolver.Received(1)
+                .ShouldPopulateProperty(
+                    buildStrategy,
+                    Arg.Is<object>(x => x.GetType() == typeof(ReadOnlyModel)),
+                    Arg.Is<PropertyInfo>(x => x.Name == nameof(ReadOnlyModel.Value)),
+                    Arg.Is<object[]>(x => (Guid)x[0] == value));
         }
 
         [Fact]
@@ -323,31 +249,49 @@
         }
 
         [Fact]
-        public void CreateWithDoesNotSetPropertysProvidedByConstructorTest()
+        public void CreateWithReturnsInstanceFromBuildChainWhenCircularReferenceDetectedTest()
         {
-            var buildLog = Substitute.For<IBuildLog>();
-            var configuration = Model.DefaultBuildStrategy;
+            var expected = new SelfReferrer();
+            var id = Guid.NewGuid();
+
+            var typeCreators = new List<ITypeCreator>();
+            var valueGenerators = new List<IValueGenerator>();
+
+            var typeCreator = Substitute.For<ITypeCreator>();
+            var generator = Substitute.For<IValueGenerator>();
+            var buildStrategy = Substitute.For<IBuildStrategy>();
+            var propertyResolver = Substitute.For<IPropertyResolver>();
+
+            typeCreators.Add(typeCreator);
+            valueGenerators.Add(generator);
+
+            buildStrategy.PropertyResolver.Returns(propertyResolver);
+            buildStrategy.TypeCreators.Returns(typeCreators.AsReadOnly());
+            buildStrategy.ValueGenerators.Returns(valueGenerators.AsReadOnly());
 
             var target = new DefaultExecuteStrategy();
 
-            target.Initialize(configuration, buildLog);
+            target.Initialize(buildStrategy, buildStrategy.GetBuildLog());
 
-            var args = new object[]
-            {
-                new Company(),
-                Guid.NewGuid(),
-                123,
-                456,
-                true
-            };
+            propertyResolver.CanPopulate(Arg.Any<PropertyInfo>()).Returns(true);
+            propertyResolver.ShouldPopulateProperty(
+                Arg.Any<IBuildConfiguration>(),
+                Arg.Any<object>(),
+                Arg.Any<PropertyInfo>(),
+                Arg.Any<object[]>()).Returns(true);
+            typeCreator.CanCreate(typeof(SelfReferrer), null, Arg.Any<LinkedList<object>>()).Returns(true);
+            typeCreator.Create(typeof(SelfReferrer), null, Arg.Any<IExecuteStrategy>()).Returns(expected);
+            typeCreator.Populate(expected, target).Returns(expected);
+            typeCreator.AutoPopulate.Returns(true);
+            generator.IsSupported(typeof(Guid), "Id", Arg.Is<LinkedList<object>>(x => x.Last.Value == expected))
+                .Returns(true);
+            generator.Generate(typeof(Guid), "Id", Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last.Value == expected))
+                .Returns(id);
 
-            var actual = (WithConstructorParameters)target.CreateWith(typeof(WithConstructorParameters), args);
+            var actual = (SelfReferrer)target.CreateWith(typeof(SelfReferrer));
 
-            actual.First.Should().BeSameAs(args[0]);
-            actual.Id.Should().Be((Guid)args[1]);
-            actual.RefNumber.Should().Be((int?)args[2]);
-            actual.Number.Should().Be((int)args[3]);
-            actual.Value.Should().Be((bool)args[4]);
+            actual.Should().Be(expected);
+            actual.Id.Should().Be(id);
         }
 
         [Fact]
@@ -430,10 +374,12 @@
             var typeCreator = Substitute.For<ITypeCreator>();
             var generator = Substitute.For<IValueGenerator>();
             var buildStrategy = Substitute.For<IBuildStrategy>();
+            var propertyResolver = Substitute.For<IPropertyResolver>();
 
             typeCreators.Add(typeCreator);
             valueGenerators.Add(generator);
 
+            buildStrategy.PropertyResolver.Returns(propertyResolver);
             buildStrategy.TypeCreators.Returns(typeCreators.AsReadOnly());
             buildStrategy.ValueGenerators.Returns(valueGenerators.AsReadOnly());
 
@@ -441,6 +387,12 @@
 
             target.Initialize(buildStrategy, buildStrategy.GetBuildLog());
 
+            propertyResolver.CanPopulate(Arg.Any<PropertyInfo>()).Returns(true);
+            propertyResolver.ShouldPopulateProperty(
+                Arg.Any<IBuildConfiguration>(),
+                Arg.Any<object>(),
+                Arg.Any<PropertyInfo>(),
+                Arg.Any<object[]>()).Returns(true);
             typeCreator.CanCreate(typeof(SlimModel), null, Arg.Any<LinkedList<object>>()).Returns(true);
             typeCreator.Create(typeof(SlimModel), null, Arg.Any<IExecuteStrategy>()).Returns(expected);
             typeCreator.Populate(expected, target).Returns(expected);
@@ -503,6 +455,7 @@
             var typeCreators = new List<ITypeCreator>();
             var valueGenerators = new List<IValueGenerator>();
 
+            var propertyResolver = Substitute.For<IPropertyResolver>();
             var buildStrategy = Substitute.For<IBuildStrategy>();
             var firstCreator = Substitute.For<ITypeCreator>();
             var secondCreator = Substitute.For<ITypeCreator>();
@@ -512,6 +465,7 @@
             typeCreators.Add(secondCreator);
             valueGenerators.Add(generator);
 
+            buildStrategy.PropertyResolver.Returns(propertyResolver);
             buildStrategy.TypeCreators.Returns(typeCreators.AsReadOnly());
             buildStrategy.ValueGenerators.Returns(valueGenerators.AsReadOnly());
 
@@ -519,6 +473,12 @@
 
             target.Initialize(buildStrategy, buildStrategy.GetBuildLog());
 
+            propertyResolver.CanPopulate(Arg.Any<PropertyInfo>()).Returns(true);
+            propertyResolver.ShouldPopulateProperty(
+                Arg.Any<IBuildConfiguration>(),
+                Arg.Any<object>(),
+                Arg.Any<PropertyInfo>(),
+                Arg.Any<object[]>()).Returns(true);
             firstCreator.CanCreate(typeof(SlimModel), null, Arg.Any<LinkedList<object>>()).Returns(true);
             firstCreator.Create(typeof(SlimModel), null, Arg.Any<IExecuteStrategy>()).Returns(firstModel);
             firstCreator.Priority.Returns(1);
@@ -724,6 +684,7 @@
             var valueGenerators = new List<IValueGenerator>();
             var typeCreators = new List<ITypeCreator>();
 
+            var propertyResolver = Substitute.For<IPropertyResolver>();
             var buildStrategy = Substitute.For<IBuildStrategy>();
             var firstCreator = Substitute.For<ITypeCreator>();
             var secondCreator = Substitute.For<ITypeCreator>();
@@ -740,6 +701,13 @@
 
             target.Initialize(buildStrategy, buildStrategy.GetBuildLog());
 
+            buildStrategy.PropertyResolver.Returns(propertyResolver);
+            propertyResolver.CanPopulate(Arg.Any<PropertyInfo>()).Returns(true);
+            propertyResolver.ShouldPopulateProperty(
+                Arg.Any<IBuildConfiguration>(),
+                Arg.Any<object>(),
+                Arg.Any<PropertyInfo>(),
+                Arg.Any<object[]>()).Returns(true);
             firstCreator.CanCreate(typeof(SlimModel), null, Arg.Any<LinkedList<object>>()).Returns(false);
             firstCreator.Create(typeof(SlimModel), null, Arg.Any<IExecuteStrategy>()).Returns(firstModel);
             firstCreator.Priority.Returns(10);
@@ -954,19 +922,65 @@
         }
 
         [Fact]
+        public void CreateWithThrowsExceptionWhenNoCreatorMatchFoundForReadOnlyChildPropertyTest()
+        {
+            var expected = new SimpleReadOnlyParent();
+            var generators = new List<IValueGenerator>();
+            var creators = new List<ITypeCreator>();
+
+            var propertyResolver = Substitute.For<IPropertyResolver>();
+            var valueGenerator = Substitute.For<IValueGenerator>();
+            var typeCreator = Substitute.For<ITypeCreator>();
+            var buildStrategy = Substitute.For<IBuildStrategy>();
+
+            buildStrategy.PropertyResolver.Returns(propertyResolver);
+            generators.Add(valueGenerator);
+            creators.Add(typeCreator);
+
+            propertyResolver.CanPopulate(Arg.Any<PropertyInfo>()).Returns(true);
+            propertyResolver.ShouldPopulateProperty(
+                Arg.Any<IBuildConfiguration>(),
+                Arg.Any<object>(),
+                Arg.Any<PropertyInfo>(),
+                Arg.Any<object[]>()).Returns(true);
+            typeCreator.CanCreate(typeof(SimpleReadOnlyParent), null, Arg.Any<LinkedList<object>>()).Returns(true);
+            typeCreator.Create(typeof(SimpleReadOnlyParent), null, Arg.Any<IExecuteStrategy>()).Returns(expected);
+            typeCreator.AutoPopulate.Returns(true);
+            valueGenerator.IsSupported(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<LinkedList<object>>()).Returns(false);
+            buildStrategy.TypeCreators.Returns(creators.AsReadOnly());
+            buildStrategy.ValueGenerators.Returns(generators.AsReadOnly());
+
+            var target = new DefaultExecuteStrategy();
+
+            target.Initialize(buildStrategy, buildStrategy.GetBuildLog());
+
+            Action action = () => target.CreateWith(typeof(SimpleReadOnlyParent));
+
+            action.ShouldThrow<BuildException>();
+        }
+
+        [Fact]
         public void CreateWithThrowsExceptionWhenNoGeneratorOrCreatorMatchFoundForChildPropertyTest()
         {
             var person = new Person();
             var generators = new List<IValueGenerator>();
             var creators = new List<ITypeCreator>();
 
+            var propertyResolver = Substitute.For<IPropertyResolver>();
             var valueGenerator = Substitute.For<IValueGenerator>();
             var typeCreator = Substitute.For<ITypeCreator>();
             var buildStrategy = Substitute.For<IBuildStrategy>();
 
+            buildStrategy.PropertyResolver.Returns(propertyResolver);
             generators.Add(valueGenerator);
             creators.Add(typeCreator);
 
+            propertyResolver.CanPopulate(Arg.Any<PropertyInfo>()).Returns(true);
+            propertyResolver.ShouldPopulateProperty(
+                Arg.Any<IBuildConfiguration>(),
+                Arg.Any<object>(),
+                Arg.Any<PropertyInfo>(),
+                Arg.Any<object[]>()).Returns(true);
             typeCreator.CanCreate(typeof(Person), null, Arg.Any<LinkedList<object>>()).Returns(true);
             typeCreator.Create(typeof(Person), null, Arg.Any<IExecuteStrategy>()).Returns(person);
             typeCreator.AutoPopulate.Returns(true);
@@ -1047,9 +1061,17 @@
 
             var buildStrategy = Substitute.For<IBuildStrategy>();
             var resolver = Substitute.For<IConstructorResolver>();
+            var propertyResolver = Substitute.For<IPropertyResolver>();
 
             typeCreators.Add(typeCreator);
 
+            buildStrategy.PropertyResolver.Returns(propertyResolver);
+            propertyResolver.CanPopulate(Arg.Any<PropertyInfo>()).Returns(true);
+            propertyResolver.ShouldPopulateProperty(
+                Arg.Any<IBuildConfiguration>(),
+                Arg.Any<object>(),
+                Arg.Any<PropertyInfo>(),
+                Arg.Any<object[]>()).Returns(true);
             resolver.Resolve(typeof(SlimModel), Arg.Any<object[]>()).Returns(typeof(SlimModel).GetConstructors()[0]);
             buildStrategy.ConstructorResolver.Returns(resolver);
             buildStrategy.TypeCreators.Returns(typeCreators.AsReadOnly());
@@ -1146,6 +1168,7 @@
             var buildStrategy = Substitute.For<IBuildStrategy>();
             var typeCreator = Substitute.For<ITypeCreator>();
             var valueGenerator = Substitute.For<IValueGenerator>();
+            var propertyResolver = Substitute.For<IPropertyResolver>();
 
             typeCreators.Add(typeCreator);
             valueGenerators.Add(valueGenerator);
@@ -1157,6 +1180,13 @@
 
             target.Initialize(buildStrategy, buildStrategy.GetBuildLog());
 
+            buildStrategy.PropertyResolver.Returns(propertyResolver);
+            propertyResolver.CanPopulate(Arg.Any<PropertyInfo>()).Returns(true);
+            propertyResolver.ShouldPopulateProperty(
+                Arg.Any<IBuildConfiguration>(),
+                Arg.Any<object>(),
+                Arg.Any<PropertyInfo>(),
+                Arg.Any<object[]>()).Returns(true);
             typeCreator.CanCreate(
                 typeof(IEnumerable<Person>),
                 "Staff",
@@ -1204,10 +1234,18 @@
             var buildStrategy = Substitute.For<IBuildStrategy>();
             var typeCreator = Substitute.For<ITypeCreator>();
             var valueGenerator = Substitute.For<IValueGenerator>();
+            var propertyResolver = Substitute.For<IPropertyResolver>();
 
             typeCreators.Add(typeCreator);
             valueGenerators.Add(valueGenerator);
 
+            buildStrategy.PropertyResolver.Returns(propertyResolver);
+            propertyResolver.CanPopulate(Arg.Any<PropertyInfo>()).Returns(true);
+            propertyResolver.ShouldPopulateProperty(
+                Arg.Any<IBuildConfiguration>(),
+                Arg.Any<object>(),
+                Arg.Any<PropertyInfo>(),
+                Arg.Any<object[]>()).Returns(true);
             buildStrategy.TypeCreators.Returns(typeCreators.AsReadOnly());
             buildStrategy.ValueGenerators.Returns(valueGenerators.AsReadOnly());
 
@@ -1264,6 +1302,7 @@
             var buildStrategy = Substitute.For<IBuildStrategy>();
             var typeCreator = Substitute.For<ITypeCreator>();
             var valueGenerator = Substitute.For<IValueGenerator>();
+            var propertyResolver = Substitute.For<IPropertyResolver>();
 
             typeCreators.Add(typeCreator);
             valueGenerators.Add(valueGenerator);
@@ -1276,6 +1315,13 @@
 
             target.Initialize(buildStrategy, buildStrategy.GetBuildLog());
 
+            buildStrategy.PropertyResolver.Returns(propertyResolver);
+            propertyResolver.CanPopulate(Arg.Any<PropertyInfo>()).Returns(true);
+            propertyResolver.ShouldPopulateProperty(
+                Arg.Any<IBuildConfiguration>(),
+                Arg.Any<object>(),
+                Arg.Any<PropertyInfo>(),
+                Arg.Any<object[]>()).Returns(true);
             valueGenerator.IsSupported(
                 typeof(SimpleEnum),
                 "Z",
@@ -1329,10 +1375,18 @@
             var buildStrategy = Substitute.For<IBuildStrategy>();
             var typeCreator = Substitute.For<ITypeCreator>();
             var valueGenerator = Substitute.For<IValueGenerator>();
+            var propertyResolver = Substitute.For<IPropertyResolver>();
 
             typeCreators.Add(typeCreator);
             valueGenerators.Add(valueGenerator);
 
+            buildStrategy.PropertyResolver.Returns(propertyResolver);
+            propertyResolver.CanPopulate(Arg.Any<PropertyInfo>()).Returns(true);
+            propertyResolver.ShouldPopulateProperty(
+                Arg.Any<IBuildConfiguration>(),
+                Arg.Any<object>(),
+                Arg.Any<PropertyInfo>(),
+                Arg.Any<object[]>()).Returns(true);
             buildStrategy.TypeCreators.Returns(typeCreators.AsReadOnly());
             buildStrategy.ValueGenerators.Returns(valueGenerators.AsReadOnly());
             buildStrategy.IgnoreRules.Returns(ignoreRules.AsReadOnly());
@@ -1393,10 +1447,18 @@
             var buildStrategy = Substitute.For<IBuildStrategy>();
             var typeCreator = Substitute.For<ITypeCreator>();
             var valueGenerator = Substitute.For<IValueGenerator>();
+            var propertyResolver = Substitute.For<IPropertyResolver>();
 
             typeCreators.Add(typeCreator);
             valueGenerators.Add(valueGenerator);
 
+            buildStrategy.PropertyResolver.Returns(propertyResolver);
+            propertyResolver.CanPopulate(Arg.Any<PropertyInfo>()).Returns(true);
+            propertyResolver.ShouldPopulateProperty(
+                Arg.Any<IBuildConfiguration>(),
+                Arg.Any<object>(),
+                Arg.Any<PropertyInfo>(),
+                Arg.Any<object[]>()).Returns(true);
             buildStrategy.TypeCreators.Returns(typeCreators.AsReadOnly());
             buildStrategy.ValueGenerators.Returns(valueGenerators.AsReadOnly());
             buildStrategy.IgnoreRules.Returns(ignoreRules.AsReadOnly());
@@ -1457,10 +1519,18 @@
             var buildStrategy = Substitute.For<IBuildStrategy>();
             var typeCreator = Substitute.For<ITypeCreator>();
             var valueGenerator = Substitute.For<IValueGenerator>();
+            var propertyResolver = Substitute.For<IPropertyResolver>();
 
             typeCreators.Add(typeCreator);
             valueGenerators.Add(valueGenerator);
 
+            buildStrategy.PropertyResolver.Returns(propertyResolver);
+            propertyResolver.CanPopulate(Arg.Any<PropertyInfo>()).Returns(true);
+            propertyResolver.ShouldPopulateProperty(
+                Arg.Any<IBuildConfiguration>(),
+                Arg.Any<object>(),
+                Arg.Any<PropertyInfo>(),
+                Arg.Any<object[]>()).Returns(true);
             buildStrategy.TypeCreators.Returns(typeCreators.AsReadOnly());
             buildStrategy.ValueGenerators.Returns(valueGenerators.AsReadOnly());
             buildStrategy.IgnoreRules.Returns(ignoreRules.AsReadOnly());
@@ -1504,25 +1574,6 @@
         }
 
         [Fact]
-        public void PopulateHandlesDirectCircularReferenceWithInstanceFromBuildChainTest()
-        {
-            var configuration = Model.BuildStrategy;
-            var buildLog = configuration.GetBuildLog();
-
-            var actual = new SelfReferrer();
-
-            var target = new DefaultExecuteStrategy<SelfReferrer>();
-
-            target.Initialize(configuration, buildLog);
-
-            actual = target.Populate(actual);
-
-            actual.Should().NotBeNull();
-            actual.Id.Should().NotBeEmpty();
-            actual.Self.Should().BeSameAs(actual);
-        }
-
-        [Fact]
         public void PopulateInstanceThrowsExceptionWhenNotInitializedTest()
         {
             var value = new Person();
@@ -1545,54 +1596,38 @@
         }
 
         [Fact]
-        public void PopulateOnlySetsPublicPropertiesTest()
+        public void PopulatePropertyThrowsExceptionWhenNotInitializedTest()
         {
-            var expected = new PropertyScopes();
-            var value = Guid.NewGuid();
-            var valueGenerators = new List<IValueGenerator>();
+            var value = new Person();
+            var property = typeof(Person).GetProperty(nameof(Person.FirstName));
 
-            var buildStrategy = Substitute.For<IBuildStrategy>();
-            var valueGenerator = Substitute.For<IValueGenerator>();
+            var target = new PopulatePropertyWrapper();
 
-            valueGenerators.Add(valueGenerator);
+            Action action = () => target.RunTest(value, property);
 
-            buildStrategy.ValueGenerators.Returns(valueGenerators.AsReadOnly());
-
-            var target = new DefaultExecuteStrategy();
-
-            target.Initialize(buildStrategy, buildStrategy.GetBuildLog());
-
-            valueGenerator.IsSupported(typeof(Guid), Arg.Any<string>(), Arg.Any<LinkedList<object>>()).Returns(true);
-            valueGenerator.Generate(typeof(Guid), Arg.Any<string>(), Arg.Any<IExecuteStrategy>()).Returns(value);
-
-            var actual = (PropertyScopes)target.Populate(expected);
-
-            actual.Should().BeSameAs(expected);
-            actual.Public.Should().Be(value);
-            actual.InternalSet.Should().BeEmpty();
-            actual.ReadOnly.Should().BeEmpty();
-            PropertyScopes.GlobalValue.Should().BeEmpty();
+            action.ShouldThrow<InvalidOperationException>();
         }
 
         [Fact]
-        public void PopulatePopulatesReadOnlyReferencePropertiesTest()
+        public void PopulatePropertyThrowsExceptionWithNullInstanceTest()
         {
-            var configuration = Model.BuildStrategy;
-            var buildLog = configuration.GetBuildLog();
+            var target = new PopulatePropertyWrapper();
 
-            var target = new DefaultExecuteStrategy<ReadOnlyParent>();
+            var property = typeof(Person).GetProperty("FirstName");
 
-            target.Initialize(configuration, buildLog);
+            Action action = () => target.RunTest(null, property);
 
-            var actual = new ReadOnlyParent();
+            action.ShouldThrow<ArgumentNullException>();
+        }
 
-            actual = target.Populate(actual);
+        [Fact]
+        public void PopulatePropertyThrowsExceptionWithNullPropertyInfoTest()
+        {
+            var target = new PopulatePropertyWrapper();
 
-            actual.Company.Address.Should().NotBeNullOrWhiteSpace();
-            actual.AssignablePeople.Should().NotBeEmpty();
-            actual.People.Should().NotBeEmpty();
-            actual.RestrictedPeople.Should().BeEmpty();
-            actual.Unassigned.Should().BeNull();
+            Action action = () => target.RunTest(target);
+
+            action.ShouldThrow<ArgumentNullException>();
         }
 
         [Fact]
@@ -1604,11 +1639,19 @@
             var creator = Substitute.For<ITypeCreator>();
             var generator = Substitute.For<IValueGenerator>();
             var buildStrategy = Substitute.For<IBuildStrategy>();
+            var propertyResolver = Substitute.For<IPropertyResolver>();
 
             var target = new DefaultExecuteStrategy();
 
             target.Initialize(buildStrategy, buildStrategy.GetBuildLog());
 
+            buildStrategy.PropertyResolver.Returns(propertyResolver);
+            propertyResolver.CanPopulate(Arg.Any<PropertyInfo>()).Returns(true);
+            propertyResolver.ShouldPopulateProperty(
+                Arg.Any<IBuildConfiguration>(),
+                Arg.Any<object>(),
+                Arg.Any<PropertyInfo>(),
+                Arg.Any<object[]>()).Returns(true);
             buildStrategy.CreationRules.Returns(new List<CreationRule>().AsReadOnly());
             buildStrategy.ValueGenerators.Returns(
                 new List<IValueGenerator>
@@ -1654,11 +1697,19 @@
 
             var generator = Substitute.For<IValueGenerator>();
             var buildStrategy = Substitute.For<IBuildStrategy>();
+            var propertyResolver = Substitute.For<IPropertyResolver>();
 
             var target = new DefaultExecuteStrategy();
 
             target.Initialize(buildStrategy, buildStrategy.GetBuildLog());
 
+            buildStrategy.PropertyResolver.Returns(propertyResolver);
+            propertyResolver.CanPopulate(Arg.Any<PropertyInfo>()).Returns(true);
+            propertyResolver.ShouldPopulateProperty(
+                Arg.Any<IBuildConfiguration>(),
+                Arg.Any<object>(),
+                Arg.Any<PropertyInfo>(),
+                Arg.Any<object[]>()).Returns(true);
             buildStrategy.CreationRules.Returns(new List<CreationRule>().AsReadOnly());
             buildStrategy.ValueGenerators.Returns(
                 new List<IValueGenerator>
@@ -1698,11 +1749,19 @@
             var creator = Substitute.For<ITypeCreator>();
             var generator = Substitute.For<IValueGenerator>();
             var buildStrategy = Substitute.For<IBuildStrategy>();
+            var propertyResolver = Substitute.For<IPropertyResolver>();
 
             var target = new DefaultExecuteStrategy();
 
             target.Initialize(buildStrategy, buildStrategy.GetBuildLog());
 
+            buildStrategy.PropertyResolver.Returns(propertyResolver);
+            propertyResolver.CanPopulate(Arg.Any<PropertyInfo>()).Returns(true);
+            propertyResolver.ShouldPopulateProperty(
+                Arg.Any<IBuildConfiguration>(),
+                Arg.Any<object>(),
+                Arg.Any<PropertyInfo>(),
+                Arg.Any<object[]>()).Returns(true);
             buildStrategy.CreationRules.Returns(new List<CreationRule>().AsReadOnly());
             buildStrategy.ValueGenerators.Returns(
                 new List<IValueGenerator>
@@ -1743,7 +1802,52 @@
         }
 
         [Fact]
-        public void PopulateSkipsPropertiesMarkedWithIgnoreRuleTest()
+        public void PopulateReturnsInstanceFromBuildChainWhenCircularReferenceDetectedTest()
+        {
+            var expected = new SelfReferrer();
+            var id = Guid.NewGuid();
+
+            var typeCreators = new List<ITypeCreator>();
+            var valueGenerators = new List<IValueGenerator>();
+
+            var typeCreator = Substitute.For<ITypeCreator>();
+            var generator = Substitute.For<IValueGenerator>();
+            var buildStrategy = Substitute.For<IBuildStrategy>();
+            var propertyResolver = Substitute.For<IPropertyResolver>();
+
+            typeCreators.Add(typeCreator);
+            valueGenerators.Add(generator);
+
+            buildStrategy.PropertyResolver.Returns(propertyResolver);
+            buildStrategy.TypeCreators.Returns(typeCreators.AsReadOnly());
+            buildStrategy.ValueGenerators.Returns(valueGenerators.AsReadOnly());
+
+            var target = new DefaultExecuteStrategy();
+
+            target.Initialize(buildStrategy, buildStrategy.GetBuildLog());
+
+            propertyResolver.CanPopulate(Arg.Any<PropertyInfo>()).Returns(true);
+            propertyResolver.ShouldPopulateProperty(
+                Arg.Any<IBuildConfiguration>(),
+                Arg.Any<object>(),
+                Arg.Any<PropertyInfo>(),
+                Arg.Any<object[]>()).Returns(true);
+            typeCreator.CanCreate(typeof(SelfReferrer), null, Arg.Any<LinkedList<object>>()).Returns(true);
+            typeCreator.Populate(expected, target).Returns(expected);
+            typeCreator.AutoPopulate.Returns(true);
+            generator.IsSupported(typeof(Guid), "Id", Arg.Is<LinkedList<object>>(x => x.Last.Value == expected))
+                .Returns(true);
+            generator.Generate(typeof(Guid), "Id", Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last.Value == expected))
+                .Returns(id);
+
+            var actual = (SelfReferrer)target.Populate(expected);
+
+            actual.Should().Be(expected);
+            actual.Id.Should().Be(id);
+        }
+
+        [Fact]
+        public void PopulateSkipsPropertiesThatCannotBePopulatedTest()
         {
             var staff = new List<Person>();
             var name = Guid.NewGuid().ToString();
@@ -1760,10 +1864,19 @@
             var buildStrategy = Substitute.For<IBuildStrategy>();
             var typeCreator = Substitute.For<ITypeCreator>();
             var valueGenerator = Substitute.For<IValueGenerator>();
+            var propertyResolver = Substitute.For<IPropertyResolver>();
 
             typeCreators.Add(typeCreator);
             valueGenerators.Add(valueGenerator);
 
+            buildStrategy.PropertyResolver.Returns(propertyResolver);
+            propertyResolver.CanPopulate(Arg.Any<PropertyInfo>()).Returns(true);
+            propertyResolver.CanPopulate(Arg.Is<PropertyInfo>(x => x.Name == nameof(Company.Name))).Returns(false);
+            propertyResolver.ShouldPopulateProperty(
+                Arg.Any<IBuildConfiguration>(),
+                Arg.Any<object>(),
+                Arg.Any<PropertyInfo>(),
+                Arg.Any<object[]>()).Returns(true);
             buildStrategy.TypeCreators.Returns(typeCreators.AsReadOnly());
             buildStrategy.ValueGenerators.Returns(valueGenerators.AsReadOnly());
             buildStrategy.IgnoreRules.Returns(ignoreRules.AsReadOnly());
@@ -1807,11 +1920,12 @@
         }
 
         [Fact]
-        public void PopulateSkipsPropertiesMarkedWithIgnoreRuleWithTypeMatchesBaseClassTest()
+        public void PopulateSkipsPropertiesThatShouldNotBePopulatedTest()
         {
             var staff = new List<Person>();
             var name = Guid.NewGuid().ToString();
-            var expected = new SpecificCompany();
+            var address = Guid.NewGuid().ToString();
+            var expected = new Company();
             var ignoreRule = new IgnoreRule(typeof(Company), "Name");
             var valueGenerators = new List<IValueGenerator>();
             var typeCreators = new List<ITypeCreator>();
@@ -1823,10 +1937,23 @@
             var buildStrategy = Substitute.For<IBuildStrategy>();
             var typeCreator = Substitute.For<ITypeCreator>();
             var valueGenerator = Substitute.For<IValueGenerator>();
+            var propertyResolver = Substitute.For<IPropertyResolver>();
 
             typeCreators.Add(typeCreator);
             valueGenerators.Add(valueGenerator);
 
+            buildStrategy.PropertyResolver.Returns(propertyResolver);
+            propertyResolver.CanPopulate(Arg.Any<PropertyInfo>()).Returns(true);
+            propertyResolver.ShouldPopulateProperty(
+                Arg.Any<IBuildConfiguration>(),
+                Arg.Any<object>(),
+                Arg.Any<PropertyInfo>(),
+                Arg.Any<object[]>()).Returns(true);
+            propertyResolver.ShouldPopulateProperty(
+                Arg.Any<IBuildConfiguration>(),
+                expected,
+                Arg.Is<PropertyInfo>(x => x.Name == nameof(Company.Name)),
+                Arg.Any<object[]>()).Returns(false);
             buildStrategy.TypeCreators.Returns(typeCreators.AsReadOnly());
             buildStrategy.ValueGenerators.Returns(valueGenerators.AsReadOnly());
             buildStrategy.IgnoreRules.Returns(ignoreRules.AsReadOnly());
@@ -1846,17 +1973,26 @@
             typeCreator.Populate(staff, target).Returns(staff);
             valueGenerator.IsSupported(
                 typeof(string),
-                Arg.Any<string>(),
+                "Name",
                 Arg.Is<LinkedList<object>>(x => x.Last.Value == expected)).Returns(true);
             valueGenerator.Generate(
                 typeof(string),
-                Arg.Any<string>(),
+                "Name",
                 Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last.Value == expected)).Returns(name);
+            valueGenerator.IsSupported(
+                typeof(string),
+                "Address",
+                Arg.Is<LinkedList<object>>(x => x.Last.Value == expected)).Returns(true);
+            valueGenerator.Generate(
+                typeof(string),
+                "Address",
+                Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last.Value == expected)).Returns(address);
 
-            var actual = (SpecificCompany)target.Populate(expected);
+            var actual = (Company)target.Populate(expected);
 
             actual.Should().BeSameAs(expected);
             actual.Name.Should().BeNullOrEmpty();
+            actual.Address.Should().Be(address);
             actual.Staff.Should().BeSameAs(staff);
         }
 
@@ -1882,83 +2018,57 @@
             action.ShouldThrow<ArgumentNullException>();
         }
 
-        [Fact]
-        public void ShouldPopulatePropertyThrowsExceptionWhenNotInitializedTest()
+        private class AdditionalWrapper
         {
-            var value = new Person();
-            var property = typeof(Person).GetProperty(nameof(Person.FirstName));
+            public AdditionalWrapper(int number)
+            {
+                Number = number;
+            }
 
-            var target = new ShouldPopulatePropertyWrapper();
+            public ReadOnlyModelWrapper Child { get; set; }
 
-            Action action = () => target.RunTest(value, property);
-
-            action.ShouldThrow<InvalidOperationException>();
+            public int Number { get; set; }
         }
 
-        [Fact]
-        public void ShouldPopulatePropertyThrowsExceptionWithNullInstanceTest()
+        private class BuildWrapper : DefaultExecuteStrategy
         {
-            var target = new ShouldPopulatePropertyWrapper();
-
-            var property = typeof(Person).GetProperty("FirstName");
-
-            Action action = () => target.RunTest(null, property);
-
-            action.ShouldThrow<ArgumentNullException>();
-        }
-
-        [Fact]
-        public void ShouldPopulatePropertyThrowsExceptionWithNullPropertyInfoTest()
-        {
-            var target = new ShouldPopulatePropertyWrapper();
-
-            Action action = () => target.RunTest(target);
-
-            action.ShouldThrow<ArgumentNullException>();
-        }
-
-        private class Bottom
-        {
-            public Top Root { get; set; }
-
-            public string Value { get; set; }
-        }
-
-        private class Child
-        {
-            public Bottom End { get; set; }
-
-            public string Value { get; set; }
-        }
-
-        private class Looper
-        {
-            public Looper Other { get; set; }
-
-            public string Stuff { get; set; }
+            public void RunTest(Type type)
+            {
+                Build(type, null, null);
+            }
         }
 
         private class PopulateInstanceWrapper : DefaultExecuteStrategy
         {
             public void RunTest(object instance = null)
             {
-                PopulateInstance(instance, null);
+                AutoPopulateInstance(instance, null);
             }
         }
 
-        private class ShouldPopulatePropertyWrapper : DefaultExecuteStrategy
+        private class PopulatePropertyWrapper : DefaultExecuteStrategy
         {
             public void RunTest(object instance = null, PropertyInfo propertyInfo = null)
             {
-                ShouldPopulateProperty(instance, propertyInfo, null);
+                PopulateProperty(instance, propertyInfo);
             }
         }
 
-        private class Top
+        private class ReadOnlyModelWrapper
         {
-            public Child Next { get; set; }
+            public ReadOnlyModelWrapper(ReadOnlyModel model)
+            {
+                Model = model;
+            }
 
-            public string Value { get; set; }
+            public ReadOnlyModel Model { get; set; }
+
+            public ReadOnlyModel Other { get; set; }
+        }
+
+        private class SimpleReadOnlyParent
+        {
+            public Simple Simple { get; } = new Simple();
         }
     }
 }
