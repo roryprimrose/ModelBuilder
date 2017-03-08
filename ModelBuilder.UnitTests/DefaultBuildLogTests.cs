@@ -296,20 +296,18 @@
 
             var target = new DefaultBuildLog();
 
-            target.IgnoringProperty(typeof(string), "FirstName", typeof(DummyIgnoreRule), context);
+            target.IgnoringProperty(typeof(string), "FirstName", context);
 
             target.Output.Should().NotBeNullOrWhiteSpace();
         }
 
         [Theory]
-        [InlineData(null, "FirstName", typeof(DummyIgnoreRule), true)]
-        [InlineData(typeof(string), null, typeof(DummyIgnoreRule), true)]
-        [InlineData(typeof(string), "FirstName", null, true)]
-        [InlineData(typeof(string), "FirstName", typeof(DummyIgnoreRule), false)]
+        [InlineData(null, "FirstName", true)]
+        [InlineData(typeof(string), null, true)]
+        [InlineData(typeof(string), "FirstName", false)]
         public void IgnoringPropertyValidatesPropertysTest(
             Type propertyType,
             string propertyName,
-            Type ignoreRuleType,
             bool includeContext)
         {
             Person context = null;
@@ -321,7 +319,7 @@
 
             var target = new DefaultBuildLog();
 
-            Action action = () => target.IgnoringProperty(propertyType, propertyName, ignoreRuleType, context);
+            Action action = () => target.IgnoringProperty(propertyType, propertyName, context);
 
             action.ShouldThrow<ArgumentNullException>();
         }

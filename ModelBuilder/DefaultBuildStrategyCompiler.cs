@@ -15,6 +15,7 @@
         public DefaultBuildStrategyCompiler()
         {
             ConstructorResolver = new DefaultConstructorResolver();
+            PropertyResolver = new DefaultPropertyResolver();
 
             foreach (var creator in DefaultTypeCreators)
             {

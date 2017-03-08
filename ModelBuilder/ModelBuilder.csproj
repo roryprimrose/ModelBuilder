@@ -100,6 +100,9 @@
     <Compile Include="DefaultExecuteStrategyT.cs">
       <DependentUpon>IExecuteStrategy.cs</DependentUpon>
     </Compile>
+    <Compile Include="DefaultPropertyResolver.cs">
+      <DependentUpon>IPropertyResolver.cs</DependentUpon>
+    </Compile>
     <Compile Include="DomainNameValueGenerator.cs">
       <DependentUpon>IValueGenerator.cs</DependentUpon>
     </Compile>
@@ -124,6 +127,7 @@
       <DependentUpon>IValueGenerator.cs</DependentUpon>
     </Compile>
     <Compile Include="IPostBuildAction.cs" />
+    <Compile Include="IPropertyResolver.cs" />
     <Compile Include="IRandomGenerator.cs" />
     <Compile Include="LastNameValueGenerator.cs">
       <DependentUpon>IValueGenerator.cs</DependentUpon>

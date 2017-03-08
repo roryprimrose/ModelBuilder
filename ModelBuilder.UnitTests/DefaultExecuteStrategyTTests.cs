@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.IO;
+    using System.Reflection;
     using FluentAssertions;
     using NSubstitute;
     using Xunit;
@@ -99,6 +100,7 @@
             var typeCreator = Substitute.For<ITypeCreator>();
             var generator = Substitute.For<IValueGenerator>();
             var buildStrategy = Substitute.For<IBuildStrategy>();
+            var propertyResolver = Substitute.For<IPropertyResolver>();
 
             typeCreators.Add(typeCreator);
             valueGenerators.Add(generator);
@@ -110,6 +112,13 @@
 
             target.Initialize(buildStrategy, buildStrategy.GetBuildLog());
 
+            buildStrategy.PropertyResolver.Returns(propertyResolver);
+            propertyResolver.CanPopulate(Arg.Any<PropertyInfo>()).Returns(true);
+            propertyResolver.ShouldPopulateProperty(
+                Arg.Any<IBuildConfiguration>(),
+                Arg.Any<object>(),
+                Arg.Any<PropertyInfo>(),
+                Arg.Any<object[]>()).Returns(true);
             typeCreator.CanCreate(typeof(SlimModel), null, Arg.Any<LinkedList<object>>()).Returns(true);
             typeCreator.CanPopulate(typeof(SlimModel), null, Arg.Any<LinkedList<object>>()).Returns(true);
             typeCreator.Create(typeof(SlimModel), null, Arg.Any<IExecuteStrategy>()).Returns(expected);
@@ -176,10 +185,18 @@
             var buildStrategy = Substitute.For<IBuildStrategy>();
             var typeCreator = Substitute.For<ITypeCreator>();
             var valueGenerator = Substitute.For<IValueGenerator>();
+            var propertyResolver = Substitute.For<IPropertyResolver>();
 
             typeCreators.Add(typeCreator);
             valueGenerators.Add(valueGenerator);
 
+            buildStrategy.PropertyResolver.Returns(propertyResolver);
+            propertyResolver.CanPopulate(Arg.Any<PropertyInfo>()).Returns(true);
+            propertyResolver.ShouldPopulateProperty(
+                Arg.Any<IBuildConfiguration>(),
+                Arg.Any<object>(),
+                Arg.Any<PropertyInfo>(),
+                Arg.Any<object[]>()).Returns(true);
             buildStrategy.TypeCreators.Returns(typeCreators.AsReadOnly());
             buildStrategy.ValueGenerators.Returns(valueGenerators.AsReadOnly());
 
@@ -268,7 +285,7 @@
         {
             public void RunTest()
             {
-                PopulateInstance(null, null);
+                AutoPopulateInstance(null, null);
             }
         }
 

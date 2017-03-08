@@ -12,6 +12,7 @@
         public void GetBuildLogReturnsDefaultBuildLogTest()
         {
             var constructorResolver = Substitute.For<IConstructorResolver>();
+            var propertyResolver = Substitute.For<IPropertyResolver>();
             var creationRules = new List<CreationRule>();
             var typeCreators = new List<ITypeCreator>();
             var valueGenerators = new List<IValueGenerator>();
@@ -21,6 +22,7 @@
 
             var target = new BuildStrategy(
                 constructorResolver,
+                propertyResolver,
                 creationRules,
                 typeCreators,
                 valueGenerators,
@@ -37,6 +39,7 @@
         public void GetBuildLogReturnsUniqueInstanceTest()
         {
             var constructorResolver = Substitute.For<IConstructorResolver>();
+            var propertyResolver = Substitute.For<IPropertyResolver>();
             var creationRules = new List<CreationRule>();
             var typeCreators = new List<ITypeCreator>();
             var valueGenerators = new List<IValueGenerator>();
@@ -46,6 +49,7 @@
 
             var target = new BuildStrategy(
                 constructorResolver,
+                propertyResolver,
                 creationRules,
                 typeCreators,
                 valueGenerators,
@@ -63,6 +67,7 @@
         public void GetExecuteStrategyReturnsDefaultStrategyTest()
         {
             var constructorResolver = Substitute.For<IConstructorResolver>();
+            var propertyResolver = Substitute.For<IPropertyResolver>();
             var creationRules = new List<CreationRule>();
             var typeCreators = new List<ITypeCreator>();
             var valueGenerators = new List<IValueGenerator>();
@@ -72,6 +77,7 @@
 
             var target = new BuildStrategy(
                 constructorResolver,
+                propertyResolver,
                 creationRules,
                 typeCreators,
                 valueGenerators,
@@ -87,8 +93,8 @@
         [Fact]
         public void ReturnsConstructorValuesTest()
         {
-            var buildLog = Substitute.For<IBuildLog>();
             var constructorResolver = Substitute.For<IConstructorResolver>();
+            var propertyResolver = Substitute.For<IPropertyResolver>();
             var creationRules = new List<CreationRule>
             {
                 new CreationRule(typeof(string), "Test", int.MaxValue, "Stuff")
@@ -116,6 +122,7 @@
 
             var target = new BuildStrategy(
                 constructorResolver,
+                propertyResolver,
                 creationRules,
                 typeCreators,
                 valueGenerators,
@@ -124,6 +131,7 @@
                 postBuildActions);
 
             target.ConstructorResolver.Should().Be(constructorResolver);
+            target.PropertyResolver.Should().Be(propertyResolver);
             target.CreationRules.ShouldBeEquivalentTo(creationRules);
             target.TypeCreators.ShouldBeEquivalentTo(typeCreators);
             target.ValueGenerators.ShouldBeEquivalentTo(valueGenerators);
@@ -135,6 +143,7 @@
         [Fact]
         public void ThrowsExceptionWhenCreatedWithNullConstructorResolverTest()
         {
+            var propertyResolver = Substitute.For<IPropertyResolver>();
             var creationRules = new List<CreationRule>();
             var typeCreators = new List<ITypeCreator>();
             var valueGenerators = new List<IValueGenerator>();
@@ -145,6 +154,33 @@
             Action action =
                 () =>
                     new BuildStrategy(
+                        null,
+                        propertyResolver,
+                        creationRules,
+                        typeCreators,
+                        valueGenerators,
+                        ignoreRules,
+                        executeOrderRules,
+                        postBuildActions);
+
+            action.ShouldThrow<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void ThrowsExceptionWhenCreatedWithNullPropertyResolverTest()
+        {
+            var constructorResolver = Substitute.For<IConstructorResolver>();
+            var creationRules = new List<CreationRule>();
+            var typeCreators = new List<ITypeCreator>();
+            var valueGenerators = new List<IValueGenerator>();
+            var ignoreRules = new List<IgnoreRule>();
+            var executeOrderRules = new List<ExecuteOrderRule>();
+            var postBuildActions = new List<IPostBuildAction>();
+
+            Action action =
+                () =>
+                    new BuildStrategy(
+                        constructorResolver,
                         null,
                         creationRules,
                         typeCreators,
@@ -160,6 +196,7 @@
         public void ThrowsExceptionWhenCreatedWithNullCreationRulesTest()
         {
             var constructorResolver = Substitute.For<IConstructorResolver>();
+            var propertyResolver = Substitute.For<IPropertyResolver>();
             var typeCreators = new List<ITypeCreator>();
             var valueGenerators = new List<IValueGenerator>();
             var ignoreRules = new List<IgnoreRule>();
@@ -170,6 +207,7 @@
                 () =>
                     new BuildStrategy(
                         constructorResolver,
+                        propertyResolver,
                         null,
                         typeCreators,
                         valueGenerators,
@@ -184,6 +222,7 @@
         public void ThrowsExceptionWhenCreatedWithNullExecuteOrderRulesTest()
         {
             var constructorResolver = Substitute.For<IConstructorResolver>();
+            var propertyResolver = Substitute.For<IPropertyResolver>();
             var creationRules = new List<CreationRule>();
             var typeCreators = new List<ITypeCreator>();
             var valueGenerators = new List<IValueGenerator>();
@@ -194,6 +233,7 @@
                 () =>
                     new BuildStrategy(
                         constructorResolver,
+                        propertyResolver,
                         creationRules,
                         typeCreators,
                         valueGenerators,
@@ -208,6 +248,7 @@
         public void ThrowsExceptionWhenCreatedWithNullIgnoreRulesTest()
         {
             var constructorResolver = Substitute.For<IConstructorResolver>();
+            var propertyResolver = Substitute.For<IPropertyResolver>();
             var creationRules = new List<CreationRule>();
             var typeCreators = new List<ITypeCreator>();
             var valueGenerators = new List<IValueGenerator>();
@@ -218,6 +259,7 @@
                 () =>
                     new BuildStrategy(
                         constructorResolver,
+                        propertyResolver,
                         creationRules,
                         typeCreators,
                         valueGenerators,
@@ -232,6 +274,7 @@
         public void ThrowsExceptionWhenCreatedWithNullPostBuildActionsTest()
         {
             var constructorResolver = Substitute.For<IConstructorResolver>();
+            var propertyResolver = Substitute.For<IPropertyResolver>();
             var creationRules = new List<CreationRule>();
             var typeCreators = new List<ITypeCreator>();
             var valueGenerators = new List<IValueGenerator>();
@@ -242,6 +285,7 @@
                 () =>
                     new BuildStrategy(
                         constructorResolver,
+                        propertyResolver,
                         creationRules,
                         typeCreators,
                         valueGenerators,
@@ -256,6 +300,7 @@
         public void ThrowsExceptionWhenCreatedWithNullTypeCreatorsTest()
         {
             var constructorResolver = Substitute.For<IConstructorResolver>();
+            var propertyResolver = Substitute.For<IPropertyResolver>();
             var creationRules = new List<CreationRule>();
             var valueGenerators = new List<IValueGenerator>();
             var ignoreRules = new List<IgnoreRule>();
@@ -266,6 +311,7 @@
                 () =>
                     new BuildStrategy(
                         constructorResolver,
+                        propertyResolver,
                         creationRules,
                         null,
                         valueGenerators,
@@ -280,6 +326,7 @@
         public void ThrowsExceptionWhenCreatedWithNullValueGeneratorsTest()
         {
             var constructorResolver = Substitute.For<IConstructorResolver>();
+            var propertyResolver = Substitute.For<IPropertyResolver>();
             var creationRules = new List<CreationRule>();
             var typeCreators = new List<ITypeCreator>();
             var ignoreRules = new List<IgnoreRule>();
@@ -290,6 +337,7 @@
                 () =>
                     new BuildStrategy(
                         constructorResolver,
+                        propertyResolver,
                         creationRules,
                         typeCreators,
                         null,

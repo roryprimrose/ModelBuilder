@@ -183,9 +183,8 @@
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="propertyType" /> parameter is null.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="propertyName" /> parameter is null.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="ignoreRuleType" /> parameter is null.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="context" /> parameter is null.</exception>
-        public void IgnoringProperty(Type propertyType, string propertyName, Type ignoreRuleType, object context)
+        public void IgnoringProperty(Type propertyType, string propertyName, object context)
         {
             if (propertyType == null)
             {
@@ -196,12 +195,7 @@
             {
                 throw new ArgumentNullException(nameof(propertyName));
             }
-
-            if (ignoreRuleType == null)
-            {
-                throw new ArgumentNullException(nameof(ignoreRuleType));
-            }
-
+           
             if (context == null)
             {
                 throw new ArgumentNullException(nameof(context));
@@ -211,8 +205,7 @@
                 Resources.DefaultBuildLog_IgnoringProperty,
                 propertyName,
                 propertyType.FullName,
-                context.GetType().FullName,
-                ignoreRuleType.FullName);
+                context.GetType().FullName);
         }
 
         /// <inheritdoc />
