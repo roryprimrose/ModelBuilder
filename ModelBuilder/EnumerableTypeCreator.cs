@@ -6,7 +6,7 @@
     using System.Diagnostics.CodeAnalysis;
     using System.Reflection;
 
-#if NET40
+#if NET452
     using System.Net.NetworkInformation;
 #endif
 
@@ -19,7 +19,7 @@
         private static readonly List<Type> _unsupportedTypes = new List<Type>
         {
             typeof(ArraySegment<>),
-#if NET40
+#if NET452
             typeof(GatewayIPAddressInformationCollection),
             typeof(IPAddressCollection),
             typeof(IPAddressInformationCollection),

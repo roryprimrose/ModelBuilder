@@ -16,7 +16,7 @@
     /// </summary>
     public class DefaultExecuteStrategy : IExecuteStrategy
     {
-        private readonly Stack _buildChain = new Stack();
+        private readonly Stack<object> _buildChain = new Stack<object>();
 
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is null.</exception>
@@ -485,7 +485,7 @@
                     CultureInfo.CurrentCulture,
                     "The {0} has not be initialized. You must invoke {1} first to provide the build configuration and the build log.",
                     GetType().FullName,
-                    MethodBase.GetCurrentMethod().Name);
+                    nameof(EnsureInitialized));
 
                 throw new InvalidOperationException(message);
             }

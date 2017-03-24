@@ -1,10 +1,11 @@
-﻿using System;
-using System.Linq;
-using FluentAssertions;
-using Xunit;
-
-namespace ModelBuilder.UnitTests
+﻿namespace ModelBuilder.UnitTests
 {
+    using System;
+    using System.Linq;
+    using System.Reflection;
+    using FluentAssertions;
+    using Xunit;
+
     public class RandomGeneratorTests
     {
         [Theory]
@@ -218,7 +219,7 @@ namespace ModelBuilder.UnitTests
 
                 var actual = Convert.ToDouble(value);
 
-                if (unchecked(actual != (int) actual))
+                if (unchecked(actual != (int)actual))
                 {
                     decimalFound = true;
 
@@ -254,7 +255,6 @@ namespace ModelBuilder.UnitTests
                 value.Should().BeOfType(type);
             }
         }
-
 
         [Theory]
         [ClassData(typeof(NumericTypeDataSource))]

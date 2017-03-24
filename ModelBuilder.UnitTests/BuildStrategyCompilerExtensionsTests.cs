@@ -674,6 +674,7 @@
             action.ShouldThrow<ArgumentNullException>();
         }
 
+#if NET452
         [Fact]
         public void ScanModulesPopulatesCompilerWithDetectedConfigurationTest()
         {
@@ -698,6 +699,7 @@
 
             action.ShouldThrow<ArgumentNullException>();
         }
+#endif
 
         [Fact]
         public void SetConstructorResolverAssignsResolverToCompilerTest()

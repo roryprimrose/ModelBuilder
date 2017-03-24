@@ -576,8 +576,11 @@
 
                         strategy.CreateWith();
 
-                        return "Iteration " + loopIndex + " on thread " + Thread.CurrentThread.ManagedThreadId +
-                               Environment.NewLine + strategy.Log.Output;
+                        return "Iteration " + loopIndex
+#if NET452
+                        + " on thread " + Thread.CurrentThread.ManagedThreadId 
+#endif
+                        + Environment.NewLine + strategy.Log.Output;
                     });
 
                 tasks.Add(task);

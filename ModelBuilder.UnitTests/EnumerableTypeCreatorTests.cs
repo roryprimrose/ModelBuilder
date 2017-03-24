@@ -40,11 +40,13 @@
         [InlineData(typeof(IReadOnlyCollection<int>), false)]
         [InlineData(typeof(IReadOnlyList<int>), false)]
         [InlineData(typeof(ArraySegment<string>), false)]
-        [InlineData(typeof(GatewayIPAddressInformationCollection), false)]
         [InlineData(typeof(IPAddressCollection), false)]
+#if NET452
+        [InlineData(typeof(GatewayIPAddressInformationCollection), false)]
         [InlineData(typeof(IPAddressInformationCollection), false)]
         [InlineData(typeof(MulticastIPAddressInformationCollection), false)]
         [InlineData(typeof(UnicastIPAddressInformationCollection), false)]
+#endif
         [InlineData(typeof(Dictionary<,>.KeyCollection), false)]
         [InlineData(typeof(Dictionary<,>.ValueCollection), false)]
         [InlineData(typeof(Dictionary<string, int>), true)]
@@ -87,11 +89,13 @@
         [InlineData(typeof(IReadOnlyList<int>), false)]
         [InlineData(typeof(IEnumerable<string>), false)]
         [InlineData(typeof(ArraySegment<string>), false)]
-        [InlineData(typeof(GatewayIPAddressInformationCollection), false)]
         [InlineData(typeof(IPAddressCollection), false)]
+#if NET452
+        [InlineData(typeof(GatewayIPAddressInformationCollection), false)]
         [InlineData(typeof(IPAddressInformationCollection), false)]
         [InlineData(typeof(MulticastIPAddressInformationCollection), false)]
         [InlineData(typeof(UnicastIPAddressInformationCollection), false)]
+#endif
         [InlineData(typeof(Dictionary<,>.KeyCollection), false)]
         [InlineData(typeof(Dictionary<,>.ValueCollection), false)]
         [InlineData(typeof(SortedDictionary<,>.KeyCollection), false)]
@@ -147,7 +151,7 @@
 
             var target = new IncrementingEnumerableTypeCreator();
 
-            var result = (IList<int>) target.Create(typeof(IList<int>), null, executeStrategy);
+            var result = (IList<int>)target.Create(typeof(IList<int>), null, executeStrategy);
 
             result.Should().BeEmpty();
         }
@@ -193,7 +197,7 @@
             actual.Should().BeOfType<List<int>>();
             actual.As<List<int>>().Should().BeEmpty();
         }
-        
+
         [Theory]
         [InlineData(typeof(string), false)]
         [InlineData(typeof(Stream), false)]
@@ -205,11 +209,13 @@
         [InlineData(typeof(IReadOnlyCollection<int>), false)]
         [InlineData(typeof(IReadOnlyList<int>), false)]
         [InlineData(typeof(ArraySegment<string>), false)]
-        [InlineData(typeof(GatewayIPAddressInformationCollection), false)]
         [InlineData(typeof(IPAddressCollection), false)]
+#if NET452
+        [InlineData(typeof(GatewayIPAddressInformationCollection), false)]
         [InlineData(typeof(IPAddressInformationCollection), false)]
         [InlineData(typeof(MulticastIPAddressInformationCollection), false)]
         [InlineData(typeof(UnicastIPAddressInformationCollection), false)]
+#endif
         [InlineData(typeof(Dictionary<,>.KeyCollection), false)]
         [InlineData(typeof(Dictionary<,>.ValueCollection), false)]
         [InlineData(typeof(SortedDictionary<,>.KeyCollection), false)]
@@ -264,7 +270,7 @@
 
             actual.Should().BeSameAs(expected);
 
-            var set = (Collection<Guid>) actual;
+            var set = (Collection<Guid>)actual;
 
             set.Should().HaveCount(target.AutoPopulateCount);
             set.All(x => x != Guid.Empty).Should().BeTrue();
@@ -294,7 +300,7 @@
 
             target.Populate(actual, executeStrategy);
 
-            var converted = (IEnumerable) actual;
+            var converted = (IEnumerable)actual;
 
             converted.Should().NotBeEmpty();
         }
@@ -319,7 +325,7 @@
 
             actual.Should().BeSameAs(expected);
 
-            var set = (List<Guid>) actual;
+            var set = (List<Guid>)actual;
 
             set.Should().HaveCount(target.AutoPopulateCount);
             set.All(x => x != Guid.Empty).Should().BeTrue();
@@ -333,7 +339,7 @@
 
             var target = new IncrementingEnumerableTypeCreator();
 
-            var result = (List<int>) target.Populate(actual, executeStrategy);
+            var result = (List<int>)target.Populate(actual, executeStrategy);
 
             var baseValue = result[0];
             var expected = new List<int>(target.AutoPopulateCount);
@@ -345,7 +351,7 @@
 
             result.ShouldAllBeEquivalentTo(expected);
         }
-        
+
         [Fact]
         public void PopulateThrowsExceptionWithUnsupportedTypeTest()
         {
