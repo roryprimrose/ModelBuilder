@@ -621,7 +621,7 @@
             return compiler;
         }
 
-#if !NETSTANDARD1_3
+#if NET452
         /// <summary>
         ///     Scans available assemblies for <see cref="ICompilerModule" /> types that can configure the specified compiler.
         /// </summary>

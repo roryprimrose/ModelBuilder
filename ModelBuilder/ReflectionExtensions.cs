@@ -2,7 +2,7 @@
 {
     using System;
     using System.Reflection;
-#if NETSTANDARD1_3
+#if NETSTANDARD1_5
     using System.Collections.Generic;
 
 #endif
@@ -102,7 +102,7 @@
 #endif
         }
 
-#if NETSTANDARD1_3
+#if NETSTANDARD1_5
         
         public static Type[] GetGenericArguments(this Type type)
         {

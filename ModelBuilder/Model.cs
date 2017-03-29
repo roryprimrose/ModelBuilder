@@ -130,7 +130,7 @@
         {
             var compiler = new DefaultBuildStrategyCompiler();
 
-#if !NETSTANDARD1_3
+#if NET452
             compiler.ScanModules();
 #endif
 

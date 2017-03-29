@@ -1,22 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.5;net452</TargetFrameworks>
+    <TargetFrameworks>netcoreapp1.1;net452</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="fluentassertions" Version="4.19.1" />
     <PackageReference Include="nsubstitute" Version="2.0.2" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.0.0" />
     <PackageReference Include="xunit" Version="2.2.0" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.2.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\ModelBuilder\ModelBuilder.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Properties\" />
   </ItemGroup>
 
 </Project>

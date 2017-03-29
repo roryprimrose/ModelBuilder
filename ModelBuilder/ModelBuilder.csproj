@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.3;net452</TargetFrameworks>
+    <TargetFrameworks>netstandard1.5;net452</TargetFrameworks>
     <Authors>rprimrose</Authors>
     <Company>Neovolve</Company>
     <Description>Provides build features for creating model data.</Description>
@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <PackageReference Include="gitversiontask" Version="4.0.0-beta0011" />
+    <PackageReference Include="System.Xml.XmlSerializer" Version="4.3.0" />
   </ItemGroup>
   
 </Project>

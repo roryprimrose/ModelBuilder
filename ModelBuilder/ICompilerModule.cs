@@ -1,4 +1,4 @@
-﻿#if !NETSTANDARD1_2
+﻿#if NET452
 namespace ModelBuilder
 {
     /// <summary>
