@@ -179,7 +179,7 @@
             var collectionType = collectionGenericTypeDefinition.MakeGenericType(internalType);
 
             // Get the Add method
-            var addMethod = collectionType.GetMethod("Add");
+            var addMethod = collectionType.GetTypeInfo().GetMethod("Add");
 
             object previousItem = null;
 

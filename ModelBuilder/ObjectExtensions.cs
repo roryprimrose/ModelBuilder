@@ -32,7 +32,7 @@ namespace ModelBuilder
                 throw new ArgumentNullException(nameof(expression));
             }
 
-            return from x in source.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance)
+            return from x in source.GetType().GetTypeInfo().GetProperties(BindingFlags.Public | BindingFlags.Instance)
                 where expression.IsMatch(x.Name)
                 select x;
         }

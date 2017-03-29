@@ -9,11 +9,6 @@
 
     public class BuildStrategyCompilerExtensionsTests
     {
-        public interface ISomeCompilerModule : ICompilerModule
-        {
-            // This verifies that the module scanner does not attempt to use interface modules
-        }
-
         [Fact]
         public void AddCreationRuleAddsRuleToCompilerTest()
         {
@@ -675,6 +670,20 @@
         }
 
 #if NET452
+        public interface ISomeCompilerModule : ICompilerModule
+        {
+            // This verifies that the module scanner does not attempt to use interface modules
+        }
+
+        public abstract class AbstractCompilerModule : ICompilerModule
+        {
+            public void Configure(IBuildStrategyCompiler compiler)
+            {
+                // This verifies that the module scanner does not attempt to use abstract modules
+                throw new NotImplementedException();
+            }
+        }
+
         [Fact]
         public void ScanModulesPopulatesCompilerWithDetectedConfigurationTest()
         {
@@ -811,15 +820,6 @@
             Action action = () => target.SetPropertyResolver(resolver);
 
             action.ShouldThrow<ArgumentNullException>();
-        }
-
-        public abstract class AbstractCompilerModule : ICompilerModule
-        {
-            public void Configure(IBuildStrategyCompiler compiler)
-            {
-                // This verifies that the module scanner does not attempt to use abstract modules
-                throw new NotImplementedException();
-            }
         }
     }
 }

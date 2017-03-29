@@ -77,7 +77,7 @@
             // Search for a matching constructor
             var types = args.Select(x => x.GetType()).ToArray();
 
-            var constructor = type.GetConstructor(types);
+            var constructor = type.GetTypeInfo().GetConstructor(types);
 
             if (constructor == null)
             {
