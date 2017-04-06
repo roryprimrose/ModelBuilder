@@ -4,12 +4,9 @@
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
-    using System.Reflection;
-
-#if NET452
     using System.Net.NetworkInformation;
-#endif
-
+    using System.Reflection;
+    
     /// <summary>
     ///     The <see cref="EnumerableTypeCreator" />
     ///     class is used to create an instance from an <see cref="IEnumerable{T}" /> type.
@@ -19,9 +16,9 @@
         private static readonly List<Type> _unsupportedTypes = new List<Type>
         {
             typeof(ArraySegment<>),
+            typeof(IPAddressCollection),
 #if NET452
             typeof(GatewayIPAddressInformationCollection),
-            typeof(IPAddressCollection),
             typeof(IPAddressInformationCollection),
             typeof(MulticastIPAddressInformationCollection),
             typeof(UnicastIPAddressInformationCollection),

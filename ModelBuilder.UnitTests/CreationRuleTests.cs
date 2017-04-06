@@ -8,21 +8,6 @@
     public class CreationRuleTests
     {
         [Fact]
-        public void CreateReturnsValueFromConstructorExpressionTest()
-        {
-            var type = typeof(string);
-            var name = Guid.NewGuid().ToString();
-            var priority = Environment.TickCount;
-            var expected = Guid.NewGuid().ToString();
-
-            var target = new CreationRule((checkType, referenceName) => true, priority, (createType, referenceName, context) => expected);
-
-            var actual = target.Create(type, name, null);
-
-            actual.Should().Be(expected);
-        }
-
-        [Fact]
         public void CreateReturnsValueFromConstructorTest()
         {
             var type = typeof(string);
@@ -31,6 +16,94 @@
             var expected = Guid.NewGuid().ToString();
 
             var target = new CreationRule((checkType, referenceName) => true, priority, expected);
+
+            var actual = target.Create(type, name, null);
+
+            actual.Should().Be(expected);
+        }
+
+        [Fact]
+        public void CreateReturnsValueFromLiteralValueWithRegularExpressionMatchTest()
+        {
+            var type = typeof(string);
+            var name = "FirstName";
+            var expression = new Regex(".+Name");
+            var priority = Environment.TickCount;
+            var expected = Guid.NewGuid().ToString();
+
+            var target = new CreationRule(typeof(string), expression, priority, expected);
+
+            var actual = target.Create(type, name, null);
+
+            actual.Should().Be(expected);
+        }
+
+        [Fact]
+        public void CreateReturnsValueFromLiteralValueWithStringMatchTest()
+        {
+            var type = typeof(string);
+            var name = "FirstName";
+            var priority = Environment.TickCount;
+            var expected = Guid.NewGuid().ToString();
+
+            var target = new CreationRule(typeof(string), name, priority, expected);
+
+            var actual = target.Create(type, name, null);
+
+            actual.Should().Be(expected);
+        }
+
+        [Fact]
+        public void CreateReturnsValueFromValueExpressionWithMatchExpressionTest()
+        {
+            var type = typeof(string);
+            var name = Guid.NewGuid().ToString();
+            var priority = Environment.TickCount;
+            var expected = Guid.NewGuid().ToString();
+
+            var target = new CreationRule(
+                (checkType, referenceName) => true,
+                priority,
+                (createType, referenceName, context) => expected);
+
+            var actual = target.Create(type, name, null);
+
+            actual.Should().Be(expected);
+        }
+
+        [Fact]
+        public void CreateReturnsValueFromValueExpressionWithRegularExpressionMatchTest()
+        {
+            var type = typeof(string);
+            var name = "FirstName";
+            var expression = new Regex(".+Name");
+            var priority = Environment.TickCount;
+            var expected = Guid.NewGuid().ToString();
+
+            var target = new CreationRule(
+                typeof(string),
+                expression,
+                priority,
+                (createType, referenceName, context) => expected);
+
+            var actual = target.Create(type, name, null);
+
+            actual.Should().Be(expected);
+        }
+
+        [Fact]
+        public void CreateReturnsValueFromValueExpressionWithStringMatchTest()
+        {
+            var type = typeof(string);
+            var name = "FirstName";
+            var priority = Environment.TickCount;
+            var expected = Guid.NewGuid().ToString();
+
+            var target = new CreationRule(
+                typeof(string),
+                name,
+                priority,
+                (createType, referenceName, context) => expected);
 
             var actual = target.Create(type, name, null);
 

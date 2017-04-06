@@ -1,13 +1,24 @@
-﻿using System;
-using System.Linq.Expressions;
-using System.Reflection;
-using FluentAssertions;
-using Xunit;
-
-namespace ModelBuilder.UnitTests
+﻿namespace ModelBuilder.UnitTests
 {
+    using System;
+    using System.Linq.Expressions;
+    using System.Reflection;
+    using FluentAssertions;
+    using Xunit;
+
     public class ExpressionExtensionTests
     {
+        private class StaticGetter
+        {
+            public static string Value
+            {
+                get
+                {
+                    return Guid.NewGuid().ToString();
+                }
+            }
+        }
+
         [Fact]
         public void GetPropertyReturnsPropertyInfoOfExpressionTest()
         {
@@ -15,6 +26,22 @@ namespace ModelBuilder.UnitTests
 
             actual.Name.Should().Be("Priority");
             actual.PropertyType.Should().Be<int>();
+        }
+
+        [Fact]
+        public void GetPropertyThrowsExceptionForStaticPropertyTest()
+        {
+            Action action = () => Wrapper<WithStatic>(x => WithStatic.Second);
+
+            action.ShouldThrow<ArgumentException>();
+        }
+
+        [Fact]
+        public void GetPropertyThrowsExceptionForStaticReadOnlyPropertyTest()
+        {
+            Action action = () => Wrapper<WithStatic>(x => StaticGetter.Value);
+
+            action.ShouldThrow<ArgumentException>();
         }
 
         [Fact]

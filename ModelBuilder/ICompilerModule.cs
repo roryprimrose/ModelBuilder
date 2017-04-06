@@ -1,5 +1,4 @@
-﻿#if NET452
-namespace ModelBuilder
+﻿namespace ModelBuilder
 {
     /// <summary>
     ///     The <see cref="ICompilerModule" />
@@ -15,4 +14,3 @@ namespace ModelBuilder
         void Configure(IBuildStrategyCompiler compiler);
     }
 }
-#endif

@@ -1,5 +1,4 @@
-﻿#if NET452
-namespace ModelBuilder.UnitTests
+﻿namespace ModelBuilder.UnitTests
 {
     public class TestCompilerModule : ICompilerModule
     {
@@ -14,4 +13,3 @@ namespace ModelBuilder.UnitTests
         }
     }
 }
-#endif

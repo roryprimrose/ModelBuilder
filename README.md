@@ -100,9 +100,9 @@ The extensibility points controlling how to create models are:
 A BuildStrategyCompiler provides the ability to define the configuration options of the above extensibility points and can compile a BuildStrategy. There is an inbuilt compiler that provides a default configuration to provide an out of the box BuildStrategy.
     
 ### CompilerModules
-The behaviour of ModelBuilder is to create a BuildStrategy using a pre-defined BuildStrategyCompiler that includes a default configuration. It then scans for CompilerModules in the loaded assemblies to support additional configuration of the BuildStrategyCompiler before compiling a BuildStrategy.
+A CompilerModule defines a reusable configuration that can apply to a BuildStrategyCompiler. 
 
-Using a CompilerModule is the easiest mechanism of configuring the default BuildStrategy. Simply by creating a class that implements ICompilerModule will cause the class to be executed on the first call to Model.Create&lt;T&gt;.
+Using a CompilerModule is the easiest mechanism of configuring the default BuildStrategy. Simply create a class that implements ICompilerModule to define the custom configuration for a BuildStrategyCompiler.
 
 ```
 public class MyCustomCompilerModule : ICompilerModule
@@ -115,9 +115,21 @@ public class MyCustomCompilerModule : ICompilerModule
         compiler.Add(new MyCustomCreationRule());
         compiler.Add(new MyCustomTypeCreator());
         compiler.Add(new MyCustomValueGenerator());
+		
+		// Or
+        compiler.AddExecuteOrderRule<MyCustomExecuteOrderRule>();
+        compiler.AddIgnoreRule<MyCustomIgnoreRule>();
+        compiler.AddPostBuildAction<MyCustomPostBuildAction>();
+        compiler.AddCreationRule<MyCustomCreationRule>();
+        compiler.AddTypeCreator<MyCustomTypeCreator>();
+        compiler.AddValueGenerator<MyCustomValueGenerator>();
     }
 }
 ```
+
+When running under the full .Net framework (from 4.5.2), ModelBuilder will automatically scan all the CompilerModule types found in the assemblies in the current AppDomain. It will then automatically configure the default BuildStrategyCompiler using those modules when calling Model.Create&lt;T&gt;. 
+
+The assembly scanning for CompilerModule types available in the full .Net framework is not available in netstandard 1.5. The netstandard frameworks do not support AppDomain. CompilerModules in netstandard 1.5 and higher must be manually added to a BuildStrategyCompiler using either ```compiler.Add(new MyCustomModule())``` or ```compiler.AddCompilerModule&lt;MyCustomModule&gt;()```.
 
 ### BuildStrategy 
 

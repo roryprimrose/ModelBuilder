@@ -1,6 +1,7 @@
 ﻿namespace ModelBuilder
 {
     using System;
+    using System.Diagnostics;
     using System.Reflection;
 #if NETSTANDARD1_5
     using System.Collections.Generic;
@@ -19,14 +20,7 @@
                 return false;
             }
 
-            var getMethod = propertyInfo.GetGetMethod();
-
-            if (getMethod != null &&
-                getMethod.IsStatic)
-            {
-                return false;
-            }
-
+            // If the setter is static, then the getter must also be static. No point validating that here as well
             return true;
         }
 
@@ -123,10 +117,7 @@
 
         public static bool IsInstanceOfType(this Type type, object target)
         {
-            if (target == null)
-            {
-                return false;
-            }
+            Debug.Assert(target != null, "A target must be specified");
 
             var targetType = target.GetType().GetTypeInfo();
 
@@ -135,17 +126,17 @@
 
         public static IEnumerable<PropertyInfo> GetProperties(this Type type)
         {
-            return type.GetTypeInfo().DeclaredProperties;
+            return type.GetTypeInfo().GetProperties(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
         }
 
         public static IEnumerable<Type> GetInterfaces(this Type type)
         {
-            return type.GetTypeInfo().ImplementedInterfaces;
+            return type.GetTypeInfo().GetInterfaces();
         }
 
         public static IEnumerable<ConstructorInfo> GetConstructors(this Type type)
         {
-            return type.GetTypeInfo().DeclaredConstructors;
+            return type.GetTypeInfo().GetConstructors(BindingFlags.Public | BindingFlags.Instance);
         }
 #endif
     }
