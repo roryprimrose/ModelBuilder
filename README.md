@@ -116,7 +116,7 @@ public class MyCustomCompilerModule : ICompilerModule
         compiler.Add(new MyCustomTypeCreator());
         compiler.Add(new MyCustomValueGenerator());
 		
-		// Or
+        // Or
         compiler.AddExecuteOrderRule<MyCustomExecuteOrderRule>();
         compiler.AddIgnoreRule<MyCustomIgnoreRule>();
         compiler.AddPostBuildAction<MyCustomPostBuildAction>();
@@ -129,7 +129,7 @@ public class MyCustomCompilerModule : ICompilerModule
 
 When running under the full .Net framework (from 4.5.2), ModelBuilder will automatically scan all the CompilerModule types found in the assemblies in the current AppDomain. It will then automatically configure the default BuildStrategyCompiler using those modules when calling Model.Create&lt;T&gt;. 
 
-The assembly scanning for CompilerModule types available in the full .Net framework is not available in netstandard 1.5. The netstandard frameworks do not support AppDomain. CompilerModules in netstandard 1.5 and higher must be manually added to a BuildStrategyCompiler using either ```compiler.Add(new MyCustomModule())``` or ```compiler.AddCompilerModule&lt;MyCustomModule&gt;()```.
+The assembly scanning for CompilerModule types in .Net 4.5.2 is not available in netstandard 1.5. CompilerModules in netstandard 1.5 and higher must be manually added to a BuildStrategyCompiler using either ```compiler.Add(new MyCustomModule())``` or ```compiler.AddCompilerModule<MyCustomModule>()```.
 
 ### BuildStrategy 
 
