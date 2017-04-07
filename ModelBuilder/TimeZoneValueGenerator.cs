@@ -27,8 +27,9 @@
 
             if (context != null)
             {
+                var contextType = context.GetType();
                 var expression = new Regex("Country");
-                var property = context.FindProperties(expression).FirstOrDefault();
+                var property = executeStrategy.Configuration.PropertyResolver.GetProperties(contextType, expression).FirstOrDefault();
 
                 if (property != null)
                 {

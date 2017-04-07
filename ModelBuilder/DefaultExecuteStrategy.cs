@@ -103,8 +103,7 @@
             var type = instance.GetType();
             var propertyResolver = Configuration.PropertyResolver;
 
-            var propertyInfos = from x in type.GetProperties()
-                                where propertyResolver.CanPopulate(x)
+            var propertyInfos = from x in Configuration.PropertyResolver.GetProperties(type)
                                 orderby GetMaximumOrderPrority(x.PropertyType, x.Name) descending
                                 select x;
 

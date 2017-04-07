@@ -61,7 +61,7 @@
             {
                 typeof(int)
             };
-            var constructor = type.GetTypeInfo().GetConstructor(parameterTypes);
+            var constructor = type.GetConstructor(parameterTypes);
 
             Debug.Assert(constructor != null, "No constructor was found on the array");
 

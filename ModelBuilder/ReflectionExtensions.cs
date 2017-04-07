@@ -10,23 +10,9 @@
 
     internal static class ReflectionExtensions
     {
-        public static bool IsInstanceProperty(this PropertyInfo propertyInfo)
-        {
-            var setMethod = propertyInfo.GetSetMethod();
-
-            if (setMethod != null &&
-                setMethod.IsStatic)
-            {
-                return false;
-            }
-
-            // If the setter is static, then the getter must also be static. No point validating that here as well
-            return true;
-        }
-
         public static bool TypeIsAbstract(this Type type)
         {
-#if NET452
+#if NET40
             return type.IsAbstract;
 #else
             return type.GetTypeInfo().IsAbstract;
@@ -35,7 +21,7 @@
 
         public static bool TypeIsArray(this Type type)
         {
-#if NET452
+#if NET40
             return type.IsArray;
 #else
             return type.GetTypeInfo().IsArray;
@@ -44,7 +30,7 @@
 
         public static bool TypeIsClass(this Type type)
         {
-#if NET452
+#if NET40
             return type.IsClass;
 #else
             return type.GetTypeInfo().IsClass;
@@ -53,7 +39,7 @@
 
         public static bool TypeIsEnum(this Type type)
         {
-#if NET452
+#if NET40
             return type.IsEnum;
 #else
             return type.GetTypeInfo().IsEnum;
@@ -62,7 +48,7 @@
 
         public static bool TypeIsGenericType(this Type type)
         {
-#if NET452
+#if NET40
             return type.IsGenericType;
 #else
             return type.GetTypeInfo().IsGenericType;
@@ -71,7 +57,7 @@
 
         public static bool TypeIsGenericTypeDefinition(this Type type)
         {
-#if NET452
+#if NET40
             return type.IsGenericTypeDefinition;
 #else
             return type.GetTypeInfo().IsGenericTypeDefinition;
@@ -80,7 +66,7 @@
 
         public static bool TypeIsInterface(this Type type)
         {
-#if NET452
+#if NET40
             return type.IsInterface;
 #else
             return type.GetTypeInfo().IsInterface;
@@ -89,7 +75,7 @@
 
         public static bool TypeIsValueType(this Type type)
         {
-#if NET452
+#if NET40
             return type.IsValueType;
 #else
             return type.GetTypeInfo().IsValueType;
@@ -97,7 +83,7 @@
         }
 
 #if NETSTANDARD1_5
-        
+
         public static Type[] GetGenericArguments(this Type type)
         {
             return type.GetTypeInfo().IsGenericTypeDefinition
@@ -124,9 +110,21 @@
             return type.GetTypeInfo().IsAssignableFrom(targetType);
         }
 
-        public static IEnumerable<PropertyInfo> GetProperties(this Type type)
+        public static ConstructorInfo GetConstructor(this Type type, Type[] types)
         {
-            return type.GetTypeInfo().GetProperties(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
+            return type.GetTypeInfo().GetConstructor(types);
+        }
+
+        public static MethodInfo GetMethod(this Type type, string name)
+        {
+            return type.GetTypeInfo().GetMethod(name);
+        }
+
+        public static IEnumerable<PropertyInfo> GetProperties(
+            this Type type,
+            BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance)
+        {
+            return type.GetTypeInfo().GetProperties(bindingFlags);
         }
 
         public static IEnumerable<Type> GetInterfaces(this Type type)
@@ -138,6 +136,7 @@
         {
             return type.GetTypeInfo().GetConstructors(BindingFlags.Public | BindingFlags.Instance);
         }
+
 #endif
     }
 }

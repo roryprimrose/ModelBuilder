@@ -65,7 +65,7 @@
 
             var target = new CountValueGenerator();
 
-            for (var index = 0; index < 10000; index++)
+            for (var index = 0; index < 100000; index++)
             {
                 var value = (int?)target.Generate(typeof(int?), "Count", executeStrategy);
 

@@ -130,7 +130,7 @@
         {
             var compiler = new DefaultBuildStrategyCompiler();
 
-#if NET452
+#if NET40
             compiler.ScanModules();
 #endif
 

@@ -1,12 +1,11 @@
-﻿using System;
-using System.IO;
-using FluentAssertions;
-using Xunit;
-
-namespace ModelBuilder.UnitTests
+﻿namespace ModelBuilder.UnitTests
 {
+    using System;
     using System.Collections.Generic;
+    using System.IO;
+    using FluentAssertions;
     using NSubstitute;
+    using Xunit;
 
     public class StateValueGeneratorTests
     {
@@ -20,13 +19,22 @@ namespace ModelBuilder.UnitTests
 
             var target = new StateValueGenerator();
 
-            var first = target.Generate(typeof(string), "state", executeStrategy);
+            var first = target.Generate(typeof(string), "state", executeStrategy) as string;
 
-            first.Should().BeOfType<string>();
-            first.As<string>().Should().NotBeNullOrWhiteSpace();
+            first.Should().NotBeNullOrWhiteSpace();
 
-            var second = target.Generate(typeof(string), "state", executeStrategy);
+            string second = null;
 
+            for (var index = 0; index < 1000; index++)
+            {
+                second = target.Generate(typeof(string), "state", executeStrategy) as string;
+
+                if (first != second)
+                {
+                    break;
+                }
+            }
+            
             first.Should().NotBe(second);
         }
 
@@ -44,7 +52,7 @@ namespace ModelBuilder.UnitTests
 
             var target = new StateValueGenerator();
 
-            var actual = (string) target.Generate(type, referenceName, executeStrategy);
+            var actual = (string)target.Generate(type, referenceName, executeStrategy);
 
             actual.Should().NotBeNullOrEmpty();
         }
@@ -66,7 +74,7 @@ namespace ModelBuilder.UnitTests
 
             action.ShouldThrow<NotSupportedException>();
         }
-        
+
         [Fact]
         public void HasHigherPriorityThanStringValueGeneratorTest()
         {

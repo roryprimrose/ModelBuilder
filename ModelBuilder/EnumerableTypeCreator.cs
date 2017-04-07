@@ -17,7 +17,7 @@
         {
             typeof(ArraySegment<>),
             typeof(IPAddressCollection),
-#if NET452
+#if NET40
             typeof(GatewayIPAddressInformationCollection),
             typeof(IPAddressInformationCollection),
             typeof(MulticastIPAddressInformationCollection),
@@ -176,7 +176,7 @@
             var collectionType = collectionGenericTypeDefinition.MakeGenericType(internalType);
 
             // Get the Add method
-            var addMethod = collectionType.GetTypeInfo().GetMethod("Add");
+            var addMethod = collectionType.GetMethod("Add");
 
             object previousItem = null;
 

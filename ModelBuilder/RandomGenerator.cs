@@ -2,7 +2,6 @@
 {
     using System;
     using System.Globalization;
-    using System.Reflection;
     using ModelBuilder.Properties;
 
     /// <summary>
@@ -11,7 +10,7 @@
     /// </summary>
     public class RandomGenerator : IRandomGenerator
     {
-        private static readonly Random _random = new Random();
+        private static readonly Random _random = new Random(Environment.TickCount);
 
         /// <inheritdoc />
         public object GetMax(Type type)

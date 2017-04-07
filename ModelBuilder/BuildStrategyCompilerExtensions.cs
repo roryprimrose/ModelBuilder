@@ -5,7 +5,7 @@
     using System.Linq;
     using System.Linq.Expressions;
 
-#if NET452
+#if NET40
     using System.Collections.Generic;
     using System.Reflection;
 #endif
@@ -690,7 +690,7 @@
             return compiler;
         }
 
-#if NET452
+#if NET40
 
 /// <summary>
 ///     Scans available assemblies for <see cref="ICompilerModule" /> types that can configure the specified compiler.

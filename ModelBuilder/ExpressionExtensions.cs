@@ -42,13 +42,12 @@ namespace ModelBuilder
 
             var type = typeof(T);
             var typeProperties =
-                type.GetProperties();
+                type.GetProperties(BindingFlags.Instance | BindingFlags.Public);
 
             if (
                 typeProperties.Any(
                     x =>
-                        x.IsInstanceProperty()
-                        && x.DeclaringType == propInfo.DeclaringType && x.PropertyType == propInfo.PropertyType &&
+                        x.DeclaringType == propInfo.DeclaringType && x.PropertyType == propInfo.PropertyType &&
                         x.Name == propInfo.Name) == false)
             {
                 var message = string.Format(CultureInfo.CurrentCulture,
