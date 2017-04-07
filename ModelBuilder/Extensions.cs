@@ -24,7 +24,7 @@ namespace ModelBuilder
                 throw new ArgumentNullException(nameof(type));
             }
 
-            if (type.IsGenericType == false)
+            if (type.TypeIsGenericType() == false)
             {
                 return false;
             }

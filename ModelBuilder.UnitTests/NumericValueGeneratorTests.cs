@@ -93,7 +93,7 @@
 
             var target = new NumericValueGenerator();
 
-            for (var index = 0; index < 1000; index++)
+            for (var index = 0; index < 10000; index++)
             {
                 var value = target.Generate(typeof(double), null, executeStrategy);
 
@@ -123,7 +123,7 @@
 
             var target = new NumericValueGenerator();
 
-            for (var index = 0; index < 1000; index++)
+            for (var index = 0; index < 100000; index++)
             {
                 var value = (int?)target.Generate(typeof(int?), null, executeStrategy);
 

@@ -42,7 +42,7 @@ namespace ModelBuilder
 
             var type = typeof(T);
             var typeProperties =
-                type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy);
+                type.GetProperties(BindingFlags.Instance | BindingFlags.Public);
 
             if (
                 typeProperties.Any(
@@ -67,7 +67,7 @@ namespace ModelBuilder
 
             if (unaryExpression != null)
             {
-                property = ((MemberExpression) unaryExpression.Operand).Member as PropertyInfo;
+                property = ((MemberExpression)unaryExpression.Operand).Member as PropertyInfo;
             }
 
             if (property != null)

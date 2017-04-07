@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Reflection;
 
     /// <summary>
     ///     The <see cref="EnumValueGenerator" />
@@ -26,7 +27,7 @@
                 generateType = type.GetGenericArguments()[0];
             }
 
-            if (generateType.IsEnum)
+            if (generateType.TypeIsEnum())
             {
                 return true;
             }

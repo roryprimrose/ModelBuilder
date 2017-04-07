@@ -49,7 +49,7 @@ namespace ModelBuilder
                 return false;
             }
 
-            if (getMethod.ReturnType.IsValueType)
+            if (getMethod.ReturnType.TypeIsValueType())
             {
                 // We can't populate a value type via a get method
                 return false;
@@ -136,7 +136,7 @@ namespace ModelBuilder
             }
 
             // Check for instance types (ignoring strings)
-            if (propertyInfo.PropertyType.IsValueType == false &&
+            if (propertyInfo.PropertyType.TypeIsValueType() == false &&
                 propertyInfo.PropertyType != typeof(string))
             {
                 // This is an interface or class type

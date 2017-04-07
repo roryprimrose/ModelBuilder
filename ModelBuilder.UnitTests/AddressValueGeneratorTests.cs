@@ -41,12 +41,21 @@ namespace ModelBuilder.UnitTests
 
             var target = new AddressValueGenerator();
 
-            var first = target.Generate(typeof(string), "address", executeStrategy);
+            var first = target.Generate(typeof(string), "address", executeStrategy) as string;
 
-            first.Should().BeOfType<string>();
-            first.As<string>().Should().NotBeNullOrWhiteSpace();
+            first.Should().NotBeNullOrWhiteSpace();
 
-            var second = target.Generate(typeof(string), "address", executeStrategy);
+            string second = null;
+
+            for (var index = 0; index < 1000; index++)
+            {
+                second = target.Generate(typeof(string), "address", executeStrategy) as string;
+
+                if (first != second)
+                {
+                    break;
+                }
+            }
 
             first.Should().NotBe(second);
         }

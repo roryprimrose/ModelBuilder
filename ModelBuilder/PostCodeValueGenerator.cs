@@ -14,7 +14,7 @@
         ///     Initializes a new instance of the <see cref="PostCodeValueGenerator" /> class.
         /// </summary>
         public PostCodeValueGenerator()
-            : base(new Regex("PostCode|Zip(Code)?", RegexOptions.Compiled | RegexOptions.IgnoreCase), typeof(string))
+            : base(new Regex("PostCode|Zip(Code)?", RegexOptions.IgnoreCase), typeof(string))
         {
         }
 

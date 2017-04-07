@@ -14,7 +14,7 @@
         ///     Initializes a new instance of the <see cref="PhoneValueGenerator" /> class.
         /// </summary>
         public PhoneValueGenerator()
-            : base(new Regex("Phone|Cell|Mobile|Fax", RegexOptions.Compiled | RegexOptions.IgnoreCase), typeof(string))
+            : base(new Regex("Phone|Cell|Mobile|Fax", RegexOptions.IgnoreCase), typeof(string))
         {
         }
 

@@ -8,9 +8,17 @@
     using FluentAssertions;
     using NSubstitute;
     using Xunit;
+    using Xunit.Abstractions;
 
     public class ArrayTypeCreatorTests
     {
+        private readonly ITestOutputHelper _output;
+
+        public ArrayTypeCreatorTests(ITestOutputHelper output)
+        {
+            _output = output;
+        }
+
         [Theory]
         [InlineData(typeof(string), false)]
         [InlineData(typeof(Stream), false)]
@@ -76,6 +84,8 @@
         [InlineData(typeof(Person[]), true)]
         public void CanPopulateReturnsWhetherTypeIsSupportedTest(Type type, bool supported)
         {
+            _output.WriteLine("Testing " + type.FullName);
+
             var target = new ArrayTypeCreator();
 
             var actual = target.CanPopulate(type, null, null);
@@ -123,7 +133,7 @@
 
             actual.Should().NotBeNull();
         }
-        
+
         [Theory]
         [InlineData(typeof(string), false)]
         [InlineData(typeof(Stream), false)]
@@ -245,7 +255,7 @@
         public void PopulateCanAddItemsBasedOnPreviousItemTest()
         {
             var actual = new int[15];
-            var executeStrategy = Model.BuildStrategy.GetExecuteStrategy<List<int>>();
+            var executeStrategy = Model.BuildStrategy.GetExecuteStrategy<List<Company>>();
 
             var target = new IncrementingArrayTypeCreator();
 
@@ -266,7 +276,7 @@
         public void PopulateInferesItemTypeByArrayTypeWhenFirstItemIsNullTest()
         {
             var actual = new Person[15];
-            var executeStrategy = Model.BuildStrategy.GetExecuteStrategy<List<int>>();
+            var executeStrategy = Model.BuildStrategy.GetExecuteStrategy<List<Company>>();
 
             var target = new ArrayTypeCreator();
 

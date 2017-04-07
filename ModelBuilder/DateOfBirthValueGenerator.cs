@@ -1,6 +1,7 @@
 namespace ModelBuilder
 {
     using System;
+    using System.Reflection;
     using System.Text.RegularExpressions;
 
     /// <summary>

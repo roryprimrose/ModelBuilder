@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Reflection;
 
     /// <summary>
     ///     The <see cref="NumericValueGenerator" />
@@ -37,9 +38,9 @@
             if (generateType.IsNullable())
             {
                 // Allow for a 10% the chance that this might be null
-                var range = Generator.NextValue(0, 100);
+                var range = Generator.NextValue(0, 100000);
 
-                if (range < 10)
+                if (range < 10000)
                 {
                     return null;
                 }

@@ -9,9 +9,26 @@
 
     public class BuildStrategyCompilerExtensionsTests
     {
-        public interface ISomeCompilerModule : ICompilerModule
+        [Fact]
+        public void AddCompilerModuleAddsRuleToCompilerTest()
         {
-            // This verifies that the module scanner does not attempt to use interface modules
+            var target = new BuildStrategyCompiler();
+
+            target.AddCompilerModule<TestCompilerModule>();
+
+            var actual = target.PostBuildActions.OfType<DummyPostBuildAction>();
+
+            actual.Should().NotBeEmpty();
+        }
+
+        [Fact]
+        public void AddCompilerModuleThrowsExceptionWithNullCompilerTest()
+        {
+            IBuildStrategyCompiler target = null;
+
+            Action action = () => target.AddCompilerModule<TestCompilerModule>();
+
+            action.ShouldThrow<ArgumentNullException>();
         }
 
         [Fact]
@@ -262,6 +279,40 @@
             IBuildStrategyCompiler target = null;
 
             Action action = () => target.AddValueGenerator<StringValueGenerator>();
+
+            action.ShouldThrow<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void AddWithCompilerModuleAddsRuleToCompilerTest()
+        {
+            var module = Substitute.For<ICompilerModule>();
+
+            var target = new BuildStrategyCompiler();
+
+            target.Add(module);
+
+            module.Received().Configure(target);
+        }
+
+        [Fact]
+        public void AddWithCompilerModuleThrowsExceptionWithNullCompilerTest()
+        {
+            var module = new TestCompilerModule();
+
+            IBuildStrategyCompiler target = null;
+
+            Action action = () => target.Add(module);
+
+            action.ShouldThrow<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void AddWithCompilerModuleThrowsExceptionWithNullRuleTest()
+        {
+            var target = Substitute.For<IBuildStrategyCompiler>();
+
+            Action action = () => target.Add((ICompilerModule)null);
 
             action.ShouldThrow<ArgumentNullException>();
         }
@@ -675,31 +726,6 @@
         }
 
         [Fact]
-        public void ScanModulesPopulatesCompilerWithDetectedConfigurationTest()
-        {
-            var target = new BuildStrategyCompiler();
-
-            target.ScanModules();
-
-            target.ExecuteOrderRules.Should().ContainItemsAssignableTo<DummyExecuteOrderRule>();
-            target.IgnoreRules.Should().ContainItemsAssignableTo<DummyIgnoreRule>();
-            target.PostBuildActions.Should().ContainItemsAssignableTo<DummyPostBuildAction>();
-            target.CreationRules.Should().ContainItemsAssignableTo<DummyCreationRule>();
-            target.TypeCreators.Should().ContainItemsAssignableTo<DummyTypeCreator>();
-            target.ValueGenerators.Should().ContainItemsAssignableTo<DummyValueGenerator>();
-        }
-
-        [Fact]
-        public void ScanModulesThrowsExceptionWithNullCompilerTest()
-        {
-            var target = (IBuildStrategyCompiler)null;
-
-            Action action = () => target.ScanModules();
-
-            action.ShouldThrow<ArgumentNullException>();
-        }
-
-        [Fact]
         public void SetConstructorResolverAssignsResolverToCompilerTest()
         {
             var target = new BuildStrategyCompiler();
@@ -811,6 +837,13 @@
             action.ShouldThrow<ArgumentNullException>();
         }
 
+#if NET452
+
+        public interface ISomeCompilerModule : ICompilerModule
+        {
+            // This verifies that the module scanner does not attempt to use interface modules
+        }
+
         public abstract class AbstractCompilerModule : ICompilerModule
         {
             public void Configure(IBuildStrategyCompiler compiler)
@@ -819,5 +852,32 @@
                 throw new NotImplementedException();
             }
         }
+
+        [Fact]
+        public void ScanModulesPopulatesCompilerWithDetectedConfigurationTest()
+        {
+            var target = new BuildStrategyCompiler();
+
+            target.ScanModules();
+
+            target.ExecuteOrderRules.Should().ContainItemsAssignableTo<DummyExecuteOrderRule>();
+            target.IgnoreRules.Should().ContainItemsAssignableTo<DummyIgnoreRule>();
+            target.PostBuildActions.Should().ContainItemsAssignableTo<DummyPostBuildAction>();
+            target.CreationRules.Should().ContainItemsAssignableTo<DummyCreationRule>();
+            target.TypeCreators.Should().ContainItemsAssignableTo<DummyTypeCreator>();
+            target.ValueGenerators.Should().ContainItemsAssignableTo<DummyValueGenerator>();
+        }
+
+        [Fact]
+        public void ScanModulesThrowsExceptionWithNullCompilerTest()
+        {
+            var target = (IBuildStrategyCompiler)null;
+
+            Action action = () => target.ScanModules();
+
+            action.ShouldThrow<ArgumentNullException>();
+        }
+
+#endif
     }
 }

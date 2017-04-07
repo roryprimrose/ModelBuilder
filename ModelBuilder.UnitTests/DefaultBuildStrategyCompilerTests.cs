@@ -2,6 +2,7 @@
 {
     using System;
     using System.Linq;
+    using System.Reflection;
     using FluentAssertions;
     using Xunit;
 
@@ -40,8 +41,8 @@
         [Fact]
         public void TypeCreatorsIncludesAllAvailableTypeCreatorsTest()
         {
-            var types = from x in typeof(DefaultBuildStrategyCompiler).Assembly.GetTypes()
-                where typeof(ITypeCreator).IsAssignableFrom(x) && x.IsAbstract == false && x.IsInterface == false
+            var types = from x in typeof(DefaultBuildStrategyCompiler).GetTypeInfo().Assembly.GetTypes()
+                where typeof(ITypeCreator).IsAssignableFrom(x) && x.GetTypeInfo().IsAbstract == false && x.GetTypeInfo().IsInterface == false
                 select x;
 
             var target = new DefaultBuildStrategyCompiler();
@@ -63,9 +64,9 @@
         [Fact]
         public void ValueGeneratorsIncludesAllAvailableValueGeneratorsExceptMailinatorTest()
         {
-            var types = from x in typeof(DefaultBuildStrategyCompiler).Assembly.GetTypes()
+            var types = from x in typeof(DefaultBuildStrategyCompiler).GetTypeInfo().Assembly.GetTypes()
                 where
-                    typeof(IValueGenerator).IsAssignableFrom(x) && x.IsAbstract == false && x.IsInterface == false &&
+                    typeof(IValueGenerator).IsAssignableFrom(x) && x.GetTypeInfo().IsAbstract == false && x.GetTypeInfo().IsInterface == false &&
                     x != typeof(MailinatorEmailValueGenerator)
                 select x;
 

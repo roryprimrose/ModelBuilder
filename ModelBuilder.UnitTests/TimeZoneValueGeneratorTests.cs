@@ -17,8 +17,13 @@
                 Country = "Australia"
             };
             var buildChain = new LinkedList<object>();
+            var resolver = new DefaultPropertyResolver();
+
+            var configuration = Substitute.For<IBuildConfiguration>();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
+            configuration.PropertyResolver.Returns(resolver);
+            executeStrategy.Configuration.Returns(configuration);
             executeStrategy.BuildChain.Returns(buildChain);
 
             buildChain.AddFirst(source);
@@ -38,8 +43,13 @@
                 Country = Guid.NewGuid().ToString()
             };
             var buildChain = new LinkedList<object>();
+            var resolver = new DefaultPropertyResolver();
+
+            var configuration = Substitute.For<IBuildConfiguration>();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
+            configuration.PropertyResolver.Returns(resolver);
+            executeStrategy.Configuration.Returns(configuration);
             executeStrategy.BuildChain.Returns(buildChain);
 
             buildChain.AddFirst(source);
@@ -56,8 +66,13 @@
         public void GenerateReturnsRandomValueTest()
         {
             var buildChain = new LinkedList<object>();
+            var resolver = new DefaultPropertyResolver();
+
+            var configuration = Substitute.For<IBuildConfiguration>();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
+            configuration.PropertyResolver.Returns(resolver);
+            executeStrategy.Configuration.Returns(configuration);
             executeStrategy.BuildChain.Returns(buildChain);
 
             var target = new TimeZoneValueGenerator();
@@ -76,8 +91,13 @@
         public void GenerateReturnsValueForTimeZoneTypeTest()
         {
             var buildChain = new LinkedList<object>();
+            var resolver = new DefaultPropertyResolver();
+
+            var configuration = Substitute.For<IBuildConfiguration>();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
+            configuration.PropertyResolver.Returns(resolver);
+            executeStrategy.Configuration.Returns(configuration);
             executeStrategy.BuildChain.Returns(buildChain);
 
             var target = new TimeZoneValueGenerator();
@@ -94,8 +114,13 @@
         public void GenerateReturnsValuesForSeveralNameFormatsTest(Type type, string referenceName, bool expected)
         {
             var buildChain = new LinkedList<object>();
+            var resolver = new DefaultPropertyResolver();
+
+            var configuration = Substitute.For<IBuildConfiguration>();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
+            configuration.PropertyResolver.Returns(resolver);
+            executeStrategy.Configuration.Returns(configuration);
             executeStrategy.BuildChain.Returns(buildChain);
 
             var target = new TimeZoneValueGenerator();
@@ -112,8 +137,13 @@
         public void GenerateThrowsExceptionWithInvalidParametersTest(Type type, string referenceName)
         {
             var buildChain = new LinkedList<object>();
+            var resolver = new DefaultPropertyResolver();
+
+            var configuration = Substitute.For<IBuildConfiguration>();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
+            configuration.PropertyResolver.Returns(resolver);
+            executeStrategy.Configuration.Returns(configuration);
             executeStrategy.BuildChain.Returns(buildChain);
 
             var target = new TimeZoneValueGenerator();

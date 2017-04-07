@@ -18,8 +18,7 @@
                 typeof(DateTimeOffset),
                 typeof(DateTimeOffset?),
                 typeof(TimeSpan),
-                typeof(TimeSpan?),
-                typeof(TimeZoneInfo))
+                typeof(TimeSpan?))
         {
         }
 
@@ -41,15 +40,7 @@
                 // Hijack the type to generator so we can continue with the normal code pointed at the correct type to generate
                 generateType = type.GetGenericArguments()[0];
             }
-
-            if (generateType == typeof(TimeZoneInfo))
-            {
-                var zones = TimeZoneInfo.GetSystemTimeZones();
-                var zoneIndex = Generator.NextValue(0, zones.Count - 1);
-
-                return zones[zoneIndex];
-            }
-
+            
             var tenYears = TimeSpan.FromDays(3650);
             var shift = Generator.NextValue(0, tenYears.TotalSeconds);
 

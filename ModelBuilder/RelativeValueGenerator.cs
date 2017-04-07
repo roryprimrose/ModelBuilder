@@ -41,12 +41,7 @@
         protected RelativeValueGenerator(Regex targetNameExpression, Regex sourceNameExpression, params Type[] types)
             : base(types)
         {
-            if (targetNameExpression == null)
-            {
-                throw new ArgumentNullException(nameof(targetNameExpression));
-            }
-
-            _targetExpression = targetNameExpression;
+            _targetExpression = targetNameExpression ?? throw new ArgumentNullException(nameof(targetNameExpression));
             _sourceExpression = sourceNameExpression;
         }
 
@@ -167,7 +162,7 @@
         private static PropertyInfo GetMatchingProperty(Regex expression, object context)
         {
             var contextType = context.GetType();
-            var properties = contextType.GetProperties();
+            var properties = contextType.GetProperties(BindingFlags.Instance | BindingFlags.Public);
             var matchingProperty = properties.FirstOrDefault(x => expression.IsMatch(x.Name));
 
             return matchingProperty;

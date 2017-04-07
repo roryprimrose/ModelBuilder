@@ -14,7 +14,7 @@
         ///     Initializes a new instance of the <see cref="CityValueGenerator" /> class.
         /// </summary>
         public CityValueGenerator()
-            : base(new Regex("City", RegexOptions.Compiled | RegexOptions.IgnoreCase), typeof(string))
+            : base(new Regex("City", RegexOptions.IgnoreCase), typeof(string))
         {
         }
 

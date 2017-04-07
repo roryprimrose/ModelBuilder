@@ -29,7 +29,7 @@
             throw new NotImplementedException();
         }
 
-        public LinkedList<object> BuildChain { get; }
+        public LinkedList<object> BuildChain { get; } = new LinkedList<object>();
 
         public IBuildConfiguration Configuration { get; }
         public IBuildLog Log { get; }

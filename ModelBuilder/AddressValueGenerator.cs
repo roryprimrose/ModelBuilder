@@ -13,7 +13,7 @@
     {
         private static readonly Regex _multipleAddressExpression = new Regex(
             "Address(Line)?(?<Number>\\d+)",
-            RegexOptions.IgnoreCase | RegexOptions.Compiled);
+            RegexOptions.IgnoreCase);
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="AddressValueGenerator" /> class.

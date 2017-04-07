@@ -1,7 +1,9 @@
 ﻿using System;
 using System.IO;
+#if NET452
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+#endif
 using FluentAssertions;
 using Xunit;
 
@@ -9,35 +11,6 @@ namespace ModelBuilder.UnitTests
 {
     public class BuildExceptionTests
     {
-        [Fact]
-        public void CanBeSerializedAndDeserializedTest()
-        {
-            var message = Guid.NewGuid().ToString();
-            var targetType = typeof(Person);
-            var referenceName = Guid.NewGuid().ToString();
-            var context = new Company();
-            var buildLog = Guid.NewGuid().ToString();
-            var inner = new TimeoutException();
-            var formatter = new BinaryFormatter();
-
-            var target = new BuildException(message, targetType, referenceName, context, buildLog, inner);
-
-            using (var ms = new MemoryStream())
-            {
-                formatter.Serialize(ms, target);
-                ms.Seek(0, SeekOrigin.Begin);
-
-                var outputException = formatter.Deserialize(ms) as BuildException;
-
-                outputException.Message.Should().Be(message);
-                outputException.TargetType.Should().Be(targetType);
-                outputException.ReferenceName.Should().Be(referenceName);
-                outputException.Context.Should().BeNull();
-                outputException.BuildLog.Should().Be(buildLog);
-                outputException.InnerException.Message.ShouldBeEquivalentTo(inner.Message);
-            }
-        }
-
         [Fact]
         public void CanCreatesWithDefaultValuesTest()
         {
@@ -111,6 +84,36 @@ namespace ModelBuilder.UnitTests
             target.Message.Should().Be(message);
         }
 
+#if NET452
+        [Fact]
+        public void CanBeSerializedAndDeserializedTest()
+        {
+            var message = Guid.NewGuid().ToString();
+            var targetType = typeof(Person);
+            var referenceName = Guid.NewGuid().ToString();
+            var context = new Company();
+            var buildLog = Guid.NewGuid().ToString();
+            var inner = new TimeoutException();
+            var formatter = new BinaryFormatter();
+
+            var target = new BuildException(message, targetType, referenceName, context, buildLog, inner);
+
+            using (var ms = new MemoryStream())
+            {
+                formatter.Serialize(ms, target);
+                ms.Seek(0, SeekOrigin.Begin);
+
+                var outputException = formatter.Deserialize(ms) as BuildException;
+
+                outputException.Message.Should().Be(message);
+                outputException.TargetType.Should().Be(targetType);
+                outputException.ReferenceName.Should().Be(referenceName);
+                outputException.Context.Should().BeNull();
+                outputException.BuildLog.Should().Be(buildLog);
+                outputException.InnerException.Message.ShouldBeEquivalentTo(inner.Message);
+            }
+        }
+
         [Fact]
         public void GetObjectDataThrowsExceptionWithNullInfoTest()
         {
@@ -122,5 +125,6 @@ namespace ModelBuilder.UnitTests
 
             action.ShouldThrow<ArgumentNullException>();
         }
+#endif
     }
 }

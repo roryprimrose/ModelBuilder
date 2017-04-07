@@ -15,7 +15,7 @@
         ///     Initializes a new instance of the <see cref="TimeZoneValueGenerator" /> class.
         /// </summary>
         public TimeZoneValueGenerator()
-            : base(new Regex("TimeZone", RegexOptions.Compiled | RegexOptions.IgnoreCase), typeof(string))
+            : base(new Regex("TimeZone", RegexOptions.IgnoreCase), typeof(string))
         {
         }
 
@@ -27,8 +27,9 @@
 
             if (context != null)
             {
+                var contextType = context.GetType();
                 var expression = new Regex("Country");
-                var property = context.FindProperties(expression).FirstOrDefault();
+                var property = executeStrategy.Configuration.PropertyResolver.GetProperties(contextType, expression).FirstOrDefault();
 
                 if (property != null)
                 {
