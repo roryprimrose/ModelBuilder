@@ -4,7 +4,6 @@
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Linq;
-    using System.Threading;
     using System.Threading.Tasks;
     using FluentAssertions;
     using NSubstitute;
@@ -41,15 +40,10 @@
         [Fact]
         public void CanCreateCustomBuildStrategyToCreateModelsTest()
         {
-            var strategy = Model.DefaultBuildStrategy.Clone()
-                .Set(x => x.ValueGenerators.Clear())
-                .AddValueGenerator<StringValueGenerator>()
-                .AddValueGenerator<NumericValueGenerator>()
-                .AddValueGenerator<BooleanValueGenerator>()
-                .AddValueGenerator<GuidValueGenerator>()
-                .AddValueGenerator<DateTimeValueGenerator>()
-                .AddValueGenerator<EnumValueGenerator>()
-                .Compile();
+            var strategy = Model.DefaultBuildStrategy.Clone().Set(x => x.ValueGenerators.Clear())
+                .AddValueGenerator<StringValueGenerator>().AddValueGenerator<NumericValueGenerator>()
+                .AddValueGenerator<BooleanValueGenerator>().AddValueGenerator<GuidValueGenerator>()
+                .AddValueGenerator<DateTimeValueGenerator>().AddValueGenerator<EnumValueGenerator>().Compile();
 
             var actual = strategy.Create<Person>();
 
@@ -164,7 +158,8 @@
         public void CreateBuildsLogOfPostActionsTest()
         {
             // We must explicitly add the module that brings in DummyPostBuildAction because module scanning not available in all frameworks that run this test
-            var strategy = Model.DefaultBuildStrategy.Clone().AddCompilerModule<TestCompilerModule>().Compile().GetExecuteStrategy<Company>();
+            var strategy = Model.DefaultBuildStrategy.Clone().AddCompilerModule<TestCompilerModule>().Compile()
+                .GetExecuteStrategy<Company>();
 
             strategy.Create();
 
@@ -333,10 +328,8 @@
 
             Action action = () => target.CreateWith();
 
-            var exception = action.ShouldThrow<BuildException>()
-                .Where(x => x.Message != null)
-                .Where(x => x.BuildLog != null)
-                .Which;
+            var exception = action.ShouldThrow<BuildException>().Where(x => x.Message != null)
+                .Where(x => x.BuildLog != null).Which;
 
             _output.WriteLine(exception.Message);
         }
@@ -440,8 +433,7 @@
         {
             var expected = Guid.NewGuid();
 
-            var strategy = Model.DefaultBuildStrategy.Clone()
-                .AddCreationRule<Person>(x => x.Id, 100, expected)
+            var strategy = Model.DefaultBuildStrategy.Clone().AddCreationRule<Person>(x => x.Id, 100, expected)
                 .Compile();
 
             var actual = strategy.Create<List<Person>>();
@@ -460,8 +452,7 @@
         [Fact]
         public void IgnoringSkipsPropertyAssignmentOfNestedObjectsTest()
         {
-            var actual = Model.Ignoring<Person>(x => x.FirstName)
-                .Ignoring<Address>(x => x.AddressLine1)
+            var actual = Model.Ignoring<Person>(x => x.FirstName).Ignoring<Address>(x => x.AddressLine1)
                 .Create<Person>();
 
             actual.Should().NotBeNull();
@@ -488,8 +479,7 @@
         public void MailinatorEmailGeneratorIsAssignedAgainstAllInstancesTest()
         {
             var strategy = new DefaultBuildStrategyCompiler().RemoveValueGenerator<EmailValueGenerator>()
-                .AddValueGenerator<MailinatorEmailValueGenerator>()
-                .Compile();
+                .AddValueGenerator<MailinatorEmailValueGenerator>().Compile();
 
             var actual = strategy.Create<List<Person>>();
 
@@ -562,6 +552,17 @@
         }
 
         [Fact]
+        public void PopulateUsesResolvedTypeCreatorToPopulateInstanceTest()
+        {
+            var actual = new List<Person>();
+
+            actual = Model.Populate(actual);
+
+            actual.Should().NotBeEmpty();
+            actual.Count.Should().Be(EnumerableTypeCreator.DefaultAutoPopulateCount);
+        }
+
+        [Fact]
         public void UsesBuildLogInstancePerExecutionPipelineTest()
         {
             var buildStrategy = Model.BuildStrategy;
@@ -581,7 +582,7 @@
 
                         return "Iteration " + loopIndex
 #if NET452
-                               + " on thread " + Thread.CurrentThread.ManagedThreadId
+                               + " on thread " + System.Threading.Thread.CurrentThread.ManagedThreadId
 #endif
                                + Environment.NewLine + strategy.Log.Output;
                     });
