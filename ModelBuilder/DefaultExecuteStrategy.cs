@@ -76,7 +76,18 @@
 
             try
             {
-                return AutoPopulateInstance(instance, null);
+                var type = instance.GetType();
+                var typeCreator =
+                    Configuration.TypeCreators?.Where(x => x.CanPopulate(type, null, BuildChain))
+                        .OrderByDescending(x => x.Priority)
+                        .FirstOrDefault();
+
+                if (typeCreator == null)
+                {
+                    throw CreateBuildException(type, null, instance);
+                }
+
+                return PopulateInternal(type, null, null, typeCreator, instance);
             }
             finally
             {
@@ -227,7 +238,7 @@
 
             if (typeCreator == null)
             {
-                throw BuildFailureException(type, referenceName, context);
+                throw CreateBuildException(type, referenceName, context);
             }
 
             Log.CreatingType(type, typeCreator.GetType(), context);
@@ -325,7 +336,7 @@
             if (typeCreator == null)
             {
                 // This is either not supported or it is a value type
-                throw BuildFailureException(propertyType, propertyInfo.Name, instance);
+                throw CreateBuildException(propertyType, propertyInfo.Name, instance);
             }
 
             // The property is public, but the setter is not
@@ -335,7 +346,7 @@
             PopulateInternal(propertyType, propertyInfo.Name, null, typeCreator, originalValue);
         }
 
-        private Exception BuildFailureException(Type type, string referenceName, object context)
+        private Exception CreateBuildException(Type type, string referenceName, object context)
         {
             string message;
 

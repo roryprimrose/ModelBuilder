@@ -2,6 +2,7 @@ namespace ModelBuilder.Synchronous.UnitTests
 {
     using System;
     using System.Collections.Generic;
+    using System.Reflection;
     using FluentAssertions;
     using ModelBuilder.UnitTests;
     using NSubstitute;
@@ -150,7 +151,7 @@ namespace ModelBuilder.Synchronous.UnitTests
         }
 
         [Fact]
-        public void CreateWitThUsesBuildStrategyToCreateInstanceWithParametersTest()
+        public void CreateWithTUsesBuildStrategyToCreateInstanceWithParametersTest()
         {
             var value = Guid.NewGuid();
             var expected = new ReadOnlyModel(value);
@@ -225,13 +226,31 @@ namespace ModelBuilder.Synchronous.UnitTests
             var expected = new SlimModel();
 
             var build = Substitute.For<IBuildStrategy>();
+            var creator = Substitute.For<ITypeCreator>();
+            var propertyResolver = Substitute.For<IPropertyResolver>();
+
+            var creators = new List<ITypeCreator>
+            {
+                creator
+            }.AsReadOnly();
             var generator = Substitute.For<IValueGenerator>();
             var generators = new List<IValueGenerator>
             {
                 generator
             }.AsReadOnly();
 
+            build.PropertyResolver.Returns(propertyResolver);
+            build.TypeCreators.Returns(creators);
             build.ValueGenerators.Returns(generators);
+            propertyResolver.CanPopulate(Arg.Any<PropertyInfo>()).Returns(true);
+            propertyResolver.ShouldPopulateProperty(
+                Arg.Any<IBuildConfiguration>(),
+                Arg.Any<object>(),
+                Arg.Any<PropertyInfo>(),
+                Arg.Any<object[]>()).Returns(true);
+            creator.CanPopulate(typeof(SlimModel), null, Arg.Any<LinkedList<object>>()).Returns(true);
+            creator.Populate(expected, Arg.Any<IExecuteStrategy>()).Returns(expected);
+            creator.AutoPopulate.Returns(true);
             generator.IsSupported(typeof(Guid), "Value", Arg.Any<LinkedList<object>>()).Returns(true);
             generator.Generate(typeof(Guid), "Value", Arg.Any<IExecuteStrategy>()).Returns(value);
 
