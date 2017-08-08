@@ -214,4 +214,10 @@
   <data name="Cultures" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Cultures.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
+  <data name="NoPropertyTypeOrPropertyExpression" xml:space="preserve">
+    <value>Either propertyType or propertyExpression must be supplied</value>
+  </data>
+  <data name="NoPropertyTypeOrPropertyName" xml:space="preserve">
+    <value>Either propertyType or propertyName must be supplied</value>
+  </data>
 </root>

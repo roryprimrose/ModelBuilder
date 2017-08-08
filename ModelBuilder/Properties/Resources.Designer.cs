@@ -38,15 +38,17 @@ namespace ModelBuilder.Properties {
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
         internal static global::System.Resources.ResourceManager ResourceManager {
-            get {
-                if (object.ReferenceEquals(resourceMan, null)) {
+            get
+            {
+                if (object.ReferenceEquals(resourceMan, null))
+                {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ModelBuilder.Properties.Resources",
 #if NET40
                         typeof(Resources).Assembly
 #else
                         typeof(Resources).GetTypeInfo().Assembly
 #endif
-                        );
+                    );
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -383,6 +385,24 @@ namespace ModelBuilder.Properties {
         internal static string NoMatchingCreatorOrGeneratorFoundWithNameAndContext {
             get {
                 return ResourceManager.GetString("NoMatchingCreatorOrGeneratorFoundWithNameAndContext", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Either propertyType or propertyExpression must be supplied.
+        /// </summary>
+        internal static string NoPropertyTypeOrPropertyExpression {
+            get {
+                return ResourceManager.GetString("NoPropertyTypeOrPropertyExpression", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Either propertyType or propertyName must be supplied.
+        /// </summary>
+        internal static string NoPropertyTypeOrPropertyName {
+            get {
+                return ResourceManager.GetString("NoPropertyTypeOrPropertyName", resourceCulture);
             }
         }
         
