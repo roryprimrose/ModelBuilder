@@ -1,25 +1,29 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics.CodeAnalysis;
-using System.IO;
-using System.Xml.Serialization;
-using ModelBuilder.Properties;
-
-namespace ModelBuilder.Data
+﻿namespace ModelBuilder.Data
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+    using System.Diagnostics.CodeAnalysis;
+    using System.IO;
+    using System.Linq;
+    using System.Xml.Serialization;
+    using ModelBuilder.Properties;
+
     /// <summary>
-    /// The <see cref="TestData"/>
-    /// class is used to expose some pre-generated test data.
+    ///     The <see cref="TestData" />
+    ///     class is used to expose some pre-generated test data.
     /// </summary>
     public static class TestData
     {
-        [SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline",
+        [SuppressMessage(
+            "Microsoft.Performance",
+            "CA1810:InitializeReferenceTypeStaticFieldsInline",
             Justification =
-                "This is done in the constructor for the better performance of splitting males an females in a single iteration."
-            )]
+                "This is done in the constructor for the better performance of splitting males an females in a single iteration.")]
         static TestData()
         {
             People = ReadPeople();
+            Cultures = ReadCultures();
 
             var males = new List<Person>();
             var females = new List<Person>();
@@ -42,7 +46,7 @@ namespace ModelBuilder.Data
         }
 
         /// <summary>
-        /// Returns a random female from the test data set.
+        ///     Returns a random female from the test data set.
         /// </summary>
         /// <returns>A random female.</returns>
         public static Person NextFemale()
@@ -55,7 +59,7 @@ namespace ModelBuilder.Data
         }
 
         /// <summary>
-        /// Returns a random male from the test data set.
+        ///     Returns a random male from the test data set.
         /// </summary>
         /// <returns>A random male.</returns>
         public static Person NextMale()
@@ -68,7 +72,7 @@ namespace ModelBuilder.Data
         }
 
         /// <summary>
-        /// Returns a random person from the test data set.
+        ///     Returns a random person from the test data set.
         /// </summary>
         /// <returns>A random person.</returns>
         public static Person NextPerson()
@@ -80,30 +84,50 @@ namespace ModelBuilder.Data
             return People[index];
         }
 
+        private static DataSet<string> ReadCultures()
+        {
+            var cultures = Resources.Cultures;
+            var items = cultures.Split(
+                new[]
+                {
+                    Environment.NewLine
+                },
+                StringSplitOptions.RemoveEmptyEntries);
+
+            var data = items.ToList();
+
+            return new DataSet<string>(data);
+        }
+
         private static ReadOnlyCollection<Person> ReadPeople()
         {
             var serializer = new XmlSerializer(typeof(People));
 
             using (var reader = new StringReader(Resources.People))
             {
-                var data = (People) serializer.Deserialize(reader);
+                var data = (People)serializer.Deserialize(reader);
 
                 return new ReadOnlyCollection<Person>(data.Items);
             }
         }
 
         /// <summary>
-        /// Gets a test data set of females.
+        ///     Gets a test data set of cultures.
+        /// </summary>
+        public static DataSet<string> Cultures { get; }
+
+        /// <summary>
+        ///     Gets a test data set of females.
         /// </summary>
         public static ReadOnlyCollection<Person> Females { get; }
 
         /// <summary>
-        /// Gets a test data set of males.
+        ///     Gets a test data set of males.
         /// </summary>
         public static ReadOnlyCollection<Person> Males { get; }
 
         /// <summary>
-        /// Gets a test data set of people.
+        ///     Gets a test data set of people.
         /// </summary>
         public static ReadOnlyCollection<Person> People { get; }
     }

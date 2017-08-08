@@ -11,7 +11,8 @@
 namespace ModelBuilder.Properties {
     using System;
     using System.Reflection;
-
+    
+    
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
     /// </summary>
@@ -42,7 +43,7 @@ namespace ModelBuilder.Properties {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ModelBuilder.Properties.Resources",
 #if NET40
                         typeof(Resources).Assembly
-#else                        
+#else
                         typeof(Resources).GetTypeInfo().Assembly
 #endif
                         );
@@ -117,6 +118,91 @@ namespace ModelBuilder.Properties {
         internal static string ConstructorResolver_NoValidConstructorFound {
             get {
                 return ResourceManager.GetString("ConstructorResolver_NoValidConstructorFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to aa
+        ///aa-DJ
+        ///aa-ER
+        ///aa-ET
+        ///af
+        ///af-NA
+        ///af-ZA
+        ///agq
+        ///agq-CM
+        ///ak
+        ///ak-GH
+        ///am
+        ///am-ET
+        ///ar
+        ///ar-001
+        ///ar-AE
+        ///ar-BH
+        ///ar-DJ
+        ///ar-DZ
+        ///ar-EG
+        ///ar-ER
+        ///ar-IL
+        ///ar-IQ
+        ///ar-JO
+        ///ar-KM
+        ///ar-KW
+        ///ar-LB
+        ///ar-LY
+        ///ar-MA
+        ///ar-MR
+        ///ar-OM
+        ///ar-PS
+        ///ar-QA
+        ///ar-SA
+        ///ar-SD
+        ///ar-SO
+        ///ar-SS
+        ///ar-SY
+        ///ar-TD
+        ///ar-TN
+        ///ar-YE
+        ///arn
+        ///arn-CL
+        ///as
+        ///as-IN
+        ///asa
+        ///asa-TZ
+        ///ast
+        ///ast-ES
+        ///az
+        ///az-Cyrl
+        ///az-Cyrl-AZ
+        ///az-Latn
+        ///az-Latn-AZ
+        ///ba
+        ///ba-RU
+        ///bas
+        ///bas-CM
+        ///be
+        ///be-BY
+        ///bem
+        ///bem-ZM
+        ///bez
+        ///bez-TZ
+        ///bg
+        ///bg-BG
+        ///bin
+        ///bin-NG
+        ///bm
+        ///bm-Latn
+        ///bm-Latn-ML
+        ///bn
+        ///bn-BD
+        ///bn-IN
+        ///bo
+        ///bo-CN
+        ///bo-IN [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string Cultures {
+            get {
+                return ResourceManager.GetString("Cultures", resourceCulture);
             }
         }
         

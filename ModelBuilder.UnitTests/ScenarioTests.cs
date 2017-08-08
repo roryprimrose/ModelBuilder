@@ -38,6 +38,15 @@
         }
 
         [Fact]
+        public void CanCreateCultureDataTest()
+        {
+            var actual = Model.Create<CultureData>();
+
+            actual.Culture.Should().NotBeNull();
+            actual.CultureName.Should().NotBeNullOrWhiteSpace();
+        }
+
+        [Fact]
         public void CanCreateCustomBuildStrategyToCreateModelsTest()
         {
             var strategy = Model.DefaultBuildStrategy.Clone().Set(x => x.ValueGenerators.Clear())
@@ -94,6 +103,17 @@
             actual.First.Should().NotBeNull();
             actual.SecondUrl.Should().NotBeNullOrWhiteSpace();
             actual.UriThird.Should().NotBeNullOrWhiteSpace();
+        }
+
+        [Fact]
+        public void CanPopulateCultureDataTest()
+        {
+            var actual = new CultureData();
+
+            Model.Populate(actual);
+
+            actual.Culture.Should().NotBeNull();
+            actual.CultureName.Should().NotBeNullOrWhiteSpace();
         }
 
         [Fact]

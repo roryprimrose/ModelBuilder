@@ -211,4 +211,7 @@
   <data name="BuildStrategyCompiler_NullPropertyResolver" xml:space="preserve">
     <value>The PropertyResolver is null. A property resolver must be provided in order to create a build strategy</value>
   </data>
+  <data name="Cultures" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Cultures.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
 </root>
