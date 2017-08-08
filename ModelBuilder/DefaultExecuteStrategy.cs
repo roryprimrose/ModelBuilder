@@ -1,7 +1,6 @@
 ﻿namespace ModelBuilder
 {
     using System;
-    using System.Collections;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Diagnostics;
@@ -77,10 +76,8 @@
             try
             {
                 var type = instance.GetType();
-                var typeCreator =
-                    Configuration.TypeCreators?.Where(x => x.CanPopulate(type, null, BuildChain))
-                        .OrderByDescending(x => x.Priority)
-                        .FirstOrDefault();
+                var typeCreator = Configuration.TypeCreators?.Where(x => x.CanPopulate(type, null, BuildChain))
+                    .OrderByDescending(x => x.Priority).FirstOrDefault();
 
                 if (typeCreator == null)
                 {
@@ -115,8 +112,8 @@
             var propertyResolver = Configuration.PropertyResolver;
 
             var propertyInfos = from x in Configuration.PropertyResolver.GetProperties(type)
-                                orderby GetMaximumOrderPrority(x.PropertyType, x.Name) descending
-                                select x;
+                orderby GetMaximumOrderPrority(x) descending
+                select x;
 
             foreach (var propertyInfo in propertyInfos)
             {
@@ -167,10 +164,8 @@
             Type targetType = null;
 
             // First check if there is a creation rule
-            var creationRule =
-                Configuration.CreationRules?.Where(x => x.IsMatch(contextType, referenceName))
-                    .OrderByDescending(x => x.Priority)
-                    .FirstOrDefault();
+            var creationRule = Configuration.CreationRules?.Where(x => x.IsMatch(contextType, referenceName))
+                .OrderByDescending(x => x.Priority).FirstOrDefault();
 
             if (creationRule != null)
             {
@@ -183,10 +178,9 @@
             else
             {
                 // Next check if this is a type supported by a value generator
-                var valueGenerator =
-                    Configuration.ValueGenerators?.Where(x => x.IsSupported(type, referenceName, BuildChain))
-                        .OrderByDescending(x => x.Priority)
-                        .FirstOrDefault();
+                var valueGenerator = Configuration.ValueGenerators
+                    ?.Where(x => x.IsSupported(type, referenceName, BuildChain)).OrderByDescending(x => x.Priority)
+                    .FirstOrDefault();
 
                 if (valueGenerator != null)
                 {
@@ -231,10 +225,8 @@
                 }
             }
 
-            var typeCreator =
-                Configuration.TypeCreators?.Where(x => x.CanCreate(type, referenceName, BuildChain))
-                    .OrderByDescending(x => x.Priority)
-                    .FirstOrDefault();
+            var typeCreator = Configuration.TypeCreators?.Where(x => x.CanCreate(type, referenceName, BuildChain))
+                .OrderByDescending(x => x.Priority).FirstOrDefault();
 
             if (typeCreator == null)
             {
@@ -328,10 +320,9 @@
             var propertyType = value.GetType();
 
             // Attempt to find a type creator for this type that will help us figure out how it should be populated
-            var typeCreator =
-                Configuration.TypeCreators?.Where(x => x.CanPopulate(propertyType, propertyInfo.Name, BuildChain))
-                    .OrderByDescending(x => x.Priority)
-                    .FirstOrDefault();
+            var typeCreator = Configuration.TypeCreators
+                ?.Where(x => x.CanPopulate(propertyType, propertyInfo.Name, BuildChain))
+                .OrderByDescending(x => x.Priority).FirstOrDefault();
 
             if (typeCreator == null)
             {
@@ -344,6 +335,35 @@
             var originalValue = propertyInfo.GetValue(instance, null);
 
             PopulateInternal(propertyType, propertyInfo.Name, null, typeCreator, originalValue);
+        }
+
+        private object CreateAndPopulate(
+            Type type,
+            string referenceName,
+            LinkedList<object> buildChain,
+            object[] args,
+            ITypeCreator typeCreator)
+        {
+            var outcome = CreateInstance(typeCreator, type, referenceName, buildChain, args);
+
+            var instance = outcome.Item1;
+            var arguments = outcome.Item2;
+
+            if (instance == null)
+            {
+                return null;
+            }
+
+            _buildChain.Push(instance);
+
+            try
+            {
+                return PopulateInternal(type, referenceName, arguments, typeCreator, instance);
+            }
+            finally
+            {
+                _buildChain.Pop();
+            }
         }
 
         private Exception CreateBuildException(Type type, string referenceName, object context)
@@ -395,35 +415,6 @@
                 buildLog);
 
             return new BuildException(failureMessage, type, referenceName, context, buildLog, ex);
-        }
-
-        private object CreateAndPopulate(
-            Type type,
-            string referenceName,
-            LinkedList<object> buildChain,
-            object[] args,
-            ITypeCreator typeCreator)
-        {
-            var outcome = CreateInstance(typeCreator, type, referenceName, buildChain, args);
-
-            var instance = outcome.Item1;
-            var arguments = outcome.Item2;
-
-            if (instance == null)
-            {
-                return null;
-            }
-
-            _buildChain.Push(instance);
-
-            try
-            {
-                return PopulateInternal(type, referenceName, arguments, typeCreator, instance);
-            }
-            finally
-            {
-                _buildChain.Pop();
-            }
         }
 
         private Tuple<object, object[]> CreateInstance(
@@ -501,7 +492,7 @@
             }
         }
 
-        private int GetMaximumOrderPrority(Type type, string propertyName)
+        private int GetMaximumOrderPrority(PropertyInfo property)
         {
             if (Configuration.ExecuteOrderRules == null)
             {
@@ -509,9 +500,9 @@
             }
 
             var matchingRules = from x in Configuration.ExecuteOrderRules
-                                where x.IsMatch(type, propertyName)
-                                orderby x.Priority descending
-                                select x;
+                where x.IsMatch(property.DeclaringType, property.PropertyType, property.Name)
+                orderby x.Priority descending
+                select x;
             var matchingRule = matchingRules.FirstOrDefault();
 
             if (matchingRule == null)
@@ -544,9 +535,8 @@
                 // Allow the type creator to do its own population of the instance
                 instance = typeCreator.Populate(instance, this);
 
-                var postBuildActions =
-                    Configuration.PostBuildActions?.Where(x => x.IsSupported(type, referenceName, BuildChain))
-                        .OrderByDescending(x => x.Priority);
+                var postBuildActions = Configuration.PostBuildActions
+                    ?.Where(x => x.IsSupported(type, referenceName, BuildChain)).OrderByDescending(x => x.Priority);
 
                 if (postBuildActions != null)
                 {
