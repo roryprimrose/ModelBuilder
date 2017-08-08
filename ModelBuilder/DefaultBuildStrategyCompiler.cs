@@ -73,6 +73,7 @@
                 yield return new CompanyValueGenerator();
                 yield return new CountryValueGenerator();
                 yield return new CountValueGenerator();
+                yield return new CultureValueGenerator();
                 yield return new DateOfBirthValueGenerator();
                 yield return new DateTimeValueGenerator();
                 yield return new DomainNameValueGenerator();
