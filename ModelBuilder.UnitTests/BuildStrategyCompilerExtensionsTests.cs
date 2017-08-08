@@ -133,7 +133,7 @@
 
             rule.Priority.Should().Be(priority);
 
-            var actual = rule.IsMatch(typeof(Person), nameof(Person.FirstName));
+            var actual = rule.IsMatch(typeof(Person), typeof(string), nameof(Person.FirstName));
 
             actual.Should().BeTrue();
         }

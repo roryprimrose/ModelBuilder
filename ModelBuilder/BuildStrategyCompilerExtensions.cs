@@ -330,7 +330,7 @@
             var targetType = typeof(T);
             var property = expression.GetProperty();
 
-            var rule = new ExecuteOrderRule(targetType, property.Name, priority);
+            var rule = new ExecuteOrderRule(targetType, property.PropertyType, property.Name, priority);
 
             compiler.ExecuteOrderRules.Add(rule);
 
