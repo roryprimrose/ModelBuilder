@@ -389,6 +389,24 @@ namespace ModelBuilder.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Either ownerType, propertyType or propertyExpression must be supplied.
+        /// </summary>
+        internal static string NoOwnerTypePropertyTypeOrPropertyExpression {
+            get {
+                return ResourceManager.GetString("NoOwnerTypePropertyTypeOrPropertyExpression", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Either ownerType, propertyType or propertyName must be supplied.
+        /// </summary>
+        internal static string NoOwnerTypePropertyTypeOrPropertyName {
+            get {
+                return ResourceManager.GetString("NoOwnerTypePropertyTypeOrPropertyName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Either propertyType or propertyExpression must be supplied.
         /// </summary>
         internal static string NoPropertyTypeOrPropertyExpression {
