@@ -221,9 +221,9 @@
     <value>Either propertyType or propertyName must be supplied</value>
   </data>
   <data name="NoOwnerTypePropertyTypeOrPropertyExpression" xml:space="preserve">
-    <value>Either ownerType, propertyType or propertyExpression must be supplied</value>
+    <value>Either declaringType, propertyType or propertyExpression must be supplied</value>
   </data>
   <data name="NoOwnerTypePropertyTypeOrPropertyName" xml:space="preserve">
-    <value>Either ownerType, propertyType or propertyName must be supplied</value>
+    <value>Either declaringType, propertyType or propertyName must be supplied</value>
   </data>
 </root>

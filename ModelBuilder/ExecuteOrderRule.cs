@@ -52,7 +52,7 @@
         /// <summary>
         ///     Initializes a new instance of the <see cref="ExecuteOrderRule" /> class.
         /// </summary>
-        /// <param name="ownerType">The property owner type that matches the rule.</param>
+        /// <param name="declaringType">The declaring type with the property that matches the rule.</param>
         /// <param name="propertyType">The property type that matches the rule.</param>
         /// <param name="propertyExpression">The property name regular expression that matches the rule.</param>
         /// <param name="priority">The priority of the rule.</param>
@@ -60,9 +60,9 @@
         ///     The <paramref name="propertyType" /> and <paramref name="propertyExpression" />
         ///     parameters are both null.
         /// </exception>
-        public ExecuteOrderRule(Type ownerType, Type propertyType, Regex propertyExpression, int priority)
+        public ExecuteOrderRule(Type declaringType, Type propertyType, Regex propertyExpression, int priority)
         {
-            if (ownerType == null &&
+            if (declaringType == null &&
                 propertyType == null &&
                 propertyExpression == null)
             {
@@ -71,8 +71,8 @@
 
             _func = (parentType, propType, name) =>
             {
-                if (ownerType != null &&
-                    ownerType != parentType)
+                if (declaringType != null &&
+                    declaringType != parentType)
                 {
                     return false;
                 }
@@ -106,7 +106,7 @@
         ///     parameters are both null.
         /// </exception>
         [Obsolete(
-            "ExecuteOrderRule now supports OwnerType and PropertyType. Please use the ExecuteOrderRule(Type ownerType, Type propertyType, Regex propertyExpression, int priority) constructor instead. This constructor will be removed in the next major version.")]
+            "ExecuteOrderRule now supports OwnerType and PropertyType. Please use the ExecuteOrderRule(Type declaringType, Type propertyType, Regex propertyExpression, int priority) constructor instead. This constructor will be removed in the next major version.")]
         public ExecuteOrderRule(Type propertyType, Regex propertyExpression, int priority)
         {
             // TODO: Remove this in the next version
@@ -147,7 +147,7 @@
         ///     parameters are both null.
         /// </exception>
         [Obsolete(
-            "ExecuteOrderRule now supports OwnerType and PropertyType. Please use the ExecuteOrderRule(Type ownerType, Type propertyType, string propertyName, int priority) constructor instead. This constructor will be removed in the next major version.")]
+            "ExecuteOrderRule now supports OwnerType and PropertyType. Please use the ExecuteOrderRule(Type declaringType, Type propertyType, string propertyName, int priority) constructor instead. This constructor will be removed in the next major version.")]
         public ExecuteOrderRule(Type propertyType, string propertyName, int priority)
         {
             // TODO: Remove this in the next version
@@ -180,7 +180,7 @@
         /// <summary>
         ///     Initializes a new instance of the <see cref="ExecuteOrderRule" /> class.
         /// </summary>
-        /// <param name="ownerType">The property owner type that matches the rule.</param>
+        /// <param name="declaringType">The declaring type with the property that matches the rule.</param>
         /// <param name="propertyType">The property type that matches the rule.</param>
         /// <param name="propertyName">The property name that matches the rule.</param>
         /// <param name="priority">The priority of the rule.</param>
@@ -188,9 +188,9 @@
         ///     The <paramref name="propertyType" /> and <paramref name="propertyName" />
         ///     parameters are both null.
         /// </exception>
-        public ExecuteOrderRule(Type ownerType, Type propertyType, string propertyName, int priority)
+        public ExecuteOrderRule(Type declaringType, Type propertyType, string propertyName, int priority)
         {
-            if (ownerType == null &&
+            if (declaringType == null &&
                 propertyType == null &&
                 propertyName == null)
             {
@@ -199,8 +199,8 @@
 
             _func = (parentType, propType, name) =>
             {
-                if (ownerType != null &&
-                    ownerType != parentType)
+                if (declaringType != null &&
+                    declaringType != parentType)
                 {
                     return false;
                 }
@@ -230,7 +230,7 @@
         /// <param name="propertyName">The property name to match.</param>
         /// <returns><c>true</c> if the rule matches the specified type and property name; otherwise <c>false</c>.</returns>
         [Obsolete(
-            "ExecuteOrderRule now supports OwnerType and PropertyType. Please use the IsMatch(Type ownerType, Type propertyType, string propertyName) constructor instead. This constructor will be removed in the next major version.")]
+            "ExecuteOrderRule now supports OwnerType and PropertyType. Please use the IsMatch(Type declaringType, Type propertyType, string propertyName) constructor instead. This constructor will be removed in the next major version.")]
         public bool IsMatch(Type propertyType, string propertyName)
         {
             // TODO: Remove this in the next version
@@ -240,13 +240,13 @@
         /// <summary>
         ///     Gets whether the specified type and property name match this rule.
         /// </summary>
-        /// <param name="ownerType">The property owner type that matches the rule.</param>
+        /// <param name="declaringType">The declaring type with the property that matches the rule.</param>
         /// <param name="propertyType">The property type that matches the rule.</param>
         /// <param name="propertyName">The property name to match.</param>
         /// <returns><c>true</c> if the rule matches the specified type and property name; otherwise <c>false</c>.</returns>
-        public bool IsMatch(Type ownerType, Type propertyType, string propertyName)
+        public bool IsMatch(Type declaringType, Type propertyType, string propertyName)
         {
-            return _func(ownerType, propertyType, propertyName);
+            return _func(declaringType, propertyType, propertyName);
         }
 
         /// <summary>

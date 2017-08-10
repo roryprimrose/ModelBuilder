@@ -32,12 +32,13 @@ namespace ModelBuilder.Properties {
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         internal Resources() {
         }
-        
+
         /// <summary>
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        internal static global::System.Resources.ResourceManager ResourceManager
+        {
             get
             {
                 if (object.ReferenceEquals(resourceMan, null))
@@ -54,7 +55,7 @@ namespace ModelBuilder.Properties {
                 return resourceMan;
             }
         }
-        
+
         /// <summary>
         ///   Overrides the current thread's CurrentUICulture property for all
         ///   resource lookups using this strongly typed resource class.
@@ -389,7 +390,7 @@ namespace ModelBuilder.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Either ownerType, propertyType or propertyExpression must be supplied.
+        ///   Looks up a localized string similar to Either declaringType, propertyType or propertyExpression must be supplied.
         /// </summary>
         internal static string NoOwnerTypePropertyTypeOrPropertyExpression {
             get {
@@ -398,7 +399,7 @@ namespace ModelBuilder.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Either ownerType, propertyType or propertyName must be supplied.
+        ///   Looks up a localized string similar to Either declaringType, propertyType or propertyName must be supplied.
         /// </summary>
         internal static string NoOwnerTypePropertyTypeOrPropertyName {
             get {

@@ -71,7 +71,7 @@
         [Fact]
         public void IsMatchReturnsWhetherEvaluatorMatchesTest()
         {
-            var target = new ExecuteOrderRule((ownerType, propertyType, name) => false, 1000);
+            var target = new ExecuteOrderRule((declaringType, propertyType, name) => false, 1000);
 
             var actual = target.IsMatch(typeof(Person), typeof(string), "Stuff");
 
@@ -85,19 +85,19 @@
         [InlineData(typeof(Person), typeof(string), "stuff", typeof(Company), typeof(string), "stuff", false)]
         [InlineData(typeof(Person), typeof(string), "stuff", typeof(Person), typeof(string), "stuff", true)]
         public void IsMatchReturnsWhetherTypeAndNameMatchTest(
-            Type ownerType,
+            Type declaringType,
             Type propertyType,
             string name,
-            Type matchOwnerType,
+            Type matchDeclaringType,
             Type matchPropertyType,
             string matchName,
             bool expected)
         {
             var priority = Environment.TickCount;
 
-            var target = new ExecuteOrderRule(ownerType, propertyType, name, priority);
+            var target = new ExecuteOrderRule(declaringType, propertyType, name, priority);
 
-            var actual = target.IsMatch(matchOwnerType, matchPropertyType, matchName);
+            var actual = target.IsMatch(matchDeclaringType, matchPropertyType, matchName);
 
             actual.Should().Be(expected);
         }
@@ -223,10 +223,10 @@
             "firstname",
             true)]
         public void IsMatchReturnsWhetherTypeAndRegularExpressionMatchTest(
-            Type ownerType,
+            Type declaringType,
             Type propertyType,
             string expression,
-            Type matchOwnerType,
+            Type matchDeclaringType,
             Type matchPropertyType,
             string matchName,
             bool expected)
@@ -234,9 +234,9 @@
             var priority = Environment.TickCount;
             var regex = new Regex(expression);
 
-            var target = new ExecuteOrderRule(ownerType, propertyType, regex, priority);
+            var target = new ExecuteOrderRule(declaringType, propertyType, regex, priority);
 
-            var actual = target.IsMatch(matchOwnerType, matchPropertyType, matchName);
+            var actual = target.IsMatch(matchDeclaringType, matchPropertyType, matchName);
 
             actual.Should().Be(expected);
         }
@@ -256,12 +256,12 @@
         [Fact]
         public void ReturnsConstructorValuesTest()
         {
-            var ownerType = typeof(Person);
+            var declaringType = typeof(Person);
             var propertyType = typeof(string);
             var name = Guid.NewGuid().ToString();
             var priority = Environment.TickCount;
 
-            var target = new ExecuteOrderRule(ownerType, propertyType, name, priority);
+            var target = new ExecuteOrderRule(declaringType, propertyType, name, priority);
 
             target.Priority.Should().Be(priority);
         }
@@ -277,7 +277,7 @@
         }
 
         [Fact]
-        public void ThrowsExceptionWhenCreatedWithNullOwnerTypePropertyTypeAndNameTest()
+        public void ThrowsExceptionWhenCreatedWithNullDeclaringTypePropertyTypeAndNameTest()
         {
             var priority = Environment.TickCount;
 
@@ -287,7 +287,7 @@
         }
 
         [Fact]
-        public void ThrowsExceptionWhenCreatedWithNullOwnerTypePropertyTypeAndRegularExpressionTest()
+        public void ThrowsExceptionWhenCreatedWithNullDeclaringTypePropertyTypeAndRegularExpressionTest()
         {
             var priority = Environment.TickCount;
 
