@@ -32,27 +32,30 @@ namespace ModelBuilder.Properties {
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         internal Resources() {
         }
-        
+
         /// <summary>
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
-            get {
-                if (object.ReferenceEquals(resourceMan, null)) {
+        internal static global::System.Resources.ResourceManager ResourceManager
+        {
+            get
+            {
+                if (object.ReferenceEquals(resourceMan, null))
+                {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ModelBuilder.Properties.Resources",
 #if NET40
                         typeof(Resources).Assembly
 #else
                         typeof(Resources).GetTypeInfo().Assembly
 #endif
-                        );
+                    );
                     resourceMan = temp;
                 }
                 return resourceMan;
             }
         }
-        
+
         /// <summary>
         ///   Overrides the current thread's CurrentUICulture property for all
         ///   resource lookups using this strongly typed resource class.
@@ -383,6 +386,42 @@ namespace ModelBuilder.Properties {
         internal static string NoMatchingCreatorOrGeneratorFoundWithNameAndContext {
             get {
                 return ResourceManager.GetString("NoMatchingCreatorOrGeneratorFoundWithNameAndContext", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Either declaringType, propertyType or propertyExpression must be supplied.
+        /// </summary>
+        internal static string NoOwnerTypePropertyTypeOrPropertyExpression {
+            get {
+                return ResourceManager.GetString("NoOwnerTypePropertyTypeOrPropertyExpression", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Either declaringType, propertyType or propertyName must be supplied.
+        /// </summary>
+        internal static string NoOwnerTypePropertyTypeOrPropertyName {
+            get {
+                return ResourceManager.GetString("NoOwnerTypePropertyTypeOrPropertyName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Either propertyType or propertyExpression must be supplied.
+        /// </summary>
+        internal static string NoPropertyTypeOrPropertyExpression {
+            get {
+                return ResourceManager.GetString("NoPropertyTypeOrPropertyExpression", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Either propertyType or propertyName must be supplied.
+        /// </summary>
+        internal static string NoPropertyTypeOrPropertyName {
+            get {
+                return ResourceManager.GetString("NoPropertyTypeOrPropertyName", resourceCulture);
             }
         }
         

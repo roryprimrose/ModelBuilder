@@ -165,8 +165,7 @@
             actual.IgnoreRules.Should().NotBeEmpty();
 
             var matchingRule =
-                actual.IgnoreRules.FirstOrDefault(
-                    x => (x.PropertyName == "Priority") && (x.TargetType == typeof(Person)));
+                actual.IgnoreRules.FirstOrDefault(x => x.PropertyName == "Priority" && x.TargetType == typeof(Person));
 
             matchingRule.Should().NotBeNull();
         }
@@ -237,8 +236,10 @@
             creator.Populate(expected, Arg.Any<IExecuteStrategy>()).Returns(expected);
             generator.IsSupported(typeof(Guid), "Value", Arg.Is<LinkedList<object>>(x => x.Last.Value == expected))
                 .Returns(true);
-            generator.Generate(typeof(Guid), "Value", Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last.Value == expected))
-                .Returns(value);
+            generator.Generate(
+                typeof(Guid),
+                "Value",
+                Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last.Value == expected)).Returns(value);
 
             var actual = target.Populate(expected);
 
