@@ -10,7 +10,7 @@
     public class BuildStrategy : BuildStrategyBase
     {
         /// <summary>
-        ///     Initializes a new instance of the <see cref="BuildStrategyBase" /> class.
+        ///     Initializes a new instance of the <see cref="BuildStrategy" /> class.
         /// </summary>
         /// <param name="constructorResolver">The constructor resolver.</param>
         /// <param name="propertyResolver">The property resolver.</param>
@@ -36,16 +36,24 @@
             IEnumerable<IValueGenerator> valueGenerators,
             IEnumerable<IgnoreRule> ignoreRules,
             IEnumerable<ExecuteOrderRule> executeOrderRules,
-            IEnumerable<IPostBuildAction> postBuildActions)
-            : base(
-                constructorResolver,
-                propertyResolver,
-                creationRules,
-                typeCreators,
-                valueGenerators,
-                ignoreRules,
-                executeOrderRules,
-                postBuildActions)
+            IEnumerable<IPostBuildAction> postBuildActions) : base(
+            constructorResolver,
+            propertyResolver,
+            creationRules,
+            typeCreators,
+            valueGenerators,
+            ignoreRules,
+            executeOrderRules,
+            postBuildActions)
+        {
+        }
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="BuildStrategy" /> class.
+        /// </summary>
+        /// <param name="strategy">The build strategy.</param>
+        /// <exception cref="ArgumentNullException">The <paramref name="strategy" /> parameter is null.</exception>
+        public BuildStrategy(IBuildStrategy strategy) : base(strategy)
         {
         }
 
