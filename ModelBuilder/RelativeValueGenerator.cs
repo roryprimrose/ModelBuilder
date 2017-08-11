@@ -156,7 +156,15 @@
                 return default(T);
             }
 
-            return (T)Convert.ChangeType(value, typeof(T), CultureInfo.CurrentCulture);
+            var expectedType = typeof(T);
+
+            if (expectedType.IsNullable())
+            {
+                // Hijack the type to generator so we can continue with the normal code pointed at the correct type to generate
+                expectedType = expectedType.GetGenericArguments()[0];
+            }
+
+            return (T)Convert.ChangeType(value, expectedType, CultureInfo.CurrentCulture);
         }
 
         private static PropertyInfo GetMatchingProperty(Regex expression, object context)
