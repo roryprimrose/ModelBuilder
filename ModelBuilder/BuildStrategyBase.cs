@@ -14,6 +14,28 @@
         /// <summary>
         ///     Initializes a new instance of the <see cref="BuildStrategyBase" /> class.
         /// </summary>
+        /// <param name="strategy">The build strategy.</param>
+        /// <exception cref="ArgumentNullException">The <paramref name="strategy" /> parameter is null.</exception>
+        protected BuildStrategyBase(IBuildStrategy strategy)
+        {
+            if (strategy == null)
+            {
+                throw new ArgumentNullException(nameof(strategy));
+            }
+
+            ConstructorResolver = strategy.ConstructorResolver;
+            PropertyResolver = strategy.PropertyResolver;
+            TypeCreators = new ReadOnlyCollection<ITypeCreator>(strategy.TypeCreators.ToList());
+            ValueGenerators = new ReadOnlyCollection<IValueGenerator>(strategy.ValueGenerators.ToList());
+            IgnoreRules = new ReadOnlyCollection<IgnoreRule>(strategy.IgnoreRules.ToList());
+            ExecuteOrderRules = new ReadOnlyCollection<ExecuteOrderRule>(strategy.ExecuteOrderRules.ToList());
+            PostBuildActions = new ReadOnlyCollection<IPostBuildAction>(strategy.PostBuildActions.ToList());
+            CreationRules = new ReadOnlyCollection<CreationRule>(strategy.CreationRules.ToList());
+        }
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="BuildStrategyBase" /> class.
+        /// </summary>
         /// <param name="constructorResolver">The constructor resolver.</param>
         /// <param name="propertyResolver">The property resolver.</param>
         /// <param name="creationRules">The creation rules.</param>
