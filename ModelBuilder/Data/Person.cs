@@ -20,12 +20,7 @@
         /// Gets or sets the company.
         /// </summary>
         public string Company { get; set; }
-
-        /// <summary>
-        /// Gets or sets the country.
-        /// </summary>
-        public string Country { get; set; }
-
+        
         /// <summary>
         /// Gets or sets the domain name.
         /// </summary>
@@ -35,12 +30,7 @@
         /// Gets or sets the email.
         /// </summary>
         public string Email { get; set; }
-
-        /// <summary>
-        /// Gets or sets the first name.
-        /// </summary>
-        public string FirstName { get; set; }
-
+        
         /// <summary>
         /// Gets or sets the binary gender.
         /// </summary>
@@ -60,12 +50,7 @@
         /// Gets or sets the post code.
         /// </summary>
         public string PostCode { get; set; }
-
-        /// <summary>
-        /// Gets or sets the state.
-        /// </summary>
-        public string State { get; set; }
-
+        
         /// <summary>
         /// Gets or sets the time zone.
         /// </summary>

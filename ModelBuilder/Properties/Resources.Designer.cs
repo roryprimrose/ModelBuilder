@@ -20,7 +20,7 @@ namespace ModelBuilder.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -32,30 +32,21 @@ namespace ModelBuilder.Properties {
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         internal Resources() {
         }
-
+        
         /// <summary>
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager
-        {
-            get
-            {
-                if (object.ReferenceEquals(resourceMan, null))
-                {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ModelBuilder.Properties.Resources",
-#if NET40
-                        typeof(Resources).Assembly
-#else
-                        typeof(Resources).GetTypeInfo().Assembly
-#endif
-                    );
+        internal static global::System.Resources.ResourceManager ResourceManager {
+            get {
+                if (object.ReferenceEquals(resourceMan, null)) {
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ModelBuilder.Properties.Resources", typeof(Resources).GetTypeInfo().Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
             }
         }
-
+        
         /// <summary>
         ///   Overrides the current thread's CurrentUICulture property for all
         ///   resource lookups using this strongly typed resource class.
@@ -359,6 +350,243 @@ namespace ModelBuilder.Properties {
         internal static string ExecuteStrategy_NoBuildChain {
             get {
                 return ResourceManager.GetString("ExecuteStrategy_NoBuildChain", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Aaren
+        ///Abagael
+        ///Abagail
+        ///Abbe
+        ///Abbey
+        ///Abbie
+        ///Abby
+        ///Abbye
+        ///Abigael
+        ///Abigale
+        ///Abra
+        ///Ada
+        ///Adah
+        ///Adaline
+        ///Adan
+        ///Adara
+        ///Adda
+        ///Addi
+        ///Addy
+        ///Adel
+        ///Adelaida
+        ///Adelaide
+        ///Adele
+        ///Adelheid
+        ///Adelice
+        ///Adelina
+        ///Adelind
+        ///Adeline
+        ///Adella
+        ///Adelle
+        ///Adena
+        ///Adi
+        ///Adiana
+        ///Adina
+        ///Adore
+        ///Adoree
+        ///Adrea
+        ///Adria
+        ///Adriana
+        ///Adriane
+        ///Adrianna
+        ///Adrianne
+        ///Adriena
+        ///Adrienne
+        ///Aeriela
+        ///Ag
+        ///Agace
+        ///Agata
+        ///Agatha
+        ///Aggi
+        ///Aggie
+        ///Aggy
+        ///Agna
+        ///Agnella
+        ///Agnes
+        ///Agnola
+        ///Agretha
+        ///Aida
+        ///Aidan
+        ///Aigneis
+        ///Aila
+        ///Aile
+        ///Ailee
+        ///Aileen
+        ///Ailene
+        ///Aili
+        ///Ailina
+        ///Ailis
+        /// [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string FemaleNames {
+            get {
+                return ResourceManager.GetString("FemaleNames", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Aaronsohn
+        ///Abade
+        ///Abbatucci
+        ///Abbets
+        ///Abbiss
+        ///Abdie
+        ///Abdy
+        ///Abele
+        ///Aberdalgy
+        ///Abernethy
+        ///Ableson
+        ///Ablett
+        ///Ablott
+        ///Abrahamoff
+        ///Abrahamsen
+        ///Abrahamsohn
+        ///Abrahmson
+        ///Abramamov
+        ///Abramcik
+        ///Abramin
+        ///Abramovitz
+        ///Abramowitch
+        ///Abramzon
+        ///Abrey
+        ///Acaster
+        ///Acock
+        ///Adame
+        ///Adamiec
+        ///Adams
+        ///Adamthwaite
+        ///Adan
+        ///Adanez
+        ///Adderson
+        ///Ades
+        ///Adney
+        ///Adolf
+        ///Adolfsen
+        ///Adolfson
+        ///Adrien
+        ///Adrienne
+        ///Adshed
+        ///Advani
+        ///Affuso
+        ///Ager
+        ///Agerskow
+        ///Aggio
+        ///Agiolfinger
+        ///Aguirrezabal
+        ///Aguirrezabala
+        ///Ahern
+        ///Ahrenius
+        ///Ahrens
+        ///Aiken
+        ///Aikin
+        ///Ailsbury
+        ///Aimer
+        ///A [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string LastNames {
+            get {
+                return ResourceManager.GetString("LastNames", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Country,State,City,PostCode,StreetName,StreetSuffix
+        ///Australia,New South Wales,Eastern Suburbs Mc,1315,Dawn,Terrace
+        ///Australia,New South Wales,Eastern Suburbs Mc,1315,Hansons,Alley
+        ///Australia,New South Wales,Sydney,1043,Donald,Park
+        ///Australia,New South Wales,Sydney,1109,Melvin,Street
+        ///Australia,New South Wales,Sydney,1130,Warner,Drive
+        ///Australia,New South Wales,Sydney,1196,Golf Course,Parkway
+        ///Australia,South Australia,Adelaide Mail Centre,5869,Eagle Crest,Lane
+        ///Australia,South Australia,Adelaide Mail Centr [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string Locations {
+            get {
+                return ResourceManager.GetString("Locations", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Aaron
+        ///Ab
+        ///Abba
+        ///Abbie
+        ///Abbot
+        ///Abbott
+        ///Abdul
+        ///Abe
+        ///Abel
+        ///Abelard
+        ///Abeu
+        ///Abey
+        ///Abie
+        ///Abner
+        ///Abraham
+        ///Abrahan
+        ///Abram
+        ///Abramo
+        ///Abran
+        ///Ad
+        ///Adair
+        ///Adam
+        ///Adamo
+        ///Adams
+        ///Adan
+        ///Addie
+        ///Addy
+        ///Ade
+        ///Adelbert
+        ///Adham
+        ///Adlai
+        ///Adler
+        ///Ado
+        ///Adolf
+        ///Adolph
+        ///Adolphe
+        ///Adolpho
+        ///Adolphus
+        ///Adrian
+        ///Adriano
+        ///Adrien
+        ///Agosto
+        ///Aguie
+        ///Aguistin
+        ///Agustin
+        ///Ahmad
+        ///Ahmed
+        ///Ailbert
+        ///Akim
+        ///Aksel
+        ///Al
+        ///Alain
+        ///Alair
+        ///Alan
+        ///Aland
+        ///Alano
+        ///Alanson
+        ///Alard
+        ///Alaric
+        ///Alasdair
+        ///Alastair
+        ///Alasteir
+        ///Alaster
+        ///Alberik
+        ///Albert
+        ///Alberto
+        ///Albie
+        ///Albrecht
+        ///Aldin
+        ///A [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string MaleNames {
+            get {
+                return ResourceManager.GetString("MaleNames", resourceCulture);
             }
         }
         

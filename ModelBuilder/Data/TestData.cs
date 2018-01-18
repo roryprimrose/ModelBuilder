@@ -22,8 +22,13 @@
                 "This is done in the constructor for the better performance of splitting males an females in a single iteration.")]
         static TestData()
         {
+            Locations = ParseLocations(Resources.Locations);
+            FemaleNames = ParseValues(Resources.FemaleNames);
+            MaleNames = ParseValues(Resources.MaleNames);
+            LastNames = ParseValues(Resources.LastNames);
+            Cultures = ParseValues(Resources.Cultures);
+
             People = ReadPeople();
-            Cultures = ReadCultures();
 
             var males = new List<Person>();
             var females = new List<Person>();
@@ -84,19 +89,31 @@
             return People[index];
         }
 
-        private static DataSet<string> ReadCultures()
+        private static List<Location> ParseLocations(string locations)
         {
-            var cultures = Resources.Cultures;
-            var items = cultures.Split(
+            var lines = ParseValues(locations);
+            var parsedLines = new List<Location>(lines.Count);
+
+            foreach (var line in lines)
+            {
+                var location = Location.Parse(line);
+
+                parsedLines.Add(location);
+            }
+
+            return parsedLines;
+        }
+
+        private static List<string> ParseValues(string values)
+        {
+            var items = values.Split(
                 new[]
                 {
                     Environment.NewLine
                 },
                 StringSplitOptions.RemoveEmptyEntries);
 
-            var data = items.ToList();
-
-            return new DataSet<string>(data);
+            return items.ToList();
         }
 
         private static ReadOnlyCollection<Person> ReadPeople()
@@ -114,12 +131,32 @@
         /// <summary>
         ///     Gets a test data set of cultures.
         /// </summary>
-        public static DataSet<string> Cultures { get; }
+        public static IReadOnlyList<string> Cultures { get; }
+
+        /// <summary>
+        ///     Gets a test data set of female names.
+        /// </summary>
+        public static IReadOnlyList<string> FemaleNames { get; }
 
         /// <summary>
         ///     Gets a test data set of females.
         /// </summary>
-        public static ReadOnlyCollection<Person> Females { get; }
+        public static IReadOnlyList<Person> Females { get; }
+
+        /// <summary>
+        ///     Gets a test data set of last names.
+        /// </summary>
+        public static IReadOnlyList<string> LastNames { get; }
+
+        /// <summary>
+        ///     Gets a test data set of locations.
+        /// </summary>
+        public static IReadOnlyList<Location> Locations { get; }
+
+        /// <summary>
+        ///     Gets a test data set of male names.
+        /// </summary>
+        public static IReadOnlyList<string> MaleNames { get; }
 
         /// <summary>
         ///     Gets a test data set of males.

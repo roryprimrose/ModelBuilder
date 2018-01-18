@@ -141,6 +141,80 @@
             }
         }
 
+        [Theory]
+        [ClassData(typeof(NumericTypeDataSource))]
+        public void NextValueWithTypeCanReturnMaxValueTest(Type type, bool typeSupported, double min, double max)
+        {
+            if (typeSupported == false)
+            {
+                // Ignore this test
+                return;
+            }
+
+            if (type.IsNullable())
+            {
+                // Ignore this test
+                return;
+            }
+
+            var target = new RandomGenerator();
+
+            var value = target.NextValue(type, max, max);
+
+            // There are some special scenarios where the conversion of max values to and from double cause an exception
+            if (type == typeof(decimal))
+            {
+                value.Should().Be(decimal.MaxValue);
+            }
+            else if (type == typeof(long))
+            {
+                value.Should().Be(long.MaxValue);
+            }
+            else if (type == typeof(ulong))
+            {
+                value.Should().Be(ulong.MaxValue);
+            }
+            else
+            {
+                var expectedValue = Convert.ChangeType(max, type);
+
+                value.Should().Be(expectedValue);
+            }
+        }
+
+        [Theory]
+        [ClassData(typeof(NumericTypeDataSource))]
+        public void NextValueWithTypeCanReturnMinValueTest(Type type, bool typeSupported, double min, double max)
+        {
+            if (typeSupported == false)
+            {
+                // Ignore this test
+                return;
+            }
+
+            if (type.IsNullable())
+            {
+                // Ignore this test
+                return;
+            }
+
+            var target = new RandomGenerator();
+
+            var value = target.NextValue(type, min, min);
+
+            if (type == typeof(decimal))
+            {
+                // Special scenario here because new Decimal(new Double(decimal.MinValue)) throws an exception
+                value.Should().Be(decimal.MinValue);
+            }
+            else
+            {
+                var expectedValue = Convert.ChangeType(min, type);
+
+                value.Should().Be(expectedValue);
+            }
+        }
+
         [Fact]
         public void NextValueWithTypeCanReturnNonMaxValuesTest()
         {

@@ -4,7 +4,7 @@
 
     public class DummyExecuteOrderRule : ExecuteOrderRule
     {
-        public DummyExecuteOrderRule() : base(typeof(string), "SomeRandomPropertyWhichDoesNotExist", Environment.TickCount)
+        public DummyExecuteOrderRule() : base(typeof(Person), typeof(string), "SomeRandomPropertyWhichDoesNotExist", Environment.TickCount)
         {
         }
     }

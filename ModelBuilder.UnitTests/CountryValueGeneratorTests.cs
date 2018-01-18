@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.IO;
     using FluentAssertions;
+    using FluentAssertions.Execution;
     using NSubstitute;
     using Xunit;
 
@@ -24,9 +25,18 @@
             first.Should().BeOfType<string>();
             first.As<string>().Should().NotBeNullOrWhiteSpace();
 
-            var second = target.Generate(typeof(string), "country", executeStrategy);
+            for (var index = 0; index < 50; index++)
+            {
+                var second = target.Generate(typeof(string), "country", executeStrategy);
 
-            first.Should().NotBe(second);
+                if (first != second)
+                {
+                    // We have proved that a different value can be returned
+                    return;
+                }
+            }
+
+            throw new AssertionFailedException("No unique values were returned. Randomness has not been proven.");
         }
 
         [Theory]

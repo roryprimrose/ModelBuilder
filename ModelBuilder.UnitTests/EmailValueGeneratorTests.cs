@@ -44,7 +44,7 @@
 
             var actual = (string)target.Generate(typeof(string), "email", executeStrategy);
 
-            var domain = actual.Substring(actual.IndexOf("@") + 1);
+            var domain = actual.Substring(actual.IndexOf("@", StringComparison.Ordinal) + 1);
 
             TestData.People.Any(x => x.Domain.ToLowerInvariant() == domain).Should().BeTrue();
         }
@@ -91,9 +91,9 @@
 
             var actual = (string)target.Generate(typeof(string), "email", executeStrategy);
 
-            var firstName = actual.Substring(0, actual.IndexOf("."));
+            var firstName = actual.Substring(0, actual.IndexOf(".", StringComparison.OrdinalIgnoreCase));
 
-            TestData.Females.Any(x => x.FirstName.ToLowerInvariant() == firstName).Should().BeTrue();
+            TestData.FemaleNames.Any(x => x.ToLowerInvariant() == firstName).Should().BeTrue();
         }
 
         [Fact]
@@ -114,9 +114,9 @@
 
             var actual = (string)target.Generate(typeof(string), "email", executeStrategy);
 
-            var firstName = actual.Substring(0, actual.IndexOf("."));
+            var firstName = actual.Substring(0, actual.IndexOf(".", StringComparison.Ordinal));
 
-            TestData.Males.Any(x => x.FirstName.ToLowerInvariant() == firstName).Should().BeTrue();
+            TestData.MaleNames.Any(x => x.ToLowerInvariant() == firstName).Should().BeTrue();
         }
 
         [Fact]
@@ -265,7 +265,7 @@
 
             action.ShouldThrow<NotSupportedException>();
         }
-        
+
         [Fact]
         public void HasHigherPriorityThanStringValueGeneratorTest()
         {

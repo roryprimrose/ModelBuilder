@@ -1,0 +1,1548 @@
+﻿Country,State,City,PostCode,StreetName,StreetSuffix
+Australia,New South Wales,Eastern Suburbs Mc,1315,Dawn,Terrace
+Australia,New South Wales,Eastern Suburbs Mc,1315,Hansons,Alley
+Australia,New South Wales,Sydney,1043,Donald,Park
+Australia,New South Wales,Sydney,1109,Melvin,Street
+Australia,New South Wales,Sydney,1130,Warner,Drive
+Australia,New South Wales,Sydney,1196,Golf Course,Parkway
+Australia,South Australia,Adelaide Mail Centre,5869,Eagle Crest,Lane
+Australia,South Australia,Adelaide Mail Centre,5889,Reinke,Terrace
+Australia,Victoria,Melbourne,8045,Ilene,Trail
+Australia,Western Australia,Perth,6843,Eagan,Way
+Australia,Western Australia,Perth,6843,Rigney,Circle
+Austria,Kaernten,Wolfsberg,9421,Bluejay,Road
+Austria,Oberösterreich,Burgkirchen,5271,Schurz,Street
+Austria,Steiermark,Graz,8047,Merrick,Junction
+Austria,Steiermark,Großklein,8453,Lunder,Circle
+Austria,Steiermark,Sankt Andrä-Höch,8505,Autumn Leaf,Center
+Austria,Steiermark,Schäffern,8243,Mitchell,Circle
+Belgium,Wallonie,Ath,7823,Iowa,Center
+Belgium,Wallonie,Péruwelz,7604,Nobel,Drive
+Belgium,Wallonie,Tournai,7504,Laurel,Road
+Canada,Alberta,Airdrie,T4B,Gerald,Circle
+Canada,Alberta,Banff,T1L,Vahlen,Court
+Canada,Alberta,Calgary,T3S,Almo,Parkway
+Canada,Alberta,Calgary,T3S,Lotheville,Point
+Canada,Alberta,Camrose,T4V,Kings,Trail
+Canada,Alberta,Camrose,T4V,Westridge,Circle
+Canada,Alberta,Crossfield,B0N,Blackbird,Parkway
+Canada,Alberta,Devon,T9G,Calypso,Point
+Canada,Alberta,Grande Cache,N2Z,Tennessee,Parkway
+Canada,Alberta,Grande Prairie,R3J,Mayfield,Point
+Canada,Alberta,Grande Prairie,R3J,Roxbury,Hill
+Canada,Alberta,Hanna,T6L,Huxley,Center
+Canada,Alberta,High River,T1V,Dovetail,Lane
+Canada,Alberta,Lamont,N2E,Swallow,Plaza
+Canada,Alberta,Lethbridge,T1K,Fulton,Road
+Canada,Alberta,Medicine Hat,T1C,Briar Crest,Court
+Canada,Alberta,Peace River,T8S,Maywood,Alley
+Canada,Alberta,Pincher Creek,J0J,Ronald Regan,Hill
+Canada,Alberta,Stettler,G8J,Browning,Junction
+Canada,Alberta,Sundre,L9H,Scofield,Trail
+Canada,Alberta,Sundre,L9H,Tennessee,Plaza
+Canada,Alberta,Vegreville,T9C,Kingsford,Crossing
+Canada,British Columbia,Abbotsford,L9T,Oxford,Center
+Canada,British Columbia,Abbotsford,L9T,Springview,Center
+Canada,British Columbia,Agassiz,B2E,Summit,Park
+Canada,British Columbia,Chilliwack,N5L,Mosinee,Circle
+Canada,British Columbia,Kamloops,H9P,Lakewood Gardens,Alley
+Canada,British Columbia,Kitimat,V8C,Arapahoe,Junction
+Canada,British Columbia,Lillooet,H9G,Ryan,Avenue
+Canada,British Columbia,Nanaimo,V6L,Monument,Center
+Canada,British Columbia,Port Moody,V3H,Mendota,Park
+Canada,British Columbia,Summerland,H1V,4th,Junction
+Canada,British Columbia,Summerland,H1V,Dennis,Place
+Canada,Manitoba,Flin Flon,R8A,Declaration,Drive
+Canada,Manitoba,Killarney,V9B,Fremont,Pass
+Canada,Manitoba,La Broquerie,L2G,Morning,Road
+Canada,Manitoba,Virden,J5V,Daystar,Place
+Canada,Manitoba,Virden,J5V,Longview,Park
+Canada,New Brunswick,Richibucto,E4W,Coleman,Way
+Canada,New Brunswick,Shediac,E4P,Lawn,Alley
+Canada,New Brunswick,Sussex,E4E,Wayridge,Junction
+Canada,Newfoundland and Labrador,Conception Bay South,A1X,Messerschmidt,Place
+Canada,Newfoundland and Labrador,Grand Bank,E8K,Fieldstone,Hill
+Canada,Newfoundland and Labrador,Harbour Breton,M4N,Lake View,Way
+Canada,Newfoundland and Labrador,Lewisporte,M2K,Loftsgordon,Court
+Canada,Newfoundland and Labrador,Torbay,A1K,Waubesa,Hill
+Canada,Newfoundland and Labrador,Wabana,V7X,Schiller,Trail
+Canada,Northwest Territories,Fort Smith,L4S,Corben,Park
+Canada,Nouveau-Brunswick,Bouctouche,E4S,Westridge,Place
+Canada,Nunavut,Iqaluit,K6K,Union,Crossing
+Canada,Nunavut,Kugluktuk,T5C,Hooker,Alley
+Canada,Nunavut,Pangnirtung,M5T,Nova,Circle
+Canada,Ontario,Amherstburg,N9V,Hanover,Hill
+Canada,Ontario,Aylmer,N5H,Cody,Road
+Canada,Ontario,Barrie,L9J,Moulton,Street
+Canada,Ontario,Brant,N3T,Forest Dale,Drive
+Canada,Ontario,Greater Napanee,K7R,Little Fleur,Parkway
+Canada,Ontario,Keswick,L4P,Bartillon,Junction
+Canada,Ontario,Lambton Shores,J5T,Glacier Hill,Junction
+Canada,Ontario,Newmarket,L9N,Lotheville,Drive
+Canada,Ontario,Norfolk County,T0C,Delladonna,Lane
+Canada,Ontario,Ottawa,J8Y,Bashford,Way
+Canada,Ontario,Ottawa,J8Y,Carey,Pass
+Canada,Ontario,Parry Sound,P2A,Mandrake,Center
+Canada,Ontario,Pickering,L1X,Burning Wood,Terrace
+Canada,Ontario,Rayside-Balfour,G9T,Bultman,Plaza
+Canada,Ontario,Smiths Falls,K7A,Menomonie,Way
+Canada,Ontario,St. Thomas,N5R,Trailsway,Place
+Canada,Ontario,Timmins,P4P,Dottie,Street
+Canada,Ontario,Windsor,J1S,Susan,Street
+Canada,Ontario,Woodstock,E7M,Birchwood,Street
+Canada,Ontario,Woodstock,E7M,Granby,Alley
+Canada,Prince Edward Island,Charlottetown,C1B,Nevada,Park
+Canada,Québec,Bedford,J6W,Loeprich,Alley
+Canada,Québec,Boisbriand,J7G,Brown,Terrace
+Canada,Québec,Boucherville,J4B,Arrowood,Way
+Canada,Québec,Bromont,J2L,Buena Vista,Drive
+Canada,Québec,Dollard-Des Ormeaux,H9P,Graceland,Parkway
+Canada,Québec,Dorval,H9S,Lerdahl,Pass
+Canada,Québec,Forestville,G2B,Mesta,Way
+Canada,Québec,Hudson,J0N,Petterle,Parkway
+Canada,Québec,Joliette,J6E,Birchwood,Trail
+Canada,Québec,Jonquière,G7Y,Luster,Hill
+Canada,Québec,Lac-Mégantic,G6B,3rd,Court
+Canada,Québec,Lac-Mégantic,G6B,Donald,Junction
+Canada,Québec,Lacolle,E5A,Hazelcrest,Point
+Canada,Québec,Lacolle,E5A,Macpherson,Circle
+Canada,Québec,Lacolle,E5A,Straubel,Terrace
+Canada,Québec,Les Cèdres,J6S,Washington,Junction
+Canada,Québec,Lévis,G6W,Esch,Road
+Canada,Québec,Louiseville,J5V,Northport,Lane
+Canada,Québec,Magog,J1X,Rusk,Crossing
+Canada,Québec,Marieville,J3M,Veith,Way
+Canada,Québec,Mascouche,J6W,Hudson,Road
+Canada,Québec,Maskinongé,T7A,Derek,Avenue
+Canada,Québec,Matagami,N2M,Garrison,Circle
+Canada,Québec,Mercier,J6R,Annamark,Avenue
+Canada,Québec,Montréal,H5B,Little Fleur,Junction
+Canada,Québec,Montréal-Ouest,H5B,Sheridan,Hill
+Canada,Québec,Mont-Saint-Hilaire,J3H,8th,Alley
+Canada,Québec,Normandin,G0H,Sundown,Way
+Canada,Québec,Notre-Dame-de-l'Île-Perrot,H9X,Basil,Point
+Canada,Québec,Québec,G6W,South,Lane
+Canada,Québec,Saint-Bruno,J3V,Dryden,Trail
+Canada,Québec,Saint-Bruno-de-Guigues,G6B,Ridgeview,Alley
+Canada,Québec,Saint-Bruno-de-Montarville,J3V,Heffernan,Junction
+Canada,Québec,Sainte-Anne-des-Monts,L8P,Portage,Trail
+Canada,Québec,Sainte-Marthe-sur-le-Lac,H9K,Clyde Gallagher,Pass
+Canada,Québec,Saint-Raymond,G3L,Golf,Point
+Canada,Québec,Senneterre,L0P,Schurz,Avenue
+Canada,Québec,Sherbrooke,J1K,Coleman,Circle
+Canada,Québec,Val-d'Or,J9P,Grover,Terrace
+Canada,Québec,Vaudreuil-Dorion,J7W,Thackeray,Trail
+Canada,Québec,Vaudreuil-Dorion,J7W,Transport,Avenue
+Canada,Saskatchewan,Estevan,S4A,Dorton,Crossing
+Canada,Saskatchewan,Hudson Bay,K2J,Crest Line,Terrace
+Canada,Saskatchewan,Kindersley,C1C,Susan,Street
+Canada,Saskatchewan,Lloydminster,S9V,Claremont,Street
+Canada,Saskatchewan,Maple Creek,P3L,Daystar,Court
+Canada,Saskatchewan,Nipawin,V9B,Lakewood,Court
+Canada,Saskatchewan,Outlook,N3S,Shopko,Place
+Canada,Saskatchewan,Rosthern,B0L,Barby,Place
+Canada,Saskatchewan,Watrous,L9T,Ronald Regan,Trail
+Canada,Saskatchewan,Watrous,L9T,Walton,Terrace
+Canada,Yukon Territory,Whitehorse,Y1A,Weeping Birch,Way
+Denmark,Region Hovedstaden,Frederiksberg,1802,Carey,Place
+Denmark,Region Hovedstaden,Frederiksberg,1865,Hintze,Lane
+Denmark,Region Hovedstaden,Frederiksberg,1906,Forster,Trail
+Denmark,Region Hovedstaden,Frederiksberg,1950,Goodland,Way
+Denmark,Region Hovedstaden,København,1111,Clyde Gallagher,Way
+Denmark,Region Hovedstaden,København,1240,Manitowish,Street
+Denmark,Region Hovedstaden,København,1260,Acker,Parkway
+Denmark,Region Hovedstaden,København,1618,Dorton,Park
+Denmark,Region Hovedstaden,København,1633,Blaine,Hill
+Denmark,Region Hovedstaden,København,1738,Oak,Way
+France,Alsace,Altkirch,68134 CEDEX,Ryan,Avenue
+France,Alsace,Colmar,68004 CEDEX,Graedel,Way
+France,Alsace,Strasbourg,67029 CEDEX 1,Cherokee,Plaza
+France,Alsace,Strasbourg,67975 CEDEX 9,Fair Oaks,Center
+France,Alsace,Strasbourg,67975 CEDEX 9,Nancy,Court
+France,Alsace,Wintzenheim,68925 CEDEX,Sutherland,Drive
+France,Aquitaine,Bordeaux,33010 CEDEX,Monterey,Court
+France,Aquitaine,Bordeaux,33026 CEDEX,Crest Line,Junction
+France,Aquitaine,Bordeaux,33026 CEDEX,Delladonna,Avenue
+France,Aquitaine,Bordeaux,33070 CEDEX,Buell,Circle
+France,Aquitaine,Bordeaux,33911 CEDEX 9,Westerfield,Point
+France,Aquitaine,Libourne,33515 CEDEX,Crest Line,Parkway
+France,Aquitaine,Mérignac,33699 CEDEX,Farwell,Circle
+France,Aquitaine,Mérignac,33699 CEDEX,Myrtle,Road
+France,Aquitaine,Pau,64039 CEDEX,Golf View,Place
+France,Aquitaine,Pau,64044 CEDEX,Grayhawk,Place
+France,Aquitaine,Pau,64044 CEDEX,Sachs,Crossing
+France,Auvergne,Aurillac,15015 CEDEX,Jana,Street
+France,Auvergne,Clermont-Ferrand,63019 CEDEX 2,Sycamore,Road
+France,Basse-Normandie,Avranches,50309 CEDEX,Huxley,Lane
+France,Basse-Normandie,Bayeux,14409 CEDEX,Thierer,Alley
+France,Basse-Normandie,Caen,14008 CEDEX 1,Columbus,Circle
+France,Basse-Normandie,Caen,14058 CEDEX 4,Golf,Plaza
+France,Basse-Normandie,Caen,14097 CEDEX 9,Lien,Way
+France,Basse-Normandie,Flers,61104 CEDEX,Sherman,Pass
+France,Bourgogne,Autun,71404 CEDEX,Redwing,Junction
+France,Bourgogne,Beaune,21209 CEDEX,Montana,Road
+France,Bourgogne,Chalon-sur-Saône,71332 CEDEX,Eggendart,Court
+France,Bourgogne,Chenôve,21304 CEDEX,Monterey,Plaza
+France,Bourgogne,Dijon,21083 CEDEX 9,Ronald Regan,Pass
+France,Bretagne,Brest,29825 CEDEX 9,Rockefeller,Pass
+France,Bretagne,Chantepie,35574 CEDEX,Forest Dale,Place
+France,Bretagne,Pontivy,56309 CEDEX,Ryan,Plaza
+France,Bretagne,Quimper,29551 CEDEX 9,Kinsman,Center
+France,Bretagne,Quimperlé,29399 CEDEX,Sachs,Center
+France,Bretagne,Rennes,35087 CEDEX,Westport,Road
+France,Bretagne,Rennes,35203 CEDEX 2,Loftsgordon,Pass
+France,Bretagne,Rennes,35704 CEDEX 7,Warner,Avenue
+France,Bretagne,Rennes,35914 CEDEX 9,Waxwing,Alley
+France,Bretagne,Roscoff,29688 CEDEX,Esker,Place
+France,Bretagne,Saint-Brieuc,22004 CEDEX 1,Cottonwood,Road
+France,Centre,Blois,41015 CEDEX,Holmberg,Court
+France,Centre,Blois,41965 CEDEX 9,Kedzie,Lane
+France,Centre,Blois,41976 CEDEX 9,Kinsman,Trail
+France,Centre,Chambray-lès-Tours,37174 CEDEX,Acker,Drive
+France,Centre,Chartres,28009 CEDEX,Fremont,Place
+France,Centre,Châteaudun,28205 CEDEX,Carioca,Center
+France,Centre,Châteauroux,36019 CEDEX,Truax,Way
+France,Centre,Châteauroux,36029 CEDEX,Independence,Point
+France,Centre,Orléans,45032 CEDEX 1,Heffernan,Way
+France,Centre,Orléans,45911 CEDEX 9,Fallview,Hill
+France,Centre,Orléans,45933 CEDEX 9,Springview,Hill
+France,Centre,Orléans,45947 CEDEX 9,Lillian,Alley
+France,Centre,Orléans,45969 CEDEX 9,Elgar,Way
+France,Centre,Orléans,45979 CEDEX 9,Portage,Way
+France,Centre,Romorantin-Lanthenay,41204 CEDEX,Nevada,Park
+France,Centre,Tours,37032 CEDEX 1,Montana,Hill
+France,Centre,Tours,37922 CEDEX 9,Lighthouse Bay,Court
+France,Champagne-Ardenne,Épernay,51209 CEDEX,Clemons,Point
+France,Champagne-Ardenne,Langres,52204 CEDEX,Moulton,Point
+France,Champagne-Ardenne,Saint-Dizier,52109 CEDEX,Sunbrook,Road
+France,Champagne-Ardenne,Troyes,10004 CEDEX,Hudson,Street
+France,Champagne-Ardenne,Troyes,10004 CEDEX,Sherman,Crossing
+France,Franche-Comté,Besançon,25057 CEDEX,East,Lane
+France,Franche-Comté,Besançon,25057 CEDEX,Summerview,Court
+France,Franche-Comté,Champagnole,39304 CEDEX,Red Cloud,Road
+France,Franche-Comté,Champagnole,39304 CEDEX,Sugar,Lane
+France,Franche-Comté,Lons-le-Saunier,39039 CEDEX 9,Twin Pines,Terrace
+France,Franche-Comté,Morez,39409 CEDEX,Hooker,Center
+France,Franche-Comté,Poligny,39804 CEDEX,7th,Way
+France,Franche-Comté,Poligny,39804 CEDEX,Pennsylvania,Avenue
+France,Franche-Comté,Saint-Claude,39209 CEDEX,Orin,Place
+France,Franche-Comté,Vesoul,70004 CEDEX,Bartelt,Crossing
+France,Haute-Normandie,Le Havre,76059 CEDEX,Redwing,Point
+France,Haute-Normandie,Le Havre,76086 CEDEX,Rockefeller,Parkway
+France,Haute-Normandie,Maromme,76152 CEDEX,Memorial,Point
+France,Haute-Normandie,Pont-Audemer,27509 CEDEX,Superior,Junction
+France,Haute-Normandie,Rouen,76040 CEDEX,Lakeland,Court
+France,Haute-Normandie,Rouen,76101 CEDEX,Badeau,Way
+France,Haute-Normandie,Yvetot,76194 CEDEX,Shopko,Crossing
+France,Île-de-France,Bobigny,93737 CEDEX 9,Loftsgordon,Plaza
+France,Île-de-France,Bonneuil-sur-Marne,94384 CEDEX,Menomonie,Parkway
+France,Île-de-France,Boulogne-Billancourt,92645 CEDEX,Hanson,Junction
+France,Île-de-France,Brie-Comte-Robert,77254 CEDEX,Logan,Street
+France,Île-de-France,Cergy-Pontoise,95011 CEDEX,Anthes,Lane
+France,Île-de-France,Cergy-Pontoise,95032 CEDEX,Farmco,Avenue
+France,Île-de-France,Cergy-Pontoise,95046 CEDEX 1,Vahlen,Drive
+France,Île-de-France,Cergy-Pontoise,95092 CEDEX,Bartelt,Avenue
+France,Île-de-France,Cergy-Pontoise,95652 CEDEX,Boyd,Terrace
+France,Île-de-France,Charenton-le-Pont,94224 CEDEX,Eagle Crest,Place
+France,Île-de-France,Charenton-le-Pont,94224 CEDEX,Forest,Plaza
+France,Île-de-France,Chilly-Mazarin,91384 CEDEX,Westport,Place
+France,Île-de-France,Créteil,94952 CEDEX 9,Sullivan,Road
+France,Île-de-France,Croissy-sur-Seine,78294 CEDEX,Lukken,Road
+France,Île-de-France,Dammarie-les-Lys,77193 CEDEX,Rowland,Terrace
+France,Île-de-France,Élancourt,78990,Rigney,Alley
+France,Île-de-France,Évry,91024 CEDEX,Badeau,Court
+France,Île-de-France,Évry,91982 CEDEX 9,Barby,Way
+France,Île-de-France,Fontenay-sous-Bois,94129 CEDEX,Bluejay,Crossing
+France,Île-de-France,Fontenay-sous-Bois,94129 CEDEX,Sage,Terrace
+France,Île-de-France,Fontenay-sous-Bois,94726 CEDEX,Carioca,Point
+France,Île-de-France,Fosses,95479 CEDEX,Meadow Valley,Plaza
+France,Île-de-France,Fresnes,94264 CEDEX,Delladonna,Pass
+France,Île-de-France,Goussainville,95697 CEDEX,Calypso,Lane
+France,Île-de-France,Issy-les-Moulineaux,92782 CEDEX 9,Cambridge,Road
+France,Île-de-France,Issy-les-Moulineaux,92864 CEDEX 9,Eagan,Terrace
+France,Île-de-France,La Courneuve,93126 CEDEX,Del Mar,Alley
+France,Île-de-France,La Garenne-Colombes,92959 CEDEX,Kipling,Road
+France,Île-de-France,La Plaine-Saint-Denis,93571 CEDEX,Summerview,Pass
+France,Île-de-France,Le Blanc-Mesnil,93591 CEDEX,Onsgard,Plaza
+France,Île-de-France,Le Perreux-sur-Marne,94174 CEDEX,Pearson,Center
+France,Île-de-France,Levallois-Perret,92309 CEDEX,Londonderry,Lane
+France,Île-de-France,Levallois-Perret,92592 CEDEX,Hoard,Terrace
+France,Île-de-France,Levallois-Perret,92684 CEDEX,Bartelt,Place
+France,Île-de-France,Maisons-Laffitte,78604 CEDEX,Moulton,Drive
+France,Île-de-France,Mantes-la-Jolie,78204 CEDEX,Melody,Center
+France,Île-de-France,Mantes-la-Jolie,78718 CEDEX,Cardinal,Court
+France,Île-de-France,Marne-la-Vallée,77708 CEDEX 4,Bashford,Court
+France,Île-de-France,Marne-la-Vallée,77708 CEDEX 4,Reinke,Center
+France,Île-de-France,Meaux,77109 CEDEX,Prairie Rose,Parkway
+France,Île-de-France,Montreuil,93517 CEDEX,Lakeland,Alley
+France,Île-de-France,Morangis,91424 CEDEX,Nobel,Way
+France,Île-de-France,Moret-sur-Loing,77815 CEDEX,Tomscot,Court
+France,Île-de-France,Nemours,77794 CEDEX,Graedel,Crossing
+France,Île-de-France,Noisy-le-Grand,93883 CEDEX,Steensland,Avenue
+France,Île-de-France,Orsay,91851 CEDEX,Knutson,Trail
+France,Île-de-France,Orsay,91893 CEDEX,Logan,Hill
+France,Île-de-France,Palaiseau,91129 CEDEX,Carpenter,Way
+France,Île-de-France,Pantin,93504 CEDEX,Algoma,Plaza
+France,Île-de-France,Pantin,93504 CEDEX,Chinook,Terrace
+France,Île-de-France,Paris 01,75038 CEDEX 01,Shelley,Pass
+France,Île-de-France,Paris 06,75270 CEDEX 06,Fieldstone,Drive
+France,Île-de-France,Paris 07,75353 SP 07,Hallows,Crossing
+France,Île-de-France,Paris 10,75464 CEDEX 10,Bluejay,Circle
+France,Île-de-France,Paris 10,75464 CEDEX 10,Dorton,Place
+France,Île-de-France,Paris 11,75128 CEDEX 11,Transport,Alley
+France,Île-de-France,Paris 11,75542 CEDEX 11,Pepper Wood,Crossing
+France,Île-de-France,Paris 12,75562 CEDEX 12,Marcy,Center
+France,Île-de-France,Paris 13,75623 CEDEX 13,Glacier Hill,Crossing
+France,Île-de-France,Paris 14,75669 CEDEX 14,Stephen,Hill
+France,Île-de-France,Paris 14,75675 CEDEX 14,Moland,Place
+France,Île-de-France,Paris 14,75693 CEDEX 14,Manufacturers,Lane
+France,Île-de-France,Paris 15,75737 CEDEX 15,Hauk,Lane
+France,Île-de-France,Paris 16,75215 CEDEX 16,Homewood,Way
+France,Île-de-France,Paris 16,75215 CEDEX 16,Straubel,Lane
+France,Île-de-France,Paris 17,75837 CEDEX 17,Talisman,Place
+France,Île-de-France,Paris 18,75863 CEDEX 18,Lakeland,Pass
+France,Île-de-France,Paris 19,75166 CEDEX 19,Fieldstone,Center
+France,Île-de-France,Paris 19,75929 CEDEX 19,Linden,Center
+France,Île-de-France,Paris 19,75954 CEDEX 19,Anthes,Pass
+France,Île-de-France,Paris La Défense,92083 CEDEX,Columbus,Street
+France,Île-de-France,Paris La Défense,92901 CEDEX,Delladonna,Street
+France,Île-de-France,Paris La Défense,92907 CEDEX,Old Gate,Court
+France,Île-de-France,Roissy Charles-de-Gaulle,95761 CEDEX 1,Northland,Center
+France,Île-de-France,Roissy Charles-de-Gaulle,95915 CEDEX 2,Cordelia,Place
+France,Île-de-France,Roissy Charles-de-Gaulle,95943 CEDEX 2,Onsgard,Alley
+France,Île-de-France,Rueil-Malmaison,92504 CEDEX,Anzinger,Plaza
+France,Île-de-France,Rueil-Malmaison,92509 CEDEX,Longview,Crossing
+France,Île-de-France,Rungis,94598 CEDEX 2,East,Way
+France,Île-de-France,Rungis,94598 CEDEX 2,Loeprich,Terrace
+France,Île-de-France,Saint-Denis,93209 CEDEX,Kennedy,Parkway
+France,Île-de-France,Sainte-Geneviève-des-Bois,91709 CEDEX,American,Junction
+France,Île-de-France,Sainte-Geneviève-des-Bois,91709 CEDEX,Sloan,Circle
+France,Île-de-France,Saint-Maur-des-Fossés,94109 CEDEX,Forest Run,Terrace
+France,Île-de-France,Saint-Ouen,93487 CEDEX,Becker,Plaza
+France,Île-de-France,Saint-Quentin-en-Yvelines,78067 CEDEX,Sage,Parkway
+France,Île-de-France,Saint-Quentin-en-Yvelines,78067 CEDEX,Stuart,Hill
+France,Île-de-France,Saint-Quentin-en-Yvelines,78093 CEDEX 9,Crowley,Parkway
+France,Île-de-France,Sannois,95118 CEDEX,Dovetail,Lane
+France,Île-de-France,Suresnes,92159 CEDEX,Grover,Hill
+France,Île-de-France,Vanves,92179 CEDEX,Fallview,Street
+France,Île-de-France,Vincennes,94309 CEDEX,Lawn,Point
+France,Languedoc-Roussillon,Alès,30112 CEDEX,Pawling,Junction
+France,Languedoc-Roussillon,Béziers,34536 CEDEX,Express,Plaza
+France,Languedoc-Roussillon,Carcassonne,11803 CEDEX 9,Fremont,Way
+France,Languedoc-Roussillon,Lunel,34404 CEDEX,Mccormick,Lane
+France,Languedoc-Roussillon,Montpellier,34058 CEDEX 1,Forest Dale,Plaza
+France,Languedoc-Roussillon,Montpellier,34294 CEDEX 5,Oriole,Circle
+France,Languedoc-Roussillon,Montpellier,34934 CEDEX 9,Hollow Ridge,Avenue
+France,Languedoc-Roussillon,Montpellier,34934 CEDEX 9,Pleasure,Parkway
+France,Languedoc-Roussillon,Montpellier,34964 CEDEX 2,Forest,Avenue
+France,Languedoc-Roussillon,Nîmes,30904 CEDEX 9,Nobel,Road
+France,Languedoc-Roussillon,Nîmes,30935 CEDEX 9,Esch,Pass
+France,Languedoc-Roussillon,Perpignan,66019 CEDEX 9,Schmedeman,Circle
+France,Languedoc-Roussillon,Perpignan,66921 CEDEX,Bultman,Hill
+France,Languedoc-Roussillon,Perpignan,66921 CEDEX,Talisman,Crossing
+France,Languedoc-Roussillon,Saint-Jean-de-Védas,34435 CEDEX,Memorial,Road
+France,Languedoc-Roussillon,Vendargues,34747 CEDEX,Grayhawk,Place
+France,Limousin,Guéret,23009 CEDEX,Sachs,Road
+France,Limousin,Limoges,87066 CEDEX 2,Scott,Circle
+France,Limousin,Limoges,87090 CEDEX 9,Weeping Birch,Avenue
+France,Limousin,Limoges,87930 CEDEX 9,Lakeland,Trail
+France,Lorraine,Épinal,88009 CEDEX,Mcguire,Way
+France,Lorraine,Hayange,57704 CEDEX,Lakeland,Avenue
+France,Lorraine,Metz,57751 CEDEX 9,Tennessee,Court
+France,Lorraine,Nancy,54009 CEDEX,Karstens,Crossing
+France,Lorraine,Nancy,54009 CEDEX,Union,Circle
+France,Lorraine,Nancy,54039 CEDEX,Acker,Street
+France,Lorraine,Nancy,54939 CEDEX 9,Kropf,Terrace
+France,Lorraine,Saint-Dié-des-Vosges,88109 CEDEX,Namekagon,Crossing
+France,Lorraine,Thionville,57119 CEDEX,Pawling,Street
+France,Lorraine,Toul,54204 CEDEX,5th,Pass
+France,Lorraine,Vandœuvre-lès-Nancy,54516 CEDEX,Golf View,Parkway
+France,Midi-Pyrénées,Albi,81028 CEDEX 9,Carioca,Avenue
+France,Midi-Pyrénées,Auch,32010 CEDEX,Summerview,Alley
+France,Midi-Pyrénées,Cahors,46004 CEDEX 9,Nelson,Place
+France,Midi-Pyrénées,Castelsarrasin,82104 CEDEX,Del Mar,Avenue
+France,Midi-Pyrénées,Labège,31678 CEDEX,Ronald Regan,Avenue
+France,Midi-Pyrénées,L'Union,31244 CEDEX,Eagan,Way
+France,Midi-Pyrénées,Mazamet,81204 CEDEX,Graedel,Alley
+France,Midi-Pyrénées,Montauban,82037 CEDEX,Dexter,Point
+France,Midi-Pyrénées,Toulouse,31044 CEDEX 9,Fordem,Center
+France,Midi-Pyrénées,Toulouse,31044 CEDEX 9,Gulseth,Drive
+France,Midi-Pyrénées,Toulouse,31044 CEDEX 9,John Wall,Alley
+France,Midi-Pyrénées,Toulouse,31059 CEDEX 9,Lerdahl,Terrace
+France,Midi-Pyrénées,Toulouse,31069 CEDEX 7,Cascade,Point
+France,Midi-Pyrénées,Toulouse,31101 CEDEX 9,Hollow Ridge,Avenue
+France,Nord-Pas-de-Calais,Arras,62004 CEDEX,Sunbrook,Parkway
+France,Nord-Pas-de-Calais,Arras,62010 CEDEX,Cascade,Park
+France,Nord-Pas-de-Calais,Béthune,62411 CEDEX,Sommers,Circle
+France,Nord-Pas-de-Calais,Lille,59007 CEDEX,Jackson,Way
+France,Nord-Pas-de-Calais,Lille,59715 CEDEX 9,Drewry,Center
+France,Nord-Pas-de-Calais,Lille,59715 CEDEX 9,Lerdahl,Junction
+France,Nord-Pas-de-Calais,Lille,59784 CEDEX 9,Oneill,Alley
+France,Nord-Pas-de-Calais,Lillers,62193 CEDEX,Carpenter,Trail
+France,Nord-Pas-de-Calais,Maubeuge,59604 CEDEX,Eliot,Drive
+France,Nord-Pas-de-Calais,Noyelles-sous-Lens,62247 CEDEX,Cardinal,Avenue
+France,Nord-Pas-de-Calais,Saint-Amand-les-Eaux,59734 CEDEX,Sunbrook,Road
+France,Nord-Pas-de-Calais,Villeneuve-d'Ascq,59663 CEDEX,Nobel,Alley
+France,Nord-Pas-de-Calais,Wasquehal,59449 CEDEX,Menomonie,Circle
+France,Pays de la Loire,Ancenis,44159 CEDEX,Vermont,Street
+France,Pays de la Loire,Angers,49066 CEDEX 01,Cascade,Park
+France,Pays de la Loire,Carquefou,44474 CEDEX,International,Point
+France,Pays de la Loire,Cholet,49321 CEDEX,Clemons,Pass
+France,Pays de la Loire,La Roche-sur-Yon,85928 CEDEX 9,Farmco,Point
+France,Pays de la Loire,Laval,53009 CEDEX,Waxwing,Road
+France,Pays de la Loire,Le Mans,72029 CEDEX 2,Vera,Place
+France,Pays de la Loire,Le Mans,72052 CEDEX 2,Starling,Point
+France,Pays de la Loire,Le Mans,72100,Welch,Junction
+France,Pays de la Loire,Nantes,44101 CEDEX 4,Summit,Terrace
+France,Pays de la Loire,Nantes,44200,Daystar,Lane
+France,Pays de la Loire,Nantes,44302 CEDEX 3,Annamark,Pass
+France,Pays de la Loire,Nantes,44945 CEDEX 9,Vidon,Pass
+France,Pays de la Loire,Nantes,44966 CEDEX 9,Donald,Lane
+France,Pays de la Loire,Saint-Nazaire,44604 CEDEX,Barby,Point
+France,Picardie,Abbeville,80104 CEDEX,Michigan,Road
+France,Picardie,Amiens,80891 CEDEX 3,Brown,Hill
+France,Picardie,Beauvais,60006 CEDEX,Pierstorff,Way
+France,Picardie,Creil,60922 CEDEX 9,Oak Valley,Terrace
+France,Picardie,Laon,02004 CEDEX,Fulton,Trail
+France,Picardie,Laon,02004 CEDEX,Kropf,Alley
+France,Poitou-Charentes,Angoulême,16015 CEDEX,Crest Line,Road
+France,Poitou-Charentes,Angoulême,16919 CEDEX 9,Petterle,Avenue
+France,Poitou-Charentes,La Rochelle,17029 CEDEX 1,Erie,Street
+France,Poitou-Charentes,Niort,79021 CEDEX,Gerald,Plaza
+France,Poitou-Charentes,Niort,79042 CEDEX 9,Mesta,Court
+France,Poitou-Charentes,Niort,79042 CEDEX 9,Mifflin,Lane
+France,Poitou-Charentes,Niort,79072 CEDEX 9,Northwestern,Hill
+France,Poitou-Charentes,Niort,79099 CEDEX 9,Scofield,Pass
+France,Poitou-Charentes,Parthenay,79204 CEDEX,Menomonie,Hill
+France,Poitou-Charentes,Poitiers,86020 CEDEX,Prentice,Avenue
+France,Poitou-Charentes,Poitiers,86042 CEDEX 9,Clemons,Crossing
+France,Poitou-Charentes,Poitiers,86062 CEDEX 9,Bonner,Trail
+France,Provence-Alpes-Côte d'Azur,Avignon,84019 CEDEX 1,Riverside,Center
+France,Provence-Alpes-Côte d'Azur,Avignon,84072 CEDEX 4,Northland,Terrace
+France,Provence-Alpes-Côte d'Azur,Avignon,84913 CEDEX 9,Anzinger,Terrace
+France,Provence-Alpes-Côte d'Azur,Carpentras,84204 CEDEX,Hansons,Center
+France,Provence-Alpes-Côte d'Azur,Digne-les-Bains,04004 CEDEX,Northview,Park
+France,Provence-Alpes-Côte d'Azur,Fos-sur-Mer,13779 CEDEX,Kropf,Court
+France,Provence-Alpes-Côte d'Azur,Gap,05004 CEDEX,Surrey,Court
+France,Provence-Alpes-Côte d'Azur,Istres,13802 CEDEX,Dottie,Drive
+France,Provence-Alpes-Côte d'Azur,Istres,13807 CEDEX,John Wall,Trail
+France,Provence-Alpes-Côte d'Azur,Le Pontet,84964 CEDEX,Division,Terrace
+France,Provence-Alpes-Côte d'Azur,Marseille,13219 CEDEX 02,Anzinger,Junction
+France,Provence-Alpes-Côte d'Azur,Marseille,13269 CEDEX 08,Arizona,Park
+France,Provence-Alpes-Côte d'Azur,Marseille,13269 CEDEX 08,Bunting,Park
+France,Provence-Alpes-Côte d'Azur,Marseille,13269 CEDEX 08,Hovde,Terrace
+France,Provence-Alpes-Côte d'Azur,Marseille,13281 CEDEX 06,Troy,Court
+France,Provence-Alpes-Côte d'Azur,Marseille,13316 CEDEX 15,Fieldstone,Court
+France,Provence-Alpes-Côte d'Azur,Marseille,13907 CEDEX 20,Northland,Lane
+France,Provence-Alpes-Côte d'Azur,Montfavet,84147 CEDEX,Village,Circle
+France,Provence-Alpes-Côte d'Azur,Mougins,06254 CEDEX,Kedzie,Way
+France,Provence-Alpes-Côte d'Azur,Nice,06009 CEDEX 1,Lotheville,Hill
+France,Provence-Alpes-Côte d'Azur,Orange,84104 CEDEX,Mallory,Hill
+France,Provence-Alpes-Côte d'Azur,Puget-sur-Argens,83484 CEDEX,Tomscot,Street
+France,Provence-Alpes-Côte d'Azur,Sophia Antipolis,06928 CEDEX,Mosinee,Way
+France,Provence-Alpes-Côte d'Azur,Toulon,83060 CEDEX,Hintze,Terrace
+France,Provence-Alpes-Côte d'Azur,Vedène,84274 CEDEX,Westend,Way
+France,Rhône-Alpes,Aix-les-Bains,73104 CEDEX,Valley Edge,Pass
+France,Rhône-Alpes,Annecy,74982 CEDEX 9,Havey,Road
+France,Rhône-Alpes,Bourg-en-Bresse,01004 CEDEX,Michigan,Trail
+France,Rhône-Alpes,Bourg-en-Bresse,01009 CEDEX,Mifflin,Drive
+France,Rhône-Alpes,Bourg-lès-Valence,26504 CEDEX,Nova,Point
+France,Rhône-Alpes,Chambéry,73031 CEDEX,Almo,Circle
+France,Rhône-Alpes,Grenoble,38051 CEDEX 9,Loeprich,Park
+France,Rhône-Alpes,Grenoble,38066 CEDEX 2,Hallows,Point
+France,Rhône-Alpes,Grenoble,38066 CEDEX 2,Magdeline,Point
+France,Rhône-Alpes,Le Bourget-du-Lac,73379 CEDEX,Beilfuss,Lane
+France,Rhône-Alpes,Le Chambon-Feugerolles,42505 CEDEX,Farragut,Avenue
+France,Rhône-Alpes,Lyon,69206 CEDEX 01,Randy,Lane
+France,Rhône-Alpes,Lyon,69212 CEDEX 03,Burning Wood,Alley
+France,Rhône-Alpes,Lyon,69245 CEDEX 05,Coolidge,Drive
+France,Rhône-Alpes,Lyon,69265 CEDEX 09,Dunning,Way
+France,Rhône-Alpes,Lyon,69303 CEDEX 07,Dottie,Plaza
+France,Rhône-Alpes,Lyon,69362 CEDEX 07,Warrior,Center
+France,Rhône-Alpes,Lyon,69367 CEDEX 07,Cherokee,Point
+France,Rhône-Alpes,Lyon,69367 CEDEX 07,Loeprich,Plaza
+France,Rhône-Alpes,Lyon,69939 CEDEX 20,Continental,Junction
+France,Rhône-Alpes,Montluel,01129 CEDEX,Corscot,Trail
+France,Rhône-Alpes,Oullins,69924 CEDEX,Brown,Parkway
+France,Rhône-Alpes,Saint-Égrève,38524 CEDEX,Thompson,Point
+France,Rhône-Alpes,Saint-Marcellin,38164 CEDEX,Blaine,Plaza
+France,Rhône-Alpes,Saint-Quentin-Fallavier,38293 CEDEX,Clyde Gallagher,Way
+France,Rhône-Alpes,Seynod,74604 CEDEX,Westerfield,Lane
+France,Rhône-Alpes,Tassin-la-Demi-Lune,69814 CEDEX,Di Loreto,Park
+France,Rhône-Alpes,Tournon-sur-Rhône,07309 CEDEX,Monterey,Park
+France,Rhône-Alpes,Valence,26003 CEDEX,Bultman,Lane
+France,Rhône-Alpes,Valence,26009 CEDEX,Continental,Terrace
+France,Rhône-Alpes,Valence,26029 CEDEX,Hoffman,Terrace
+France,Rhône-Alpes,Vaulx-en-Velin,69519 CEDEX,Mallard,Parkway
+France,Rhône-Alpes,Vénissieux,69639 CEDEX,Rowland,Parkway
+France,Rhône-Alpes,Voiron,38509 CEDEX,Homewood,Pass
+French Guiana,Guyane,Cayenne,97341 CEDEX,Fremont,Road
+Germany,Baden-Württemberg,Mannheim,68239,Lerdahl,Crossing
+Germany,Baden-Württemberg,Reutlingen,72768,Acker,Point
+Germany,Baden-Württemberg,Reutlingen,72768,Colorado,Parkway
+Germany,Berlin,Berlin,10179,Anniversary,Circle
+Germany,Berlin,Berlin,10409,Transport,Way
+Germany,Berlin,Berlin,13409,La Follette,Parkway
+Germany,Berlin,Berlin,13409,South,Court
+Germany,Berlin,Berlin,13409,Sutherland,Pass
+Germany,Brandenburg,Cottbus,03055,Anhalt,Point
+Germany,Bremen,Bremerhaven,27576,Fuller,Point
+Germany,Hamburg,Hamburg,22339,Armistice,Junction
+Germany,Hessen,Frankfurt am Main,60325,Reindahl,Crossing
+Germany,Hessen,Frankfurt am Main,60549,Ramsey,Pass
+Germany,Niedersachsen,Braunschweig,38126,Ridge Oak,Plaza
+Germany,Niedersachsen,Hannover,30453,Fulton,Trail
+Germany,Nordrhein-Westfalen,Aachen,52080,Express,Parkway
+Germany,Nordrhein-Westfalen,Bochum,44795,Vernon,Plaza
+Germany,Nordrhein-Westfalen,Herne,44629,Oriole,Place
+Germany,Sachsen,Leipzig,04109,Kropf,Pass
+Guadeloupe,Guadeloupe,Basse-Terre,97102 CEDEX,Packers,Way
+Guadeloupe,Guadeloupe,Jarry,97199 CEDEX,Quincy,Street
+Guadeloupe,Guadeloupe,Pointe-à-Pitre,97019 CEDEX,Gale,Center
+Hungary,Borsod-Abaúj-Zemplén,Miskolc,3527,Hayes,Plaza
+Hungary,Borsod-Abaúj-Zemplén,Miskolc,3527,Hollow Ridge,Hill
+Hungary,Borsod-Abaúj-Zemplén,Miskolc,3543,Eliot,Place
+Hungary,Budapest,Budapest,1035,Glacier Hill,Alley
+Hungary,Budapest,Budapest,1035,Sunbrook,Pass
+Hungary,Budapest,Budapest,1074,Raven,Pass
+Hungary,Budapest,Budapest,1122,Old Shore,Street
+Hungary,Budapest,Budapest,1181,Sunfield,Street
+Hungary,Budapest,Budapest,1239,Ryan,Center
+Hungary,Hajdú-Bihar,Debrecen,4014,Butterfield,Terrace
+Hungary,Hajdú-Bihar,Debrecen,4014,Prairie Rose,Circle
+Hungary,Pest,Érd,2035,4th,Trail
+Hungary,Pest,Érd,2035,Farragut,Crossing
+Hungary,Pest,Érd,2035,Loeprich,Place
+Hungary,Zala,Zalaegerszeg,8909,Dexter,Terrace
+India,Gujarat,R S,395003,Hoepker,Circle
+Italy,Campania,Napoli,80129,Judy,Parkway
+Italy,Emilia-Romagna,Bologna,40141,Nevada,Park
+Italy,Lazio,Roma,00174,Upham,Place
+Italy,Lazio,Roma,00196,Evergreen,Hill
+Italy,Liguria,Genova,16146,Chinook,Place
+Italy,Liguria,Genova,16157,Katie,Alley
+Italy,Lombardia,Milano,20147,Center,Court
+Italy,Lombardia,Milano,20147,Dottie,Terrace
+Italy,Sicilia,Messina,98146,Melby,Park
+Italy,Sicilia,Palermo,90141,Spaight,Point
+Italy,Umbria,Perugia,06124,Manley,Way
+Italy,Veneto,Mestre,30175,Anhalt,Road
+Malaysia,Johor,Johor Bahru,80600,Bay,Crossing
+Malaysia,Johor,Nusajaya,79518,5th,Court
+Malaysia,Johor,Nusajaya,79575,Eastlawn,Crossing
+Malaysia,Johor,Nusajaya,79632,Thackeray,Center
+Malaysia,Kedah,Alor Setar,05720,Tomscot,Court
+Malaysia,Kelantan,Kota Bharu,15740,Ruskin,Court
+Malaysia,Kuala Lumpur,Kuala Lumpur,50609,Wayridge,Point
+Malaysia,Kuala Lumpur,Kuala Lumpur,50634,Emmet,Way
+Malaysia,Kuala Lumpur,Kuala Lumpur,50653,Gina,Center
+Malaysia,Kuala Lumpur,Kuala Lumpur,50672,Vera,Court
+Malaysia,Kuala Lumpur,Kuala Lumpur,55928,Bellgrove,Pass
+Malaysia,Labuan,Labuan,87028,Fairfield,Street
+Malaysia,Melaka,Melaka,75503,South,Street
+Malaysia,Negeri Sembilan,Kuala Pilah,72507,Dakota,Center
+Malaysia,Pahang,Kuantan,25590,Lotheville,Way
+Malaysia,Pahang,Pekan,26620,2nd,Avenue
+Malaysia,Perak,Ipoh,30532,Vahlen,Plaza
+Malaysia,Perak,Ipoh,30620,Spaight,Center
+Malaysia,Perak,Taiping,34010,Lotheville,Alley
+Malaysia,Perlis,Kangar,01508,Corben,Drive
+Malaysia,Perlis,Kangar,01508,Mcbride,Drive
+Malaysia,Perlis,Kangar,01578,Blue Bill Park,Trail
+Malaysia,Perlis,Kangar,01630,Green Ridge,Road
+Malaysia,Perlis,Kangar,01630,Moland,Point
+Malaysia,Pulau Pinang,Pulau Pinang,10550,Sommers,Terrace
+Malaysia,Pulau Pinang,Pulau Pinang,10550,Towne,Street
+Malaysia,Pulau Pinang,Pulau Pinang,10612,Jana,Crossing
+Malaysia,Putrajaya,Putrajaya,62514,Summit,Parkway
+Malaysia,Sabah,Kota Kinabalu,88400,Grayhawk,Street
+Malaysia,Sabah,Kota Kinabalu,88610,Chive,Hill
+Malaysia,Sabah,Kota Kinabalu,88788,Mendota,Terrace
+Malaysia,Sabah,Sandakan,90716,Laurel,Parkway
+Malaysia,Sabah,Tawau,91030,Di Loreto,Terrace
+Malaysia,Sarawak,Kuching,93558,Jenna,Hill
+Malaysia,Sarawak,Kuching,93612,Maryland,Crossing
+Malaysia,Sarawak,Kuching,93722,Debs,Park
+Malaysia,Selangor,Klang,41720,Coolidge,Alley
+Malaysia,Selangor,Petaling Jaya,46801,Cottonwood,Circle
+Malaysia,Selangor,Puchong,47140,Cody,Hill
+Malaysia,Selangor,Shah Alam,40582,Pennsylvania,Street
+Malaysia,Selangor,Shah Alam,40726,Coolidge,Court
+Malaysia,Terengganu,Kuala Terengganu,20551,Armistice,Way
+Malaysia,Terengganu,Kuala Terengganu,20576,Crowley,Point
+Malaysia,Terengganu,Kuala Terengganu,20916,Coleman,Center
+Malaysia,Terengganu,Kuala Terengganu,20916,Jay,Terrace
+Malaysia,Terengganu,Kuala Terengganu,21009,Calypso,Plaza
+Malaysia,Terengganu,Kuala Terengganu,21009,Sloan,Circle
+Malaysia,Terengganu,Kuala Terengganu,21109,Scoville,Trail
+Martinique,Martinique,Le Lamentin,97283 CEDEX 1,Duke,Hill
+Mexico,Chiapas,Belisario Dominguez,30509,2nd,Circle
+Mexico,Chiapas,Hidalgo,30625,Hooker,Street
+Mexico,Chiapas,Hidalgo,30625,Memorial,Alley
+Mexico,Chiapas,La Libertad,29970,Nevada,Street
+Mexico,Chiapas,Las Flores,30479,Gateway,Hill
+Mexico,Chiapas,San Agustin,29480,Becker,Junction
+Mexico,Chiapas,San Francisco,30103,International,Trail
+Mexico,Chiapas,San Juan,30540,Dexter,Way
+Mexico,Chihuahua,Reforma,32600,Packers,Drive
+Mexico,Coahuila De Zaragoza,Francisco Villa,26030,Shelley,Terrace
+Mexico,Coahuila De Zaragoza,Hidalgo,26060,Haas,Park
+Mexico,Coahuila De Zaragoza,Hidalgo,26060,Hoffman,Circle
+Mexico,Coahuila De Zaragoza,San Luis,27400,Clyde Gallagher,Trail
+Mexico,Distrito Federal,El Mirador,14449,Mayer,Place
+Mexico,Distrito Federal,El Mirador,14449,Summer Ridge,Center
+Mexico,Distrito Federal,Miguel Hidalgo,14260,Susan,Center
+Mexico,Durango,Providencia,35364,Caliangt,Hill
+Mexico,Durango,Providencia,35364,Memorial,Alley
+Mexico,Guanajuato,Independencia,38260,Dottie,Alley
+Mexico,Guanajuato,La Purisima,36200,Butternut,Pass
+Mexico,Guanajuato,Los Pinos,36780,3rd,Court
+Mexico,Guanajuato,Los Pinos,36780,Hanson,Court
+Mexico,Guanajuato,San Agustin,36800,Kipling,Street
+Mexico,Guerrero,Benito Juarez,41800,Hazelcrest,Point
+Mexico,Guerrero,Cuauhtemoc,40068,Weeping Birch,Avenue
+Mexico,Guerrero,Ejidal,40160,Boyd,Street
+Mexico,Guerrero,Fovissste,40400,Farwell,Court
+Mexico,Guerrero,Juan N Alvarez,39030,Hanson,Way
+Mexico,Guerrero,Las Palmas,40054,Cambridge,Circle
+Mexico,Guerrero,Loma Bonita,41240,Cardinal,Alley
+Mexico,Guerrero,San Isidro,41004,Sommers,Alley
+Mexico,Guerrero,San Jose,39266,Truax,Hill
+Mexico,Guerrero,San Jose,41963,Portage,Avenue
+Mexico,Guerrero,San Miguel,39230,Dapin,Lane
+Mexico,Guerrero,Santa Cruz,40070,Starling,Circle
+Mexico,Guerrero,Vista Hermosa,39130,Longview,Drive
+Mexico,Jalisco,Niños Heroes,47070,Vidon,Road
+Mexico,Jalisco,San Agustin,48040,Birchwood,Place
+Mexico,Mexico,Buenavista,54414,Waubesa,Lane
+Mexico,Mexico,Buenavista,55635,Rusk,Park
+Mexico,Mexico,El Capulin,56568,Kinsman,Point
+Mexico,Mexico,El Tejocote,50625,Vera,Place
+Mexico,Mexico,La Cañada,53570,Kim,Circle
+Mexico,Mexico,Lazaro Cardenas,55407,Blue Bill Park,Place
+Mexico,Mexico,Ojo de Agua,51372,Sundown,Trail
+Mexico,Mexico,San Juan,56030,Main,Hill
+Mexico,Mexico,San Martin,56199,Artisan,Crossing
+Mexico,Michoacan De Ocampo,Buenos Aires,58095,Paget,Terrace
+Mexico,Michoacan De Ocampo,Buenos Aires,58095,Summer Ridge,Crossing
+Mexico,Michoacan De Ocampo,El Salitre,58503,Nova,Point
+Mexico,Michoacan De Ocampo,Emiliano Zapata,61607,Continental,Center
+Mexico,Michoacan De Ocampo,La Loma,61663,Di Loreto,Terrace
+Mexico,Michoacan De Ocampo,Melchor Ocampo,61910,Eastwood,Road
+Mexico,Michoacan De Ocampo,Morelos,61609,Burrows,Junction
+Mexico,Nayarit,Amado Nervo,63455,Grim,Lane
+Mexico,Nayarit,El Limon,63174,Village,Terrace
+Mexico,Nayarit,Independencia,63136,Dorton,Avenue
+Mexico,Nuevo Leon,La Escondida,64650,Old Shore,Pass
+Mexico,Nuevo Leon,La Escondida,64650,Portage,Lane
+Mexico,Nuevo Leon,Los Angeles,65600,Eagle Crest,Plaza
+Mexico,Nuevo Leon,Los Angeles,65600,Rigney,Hill
+Mexico,Oaxaca,Benito Juarez,70760,Lighthouse Bay,Avenue
+Mexico,Oaxaca,El Calvario,68213,Bay,Place
+Mexico,Oaxaca,El Calvario,68213,Stone Corner,Way
+Mexico,Oaxaca,El Progreso,68451,Golf View,Alley
+Mexico,Oaxaca,Emiliano Zapata,71836,Lawn,Avenue
+Mexico,Oaxaca,Niños Heroes,68145,1st,Lane
+Mexico,Puebla,Alvaro Obregon,74060,Quincy,Lane
+Mexico,Puebla,El Calvario,75200,Brentwood,Center
+Mexico,Puebla,Fovissste,75483,Hazelcrest,Terrace
+Mexico,San Luis Potosi,San Francisco,78490,Melby,Place
+Mexico,Sonora,El Alamo,83448,Banding,Lane
+Mexico,Sonora,Libertad,83450,Helena,Way
+Mexico,Sonora,Parque Industrial,83553,Corben,Road
+Mexico,Tabasco,Lazaro Cardenas,86723,Mitchell,Park
+Mexico,Tamaulipas,Altavista,87900,Carpenter,Street
+Mexico,Tamaulipas,Benito Juarez,88930,Gulseth,Street
+Mexico,Tamaulipas,Benito Juarez,88930,Londonderry,Crossing
+Mexico,Tamaulipas,Emiliano Zapata,88759,Arrowood,Way
+Mexico,Tamaulipas,Las Americas,88925,Farragut,Parkway
+Mexico,Tamaulipas,Solidaridad,88736,Scofield,Alley
+Mexico,Tamaulipas,Tamaulipas,89060,Forster,Alley
+Mexico,Tamaulipas,Vista Hermosa,87078,4th,Place
+Mexico,Veracruz Llave,Buenos Aires,93380,Marcy,Court
+Mexico,Veracruz Llave,Fernando Gutierrez Barrios,93420,Maple,Trail
+Mexico,Veracruz Llave,Guadalupe,94590,Armistice,Avenue
+Mexico,Veracruz Llave,Guadalupe Victoria,93856,Crest Line,Parkway
+Mexico,Veracruz Llave,Ignacio Zaragoza,93470,Lyons,Place
+Mexico,Veracruz Llave,Jose Maria Morelos,94453,Messerschmidt,Court
+Mexico,Veracruz Llave,La Reforma,94724,Sugar,Way
+Mexico,Veracruz Llave,Lazaro Cardenas,91539,Lyons,Avenue
+Mexico,Veracruz Llave,Lazaro Cardenas,92015,Tomscot,Circle
+Mexico,Veracruz Llave,Lindavista,95098,Sutteridge,Center
+Mexico,Veracruz Llave,Los Mangos,93228,Goodland,Lane
+Mexico,Veracruz Llave,Los Pinos,93605,Oakridge,Place
+Mexico,Veracruz Llave,Los Pinos,96640,Hanson,Center
+Mexico,Veracruz Llave,Manlio Fabio Altamirano,94970,Sunfield,Point
+Mexico,Veracruz Llave,Niños Heroes,93393,Golf Course,Road
+Mexico,Veracruz Llave,Nueva Esperanza,94242,Merry,Junction
+Mexico,Veracruz Llave,Rafael Hernandez Ochoa,93995,High Crossing,Drive
+Mexico,Veracruz Llave,Revolucion,93610,Manitowish,Trail
+Mexico,Veracruz Llave,Santa Cruz,92733,Fremont,Way
+Mexico,Veracruz Llave,Vicente Guerrero,92440,Springs,Park
+Netherlands,Provincie Drenthe,Emmen,7814,Waubesa,Park
+Netherlands,Provincie Gelderland,Apeldoorn,7319,Laurel,Park
+Netherlands,Provincie Gelderland,Arnhem,6824,7th,Parkway
+Netherlands,Provincie Gelderland,Arnhem,6824,Katie,Park
+Netherlands,Provincie Limburg,Heerlen,6414,Emmet,Junction
+Netherlands,Provincie Limburg,Maastricht,6224,Melrose,Circle
+Netherlands,Provincie Limburg,Roermond,6044,Delaware,Parkway
+Netherlands,Provincie Noord-Brabant,Breda,4839,Saint Paul,Street
+Netherlands,Provincie Noord-Brabant,'s-Hertogenbosch,5204,Montana,Drive
+Netherlands,Provincie Noord-Brabant,Veghel,5464,Almo,Hill
+Netherlands,Provincie Noord-Holland,Amsterdam Binnenstad en Oostelijk Havengebied,1019,East,Way
+Netherlands,Provincie Noord-Holland,Amsterdam Oud Zuid en Rivierenbuurt,1079,Dwight,Lane
+Netherlands,Provincie Noord-Holland,Bussum,1404,Westerfield,Place
+Netherlands,Provincie Overijssel,Hengelo,7554,Hauk,Way
+Netherlands,Provincie Overijssel,Zwolle,8044,Melvin,Trail
+Netherlands,Provincie Utrecht,Amersfoort,3805,Mcguire,Drive
+Netherlands,Provincie Utrecht,Houten,3994,Ludington,Road
+Netherlands,Provincie Zeeland,Middelburg,4334,Grayhawk,Alley
+Netherlands,Provincie Zuid-Holland,Delft,2629,Coleman,Circle
+Netherlands,Provincie Zuid-Holland,Den Haag,2578,Montana,Circle
+Netherlands,Provincie Zuid-Holland,Dordrecht,3309,Sachtjen,Alley
+Netherlands,Provincie Zuid-Holland,Hellevoetsluis,3224,South,Drive
+Netherlands,Provincie Zuid-Holland,Leiden,2334,Atwood,Alley
+Norway,Akershus,Asker,1384,Forest,Lane
+Norway,Akershus,Asker,1384,Susan,Lane
+Norway,Buskerud,Drammen,3005,5th,Avenue
+Norway,Hordaland,Bergen,5098,Eagle Crest,Trail
+Norway,Hordaland,Bergen,5857,Hollow Ridge,Alley
+Norway,Hordaland,Bergen,5895,Mariners Cove,Lane
+Norway,Hordaland,Stord,5406,Magdeline,Plaza
+Norway,Hordaland,Ulset,5119,Almo,Lane
+Norway,More og Romdal,Kristiansund N,6506,Fair Oaks,Point
+Norway,More og Romdal,Molde,6413,Monument,Place
+Norway,More og Romdal,Molde,6413,Thierer,Junction
+Norway,Nordland,Bodø,8010,Carey,Drive
+Norway,Nordland,Bodø,8029,Steensland,Park
+Norway,Nordland,Mo I Rana,8607,Anhalt,Plaza
+Norway,Nordland,Mo I Rana,8607,Atwood,Street
+Norway,Nord-Trondelag,Steinkjer,7712,Dovetail,Trail
+Norway,Oppland,Lillehammer,2605,Arizona,Way
+Norway,Oslo,Oslo,0025,Green,Road
+Norway,Oslo,Oslo,0025,Springview,Hill
+Norway,Oslo,Oslo,0162,Clove,Street
+Norway,Oslo,Oslo,0173,Commercial,Drive
+Norway,Oslo,Oslo,0424,Stone Corner,Plaza
+Norway,Oslo,Oslo,0460,Dorton,Terrace
+Norway,Oslo,Oslo,0487,Thompson,Point
+Norway,Oslo,Oslo,0492,Rusk,Center
+Norway,Oslo,Oslo,0512,Reinke,Crossing
+Norway,Oslo,Oslo,0614,South,Place
+Norway,Oslo,Oslo,0654,Swallow,Alley
+Norway,Oslo,Oslo,1168,Bonner,Way
+Norway,Oslo,Oslo,1257,Milwaukee,Junction
+Norway,Oslo,Oslo,1257,Shopko,Road
+Norway,Ostfold,Moss,1508,Shelley,Place
+Norway,Ostfold,Moss,1531,David,Place
+Norway,Ostfold,Moss,1536,3rd,Terrace
+Norway,Rogaland,Haugesund,5505,Eastwood,Crossing
+Norway,Rogaland,Haugesund,5518,Brown,Circle
+Norway,Rogaland,Haugesund,5532,Jenifer,Street
+Norway,Rogaland,Stavanger,4064,Steensland,Avenue
+Norway,Sor-Trondelag,Trondheim,7026,Springs,Junction
+Norway,Sor-Trondelag,Trondheim,7047,Mariners Cove,Street
+Norway,Sor-Trondelag,Trondheim,7409,Kipling,Parkway
+Norway,Telemark,Porsgrunn,3930,Mosinee,Drive
+Norway,Telemark,Porsgrunn,3943,Marcy,Terrace
+Norway,Telemark,Skien,3736,Bluejay,Avenue
+Norway,Telemark,Skien,3741,Welch,Hill
+Norway,Troms,Harstad,9414,Huxley,Crossing
+Norway,Troms,Harstad,9498,Packers,Crossing
+Norway,Troms,Tromsø,9259,Mesta,Center
+Norway,Vestfold,Larvik,3260,Dwight,Avenue
+Norway,Vestfold,Tønsberg,3114,Elgar,Hill
+Norway,Vestfold,Tønsberg,3119,Pleasure,Plaza
+Portugal,Aveiro,Boavista,4520-104,Claremont,Plaza
+Portugal,Aveiro,Boavista,4520-104,Southridge,Road
+Portugal,Aveiro,Cabeço,3800-525,Rusk,Center
+Portugal,Aveiro,Costa Nova do Prado,3830-455,Bowman,Circle
+Portugal,Aveiro,Cruzeiro,3700-364,Jenifer,Way
+Portugal,Aveiro,Esmoriz,3885-395,Briar Crest,Parkway
+Portugal,Aveiro,Estarreja,3860-205,Mendota,Place
+Portugal,Aveiro,Fajões,3700-660,Quincy,Point
+Portugal,Aveiro,Gafanha de Aquém,3830-017,Fairview,Street
+Portugal,Aveiro,Légua,3830-247,Eagan,Junction
+Portugal,Aveiro,Louredo,4525-355,Columbus,Lane
+Portugal,Aveiro,Maceda,3885-705,Ryan,Hill
+Portugal,Aveiro,Mirões,3700-622,Dovetail,Avenue
+Portugal,Aveiro,Mirões,3700-622,Service,Street
+Portugal,Aveiro,Mozelos,4535-160,Bellgrove,Parkway
+Portugal,Aveiro,Nogueira da Regedoura,4500-695,Pine View,Center
+Portugal,Aveiro,Póvoa,3720-029,Kingsford,Junction
+Portugal,Aveiro,Póvoa,3720-029,Russell,Court
+Portugal,Aveiro,Póvoa,3720-029,Washington,Parkway
+Portugal,Aveiro,Póvoa do Valado,3810-760,Bayside,Circle
+Portugal,Aveiro,Real,4550-289,Hoepker,Street
+Portugal,Aveiro,Torreira,3870-306,Laurel,Place
+Portugal,Aveiro,Veiros,3860-346,6th,Avenue
+Portugal,Beja,Cuba,7940-006,4th,Lane
+Portugal,Beja,Entradas,7780-325,Menomonie,Park
+Portugal,Beja,Entradas,7780-325,Rusk,Pass
+Portugal,Beja,Figueira dos Cavaleiros,7900-234,Hudson,Trail
+Portugal,Beja,Montes Velhos,7600-411,Morning,Way
+Portugal,Beja,Santa Bárbara de Padrões,7780-460,Lawn,Lane
+Portugal,Braga,Abade de Neiva,4750-005,Dapin,Avenue
+Portugal,Braga,Abade de Vermoim,4770-014,Russell,Junction
+Portugal,Braga,Agrela,4730-220,Paget,Trail
+Portugal,Braga,Agrelo,4730-300,Loeprich,Hill
+Portugal,Braga,Atães,4800-230,Swallow,Place
+Portugal,Braga,Boavista,4905-014,Fair Oaks,Way
+Portugal,Braga,Boucinha,4890-011,Green,Center
+Portugal,Braga,Braga,4700-005,Jackson,Circle
+Portugal,Braga,Breia,4830-433,Sommers,Alley
+Portugal,Braga,Caldas das Taipas,4805-081,Loftsgordon,Center
+Portugal,Braga,Calvário,4820-449,Scott,Plaza
+Portugal,Braga,Calvos,4810-804,Blue Bill Park,Drive
+Portugal,Braga,Calvos,4810-804,Cardinal,Plaza
+Portugal,Braga,Carreira,4820-021,Mandrake,Hill
+Portugal,Braga,Castelões,4770-834,Eliot,Plaza
+Portugal,Braga,Cavalões,4760-421,Esch,Pass
+Portugal,Braga,Corvite,4805-223,Bultman,Road
+Portugal,Braga,Figueiredo,4705-722,Mesta,Trail
+Portugal,Braga,Figueiredo,4705-722,Stoughton,Drive
+Portugal,Braga,Guardizela,4765-405,Lakewood Gardens,Road
+Portugal,Braga,Lanhas,4730-264,Fuller,Trail
+Portugal,Braga,Leitões,4805-191,Forest,Parkway
+Portugal,Braga,Leitões,4805-191,Warbler,Point
+Portugal,Braga,Longos,4805-196,Susan,Drive
+Portugal,Braga,Lordelo,4815-014,Coleman,Point
+Portugal,Braga,Lousado,4760-606,Sutteridge,Center
+Portugal,Braga,Mó,4730-062,Sommers,Road
+Portugal,Braga,Passos,4710-730,Manley,Road
+Portugal,Braga,Pedra Furada,4755-393,Surrey,Park
+Portugal,Braga,Quinta,4860-077,Kinsman,Alley
+Portugal,Braga,Quintela,4890-110,Oneill,Plaza
+Portugal,Braga,Roriz,4750-654,Sheridan,Street
+Portugal,Braga,Santa Maria do Souto,4800-260,Magdeline,Parkway
+Portugal,Braga,Santo Adrião Vizela,4815-668,Namekagon,Center
+Portugal,Braga,Santo Adrião Vizela,4815-668,Rutledge,Drive
+Portugal,Braga,Seara,4845-028,Katie,Point
+Portugal,Braga,Soutelo,4740-497,Gulseth,Point
+Portugal,Braga,Souto,4750-419,Mockingbird,Place
+Portugal,Braga,Souto,4750-419,Sunbrook,Park
+Portugal,Bragança,Carrazeda de Ansiães,5140-058,Nelson,Court
+Portugal,Bragança,Carrazeda de Ansiães,5140-058,Vermont,Road
+Portugal,Bragança,Fonte da Aldeia,5210-325,Bay,Plaza
+Portugal,Bragança,Fornos,5180-015,Charing Cross,Circle
+Portugal,Bragança,Mirandela,5370-182,Melody,Terrace
+Portugal,Bragança,Vinhais,5320-305,Holmberg,Alley
+Portugal,Castelo Branco,Alcaria,6230-026,Katie,Hill
+Portugal,Castelo Branco,Aldeia do Bispo,6090-075,Summer Ridge,Park
+Portugal,Castelo Branco,Aldeia do Bispo,6090-075,Warrior,Lane
+Portugal,Castelo Branco,Casal Novo,6100-218,Farwell,Place
+Portugal,Castelo Branco,Orvalho,6185-302,Basil,Court
+Portugal,Castelo Branco,Pedrogão,6090-425,Pine View,Drive
+Portugal,Castelo Branco,Penamacor,6090-511,Menomonie,Pass
+Portugal,Castelo Branco,Penamacor,6090-511,Village,Lane
+Portugal,Coimbra,Ardazubre,3025-348,Hoard,Road
+Portugal,Coimbra,Arganil,3300-043,Memorial,Way
+Portugal,Coimbra,Cabeças Verdes,3070-505,East,Circle
+Portugal,Coimbra,Cabeças Verdes,3070-505,Petterle,Point
+Portugal,Coimbra,Cential,3070-085,Chinook,Way
+Portugal,Coimbra,Cochadas,3060-629,Sullivan,Road
+Portugal,Coimbra,Ourentã,3060-445,Badeau,Plaza
+Portugal,Coimbra,Praia da Tocha,3060-681,Lillian,Crossing
+Portugal,Coimbra,Rios Frios,3025-610,Kim,Park
+Portugal,Coimbra,São Martinho de Árvore,3025-483,Mallard,Court
+Portugal,Coimbra,Seixo da Beira,3405-425,Elgar,Road
+Portugal,Coimbra,Serra de Santa Marinha,3080-570,Leroy,Court
+Portugal,Coimbra,Vila Franca da Beira,3405-605,Butternut,Court
+Portugal,Coimbra,Vila Pouca da Beira,3400-759,Glendale,Center
+Portugal,Coimbra,Vila Verde,3025-403,Michigan,Place
+Portugal,Évora,Azaruja,7005-104,Hanson,Crossing
+Portugal,Évora,Monte de Trigo,7220-205,Barby,Street
+Portugal,Évora,Monte do Outeiro,7005-719,Fairfield,Circle
+Portugal,Évora,Pavia,7490-405,Mcbride,Hill
+Portugal,Évora,São Miguel de Machede,7005-764,Sachs,Crossing
+Portugal,Évora,São Miguel de Machede,7005-764,Swallow,Pass
+Portugal,Évora,Vera Cruz,7220-565,Meadow Vale,Court
+Portugal,Faro,Aldeia da Bela Vista,8400-661,Continental,Avenue
+Portugal,Faro,Burgau,8650-104,Briar Crest,Hill
+Portugal,Faro,Estoi,8005-453,1st,Junction
+Portugal,Faro,Guia,8200-434,Manley,Alley
+Portugal,Faro,Paderne,8200-510,Gateway,Street
+Portugal,Faro,Vila do Bispo,8650-409,Acker,Drive
+Portugal,Faro,Vila do Bispo,8650-409,Lakewood Gardens,Place
+Portugal,Guarda,Fornos de Algodres,6370-105,Stoughton,Point
+Portugal,Guarda,Freixo de Numão,5155-205,Gateway,Circle
+Portugal,Guarda,Seia,6270-405,Fulton,Avenue
+Portugal,Ilha da Graciosa,Santa Cruz da Graciosa,9880-324,Derek,Center
+Portugal,Ilha da Madeira,Igreja,9200-078,Randy,Center
+Portugal,Ilha da Madeira,Santa Cruz,9100-153,Pond,Way
+Portugal,Ilha de São Jorge,Manadas,9800-026,Holy Cross,Park
+Portugal,Ilha de São Miguel,Achada,9630-015,Hauk,Center
+Portugal,Ilha de São Miguel,Atalhada,9560-404,Fairfield,Trail
+Portugal,Ilha de São Miguel,Mosteiros,9555-145,Dottie,Street
+Portugal,Ilha de São Miguel,Ponta Delgada,9500-014,Killdeer,Road
+Portugal,Ilha de São Miguel,Ribeira Grande,9600-502,Shoshone,Road
+Portugal,Ilha de São Miguel,São Roque,9500-701,Fairview,Court
+Portugal,Ilha do Faial,Horta,9900-016,Miller,Junction
+Portugal,Ilha Terceira,Agualva,9760-016,Pond,Parkway
+Portugal,Ilha Terceira,Biscoitos,9760-055,Northview,Place
+Portugal,Leiria,Alvaiázere,3250-104,Onsgard,Court
+Portugal,Leiria,Arrabal,2420-005,Forster,Plaza
+Portugal,Leiria,Avelar,3240-305,Menomonie,Junction
+Portugal,Leiria,Barqueiro,2430-604,Golf,Circle
+Portugal,Leiria,Brejieira,2420-257,Kennedy,Crossing
+Portugal,Leiria,Brejieira,2420-257,Meadow Valley,Street
+Portugal,Leiria,Carpalho,2425-417,Hagan,Plaza
+Portugal,Leiria,Casais,3100-806,Oriole,Avenue
+Portugal,Leiria,Casal da Anja,2430-620,Arkansas,Place
+Portugal,Leiria,Casal da Anja,2430-620,Maple,Place
+Portugal,Leiria,Casal do Relvas,2440-341,Tony,Street
+Portugal,Leiria,Castanheira de Pêra,3280-011,Shelley,Lane
+Portugal,Leiria,Cortes,2410-505,Fairfield,Plaza
+Portugal,Leiria,Granja,2425-009,Saint Paul,Plaza
+Portugal,Leiria,Guarda Nova,2430-149,Troy,Plaza
+Portugal,Leiria,Lameiro,2425-317,2nd,Plaza
+Portugal,Leiria,Leiria,2400-013,Kenwood,Drive
+Portugal,Leiria,Memória,2420-231,Anniversary,Place
+Portugal,Leiria,Moita da Roda,2425-839,Kings,Lane
+Portugal,Leiria,Picassinos,2430-418,Crescent Oaks,Street
+Portugal,Leiria,Picoto,2425-497,Lake View,Center
+Portugal,Leiria,Tojeira,3270-152,Bayside,Pass
+Portugal,Leiria,Trabulheira,2420-369,Graedel,Crossing
+Portugal,Leiria,Vale da Bajouca,2425-207,Steensland,Center
+Portugal,Leiria,Várzeas,2425-507,Eagan,Street
+Portugal,Leiria,Várzeas,2425-507,Marquette,Place
+Portugal,Lisboa,Abuxarda,2755-013,Moland,Drive
+Portugal,Lisboa,Algés,1495-005,Arapahoe,Hill
+Portugal,Lisboa,Algés,1495-005,Oak Valley,Point
+Portugal,Lisboa,Algés,1495-005,Weeping Birch,Drive
+Portugal,Lisboa,Almoínhas Velhas,2755-163,Lakewood Gardens,Junction
+Portugal,Lisboa,Alverca do Ribatejo,2615-009,Fordem,Parkway
+Portugal,Lisboa,Azenhas do Mar,2705-085,Northview,Way
+Portugal,Lisboa,Bairro de Santo António,2765-133,Vernon,Point
+Portugal,Lisboa,Belas,2605-016,Muir,Parkway
+Portugal,Lisboa,Cabriz,2710-102,North,Place
+Portugal,Lisboa,Campelos,2565-035,Ramsey,Court
+Portugal,Lisboa,Carnaxide,2790-009,La Follette,Court
+Portugal,Lisboa,Casal da Serra,2560-057,Kinsman,Pass
+Portugal,Lisboa,Catujal Velho,2680-423,Farragut,Drive
+Portugal,Lisboa,Dafundo,1495-701,School,Lane
+Portugal,Lisboa,Dois Portos,2565-209,Mcguire,Circle
+Portugal,Lisboa,Janes,2755-123,Browning,Pass
+Portugal,Lisboa,Laveiras,2760-012,Warner,Plaza
+Portugal,Lisboa,Lisboa,1000-005,Susan,Drive
+Portugal,Lisboa,Mato Cheirinhos,2785-220,Northland,Plaza
+Portugal,Lisboa,Monte Leite,2765-317,Swallow,Terrace
+Portugal,Lisboa,Murganhal,2760-040,Montana,Plaza
+Portugal,Lisboa,Pobral,2655-121,Meadow Ridge,Trail
+Portugal,Lisboa,Pontinha,1675-007,Johnson,Point
+Portugal,Lisboa,Queluz de Baixo,2730-015,High Crossing,Plaza
+Portugal,Lisboa,Ramada,2620-188,Westridge,Place
+Portugal,Lisboa,Ramalhal,2565-650,Hooker,Center
+Portugal,Lisboa,São Domingos de Rana,2785-581,Center,Court
+Portugal,Lisboa,São Pedro,2710-470,Golf View,Center
+Portugal,Lisboa,São Pedro do Estoril,2765-343,Dayton,Court
+Portugal,Lisboa,Sapataria,2590-431,Autumn Leaf,Circle
+Portugal,Lisboa,Sintra,2710-200,Towne,Lane
+Portugal,Lisboa,Tercena,2730-017,Carpenter,Junction
+Portugal,Lisboa,Tercena,2730-017,Kim,Road
+Portugal,Lisboa,Vila Fria,2740-023,Emmet,Park
+Portugal,Portalegre,Elvas,7350-005,Shelley,Street
+Portugal,Portalegre,Flor da Rosa,7430-215,Springs,Pass
+Portugal,Portalegre,Santo António das Areias,7330-254,Melody,Crossing
+Portugal,Portalegre,Vaiamonte,7450-265,Commercial,Court
+Portugal,Porto,Agrela,4580-245,Nevada,Place
+Portugal,Porto,Arcos,4480-014,Sundown,Court
+Portugal,Porto,Argivai,4490-204,Meadow Ridge,Crossing
+Portugal,Porto,Ariz,4625-007,Sloan,Circle
+Portugal,Porto,Astromil,4585-794,Northland,Crossing
+Portugal,Porto,Bacelo,4615-544,Knutson,Park
+Portugal,Porto,Balazar,4570-013,Mcguire,Lane
+Portugal,Porto,Barroco,4650-576,Service,Trail
+Portugal,Porto,Belos Ares,4650-304,Forster,Pass
+Portugal,Porto,Besteiros,4580-290,Pierstorff,Hill
+Portugal,Porto,Cabo de Vila,4620-400,High Crossing,Trail
+Portugal,Porto,Campos,4620-031,Farmco,Street
+Portugal,Porto,Campos,4620-031,Straubel,Park
+Portugal,Porto,Casa Nova,4600-741,Elmside,Court
+Portugal,Porto,Castelo,4640-221,Miller,Trail
+Portugal,Porto,Cimo de Vila,4615-092,Anthes,Court
+Portugal,Porto,Cortiços,4745-616,Messerschmidt,Point
+Portugal,Porto,Crasto,4610-017,Golf,Terrace
+Portugal,Porto,Cruzeiro,4640-324,Heffernan,Road
+Portugal,Porto,Duas Igrejas,4580-373,Golf View,Center
+Portugal,Porto,Eiriz,4595-075,Moland,Terrace
+Portugal,Porto,Fanzeres,4510-469,Nobel,Parkway
+Portugal,Porto,Feitoria,4650-291,Gale,Trail
+Portugal,Porto,Felgueiras,4610-104,Loftsgordon,Alley
+Portugal,Porto,Fraga,4625-445,Anhalt,Center
+Portugal,Porto,Labruge,4485-296,Green Ridge,Plaza
+Portugal,Porto,Ladário,4635-133,Briar Crest,Junction
+Portugal,Porto,Lages,4620-279,Alpine,Circle
+Portugal,Porto,Laúndos,4570-308,Bluejay,Center
+Portugal,Porto,Maia,4425-005,Shelley,Place
+Portugal,Porto,Marco de Canaveses,4630-087,Meadow Vale,Trail
+Portugal,Porto,Montinho,4625-608,Kropf,Street
+Portugal,Porto,Montinho,4625-608,Roth,Plaza
+Portugal,Porto,Mosteirô,4785-210,Atwood,Parkway
+Portugal,Porto,Muro,4620-620,Sullivan,Way
+Portugal,Porto,Nogueira,4605-410,Buena Vista,Center
+Portugal,Porto,Outeirô,4785-035,Springs,Plaza
+Portugal,Porto,Paço,4615-196,Saint Paul,Court
+Portugal,Porto,Palhais,4620-023,Esker,Court
+Portugal,Porto,Pinheiral,4625-253,Pine View,Terrace
+Portugal,Porto,Pinheiral,4625-253,Springview,Alley
+Portugal,Porto,Póvoa,4615-325,Harper,Trail
+Portugal,Porto,Quinta,4600-652,Mayfield,Circle
+Portugal,Porto,Quintães,4620-620,Hayes,Park
+Portugal,Porto,Quintas,4625-619,Melby,Lane
+Portugal,Porto,Rates,4570-414,Butternut,Point
+Portugal,Porto,Refojos de Riba de Ave,4825-296,Mcguire,Plaza
+Portugal,Porto,Reguenga,4825-364,Logan,Avenue
+Portugal,Porto,Ribeiro,4600-758,Washington,Drive
+Portugal,Porto,São Mamede de Infesta,4465-005,Browning,Pass
+Portugal,Porto,São Mamede de Infesta,4465-005,Springview,Center
+Portugal,Porto,Seroa,4595-414,Farwell,Street
+Portugal,Porto,Torre,4605-169,Sommers,Junction
+Portugal,Porto,Veiga,4650-226,Barby,Avenue
+Portugal,Porto,Vinha,4615-131,Mesta,Hill
+Portugal,Santarém,Casal dos Bernardos,2435-010,Derek,Circle
+Portugal,Santarém,Eira da Pedra,2495-505,Farmco,Center
+Portugal,Santarém,Lavradio,2435-362,Thompson,Place
+Portugal,Santarém,Marinhais,2125-106,Kennedy,Lane
+Portugal,Santarém,Ortiga,6120-516,Shoshone,Drive
+Portugal,Santarém,Pontes,2435-127,Hoffman,Plaza
+Portugal,Santarém,Seiça,2435-609,Dawn,Terrace
+Portugal,Santarém,Vale das Mós,2205-806,Memorial,Hill
+Portugal,Setúbal,Almada,2800-011,Green Ridge,Terrace
+Portugal,Setúbal,Aroeira,2820-023,Mccormick,Court
+Portugal,Setúbal,Aroeira,2820-023,Sommers,Point
+Portugal,Setúbal,Bairro dos Marinheiros,2950-691,Clarendon,Drive
+Portugal,Setúbal,Brejoeira,2860-310,Eggendart,Point
+Portugal,Setúbal,Carregueira,2955-260,Saint Paul,Road
+Portugal,Setúbal,Corredoura,2970-079,West,Drive
+Portugal,Setúbal,Corroios,2855-005,Brickson Park,Avenue
+Portugal,Setúbal,Funchalinho,2825-106,Grim,Alley
+Portugal,Setúbal,Padre Nabeto,2950-107,Helena,Way
+Portugal,Setúbal,Palhais,2830-449,Upham,Park
+Portugal,Setúbal,Pinhal de Frades,2840-284,Fairfield,Junction
+Portugal,Setúbal,Pinhal de Frades,2840-284,Forster,Street
+Portugal,Setúbal,Pinhal General,2865-193,Canary,Street
+Portugal,Setúbal,Rego de Água,2860-278,Barby,Place
+Portugal,Setúbal,Samouco,2890-206,Mallard,Circle
+Portugal,Setúbal,Santo António da Charneca,2835-496,Harbort,Avenue
+Portugal,Setúbal,Vila Ribeiro,2835-795,Anzinger,Street
+Portugal,Viana do Castelo,Aldeia,4910-302,Grayhawk,Way
+Portugal,Viana do Castelo,Boavista,4960-343,Sachtjen,Street
+Portugal,Viana do Castelo,Bouças,4950-270,Spaight,Road
+Portugal,Viana do Castelo,Boucinha,4950-122,Glendale,Park
+Portugal,Viana do Castelo,Breia,4950-284,Crowley,Way
+Portugal,Viana do Castelo,Capela,4960-320,John Wall,Drive
+Portugal,Viana do Castelo,Carvalheira,4950-740,Eastlawn,Place
+Portugal,Viana do Castelo,Castanheira,4980-233,American,Hill
+Portugal,Viana do Castelo,Giesteira,4950-830,Green Ridge,Park
+Portugal,Viana do Castelo,Monção,4950-416,Anzinger,Point
+Portugal,Viana do Castelo,Paço,4910-060,Valley Edge,Drive
+Portugal,Viana do Castelo,Pinheiro,4960-254,Hoard,Trail
+Portugal,Viana do Castelo,Quinta,4980-559,Acker,Park
+Portugal,Viana do Castelo,Quinta,4980-559,Thompson,Way
+Portugal,Viana do Castelo,São Sebastião,4990-640,Anzinger,Way
+Portugal,Viana do Castelo,Sobreira,4960-180,Sauthoff,Way
+Portugal,Viana do Castelo,Souto,4910-060,Merchant,Hill
+Portugal,Viana do Castelo,Viana do Castelo,4900-005,Norway Maple,Court
+Portugal,Viana do Castelo,Viana do Castelo,4900-005,Vera,Drive
+Portugal,Vila Real,Castedo,5070-227,Alpine,Junction
+Portugal,Vila Real,Ermelo,4880-128,Roth,Terrace
+Portugal,Vila Real,Granja,5070-085,Daystar,Pass
+Portugal,Vila Real,Mondim de Basto,4880-235,Jenna,Park
+Portugal,Vila Real,Parada de Pinhão,5060-105,Lotheville,Lane
+Portugal,Vila Real,Peso da Régua,5050-223,Debra,Pass
+Portugal,Vila Real,Peso da Régua,5050-223,Loomis,Point
+Portugal,Vila Real,Santa Marta de Penaguião,5030-473,Mesta,Park
+Portugal,Vila Real,Santa Valha,5430-236,Grasskamp,Circle
+Portugal,Vila Real,Vila Nova,5445-072,Montana,Circle
+Portugal,Viseu,Arcos,5120-040,Kipling,Terrace
+Portugal,Viseu,Armamar,5110-125,Pine View,Point
+Portugal,Viseu,Armamar,5110-125,Valley Edge,Court
+Portugal,Viseu,Aviúges,3505-130,Weeping Birch,Hill
+Portugal,Viseu,Bertelhe,3505-143,Pepper Wood,Street
+Portugal,Viseu,Cabanas de Viriato,3430-605,Vera,Point
+Portugal,Viseu,Castainço,3630-074,3rd,Parkway
+Portugal,Viseu,Chãos,4690-805,Clove,Lane
+Portugal,Viseu,Chãos,4690-805,Quincy,Road
+Portugal,Viseu,Estrada,5100-873,Arizona,Pass
+Portugal,Viseu,Gândara,3450-405,Sauthoff,Point
+Portugal,Viseu,Granja,4690-711,Hauk,Court
+Portugal,Viseu,Nagosela,3440-635,Bay,Way
+Portugal,Viseu,Nagosela,3440-635,Bellgrove,Road
+Portugal,Viseu,Oliveirinha,3430-393,Wayridge,Street
+Portugal,Viseu,Sé,5100-121,Sutteridge,Lane
+Portugal,Viseu,Sezures,3550-286,Parkside,Court
+Portugal,Viseu,Tabuaço,5120-384,Mariners Cove,Place
+Puerto Rico,Pr,Ponce,00731,Dovetail,Drive
+Reunion,Réunion,Saint-Denis,97417,Bunting,Terrace
+Reunion,Réunion,Saint-Pierre,97453 CEDEX,Tennessee,Point
+Spain,Andalucia,Cadiz,11010,Stone Corner,Place
+Spain,Andalucia,Granada,18005,East,Court
+Spain,Aragon,Zaragoza,50080,Artisan,Parkway
+Spain,Baleares,Palma De Mallorca,07015,Forest,Plaza
+Spain,Baleares,Palma De Mallorca,07121,Eagle Crest,Plaza
+Spain,Canarias,Telde,35213,6th,Point
+Spain,Cantabria,Santander,39005,Golf Course,Place
+Spain,Castilla - Leon,Leon,24193,Fieldstone,Avenue
+Spain,Cataluna,Lleida,25005,Fieldstone,Alley
+Spain,Cataluna,Lleida,25193,Del Mar,Road
+Spain,Cataluna,Sabadell,08204,Helena,Hill
+Spain,Ceuta,Ceuta,51005,Manitowish,Hill
+Spain,Ceuta,Ceuta,51005,Pearson,Pass
+Spain,Comunidad Valenciana,Castellon De La Plana/Castello De La Pla,12005,Corry,Point
+Spain,Galicia,Santiago De Compostela,15705,Stoughton,Place
+Spain,Galicia,Vigo,36210,Truax,Place
+Spain,La Rioja,Logroño,26005,Sycamore,Junction
+Spain,Madrid,Fuenlabrada,28944,Elmside,Circle
+Spain,Madrid,Madrid,28050,Scott,Circle
+Spain,Murcia,Murcia,30010,Veith,Park
+Spain,Pais Vasco,Vitoria-Gasteiz,01005,Linden,Alley
+Sweden,Blekinge,Ronneby,372 25,Oriole,Crossing
+Sweden,Blekinge,Ronneby,372 25,Valley Edge,Point
+Sweden,Blekinge,Sölvesborg,294 74,Menomonie,Hill
+Sweden,Dalarna,Älvdalen,796 25,Claremont,Hill
+Sweden,Dalarna,Avesta,774 24,Eliot,Court
+Sweden,Dalarna,Falun,791 26,Doe Crossing,Hill
+Sweden,Dalarna,Falun,791 55,Heffernan,Point
+Sweden,Dalarna,Falun,791 55,Milwaukee,Road
+Sweden,Dalarna,Falun,791 96,Susan,Pass
+Sweden,Dalarna,Grängesberg,772 30,Kensington,Trail
+Sweden,Dalarna,Ludvika,771 24,Nobel,Place
+Sweden,Dalarna,Mora,792 52,Sycamore,Trail
+Sweden,Dalarna,Säter,783 35,Corry,Court
+Sweden,Dalarna,Smedjebacken,777 34,Pepper Wood,Parkway
+Sweden,Gävleborg,Bollnäs,821 80,Colorado,Drive
+Sweden,Gävleborg,Gävle,801 38,Stang,Drive
+Sweden,Gävleborg,Gävle,801 84,Sycamore,Pass
+Sweden,Gävleborg,Gävle,802 66,Hallows,Place
+Sweden,Gävleborg,Hudiksvall,824 26,Kenwood,Center
+Sweden,Gävleborg,Sandviken,811 30,Chinook,Place
+Sweden,Gotland,Visby,621 85,Oakridge,Drive
+Sweden,Gotland,Visby,621 90,Fisk,Court
+Sweden,Halland,Falkenberg,311 35,Westport,Lane
+Sweden,Halland,Halmstad,300 10,Riverside,Alley
+Sweden,Halland,Halmstad,301 10,Fulton,Junction
+Sweden,Halland,Kungsbacka,434 23,Raven,Park
+Sweden,Halland,Laholm,312 31,Loftsgordon,Lane
+Sweden,Halland,Onsala,439 24,Algoma,Lane
+Sweden,Jämtland,Frösön,832 93,Daystar,Court
+Sweden,Jämtland,Frösön,832 93,Hollow Ridge,Center
+Sweden,Jämtland,Östersund,831 37,Talisman,Road
+Sweden,Jämtland,Strömsund,833 92,Meadow Valley,Pass
+Sweden,Jämtland,Sveg,842 93,Toban,Point
+Sweden,Jönköping,Gislaved,332 37,Magdeline,Way
+Sweden,Jönköping,Gnosjö,335 24,Brickson Park,Park
+Sweden,Jönköping,Habo,566 24,Green,Avenue
+Sweden,Jönköping,Habo,566 24,Old Gate,Trail
+Sweden,Jönköping,Huskvarna,561 50,Bunting,Avenue
+Sweden,Jönköping,Jönköping,553 02,Namekagon,Point
+Sweden,Jönköping,Jönköping,554 52,Hudson,Trail
+Sweden,Jönköping,Jönköping,554 52,Village Green,Lane
+Sweden,Jönköping,Värnamo,331 43,Delaware,Pass
+Sweden,Jönköping,Värnamo,331 43,Michigan,Street
+Sweden,Jönköping,Värnamo,331 43,Ridge Oak,Circle
+Sweden,Kalmar,Hultsfred,577 92,4th,Lane
+Sweden,Kalmar,Kalmar,391 21,Eastlawn,Center
+Sweden,Kalmar,Kalmar,392 41,Raven,Park
+Sweden,Kalmar,Kalmar,392 47,Comanche,Avenue
+Sweden,Kalmar,Kalmar,393 59,Messerschmidt,Center
+Sweden,Kalmar,Nybro,382 43,Kensington,Center
+Sweden,Kalmar,Oskarshamn,572 27,Scott,Circle
+Sweden,Kalmar,Oskarshamn,572 32,Dunning,Junction
+Sweden,Kalmar,Oskarshamn,572 60,Golf View,Crossing
+Sweden,Kalmar,Västervik,593 30,Monica,Junction
+Sweden,Kronoberg,Alvesta,342 80,Harper,Junction
+Sweden,Kronoberg,Växjö,351 88,Elmside,Point
+Sweden,Kronoberg,Växjö,352 44,Golf Course,Pass
+Sweden,Norrbotten,Arvidsjaur,933 82,Ridgeway,Terrace
+Sweden,Norrbotten,Boden,961 19,Sauthoff,Parkway
+Sweden,Norrbotten,Boden,961 86,Hintze,Park
+Sweden,Norrbotten,Haparanda,953 34,Raven,Alley
+Sweden,Norrbotten,Kiruna,981 22,Warrior,Way
+Sweden,Norrbotten,Luleå,973 23,Ridgeview,Lane
+Sweden,Norrbotten,Luleå,973 23,Toban,Avenue
+Sweden,Norrbotten,Luleå,973 41,Independence,Center
+Sweden,Norrbotten,Övertorneå,957 32,Granby,Lane
+Sweden,Örebro,Degerfors,693 30,Sunnyside,Trail
+Sweden,Östergötland,Boxholm,590 14,Del Sol,Court
+Sweden,Östergötland,Finspång,612 32,Loeprich,Center
+Sweden,Östergötland,Linköping,587 24,Dottie,Court
+Sweden,Östergötland,Linköping,589 41,Petterle,Way
+Sweden,Östergötland,Norrköping,602 09,Sutherland,Alley
+Sweden,Östergötland,Norrköping,603 72,Milwaukee,Place
+Sweden,Östergötland,Norrköping,603 86,Mitchell,Road
+Sweden,Skåne,Bjuv,267 35,Manley,Road
+Sweden,Skåne,Degeberga,297 32,Mitchell,Way
+Sweden,Skåne,Hässleholm,281 32,Nevada,Street
+Sweden,Skåne,Helsingborg,254 36,Leroy,Crossing
+Sweden,Skåne,Höganäs,263 25,Lakewood,Avenue
+Sweden,Skåne,Klippan,264 31,Talmadge,Hill
+Sweden,Skåne,Löddeköpinge,246 43,Pleasure,Place
+Sweden,Skåne,Osby,283 31,Sundown,Avenue
+Sweden,Skåne,Osby,283 45,Lerdahl,Way
+Sweden,Skåne,Perstorp,284 92,Daystar,Avenue
+Sweden,Skåne,Skanör,239 30,Northridge,Road
+Sweden,Skåne,Ystad,271 22,Kipling,Parkway
+Sweden,Södermanland,Mariefred,647 81,Shasta,Parkway
+Sweden,Södermanland,Nyköping,611 24,Acker,Pass
+Sweden,Södermanland,Nyköping,611 81,Iowa,Road
+Sweden,Södermanland,Nyköping,611 81,Nancy,Place
+Sweden,Södermanland,Strängnäs,645 32,Mockingbird,Trail
+Sweden,Södermanland,Strängnäs,645 84,Helena,Junction
+Sweden,Södermanland,Trosa,619 35,Westridge,Parkway
+Sweden,Stockholm,Åkersberga,184 70,Pierstorff,Trail
+Sweden,Stockholm,Älvsjö,125 46,Scott,Hill
+Sweden,Stockholm,Bandhagen,124 22,Magdeline,Plaza
+Sweden,Stockholm,Bromma,168 58,Prairie Rose,Center
+Sweden,Stockholm,Bromma,168 58,Tennyson,Trail
+Sweden,Stockholm,Bromma,168 74,Mcbride,Terrace
+Sweden,Stockholm,Danderyd,182 39,Amoth,Pass
+Sweden,Stockholm,Danderyd,182 39,Superior,Terrace
+Sweden,Stockholm,Ekerö,178 32,Sundown,Parkway
+Sweden,Stockholm,Farsta,123 47,Commercial,Crossing
+Sweden,Stockholm,Farsta,123 47,Shelley,Crossing
+Sweden,Stockholm,Hägersten,126 36,Macpherson,Center
+Sweden,Stockholm,Hägersten,129 30,Mallard,Plaza
+Sweden,Stockholm,Ingarö,134 61,Fairfield,Center
+Sweden,Stockholm,Järfälla,175 49,Rigney,Parkway
+Sweden,Stockholm,Järfälla,175 54,Kensington,Point
+Sweden,Stockholm,Järna,153 38,Blue Bill Park,Crossing
+Sweden,Stockholm,Johanneshov,121 12,Rieder,Circle
+Sweden,Stockholm,Kista,164 35,Helena,Lane
+Sweden,Stockholm,Kista,164 73,Grover,Parkway
+Sweden,Stockholm,Lidingö,181 41,Declaration,Pass
+Sweden,Stockholm,Nacka,131 05,Cardinal,Avenue
+Sweden,Stockholm,Nacka,131 46,3rd,Parkway
+Sweden,Stockholm,Norsborg,145 74,Corben,Crossing
+Sweden,Stockholm,Rimbo,762 91,Onsgard,Crossing
+Sweden,Stockholm,Södertälje,152 31,Badeau,Trail
+Sweden,Stockholm,Södertälje,152 31,Kropf,Avenue
+Sweden,Stockholm,Södertälje,152 31,Nevada,Court
+Sweden,Stockholm,Solna,169 50,Bultman,Circle
+Sweden,Stockholm,Solna,169 65,Bartillon,Point
+Sweden,Stockholm,Solna,171 14,Arkansas,Place
+Sweden,Stockholm,Spånga,163 41,Mallory,Street
+Sweden,Stockholm,Stockholm,103 50,Union,Place
+Sweden,Stockholm,Stockholm,103 70,Old Gate,Crossing
+Sweden,Stockholm,Stockholm,103 83,Oak Valley,Plaza
+Sweden,Stockholm,Stockholm,106 65,Schmedeman,Point
+Sweden,Stockholm,Stockholm,111 20,Schmedeman,Plaza
+Sweden,Stockholm,Stockholm,112 75,Merry,Avenue
+Sweden,Stockholm,Stockholm,115 37,Farmco,Park
+Sweden,Stockholm,Stockholm,115 77,5th,Park
+Sweden,Stockholm,Stockholm,115 91,Gale,Parkway
+Sweden,Stockholm,Stockholm,117 43,American Ash,Hill
+Sweden,Stockholm,Stockholm,117 97,Lindbergh,Hill
+Sweden,Stockholm,Stockholm,120 30,Lillian,Point
+Sweden,Stockholm,Stockholm,126 12,Kings,Way
+Sweden,Stockholm,Stockholm,164 83,Birchwood,Drive
+Sweden,Stockholm,Stockholm,164 83,Burning Wood,Drive
+Sweden,Stockholm,Stockholm,164 83,Shasta,Plaza
+Sweden,Stockholm,Täby,183 04,Ohio,Lane
+Sweden,Stockholm,Tungelsta,137 57,Express,Road
+Sweden,Stockholm,Tungelsta,137 57,Michigan,Park
+Sweden,Stockholm,Tyresö,135 55,North,Center
+Sweden,Stockholm,Vallentuna,186 53,American Ash,Crossing
+Sweden,Uppsala,Alunda,747 30,Blue Bill Park,Circle
+Sweden,Uppsala,Gimo,747 43,Stang,Way
+Sweden,Uppsala,Knivsta,741 72,Elka,Junction
+Sweden,Uppsala,Tierp,815 24,Longview,Hill
+Sweden,Uppsala,Uppsala,752 42,Gerald,Court
+Sweden,Uppsala,Uppsala,757 54,Donald,Trail
+Sweden,Uppsala,Uppsala,757 59,Dryden,Road
+Sweden,Värmland,Arvika,671 30,Northport,Way
+Sweden,Värmland,Arvika,671 60,Kings,Street
+Sweden,Värmland,Forshaga,667 91,Continental,Park
+Sweden,Värmland,Kristinehamn,681 84,Nobel,Road
+Sweden,Värmland,Kristinehamn,681 84,Weeping Birch,Road
+Sweden,Värmland,Säffle,661 24,Jackson,Point
+Sweden,Västerbotten,Lycksele,921 33,Claremont,Avenue
+Sweden,Västerbotten,Skellefteå,931 77,Leroy,Alley
+Sweden,Västerbotten,Storuman,923 98,Monica,Avenue
+Sweden,Västerbotten,Umeå,901 81,Summerview,Court
+Sweden,Västerbotten,Umeå,907 04,7th,Avenue
+Sweden,Västernorrland,Bollstabruk,873 80,Spohn,Road
+Sweden,Västernorrland,Härnösand,871 60,Evergreen,Junction
+Sweden,Västernorrland,Njurunda,862 95,Fordem,Circle
+Sweden,Västernorrland,Örnsköldsvik,891 86,Boyd,Trail
+Sweden,Västernorrland,Sundsvall,851 83,Lillian,Street
+Sweden,Västernorrland,Sundsvall,852 36,Browning,Road
+Sweden,Västernorrland,Sundsvall,852 36,Division,Court
+Sweden,Västmanland,Fagersta,737 47,Oriole,Drive
+Sweden,Västmanland,Köping,731 27,Thompson,Circle
+Sweden,Västmanland,Sala,733 24,Londonderry,Drive
+Sweden,Västmanland,Sala,733 24,Park Meadow,Crossing
+Sweden,Västmanland,Skinnskatteberg,739 30,Grover,Crossing
+Sweden,Västmanland,Västerås,721 85,Everett,Trail
+Sweden,Västmanland,Västerås,722 44,Killdeer,Pass
+Sweden,Västmanland,Västerås,722 44,Kingsford,Hill
+Sweden,Västmanland,Västerås,724 68,Reinke,Court
+Sweden,Västra Götaland,Angered,424 31,Merry,Alley
+Sweden,Västra Götaland,Angered,424 31,Sullivan,Terrace
+Sweden,Västra Götaland,Borås,501 78,John Wall,Center
+Sweden,Västra Götaland,Borås,504 67,Independence,Lane
+Sweden,Västra Götaland,Borås,506 40,Loomis,Lane
+Sweden,Västra Götaland,Borås,506 40,Village,Parkway
+Sweden,Västra Götaland,Falköping,521 96,Delladonna,Hill
+Sweden,Västra Götaland,Färgelanda,458 31,Quincy,Court
+Sweden,Västra Götaland,Göteborg,400 70,6th,Lane
+Sweden,Västra Götaland,Göteborg,400 94,Mccormick,Circle
+Sweden,Västra Götaland,Göteborg,402 25,Brentwood,Park
+Sweden,Västra Götaland,Göteborg,402 57,Rusk,Trail
+Sweden,Västra Götaland,Göteborg,411 00,Shoshone,Drive
+Sweden,Västra Götaland,Göteborg,413 80,Iowa,Court
+Sweden,Västra Götaland,Göteborg,413 80,Sachtjen,Road
+Sweden,Västra Götaland,Göteborg,414 66,Delladonna,Terrace
+Sweden,Västra Götaland,Göteborg,416 55,Beilfuss,Alley
+Sweden,Västra Götaland,Göteborg,416 80,Jenna,Park
+Sweden,Västra Götaland,Göteborg,417 02,Lien,Court
+Sweden,Västra Götaland,Göteborg,417 02,Talmadge,Park
+Sweden,Västra Götaland,Hisings Kärra,425 33,Bay,Drive
+Sweden,Västra Götaland,Horred,519 81,Mandrake,Street
+Sweden,Västra Götaland,Hovås,436 54,Hagan,Circle
+Sweden,Västra Götaland,Kinna,511 58,Merrick,Drive
+Sweden,Västra Götaland,Kungälv,442 40,Mallory,Alley
+Sweden,Västra Götaland,Kungshamn,456 42,Loeprich,Avenue
+Sweden,Västra Götaland,Lindome,437 92,Luster,Center
+Sweden,Västra Götaland,Ljungskile,459 30,Northport,Point
+Sweden,Västra Götaland,Lysekil,453 41,Memorial,Park
+Sweden,Västra Götaland,Mariestad,542 33,2nd,Center
+Sweden,Västra Götaland,Mariestad,542 73,South,Street
+Sweden,Västra Götaland,Mölndal,431 10,Eggendart,Hill
+Sweden,Västra Götaland,Mölndal,431 66,Riverside,Crossing
+Sweden,Västra Götaland,Munkedal,455 31,Doe Crossing,Terrace
+Sweden,Västra Götaland,Nol,449 43,Express,Plaza
+Sweden,Västra Götaland,Stenungsund,444 32,Tomscot,Avenue
+Sweden,Västra Götaland,Tibro,543 30,Sutherland,Junction
+Sweden,Västra Götaland,Trollhättan,461 42,Bellgrove,Terrace
+Sweden,Västra Götaland,Trollhättan,461 63,Anderson,Center
+Sweden,Västra Götaland,Uddevalla,451 95,Garrison,Way
+Sweden,Västra Götaland,Uddevalla,451 95,Sachtjen,Pass
+Sweden,Västra Götaland,Ulricehamn,523 32,Fair Oaks,Center
+Sweden,Västra Götaland,Vårgårda,447 93,Main,Crossing
+Sweden,Västra Götaland,Västra Frölunda,421 62,Blackbird,Crossing
+Sweden,Västra Götaland,Västra Frölunda,426 57,Barnett,Park
+Sweden,Västra Götaland,Ytterby,442 53,Cardinal,Street
+Switzerland,Canton de Genève,Genève,1209,Reinke,Court
+Switzerland,Kanton Basel-Stadt,Basel,4085,Kennedy,Park
+Switzerland,Kanton Bern,Thun,3604,Sachtjen,Street
+Switzerland,Kanton Graubünden,Chur,7006,Pearson,Plaza
+Switzerland,Kanton Zürich,Zürich,8012,Fairview,Avenue
+Switzerland,Kanton Zürich,Zürich,8023,Granby,Lane
+Switzerland,Kanton Zürich,Zürich,8031,Esch,Pass
+Switzerland,Kanton Zürich,Zürich,8037,Mariners Cove,Drive
+Switzerland,Kanton Zürich,Zürich,8088,Village Green,Way
+Turkey,Aydin,Yeniköy,09400,Northland,Way
+Turkey,Manisa,Yeniköy,45600,Green Ridge,Parkway
+United Kingdom,England,Bristol,BS41,Jay,Plaza
+United Kingdom,England,Buckland,CT16,Almo,Point
+United Kingdom,England,Buckland,CT16,Gerald,Park
+United Kingdom,England,Charlton,OX12,Crowley,Junction
+United Kingdom,England,Church End,N3,Chinook,Street
+United Kingdom,England,Liverpool,L74,Eastlawn,Lane
+United Kingdom,England,Liverpool,L74,Spenser,Road
+United Kingdom,England,London,EC3M,Clarendon,Drive
+United Kingdom,England,Normanton,LE15,Center,Alley
+United Kingdom,England,Seaton,LE15,Arkansas,Point
+United Kingdom,England,West End,DN36,Delaware,Parkway
+United Kingdom,Northern Ireland,Craigavon,BT66,Luster,Drive
+United Kingdom,Scotland,Burnside,EH52,Rieder,Crossing
+United States,Alabama,Birmingham,35254,Maple Wood,Point
+United States,Alabama,Birmingham,35290,International,Way
+United States,Alabama,Huntsville,35815,Hoffman,Hill
+United States,Alaska,Anchorage,99507,Jenna,Parkway
+United States,Alaska,Anchorage,99522,Fulton,Parkway
+United States,Arizona,Mesa,85205,Hanover,Circle
+United States,Arizona,Phoenix,85025,Delaware,Alley
+United States,Arizona,Phoenix,85053,Montana,Way
+United States,Arizona,Tempe,85284,Emmet,Avenue
+United States,Arizona,Tucson,85743,Warrior,Park
+United States,Arizona,Tucson,85754,Maywood,Hill
+United States,California,Carlsbad,92013,Crest Line,Junction
+United States,California,Chico,95973,Crescent Oaks,Alley
+United States,California,Fresno,93773,Heffernan,Plaza
+United States,California,Fullerton,92835,Morningstar,Center
+United States,California,Irvine,92619,Doe Crossing,Point
+United States,California,Long Beach,90805,West,Trail
+United States,California,Los Angeles,90045,Kenwood,Way
+United States,California,Sacramento,95894,Anniversary,Point
+United States,California,Sacramento,95894,Armistice,Drive
+United States,California,Sacramento,95894,Tomscot,Drive
+United States,California,San Francisco,94110,Sunnyside,Avenue
+United States,California,San Jose,95138,Monica,Street
+United States,California,San Jose,95160,Farragut,Hill
+United States,California,Santa Cruz,95064,Kennedy,Hill
+United States,Colorado,Denver,80243,Commercial,Avenue
+United States,Colorado,Denver,80262,Eastwood,Trail
+United States,Colorado,Grand Junction,81505,Nevada,Center
+United States,Connecticut,Waterbury,06721,Corry,Street
+United States,Delaware,Wilmington,19810,Elmside,Center
+United States,Delaware,Wilmington,19892,Schurz,Circle
+United States,District of Columbia,Washington,20057,Union,Circle
+United States,District of Columbia,Washington,20220,Bartillon,Park
+United States,District of Columbia,Washington,20220,David,Place
+United States,District of Columbia,Washington,20220,Lukken,Court
+United States,District of Columbia,Washington,20310,Mcguire,Point
+United States,District of Columbia,Washington,20380,Dottie,Circle
+United States,District of Columbia,Washington,20380,Pawling,Junction
+United States,District of Columbia,Washington,20436,Hermina,Way
+United States,District of Columbia,Washington,20520,Elmside,Pass
+United States,District of Columbia,Washington,20566,School,Pass
+United States,District of Columbia,Washington,20575,Donald,Terrace
+United States,Florida,Boca Raton,33499,Nova,Road
+United States,Florida,Clearwater,34615,Ohio,Place
+United States,Florida,Daytona Beach,32128,Bunting,Street
+United States,Florida,Gainesville,32605,Warbler,Center
+United States,Florida,Lakeland,33811,Morningstar,Terrace
+United States,Florida,Largo,34643,Stephen,Lane
+United States,Florida,Miami,33196,7th,Drive
+United States,Florida,Miami,33196,Bartillon,Center
+United States,Florida,Miami,33233,Bunting,Center
+United States,Florida,Naples,34102,Graceland,Way
+United States,Florida,Ocala,34479,Fair Oaks,Road
+United States,Florida,Orlando,32835,Vermont,Center
+United States,Florida,Pensacola,32575,Nobel,Trail
+United States,Florida,Pensacola,32590,Waubesa,Junction
+United States,Florida,Pensacola,32595,Rowland,Way
+United States,Florida,Tampa,33615,Merchant,Crossing
+United States,Florida,Tampa,33661,Raven,Junction
+United States,Florida,Tampa,33686,Oxford,Lane
+United States,Florida,Winter Haven,33884,Corry,Point
+United States,Georgia,Atlanta,30316,Nova,Pass
+United States,Georgia,Atlanta,30316,Starling,Crossing
+United States,Georgia,Atlanta,30323,Melvin,Plaza
+United States,Georgia,Atlanta,30328,Old Gate,Pass
+United States,Georgia,Atlanta,30328,Old Gate,Place
+United States,Georgia,Atlanta,30343,Pierstorff,Circle
+United States,Georgia,Atlanta,30351,Novick,Trail
+United States,Georgia,Atlanta,31136,Forster,Parkway
+United States,Georgia,Atlanta,31136,Independence,Point
+United States,Georgia,Macon,31205,International,Alley
+United States,Georgia,Savannah,31422,Summerview,Lane
+United States,Hawaii,Honolulu,96850,Moose,Street
+United States,Idaho,Boise,83722,Birchwood,Crossing
+United States,Illinois,Chicago,60619,Di Loreto,Avenue
+United States,Illinois,Palatine,60078,Memorial,Trail
+United States,Indiana,Bloomington,47405,Darwin,Point
+United States,Indiana,Evansville,47719,Randy,Avenue
+United States,Indiana,Fort Wayne,46852,Manley,Park
+United States,Indiana,Gary,46406,Anthes,Center
+United States,Indiana,Jeffersonville,47134,Tony,Pass
+United States,Iowa,Des Moines,50320,Judy,Avenue
+United States,Iowa,Des Moines,50320,Kinsman,Court
+United States,Iowa,Des Moines,50981,Bayside,Road
+United States,Iowa,Des Moines,50981,Schlimgen,Road
+United States,Iowa,Sioux City,51105,John Wall,Hill
+United States,Kentucky,Lexington,40510,Messerschmidt,Circle
+United States,Kentucky,London,40745,High Crossing,Parkway
+United States,Kentucky,Louisville,40205,Walton,Hill
+United States,Kentucky,Louisville,40266,Prairie Rose,Hill
+United States,Kentucky,Louisville,40266,Superior,Place
+United States,Louisiana,Lafayette,70505,Gina,Way
+United States,Louisiana,New Orleans,70179,Straubel,Point
+United States,Louisiana,Shreveport,71105,Maple,Circle
+United States,Maryland,Baltimore,21216,Kim,Way
+United States,Maryland,Baltimore,21216,Sage,Parkway
+United States,Massachusetts,Springfield,01105,Holy Cross,Crossing
+United States,Michigan,Detroit,48258,Old Shore,Center
+United States,Michigan,Grand Rapids,49505,Comanche,Point
+United States,Michigan,Lansing,48930,Havey,Center
+United States,Minnesota,Maple Plain,55579,Banding,Place
+United States,Minnesota,Minneapolis,55480,Eagle Crest,Circle
+United States,Minnesota,Rochester,55905,Sheridan,Place
+United States,Missouri,Lees Summit,64082,Carey,Place
+United States,Missouri,Saint Joseph,64504,Sommers,Pass
+United States,Missouri,Saint Louis,63126,Anthes,Place
+United States,Missouri,Saint Louis,63180,Lotheville,Lane
+United States,Nebraska,Omaha,68117,Scott,Street
+United States,Nebraska,Omaha,68164,Annamark,Alley
+United States,Nevada,Las Vegas,89105,4th,Drive
+United States,Nevada,Las Vegas,89110,Burrows,Place
+United States,Nevada,Las Vegas,89115,Pawling,Hill
+United States,Nevada,Las Vegas,89166,Nelson,Plaza
+United States,Nevada,Las Vegas,89193,Oak,Hill
+United States,Nevada,Reno,89519,Katie,Plaza
+United States,Nevada,Reno,89519,Paget,Avenue
+United States,New Jersey,Newark,07104,Pond,Court
+United States,New Mexico,Las Cruces,88006,Judy,Street
+United States,New York,Albany,12205,Calypso,Avenue
+United States,New York,Brooklyn,11205,Walton,Way
+United States,New York,Flushing,11355,Lillian,Parkway
+United States,New York,Flushing,11388,Northport,Hill
+United States,New York,Jamaica,11470,8th,Pass
+United States,New York,New York City,10045,Scott,Alley
+United States,New York,New York City,10131,Fremont,Point
+United States,New York,Rochester,14609,Orin,Circle
+United States,New York,Rochester,14652,Paget,Park
+United States,New York,Rochester,14683,Shoshone,Parkway
+United States,New York,Staten Island,10310,Green,Pass
+United States,North Carolina,Durham,27710,Toban,Plaza
+United States,North Carolina,Greensboro,27409,Columbus,Terrace
+United States,North Carolina,Greensboro,27415,John Wall,Trail
+United States,North Carolina,Greensboro,27455,Rowland,Lane
+United States,North Carolina,Raleigh,27635,Forest,Junction
+United States,Ohio,Cincinnati,45249,Packers,Junction
+United States,Ohio,Cincinnati,45254,Dahle,Way
+United States,Ohio,Columbus,43231,Oak Valley,Lane
+United States,Ohio,Columbus,43240,Basil,Parkway
+United States,Ohio,Columbus,43240,Jackson,Trail
+United States,Ohio,Toledo,43615,Ridge Oak,Terrace
+United States,Ohio,Toledo,43635,Parkside,Terrace
+United States,Oklahoma,Oklahoma City,73119,Crescent Oaks,Place
+United States,Oklahoma,Oklahoma City,73173,Morrow,Street
+United States,Oregon,Portland,97229,Browning,Park
+United States,Pennsylvania,Allentown,18105,Dexter,Drive
+United States,Pennsylvania,Philadelphia,19146,Montana,Drive
+United States,Pennsylvania,Philadelphia,19172,Lyons,Place
+United States,Pennsylvania,Wilkes Barre,18763,Homewood,Drive
+United States,South Carolina,Beaufort,29905,Corry,Place
+United States,South Carolina,Florence,29505,Maywood,Plaza
+United States,South Carolina,Florence,29505,Warrior,Way
+United States,Tennessee,Johnson City,37605,Mallory,Lane
+United States,Tennessee,Knoxville,37914,Utah,Crossing
+United States,Tennessee,Memphis,38150,Vera,Parkway
+United States,Tennessee,Nashville,37215,Declaration,Avenue
+United States,Texas,Arlington,76011,Washington,Crossing
+United States,Texas,Austin,78703,Karstens,Avenue
+United States,Texas,Austin,78759,Granby,Center
+United States,Texas,Corpus Christi,78410,Nancy,Parkway
+United States,Texas,Dallas,75260,Menomonie,Way
+United States,Texas,El Paso,79934,Waxwing,Avenue
+United States,Texas,El Paso,88546,Oak,Plaza
+United States,Texas,Fort Worth,76105,Forster,Terrace
+United States,Texas,Fort Worth,76110,Westridge,Terrace
+United States,Texas,Fort Worth,76115,Trailsway,Avenue
+United States,Texas,Fort Worth,76178,Bartillon,Place
+United States,Texas,Gatesville,76598,Becker,Hill
+United States,Texas,Houston,77075,Welch,Circle
+United States,Texas,Houston,77240,Barby,Point
+United States,Texas,Houston,77260,Ridgeview,Trail
+United States,Texas,Houston,77281,Bluestem,Circle
+United States,Texas,Lubbock,79405,Dawn,Avenue
+United States,Texas,Round Rock,78682,Shelley,Road
+United States,Texas,San Antonio,78225,Annamark,Drive
+United States,Texas,Tyler,75710,Vera,Street
+United States,Utah,Provo,84605,Derek,Avenue
+United States,Utah,Provo,84605,Swallow,Point
+United States,Virginia,Alexandria,22313,Dixon,Trail
+United States,Virginia,Alexandria,22313,Michigan,Street
+United States,Virginia,Arlington,22205,Duke,Pass
+United States,Virginia,Arlington,22205,Redwing,Court
+United States,Virginia,Arlington,22205,Straubel,Avenue
+United States,Virginia,Chesapeake,23324,Anthes,Alley
+United States,Virginia,Chesapeake,23324,Barnett,Center
+United States,Virginia,Chesapeake,23324,Dexter,Park
+United States,Virginia,Dulles,20189,Arrowood,Road
+United States,Virginia,Hampton,23663,Linden,Park
+United States,Virginia,Richmond,23277,Cardinal,Place
+United States,Virginia,Richmond,23289,Maryland,Court
+United States,Virginia,Vienna,22184,Del Mar,Avenue
+United States,Virginia,Virginia Beach,23459,Di Loreto,Pass
+United States,Washington,Seattle,98109,Oak Valley,Lane
+United States,Washington,Seattle,98158,Susan,Junction
+United States,Washington,Seattle,98185,Grayhawk,Road
+United States,Washington,Tacoma,98405,Arrowood,Pass
+United States,West Virginia,Charleston,25326,Monument,Plaza
+United States,West Virginia,Charleston,25362,Truax,Pass
+United States,Wisconsin,Madison,53710,Sheridan,Avenue
+United States,Wisconsin,Madison,53726,Sunfield,Place

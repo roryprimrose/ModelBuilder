@@ -1,10 +1,9 @@
 ﻿namespace ModelBuilder.UnitTests
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Data;
     using FluentAssertions;
+    using ModelBuilder.Data;
     using NSubstitute;
     using Xunit;
 
@@ -26,9 +25,9 @@
 
             var target = new FirstNameValueGenerator();
 
-            var actual = (string) target.Generate(typeof(string), "FirstName", executeStrategy);
+            var actual = (string)target.Generate(typeof(string), "FirstName", executeStrategy);
 
-            TestData.Females.Any(x => x.FirstName == actual).Should().BeTrue();
+            TestData.FemaleNames.Any(x => x == actual).Should().BeTrue();
         }
 
         [Fact]
@@ -47,9 +46,9 @@
 
             var target = new FirstNameValueGenerator();
 
-            var actual = (string) target.Generate(typeof(string), "FirstName", executeStrategy);
+            var actual = (string)target.Generate(typeof(string), "FirstName", executeStrategy);
 
-            TestData.Females.Any(x => x.FirstName == actual).Should().BeTrue();
+            TestData.FemaleNames.Any(x => x == actual).Should().BeTrue();
         }
 
         [Fact]
@@ -68,9 +67,9 @@
 
             var target = new FirstNameValueGenerator();
 
-            var actual = (string) target.Generate(typeof(string), "FirstName", executeStrategy);
+            var actual = (string)target.Generate(typeof(string), "FirstName", executeStrategy);
 
-            TestData.Males.Any(x => x.FirstName == actual).Should().BeTrue();
+            TestData.MaleNames.Any(x => x == actual).Should().BeTrue();
         }
 
         [Fact]
@@ -86,9 +85,17 @@
 
             var target = new FirstNameValueGenerator();
 
-            var actual = (string) target.Generate(typeof(string), "FirstName", executeStrategy);
+            var actual = (string)target.Generate(typeof(string), "FirstName", executeStrategy);
 
-            TestData.People.Any(x => x.FirstName == actual).Should().BeTrue();
+            if (TestData.MaleNames.Any(x => x == actual))
+            {
+                // This is a match on a male name so all good
+            }
+            else
+            {
+                // Not a male name so it must be a female name
+                TestData.FemaleNames.Any(x => x == actual).Should().BeTrue(); 
+            }
         }
 
         [Fact]

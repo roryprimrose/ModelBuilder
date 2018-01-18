@@ -41,12 +41,19 @@
 
             if (firstName == null)
             {
-                firstName = person.FirstName;
+                if (string.Equals(gender, "male", StringComparison.OrdinalIgnoreCase))
+                {
+                    firstName = TestData.MaleNames.Next();
+                }
+                else
+                {
+                    firstName = TestData.FemaleNames.Next();
+                }
             }
 
             if (lastName == null)
             {
-                lastName = person.LastName;
+                lastName = TestData.LastNames.Next();
             }
 
             if (domain == null)
@@ -58,7 +65,7 @@
 
             return email.Replace(" ", string.Empty).ToLowerInvariant();
         }
-
+        
         /// <inheritdoc />
         public override int Priority { get; } = 1000;
 

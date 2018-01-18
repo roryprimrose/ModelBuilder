@@ -10,9 +10,9 @@
         [Fact]
         public void IsMatchPropertyTypeOnlyReturnsWhetherEvaluatorMatchesTest()
         {
-            var target = new ExecuteOrderRule((type, name) => false, 1000);
+            var target = new ExecuteOrderRule((declaringType, propertyType, name) => false, 1000);
 
-            var actual = target.IsMatch(typeof(string), "Stuff");
+            var actual = target.IsMatch(typeof(Person), typeof(string), "Stuff");
 
             actual.Should().BeFalse();
         }
@@ -23,7 +23,7 @@
         [InlineData(typeof(string), "stuff", typeof(int), "stuff", false)]
         [InlineData(typeof(string), "stuff", typeof(string), "stuff", true)]
         public void IsMatchPropertyTypeOnlyReturnsWhetherTypeAndNameMatchTest(
-            Type type,
+            Type propertyType,
             string name,
             Type matchType,
             string matchName,
@@ -31,9 +31,9 @@
         {
             var priority = Environment.TickCount;
 
-            var target = new ExecuteOrderRule(type, name, priority);
+            var target = new ExecuteOrderRule(null, propertyType, name, priority);
 
-            var actual = target.IsMatch(matchType, matchName);
+            var actual = target.IsMatch(null, matchType, matchName);
 
             actual.Should().Be(expected);
         }
@@ -54,16 +54,16 @@
         public void IsMatchPropertyTypeOnlyReturnsWhetherTypeAndRegularExpressionMatchTest(
             Type type,
             string expression,
-            Type matchType,
+            Type propertyType,
             string matchName,
             bool expected)
         {
             var priority = Environment.TickCount;
             var regex = new Regex(expression);
 
-            var target = new ExecuteOrderRule(type, regex, priority);
+            var target = new ExecuteOrderRule(null, type, regex, priority);
 
-            var actual = target.IsMatch(matchType, matchName);
+            var actual = target.IsMatch(null, propertyType, matchName);
 
             actual.Should().Be(expected);
         }
@@ -244,11 +244,12 @@
         [Fact]
         public void ReturnsConstructorValuesPropertyTypeOnlyTest()
         {
-            var type = typeof(string);
+            var declaringType = typeof(Person);
+            var propertyType = typeof(string);
             var name = Guid.NewGuid().ToString();
             var priority = Environment.TickCount;
 
-            var target = new ExecuteOrderRule(type, name, priority);
+            var target = new ExecuteOrderRule(declaringType, propertyType, name, priority);
 
             target.Priority.Should().Be(priority);
         }
@@ -292,36 +293,6 @@
             var priority = Environment.TickCount;
 
             Action action = () => new ExecuteOrderRule(null, null, (Regex)null, priority);
-
-            action.ShouldThrow<ArgumentNullException>();
-        }
-
-        [Fact]
-        public void ThrowsExceptionWhenCreatedWithNullPropertyTypeAndNameTest()
-        {
-            var priority = Environment.TickCount;
-
-            Action action = () => new ExecuteOrderRule(null, (string)null, priority);
-
-            action.ShouldThrow<ArgumentNullException>();
-        }
-
-        [Fact]
-        public void ThrowsExceptionWhenCreatedWithNullPropertyTypeAndRegularExpressionTest()
-        {
-            var priority = Environment.TickCount;
-
-            Action action = () => new ExecuteOrderRule(null, (Regex)null, priority);
-
-            action.ShouldThrow<ArgumentNullException>();
-        }
-
-        [Fact]
-        public void ThrowsExceptionWhenCreatedWithNullPropertyTypeOnlyFunctionTest()
-        {
-            var priority = Environment.TickCount;
-
-            Action action = () => new ExecuteOrderRule((Func<Type, string, bool>)null, priority);
 
             action.ShouldThrow<ArgumentNullException>();
         }

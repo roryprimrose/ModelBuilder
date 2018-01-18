@@ -51,16 +51,13 @@ namespace ModelBuilder.UnitTests
             target.Should().NotBeNull();
             target.Email.Should().NotBeNullOrWhiteSpace();
             target.Domain.Should().NotBeNullOrWhiteSpace();
-            target.FirstName.Should().NotBeNullOrWhiteSpace();
             target.Gender.Should().NotBeNullOrWhiteSpace();
             target.Address.Should().NotBeNullOrWhiteSpace();
             target.City.Should().NotBeNullOrWhiteSpace();
             target.Company.Should().NotBeNullOrWhiteSpace();
-            target.Country.Should().NotBeNullOrWhiteSpace();
             target.LastName.Should().NotBeNullOrWhiteSpace();
             target.Phone.Should().NotBeNullOrWhiteSpace();
             target.PostCode.Should().NotBeNullOrWhiteSpace();
-            target.State.Should().NotBeNullOrWhiteSpace();
             target.TimeZone.Should().NotBeNullOrWhiteSpace();
         }
 

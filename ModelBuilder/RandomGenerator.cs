@@ -250,7 +250,54 @@
 
             var requiresRounding = RequiresRounding(checkType);
 
-            var value = NextValue<double>(minimum, maximum, requiresRounding);
+            var value = NextDoubleValue(minimum, maximum, requiresRounding);
+
+            if (checkType == typeof(double))
+            {
+                // There is no conversion required, just return the value
+                return value;
+            }
+            
+            // We need to manage some specific precision issues here
+            // If the type is decimal, the min value will already be decimal.MinValue
+            // however a conversion of this value from double to decimal will still be an exception
+            // This is because double is wider than decimal, long and unlong and conversions of the same logical value
+            // results in out of bound values
+            if (checkType == typeof(decimal))
+            {
+                var minBoundary = (double)decimal.MinValue;
+
+                if (value <= minBoundary)
+                {
+                    return decimal.MinValue;
+                }
+
+                var maxBoundary = (double)decimal.MaxValue;
+
+                if (value >= maxBoundary)
+                {
+                    return decimal.MaxValue;
+                }
+            }
+            else if (checkType == typeof(long))
+            {
+                var maxBoundary = (double)long.MaxValue;
+
+                if (value >= maxBoundary)
+                {
+                    return long.MaxValue;
+                }
+            }
+            else if (checkType == typeof(ulong))
+            {
+                var maxBoundary = (double)ulong.MaxValue;
+
+                if (value >= maxBoundary)
+                {
+                    return ulong.MaxValue;
+                }
+            }
+
             var convertedValue = Convert.ChangeType(value, checkType, CultureInfo.InvariantCulture);
 
             if (isNullable)
@@ -282,7 +329,7 @@
             }
         }
 
-        private static T NextValue<T>(double min, double max, bool roundValue)
+        private static double NextDoubleValue(double min, double max, bool roundValue)
         {
             if (min > max)
             {
@@ -323,7 +370,7 @@
 
             var shiftedPoint = value + min;
 
-            return (T)Convert.ChangeType(shiftedPoint, typeof(T), CultureInfo.InvariantCulture);
+            return shiftedPoint;
         }
 
         private bool RequiresRounding(Type type)

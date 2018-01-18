@@ -3,19 +3,76 @@
     using System;
     using System.Collections.Generic;
     using System.IO;
+    using System.Linq;
     using FluentAssertions;
+    using ModelBuilder.Data;
     using NSubstitute;
     using Xunit;
 
     public class StateValueGeneratorTests
     {
         [Fact]
-        public void GenerateReturnsRandomStateTest()
+        public void GenerateReturnsRandomStateMatchingCaseInsensitiveCountryTest()
         {
+            var address = new Address
+            {
+                Country = "UNITED STATES"
+            };
             var buildChain = new LinkedList<object>();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
+
+            buildChain.AddFirst(address);
+
+            var target = new StateValueGenerator();
+
+            var actual = target.Generate(typeof(string), "state", executeStrategy) as string;
+
+            actual.Should().NotBeNullOrWhiteSpace();
+
+            var countryToMatch = address.Country.ToLowerInvariant();
+
+            var possibleMatches = TestData.Locations.Where(x => x.Country.ToLowerInvariant() == countryToMatch);
+
+            possibleMatches.Select(x => x.State).Should().Contain(actual);
+        }
+
+        [Fact]
+        public void GenerateReturnsRandomStateMatchingCountryTest()
+        {
+            var address = new Address
+            {
+                Country = "United States"
+            };
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            buildChain.AddFirst(address);
+
+            var target = new StateValueGenerator();
+
+            var actual = target.Generate(typeof(string), "state", executeStrategy) as string;
+
+            actual.Should().NotBeNullOrWhiteSpace();
+
+            var possibleMatches = TestData.Locations.Where(x => x.Country == address.Country);
+
+            possibleMatches.Select(x => x.State).Should().Contain(actual);
+        }
+
+        [Fact]
+        public void GenerateReturnsRandomStateTest()
+        {
+            var address = new Address();
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            buildChain.AddFirst(address);
 
             var target = new StateValueGenerator();
 
@@ -34,8 +91,29 @@
                     break;
                 }
             }
-            
+
             first.Should().NotBe(second);
+        }
+
+        [Fact]
+        public void GenerateReturnsRandomStateWhenNoMatchingCountryTest()
+        {
+            var address = new Address
+            {
+                Country = Guid.NewGuid().ToString()
+            };
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            buildChain.AddFirst(address);
+
+            var target = new StateValueGenerator();
+
+            var actual = target.Generate(typeof(string), "state", executeStrategy) as string;
+
+            actual.Should().NotBeNullOrWhiteSpace();
         }
 
         [Theory]
@@ -45,10 +123,13 @@
         [InlineData(typeof(string), "Region", true)]
         public void GenerateReturnsValuesForSeveralNameFormatsTest(Type type, string referenceName, bool expected)
         {
+            var address = new Address();
             var buildChain = new LinkedList<object>();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
+
+            buildChain.AddFirst(address);
 
             var target = new StateValueGenerator();
 
@@ -95,9 +176,17 @@
         [InlineData(typeof(string), "Region", true)]
         public void IsSupportedTest(Type type, string referenceName, bool expected)
         {
+            var address = new Address();
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            buildChain.AddFirst(address);
+
             var target = new StateValueGenerator();
 
-            var actual = target.IsSupported(type, referenceName, null);
+            var actual = target.IsSupported(type, referenceName, buildChain);
 
             actual.Should().Be(expected);
         }

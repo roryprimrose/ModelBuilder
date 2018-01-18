@@ -21,19 +21,35 @@
         {
             var context = executeStrategy?.BuildChain?.Last?.Value;
             var gender = GetValue<string>(PropertyExpression.Gender, context);
+            bool isMale;
 
-            if (string.Equals(gender, "male", StringComparison.OrdinalIgnoreCase))
+            if (string.IsNullOrWhiteSpace(gender))
+            {
+                // Randomly assign a gender so that we can pick from a gender data set rather than limiting to a specific one
+                var nextValue = Generator.NextValue(0, 1);
+
+                if (nextValue == 0)
+                {
+                    isMale = false;
+                }
+                else
+                {
+                    isMale = true;
+                }
+            }
+            else
+            {
+                isMale = string.Equals(gender, "male", StringComparison.OrdinalIgnoreCase);
+            }
+
+            if (isMale)
             {
                 // Use a male first name
-                var male = TestData.NextMale();
-
-                return male.FirstName;
+                return TestData.MaleNames.Next();
             }
 
             // Use a female name
-            var female = TestData.NextFemale();
-
-            return female.FirstName;
+            return TestData.FemaleNames.Next();
         }
 
         /// <inheritdoc />

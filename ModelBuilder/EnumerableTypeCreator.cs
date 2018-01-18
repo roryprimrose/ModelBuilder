@@ -17,7 +17,7 @@
         {
             typeof(ArraySegment<>),
             typeof(IPAddressCollection),
-#if NET40
+#if NET45
             typeof(GatewayIPAddressInformationCollection),
             typeof(IPAddressInformationCollection),
             typeof(MulticastIPAddressInformationCollection),

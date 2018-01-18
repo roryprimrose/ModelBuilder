@@ -31,7 +31,7 @@
             };
             var executeOrderRules = new List<ExecuteOrderRule>
             {
-                new ExecuteOrderRule(typeof(Person), "LastName", int.MinValue)
+                new ExecuteOrderRule(typeof(Person), typeof(string), "LastName", int.MinValue)
             };
             var postBuildActions = new List<IPostBuildAction>
             {

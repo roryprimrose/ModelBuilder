@@ -32,7 +32,7 @@
 
             foreach (var rule in rules)
             {
-                Action action = () => rule.IsMatch(typeof(string), "Stuff");
+                Action action = () => rule.IsMatch(typeof(Person), typeof(string), "Stuff");
 
                 action.ShouldNotThrow();
             }
