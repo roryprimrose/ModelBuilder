@@ -6,6 +6,7 @@
     using System.Linq;
     using System.Threading.Tasks;
     using FluentAssertions;
+    using ModelBuilder.Data;
     using NSubstitute;
     using NSubstitute.ExceptionExtensions;
     using Xunit;
@@ -114,6 +115,28 @@
 
             actual.Culture.Should().NotBeNull();
             actual.CultureName.Should().NotBeNullOrWhiteSpace();
+        }
+
+        [Fact]
+        public void CreateBuildsAddressUsingValidCombinationOfValuesTest()
+        {
+            var actual = Model.Create<Address>();
+
+            var matchingCountries = TestData.Locations.Where(x => x.Country == actual.Country).ToList();
+
+            matchingCountries.Should().NotBeEmpty();
+
+            var matchingStates = matchingCountries.Where(x => x.State == actual.State).ToList();
+
+            matchingStates.Should().NotBeEmpty();
+
+            var matchingCities = matchingStates.Where(x => x.City == actual.City).ToList();
+
+            matchingCities.Should().NotBeEmpty();
+
+            var matchingPostCodes = matchingStates.Where(x => x.PostCode == actual.Postcode).ToList();
+
+            matchingPostCodes.Should().NotBeEmpty();
         }
 
         [Fact]
@@ -604,7 +627,7 @@
 #if NET452
                                + " on thread " + System.Threading.Thread.CurrentThread.ManagedThreadId
 #endif
-                               + Environment.NewLine + strategy.Log.Output;
+                                            + Environment.NewLine + strategy.Log.Output;
                     });
 
                 tasks.Add(task);

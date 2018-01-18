@@ -309,6 +309,56 @@ namespace ModelBuilder.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 000dn.com
+        ///013net.net
+        ///100im.info
+        ///101affiliates.com
+        ///10best.com
+        ///11oyun.com
+        ///120sports.com
+        ///123c.vn
+        ///123mua.vn
+        ///123pay.vn
+        ///123phim.vn
+        ///123-reg.co.uk
+        ///123rf.com
+        ///123srv.com
+        ///1337x.org
+        ///140proof.com
+        ///163.com
+        ///1688.com
+        ///16mm.it
+        ///173uu.com
+        ///17ok.com
+        ///1and1.co.uk
+        ///1and1.com
+        ///1anh.com
+        ///1dial.com
+        ///1digitalstock.com
+        ///1iota.com
+        ///1mobile.com
+        ///1up.com
+        ///1worldonline.com
+        ///20minutos.es
+        ///22find.com
+        ///2345.com
+        ///247inc.net
+        ///247-inc.net
+        ///247msg.com
+        ///247realmedia.com
+        ///247sports.com
+        ///247wallst.com
+        ///24h.com.vn
+        ///24h-hotel.com
+        ///2 [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string Domains {
+            get {
+                return ResourceManager.GetString("Domains", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Expression &apos;{0}&apos; does not refer to a property.
         /// </summary>
         internal static string Error_ExpressionNotPropertyFormat {
@@ -496,15 +546,13 @@ namespace ModelBuilder.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Country,State,City,PostCode,StreetName,StreetSuffix
-        ///Australia,New South Wales,Eastern Suburbs Mc,1315,Dawn,Terrace
-        ///Australia,New South Wales,Eastern Suburbs Mc,1315,Hansons,Alley
-        ///Australia,New South Wales,Sydney,1043,Donald,Park
-        ///Australia,New South Wales,Sydney,1109,Melvin,Street
-        ///Australia,New South Wales,Sydney,1130,Warner,Drive
-        ///Australia,New South Wales,Sydney,1196,Golf Course,Parkway
-        ///Australia,South Australia,Adelaide Mail Centre,5869,Eagle Crest,Lane
-        ///Australia,South Australia,Adelaide Mail Centr [rest of string was truncated]&quot;;.
+        ///   Looks up a localized string similar to Australia,New South Wales,Australia Square,1213,Clyde Gallagher,Circle,+61 918 203 7532
+        ///Australia,New South Wales,Sydney,1009,Bunker Hill,Junction,+61 140 836 9230
+        ///Australia,New South Wales,Sydney,1109,Miller,Road,+61 939 821 6963
+        ///Australia,New South Wales,Sydney,1134,Sachtjen,Point,+61 613 266 0635
+        ///Australia,South Australia,Adelaide Mail Centre,5889,Bultman,Park,+61 752 287 8617
+        ///Australia,South Australia,Adelaide Mail Centre,5899,Ohio,Hill,+61 573 292 8781
+        ///Australia,Tasmania,Hobart,7803,School,Park,+ [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Locations {
             get {
@@ -696,6 +744,46 @@ namespace ModelBuilder.Properties {
         internal static string Rule_InvalidMatch {
             get {
                 return ResourceManager.GetString("Rule_InvalidMatch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Africa/Abidjan
+        ///Africa/Accra
+        ///Africa/Addis_Ababa
+        ///Africa/Algiers
+        ///Africa/Asmara
+        ///Africa/Asmera
+        ///Africa/Bamako
+        ///Africa/Bangui
+        ///Africa/Banjul
+        ///Africa/Bissau
+        ///Africa/Blantyre
+        ///Africa/Brazzaville
+        ///Africa/Bujumbura
+        ///Africa/Cairo
+        ///Africa/Casablanca
+        ///Africa/Ceuta
+        ///Africa/Conakry
+        ///Africa/Dakar
+        ///Africa/Dar_es_Salaam
+        ///Africa/Djibouti
+        ///Africa/Douala
+        ///Africa/El_Aaiun
+        ///Africa/Freetown
+        ///Africa/Gaborone
+        ///Africa/Harare
+        ///Africa/Johannesburg
+        ///Africa/Juba
+        ///Africa/Kampala
+        ///Africa/Khartoum
+        ///Africa/Kigali
+        ///Africa/Kinshasa
+        ///Afric [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TimeZones {
+            get {
+                return ResourceManager.GetString("TimeZones", resourceCulture);
             }
         }
     }

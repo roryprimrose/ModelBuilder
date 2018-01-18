@@ -31,9 +31,9 @@
 
             actual.Should().NotBeNullOrWhiteSpace();
 
-            var countryToMatch = address.Country.ToLowerInvariant();
+            var valueToMatch = address.Country.ToLowerInvariant();
 
-            var possibleMatches = TestData.Locations.Where(x => x.Country.ToLowerInvariant() == countryToMatch);
+            var possibleMatches = TestData.Locations.Where(x => x.Country.ToLowerInvariant() == valueToMatch);
 
             possibleMatches.Select(x => x.State).Should().Contain(actual);
         }
@@ -113,7 +113,7 @@
 
             var actual = target.Generate(typeof(string), "state", executeStrategy) as string;
 
-            actual.Should().NotBeNullOrWhiteSpace();
+            TestData.Locations.Select(x => x.State).Should().Contain(actual);
         }
 
         [Theory]
@@ -178,9 +178,6 @@
         {
             var address = new Address();
             var buildChain = new LinkedList<object>();
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            executeStrategy.BuildChain.Returns(buildChain);
 
             buildChain.AddFirst(address);
 

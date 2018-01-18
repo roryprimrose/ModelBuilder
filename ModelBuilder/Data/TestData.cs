@@ -27,6 +27,8 @@
             MaleNames = ParseValues(Resources.MaleNames);
             LastNames = ParseValues(Resources.LastNames);
             Cultures = ParseValues(Resources.Cultures);
+            TimeZones = ParseValues(Resources.TimeZones);
+            Domains = ParseValues(Resources.Domains);
 
             People = ReadPeople();
 
@@ -134,6 +136,11 @@
         public static IReadOnlyList<string> Cultures { get; }
 
         /// <summary>
+        ///     Gets a test data set of domains.
+        /// </summary>
+        public static IReadOnlyList<string> Domains { get; }
+
+        /// <summary>
         ///     Gets a test data set of female names.
         /// </summary>
         public static IReadOnlyList<string> FemaleNames { get; }
@@ -167,5 +174,10 @@
         ///     Gets a test data set of people.
         /// </summary>
         public static ReadOnlyCollection<Person> People { get; }
+
+        /// <summary>
+        ///     Gets a test data set of time zones.
+        /// </summary>
+        public static IReadOnlyList<string> TimeZones { get; }
     }
 }

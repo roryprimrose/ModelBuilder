@@ -46,6 +46,12 @@
                 yield return new ExecuteOrderRule(null, null, PropertyExpression.LastName, 2560);
                 yield return new ExecuteOrderRule(null, null, PropertyExpression.Email, 2540);
 
+                yield return new ExecuteOrderRule(null, null, PropertyExpression.Country, 2400);
+                yield return new ExecuteOrderRule(null, null, PropertyExpression.State, 2390);
+                yield return new ExecuteOrderRule(null, null, PropertyExpression.City, 2380);
+                yield return new ExecuteOrderRule(null, null, PropertyExpression.PostCode, 2370);
+                yield return new ExecuteOrderRule(null, null, PropertyExpression.TimeZone, 2360);
+
                 // Populate strings before other reference types
                 yield return new ExecuteOrderRule(null, typeof(string), (string)null, 2000);
                 yield return new ExecuteOrderRule((declaringType, propertyType, name) => propertyType.TypeIsClass(), 1000);

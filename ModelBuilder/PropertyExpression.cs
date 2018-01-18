@@ -9,6 +9,11 @@
     public static class PropertyExpression
     {
         /// <summary>
+        ///     Defines the expression for matching city properties.
+        /// </summary>
+        public static readonly Regex City = new Regex("City", RegexOptions.IgnoreCase);
+
+        /// <summary>
         ///     Defines the expression for matching country properties.
         /// </summary>
         public static readonly Regex Country = new Regex("Country", RegexOptions.IgnoreCase);
@@ -32,5 +37,20 @@
         ///     Defines the expression for matching last name/surname properties.
         /// </summary>
         public static readonly Regex LastName = new Regex("Surname|(Last[_]?Name)", RegexOptions.IgnoreCase);
+
+        /// <summary>
+        ///     Defines the expression for matching postcode properties.
+        /// </summary>
+        public static readonly Regex PostCode = new Regex("PostCode|Zip(Code)?", RegexOptions.IgnoreCase);
+
+        /// <summary>
+        ///     Defines the expression for matching state properties.
+        /// </summary>
+        public static readonly Regex State = new Regex("State|Region", RegexOptions.IgnoreCase);
+
+        /// <summary>
+        ///     Defines the expression for matching timezone properties.
+        /// </summary>
+        public static readonly Regex TimeZone = new Regex("TimeZone", RegexOptions.IgnoreCase);
     }
 }

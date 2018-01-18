@@ -13,17 +13,14 @@ namespace ModelBuilder
         /// <summary>
         ///     Initializes a new instance of the <see cref="DomainNameValueGenerator" /> class.
         /// </summary>
-        public DomainNameValueGenerator()
-            : base(new Regex("Domain", RegexOptions.IgnoreCase), typeof(string))
+        public DomainNameValueGenerator() : base(new Regex("Domain", RegexOptions.IgnoreCase), typeof(string))
         {
         }
 
         /// <inheritdoc />
         protected override object GenerateValue(Type type, string referenceName, IExecuteStrategy executeStrategy)
         {
-            var person = TestData.NextPerson();
-
-            return person.Domain;
+            return TestData.Domains.Next();
         }
 
         /// <inheritdoc />

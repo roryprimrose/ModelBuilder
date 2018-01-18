@@ -4,11 +4,27 @@
     using System.Collections.Generic;
     using System.IO;
     using FluentAssertions;
+    using ModelBuilder.Data;
     using NSubstitute;
     using Xunit;
 
     public class DomainNameValueGeneratorTests
     {
+        [Fact]
+        public void GenerateReturnsRandomDomainFromDefinedListTest()
+        {
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            var target = new DomainNameValueGenerator();
+
+            var actual = target.Generate(typeof(string), "domain", executeStrategy) as string;
+
+            TestData.Domains.Should().Contain(actual);
+        }
+
         [Fact]
         public void GenerateReturnsRandomDomainTest()
         {
@@ -63,7 +79,7 @@
 
             action.ShouldThrow<NotSupportedException>();
         }
-        
+
         [Fact]
         public void HasHigherPriorityThanStringValueGeneratorTest()
         {

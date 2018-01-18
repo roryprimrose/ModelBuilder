@@ -14,7 +14,7 @@
         /// <summary>
         ///     Initializes a new instance of the <see cref="StateValueGenerator" /> class.
         /// </summary>
-        public StateValueGenerator() : base(new Regex("State|Region", RegexOptions.IgnoreCase), typeof(string))
+        public StateValueGenerator() : base(PropertyExpression.State, typeof(string))
         {
         }
 

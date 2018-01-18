@@ -14,7 +14,7 @@
         public static Location Parse(string csvData)
         {
             // This data is expected to be in the following CSV format 
-            // Country,State,City,PostCode,StreetName,StreetSuffix
+            // Country,State,City,PostCode,StreetName,StreetSuffix,Phone
             var parts = csvData.Split(',');
 
             var location = new Location
@@ -24,7 +24,8 @@
                 City = parts[2],
                 PostCode = parts[3],
                 StreetName = parts[4],
-                StreetSuffix = parts[5]
+                StreetSuffix = parts[5],
+                Phone = parts[6]
             };
 
             return location;
@@ -39,6 +40,11 @@
         ///     Gets or sets the country.
         /// </summary>
         public string Country { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the phone.
+        /// </summary>
+        public string Phone { get; set; }
 
         /// <summary>
         ///     Gets or sets the post code.
