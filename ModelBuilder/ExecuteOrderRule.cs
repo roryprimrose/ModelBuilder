@@ -1,6 +1,7 @@
 ﻿namespace ModelBuilder
 {
     using System;
+    using System.Reflection;
     using System.Text.RegularExpressions;
     using ModelBuilder.Properties;
 
@@ -124,13 +125,11 @@
         /// <summary>
         ///     Gets whether the specified type and property name match this rule.
         /// </summary>
-        /// <param name="declaringType">The declaring type with the property that matches the rule.</param>
-        /// <param name="propertyType">The property type that matches the rule.</param>
-        /// <param name="propertyName">The property name to match.</param>
+        /// <param name="property">The property to evaluate against the rule.</param>
         /// <returns><c>true</c> if the rule matches the specified type and property name; otherwise <c>false</c>.</returns>
-        public bool IsMatch(Type declaringType, Type propertyType, string propertyName)
+        public bool IsMatch(PropertyInfo property)
         {
-            return _func(declaringType, propertyType, propertyName);
+            return _func(property.DeclaringType, property.PropertyType, property.Name);
         }
 
         /// <summary>
