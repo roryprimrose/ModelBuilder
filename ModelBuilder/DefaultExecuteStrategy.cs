@@ -500,7 +500,7 @@
             }
 
             var matchingRules = from x in Configuration.ExecuteOrderRules
-                where x.IsMatch(property.DeclaringType, property.PropertyType, property.Name)
+                where x.IsMatch(property)
                 orderby x.Priority descending
                 select x;
             var matchingRule = matchingRules.FirstOrDefault();

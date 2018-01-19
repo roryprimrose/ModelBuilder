@@ -32,7 +32,9 @@
 
             foreach (var rule in rules)
             {
-                Action action = () => rule.IsMatch(typeof(Person), typeof(string), "Stuff");
+                var property = typeof(Person).GetProperty(nameof(Person.FirstName));
+
+                Action action = () => rule.IsMatch(property);
 
                 action.ShouldNotThrow();
             }

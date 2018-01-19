@@ -3,6 +3,7 @@
     using System;
     using System.Linq;
     using System.Linq.Expressions;
+    using System.Reflection;
     using FluentAssertions;
     using NSubstitute;
     using Xunit;
@@ -126,7 +127,9 @@
 
             rule.Priority.Should().Be(priority);
 
-            var actual = rule.IsMatch(typeof(Person), typeof(string), nameof(Person.FirstName));
+            var property = typeof(Person).GetProperty(nameof(Person.FirstName));
+
+            var actual = rule.IsMatch(property);
 
             actual.Should().BeTrue();
         }

@@ -162,7 +162,9 @@
 
             var expected = actual.FirstName + "." + actual.LastName + "@" + actual.Domain;
 
-            actual.Email.Should().Be(expected.ToLowerInvariant());
+            expected = expected.Replace(" ", "").ToLowerInvariant();
+
+            actual.Email.Should().Be(expected);
         }
 
         [Fact]

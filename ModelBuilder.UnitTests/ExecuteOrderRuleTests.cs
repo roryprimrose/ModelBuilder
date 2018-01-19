@@ -1,61 +1,22 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
+    using System.IO;
+    using System.Reflection;
     using System.Text.RegularExpressions;
     using FluentAssertions;
     using Xunit;
 
     public class ExecuteOrderRuleTests
     {
-        [Fact]
-        public void IsMatchPropertyTypeOnlyReturnsWhetherEvaluatorMatchesTest()
-        {
-            var target = new ExecuteOrderRule((declaringType, propertyType, name) => false, 1000);
-
-            var actual = target.IsMatch(typeof(Person), typeof(string), "Stuff");
-
-            actual.Should().BeFalse();
-        }
-
         [Theory]
-        [InlineData(typeof(string), "stuff", typeof(int), "no", false)]
-        [InlineData(typeof(string), "stuff", typeof(string), "no", false)]
-        [InlineData(typeof(string), "stuff", typeof(int), "stuff", false)]
-        [InlineData(typeof(string), "stuff", typeof(string), "stuff", true)]
-        public void IsMatchPropertyTypeOnlyReturnsWhetherTypeAndNameMatchTest(
-            Type propertyType,
-            string name,
-            Type matchType,
-            string matchName,
-            bool expected)
-        {
-            var priority = Environment.TickCount;
-
-            var target = new ExecuteOrderRule(null, propertyType, name, priority);
-
-            var actual = target.IsMatch(null, matchType, matchName);
-
-            actual.Should().Be(expected);
-        }
-
-        [Theory]
-        [InlineData(typeof(string), "stuff", typeof(int), "no", false)]
-        [InlineData(typeof(string), "stuff", typeof(string), "no", false)]
-        [InlineData(typeof(string), "stuff", typeof(int), "stuff", false)]
-        [InlineData(typeof(string), "stuff", typeof(string), "stuff", true)]
-        [InlineData(typeof(string), "First.+", typeof(string), "FirstName", true)]
-        [InlineData(typeof(string), "(F|f)irst[_]?(N|n)ame", typeof(string), "FirstName", true)]
-        [InlineData(typeof(string), "(F|f)irst[_]?(N|n)ame", typeof(string), "First_Name", true)]
-        [InlineData(typeof(string), "(F|f)irst[_]?(N|n)ame", typeof(string), "First_name", true)]
-        [InlineData(typeof(string), "(F|f)irst[_]?(N|n)ame", typeof(string), "Firstname", true)]
-        [InlineData(typeof(string), "(F|f)irst[_]?(N|n)ame", typeof(string), "first_name", true)]
-        [InlineData(typeof(string), "(F|f)irst[_]?(N|n)ame", typeof(string), "first_Name", true)]
-        [InlineData(typeof(string), "(F|f)irst[_]?(N|n)ame", typeof(string), "firstname", true)]
+        [InlineData(typeof(string), "stuff", false)]
+        [InlineData(typeof(Stream), "First.+", false)]
+        [InlineData(typeof(string), "First.+", true)]
+        [InlineData(typeof(string), "(F|f)irst[_]?(N|n)ame", true)]
         public void IsMatchPropertyTypeOnlyReturnsWhetherTypeAndRegularExpressionMatchTest(
             Type type,
             string expression,
-            Type propertyType,
-            string matchName,
             bool expected)
         {
             var priority = Environment.TickCount;
@@ -63,7 +24,9 @@
 
             var target = new ExecuteOrderRule(null, type, regex, priority);
 
-            var actual = target.IsMatch(null, propertyType, matchName);
+            var property = typeof(Person).GetProperty(nameof(Person.FirstName));
+
+            var actual = target.IsMatch(property);
 
             actual.Should().Be(expected);
         }
@@ -73,162 +36,47 @@
         {
             var target = new ExecuteOrderRule((declaringType, propertyType, name) => false, 1000);
 
-            var actual = target.IsMatch(typeof(Person), typeof(string), "Stuff");
+            var property = typeof(Person).GetProperty(nameof(Person.FirstName));
+
+            var actual = target.IsMatch(property);
 
             actual.Should().BeFalse();
         }
 
         [Theory]
-        [InlineData(typeof(Person), typeof(string), "stuff", typeof(Person), typeof(int), "no", false)]
-        [InlineData(typeof(Person), typeof(string), "stuff", typeof(Person), typeof(string), "no", false)]
-        [InlineData(typeof(Person), typeof(string), "stuff", typeof(Person), typeof(int), "stuff", false)]
-        [InlineData(typeof(Person), typeof(string), "stuff", typeof(Company), typeof(string), "stuff", false)]
-        [InlineData(typeof(Person), typeof(string), "stuff", typeof(Person), typeof(string), "stuff", true)]
+        [InlineData(typeof(Person), typeof(string), "stuff", false)]
+        [InlineData(typeof(Person), typeof(Stream), "FirstName", false)]
+        [InlineData(typeof(Stream), typeof(string), "stuff", false)]
+        [InlineData(typeof(Person), typeof(string), "FirstName", true)]
+        [InlineData(null, typeof(string), "FirstName", true)]
         public void IsMatchReturnsWhetherTypeAndNameMatchTest(
             Type declaringType,
             Type propertyType,
             string name,
-            Type matchDeclaringType,
-            Type matchPropertyType,
-            string matchName,
             bool expected)
         {
             var priority = Environment.TickCount;
 
             var target = new ExecuteOrderRule(declaringType, propertyType, name, priority);
 
-            var actual = target.IsMatch(matchDeclaringType, matchPropertyType, matchName);
+            var property = typeof(Person).GetProperty(nameof(Person.FirstName));
+
+            var actual = target.IsMatch(property);
 
             actual.Should().Be(expected);
         }
 
         [Theory]
-        [InlineData(typeof(Person), typeof(string), "stuff", typeof(Person), typeof(int), "no", false)]
-        [InlineData(typeof(Person), typeof(string), "stuff", typeof(Person), typeof(string), "no", false)]
-        [InlineData(typeof(Person), typeof(string), "stuff", typeof(Person), typeof(int), "stuff", false)]
-        [InlineData(typeof(Person), typeof(string), "stuff", typeof(Company), typeof(string), "stuff", false)]
-        [InlineData(typeof(Person), typeof(string), "First.+", typeof(Company), typeof(string), "FirstName", false)]
-        [InlineData(
-            typeof(Person),
-            typeof(string),
-            "(F|f)irst[_]?(N|n)ame",
-            typeof(Company),
-            typeof(string),
-            "FirstName",
-            false)]
-        [InlineData(
-            typeof(Person),
-            typeof(string),
-            "(F|f)irst[_]?(N|n)ame",
-            typeof(Company),
-            typeof(string),
-            "First_Name",
-            false)]
-        [InlineData(
-            typeof(Person),
-            typeof(string),
-            "(F|f)irst[_]?(N|n)ame",
-            typeof(Company),
-            typeof(string),
-            "First_name",
-            false)]
-        [InlineData(
-            typeof(Person),
-            typeof(string),
-            "(F|f)irst[_]?(N|n)ame",
-            typeof(Company),
-            typeof(string),
-            "Firstname",
-            false)]
-        [InlineData(
-            typeof(Person),
-            typeof(string),
-            "(F|f)irst[_]?(N|n)ame",
-            typeof(Company),
-            typeof(string),
-            "first_name",
-            false)]
-        [InlineData(
-            typeof(Person),
-            typeof(string),
-            "(F|f)irst[_]?(N|n)ame",
-            typeof(Company),
-            typeof(string),
-            "first_Name",
-            false)]
-        [InlineData(
-            typeof(Person),
-            typeof(string),
-            "(F|f)irst[_]?(N|n)ame",
-            typeof(Company),
-            typeof(string),
-            "firstname",
-            false)]
-        [InlineData(typeof(Person), typeof(string), "stuff", typeof(Person), typeof(string), "stuff", true)]
-        [InlineData(typeof(Person), typeof(string), "First.+", typeof(Person), typeof(string), "FirstName", true)]
-        [InlineData(
-            typeof(Person),
-            typeof(string),
-            "(F|f)irst[_]?(N|n)ame",
-            typeof(Person),
-            typeof(string),
-            "FirstName",
-            true)]
-        [InlineData(
-            typeof(Person),
-            typeof(string),
-            "(F|f)irst[_]?(N|n)ame",
-            typeof(Person),
-            typeof(string),
-            "First_Name",
-            true)]
-        [InlineData(
-            typeof(Person),
-            typeof(string),
-            "(F|f)irst[_]?(N|n)ame",
-            typeof(Person),
-            typeof(string),
-            "First_name",
-            true)]
-        [InlineData(
-            typeof(Person),
-            typeof(string),
-            "(F|f)irst[_]?(N|n)ame",
-            typeof(Person),
-            typeof(string),
-            "Firstname",
-            true)]
-        [InlineData(
-            typeof(Person),
-            typeof(string),
-            "(F|f)irst[_]?(N|n)ame",
-            typeof(Person),
-            typeof(string),
-            "first_name",
-            true)]
-        [InlineData(
-            typeof(Person),
-            typeof(string),
-            "(F|f)irst[_]?(N|n)ame",
-            typeof(Person),
-            typeof(string),
-            "first_Name",
-            true)]
-        [InlineData(
-            typeof(Person),
-            typeof(string),
-            "(F|f)irst[_]?(N|n)ame",
-            typeof(Person),
-            typeof(string),
-            "firstname",
-            true)]
+        [InlineData(typeof(Stream), typeof(string), "FirstName", false)]
+        [InlineData(typeof(Person), typeof(int), "FirstName", false)]
+        [InlineData(typeof(Person), typeof(string), "stuff", false)]
+        [InlineData(typeof(Person), typeof(string), "FirstName", true)]
+        [InlineData(typeof(Person), typeof(string), "First.+", true)]
+        [InlineData(typeof(Person), typeof(string), "(F|f)irst[_]?(N|n)ame", true)]
         public void IsMatchReturnsWhetherTypeAndRegularExpressionMatchTest(
             Type declaringType,
             Type propertyType,
             string expression,
-            Type matchDeclaringType,
-            Type matchPropertyType,
-            string matchName,
             bool expected)
         {
             var priority = Environment.TickCount;
@@ -236,7 +84,9 @@
 
             var target = new ExecuteOrderRule(declaringType, propertyType, regex, priority);
 
-            var actual = target.IsMatch(matchDeclaringType, matchPropertyType, matchName);
+            var property = typeof(Person).GetProperty(nameof(Person.FirstName));
+
+            var actual = target.IsMatch(property);
 
             actual.Should().Be(expected);
         }
@@ -268,16 +118,6 @@
         }
 
         [Fact]
-        public void ThrowsExceptionWhenCreatedWithNullFunctionTest()
-        {
-            var priority = Environment.TickCount;
-
-            Action action = () => new ExecuteOrderRule((Func<Type, Type, string, bool>)null, priority);
-
-            action.ShouldThrow<ArgumentNullException>();
-        }
-
-        [Fact]
         public void ThrowsExceptionWhenCreatedWithNullDeclaringTypePropertyTypeAndNameTest()
         {
             var priority = Environment.TickCount;
@@ -293,6 +133,16 @@
             var priority = Environment.TickCount;
 
             Action action = () => new ExecuteOrderRule(null, null, (Regex)null, priority);
+
+            action.ShouldThrow<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void ThrowsExceptionWhenCreatedWithNullFunctionTest()
+        {
+            var priority = Environment.TickCount;
+
+            Action action = () => new ExecuteOrderRule(null, priority);
 
             action.ShouldThrow<ArgumentNullException>();
         }
