@@ -6,6 +6,8 @@
     using System.Linq;
     using System.Threading.Tasks;
     using FluentAssertions;
+    using ModelBuilder.Data;
+    using ModelBuilder.UnitTests.Models;
     using NSubstitute;
     using NSubstitute.ExceptionExtensions;
     using Xunit;
@@ -117,6 +119,28 @@
         }
 
         [Fact]
+        public void CreateBuildsAddressUsingValidCombinationOfValuesTest()
+        {
+            var actual = Model.Create<Address>();
+
+            var matchingCountries = TestData.Locations.Where(x => x.Country == actual.Country).ToList();
+
+            matchingCountries.Should().NotBeEmpty();
+
+            var matchingStates = matchingCountries.Where(x => x.State == actual.State).ToList();
+
+            matchingStates.Should().NotBeEmpty();
+
+            var matchingCities = matchingStates.Where(x => x.City == actual.City).ToList();
+
+            matchingCities.Should().NotBeEmpty();
+
+            var matchingPostCodes = matchingStates.Where(x => x.PostCode == actual.Postcode).ToList();
+
+            matchingPostCodes.Should().NotBeEmpty();
+        }
+
+        [Fact]
         public void CreateBuildsAndPopulatesNestedInstancesTest()
         {
             var actual = Model.Create<Person>();
@@ -129,6 +153,16 @@
             actual.Address.Country.Should().NotBeNullOrEmpty();
             actual.Address.State.Should().NotBeNullOrEmpty();
             actual.Address.Suburb.Should().NotBeNullOrEmpty();
+        }
+
+        [Fact]
+        public void CreateBuildsEmailUsingValidCombinationOfValuesTest()
+        {
+            var actual = Model.Create<EmailParts>();
+
+            var expected = actual.FirstName + "." + actual.LastName + "@" + actual.Domain;
+
+            actual.Email.Should().Be(expected.ToLowerInvariant());
         }
 
         [Fact]
@@ -604,7 +638,7 @@
 #if NET452
                                + " on thread " + System.Threading.Thread.CurrentThread.ManagedThreadId
 #endif
-                               + Environment.NewLine + strategy.Log.Output;
+                                            + Environment.NewLine + strategy.Log.Output;
                     });
 
                 tasks.Add(task);

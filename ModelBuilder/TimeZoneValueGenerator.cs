@@ -9,57 +9,83 @@
     ///     The <see cref="TimeZoneValueGenerator" />
     ///     class is used to generate IANA time zone values.
     /// </summary>
-    public class TimeZoneValueGenerator : ValueGeneratorMatcher
+    public class TimeZoneValueGenerator : RelativeValueGenerator
     {
         /// <summary>
         ///     Initializes a new instance of the <see cref="TimeZoneValueGenerator" /> class.
         /// </summary>
-        public TimeZoneValueGenerator()
-            : base(new Regex("TimeZone", RegexOptions.IgnoreCase), typeof(string))
+        public TimeZoneValueGenerator() : base(PropertyExpression.TimeZone, typeof(string))
         {
         }
 
         /// <inheritdoc />
         protected override object GenerateValue(Type type, string referenceName, IExecuteStrategy executeStrategy)
         {
-            string country = null;
             var context = executeStrategy?.BuildChain?.Last?.Value;
 
-            if (context != null)
-            {
-                var contextType = context.GetType();
-                var expression = new Regex("Country");
-                var property = executeStrategy.Configuration.PropertyResolver.GetProperties(contextType, expression).FirstOrDefault();
+            var location = GetRelativeLocation(context);
 
-                if (property != null)
+            if (location == null)
+            {
+                // There was either no country or city or no match on the country or city
+                location = TestData.Locations.Next();
+            }
+
+            string timeZone = null;
+
+            if (location != null)
+            {
+                // Attempt to find a timezone that contains the city
+                var cityMatches = TestData.TimeZones.Where(x => x.EndsWith(location.City, StringComparison.OrdinalIgnoreCase)).ToList();
+
+                timeZone = cityMatches.Next();
+
+                if (timeZone != null)
                 {
-                    country = (string)property.GetValue(context, null);
+                    return timeZone;
+                }
+
+                var countryMatches = TestData.TimeZones.Where(x => x.StartsWith(location.Country, StringComparison.OrdinalIgnoreCase)).ToList();
+
+                timeZone = countryMatches.Next();
+            }
+
+            if (timeZone == null)
+            {
+                return TestData.TimeZones.Next();
+            }
+
+            return timeZone;
+        }
+
+        private Location GetRelativeLocation(object context)
+        {
+            var city = GetValue<string>(PropertyExpression.City, context);
+
+            if (string.IsNullOrWhiteSpace(city) == false)
+            {
+                var cityMatches = TestData.Locations.Where(x => x.City.Equals(city, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+
+                var cityMatch = cityMatches.Next();
+
+                if (cityMatch != null)
+                {
+                    return cityMatch;
                 }
             }
 
-            if (country == null)
-            {
-                var person = TestData.NextPerson();
+            var country = GetValue<string>(PropertyExpression.Country, context);
 
-                return person.TimeZone;
+            if (string.IsNullOrWhiteSpace(country))
+            {
+                return null;
             }
 
-            var people =
-                TestData.People.Where(x => x.TimeZone.IndexOf(country, StringComparison.OrdinalIgnoreCase) > -1)
-                    .ToList();
+            var countryMatches = TestData.Locations
+                .Where(x => x.Country.Equals(country, StringComparison.OrdinalIgnoreCase)).ToList();
 
-            if (people.Count == 0)
-            {
-                // There are no people that have the timezone matching the current build objects country
-                var person = TestData.NextPerson();
-
-                return person.TimeZone;
-            }
-
-            var filteredIndex = Generator.NextValue(0, people.Count - 1);
-            var filteredPerson = people[filteredIndex];
-
-            return filteredPerson.TimeZone;
+            return countryMatches.Next();
         }
 
         /// <inheritdoc />

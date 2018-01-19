@@ -50,8 +50,8 @@
         /// <inheritdoc />
         protected override object GenerateValue(Type type, string referenceName, IExecuteStrategy executeStrategy)
         {
-            var person = TestData.NextPerson();
-            var value = "https://www." + person.Domain;
+            var domain = TestData.Domains.Next();
+            var value = "https://www." + domain;
 
             if (type == typeof(Uri))
             {

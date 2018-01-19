@@ -1,6 +1,7 @@
 ﻿namespace ModelBuilder
 {
     using System;
+    using System.Linq;
     using System.Text.RegularExpressions;
     using ModelBuilder.Data;
 
@@ -8,25 +9,39 @@
     ///     The <see cref="StateValueGenerator" />
     ///     class is used to generate state addressing values.
     /// </summary>
-    public class StateValueGenerator : ValueGeneratorMatcher
+    public class StateValueGenerator : RelativeValueGenerator
     {
         /// <summary>
         ///     Initializes a new instance of the <see cref="StateValueGenerator" /> class.
         /// </summary>
-        public StateValueGenerator()
-            : base(new Regex("State|Region", RegexOptions.IgnoreCase), typeof(string))
+        public StateValueGenerator() : base(PropertyExpression.State, typeof(string))
         {
         }
 
         /// <inheritdoc />
         protected override object GenerateValue(Type type, string referenceName, IExecuteStrategy executeStrategy)
         {
-            var person = TestData.NextPerson();
+            var context = executeStrategy?.BuildChain?.Last?.Value;
+            var country = GetValue<string>(PropertyExpression.Country, context);
+            Location location = null;
 
-            return person.State;
+            if (string.IsNullOrWhiteSpace(country) == false)
+            {
+                var locationMatches = TestData.Locations.Where(x => x.Country.Equals(country, StringComparison.OrdinalIgnoreCase)).ToList();
+
+                location = locationMatches.Next();
+            }
+            
+            if (location == null)
+            {
+                // There was either no country or no match on the country
+                location = TestData.Locations.Next();
+            }
+
+            return location.State;
         }
 
         /// <inheritdoc />
         public override int Priority { get; } = 1000;
-    }
+    } 
 }

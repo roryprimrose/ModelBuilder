@@ -1,12 +1,13 @@
-﻿using System;
-using System.IO;
-using FluentAssertions;
-using Xunit;
-
-namespace ModelBuilder.UnitTests
+﻿namespace ModelBuilder.UnitTests
 {
+    using System;
     using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using FluentAssertions;
+    using ModelBuilder.Data;
     using NSubstitute;
+    using Xunit;
 
     public class AddressValueGeneratorTests
     {
@@ -26,7 +27,7 @@ namespace ModelBuilder.UnitTests
 
             var target = new AddressValueGenerator();
 
-            var actual = (string) target.Generate(typeof(string), referenceName, executeStrategy);
+            var actual = (string)target.Generate(typeof(string), referenceName, executeStrategy);
 
             actual.Should().BeNullOrEmpty();
         }
@@ -61,6 +62,57 @@ namespace ModelBuilder.UnitTests
         }
 
         [Theory]
+        [InlineData("address")]
+        [InlineData("Address")]
+        [InlineData("address2")]
+        [InlineData("Address2")]
+        [InlineData("addressline2")]
+        [InlineData("addressLine2")]
+        [InlineData("AddressLine2")]
+        [InlineData("Addressline2")]
+        public void GenerateReturnsStreetAddressTest(string propertyName)
+        {
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            var target = new AddressValueGenerator();
+
+            var actual = target.Generate(typeof(string), propertyName, executeStrategy) as string;
+
+            actual.Should().NotBeNullOrWhiteSpace();
+
+            var matchingLocations =
+                TestData.Locations.Where(x => actual.Contains(x.StreetName) && actual.Contains(x.StreetSuffix));
+
+            matchingLocations.Should().NotBeEmpty();
+        }
+
+        [Theory]
+        [InlineData("address1")]
+        [InlineData("Address1")]
+        [InlineData("addressline1")]
+        [InlineData("addressLine1")]
+        [InlineData("AddressLine1")]
+        [InlineData("Addressline1")]
+        public void GenerateReturnsUnitFloorLocationForSecondLineTest(string propertyName)
+        {
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            var target = new AddressValueGenerator();
+
+            var actual = target.Generate(typeof(string), propertyName, executeStrategy) as string;
+
+            actual.Should().NotBeNullOrWhiteSpace();
+            actual.Should().Contain("Unit ");
+            actual.Should().Contain(", Floor ");
+        }
+
+        [Theory]
         [InlineData(typeof(string), "address", true)]
         [InlineData(typeof(string), "Address", true)]
         [InlineData(typeof(string), "address1", true)]
@@ -75,6 +127,12 @@ namespace ModelBuilder.UnitTests
         [InlineData(typeof(string), "addressLine2", true)]
         [InlineData(typeof(string), "AddressLine2", true)]
         [InlineData(typeof(string), "Addressline2", true)]
+        [InlineData(typeof(string), "address3", false)]
+        [InlineData(typeof(string), "Address3", false)]
+        [InlineData(typeof(string), "addressline3", false)]
+        [InlineData(typeof(string), "addressLine3", false)]
+        [InlineData(typeof(string), "AddressLine3", false)]
+        [InlineData(typeof(string), "Addressline3", false)]
         public void GenerateReturnsValuesForSeveralNameFormatsTest(Type type, string referenceName, bool expected)
         {
             var buildChain = new LinkedList<object>();
@@ -84,9 +142,16 @@ namespace ModelBuilder.UnitTests
 
             var target = new AddressValueGenerator();
 
-            var actual = (string) target.Generate(type, referenceName, executeStrategy);
+            var actual = (string)target.Generate(type, referenceName, executeStrategy);
 
-            actual.Should().NotBeNullOrEmpty();
+            if (expected)
+            {
+                actual.Should().NotBeNullOrEmpty();
+            }
+            else
+            {
+                actual.Should().BeNull();
+            }
         }
 
         [Theory]
@@ -107,7 +172,7 @@ namespace ModelBuilder.UnitTests
 
             action.ShouldThrow<NotSupportedException>();
         }
-        
+
         [Fact]
         public void HasHigherPriorityThanStringValueGeneratorTest()
         {

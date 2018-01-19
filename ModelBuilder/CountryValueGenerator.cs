@@ -13,17 +13,16 @@
         /// <summary>
         ///     Initializes a new instance of the <see cref="CountryValueGenerator" /> class.
         /// </summary>
-        public CountryValueGenerator()
-            : base(new Regex("Country", RegexOptions.IgnoreCase), typeof(string))
+        public CountryValueGenerator() : base(PropertyExpression.Country, typeof(string))
         {
         }
 
         /// <inheritdoc />
         protected override object GenerateValue(Type type, string referenceName, IExecuteStrategy executeStrategy)
         {
-            var person = TestData.NextPerson();
+            var location = TestData.Locations.Next();
 
-            return person.Country;
+            return location.Country;
         }
 
         /// <inheritdoc />

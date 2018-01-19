@@ -6,6 +6,7 @@ using Xunit;
 namespace ModelBuilder.UnitTests
 {
     using System.Collections.Generic;
+    using ModelBuilder.Data;
     using NSubstitute;
 
     public class SuburbValueGeneratorTests
@@ -44,7 +45,7 @@ namespace ModelBuilder.UnitTests
 
             var actual = (string) target.Generate(type, referenceName, executeStrategy);
 
-            actual.Should().NotBeNullOrEmpty();
+            TestData.LastNames.Should().Contain(actual);
         }
 
         [Theory]

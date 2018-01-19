@@ -24,8 +24,10 @@
         /// <param name="types">The types the generator can match.</param>
         /// <exception cref="ArgumentNullException">The <paramref name="targetNameExpression" /> parameter is null.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="types" /> parameter is null.</exception>
-        protected RelativeValueGenerator(Regex targetNameExpression, params Type[] types)
-            : this(targetNameExpression, null, types)
+        protected RelativeValueGenerator(Regex targetNameExpression, params Type[] types) : this(
+            targetNameExpression,
+            null,
+            types)
         {
         }
 
@@ -38,8 +40,10 @@
         /// <exception cref="ArgumentNullException">The <paramref name="targetNameExpression" /> parameter is null.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="sourceNameExpression" /> parameter is null.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="types" /> parameter is null.</exception>
-        protected RelativeValueGenerator(Regex targetNameExpression, Regex sourceNameExpression, params Type[] types)
-            : base(types)
+        protected RelativeValueGenerator(
+            Regex targetNameExpression,
+            Regex sourceNameExpression,
+            params Type[] types) : base(types)
         {
             _targetExpression = targetNameExpression ?? throw new ArgumentNullException(nameof(targetNameExpression));
             _sourceExpression = sourceNameExpression;
@@ -165,6 +169,48 @@
             }
 
             return (T)Convert.ChangeType(value, expectedType, CultureInfo.CurrentCulture);
+        }
+
+        /// <summary>
+        ///     Gets whether the build context being created is/should represents a male gender.
+        /// </summary>
+        /// <param name="executeStrategy">The execute strategy.</param>
+        /// <returns><c>true</c> if the object is/should represent a male, otherwose <c>false</c>.</returns>
+        /// <remarks>The value returned will be random if there is no supported gender identifier found.</remarks>
+        protected bool IsMale(IExecuteStrategy executeStrategy)
+        {
+            if (executeStrategy == null)
+            {
+                throw new ArgumentNullException(nameof(executeStrategy));
+            }
+
+            string gender = null;
+            var context = executeStrategy?.BuildChain?.Last?.Value;
+
+            if (context != null)
+            {
+                gender = GetValue<string>(PropertyExpression.Gender, context);
+            }
+
+            if (string.IsNullOrWhiteSpace(gender))
+            {
+                // Randomly assign a gender so that we can pick from a gender data set rather than limiting to a specific one
+                var nextValue = Generator.NextValue(0, 1);
+
+                if (nextValue == 0)
+                {
+                    return false;
+                }
+
+                return true;
+            }
+
+            if (string.Equals(gender, "male", StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+
+            return false;
         }
 
         private static PropertyInfo GetMatchingProperty(Regex expression, object context)

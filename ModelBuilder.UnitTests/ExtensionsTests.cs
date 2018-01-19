@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using FluentAssertions;
-using Xunit;
-
-namespace ModelBuilder.UnitTests
+﻿namespace ModelBuilder.UnitTests
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+    using System.Linq;
+    using FluentAssertions;
+    using Xunit;
+
     public class ExtensionsTests
     {
         [Theory]
@@ -36,6 +36,34 @@ namespace ModelBuilder.UnitTests
         }
 
         [Fact]
+        public void NextReturnsDefaultValueWhenListIsEmptyTest()
+        {
+            var values = new List<Location>();
+
+            var actual = values.Next();
+
+            actual.Should().BeNull();
+        }
+
+        [Fact]
+        public void NextReturnsRandomValueTest()
+        {
+            var values = Model.Create<List<int>>();
+
+            var actual = values.Next();
+
+            values.Should().Contain(actual);
+        }
+
+        [Fact]
+        public void NextThrowsExceptionWithNullSourceTest()
+        {
+            Action action = () => Extensions.Next<int>(null);
+
+            action.ShouldThrow<ArgumentNullException>();
+        }
+
+        [Fact]
         public void SetEachCollectionRunsActionAgainstInstanceTest()
         {
             var index = 0;
@@ -45,11 +73,12 @@ namespace ModelBuilder.UnitTests
                 new Person()
             };
 
-            var actual = target.SetEach(x =>
-            {
-                index++;
-                x.Priority = index;
-            });
+            var actual = target.SetEach(
+                x =>
+                {
+                    index++;
+                    x.Priority = index;
+                });
 
             actual.Should().BeSameAs(target);
             actual.Count.Should().Be(2);
@@ -114,11 +143,12 @@ namespace ModelBuilder.UnitTests
             var index = 0;
             var target = BuildPeople();
 
-            var actual = target.SetEach(x =>
-            {
-                index++;
-                x.Priority = index;
-            });
+            var actual = target.SetEach(
+                x =>
+                {
+                    index++;
+                    x.Priority = index;
+                });
 
             actual.Count.Should().Be(2);
             actual[0].Priority.Should().Be(1);
@@ -145,11 +175,12 @@ namespace ModelBuilder.UnitTests
                 new Person()
             };
 
-            var actual = target.SetEach(x =>
-            {
-                index++;
-                x.Priority = index;
-            });
+            var actual = target.SetEach(
+                x =>
+                {
+                    index++;
+                    x.Priority = index;
+                });
 
             actual.Should().BeSameAs(target);
             actual.Count.Should().Be(2);
@@ -188,11 +219,12 @@ namespace ModelBuilder.UnitTests
             };
             var target = new ReadOnlyCollection<Person>(source);
 
-            var actual = target.SetEach(x =>
-            {
-                index++;
-                x.Priority = index;
-            });
+            var actual = target.SetEach(
+                x =>
+                {
+                    index++;
+                    x.Priority = index;
+                });
 
             actual.Should().BeSameAs(target);
             actual.Count.Should().Be(2);
@@ -234,8 +266,14 @@ namespace ModelBuilder.UnitTests
 
         private IEnumerable<Person> BuildPeople()
         {
-            yield return new Person {Id = Guid.NewGuid()};
-            yield return new Person {Id = Guid.NewGuid()};
+            yield return new Person
+            {
+                Id = Guid.NewGuid()
+            };
+            yield return new Person
+            {
+                Id = Guid.NewGuid()
+            };
         }
     }
 }

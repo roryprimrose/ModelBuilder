@@ -11,5 +11,7 @@
         public string State { get; set; }
 
         public string Suburb { get; set; }
+
+        public string TimeZone { get; set; }
     }
 }

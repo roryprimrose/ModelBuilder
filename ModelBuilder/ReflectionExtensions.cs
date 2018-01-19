@@ -12,7 +12,7 @@
     {
         public static bool TypeIsAbstract(this Type type)
         {
-#if NET40
+#if NET45
             return type.IsAbstract;
 #else
             return type.GetTypeInfo().IsAbstract;
@@ -21,7 +21,7 @@
 
         public static bool TypeIsArray(this Type type)
         {
-#if NET40
+#if NET45
             return type.IsArray;
 #else
             return type.GetTypeInfo().IsArray;
@@ -30,7 +30,7 @@
 
         public static bool TypeIsClass(this Type type)
         {
-#if NET40
+#if NET45
             return type.IsClass;
 #else
             return type.GetTypeInfo().IsClass;
@@ -39,7 +39,7 @@
 
         public static bool TypeIsEnum(this Type type)
         {
-#if NET40
+#if NET45
             return type.IsEnum;
 #else
             return type.GetTypeInfo().IsEnum;
@@ -48,7 +48,7 @@
 
         public static bool TypeIsGenericType(this Type type)
         {
-#if NET40
+#if NET45
             return type.IsGenericType;
 #else
             return type.GetTypeInfo().IsGenericType;
@@ -57,7 +57,7 @@
 
         public static bool TypeIsGenericTypeDefinition(this Type type)
         {
-#if NET40
+#if NET45
             return type.IsGenericTypeDefinition;
 #else
             return type.GetTypeInfo().IsGenericTypeDefinition;
@@ -66,7 +66,7 @@
 
         public static bool TypeIsInterface(this Type type)
         {
-#if NET40
+#if NET45
             return type.IsInterface;
 #else
             return type.GetTypeInfo().IsInterface;
@@ -75,7 +75,7 @@
 
         public static bool TypeIsValueType(this Type type)
         {
-#if NET40
+#if NET45
             return type.IsValueType;
 #else
             return type.GetTypeInfo().IsValueType;

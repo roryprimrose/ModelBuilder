@@ -2,7 +2,9 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using FluentAssertions;
+    using ModelBuilder.Data;
     using NSubstitute;
     using Xunit;
 
@@ -18,10 +20,9 @@
 
             var target = new UriValueGenerator();
 
-            var actual = target.Generate(typeof(string), "uri", executeStrategy);
+            var actual = target.Generate(typeof(string), "uri", executeStrategy).As<string>().ToLowerInvariant();
 
-            actual.Should().NotBeNull();
-            actual.As<string>().Should().NotBeNullOrEmpty();
+            TestData.Domains.Any(x => actual.Contains(x)).Should().BeTrue();
         }
 
         [Fact]
@@ -34,10 +35,9 @@
 
             var target = new UriValueGenerator();
 
-            var actual = target.Generate(typeof(string), "url", executeStrategy);
+            var actual = target.Generate(typeof(string), "uri", executeStrategy).As<string>().ToLowerInvariant();
 
-            actual.Should().NotBeNull();
-            actual.As<string>().Should().NotBeNullOrEmpty();
+            TestData.Domains.Any(x => actual.Contains(x)).Should().BeTrue();
         }
 
         [Fact]
@@ -50,12 +50,11 @@
 
             var target = new UriValueGenerator();
 
-            var actual = target.Generate(typeof(Uri), null, executeStrategy);
+            var actual = target.Generate(typeof(Uri), null, executeStrategy).As<Uri>();
 
-            actual.Should().NotBeNull();
-            actual.As<Uri>().ToString().Should().NotBeNullOrEmpty();
+            TestData.Domains.Any(x => actual.AbsoluteUri.Contains(x)).Should().BeTrue();
         }
-        
+
         [Theory]
         [InlineData(typeof(string), (string)null, false)]
         [InlineData(typeof(string), "", false)]

@@ -19,21 +19,14 @@
         /// <inheritdoc />
         protected override object GenerateValue(Type type, string referenceName, IExecuteStrategy executeStrategy)
         {
-            var context = executeStrategy?.BuildChain?.Last?.Value;
-            var gender = GetValue<string>(PropertyExpression.Gender, context);
-
-            if (string.Equals(gender, "male", StringComparison.OrdinalIgnoreCase))
+            if (IsMale(executeStrategy))
             {
                 // Use a male first name
-                var male = TestData.NextMale();
-
-                return male.FirstName;
+                return TestData.MaleNames.Next();
             }
 
             // Use a female name
-            var female = TestData.NextFemale();
-
-            return female.FirstName;
+            return TestData.FemaleNames.Next();
         }
 
         /// <inheritdoc />

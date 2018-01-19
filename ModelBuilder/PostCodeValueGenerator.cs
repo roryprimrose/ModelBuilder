@@ -1,6 +1,7 @@
 ﻿namespace ModelBuilder
 {
     using System;
+    using System.Linq;
     using System.Text.RegularExpressions;
     using ModelBuilder.Data;
 
@@ -8,22 +9,39 @@
     ///     The <see cref="PostCodeValueGenerator" />
     ///     class is used to generate random post code values.
     /// </summary>
-    public class PostCodeValueGenerator : ValueGeneratorMatcher
+    public class PostCodeValueGenerator : RelativeValueGenerator
     {
         /// <summary>
         ///     Initializes a new instance of the <see cref="PostCodeValueGenerator" /> class.
         /// </summary>
-        public PostCodeValueGenerator()
-            : base(new Regex("PostCode|Zip(Code)?", RegexOptions.IgnoreCase), typeof(string))
+        public PostCodeValueGenerator() : base(
+            PropertyExpression.PostCode,
+            typeof(string))
         {
         }
 
         /// <inheritdoc />
         protected override object GenerateValue(Type type, string referenceName, IExecuteStrategy executeStrategy)
         {
-            var person = TestData.NextPerson();
+            var context = executeStrategy?.BuildChain?.Last?.Value;
+            var city = GetValue<string>(PropertyExpression.City, context);
+            Location location = null;
 
-            return person.PostCode;
+            if (string.IsNullOrWhiteSpace(city) == false)
+            {
+                var locationMatches = TestData.Locations
+                    .Where(x => x.City.Equals(city, StringComparison.OrdinalIgnoreCase)).ToList();
+
+                location = locationMatches.Next();
+            }
+
+            if (location == null)
+            {
+                // There was either no country or no match on the country
+                location = TestData.Locations.Next();
+            }
+
+            return location.PostCode;
         }
 
         /// <inheritdoc />

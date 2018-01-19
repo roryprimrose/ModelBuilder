@@ -24,7 +24,7 @@ namespace ModelBuilder
         /// <inheritdoc />
         protected override object GenerateValue(Type type, string referenceName, IExecuteStrategy executeStrategy)
         {
-#if NET40
+#if NET45
             var cultures = CultureInfo.GetCultures(CultureTypes.AllCultures);
             var index = Generator.NextValue(0, cultures.Length - 1);
             var culture = cultures[index];

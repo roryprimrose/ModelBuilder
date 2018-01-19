@@ -22,113 +22,81 @@
                 "This is done in the constructor for the better performance of splitting males an females in a single iteration.")]
         static TestData()
         {
-            People = ReadPeople();
-            Cultures = ReadCultures();
+            Companies = ParseValues(Resources.Companies);
+            Locations = ParseLocations(Resources.Locations);
+            FemaleNames = ParseValues(Resources.FemaleNames);
+            MaleNames = ParseValues(Resources.MaleNames);
+            LastNames = ParseValues(Resources.LastNames);
+            Cultures = ParseValues(Resources.Cultures);
+            TimeZones = ParseValues(Resources.TimeZones);
+            Domains = ParseValues(Resources.Domains);
+        }
+        
+        private static List<Location> ParseLocations(string locations)
+        {
+            var lines = ParseValues(locations);
+            var parsedLines = new List<Location>(lines.Count);
 
-            var males = new List<Person>();
-            var females = new List<Person>();
-
-            // More efficient to loop manually rather than use LINQ to avoid multiple iterations of the large collection
-            foreach (var person in People)
+            foreach (var line in lines)
             {
-                if (person.Gender == "Male")
-                {
-                    males.Add(person);
-                }
-                else
-                {
-                    females.Add(person);
-                }
+                var location = Location.Parse(line);
+
+                parsedLines.Add(location);
             }
 
-            Males = new ReadOnlyCollection<Person>(males);
-            Females = new ReadOnlyCollection<Person>(females);
+            return parsedLines;
         }
 
-        /// <summary>
-        ///     Returns a random female from the test data set.
-        /// </summary>
-        /// <returns>A random female.</returns>
-        public static Person NextFemale()
+        private static List<string> ParseValues(string values)
         {
-            var generator = new RandomGenerator();
-
-            var index = generator.NextValue(0, Females.Count - 1);
-
-            return Females[index];
-        }
-
-        /// <summary>
-        ///     Returns a random male from the test data set.
-        /// </summary>
-        /// <returns>A random male.</returns>
-        public static Person NextMale()
-        {
-            var generator = new RandomGenerator();
-
-            var index = generator.NextValue(0, Males.Count - 1);
-
-            return Males[index];
-        }
-
-        /// <summary>
-        ///     Returns a random person from the test data set.
-        /// </summary>
-        /// <returns>A random person.</returns>
-        public static Person NextPerson()
-        {
-            var generator = new RandomGenerator();
-
-            var index = generator.NextValue(0, People.Count - 1);
-
-            return People[index];
-        }
-
-        private static DataSet<string> ReadCultures()
-        {
-            var cultures = Resources.Cultures;
-            var items = cultures.Split(
+            var items = values.Split(
                 new[]
                 {
                     Environment.NewLine
                 },
                 StringSplitOptions.RemoveEmptyEntries);
 
-            var data = items.ToList();
-
-            return new DataSet<string>(data);
+            return items.ToList();
         }
-
-        private static ReadOnlyCollection<Person> ReadPeople()
-        {
-            var serializer = new XmlSerializer(typeof(People));
-
-            using (var reader = new StringReader(Resources.People))
-            {
-                var data = (People)serializer.Deserialize(reader);
-
-                return new ReadOnlyCollection<Person>(data.Items);
-            }
-        }
+        
+        /// <summary>
+        ///     Gets a test data set of companies.
+        /// </summary>
+        public static IReadOnlyList<string> Companies { get; }
 
         /// <summary>
         ///     Gets a test data set of cultures.
         /// </summary>
-        public static DataSet<string> Cultures { get; }
+        public static IReadOnlyList<string> Cultures { get; }
 
         /// <summary>
-        ///     Gets a test data set of females.
+        ///     Gets a test data set of domains.
         /// </summary>
-        public static ReadOnlyCollection<Person> Females { get; }
+        public static IReadOnlyList<string> Domains { get; }
 
         /// <summary>
-        ///     Gets a test data set of males.
+        ///     Gets a test data set of female names.
         /// </summary>
-        public static ReadOnlyCollection<Person> Males { get; }
+        public static IReadOnlyList<string> FemaleNames { get; }
 
         /// <summary>
-        ///     Gets a test data set of people.
+        ///     Gets a test data set of last names.
         /// </summary>
-        public static ReadOnlyCollection<Person> People { get; }
+        public static IReadOnlyList<string> LastNames { get; }
+
+        /// <summary>
+        ///     Gets a test data set of locations.
+        /// </summary>
+        public static IReadOnlyList<Location> Locations { get; }
+
+        /// <summary>
+        ///     Gets a test data set of male names.
+        /// </summary>
+        public static IReadOnlyList<string> MaleNames { get; }
+        
+        /// <summary>
+        ///     Gets a test data set of time zones.
+        /// </summary>
+        public static IReadOnlyList<string> TimeZones { get; }
     }
 }

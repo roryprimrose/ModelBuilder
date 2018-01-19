@@ -3,19 +3,97 @@
     using System;
     using System.Collections.Generic;
     using System.IO;
+    using System.Linq;
     using FluentAssertions;
+    using ModelBuilder.Data;
     using NSubstitute;
     using Xunit;
 
     public class PhoneValueGeneratorTests
     {
         [Fact]
-        public void GenerateReturnsRandomValueTest()
+        public void GenerateReturnsRandomPhoneMatchingCaseInsensitiveCountryTest()
         {
+            var address = new Address
+            {
+                Country = "UNITED STATES"
+            };
             var buildChain = new LinkedList<object>();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
+
+            buildChain.AddFirst(address);
+
+            var target = new PhoneValueGenerator();
+
+            var actual = target.Generate(typeof(string), "phone", executeStrategy) as string;
+
+            actual.Should().NotBeNullOrWhiteSpace();
+
+            var valueToMatch = address.Country.ToLowerInvariant();
+
+            var possibleMatches = TestData.Locations.Where(x => x.Country.ToLowerInvariant() == valueToMatch);
+
+            possibleMatches.Select(x => x.Phone).Should().Contain(actual);
+        }
+
+        [Fact]
+        public void GenerateReturnsRandomPhoneMatchingCountryTest()
+        {
+            var address = new Address
+            {
+                Country = "United States"
+            };
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            buildChain.AddFirst(address);
+
+            var target = new PhoneValueGenerator();
+
+            var actual = target.Generate(typeof(string), "phone", executeStrategy) as string;
+
+            actual.Should().NotBeNullOrWhiteSpace();
+
+            var possibleMatches = TestData.Locations.Where(x => x.Country == address.Country);
+
+            possibleMatches.Select(x => x.Phone).Should().Contain(actual);
+        }
+
+        [Fact]
+        public void GenerateReturnsRandomPhoneWhenNoMatchingCountryTest()
+        {
+            var address = new Address
+            {
+                Country = Guid.NewGuid().ToString()
+            };
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            buildChain.AddFirst(address);
+
+            var target = new PhoneValueGenerator();
+
+            var actual = target.Generate(typeof(string), "phone", executeStrategy) as string;
+
+            TestData.Locations.Select(x => x.Phone).Should().Contain(actual);
+        }
+
+        [Fact]
+        public void GenerateReturnsRandomValueTest()
+        {
+            var address = new Address();
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            buildChain.AddFirst(address);
 
             var target = new PhoneValueGenerator();
 
@@ -27,21 +105,6 @@
             var second = target.Generate(typeof(string), "cell", executeStrategy);
 
             first.Should().NotBe(second);
-        }
-
-        [Fact]
-        public void GenerateReturnsValueForPhoneTypeTest()
-        {
-            var buildChain = new LinkedList<object>();
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            executeStrategy.BuildChain.Returns(buildChain);
-
-            var target = new PhoneValueGenerator();
-
-            var actual = target.Generate(typeof(string), "Cell", executeStrategy);
-
-            actual.Should().BeOfType<string>();
         }
 
         [Theory]
@@ -71,10 +134,13 @@
         [InlineData(typeof(string), "Faxnumber", true)]
         public void GenerateReturnsValuesForSeveralNameFormatsTest(Type type, string referenceName, bool expected)
         {
+            var address = new Address();
             var buildChain = new LinkedList<object>();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
+
+            buildChain.AddFirst(address);
 
             var target = new PhoneValueGenerator();
 
@@ -100,7 +166,16 @@
 
             action.ShouldThrow<NotSupportedException>();
         }
-        
+
+        [Fact]
+        public void HasHigherPriorityThanStringValueGeneratorTest()
+        {
+            var target = new PhoneValueGenerator();
+            var other = new StringValueGenerator();
+
+            target.Priority.Should().BeGreaterThan(other.Priority);
+        }
+
         [Theory]
         [InlineData(typeof(Stream), "phonenumber", false)]
         [InlineData(typeof(string), null, false)]
@@ -131,9 +206,14 @@
         [InlineData(typeof(string), "faxnumber", true)]
         public void IsSupportedTest(Type type, string referenceName, bool expected)
         {
+            var address = new Address();
+            var buildChain = new LinkedList<object>();
+
+            buildChain.AddFirst(address);
+
             var target = new PhoneValueGenerator();
 
-            var actual = target.IsSupported(type, referenceName, null);
+            var actual = target.IsSupported(type, referenceName, buildChain);
 
             actual.Should().Be(expected);
         }

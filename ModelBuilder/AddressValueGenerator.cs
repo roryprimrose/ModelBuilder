@@ -44,13 +44,15 @@
 
                 if (number > 2)
                 {
+                    // This generator will only populate the first two address lines
                     return null;
                 }
             }
 
-            var person = TestData.NextPerson();
+            var addressNumber = Generator.NextValue(1, 1500);
+            var location = TestData.Locations.Next();
 
-            return person.Address;
+            return addressNumber + " " + location.StreetName + " " + location.StreetSuffix;
         }
 
         /// <inheritdoc />
