@@ -7,6 +7,7 @@
     using System.Threading.Tasks;
     using FluentAssertions;
     using ModelBuilder.Data;
+    using ModelBuilder.UnitTests.Models;
     using NSubstitute;
     using NSubstitute.ExceptionExtensions;
     using Xunit;
@@ -152,6 +153,16 @@
             actual.Address.Country.Should().NotBeNullOrEmpty();
             actual.Address.State.Should().NotBeNullOrEmpty();
             actual.Address.Suburb.Should().NotBeNullOrEmpty();
+        }
+
+        [Fact]
+        public void CreateBuildsEmailUsingValidCombinationOfValuesTest()
+        {
+            var actual = Model.Create<EmailParts>();
+
+            var expected = actual.FirstName + "." + actual.LastName + "@" + actual.Domain;
+
+            actual.Email.Should().Be(expected.ToLowerInvariant());
         }
 
         [Fact]

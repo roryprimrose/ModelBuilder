@@ -1,66 +1,71 @@
-﻿using System.Linq;
-using FluentAssertions;
-using ModelBuilder.Data;
-using Xunit;
-
-namespace ModelBuilder.UnitTests
+﻿namespace ModelBuilder.UnitTests
 {
+    using FluentAssertions;
+    using ModelBuilder.Data;
+    using Xunit;
+
     public class TestDataTests
     {
         [Fact]
-        public void FemalesReturnsTestDataTest()
+        public void CompaniesReturnsTestDataTest()
         {
-            var target = TestData.Females;
+            var target = TestData.Companies;
 
             target.Should().NotBeEmpty();
-            target.All(x => x.Gender == "Female").Should().BeTrue();
         }
 
         [Fact]
-        public void MalesReturnsTestDataTest()
+        public void CulturesReturnsTestDataTest()
         {
-            var target = TestData.Males;
+            var target = TestData.Cultures;
 
             target.Should().NotBeEmpty();
-            target.All(x => x.Gender == "Male").Should().BeTrue();
         }
 
         [Fact]
-        public void NextFemaleReturnsTestDataTest()
+        public void DomainsReturnsTestDataTest()
         {
-            var target = TestData.NextFemale();
+            var target = TestData.Domains;
 
-            target.Should().NotBeNull();
-            target.Gender.Should().Be("Female");
+            target.Should().NotBeEmpty();
         }
 
         [Fact]
-        public void NextMaleReturnsTestDataTest()
+        public void FemaleNamesReturnsTestDataTest()
         {
-            var target = TestData.NextMale();
+            var target = TestData.FemaleNames;
 
-            target.Should().NotBeNull();
-            target.Gender.Should().Be("Male");
+            target.Should().NotBeEmpty();
         }
 
         [Fact]
-        public void NextPersonReturnsTestDataTest()
+        public void LastNamesReturnsTestDataTest()
         {
-            var target = TestData.NextPerson();
+            var target = TestData.LastNames;
 
-            target.Should().NotBeNull();
-            target.Email.Should().NotBeNullOrWhiteSpace();
-            target.Domain.Should().NotBeNullOrWhiteSpace();
-            target.Gender.Should().NotBeNullOrWhiteSpace();
-            target.Address.Should().NotBeNullOrWhiteSpace();
-            target.Company.Should().NotBeNullOrWhiteSpace();
-            target.LastName.Should().NotBeNullOrWhiteSpace();
+            target.Should().NotBeEmpty();
         }
 
         [Fact]
-        public void PeopleReturnsTestDataTest()
+        public void LocationsReturnsTestDataTest()
         {
-            var target = TestData.People;
+            var target = TestData.Locations;
+
+            target.Should().NotBeEmpty();
+        }
+
+        [Fact]
+        public void MaleNamesReturnsTestDataTest()
+        {
+            var target = TestData.MaleNames;
+
+            target.Should().NotBeEmpty();
+        }
+
+        [Fact]
+        public void TimeZonesReturnsTestDataTest()
+        {
+            var target = TestData.TimeZones;
 
             target.Should().NotBeEmpty();
         }

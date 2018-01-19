@@ -19,6 +19,11 @@
         public static readonly Regex Country = new Regex("Country", RegexOptions.IgnoreCase);
 
         /// <summary>
+        ///     Defines the expression for matching domain properties.
+        /// </summary>
+        public static readonly Regex Domain = new Regex("Domain", RegexOptions.IgnoreCase);
+
+        /// <summary>
         ///     Defines the expression for matching email properties.
         /// </summary>
         public static readonly Regex Email = new Regex("Email", RegexOptions.IgnoreCase);

@@ -21,9 +21,7 @@
         /// <inheritdoc />
         protected override object GenerateValue(Type type, string referenceName, IExecuteStrategy executeStrategy)
         {
-            var person = TestData.NextPerson();
-
-            return person.Company;
+            return TestData.Companies.Next();
         }
 
         /// <inheritdoc />

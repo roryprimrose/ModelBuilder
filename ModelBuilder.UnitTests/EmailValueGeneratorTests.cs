@@ -6,6 +6,7 @@
     using System.Linq;
     using FluentAssertions;
     using ModelBuilder.Data;
+    using ModelBuilder.UnitTests.Models;
     using NSubstitute;
     using Xunit;
 
@@ -46,7 +47,7 @@
 
             var domain = actual.Substring(actual.IndexOf("@", StringComparison.Ordinal) + 1);
 
-            TestData.People.Any(x => x.Domain.ToLowerInvariant() == domain).Should().BeTrue();
+            TestData.Domains.Any(x => x.ToLowerInvariant() == domain).Should().BeTrue();
         }
 
         [Fact]
@@ -160,9 +161,30 @@
         }
 
         [Fact]
-        public void GenerateReturnsRandomEmailAddressUsingFirstAndLastNameOfContextTest()
+        public void GenerateReturnsRandomEmailAddressUsingDomainOfContextTest()
         {
-            var person = new Person
+            var parts = new EmailParts
+            {
+                Domain = Guid.NewGuid().ToString("N")
+            };
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            buildChain.AddFirst(parts);
+
+            var target = new EmailValueGenerator();
+
+            var actual = (string)target.Generate(typeof(string), "email", executeStrategy);
+
+            actual.Should().EndWith(parts.Domain);
+        }
+
+        [Fact]
+        public void GenerateReturnsRandomEmailAddressUsingFirstNameAndLastNameOfContextTest()
+        {
+            var parts = new EmailParts
             {
                 FirstName = Guid.NewGuid().ToString("N"),
                 LastName = Guid.NewGuid().ToString("N")
@@ -172,15 +194,40 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            buildChain.AddFirst(person);
+            buildChain.AddFirst(parts);
 
             var target = new EmailValueGenerator();
 
             var actual = (string)target.Generate(typeof(string), "email", executeStrategy);
 
-            var expected = person.FirstName + "." + person.LastName;
+            var expected = parts.FirstName + "." + parts.LastName;
 
             actual.Should().StartWith(expected.ToLowerInvariant());
+        }
+
+        [Fact]
+        public void GenerateReturnsRandomEmailAddressUsingFirstNameLastNameAndDomainOfContextTest()
+        {
+            var parts = new EmailParts
+            {
+                FirstName = Guid.NewGuid().ToString("N"),
+                LastName = Guid.NewGuid().ToString("N"),
+                Domain = Guid.NewGuid().ToString("N")
+            };
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            buildChain.AddFirst(parts);
+
+            var target = new EmailValueGenerator();
+
+            var actual = (string)target.Generate(typeof(string), "email", executeStrategy);
+
+            var expected = parts.FirstName + "." + parts.LastName + "@" + parts.Domain;
+
+            actual.Should().Be(expected.ToLowerInvariant());
         }
 
         [Fact]

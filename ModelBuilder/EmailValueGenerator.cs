@@ -25,23 +25,10 @@
             var context = executeStrategy?.BuildChain?.Last?.Value;
             var firstName = GetValue<string>(PropertyExpression.FirstName, context);
             var lastName = GetValue<string>(PropertyExpression.LastName, context);
-            var domain = Domain;
-            var gender = GetValue<string>(PropertyExpression.Gender, context);
-
-            Person person;
-
-            if (string.Equals(gender, "male", StringComparison.OrdinalIgnoreCase))
-            {
-                person = TestData.NextMale();
-            }
-            else
-            {
-                person = TestData.NextFemale();
-            }
-
+            
             if (firstName == null)
             {
-                if (string.Equals(gender, "male", StringComparison.OrdinalIgnoreCase))
+                if (IsMale(executeStrategy))
                 {
                     firstName = TestData.MaleNames.Next();
                 }
@@ -56,9 +43,16 @@
                 lastName = TestData.LastNames.Next();
             }
 
-            if (domain == null)
+            var domain = Domain;
+
+            if (string.IsNullOrWhiteSpace(domain))
             {
-                domain = person.Domain;
+                domain = GetValue<string>(PropertyExpression.Domain, context);
+            }
+
+            if (string.IsNullOrWhiteSpace(domain))
+            {
+                domain = TestData.Domains.Next();
             }
 
             var email = firstName + "." + lastName + "@" + domain;

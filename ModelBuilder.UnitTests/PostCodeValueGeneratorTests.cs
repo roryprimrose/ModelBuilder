@@ -37,7 +37,7 @@
         {
             var address = new Address
             {
-                City = "PICASSINOS"
+                City = "RIBAS"
             };
             var buildChain = new LinkedList<object>();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -64,7 +64,7 @@
         {
             var address = new Address
             {
-                City = "Picassinos"
+                City = "Ribas"
             };
             var buildChain = new LinkedList<object>();
             var executeStrategy = Substitute.For<IExecuteStrategy>();

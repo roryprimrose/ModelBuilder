@@ -16,7 +16,7 @@
         {
             var address = new Address
             {
-                Country = "UNITED STATES"
+                Country = "AUSTRALIA"
             };
             var buildChain = new LinkedList<object>();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -42,7 +42,7 @@
         {
             var address = new Address
             {
-                Country = "United States"
+                Country = "Australia"
             };
             var buildChain = new LinkedList<object>();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -66,7 +66,7 @@
             var address = new Address
             {
                 City = Guid.NewGuid().ToString(),
-                Country = "United States"
+                Country = "Australia"
             };
             var buildChain = new LinkedList<object>();
             var executeStrategy = Substitute.For<IExecuteStrategy>();

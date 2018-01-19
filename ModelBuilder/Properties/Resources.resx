@@ -141,10 +141,6 @@
   <data name="Error_ExpressionTargetsWrongType" xml:space="preserve">
     <value>The expression returned a property {0} that was not defined on type '{1}'</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="People" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\People.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-  </data>
   <data name="NoTargetTypeOrPropertyExpression" xml:space="preserve">
     <value>Either targetType or propertyExpression must be supplied</value>
   </data>
@@ -211,6 +207,7 @@
   <data name="BuildStrategyCompiler_NullPropertyResolver" xml:space="preserve">
     <value>The PropertyResolver is null. A property resolver must be provided in order to create a build strategy</value>
   </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="Cultures" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Cultures.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
@@ -243,5 +240,8 @@
   </data>
   <data name="Domains" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Domains.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Companies" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Companies.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
 </root>

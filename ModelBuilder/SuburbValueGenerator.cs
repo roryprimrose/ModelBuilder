@@ -21,10 +21,8 @@
         /// <inheritdoc />
         protected override object GenerateValue(Type type, string referenceName, IExecuteStrategy executeStrategy)
         {
-            var person = TestData.NextPerson();
-
-            // Many suburbs are named after people so we will just take a random last name
-            return person.LastName;
+            // Some suburbs are named after people so we will just take a random last name
+            return TestData.LastNames.Next();
         }
 
         /// <inheritdoc />

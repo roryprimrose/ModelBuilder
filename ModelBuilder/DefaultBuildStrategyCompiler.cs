@@ -44,6 +44,7 @@
                 yield return new ExecuteOrderRule(null, null, PropertyExpression.Gender, 2600);
                 yield return new ExecuteOrderRule(null, null, PropertyExpression.FirstName, 2580);
                 yield return new ExecuteOrderRule(null, null, PropertyExpression.LastName, 2560);
+                yield return new ExecuteOrderRule(null, null, PropertyExpression.Domain, 2550);
                 yield return new ExecuteOrderRule(null, null, PropertyExpression.Email, 2540);
 
                 yield return new ExecuteOrderRule(null, null, PropertyExpression.Country, 2400);

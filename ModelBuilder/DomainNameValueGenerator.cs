@@ -13,7 +13,7 @@ namespace ModelBuilder
         /// <summary>
         ///     Initializes a new instance of the <see cref="DomainNameValueGenerator" /> class.
         /// </summary>
-        public DomainNameValueGenerator() : base(new Regex("Domain", RegexOptions.IgnoreCase), typeof(string))
+        public DomainNameValueGenerator() : base(PropertyExpression.Domain, typeof(string))
         {
         }
 

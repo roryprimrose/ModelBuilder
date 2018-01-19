@@ -98,6 +98,39 @@ namespace ModelBuilder.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Abata
+        ///Abatz
+        ///Abbott Group
+        ///Abbott Inc
+        ///Abbott LLC
+        ///Abbott, Eichmann and Miller
+        ///Abbott, Swift and Prosacco
+        ///Abbott, Wehner and Nitzsche
+        ///Abbott-Cole
+        ///Abbott-Harvey
+        ///Abbott-Kunde
+        ///Abbott-McDermott
+        ///Abbott-Walker
+        ///Abernathy and Sons
+        ///Abernathy Group
+        ///Abernathy Inc
+        ///Abernathy LLC
+        ///Abernathy, Bartell and Block
+        ///Abernathy, Jast and Anderson
+        ///Abernathy, Klocko and Kutch
+        ///Abernathy, Langosh and Corkery
+        ///Abernathy, Marvin and Reilly
+        ///Abernathy, Medhurst and MacGyver
+        ///Abernathy, Streich and Pouros
+        ///Abernathy, Zulau [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string Companies {
+            get {
+                return ResourceManager.GetString("Companies", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No public constructor is available for type {0}.
         /// </summary>
         internal static string ConstructorResolver_NoPublicConstructorFound {
@@ -546,13 +579,14 @@ namespace ModelBuilder.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Australia,New South Wales,Australia Square,1213,Clyde Gallagher,Circle,+61 918 203 7532
-        ///Australia,New South Wales,Sydney,1009,Bunker Hill,Junction,+61 140 836 9230
+        ///   Looks up a localized string similar to Australia,New South Wales,Sydney,1009,Bunker Hill,Junction,+61 140 836 9230
         ///Australia,New South Wales,Sydney,1109,Miller,Road,+61 939 821 6963
-        ///Australia,New South Wales,Sydney,1134,Sachtjen,Point,+61 613 266 0635
-        ///Australia,South Australia,Adelaide Mail Centre,5889,Bultman,Park,+61 752 287 8617
-        ///Australia,South Australia,Adelaide Mail Centre,5899,Ohio,Hill,+61 573 292 8781
-        ///Australia,Tasmania,Hobart,7803,School,Park,+ [rest of string was truncated]&quot;;.
+        ///Australia,Australian Capital Territory,Canberra,2600,Sachtjen,Street,+61 613 266 0635
+        ///Australia,South Australia,Adelaide,5889,Bultman,Park,+61 752 287 8617
+        ///Australia,South Australia,Adelaide,5899,Ohio,Hill,+61 573 292 8781
+        ///Australia,Tasmania,Hobart,7803,School,Park,+61 492 805 3353
+        ///Australia,Tasmania,Hobart,7808,Green Ridge,Pass,+61 810 522 2352
+        ///Australia,West [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Locations {
             get {
@@ -716,16 +750,6 @@ namespace ModelBuilder.Properties {
         internal static string NoTargetTypeOrPropertyName {
             get {
                 return ResourceManager.GetString("NoTargetTypeOrPropertyName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-        ///&lt;People xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;&gt;&lt;Person&gt;&lt;Address&gt;997 Emmet Circle&lt;/Address&gt;&lt;City&gt;Newark&lt;/City&gt;&lt;Company&gt;Tanoodle&lt;/Company&gt;&lt;Country&gt;Benin&lt;/Country&gt;&lt;Domain&gt;google.ca&lt;/Domain&gt;&lt;Email&gt;tspencer0@is.gd&lt;/Email&gt;&lt;FirstName&gt;Theresa&lt;/FirstName&gt;&lt;Gender&gt;Female&lt;/Gender&gt;&lt;LastName&gt;Spencer&lt;/LastName&gt;&lt;Phone&gt;1-(302)560-3674&lt;/Phone&gt;&lt;PostCode&gt;19714&lt;/PostCode&gt;&lt;State&gt;Delaware&lt;/State&gt;&lt;TimeZone&gt;America/Mexico_City&lt;/TimeZ [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string People {
-            get {
-                return ResourceManager.GetString("People", resourceCulture);
             }
         }
         

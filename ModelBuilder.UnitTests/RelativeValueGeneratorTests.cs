@@ -4,7 +4,9 @@
     using System.Collections.Generic;
     using System.Text.RegularExpressions;
     using FluentAssertions;
+    using FluentAssertions.Execution;
     using ModelBuilder.UnitTests.Models;
+    using NSubstitute;
     using Xunit;
 
     public class RelativeValueGeneratorTests
@@ -161,6 +163,114 @@
             action.ShouldThrow<ArgumentNullException>();
         }
 
+        [Fact]
+        public void IsMaleReturnsRandomValueWhenNoContextFoundTest()
+        {
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            var sut = new GeneratorWrapper<string>(PropertyExpression.FirstName, PropertyExpression.Email, typeof(string));
+
+            var maleFound = false;
+            var nonMaleFound = false;
+
+            for (var index = 0; index < 1000; index++)
+            {
+                var actual = sut.GetIsMale(executeStrategy);
+
+                if (actual)
+                {
+                    maleFound = true;
+                }
+                else
+                {
+                    nonMaleFound = true;
+                }
+
+                if (maleFound && nonMaleFound)
+                {
+                    // We have found both random options
+                    return;
+                }
+            }
+
+            throw new AssertionFailedException(
+                $"Did not find both values - Male found {maleFound} - Non-male found {nonMaleFound}");
+        }
+
+        [Fact]
+        public void IsMaleReturnsRandomValueWhenNoGenderPropertyFoundTest()
+        {
+            var person = new PersonWithoutGender();
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            buildChain.AddFirst(person);
+
+            var sut = new GeneratorWrapper<string>(PropertyExpression.FirstName, PropertyExpression.Email, typeof(string));
+
+            var maleFound = false;
+            var nonMaleFound = false;
+
+            for (var index = 0; index < 1000; index++)
+            {
+                var actual = sut.GetIsMale(executeStrategy);
+
+                if (actual)
+                {
+                    maleFound = true;
+                }
+                else
+                {
+                    nonMaleFound = true;
+                }
+
+                if (maleFound && nonMaleFound)
+                {
+                    // We have found both random options
+                    return;
+                }
+            }
+
+            throw new AssertionFailedException(
+                $"Did not find both values - Male found {maleFound} - Non-male found {nonMaleFound}");
+        }
+
+        [Theory]
+        [InlineData(Gender.Female, false)]
+        [InlineData(Gender.Male, true)]
+        [InlineData(Gender.Unknown, false)]
+        public void IsMaleReturnsValueBasedOnGenderPropertyTest(Gender gender, bool expected)
+        {
+            var person = new Person
+            {
+                Gender = gender
+            };
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            buildChain.AddFirst(person);
+
+            var sut = new GeneratorWrapper<string>(PropertyExpression.FirstName, PropertyExpression.Email, typeof(string));
+
+            var actual = sut.GetIsMale(executeStrategy);
+
+            actual.Should().Be(expected);
+        }
+
+        [Fact]
+        public void IsMaleThrowsExceptionWithNullExecuteStrategyTest()
+        {
+            var sut = new GeneratorWrapper<string>(PropertyExpression.FirstName, PropertyExpression.Email, typeof(string));
+
+            Action action = () => sut.GetIsMale(null);
+
+            action.ShouldThrow<ArgumentNullException>();
+        }
+
         [Theory]
         [InlineData(typeof(bool), null, null, false)]
         [InlineData(typeof(string), null, null, false)]
@@ -269,6 +379,11 @@
                 sourceNameExpression,
                 typeof(string))
             {
+            }
+
+            public bool GetIsMale(IExecuteStrategy executeStrategy)
+            {
+                return IsMale(executeStrategy);
             }
 
             public T ReadSourceValue(object context)

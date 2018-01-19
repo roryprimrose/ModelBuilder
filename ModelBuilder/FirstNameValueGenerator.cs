@@ -19,30 +19,7 @@
         /// <inheritdoc />
         protected override object GenerateValue(Type type, string referenceName, IExecuteStrategy executeStrategy)
         {
-            var context = executeStrategy?.BuildChain?.Last?.Value;
-            var gender = GetValue<string>(PropertyExpression.Gender, context);
-            bool isMale;
-
-            if (string.IsNullOrWhiteSpace(gender))
-            {
-                // Randomly assign a gender so that we can pick from a gender data set rather than limiting to a specific one
-                var nextValue = Generator.NextValue(0, 1);
-
-                if (nextValue == 0)
-                {
-                    isMale = false;
-                }
-                else
-                {
-                    isMale = true;
-                }
-            }
-            else
-            {
-                isMale = string.Equals(gender, "male", StringComparison.OrdinalIgnoreCase);
-            }
-
-            if (isMale)
+            if (IsMale(executeStrategy))
             {
                 // Use a male first name
                 return TestData.MaleNames.Next();

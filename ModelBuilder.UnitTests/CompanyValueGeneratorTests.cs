@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.IO;
     using FluentAssertions;
+    using ModelBuilder.Data;
     using NSubstitute;
     using Xunit;
 
@@ -43,7 +44,7 @@
 
             var actual = (string)target.Generate(type, referenceName, executeStrategy);
 
-            actual.Should().NotBeNullOrEmpty();
+            TestData.Companies.Should().Contain(actual);
         }
 
         [Theory]
@@ -63,7 +64,7 @@
 
             action.ShouldThrow<NotSupportedException>();
         }
-        
+
         [Fact]
         public void HasHigherPriorityThanStringValueGeneratorTest()
         {
