@@ -209,7 +209,7 @@ namespace ModelBuilder.Synchronous.UnitTests
             {
                 Model.BuildStrategy = build;
 
-                var actual = Model.For<ReadOnlyModel>();
+                var actual = Model.UsingExecuteStrategy<DefaultExecuteStrategy<ReadOnlyModel>>();
 
                 actual.Configuration.Should().Be(build);
             }
@@ -277,7 +277,7 @@ namespace ModelBuilder.Synchronous.UnitTests
             {
                 Model.BuildStrategy = buildStrategy;
 
-                var actual = Model.With<NullExecuteStrategy>();
+                var actual = Model.UsingExecuteStrategy<NullExecuteStrategy>();
 
                 actual.Should().BeOfType<NullExecuteStrategy>();
             }

@@ -66,7 +66,7 @@
         /// <inheritdoc />
         public override IExecuteStrategy<T> GetExecuteStrategy<T>()
         {
-            return this.With<DefaultExecuteStrategy<T>>();
+            return this.UsingExecuteStrategy<DefaultExecuteStrategy<T>>();
         }
     }
 }

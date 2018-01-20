@@ -24,7 +24,7 @@
                 throw new ArgumentNullException(nameof(instanceType));
             }
 
-            return With<DefaultExecuteStrategy>().Create(instanceType);
+            return ResolveDefault().Create(instanceType);
         }
 
         /// <summary>
@@ -34,7 +34,7 @@
         /// <returns>The new instance.</returns>
         public static T Create<T>()
         {
-            return For<T>().Create();
+            return ResolveDefault<T>().Create();
         }
 
         /// <summary>
@@ -52,7 +52,7 @@
                 throw new ArgumentNullException(nameof(instanceType));
             }
 
-            return With<DefaultExecuteStrategy>().CreateWith(instanceType, args);
+            return ResolveDefault().CreateWith(instanceType, args);
         }
 
         /// <summary>
@@ -64,7 +64,7 @@
         /// <returns>The new instance.</returns>
         public static T CreateWith<T>(params object[] args)
         {
-            return For<T>().CreateWith(args);
+            return ResolveDefault<T>().CreateWith(args);
         }
 
         /// <summary>
@@ -72,9 +72,10 @@
         /// </summary>
         /// <typeparam name="T">The type of instance to create using the execute strategy.</typeparam>
         /// <returns>A new execute strategy.</returns>
+        [Obsolete("This member will be removed in the next major version. Use UsingExecuteStrategy<T>() instead.")]
         public static IExecuteStrategy<T> For<T>()
         {
-            return With<DefaultExecuteStrategy<T>>();
+            return ResolveDefault<T>();
         }
 
         /// <summary>
@@ -101,7 +102,7 @@
         /// <returns>The new instance.</returns>
         public static T Populate<T>(T instance)
         {
-            return For<T>().Populate(instance);
+            return ResolveDefault<T>().Populate(instance);
         }
 
         /// <summary>
@@ -109,11 +110,20 @@
         /// </summary>
         /// <typeparam name="T">The type of build strategy to create.</typeparam>
         /// <returns>A new build strategy.</returns>
+        [Obsolete("This member will be removed in the next major version. Use UsingBuildStrategy<T>() instead.")]
         public static T Using<T>() where T : IBuildStrategy, new()
         {
-            var strategy = new T();
+            return UsingBuildStrategy<T>();
+        }
 
-            return strategy;
+        /// <summary>
+        ///     Returns a new <see cref="IBuildStrategy" /> of the specified type.
+        /// </summary>
+        /// <typeparam name="T">The type of build strategy to create.</typeparam>
+        /// <returns>A new build strategy.</returns>
+        public static T UsingBuildStrategy<T>() where T : IBuildStrategy, new()
+        {
+            return new T();
         }
 
         /// <summary>
@@ -121,9 +131,35 @@
         /// </summary>
         /// <typeparam name="T">The type of execute strategy to create.</typeparam>
         /// <returns>A new execute strategy.</returns>
+        public static T UsingExecuteStrategy<T>() where T : IExecuteStrategy, new()
+        {
+            return BuildStrategy.UsingExecuteStrategy<T>();
+        }
+
+        /// <summary>
+        ///     Returns a new build strategy using the specified <see cref="ICompilerModule" /> with
+        ///     <see cref="ModelBuilder.BuildStrategy" />.
+        /// </summary>
+        /// <typeparam name="T">The type of compiler module to create the build strategy with.</typeparam>
+        /// <returns>A new execute strategy.</returns>
+        public static IBuildStrategy UsingModule<T>() where T : ICompilerModule, new()
+        {
+            var compiler = BuildStrategy.Clone();
+
+            compiler.AddCompilerModule<T>();
+
+            return compiler.Compile();
+        }
+
+        /// <summary>
+        ///     Returns a new execute strategy using <see cref="ModelBuilder.BuildStrategy" />.
+        /// </summary>
+        /// <typeparam name="T">The type of execute strategy to create.</typeparam>
+        /// <returns>A new execute strategy.</returns>
+        [Obsolete("This member will be removed in the next major version. Use UsingExecuteStrategy<T>() instead.")]
         public static T With<T>() where T : IExecuteStrategy, new()
         {
-            return BuildStrategy.With<T>();
+            return UsingExecuteStrategy<T>();
         }
 
         private static IBuildStrategy CreateDefaultBuildStrategy()
@@ -135,6 +171,16 @@
 #endif
 
             return compiler.Compile();
+        }
+
+        private static IExecuteStrategy ResolveDefault()
+        {
+            return UsingExecuteStrategy<DefaultExecuteStrategy>();
+        }
+
+        private static IExecuteStrategy<T> ResolveDefault<T>()
+        {
+            return UsingExecuteStrategy<DefaultExecuteStrategy<T>>();
         }
 
         /// <summary>

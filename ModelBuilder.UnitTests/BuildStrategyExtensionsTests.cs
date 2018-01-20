@@ -17,9 +17,7 @@
 
             var generator = Substitute.For<IValueGenerator>();
             var generators = new List<IValueGenerator>
-            {
-                generator
-            }.AsReadOnly();
+                {generator}.AsReadOnly();
             var target = Substitute.For<IBuildStrategy>();
 
             target.ValueGenerators.Returns(generators);
@@ -58,9 +56,7 @@
 
             var generator = Substitute.For<IValueGenerator>();
             var generators = new List<IValueGenerator>
-            {
-                generator
-            }.AsReadOnly();
+                {generator}.AsReadOnly();
             var target = Substitute.For<IBuildStrategy>();
 
             target.ValueGenerators.Returns(generators);
@@ -89,9 +85,7 @@
 
             var generator = Substitute.For<IValueGenerator>();
             var generators = new List<IValueGenerator>
-            {
-                generator
-            }.AsReadOnly();
+                {generator}.AsReadOnly();
             var target = Substitute.For<IBuildStrategy>();
 
             target.ValueGenerators.Returns(generators);
@@ -130,9 +124,7 @@
 
             var generator = Substitute.For<IValueGenerator>();
             var generators = new List<IValueGenerator>
-            {
-                generator
-            }.AsReadOnly();
+                {generator}.AsReadOnly();
             var target = Substitute.For<IBuildStrategy>();
 
             target.ValueGenerators.Returns(generators);
@@ -221,14 +213,10 @@
             var target = Substitute.For<IBuildStrategy>();
             var creator = Substitute.For<ITypeCreator>();
             var creators = new List<ITypeCreator>
-            {
-                creator
-            }.AsReadOnly();
+                {creator}.AsReadOnly();
             var generator = Substitute.For<IValueGenerator>();
             var generators = new List<IValueGenerator>
-            {
-                generator
-            }.AsReadOnly();
+                {generator}.AsReadOnly();
 
             target.TypeCreators.Returns(creators);
             target.ValueGenerators.Returns(generators);
@@ -247,13 +235,11 @@
         }
 
         [Fact]
-        public void WithReturnsExecuteStrategyWithBuildStrategyConfigurationsTest()
+        public void UsingExecuteStrategyReturnsExecuteStrategyWithBuildStrategyConfigurationsTest()
         {
             var strategy = Model.BuildStrategy;
             var ignoreRules = new List<IgnoreRule>
-            {
-                new IgnoreRule(typeof(string), "Stuff")
-            };
+                {new IgnoreRule(typeof(string), "Stuff")};
 
             var buildLog = Substitute.For<IBuildLog>();
             var target = Substitute.For<IBuildStrategy>();
@@ -267,30 +253,30 @@
             target.ValueGenerators.Returns(new ReadOnlyCollection<IValueGenerator>(strategy.ValueGenerators.ToList()));
             target.IgnoreRules.Returns(new ReadOnlyCollection<IgnoreRule>(ignoreRules));
 
-            var actual = target.With<DefaultExecuteStrategy<Person>>();
+            var actual = target.UsingExecuteStrategy<DefaultExecuteStrategy<Person>>();
 
             actual.Configuration.Should().BeSameAs(target);
             actual.Log.Should().BeSameAs(buildLog);
         }
 
         [Fact]
-        public void WithThrowsExceptionWhenStrategyReturnsNullBuildLogTest()
+        public void UsingExecuteStrategyThrowsExceptionWhenStrategyReturnsNullBuildLogTest()
         {
             var target = Substitute.For<IBuildStrategy>();
 
-            target.GetBuildLog().Returns((IBuildLog)null);
+            target.GetBuildLog().Returns((IBuildLog) null);
 
-            Action action = () => target.With<DefaultExecuteStrategy>();
+            Action action = () => target.UsingExecuteStrategy<DefaultExecuteStrategy>();
 
             action.ShouldThrow<InvalidOperationException>();
         }
 
         [Fact]
-        public void WithThrowsExceptionWithNullStrategyTest()
+        public void UsingExecuteStrategyThrowsExceptionWithNullStrategyTest()
         {
             IBuildStrategy target = null;
 
-            Action action = () => target.With<NullExecuteStrategy>();
+            Action action = () => target.UsingExecuteStrategy<NullExecuteStrategy>();
 
             action.ShouldThrow<ArgumentNullException>();
         }

@@ -1,6 +1,7 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
+    using System.Linq;
     using FluentAssertions;
     using Xunit;
 
@@ -48,27 +49,35 @@
         }
 
         [Fact]
-        public void UsingReturnsNewBuilderStrategyTest()
+        public void UsingBuildStrategyReturnsNewBuilderStrategyTest()
         {
-            var actual = Model.Using<NullBuildStrategy>();
+            var actual = Model.UsingBuildStrategy<NullBuildStrategy>();
 
             actual.Should().BeOfType<NullBuildStrategy>();
         }
 
         [Fact]
-        public void UsingReturnsSpecifiedBuildStrategyTest()
+        public void UsingBuildStrategyReturnsSpecifiedBuildStrategyTest()
         {
-            var actual = Model.Using<DummyBuildStrategy>();
+            var actual = Model.UsingBuildStrategy<DummyBuildStrategy>();
 
             actual.Should().BeOfType(typeof(DummyBuildStrategy));
         }
 
         [Fact]
-        public void WithReturnsSpecifiedExecuteStrategyTest()
+        public void UsingExecuteStrategyReturnsSpecifiedExecuteStrategyTest()
         {
-            var actual = Model.With<DummyExecuteStrategy>();
+            var actual = Model.UsingExecuteStrategy<DummyExecuteStrategy>();
 
             actual.Should().BeOfType(typeof(DummyExecuteStrategy));
+        }
+
+        [Fact]
+        public void UsingModuleReturnsBuildStrategyWithModuleModificationsTest()
+        {
+            var actual = Model.UsingModule<TestCompilerModule>();
+
+            actual.ValueGenerators.FirstOrDefault(x => x.GetType() == typeof(DummyValueGenerator)).Should().NotBeNull();
         }
     }
 }
