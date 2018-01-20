@@ -170,7 +170,7 @@
         [Fact]
         public void CreateBuildsLogOfConstructionActionsTest()
         {
-            var strategy = Model.For<Company>();
+            var strategy = Model.UsingExecuteStrategy<DefaultExecuteStrategy<Company>>();
 
             strategy.Create();
 
@@ -184,7 +184,7 @@
         [Fact]
         public void CreateBuildsLogOfConstructionActionsWhereModelConstructorsAreUsedTest()
         {
-            var strategy = Model.For<WithValueParameters>();
+            var strategy = Model.UsingExecuteStrategy<DefaultExecuteStrategy<WithValueParameters>>();
 
             strategy.Create();
 
@@ -401,7 +401,7 @@
                 456,
                 true
             };
-
+            
             var actual = Model.CreateWith<WithConstructorParameters>(args);
 
             actual.First.Should().BeSameAs(args[0]);
@@ -496,15 +496,7 @@
 
             actual.All(x => x.Id == expected).Should().BeTrue();
         }
-
-        [Fact]
-        public void ForReturnsDefaultExecuteStrategyTest()
-        {
-            var actual = Model.For<string>();
-
-            actual.Should().BeOfType(typeof(DefaultExecuteStrategy<string>));
-        }
-
+        
         [Fact]
         public void IgnoringSkipsPropertyAssignmentOfNestedObjectsTest()
         {
