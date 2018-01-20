@@ -26,7 +26,7 @@
 
             var target = new AgeValueGenerator();
 
-            for (var index = 0; index < 10000; index++)
+            for (var index = 0; index < 1000; index++)
             {
                 var value = target.Generate(type, "Age", executeStrategy);
 
