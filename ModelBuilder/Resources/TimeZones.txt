@@ -183,6 +183,7 @@ America/Port-au-Prince
 America/Porto_Acre
 America/Porto_Velho
 America/Puerto_Rico
+America/Punta_Arenas
 America/Rainy_River
 America/Rankin_Inlet
 America/Recife
@@ -238,6 +239,7 @@ Asia/Aqtau
 Asia/Aqtobe
 Asia/Ashgabat
 Asia/Ashkhabad
+Asia/Atyrau
 Asia/Baghdad
 Asia/Bahrain
 Asia/Baku
@@ -258,6 +260,7 @@ Asia/Dhaka
 Asia/Dili
 Asia/Dubai
 Asia/Dushanbe
+Asia/Famagusta
 Asia/Gaza
 Asia/Harbin
 Asia/Hebron
@@ -314,6 +317,7 @@ Asia/Tel_Aviv
 Asia/Thimbu
 Asia/Thimphu
 Asia/Tokyo
+Asia/Tomsk
 Asia/Ujung_Pandang
 Asia/Ulaanbaatar
 Asia/Ulan_Bator
@@ -322,6 +326,7 @@ Asia/Ust-Nera
 Asia/Vientiane
 Asia/Vladivostok
 Asia/Yakutsk
+Asia/Yangon
 Asia/Yekaterinburg
 Asia/Yerevan
 Atlantic/Azores
@@ -366,7 +371,6 @@ Brazil/West
 Canada/Atlantic
 Canada/Central
 Canada/Eastern
-Canada/East-Saskatchewan
 Canada/Mountain
 Canada/Newfoundland
 Canada/Pacific
@@ -440,6 +444,7 @@ Europe/Istanbul
 Europe/Jersey
 Europe/Kaliningrad
 Europe/Kiev
+Europe/Kirov
 Europe/Lisbon
 Europe/Ljubljana
 Europe/London
@@ -460,6 +465,7 @@ Europe/Rome
 Europe/Samara
 Europe/San_Marino
 Europe/Sarajevo
+Europe/Saratov
 Europe/Simferopol
 Europe/Skopje
 Europe/Sofia

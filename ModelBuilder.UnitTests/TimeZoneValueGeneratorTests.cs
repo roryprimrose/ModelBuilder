@@ -4,8 +4,10 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using System.Text;
+    using Data;
     using FluentAssertions;
-    using ModelBuilder.Data;
+    using NodaTime.TimeZones;
     using NSubstitute;
     using Xunit;
 
@@ -15,9 +17,7 @@
         public void GenerateReturnsRandomTimeZoneMatchingCaseInsensitiveCountryTest()
         {
             var address = new Address
-            {
-                Country = "AUSTRALIA"
-            };
+            { Country = "AUSTRALIA" };
             var buildChain = new LinkedList<object>();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
@@ -41,9 +41,7 @@
         public void GenerateReturnsRandomTimeZoneMatchingCountryTest()
         {
             var address = new Address
-            {
-                Country = "Australia"
-            };
+            { Country = "Australia" };
             var buildChain = new LinkedList<object>();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
@@ -88,9 +86,7 @@
         public void GenerateReturnsRandomTimeZoneWhenNoMatchingCountryTest()
         {
             var address = new Address
-            {
-                Country = Guid.NewGuid().ToString()
-            };
+            { Country = Guid.NewGuid().ToString() };
             var buildChain = new LinkedList<object>();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
@@ -126,6 +122,29 @@
             var second = target.Generate(typeof(string), "timezone", executeStrategy);
 
             first.Should().NotBe(second);
+        }
+
+        [Fact]
+        public void GenerateReturnsValueInNodaTimeDatabaseTest()
+        {
+            var address = new Address();
+            var buildChain = new LinkedList<object>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            buildChain.AddFirst(address);
+
+            var target = new TimeZoneValueGenerator();
+
+            var ids = TzdbDateTimeZoneSource.Default.GetIds();
+
+            for (var index = 0; index < 10000; index++)
+            {
+                var actual = target.Generate(typeof(string), "timezone", executeStrategy) as string;
+
+                ids.Should().Contain(actual);
+            }
         }
 
         [Theory]
