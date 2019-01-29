@@ -39,12 +39,12 @@
 
             actual.ConstructorResolver.Should().Be(constructorResolver);
             actual.PropertyResolver.Should().Be(propertyResolver);
-            actual.ExecuteOrderRules.ShouldAllBeEquivalentTo(executeOrderRules);
-            actual.PostBuildActions.ShouldAllBeEquivalentTo(postBuildActions);
-            actual.CreationRules.ShouldAllBeEquivalentTo(creationRules);
-            actual.IgnoreRules.ShouldAllBeEquivalentTo(ignoreRules);
-            actual.TypeCreators.ShouldAllBeEquivalentTo(typeCreators);
-            actual.ValueGenerators.ShouldAllBeEquivalentTo(valueGenerators);
+            actual.ExecuteOrderRules.Should().BeEquivalentTo(executeOrderRules);
+            actual.PostBuildActions.Should().BeEquivalentTo(postBuildActions);
+            actual.CreationRules.Should().BeEquivalentTo(creationRules);
+            actual.IgnoreRules.Should().BeEquivalentTo(ignoreRules);
+            actual.TypeCreators.Should().BeEquivalentTo(typeCreators);
+            actual.ValueGenerators.Should().BeEquivalentTo(valueGenerators);
         }
 
         [Fact]
@@ -54,7 +54,7 @@
 
             var actual = new BuilderStrategyWrapper(expected);
 
-            actual.ShouldBeEquivalentTo(expected);
+            actual.Should().BeEquivalentTo(expected);
         }
 
         [Fact]
@@ -78,7 +78,7 @@
                 executeOrderRules,
                 postBuildActions);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -102,7 +102,7 @@
                 executeOrderRules,
                 postBuildActions);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -126,7 +126,7 @@
                 null,
                 postBuildActions);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -150,7 +150,7 @@
                 executeOrderRules,
                 postBuildActions);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -174,7 +174,7 @@
                 executeOrderRules,
                 null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -198,7 +198,7 @@
                 executeOrderRules,
                 postBuildActions);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -206,7 +206,7 @@
         {
             Action action = () => new BuilderStrategyWrapper(null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -230,7 +230,7 @@
                 executeOrderRules,
                 postBuildActions);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -254,7 +254,7 @@
                 executeOrderRules,
                 postBuildActions);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         private class BuilderStrategyWrapper : BuildStrategyBase

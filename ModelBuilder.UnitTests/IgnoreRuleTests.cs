@@ -23,7 +23,7 @@ namespace ModelBuilder.UnitTests
         {
             Action action = () => new IgnoreRule(typeof (string), string.Empty);
 
-            action.ShouldThrow<ArgumentException>();
+            action.Should().Throw<ArgumentException>();
         }
 
         [Fact]
@@ -31,7 +31,7 @@ namespace ModelBuilder.UnitTests
         {
             Action action = () => new IgnoreRule(typeof (string), null);
 
-            action.ShouldThrow<ArgumentException>();
+            action.Should().Throw<ArgumentException>();
         }
 
         [Fact]
@@ -41,7 +41,7 @@ namespace ModelBuilder.UnitTests
 
             Action action = () => { new IgnoreRule(null, name); };
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -49,7 +49,7 @@ namespace ModelBuilder.UnitTests
         {
             Action action = () => new IgnoreRule(typeof (string), "  ");
 
-            action.ShouldThrow<ArgumentException>();
+            action.Should().Throw<ArgumentException>();
         }
     }
 }

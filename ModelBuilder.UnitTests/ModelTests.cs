@@ -12,7 +12,7 @@
         {
             Action action = () => Model.Create(null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -20,7 +20,7 @@
         {
             Action action = () => Model.CreateWith(null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -37,7 +37,7 @@
         {
             Action action = () => Model.Ignoring<Person>(null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]

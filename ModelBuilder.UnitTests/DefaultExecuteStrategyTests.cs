@@ -47,7 +47,7 @@
 
             Action action = () => target.RunTest(type);
 
-            action.ShouldThrow<InvalidOperationException>();
+            action.Should().Throw<InvalidOperationException>();
         }
 
         [Fact]
@@ -57,7 +57,7 @@
 
             Action action = () => target.RunTest(null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -143,7 +143,7 @@
 
             Action action = () => target.Create(typeof(Person));
 
-            action.ShouldThrow<InvalidOperationException>();
+            action.Should().Throw<InvalidOperationException>();
         }
 
         [Fact]
@@ -806,7 +806,7 @@
 
             Action action = () => target.CreateWith(typeof(ReadOnlyModel));
 
-            action.ShouldThrow<BuildException>();
+            action.Should().Throw<BuildException>();
         }
 
         [Fact]
@@ -829,7 +829,7 @@
 
             Action action = () => target.CreateWith(typeof(Person));
 
-            var exception = action.ShouldThrow<BuildException>().Where(x => x.Message != null)
+            var exception = action.Should().Throw<BuildException>().Where(x => x.Message != null)
                 .Where(x => x.BuildLog != null).Which;
 
             _output.WriteLine(exception.Message);
@@ -850,7 +850,7 @@
 
             Action action = () => target.CreateWith(typeof(int));
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -881,7 +881,7 @@
 
             Action action = () => target.CreateWith(typeof(Person));
 
-            var exception = action.ShouldThrow<BuildException>().Where(x => x.Message != null)
+            var exception = action.Should().Throw<BuildException>().Where(x => x.Message != null)
                 .Where(x => x.BuildLog != null).Which;
 
             _output.WriteLine(exception.Message);
@@ -916,7 +916,7 @@
 
             Action action = () => target.CreateWith(typeof(Person));
 
-            action.ShouldThrow<BuildException>();
+            action.Should().Throw<BuildException>();
         }
 
         [Fact]
@@ -955,7 +955,7 @@
 
             Action action = () => target.CreateWith(typeof(SimpleReadOnlyParent));
 
-            action.ShouldThrow<BuildException>();
+            action.Should().Throw<BuildException>();
         }
 
         [Fact]
@@ -994,7 +994,7 @@
 
             Action action = () => target.CreateWith(typeof(Person));
 
-            action.ShouldThrow<BuildException>();
+            action.Should().Throw<BuildException>();
         }
 
         [Fact]
@@ -1027,7 +1027,7 @@
 
             Action action = () => target.CreateWith(typeof(KeyValuePair<string, Person>));
 
-            action.ShouldThrow<BuildException>();
+            action.Should().Throw<BuildException>();
         }
 
         [Fact]
@@ -1041,7 +1041,7 @@
 
             Action action = () => target.CreateWith(typeof(string));
 
-            action.ShouldThrow<BuildException>();
+            action.Should().Throw<BuildException>();
         }
 
         [Fact]
@@ -1051,7 +1051,7 @@
 
             Action action = () => target.CreateWith(typeof(Person));
 
-            action.ShouldThrow<InvalidOperationException>();
+            action.Should().Throw<InvalidOperationException>();
         }
 
         [Fact]
@@ -1083,7 +1083,7 @@
 
             Action action = () => target.CreateWith(typeof(SlimModel));
 
-            action.ShouldThrow<BuildException>();
+            action.Should().Throw<BuildException>();
         }
 
         [Fact]
@@ -1097,7 +1097,7 @@
 
             Action action = () => target.CreateWith(null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -1123,7 +1123,7 @@
 
             Action action = () => target.Initialize(null, buildLog);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -1135,7 +1135,7 @@
 
             Action action = () => target.Initialize(configuration, null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -1687,7 +1687,7 @@
 
             Action action = () => target.RunTest(value);
 
-            action.ShouldThrow<InvalidOperationException>();
+            action.Should().Throw<InvalidOperationException>();
         }
 
         [Fact]
@@ -1697,7 +1697,7 @@
 
             Action action = () => target.RunTest();
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -1710,7 +1710,7 @@
 
             Action action = () => target.RunTest(value, property);
 
-            action.ShouldThrow<InvalidOperationException>();
+            action.Should().Throw<InvalidOperationException>();
         }
 
         [Fact]
@@ -1722,7 +1722,7 @@
 
             Action action = () => target.RunTest(null, property);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -1732,7 +1732,7 @@
 
             Action action = () => target.RunTest(target);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -2142,7 +2142,7 @@
 
             Action action = () => target.Populate(item);
 
-            action.ShouldThrow<BuildException>();
+            action.Should().Throw<BuildException>();
         }
 
         [Fact]
@@ -2154,7 +2154,7 @@
 
             Action action = () => target.Populate(value);
 
-            action.ShouldThrow<InvalidOperationException>();
+            action.Should().Throw<InvalidOperationException>();
         }
 
         [Fact]
@@ -2174,7 +2174,7 @@
 
             Action action = () => target.Populate(item);
 
-            action.ShouldThrow<BuildException>();
+            action.Should().Throw<BuildException>();
         }
 
         [Fact]
@@ -2184,7 +2184,7 @@
 
             Action action = () => target.Populate(null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]

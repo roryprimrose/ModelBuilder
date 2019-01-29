@@ -36,7 +36,7 @@
 
             Action action = () => target.Create(null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -46,7 +46,7 @@
 
             Action action = () => target.Create(typeof(Guid));
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -75,7 +75,7 @@
 
             Action action = () => target.Create<Guid>();
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -104,7 +104,7 @@
 
             Action action = () => target.CreateWith(null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -114,7 +114,7 @@
 
             Action action = () => target.CreateWith(typeof(Guid));
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -143,7 +143,7 @@
 
             Action action = () => target.CreateWith<Guid>();
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -169,7 +169,7 @@
 
             Action action = () => target.Ignoring<Person>(null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -179,7 +179,7 @@
 
             Action action = () => target.Ignoring<Person>(x => x.Priority);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -191,7 +191,7 @@
 
             Action action = () => target.Populate(model);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -201,7 +201,7 @@
 
             Action action = () => target.Populate<Person>(null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -268,7 +268,7 @@
 
             Action action = () => target.UsingExecuteStrategy<DefaultExecuteStrategy>();
 
-            action.ShouldThrow<InvalidOperationException>();
+            action.Should().Throw<InvalidOperationException>();
         }
 
         [Fact]
@@ -278,7 +278,7 @@
 
             Action action = () => target.UsingExecuteStrategy<NullExecuteStrategy>();
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
     }
 }

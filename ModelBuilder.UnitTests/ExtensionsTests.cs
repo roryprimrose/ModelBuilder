@@ -32,7 +32,7 @@
 
             Action action = () => target.IsNullable();
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -60,7 +60,7 @@
         {
             Action action = () => Extensions.Next<int>(null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -93,7 +93,7 @@
 
             Action action = () => target.SetEach(null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -103,7 +103,7 @@
 
             Action action = () => target.SetEach(x => { });
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -134,7 +134,7 @@
 
             Action action = () => target.SetEach(null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -162,7 +162,7 @@
 
             Action action = () => target.SetEach(x => { });
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -195,7 +195,7 @@
 
             Action action = () => target.SetEach(null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -205,7 +205,7 @@
 
             Action action = () => target.SetEach(x => { });
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -251,7 +251,7 @@
 
             Action action = () => target.Set(null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -261,7 +261,7 @@
 
             Action action = () => target.Set(x => { });
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         private IEnumerable<Person> BuildPeople()

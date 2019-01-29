@@ -384,7 +384,7 @@
 
             Action action = () => target.CreateWith();
 
-            var exception = action.ShouldThrow<BuildException>().Where(x => x.Message != null)
+            var exception = action.Should().Throw<BuildException>().Where(x => x.Message != null)
                 .Where(x => x.BuildLog != null).Which;
 
             _output.WriteLine(exception.Message);

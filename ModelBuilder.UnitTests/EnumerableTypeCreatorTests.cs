@@ -76,7 +76,7 @@
 
             Action action = () => target.CanCreate(null, null, null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Theory]
@@ -126,7 +126,7 @@
 
             Action action = () => target.CanPopulate(null, null, null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -138,7 +138,7 @@
 
             Action action = () => target.CreateItem(typeof(Person), null, person);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -242,11 +242,11 @@
 
             if (supported)
             {
-                action.ShouldNotThrow();
+                action.Should().NotThrow();
             }
             else
             {
-                action.ShouldThrow<NotSupportedException>();
+                action.Should().Throw<NotSupportedException>();
             }
         }
 
@@ -349,7 +349,7 @@
                 expected.Add(baseValue + index);
             }
 
-            result.ShouldAllBeEquivalentTo(expected);
+            result.Should().BeEquivalentTo(expected);
         }
 
         [Fact]
@@ -366,7 +366,7 @@
 
             Action action = () => target.Populate(instance, executeStrategy);
 
-            action.ShouldThrow<NotSupportedException>();
+            action.Should().Throw<NotSupportedException>();
         }
 
         [Fact]

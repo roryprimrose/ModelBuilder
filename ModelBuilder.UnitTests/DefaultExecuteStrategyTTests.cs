@@ -252,7 +252,7 @@
 
             Action action = () => target.RunTest();
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -262,7 +262,7 @@
 
             Action action = () => target.Populate(null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         private class Bottom

@@ -122,7 +122,7 @@
 
             Action action = () => target.ReadSourceValue(context);
 
-            action.ShouldThrow<InvalidOperationException>();
+            action.Should().Throw<InvalidOperationException>();
         }
 
         [Fact]
@@ -132,7 +132,7 @@
 
             Action action = () => target.ReadSourceValue(null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -145,7 +145,7 @@
 
             Action action = () => target.ReadValue(PropertyExpression.LastName, null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -160,7 +160,7 @@
 
             Action action = () => target.ReadValue(null, context);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -268,7 +268,7 @@
 
             Action action = () => sut.GetIsMale(null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Theory]
@@ -350,7 +350,7 @@
         {
             Action action = () => new GeneratorWrapper<string>(null, PropertyExpression.FirstName, typeof(string));
 
-            action.ShouldThrow<ArgumentException>();
+            action.Should().Throw<ArgumentException>();
         }
 
         [Fact]
@@ -358,7 +358,7 @@
         {
             Action action = () => new GeneratorWrapper<string>(null, PropertyExpression.Gender);
 
-            action.ShouldThrow<ArgumentException>();
+            action.Should().Throw<ArgumentException>();
         }
 
         private class GeneratorWrapper<T> : RelativeValueGenerator

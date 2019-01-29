@@ -63,7 +63,7 @@ namespace ModelBuilder.UnitTests
 
             Action action = () => target.Generate(type, referenceName, executeStrategy);
 
-            action.ShouldThrow<NotSupportedException>();
+            action.Should().Throw<NotSupportedException>();
         }
         
         [Fact]
@@ -98,7 +98,7 @@ namespace ModelBuilder.UnitTests
 
             Action action = () => target.IsSupported(null, null, null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
     }
 }

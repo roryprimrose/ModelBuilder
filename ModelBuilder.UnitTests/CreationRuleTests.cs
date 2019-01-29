@@ -117,7 +117,7 @@
 
             Action action = () => target.Create(typeof(Guid), string.Empty, null);
 
-            action.ShouldThrow<NotSupportedException>();
+            action.Should().Throw<NotSupportedException>();
         }
 
         [Theory]
@@ -188,7 +188,7 @@
         {
             Action action = () => new CreationRule((type, referenceName) => true, 10, null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -196,7 +196,7 @@
         {
             Action action = () => new CreationRule(typeof(string), new Regex(".+"), 10, null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -204,7 +204,7 @@
         {
             Action action = () => new CreationRule(typeof(string), Guid.NewGuid().ToString(), 10, null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -212,7 +212,7 @@
         {
             Action action = () => new CreationRule(null, 10, (type, referenceName, context) => null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -220,7 +220,7 @@
         {
             Action action = () => new CreationRule(null, 10, (object)null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -228,7 +228,7 @@
         {
             Action action = () => new CreationRule(null, (Regex)null, 10, (type, referenceName, context) => null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -236,7 +236,7 @@
         {
             Action action = () => new CreationRule(null, (Regex)null, 10, (object)null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -244,7 +244,7 @@
         {
             Action action = () => new CreationRule(null, (string)null, 10, (type, referenceName, context) => null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -252,7 +252,7 @@
         {
             Action action = () => new CreationRule(null, (string)null, 10, (object)null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
     }
 }

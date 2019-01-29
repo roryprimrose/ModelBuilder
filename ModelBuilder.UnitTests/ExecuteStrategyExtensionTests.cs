@@ -28,7 +28,7 @@
 
             Action action = () => target.Create(null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -38,7 +38,7 @@
 
             Action action = () => target.Create(typeof(string));
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -62,7 +62,7 @@
 
             Action action = () => target.Create();
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
     }
 }

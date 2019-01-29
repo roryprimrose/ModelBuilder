@@ -33,7 +33,7 @@
 
             Action action = () => target.GetProperties(type);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -43,7 +43,7 @@
 
             Action action = () => target.GetProperties(null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Theory]
@@ -81,7 +81,7 @@
 
             Action action = () => target.GetProperties(type, expression);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -93,7 +93,7 @@
 
             Action action = () => target.GetProperties(type, null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -105,7 +105,7 @@
 
             Action action = () => target.GetProperties(null, expression);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
     }
 }

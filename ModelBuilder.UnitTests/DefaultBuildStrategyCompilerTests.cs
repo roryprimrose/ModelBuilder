@@ -36,7 +36,7 @@
 
                 Action action = () => rule.IsMatch(property);
 
-                action.ShouldNotThrow();
+                action.Should().NotThrow();
             }
         }
 

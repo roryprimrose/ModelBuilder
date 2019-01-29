@@ -100,7 +100,7 @@
 
             Action action = () => sut.CanPopulate(null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -406,7 +406,7 @@
 
             Action action = () => sut.ShouldPopulateProperty(null, instance, propertyInfo, null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -419,7 +419,7 @@
 
             Action action = () => sut.ShouldPopulateProperty(configuration, null, propertyInfo, null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -432,7 +432,7 @@
 
             Action action = () => sut.ShouldPopulateProperty(configuration, instance, null, null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         private class PrivateProp

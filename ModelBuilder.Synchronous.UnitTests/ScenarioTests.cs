@@ -15,7 +15,7 @@ namespace ModelBuilder.Synchronous.UnitTests
         {
             Action action = () => Model.BuildStrategy = null;
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]

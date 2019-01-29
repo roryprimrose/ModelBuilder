@@ -124,7 +124,7 @@
 
             Action action = () => new ExecuteOrderRule(null, null, (string)null, priority);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -134,7 +134,7 @@
 
             Action action = () => new ExecuteOrderRule(null, null, (Regex)null, priority);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -144,7 +144,7 @@
 
             Action action = () => new ExecuteOrderRule(null, priority);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
     }
 }

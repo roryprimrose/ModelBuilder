@@ -101,7 +101,7 @@
 
             Action action = () => target.Create(typeof(Person), null, executeStrategy, args);
 
-            action.ShouldThrow<MissingMemberException>();
+            action.Should().Throw<MissingMemberException>();
         }
 
         [Fact]
@@ -116,7 +116,7 @@
 
             Action action = () => target.Create(typeof(Stream), null, executeStrategy);
 
-            action.ShouldThrow<NotSupportedException>();
+            action.Should().Throw<NotSupportedException>();
         }
     }
 }

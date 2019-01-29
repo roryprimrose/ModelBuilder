@@ -55,12 +55,12 @@
 
             actual.ConstructorResolver.Should().Be(constructorResolver);
             actual.PropertyResolver.Should().Be(propertyResolver);
-            actual.CreationRules.ShouldBeEquivalentTo(creationRules);
-            actual.TypeCreators.ShouldBeEquivalentTo(typeCreators);
-            actual.ValueGenerators.ShouldBeEquivalentTo(valueGenerators);
-            actual.IgnoreRules.ShouldBeEquivalentTo(ignoreRules);
-            actual.ExecuteOrderRules.ShouldBeEquivalentTo(executeOrderRules);
-            actual.PostBuildActions.ShouldBeEquivalentTo(postBuildActions);
+            actual.CreationRules.Should().BeEquivalentTo(creationRules);
+            actual.TypeCreators.Should().BeEquivalentTo(typeCreators);
+            actual.ValueGenerators.Should().BeEquivalentTo(valueGenerators);
+            actual.IgnoreRules.Should().BeEquivalentTo(ignoreRules);
+            actual.ExecuteOrderRules.Should().BeEquivalentTo(executeOrderRules);
+            actual.PostBuildActions.Should().BeEquivalentTo(postBuildActions);
         }
 
         [Fact]
@@ -75,7 +75,7 @@
 
             Action action = () => target.Compile();
 
-            action.ShouldThrow<InvalidOperationException>();
+            action.Should().Throw<InvalidOperationException>();
         }
 
         [Fact]
@@ -90,7 +90,7 @@
 
             Action action = () => target.Compile();
 
-            action.ShouldThrow<InvalidOperationException>();
+            action.Should().Throw<InvalidOperationException>();
         }
 
         [Fact]

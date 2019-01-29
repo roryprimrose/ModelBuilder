@@ -26,7 +26,7 @@
 
             Action action = () => target.BuildFailure(null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -46,7 +46,7 @@
 
             Action action = () => target.CircularReferenceDetected(null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -86,7 +86,7 @@
 
             Action action = () => target.CreatedParameter(instanceType, parameterType, parameterName, null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -118,7 +118,7 @@
 
             Action action = () => target.CreatedProperty(propertyType, propertyName, context);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -138,7 +138,7 @@
 
             Action action = () => target.CreatedType(null, null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -181,7 +181,7 @@
 
             Action action = () => target.CreatingParameter(instanceType, parameterType, parameterName, null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -213,7 +213,7 @@
 
             Action action = () => target.CreatingProperty(propertyType, propertyName, context);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -237,7 +237,7 @@
 
             Action action = () => target.CreatingType(type, null, null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -249,7 +249,7 @@
 
             Action action = () => target.CreatingType(null, creatorType, null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -274,7 +274,7 @@
 
             Action action = () => target.CreatingValue(type, null, null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -286,7 +286,7 @@
 
             Action action = () => target.CreatingValue(null, generatorType, null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -321,7 +321,7 @@
 
             Action action = () => target.IgnoringProperty(propertyType, propertyName, context);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -343,7 +343,7 @@
 
             Action action = () => target.PopulatedInstance(null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -384,7 +384,7 @@
 
             Action action = () => target.PopulatingInstance(null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -408,7 +408,7 @@
 
             Action action = () => target.PostBuildAction(type, null, null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -420,7 +420,7 @@
 
             Action action = () => target.PostBuildAction(null, creatorType, null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]

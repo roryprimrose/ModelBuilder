@@ -34,7 +34,7 @@
 
             Action action = () => target.CanCreate(null, null, null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -46,7 +46,7 @@
 
             Action action = () => target.CanPopulate(null, "Name", buildChain);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -61,7 +61,7 @@
 
             Action action = () => target.Create(typeof(List<string>), null, executeStrategy);
 
-            action.ShouldNotThrow();
+            action.Should().NotThrow();
         }
 
         [Fact]
@@ -76,7 +76,7 @@
 
             Action action = () => target.Create(typeof(bool), null, executeStrategy);
 
-            action.ShouldThrow<NotSupportedException>();
+            action.Should().Throw<NotSupportedException>();
         }
 
         [Fact]
@@ -88,7 +88,7 @@
 
             Action action = () => target.Create(typeof(string), "Name", executeStrategy);
 
-            action.ShouldThrow<InvalidOperationException>();
+            action.Should().Throw<InvalidOperationException>();
         }
 
         [Fact]
@@ -103,7 +103,7 @@
 
             Action action = () => target.Create(typeof(string), "Name", null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -118,7 +118,7 @@
 
             Action action = () => target.Create(null, "Name", executeStrategy);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -143,7 +143,7 @@
 
             Action action = () => target.Populate(value, executeStrategy);
 
-            action.ShouldNotThrow();
+            action.Should().NotThrow();
         }
 
         [Fact]
@@ -175,7 +175,7 @@
 
             Action action = () => target.Populate(false, executeStrategy);
 
-            action.ShouldThrow<NotSupportedException>();
+            action.Should().Throw<NotSupportedException>();
         }
 
         [Fact]
@@ -187,7 +187,7 @@
 
             Action action = () => target.Populate(person, null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -202,7 +202,7 @@
 
             Action action = () => target.Populate(null, executeStrategy);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -214,7 +214,7 @@
 
             Action action = () => target.Populate(typeof(string), executeStrategy);
 
-            action.ShouldThrow<InvalidOperationException>();
+            action.Should().Throw<InvalidOperationException>();
         }
 
         [Fact]
@@ -229,7 +229,7 @@
 
             Action action = () => target.Populate(null, executeStrategy);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -249,7 +249,7 @@
 
             Action action = () => target.VerifyCreateRequestWithNullExecuteStrategy();
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -261,7 +261,7 @@
 
             Action action = () => target.RunVerifyCreateRequest(typeof(string), "stuff", strategy);
 
-            action.ShouldThrow<InvalidOperationException>();
+            action.Should().Throw<InvalidOperationException>();
         }
 
         [Fact]
@@ -271,7 +271,7 @@
 
             Action action = () => target.VerifyCreateRequestWithNullType();
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -281,7 +281,7 @@
 
             Action action = () => target.VerifyPopulateRequestWithNullExecuteStrategy();
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -293,7 +293,7 @@
 
             Action action = () => target.RunVerifyPopulateRequest(typeof(string), "stuff", strategy);
 
-            action.ShouldThrow<InvalidOperationException>();
+            action.Should().Throw<InvalidOperationException>();
         }
 
         [Fact]
@@ -303,7 +303,7 @@
 
             Action action = () => target.VerifyPopulateRequestWithNullType();
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         private class TypeCreatorWrapper : TypeCreatorBase

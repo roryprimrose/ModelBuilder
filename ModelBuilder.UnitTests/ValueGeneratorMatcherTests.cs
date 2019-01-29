@@ -102,7 +102,7 @@
 
             Action action = () => target.IsSupported(null, "Test", buildChain);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -110,7 +110,7 @@
         {
             Action action = () => new WrapperGenerator((Regex)null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -118,7 +118,7 @@
         {
             Action action = () => new WrapperGenerator((string)null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -126,7 +126,7 @@
         {
             Action action = () => new WrapperGenerator((Type[])null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         private class WrapperGenerator : ValueGeneratorMatcher

@@ -57,7 +57,7 @@
 
             Action action = () => target.CanCreate(null, null, null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Theory]
@@ -100,7 +100,7 @@
 
             Action action = () => target.CanPopulate(null, null, null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -112,7 +112,7 @@
 
             Action action = () => target.CreateItem(typeof(Person[]), null, person);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Theory]
@@ -169,11 +169,11 @@
 
             if (supported)
             {
-                action.ShouldNotThrow();
+                action.Should().NotThrow();
             }
             else
             {
-                action.ShouldThrow<NotSupportedException>();
+                action.Should().Throw<NotSupportedException>();
             }
         }
 
@@ -269,11 +269,11 @@
                 expected[index] = baseValue + index;
             }
 
-            result.ShouldAllBeEquivalentTo(expected);
+            result.Should().BeEquivalentTo(expected);
         }
 
         [Fact]
-        public void PopulateInferesItemTypeByArrayTypeWhenFirstItemIsNullTest()
+        public void PopulateInfersItemTypeByArrayTypeWhenFirstItemIsNullTest()
         {
             var actual = new Person[15];
             var executeStrategy = Model.BuildStrategy.GetExecuteStrategy<List<Company>>();
@@ -319,7 +319,7 @@
 
             Action action = () => target.Populate(null, strategy);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -331,7 +331,7 @@
 
             Action action = () => target.Populate(instance, null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -348,7 +348,7 @@
 
             Action action = () => target.Populate(instance, executeStrategy);
 
-            action.ShouldThrow<NotSupportedException>();
+            action.Should().Throw<NotSupportedException>();
         }
 
         [Fact]

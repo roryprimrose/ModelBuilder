@@ -39,7 +39,7 @@
 
             Action action = () => target.Generate(type, null, executeStrategy);
 
-            action.ShouldThrow<NotSupportedException>();
+            action.Should().Throw<NotSupportedException>();
         }
 
         [Fact]
@@ -52,7 +52,7 @@
 
             Action action = () => target.Generate(type, null, executeStrategy);
 
-            action.ShouldThrow<InvalidOperationException>();
+            action.Should().Throw<InvalidOperationException>();
         }
 
         [Fact]
@@ -64,7 +64,7 @@
 
             Action action = () => target.Generate(type, null, null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -76,7 +76,7 @@
 
             Action action = () => target.Generate(null, null, executeStrategy);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -116,7 +116,7 @@
 
             Action action = () => target.RunVerifyGenerateRequest(type, null, executeStrategy);
 
-            action.ShouldThrow<InvalidOperationException>();
+            action.Should().Throw<InvalidOperationException>();
         }
 
         [Fact]
@@ -128,7 +128,7 @@
 
             Action action = () => target.RunVerifyGenerateRequest(type, null, null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -140,7 +140,7 @@
 
             Action action = () => target.RunVerifyGenerateRequest(null, null, executeStrategy);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         private class GenerateWrapper : ValueGeneratorBase

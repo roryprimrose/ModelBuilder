@@ -200,7 +200,7 @@
 
             Action action = () => target.Resolve(typeof(Optionals), "first", null);
 
-            _output.WriteLine(action.ShouldThrow<MissingMemberException>().And.Message);
+            _output.WriteLine(action.Should().Throw<MissingMemberException>().And.Message);
         }
 
         [Fact]
@@ -210,7 +210,7 @@
 
             Action action = () => target.Resolve(typeof(Optionals), "first", "stuff", null);
 
-            _output.WriteLine(action.ShouldThrow<MissingMemberException>().And.Message);
+            _output.WriteLine(action.Should().Throw<MissingMemberException>().And.Message);
         }
 
         [Fact]
@@ -220,7 +220,7 @@
 
             Action action = () => target.Resolve(typeof(Other), Guid.NewGuid(), null, "NotAMatchingParameter", null);
 
-            _output.WriteLine(action.ShouldThrow<MissingMemberException>().And.Message);
+            _output.WriteLine(action.Should().Throw<MissingMemberException>().And.Message);
         }
 
         [Fact]
@@ -232,7 +232,7 @@
 
             Action action = () => target.Resolve(typeof(Derived), null, company, "third");
 
-            _output.WriteLine(action.ShouldThrow<MissingMemberException>().And.Message);
+            _output.WriteLine(action.Should().Throw<MissingMemberException>().And.Message);
         }
 
         [Fact]
@@ -243,7 +243,7 @@
             Action action =
                 () => target.Resolve(typeof(Other), Guid.NewGuid(), null, 123, null, "ThisParamDoesn'tMatch");
 
-            _output.WriteLine(action.ShouldThrow<MissingMemberException>().And.Message);
+            _output.WriteLine(action.Should().Throw<MissingMemberException>().And.Message);
         }
 
         [Fact]
@@ -253,7 +253,7 @@
 
             Action action = () => target.Resolve(typeof(Other), Guid.NewGuid(), "NextParameterIsInt", null, null);
 
-            _output.WriteLine(action.ShouldThrow<MissingMemberException>().And.Message);
+            _output.WriteLine(action.Should().Throw<MissingMemberException>().And.Message);
         }
 
         [Fact]
@@ -263,7 +263,7 @@
 
             Action action = () => target.Resolve(typeof(WithMixedValueParameters), "first", null, "this doesn't exist");
 
-            _output.WriteLine(action.ShouldThrow<MissingMemberException>().And.Message);
+            _output.WriteLine(action.Should().Throw<MissingMemberException>().And.Message);
         }
 
         [Fact]
@@ -273,7 +273,7 @@
 
             Action action = () => target.Resolve(typeof(Clone));
 
-            _output.WriteLine(action.ShouldThrow<MissingMemberException>().And.Message);
+            _output.WriteLine(action.Should().Throw<MissingMemberException>().And.Message);
         }
 
         [Fact]
@@ -283,7 +283,7 @@
 
             Action action = () => target.Resolve(typeof(Copy));
 
-            _output.WriteLine(action.ShouldThrow<MissingMemberException>().And.Message);
+            _output.WriteLine(action.Should().Throw<MissingMemberException>().And.Message);
         }
 
         [Fact]
@@ -293,7 +293,7 @@
 
             Action action = () => target.Resolve(typeof(Simple), Guid.NewGuid().ToString(), true, 123);
 
-            _output.WriteLine(action.ShouldThrow<MissingMemberException>().And.Message);
+            _output.WriteLine(action.Should().Throw<MissingMemberException>().And.Message);
         }
 
         [Fact]
@@ -303,7 +303,7 @@
 
             Action action = () => target.Resolve(typeof(Singleton));
 
-            _output.WriteLine(action.ShouldThrow<MissingMemberException>().And.Message);
+            _output.WriteLine(action.Should().Throw<MissingMemberException>().And.Message);
         }
 
         [Fact]
@@ -324,7 +324,7 @@
                         Guid.NewGuid(),
                         priority);
 
-            _output.WriteLine(action.ShouldThrow<MissingMemberException>().And.Message);
+            _output.WriteLine(action.Should().Throw<MissingMemberException>().And.Message);
         }
 
         [Fact]
@@ -334,7 +334,7 @@
 
             Action action = () => target.Resolve(typeof(Singleton));
 
-            _output.WriteLine(action.ShouldThrow<MissingMemberException>().And.Message);
+            _output.WriteLine(action.Should().Throw<MissingMemberException>().And.Message);
         }
 
         [Fact]
@@ -344,7 +344,7 @@
 
             Action action = () => target.Resolve(null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         public class Clone

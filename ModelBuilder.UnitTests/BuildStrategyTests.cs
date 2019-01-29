@@ -132,12 +132,12 @@
 
             target.ConstructorResolver.Should().Be(constructorResolver);
             target.PropertyResolver.Should().Be(propertyResolver);
-            target.CreationRules.ShouldBeEquivalentTo(creationRules);
-            target.TypeCreators.ShouldBeEquivalentTo(typeCreators);
-            target.ValueGenerators.ShouldBeEquivalentTo(valueGenerators);
-            target.IgnoreRules.ShouldBeEquivalentTo(ignoreRules);
-            target.ExecuteOrderRules.ShouldBeEquivalentTo(executeOrderRules);
-            target.PostBuildActions.ShouldBeEquivalentTo(postBuildActions);
+            target.CreationRules.Should().BeEquivalentTo(creationRules);
+            target.TypeCreators.Should().BeEquivalentTo(typeCreators);
+            target.ValueGenerators.Should().BeEquivalentTo(valueGenerators);
+            target.IgnoreRules.Should().BeEquivalentTo(ignoreRules);
+            target.ExecuteOrderRules.Should().BeEquivalentTo(executeOrderRules);
+            target.PostBuildActions.Should().BeEquivalentTo(postBuildActions);
         }
 
         [Fact]
@@ -147,7 +147,7 @@
 
             var target = new BuildStrategy(expected);
 
-            target.ShouldBeEquivalentTo(expected);
+            target.Should().BeEquivalentTo(expected);
         }
 
         [Fact]
@@ -171,7 +171,7 @@
                 executeOrderRules,
                 postBuildActions);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -195,7 +195,7 @@
                 executeOrderRules,
                 postBuildActions);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -219,7 +219,7 @@
                 null,
                 postBuildActions);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -243,7 +243,7 @@
                 executeOrderRules,
                 postBuildActions);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -267,7 +267,7 @@
                 executeOrderRules,
                 null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -291,7 +291,7 @@
                 executeOrderRules,
                 postBuildActions);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -299,7 +299,7 @@
         {
             Action action = () => new BuildStrategy(null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -323,7 +323,7 @@
                 executeOrderRules,
                 postBuildActions);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -347,7 +347,7 @@
                 executeOrderRules,
                 postBuildActions);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
     }
 }
