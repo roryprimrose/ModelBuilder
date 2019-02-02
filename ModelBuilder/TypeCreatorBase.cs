@@ -145,12 +145,15 @@ namespace ModelBuilder
                 throw new ArgumentNullException(nameof(executeStrategy));
             }
 
-            if (executeStrategy.BuildChain == null)
+            // Calculate the build chain just once
+            var buildChain = executeStrategy.BuildChain;
+
+            if (buildChain == null)
             {
                 throw new InvalidOperationException(Resources.ExecuteStrategy_NoBuildChain);
             }
 
-            if (CanCreate(type, referenceName, executeStrategy.BuildChain))
+            if (CanCreate(type, referenceName, buildChain))
             {
                 return;
             }
@@ -186,12 +189,15 @@ namespace ModelBuilder
                 throw new ArgumentNullException(nameof(executeStrategy));
             }
 
-            if (executeStrategy.BuildChain == null)
+            // Calculate the build chain just once
+            var buildChain = executeStrategy.BuildChain;
+
+            if (buildChain == null)
             {
                 throw new InvalidOperationException(Resources.ExecuteStrategy_NoBuildChain);
             }
 
-            if (CanPopulate(type, referenceName, executeStrategy.BuildChain))
+            if (CanPopulate(type, referenceName, buildChain))
             {
                 return;
             }

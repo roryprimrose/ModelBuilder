@@ -69,12 +69,15 @@
                 throw new ArgumentNullException(nameof(executeStrategy));
             }
 
-            if (executeStrategy.BuildChain == null)
+            // Calculate the build chain just once
+            var buildChain = executeStrategy.BuildChain;
+
+            if (buildChain == null)
             {
                 throw new InvalidOperationException(Resources.ExecuteStrategy_NoBuildChain);
             }
 
-            if (IsSupported(type, referenceName, executeStrategy.BuildChain) == false)
+            if (IsSupported(type, referenceName, buildChain) == false)
             {
                 var message = string.Format(
                     CultureInfo.CurrentCulture,

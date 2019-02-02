@@ -15,7 +15,8 @@
     /// </summary>
     public class DefaultExecuteStrategy : IExecuteStrategy
     {
-        private readonly Stack<object> _buildChain = new Stack<object>();
+        private readonly Stack<object> _buildHistory = new Stack<object>();
+        private LinkedList<object> _buildChain = new LinkedList<object>();
 
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is null.</exception>
@@ -41,18 +42,8 @@
         /// <exception cref="ArgumentNullException">The <paramref name="buildLog" /> parameter is null.</exception>
         public void Initialize(IBuildConfiguration configuration, IBuildLog buildLog)
         {
-            if (configuration == null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
-
-            if (buildLog == null)
-            {
-                throw new ArgumentNullException(nameof(buildLog));
-            }
-
-            Configuration = configuration;
-            Log = buildLog;
+            Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+            Log = buildLog ?? throw new ArgumentNullException(nameof(buildLog));
         }
 
         /// <inheritdoc />
@@ -71,7 +62,9 @@
 
             EnsureInitialized();
 
-            _buildChain.Push(instance);
+            _buildHistory.Push(instance);
+
+            CreateBuildChain();
 
             try
             {
@@ -88,7 +81,9 @@
             }
             finally
             {
-                _buildChain.Pop();
+                _buildHistory.Pop();
+
+                CreateBuildChain();
             }
         }
 
@@ -112,7 +107,7 @@
             var propertyResolver = Configuration.PropertyResolver;
 
             var propertyInfos = from x in Configuration.PropertyResolver.GetProperties(type)
-                orderby GetMaximumOrderPrority(x) descending
+                orderby GetMaximumOrderPriority(x) descending
                 select x;
 
             foreach (var propertyInfo in propertyInfos)
@@ -136,7 +131,7 @@
         /// <param name="type">The type of instance to create.</param>
         /// <param name="referenceName">Identifies the possible parameter or property name this value is intended for.</param>
         /// <param name="context">The possible context object this value is being created for.</param>
-        /// <param name="args">The arguements to create the instance with.</param>
+        /// <param name="args">The arguments to create the instance with.</param>
         /// <returns>A new instance.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is null.</exception>
         /// <exception cref="NotSupportedException">The <paramref name="type" /> parameter can not be created using this strategy.</exception>
@@ -149,7 +144,9 @@
 
             EnsureInitialized();
 
-            var circularReference = BuildChain.FirstOrDefault(x => x.GetType() == type);
+            var buildChain = BuildChain;
+
+            var circularReference = buildChain.FirstOrDefault(x => x.GetType() == type);
 
             if (circularReference != null)
             {
@@ -179,7 +176,7 @@
             {
                 // Next check if this is a type supported by a value generator
                 var valueGenerator = Configuration.ValueGenerators
-                    ?.Where(x => x.IsSupported(type, referenceName, BuildChain)).OrderByDescending(x => x.Priority)
+                    ?.Where(x => x.IsSupported(type, referenceName, buildChain)).OrderByDescending(x => x.Priority)
                     .FirstOrDefault();
 
                 if (valueGenerator != null)
@@ -225,7 +222,7 @@
                 }
             }
 
-            var typeCreator = Configuration.TypeCreators?.Where(x => x.CanCreate(type, referenceName, BuildChain))
+            var typeCreator = Configuration.TypeCreators?.Where(x => x.CanCreate(type, referenceName, buildChain))
                 .OrderByDescending(x => x.Priority).FirstOrDefault();
 
             if (typeCreator == null)
@@ -237,7 +234,7 @@
 
             try
             {
-                var instance = CreateAndPopulate(type, referenceName, BuildChain, args, typeCreator);
+                var instance = CreateAndPopulate(type, referenceName, buildChain, args, typeCreator);
 
                 return instance;
             }
@@ -354,7 +351,9 @@
                 return null;
             }
 
-            _buildChain.Push(instance);
+            _buildHistory.Push(instance);
+
+            CreateBuildChain();
 
             try
             {
@@ -362,8 +361,22 @@
             }
             finally
             {
-                _buildChain.Pop();
+                _buildHistory.Pop();
+
+                CreateBuildChain();
             }
+        }
+
+        private void CreateBuildChain()
+        {
+            var chain = new LinkedList<object>();
+
+            foreach (var item in _buildHistory)
+            {
+                chain.AddFirst(item);
+            }
+
+            _buildChain = chain;
         }
 
         private Exception CreateBuildException(Type type, string referenceName, object context)
@@ -492,7 +505,7 @@
             }
         }
 
-        private int GetMaximumOrderPrority(PropertyInfo property)
+        private int GetMaximumOrderPriority(PropertyInfo property)
         {
             if (Configuration.ExecuteOrderRules == null)
             {
@@ -535,8 +548,11 @@
                 // Allow the type creator to do its own population of the instance
                 instance = typeCreator.Populate(instance, this);
 
+                // Get the build chain once as it recalculates each time
+                var buildChain = BuildChain;
+
                 var postBuildActions = Configuration.PostBuildActions
-                    ?.Where(x => x.IsSupported(type, referenceName, BuildChain)).OrderByDescending(x => x.Priority);
+                    ?.Where(x => x.IsSupported(type, referenceName, buildChain)).OrderByDescending(x => x.Priority);
 
                 if (postBuildActions != null)
                 {
@@ -544,7 +560,7 @@
                     {
                         Log.PostBuildAction(type, postBuildAction.GetType(), instance);
 
-                        postBuildAction.Execute(type, referenceName, BuildChain);
+                        postBuildAction.Execute(type, referenceName, buildChain);
                     }
                 }
 
@@ -557,20 +573,7 @@
         }
 
         /// <inheritdoc />
-        public LinkedList<object> BuildChain
-        {
-            get
-            {
-                var chain = new LinkedList<object>();
-
-                foreach (var item in _buildChain)
-                {
-                    chain.AddFirst(item);
-                }
-
-                return chain;
-            }
-        }
+        public LinkedList<object> BuildChain => _buildChain;
 
         /// <inheritdoc />
         public IBuildConfiguration Configuration { get; private set; }
