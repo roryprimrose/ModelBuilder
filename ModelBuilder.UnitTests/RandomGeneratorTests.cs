@@ -293,7 +293,7 @@
 
                 var actual = Convert.ToDouble(value);
 
-                if (unchecked(actual != (int)actual))
+                if (unchecked(actual != (int) actual))
                 {
                     decimalFound = true;
 

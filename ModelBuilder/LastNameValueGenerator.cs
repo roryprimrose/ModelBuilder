@@ -12,7 +12,8 @@
         /// <summary>
         ///     Initializes a new instance of the <see cref="LastNameValueGenerator" />.
         /// </summary>
-        public LastNameValueGenerator() : base(PropertyExpression.LastName, typeof(string))
+        public LastNameValueGenerator()
+            : base(PropertyExpression.LastName, typeof(string))
         {
         }
 

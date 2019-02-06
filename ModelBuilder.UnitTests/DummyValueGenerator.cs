@@ -1,11 +1,10 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
-    using System.Collections.Generic;
 
     public class DummyValueGenerator : ValueGeneratorBase
     {
-        public override bool IsSupported(Type type, string referenceName, LinkedList<object> buildChain)
+        public override bool IsSupported(Type type, string referenceName, IBuildChain buildChain)
         {
             return false;
         }

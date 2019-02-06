@@ -47,11 +47,11 @@
         [InlineData(typeof(MulticastIPAddressInformationCollection), false)]
         [InlineData(typeof(UnicastIPAddressInformationCollection), false)]
 #endif
-        [InlineData(typeof(Dictionary<,>.KeyCollection), false)]
-        [InlineData(typeof(Dictionary<,>.ValueCollection), false)]
+        [InlineData(typeof(Dictionary<, >.KeyCollection), false)]
+        [InlineData(typeof(Dictionary<, >.ValueCollection), false)]
         [InlineData(typeof(Dictionary<string, int>), true)]
-        [InlineData(typeof(SortedDictionary<,>.KeyCollection), false)]
-        [InlineData(typeof(SortedDictionary<,>.ValueCollection), false)]
+        [InlineData(typeof(SortedDictionary<, >.KeyCollection), false)]
+        [InlineData(typeof(SortedDictionary<, >.ValueCollection), false)]
         [InlineData(typeof(IEnumerable<string>), true)]
         [InlineData(typeof(ICollection<string>), true)]
         [InlineData(typeof(Collection<string>), true)]
@@ -96,10 +96,10 @@
         [InlineData(typeof(MulticastIPAddressInformationCollection), false)]
         [InlineData(typeof(UnicastIPAddressInformationCollection), false)]
 #endif
-        [InlineData(typeof(Dictionary<,>.KeyCollection), false)]
-        [InlineData(typeof(Dictionary<,>.ValueCollection), false)]
-        [InlineData(typeof(SortedDictionary<,>.KeyCollection), false)]
-        [InlineData(typeof(SortedDictionary<,>.ValueCollection), false)]
+        [InlineData(typeof(Dictionary<, >.KeyCollection), false)]
+        [InlineData(typeof(Dictionary<, >.ValueCollection), false)]
+        [InlineData(typeof(SortedDictionary<, >.KeyCollection), false)]
+        [InlineData(typeof(SortedDictionary<, >.ValueCollection), false)]
         [InlineData(typeof(AbstractCollection<Person>), true)]
         [InlineData(typeof(IDictionary<string, int>), true)]
         [InlineData(typeof(Dictionary<string, int>), true)]
@@ -144,14 +144,14 @@
         [Fact]
         public void CreateDoesNotPopulateListTest()
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
 
             var target = new IncrementingEnumerableTypeCreator();
 
-            var result = (IList<int>)target.Create(typeof(IList<int>), null, executeStrategy);
+            var result = (IList<int>) target.Create(typeof(IList<int>), null, executeStrategy);
 
             result.Should().BeEmpty();
         }
@@ -167,7 +167,7 @@
         [InlineData(typeof(InheritedGenericCollection))]
         public void CreateReturnsInstanceTest(Type type)
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -185,7 +185,7 @@
         [InlineData(typeof(IList<int>))]
         public void CreateReturnsNewListOfSpecfiedTypeTest(Type targetType)
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -216,10 +216,10 @@
         [InlineData(typeof(MulticastIPAddressInformationCollection), false)]
         [InlineData(typeof(UnicastIPAddressInformationCollection), false)]
 #endif
-        [InlineData(typeof(Dictionary<,>.KeyCollection), false)]
-        [InlineData(typeof(Dictionary<,>.ValueCollection), false)]
-        [InlineData(typeof(SortedDictionary<,>.KeyCollection), false)]
-        [InlineData(typeof(SortedDictionary<,>.ValueCollection), false)]
+        [InlineData(typeof(Dictionary<, >.KeyCollection), false)]
+        [InlineData(typeof(Dictionary<, >.ValueCollection), false)]
+        [InlineData(typeof(SortedDictionary<, >.KeyCollection), false)]
+        [InlineData(typeof(SortedDictionary<, >.ValueCollection), false)]
         [InlineData(typeof(Dictionary<string, int>), true)]
         [InlineData(typeof(IEnumerable<string>), true)]
         [InlineData(typeof(ICollection<string>), true)]
@@ -231,7 +231,7 @@
         [InlineData(typeof(InheritedGenericCollection), true)]
         public void CreateValidatesWhetherTypeIsSupportedTest(Type type, bool supported)
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -255,22 +255,19 @@
         {
             var expected = new Collection<Guid>();
 
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.CreateWith(typeof(Guid)).Returns(Guid.NewGuid());
 
-            var target = new EnumerableTypeCreator
-            {
-                AutoPopulateCount = 15
-            };
+            var target = new EnumerableTypeCreator {AutoPopulateCount = 15};
 
             var actual = target.Populate(expected, executeStrategy);
 
             actual.Should().BeSameAs(expected);
 
-            var set = (Collection<Guid>)actual;
+            var set = (Collection<Guid>) actual;
 
             set.Should().HaveCount(target.AutoPopulateCount);
             set.All(x => x != Guid.Empty).Should().BeTrue();
@@ -300,7 +297,7 @@
 
             target.Populate(actual, executeStrategy);
 
-            var converted = (IEnumerable)actual;
+            var converted = (IEnumerable) actual;
 
             converted.Should().NotBeEmpty();
         }
@@ -310,22 +307,19 @@
         {
             var expected = new List<Guid>();
 
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.CreateWith(typeof(Guid)).Returns(Guid.NewGuid());
 
-            var target = new EnumerableTypeCreator
-            {
-                AutoPopulateCount = 15
-            };
+            var target = new EnumerableTypeCreator {AutoPopulateCount = 15};
 
             var actual = target.Populate(expected, executeStrategy);
 
             actual.Should().BeSameAs(expected);
 
-            var set = (List<Guid>)actual;
+            var set = (List<Guid>) actual;
 
             set.Should().HaveCount(target.AutoPopulateCount);
             set.All(x => x != Guid.Empty).Should().BeTrue();
@@ -339,7 +333,7 @@
 
             var target = new IncrementingEnumerableTypeCreator();
 
-            var result = (List<int>)target.Populate(actual, executeStrategy);
+            var result = (List<int>) target.Populate(actual, executeStrategy);
 
             var baseValue = result[0];
             var expected = new List<int>(target.AutoPopulateCount);
@@ -357,7 +351,7 @@
         {
             var instance = new Lazy<bool>(() => true);
 
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -381,10 +375,7 @@
         [Fact]
         public void SettingAutoPopulateCountShouldNotChangeDefaultAutoPopulateCountTest()
         {
-            var target = new EnumerableTypeCreator
-            {
-                AutoPopulateCount = Environment.TickCount
-            };
+            var target = new EnumerableTypeCreator {AutoPopulateCount = Environment.TickCount};
 
             EnumerableTypeCreator.DefaultAutoPopulateCount.Should().NotBe(target.AutoPopulateCount);
         }

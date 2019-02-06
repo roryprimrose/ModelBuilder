@@ -1,7 +1,6 @@
 namespace ModelBuilder
 {
     using System;
-    using System.Text.RegularExpressions;
     using ModelBuilder.Data;
 
     /// <summary>
@@ -13,7 +12,8 @@ namespace ModelBuilder
         /// <summary>
         ///     Initializes a new instance of the <see cref="DomainNameValueGenerator" /> class.
         /// </summary>
-        public DomainNameValueGenerator() : base(PropertyExpression.Domain, typeof(string))
+        public DomainNameValueGenerator()
+            : base(PropertyExpression.Domain, typeof(string))
         {
         }
 

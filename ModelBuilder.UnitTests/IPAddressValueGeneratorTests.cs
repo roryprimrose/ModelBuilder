@@ -1,7 +1,6 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
-    using System.Collections.Generic;
     using System.Linq;
     using System.Net;
     using FluentAssertions;
@@ -13,7 +12,7 @@
         [Fact]
         public void GenerateReturnsIPAddressTest()
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -29,7 +28,7 @@
         [Fact]
         public void GenerateReturnsStringTest()
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -54,7 +53,7 @@
         [InlineData(typeof(IPAddress), null, true)]
         public void GenerateValidatesUnsupportedScenariosTest(Type type, string referenceName, bool supported)
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -74,14 +73,14 @@
         }
 
         [Theory]
-        [InlineData(typeof(string), (string)null, false)]
+        [InlineData(typeof(string), (string) null, false)]
         [InlineData(typeof(string), "", false)]
         [InlineData(typeof(string), "Stuff", false)]
         [InlineData(typeof(bool), "IPAddress", false)]
         [InlineData(typeof(string), "IPAddress", true)]
         [InlineData(typeof(string), "ipaddress", true)]
         [InlineData(typeof(string), "IPADDRESS", true)]
-        [InlineData(typeof(IPAddress), (string)null, true)]
+        [InlineData(typeof(IPAddress), (string) null, true)]
         public void IsSupportedReturnsWhetherScenarioIsValidTest(Type type, string referenceName, bool supported)
         {
             var target = new IPAddressValueGenerator();
@@ -94,9 +93,9 @@
         [Fact]
         public void IsSupportedThrowsExceptionWithNullTypeTest()
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
 
-            buildChain.AddFirst(Guid.NewGuid().ToString());
+            buildChain.Push(Guid.NewGuid().ToString());
 
             var target = new IPAddressValueGenerator();
 

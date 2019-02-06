@@ -1,7 +1,6 @@
 ﻿namespace ModelBuilder
 {
     using System;
-    using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Diagnostics;
     using System.Globalization;
@@ -15,8 +14,7 @@
     /// </summary>
     public class DefaultExecuteStrategy : IExecuteStrategy
     {
-        private readonly Stack<object> _buildHistory = new Stack<object>();
-        private LinkedList<object> _buildChain = new LinkedList<object>();
+        private readonly BuildHistory _buildHistory = new BuildHistory();
 
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is null.</exception>
@@ -64,13 +62,12 @@
 
             _buildHistory.Push(instance);
 
-            CreateBuildChain();
-
             try
             {
                 var type = instance.GetType();
                 var typeCreator = Configuration.TypeCreators?.Where(x => x.CanPopulate(type, null, BuildChain))
-                    .OrderByDescending(x => x.Priority).FirstOrDefault();
+                    .OrderByDescending(x => x.Priority)
+                    .FirstOrDefault();
 
                 if (typeCreator == null)
                 {
@@ -82,8 +79,6 @@
             finally
             {
                 _buildHistory.Pop();
-
-                CreateBuildChain();
             }
         }
 
@@ -162,7 +157,8 @@
 
             // First check if there is a creation rule
             var creationRule = Configuration.CreationRules?.Where(x => x.IsMatch(contextType, referenceName))
-                .OrderByDescending(x => x.Priority).FirstOrDefault();
+                .OrderByDescending(x => x.Priority)
+                .FirstOrDefault();
 
             if (creationRule != null)
             {
@@ -176,7 +172,8 @@
             {
                 // Next check if this is a type supported by a value generator
                 var valueGenerator = Configuration.ValueGenerators
-                    ?.Where(x => x.IsSupported(type, referenceName, buildChain)).OrderByDescending(x => x.Priority)
+                    ?.Where(x => x.IsSupported(type, referenceName, buildChain))
+                    .OrderByDescending(x => x.Priority)
                     .FirstOrDefault();
 
                 if (valueGenerator != null)
@@ -208,8 +205,7 @@
                     const string MessageFormat =
                         "Failed to create value for type {0} using value generator {1}, {2}: {3}{4}{4}At the time of the failure, the build log was:{4}{4}{5}";
                     var buildLog = Log.Output;
-                    var message = string.Format(
-                        CultureInfo.CurrentCulture,
+                    var message = string.Format(CultureInfo.CurrentCulture,
                         MessageFormat,
                         type.FullName,
                         generatorType.FullName,
@@ -223,7 +219,8 @@
             }
 
             var typeCreator = Configuration.TypeCreators?.Where(x => x.CanCreate(type, referenceName, buildChain))
-                .OrderByDescending(x => x.Priority).FirstOrDefault();
+                .OrderByDescending(x => x.Priority)
+                .FirstOrDefault();
 
             if (typeCreator == null)
             {
@@ -250,8 +247,7 @@
                 const string MessageFormat =
                     "Failed to create type {0} using type creator {1}, {2}: {3}{4}{4}At the time of the failure, the build log was:{4}{4}{5}";
                 var buildLog = Log.Output;
-                var message = string.Format(
-                    CultureInfo.CurrentCulture,
+                var message = string.Format(CultureInfo.CurrentCulture,
                     MessageFormat,
                     type.FullName,
                     typeCreator.GetType().FullName,
@@ -319,7 +315,8 @@
             // Attempt to find a type creator for this type that will help us figure out how it should be populated
             var typeCreator = Configuration.TypeCreators
                 ?.Where(x => x.CanPopulate(propertyType, propertyInfo.Name, BuildChain))
-                .OrderByDescending(x => x.Priority).FirstOrDefault();
+                .OrderByDescending(x => x.Priority)
+                .FirstOrDefault();
 
             if (typeCreator == null)
             {
@@ -337,7 +334,7 @@
         private object CreateAndPopulate(
             Type type,
             string referenceName,
-            LinkedList<object> buildChain,
+            IBuildChain buildChain,
             object[] args,
             ITypeCreator typeCreator)
         {
@@ -353,8 +350,6 @@
 
             _buildHistory.Push(instance);
 
-            CreateBuildChain();
-
             try
             {
                 return PopulateInternal(type, referenceName, arguments, typeCreator, instance);
@@ -362,21 +357,7 @@
             finally
             {
                 _buildHistory.Pop();
-
-                CreateBuildChain();
             }
-        }
-
-        private void CreateBuildChain()
-        {
-            var chain = new LinkedList<object>();
-
-            foreach (var item in _buildHistory)
-            {
-                chain.AddFirst(item);
-            }
-
-            _buildChain = chain;
         }
 
         private Exception CreateBuildException(Type type, string referenceName, object context)
@@ -387,8 +368,7 @@
             {
                 if (context != null)
                 {
-                    message = string.Format(
-                        CultureInfo.CurrentCulture,
+                    message = string.Format(CultureInfo.CurrentCulture,
                         Resources.NoMatchingCreatorOrGeneratorFoundWithNameAndContext,
                         type.FullName,
                         referenceName,
@@ -396,8 +376,7 @@
                 }
                 else
                 {
-                    message = string.Format(
-                        CultureInfo.CurrentCulture,
+                    message = string.Format(CultureInfo.CurrentCulture,
                         Resources.NoMatchingCreatorOrGeneratorFoundWithName,
                         type.FullName,
                         referenceName);
@@ -405,8 +384,7 @@
             }
             else
             {
-                message = string.Format(
-                    CultureInfo.CurrentCulture,
+                message = string.Format(CultureInfo.CurrentCulture,
                     Resources.NoMatchingCreatorOrGeneratorFound,
                     type.FullName);
             }
@@ -418,8 +396,7 @@
             const string MessageFormat =
                 "Failed to create instance of type {0}, {1}: {2}{3}{3}At the time of the failure, the build log was:{3}{3}{4}";
             var buildLog = Log.Output;
-            var failureMessage = string.Format(
-                CultureInfo.CurrentCulture,
+            var failureMessage = string.Format(CultureInfo.CurrentCulture,
                 MessageFormat,
                 type.FullName,
                 ex.GetType().Name,
@@ -434,7 +411,7 @@
             ITypeCreator typeCreator,
             Type type,
             string referenceName,
-            LinkedList<object> buildChain,
+            IBuildChain buildChain,
             object[] args)
         {
             object instance;
@@ -466,7 +443,7 @@
 
                 foreach (var parameterInfo in parameterInfos)
                 {
-                    var context = buildChain.Last?.Value;
+                    var context = buildChain.Last;
 
                     Log.CreatingParameter(type, parameterInfo.ParameterType, parameterInfo.Name, context);
 
@@ -495,8 +472,7 @@
         {
             if (Configuration == null)
             {
-                var message = string.Format(
-                    CultureInfo.CurrentCulture,
+                var message = string.Format(CultureInfo.CurrentCulture,
                     "The {0} has not be initialized. You must invoke {1} first to provide the build configuration and the build log.",
                     GetType().FullName,
                     nameof(EnsureInitialized));
@@ -552,7 +528,8 @@
                 var buildChain = BuildChain;
 
                 var postBuildActions = Configuration.PostBuildActions
-                    ?.Where(x => x.IsSupported(type, referenceName, buildChain)).OrderByDescending(x => x.Priority);
+                    ?.Where(x => x.IsSupported(type, referenceName, buildChain))
+                    .OrderByDescending(x => x.Priority);
 
                 if (postBuildActions != null)
                 {
@@ -573,7 +550,7 @@
         }
 
         /// <inheritdoc />
-        public LinkedList<object> BuildChain => _buildChain;
+        public IBuildChain BuildChain => _buildHistory;
 
         /// <inheritdoc />
         public IBuildConfiguration Configuration { get; private set; }

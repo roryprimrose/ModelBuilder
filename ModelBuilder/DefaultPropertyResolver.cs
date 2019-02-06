@@ -1,6 +1,7 @@
 namespace ModelBuilder
 {
     using System;
+    using System.Collections.Concurrent;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Reflection;
@@ -11,6 +12,9 @@ namespace ModelBuilder
     /// </summary>
     public class DefaultPropertyResolver : IPropertyResolver
     {
+        private static readonly ConcurrentDictionary<Type, object> _defaultValues =
+            new ConcurrentDictionary<Type, object>();
+
         /// <inheritdoc />
         public virtual bool CanPopulate(PropertyInfo propertyInfo)
         {
@@ -89,9 +93,8 @@ namespace ModelBuilder
             var type = instance.GetType();
 
             // Check if there is a matching ignore rule
-            var ignoreRule =
-                configuration.IgnoreRules?.FirstOrDefault(
-                    x => x.TargetType.IsAssignableFrom(type) && x.PropertyName == propertyInfo.Name);
+            var ignoreRule = configuration.IgnoreRules?.FirstOrDefault(x =>
+                x.TargetType.IsAssignableFrom(type) && x.PropertyName == propertyInfo.Name);
 
             if (ignoreRule != null)
             {
@@ -136,8 +139,8 @@ namespace ModelBuilder
             }
 
             // Check for instance types (ignoring strings)
-            if (propertyInfo.PropertyType.TypeIsValueType() == false &&
-                propertyInfo.PropertyType != typeof(string))
+            if (propertyInfo.PropertyType.TypeIsValueType() == false
+                && propertyInfo.PropertyType != typeof(string))
             {
                 // This is an interface or class type
                 // Look for a matching instance
@@ -208,13 +211,14 @@ namespace ModelBuilder
             return false;
         }
 
-        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes",
+        [SuppressMessage("Microsoft.Design",
+            "CA1031:DoNotCatchGeneralExceptionTypes",
             Justification = "Any failure to create the value will default to null for value comparisons.")]
         private static object GetDefaultValue(Type type)
         {
             try
             {
-                return Activator.CreateInstance(type);
+                return _defaultValues.GetOrAdd(type, Activator.CreateInstance);
             }
             catch
             {

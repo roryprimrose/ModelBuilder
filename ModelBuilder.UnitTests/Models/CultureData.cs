@@ -5,6 +5,7 @@
     public class CultureData
     {
         public CultureInfo Culture { get; set; }
+
         public string CultureName { get; set; }
     }
 }

@@ -5,8 +5,7 @@
     using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
     using System.Net.NetworkInformation;
-    using System.Reflection;
-    
+
     /// <summary>
     ///     The <see cref="EnumerableTypeCreator" />
     ///     class is used to create an instance from an <see cref="IEnumerable{T}" /> type.
@@ -26,20 +25,20 @@
             typeof(Dictionary<,>.KeyCollection),
             typeof(Dictionary<,>.ValueCollection),
             typeof(SortedDictionary<,>.KeyCollection),
-            typeof(SortedDictionary<,>.ValueCollection),
+            typeof(SortedDictionary<,>.ValueCollection)
         };
 
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is null.</exception>
-        public override bool CanCreate(Type type, string referenceName, LinkedList<object> buildChain)
+        public override bool CanCreate(Type type, string referenceName, IBuildChain buildChain)
         {
             if (type == null)
             {
                 throw new ArgumentNullException(nameof(type));
             }
 
-            if (type.TypeIsClass() &&
-                type.TypeIsAbstract())
+            if (type.TypeIsClass()
+                && type.TypeIsAbstract())
             {
                 // This is an abstract class so we can't create it
                 return false;
@@ -84,7 +83,7 @@
 
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is null.</exception>
-        public override bool CanPopulate(Type type, string referenceName, LinkedList<object> buildChain)
+        public override bool CanPopulate(Type type, string referenceName, IBuildChain buildChain)
         {
             if (type == null)
             {
@@ -140,8 +139,10 @@
         }
 
         /// <inheritdoc />
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0",
-             Justification = "Type is validated by the base class")]
+        [SuppressMessage("Microsoft.Design",
+            "CA1062:Validate arguments of public methods",
+            MessageId = "0",
+            Justification = "Type is validated by the base class")]
         protected override object CreateInstance(
             Type type,
             string referenceName,
@@ -163,8 +164,10 @@
         }
 
         /// <inheritdoc />
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0",
-             Justification = "Instance is validated by the base class")]
+        [SuppressMessage("Microsoft.Design",
+            "CA1062:Validate arguments of public methods",
+            MessageId = "0",
+            Justification = "Instance is validated by the base class")]
         protected override object PopulateInstance(object instance, IExecuteStrategy executeStrategy)
         {
             Debug.Assert(instance != null, "instance != null");
@@ -184,12 +187,7 @@
             {
                 var childInstance = CreateChildItem(internalType, executeStrategy, previousItem);
 
-                addMethod.Invoke(
-                    instance,
-                    new[]
-                    {
-                        childInstance
-                    });
+                addMethod.Invoke(instance, new[] {childInstance});
 
                 previousItem = childInstance;
             }
@@ -264,8 +262,8 @@
         {
             foreach (var unsupportedType in _unsupportedTypes)
             {
-                if (unsupportedType.TypeIsGenericTypeDefinition() &&
-                    type.TypeIsGenericType())
+                if (unsupportedType.TypeIsGenericTypeDefinition()
+                    && type.TypeIsGenericType())
                 {
                     var typeDefinition = type.GetGenericTypeDefinition();
 

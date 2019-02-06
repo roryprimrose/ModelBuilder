@@ -1,7 +1,6 @@
 ﻿namespace ModelBuilder
 {
     using System;
-    using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
     using System.Reflection;
@@ -24,10 +23,8 @@
         /// <param name="types">The types the generator can match.</param>
         /// <exception cref="ArgumentNullException">The <paramref name="targetNameExpression" /> parameter is null.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="types" /> parameter is null.</exception>
-        protected RelativeValueGenerator(Regex targetNameExpression, params Type[] types) : this(
-            targetNameExpression,
-            null,
-            types)
+        protected RelativeValueGenerator(Regex targetNameExpression, params Type[] types)
+            : this(targetNameExpression, null, types)
         {
         }
 
@@ -40,17 +37,15 @@
         /// <exception cref="ArgumentNullException">The <paramref name="targetNameExpression" /> parameter is null.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="sourceNameExpression" /> parameter is null.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="types" /> parameter is null.</exception>
-        protected RelativeValueGenerator(
-            Regex targetNameExpression,
-            Regex sourceNameExpression,
-            params Type[] types) : base(types)
+        protected RelativeValueGenerator(Regex targetNameExpression, Regex sourceNameExpression, params Type[] types)
+            : base(types)
         {
             _targetExpression = targetNameExpression ?? throw new ArgumentNullException(nameof(targetNameExpression));
             _sourceExpression = sourceNameExpression;
         }
 
         /// <inheritdoc />
-        public override bool IsSupported(Type type, string referenceName, LinkedList<object> buildChain)
+        public override bool IsSupported(Type type, string referenceName, IBuildChain buildChain)
         {
             var baseSupported = base.IsSupported(type, referenceName, buildChain);
 
@@ -88,7 +83,7 @@
                 return true;
             }
 
-            var context = buildChain.Last.Value;
+            var context = buildChain.Last;
 
             // Check if the context has a property matching the source expression
             var matchingProperty = GetMatchingProperty(_sourceExpression, context);
@@ -106,7 +101,7 @@
         ///     Gets the source property value for the specified context.
         /// </summary>
         /// <typeparam name="T">The type of value to return.</typeparam>
-        /// <param name="context">The context to use for reference informamtion.</param>
+        /// <param name="context">The context to use for reference information.</param>
         /// <returns>The string value of the source property.</returns>
         /// <exception cref="InvalidOperationException">The generator was not created with a source expression.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="context" /> parameter is null.</exception>
@@ -130,7 +125,7 @@
         /// </summary>
         /// <typeparam name="T">The type of value to return.</typeparam>
         /// <param name="expression">The expression used to identify the property.</param>
-        /// <param name="context">The context to use for reference informamtion.</param>
+        /// <param name="context">The context to use for reference information.</param>
         /// <returns>The string value of the source property.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="expression" /> parameter is null.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="context" /> parameter is null.</exception>
@@ -168,14 +163,14 @@
                 expectedType = expectedType.GetGenericArguments()[0];
             }
 
-            return (T)Convert.ChangeType(value, expectedType, CultureInfo.CurrentCulture);
+            return (T) Convert.ChangeType(value, expectedType, CultureInfo.CurrentCulture);
         }
 
         /// <summary>
         ///     Gets whether the build context being created is/should represents a male gender.
         /// </summary>
         /// <param name="executeStrategy">The execute strategy.</param>
-        /// <returns><c>true</c> if the object is/should represent a male, otherwose <c>false</c>.</returns>
+        /// <returns><c>true</c> if the object is/should represent a male, otherwise <c>false</c>.</returns>
         /// <remarks>The value returned will be random if there is no supported gender identifier found.</remarks>
         protected bool IsMale(IExecuteStrategy executeStrategy)
         {
@@ -185,7 +180,7 @@
             }
 
             string gender = null;
-            var context = executeStrategy?.BuildChain?.Last?.Value;
+            var context = executeStrategy.BuildChain?.Last;
 
             if (context != null)
             {

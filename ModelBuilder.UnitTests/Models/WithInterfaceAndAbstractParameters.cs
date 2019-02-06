@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace ModelBuilder.UnitTests
+﻿namespace ModelBuilder.UnitTests
 {
+    using System;
+
     public class WithInterfaceAndAbstractParameters
     {
         public WithInterfaceAndAbstractParameters(IEntityResolver resolver)
@@ -12,7 +12,11 @@ namespace ModelBuilder.UnitTests
         {
         }
 
-        public WithInterfaceAndAbstractParameters(string firstName, string lastName, DateTime dob, bool isActive,
+        public WithInterfaceAndAbstractParameters(
+            string firstName,
+            string lastName,
+            DateTime dob,
+            bool isActive,
             Guid id)
         {
             FirstName = firstName;
@@ -26,7 +30,7 @@ namespace ModelBuilder.UnitTests
         {
         }
 
-        public int Age => DateTime.UtcNow.Subtract(DOB).Days/365;
+        public int Age => DateTime.UtcNow.Subtract(DOB).Days / 365;
 
         public DateTime DOB { get; set; }
 

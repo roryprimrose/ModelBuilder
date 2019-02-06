@@ -12,7 +12,8 @@
         /// <summary>
         ///     Initializes a new instance of the <see cref="FirstNameValueGenerator" />.
         /// </summary>
-        public FirstNameValueGenerator() : base(PropertyExpression.FirstName, typeof(string))
+        public FirstNameValueGenerator()
+            : base(PropertyExpression.FirstName, typeof(string))
         {
         }
 

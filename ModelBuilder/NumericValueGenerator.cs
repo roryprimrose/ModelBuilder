@@ -1,8 +1,6 @@
 ﻿namespace ModelBuilder
 {
     using System;
-    using System.Collections.Generic;
-    using System.Reflection;
 
     /// <summary>
     ///     The <see cref="NumericValueGenerator" />
@@ -12,7 +10,7 @@
     {
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is null.</exception>
-        public override bool IsSupported(Type type, string referenceName, LinkedList<object> buildChain)
+        public override bool IsSupported(Type type, string referenceName, IBuildChain buildChain)
         {
             if (type == null)
             {
@@ -49,7 +47,7 @@
                 generateType = type.GetGenericArguments()[0];
             }
 
-            var context = executeStrategy?.BuildChain?.Last?.Value;
+            var context = executeStrategy?.BuildChain?.Last;
             var min = GetMinimum(generateType, referenceName, context);
             var max = GetMaximum(generateType, referenceName, context);
 

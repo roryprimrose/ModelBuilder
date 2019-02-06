@@ -1,7 +1,6 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
-    using System.Collections.Generic;
     using System.IO;
     using FluentAssertions;
     using NSubstitute;
@@ -12,7 +11,7 @@
         [Fact]
         public void GenerateAlwaysReturnsFutureValuesWithin10YearsTest()
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -21,7 +20,7 @@
 
             for (var index = 0; index < 1000; index++)
             {
-                var value = (DateTime?)target.Generate(typeof(DateTime?), null, executeStrategy);
+                var value = (DateTime?) target.Generate(typeof(DateTime?), null, executeStrategy);
 
                 if (value == null)
                 {
@@ -42,7 +41,7 @@
             var nullFound = false;
             var valueFound = false;
 
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -75,7 +74,7 @@
         [Fact]
         public void GenerateReturnsRandomDateTimeOffsetValueTest()
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -95,7 +94,7 @@
         [Fact]
         public void GenerateReturnsRandomDateTimeValueTest()
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -115,25 +114,25 @@
         [Fact]
         public void GenerateReturnsRandomTimeSpanValueTest()
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
 
             var target = new DateTimeValueGenerator();
 
-            var first = (TimeSpan)target.Generate(typeof(TimeSpan), null, executeStrategy);
-            var second = (TimeSpan)target.Generate(typeof(TimeSpan), null, executeStrategy);
+            var first = (TimeSpan) target.Generate(typeof(TimeSpan), null, executeStrategy);
+            var second = (TimeSpan) target.Generate(typeof(TimeSpan), null, executeStrategy);
 
             first.Should().NotBe(second);
         }
-        
+
         [Theory]
         [InlineData(typeof(Stream))]
         [InlineData(typeof(string))]
         public void GenerateThrowsExceptionWithInvalidParametersTest(Type type)
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -144,7 +143,7 @@
 
             action.Should().Throw<NotSupportedException>();
         }
-        
+
         [Theory]
         [InlineData(typeof(string), false)]
         [InlineData(typeof(Stream), false)]

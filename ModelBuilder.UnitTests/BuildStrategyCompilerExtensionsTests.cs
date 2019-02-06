@@ -89,7 +89,7 @@
 
             var target = new BuildStrategyCompiler();
 
-            Action action = () => target.AddCreationRule((Expression<Func<Person, object>>)null, priority, value);
+            Action action = () => target.AddCreationRule((Expression<Func<Person, object>>) null, priority, value);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -152,7 +152,7 @@
 
             var target = new BuildStrategyCompiler();
 
-            Action action = () => target.AddExecuteOrderRule((Expression<Func<Person, object>>)null, priority);
+            Action action = () => target.AddExecuteOrderRule((Expression<Func<Person, object>>) null, priority);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -203,7 +203,7 @@
         {
             var target = new BuildStrategyCompiler();
 
-            Action action = () => target.AddIgnoreRule((Expression<Func<Person, object>>)null);
+            Action action = () => target.AddIgnoreRule((Expression<Func<Person, object>>) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -295,7 +295,7 @@
         {
             var target = Substitute.For<IBuildStrategyCompiler>();
 
-            Action action = () => target.Add((ICompilerModule)null);
+            Action action = () => target.Add((ICompilerModule) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -303,7 +303,7 @@
         [Fact]
         public void AddWithCreationRuleAddsRuleToCompilerTest()
         {
-            var rule = new CreationRule(typeof(Person), "FirstName", Environment.TickCount, (object)null);
+            var rule = new CreationRule(typeof(Person), "FirstName", Environment.TickCount, (object) null);
 
             var target = new BuildStrategyCompiler();
 
@@ -315,7 +315,7 @@
         [Fact]
         public void AddWithCreationRuleThrowsExceptionWithNullCompilerTest()
         {
-            var rule = new CreationRule(typeof(Person), "FirstName", Environment.TickCount, (object)null);
+            var rule = new CreationRule(typeof(Person), "FirstName", Environment.TickCount, (object) null);
 
             Action action = () => BuildStrategyCompilerExtensions.Add(null, rule);
 
@@ -327,7 +327,7 @@
         {
             var target = Substitute.For<IBuildStrategyCompiler>();
 
-            Action action = () => target.Add((CreationRule)null);
+            Action action = () => target.Add((CreationRule) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -359,7 +359,7 @@
         {
             var target = Substitute.For<IBuildStrategyCompiler>();
 
-            Action action = () => target.Add((ExecuteOrderRule)null);
+            Action action = () => target.Add((ExecuteOrderRule) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -391,7 +391,7 @@
         {
             var target = Substitute.For<IBuildStrategyCompiler>();
 
-            Action action = () => target.Add((IgnoreRule)null);
+            Action action = () => target.Add((IgnoreRule) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -423,7 +423,7 @@
         {
             var target = Substitute.For<IBuildStrategyCompiler>();
 
-            Action action = () => target.Add((IPostBuildAction)null);
+            Action action = () => target.Add((IPostBuildAction) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -455,7 +455,7 @@
         {
             var target = Substitute.For<IBuildStrategyCompiler>();
 
-            Action action = () => target.Add((ITypeCreator)null);
+            Action action = () => target.Add((ITypeCreator) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -487,7 +487,7 @@
         {
             var target = Substitute.For<IBuildStrategyCompiler>();
 
-            Action action = () => target.Add((IValueGenerator)null);
+            Action action = () => target.Add((IValueGenerator) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -790,7 +790,6 @@
         }
 
 #if NET452
-
         public interface ISomeCompilerModule : ICompilerModule
         {
             // This verifies that the module scanner does not attempt to use interface modules

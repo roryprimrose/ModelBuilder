@@ -1,7 +1,6 @@
 ﻿namespace ModelBuilder
 {
     using System;
-    using System.Collections.Generic;
     using System.Globalization;
     using ModelBuilder.Properties;
 
@@ -37,7 +36,7 @@
         }
 
         /// <inheritdoc />
-        public abstract bool IsSupported(Type type, string referenceName, LinkedList<object> buildChain);
+        public abstract bool IsSupported(Type type, string referenceName, IBuildChain buildChain);
 
         /// <summary>
         ///     Generates a new value with the provided context.
@@ -79,8 +78,7 @@
 
             if (IsSupported(type, referenceName, buildChain) == false)
             {
-                var message = string.Format(
-                    CultureInfo.CurrentCulture,
+                var message = string.Format(CultureInfo.CurrentCulture,
                     Resources.Error_GenerationNotSupportedFormat,
                     GetType().FullName,
                     type.FullName,

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ModelBuilder.UnitTests
+﻿namespace ModelBuilder.UnitTests
 {
     public enum BigEnum : ulong
     {

@@ -1,14 +1,12 @@
-﻿using System;
-
-namespace ModelBuilder.UnitTests
+﻿namespace ModelBuilder.UnitTests
 {
+    using System;
+
     public class PopulateOrderItem
     {
         private Person _w;
-        private int _y = int.MinValue;
         private string _x;
-
-        public SimpleEnum Z { get; set; } = (SimpleEnum) int.MinValue;
+        private int _y = int.MinValue;
 
         public Person W
         {
@@ -22,6 +20,21 @@ namespace ModelBuilder.UnitTests
                 }
 
                 _w = value;
+            }
+        }
+
+        public string X
+        {
+            get { return _x; }
+            set
+            {
+                if (_y == int.MinValue)
+                {
+                    throw new InvalidOperationException(
+                        "Execution order was not run as expected because the int was not assigned before the string");
+                }
+
+                _x = value;
             }
         }
 
@@ -40,19 +53,6 @@ namespace ModelBuilder.UnitTests
             }
         }
 
-        public string X
-        {
-            get { return _x; }
-            set
-            {
-                if (_y == int.MinValue)
-                {
-                    throw new InvalidOperationException(
-                        "Execution order was not run as expected because the int was not assigned before the string");
-                }
-
-                _x = value;
-            }
-        }
+        public SimpleEnum Z { get; set; } = (SimpleEnum) int.MinValue;
     }
 }

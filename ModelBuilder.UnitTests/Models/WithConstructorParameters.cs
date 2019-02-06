@@ -24,6 +24,7 @@
         public int OtherNumber { get; set; }
 
         public int? RefNumber { get; set; }
+
         public Company Second { get; set; }
 
         public bool Value { get; set; }

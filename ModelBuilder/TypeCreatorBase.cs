@@ -1,7 +1,6 @@
 namespace ModelBuilder
 {
     using System;
-    using System.Collections.Generic;
     using System.Globalization;
     using ModelBuilder.Properties;
 
@@ -15,7 +14,7 @@ namespace ModelBuilder
 
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is null.</exception>
-        public virtual bool CanCreate(Type type, string referenceName, LinkedList<object> buildChain)
+        public virtual bool CanCreate(Type type, string referenceName, IBuildChain buildChain)
         {
             if (type == null)
             {
@@ -37,7 +36,7 @@ namespace ModelBuilder
 
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is null.</exception>
-        public virtual bool CanPopulate(Type type, string referenceName, LinkedList<object> buildChain)
+        public virtual bool CanPopulate(Type type, string referenceName, IBuildChain buildChain)
         {
             if (type == null)
             {
@@ -158,8 +157,7 @@ namespace ModelBuilder
                 return;
             }
 
-            var message = string.Format(
-                CultureInfo.CurrentCulture,
+            var message = string.Format(CultureInfo.CurrentCulture,
                 Resources.Error_GenerationNotSupportedFormat,
                 GetType().FullName,
                 type.FullName,
@@ -202,8 +200,7 @@ namespace ModelBuilder
                 return;
             }
 
-            var message = string.Format(
-                CultureInfo.CurrentCulture,
+            var message = string.Format(CultureInfo.CurrentCulture,
                 Resources.Error_GenerationNotSupportedFormat,
                 GetType().FullName,
                 type.FullName,

@@ -1,7 +1,6 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
-    using System.Collections.Generic;
     using FluentAssertions;
     using NSubstitute;
     using Xunit;
@@ -13,7 +12,7 @@
         {
             var type = typeof(string);
             var expected = Guid.NewGuid();
-            var buildStrategy = new LinkedList<object>();
+            var buildStrategy = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildStrategy);
@@ -26,11 +25,11 @@
         }
 
         [Fact]
-        public void GenerateThrowsExceptionWhenIsSupportedReturnsfalseTest()
+        public void GenerateThrowsExceptionWhenIsSupportedReturnsFalseTest()
         {
             var type = typeof(string);
             var expected = Guid.NewGuid();
-            var buildStrategy = new LinkedList<object>();
+            var buildStrategy = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildStrategy);
@@ -47,6 +46,8 @@
         {
             var type = typeof(string);
             var executeStrategy = Substitute.For<IExecuteStrategy>();
+            
+            executeStrategy.BuildChain.Returns((IBuildChain) null);
 
             var target = Substitute.ForPartsOf<ValueGeneratorBase>();
 
@@ -94,7 +95,7 @@
         [Fact]
         public void PriorityReturnsMinimumValueTest()
         {
-            var buildStrategy = new LinkedList<object>();
+            var buildStrategy = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildStrategy);
@@ -111,6 +112,8 @@
         {
             var type = typeof(string);
             var executeStrategy = Substitute.For<IExecuteStrategy>();
+            
+            executeStrategy.BuildChain.Returns((IBuildChain) null);
 
             var target = new Wrapper();
 
@@ -154,7 +157,7 @@
                 _value = value;
             }
 
-            public override bool IsSupported(Type type, string referenceName, LinkedList<object> buildChain)
+            public override bool IsSupported(Type type, string referenceName, IBuildChain buildChain)
             {
                 return _isSupported;
             }
@@ -177,7 +180,7 @@
                 return Generator;
             }
 
-            public override bool IsSupported(Type type, string referenceName, LinkedList<object> buildChain)
+            public override bool IsSupported(Type type, string referenceName, IBuildChain buildChain)
             {
                 throw new NotImplementedException();
             }

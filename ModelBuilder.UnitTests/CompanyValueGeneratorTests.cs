@@ -1,7 +1,6 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
-    using System.Collections.Generic;
     using System.IO;
     using FluentAssertions;
     using ModelBuilder.Data;
@@ -13,7 +12,7 @@
         [Fact]
         public void GenerateReturnsRandomCompanyTest()
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -35,14 +34,14 @@
         [InlineData(typeof(string), "Company", true)]
         public void GenerateReturnsValuesForSeveralNameFormatsTest(Type type, string referenceName, bool expected)
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
 
             var target = new CompanyValueGenerator();
 
-            var actual = (string)target.Generate(type, referenceName, executeStrategy);
+            var actual = (string) target.Generate(type, referenceName, executeStrategy);
 
             TestData.Companies.Should().Contain(actual);
         }
@@ -53,7 +52,7 @@
         [InlineData(typeof(string), "Stuff")]
         public void GenerateThrowsExceptionWithInvalidParametersTest(Type type, string referenceName)
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);

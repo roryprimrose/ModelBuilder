@@ -18,7 +18,8 @@
         /// <summary>
         ///     Initializes a new instance of the <see cref="AddressValueGenerator" /> class.
         /// </summary>
-        public AddressValueGenerator() : base(new Regex("(?<!email.*)address", RegexOptions.IgnoreCase), typeof(string))
+        public AddressValueGenerator()
+            : base(new Regex("(?<!email.*)address", RegexOptions.IgnoreCase), typeof(string))
         {
         }
 
@@ -36,7 +37,7 @@
                 {
                     var floor = Generator.NextValue(1, 15);
                     var unitIndex = Generator.NextValue(0, 15);
-                    var unit = (char)(65 + unitIndex);
+                    var unit = (char) (65 + unitIndex);
 
                     // Return a Unit Xy, Floor X style value
                     return "Unit " + floor + unit + ", Floor " + floor;

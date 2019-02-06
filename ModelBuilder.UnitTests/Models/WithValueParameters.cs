@@ -1,10 +1,16 @@
-﻿using System;
-
-namespace ModelBuilder.UnitTests
+﻿namespace ModelBuilder.UnitTests
 {
+    using System;
+
     public class WithValueParameters
     {
-        public WithValueParameters(string firstName, string lastName, DateTime dob, bool isActive, Guid id, int priority)
+        public WithValueParameters(
+            string firstName,
+            string lastName,
+            DateTime dob,
+            bool isActive,
+            Guid id,
+            int priority)
         {
             FirstName = firstName;
             LastName = lastName;
@@ -14,7 +20,7 @@ namespace ModelBuilder.UnitTests
             Priority = priority;
         }
 
-        public int Age => DateTime.UtcNow.Subtract(DOB).Days/365;
+        public int Age => DateTime.UtcNow.Subtract(DOB).Days / 365;
 
         public DateTime DOB { get; set; }
 

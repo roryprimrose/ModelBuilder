@@ -1,7 +1,6 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
-    using System.Collections.Generic;
     using FluentAssertions;
     using NSubstitute;
     using Xunit;
@@ -18,7 +17,7 @@
                 return;
             }
 
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -29,8 +28,8 @@
             {
                 var value = target.Generate(type, null, executeStrategy);
 
-                if (type.IsNullable() &&
-                    (value == null))
+                if (type.IsNullable()
+                    && value == null)
                 {
                     // Nullable values could be returned so nothing more to assert
                     return;
@@ -55,7 +54,7 @@
         [Fact]
         public void GenerateCanReturnNonMaxValuesTest()
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -84,7 +83,7 @@
         [Fact]
         public void GenerateCanReturnNonMinValuesTest()
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -113,7 +112,7 @@
         [Fact]
         public void GenerateCanReturnNullAndNonNullValuesTest()
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -125,7 +124,7 @@
 
             for (var index = 0; index < 100000; index++)
             {
-                var value = (int?)target.Generate(typeof(int?), null, executeStrategy);
+                var value = (int?) target.Generate(typeof(int?), null, executeStrategy);
 
                 if (value == null)
                 {
@@ -149,7 +148,7 @@
         [Fact]
         public void GenerateDoesNotReturnInfinityForDoubleTest()
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -168,7 +167,7 @@
         [InlineData(typeof(double))]
         public void GenerateReturnsDecimalValuesTest(Type type)
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -183,7 +182,7 @@
 
                 var actual = Convert.ToDouble(value);
 
-                if (unchecked(actual != (int)actual))
+                if (unchecked(actual != (int) actual))
                 {
                     decimalFound = true;
 
@@ -204,7 +203,7 @@
                 return;
             }
 
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -213,8 +212,8 @@
 
             var value = target.Generate(type, null, executeStrategy);
 
-            if (type.IsNullable() &&
-                (value == null))
+            if (type.IsNullable()
+                && value == null)
             {
                 // Nullable values could be returned so nothing more to assert
                 return;
@@ -239,7 +238,7 @@
         [ClassData(typeof(NumericTypeDataSource))]
         public void GenerateValidatesRequestedTypeTest(Type type, bool typeSupported, double min, double max)
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);

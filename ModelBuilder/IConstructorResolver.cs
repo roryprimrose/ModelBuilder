@@ -1,16 +1,16 @@
-﻿using System;
-using System.Reflection;
-
-namespace ModelBuilder
+﻿namespace ModelBuilder
 {
+    using System;
+    using System.Reflection;
+
     /// <summary>
-    /// The <see cref="IConstructorResolver"/>
-    /// interface defines the members for resolving constructors.
+    ///     The <see cref="IConstructorResolver" />
+    ///     interface defines the members for resolving constructors.
     /// </summary>
     public interface IConstructorResolver
     {
         /// <summary>
-        /// Returns the <see cref="ConstructorInfo"/> for the type, matching on the specified arguments.
+        ///     Returns the <see cref="ConstructorInfo" /> for the type, matching on the specified arguments.
         /// </summary>
         /// <param name="type">The type to evaluate.</param>
         /// <param name="args">The optional argument list for the constructor.</param>

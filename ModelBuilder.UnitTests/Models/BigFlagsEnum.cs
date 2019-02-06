@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace ModelBuilder.UnitTests
+﻿namespace ModelBuilder.UnitTests
 {
+    using System;
+
     [Flags]
     public enum BigFlagsEnum : ulong
     {

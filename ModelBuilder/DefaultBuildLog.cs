@@ -47,6 +47,35 @@
         }
 
         /// <inheritdoc />
+        /// <exception cref="ArgumentNullException">The <paramref name="instanceType" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="parameterType" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="parameterName" /> parameter is null.</exception>
+        public void CreatedParameter(Type instanceType, Type parameterType, string parameterName, object context)
+        {
+            if (instanceType == null)
+            {
+                throw new ArgumentNullException(nameof(instanceType));
+            }
+
+            if (parameterType == null)
+            {
+                throw new ArgumentNullException(nameof(parameterType));
+            }
+
+            if (parameterName == null)
+            {
+                throw new ArgumentNullException(nameof(parameterName));
+            }
+
+            _indent--;
+
+            WriteMessage(Resources.DefaultBuildLog_CreatedParameter,
+                parameterName,
+                parameterType.FullName,
+                instanceType.FullName);
+        }
+
+        /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="propertyType" /> parameter is null.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="propertyName" /> parameter is null.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="context" /> parameter is null.</exception>
@@ -69,8 +98,7 @@
 
             _indent--;
 
-            WriteMessage(
-                Resources.DefaultBuildLog_CreatedProperty,
+            WriteMessage(Resources.DefaultBuildLog_CreatedProperty,
                 propertyName,
                 propertyType.FullName,
                 context.GetType().FullName);
@@ -111,43 +139,12 @@
                 throw new ArgumentNullException(nameof(parameterName));
             }
 
-            WriteMessage(
-                Resources.DefaultBuildLog_CreatingParameter,
+            WriteMessage(Resources.DefaultBuildLog_CreatingParameter,
                 parameterName,
                 parameterType.FullName,
                 instanceType.FullName);
 
             _indent++;
-        }
-
-        /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">The <paramref name="instanceType" /> parameter is null.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="parameterType" /> parameter is null.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="parameterName" /> parameter is null.</exception>
-        public void CreatedParameter(Type instanceType, Type parameterType, string parameterName, object context)
-        {
-            if (instanceType == null)
-            {
-                throw new ArgumentNullException(nameof(instanceType));
-            }
-
-            if (parameterType == null)
-            {
-                throw new ArgumentNullException(nameof(parameterType));
-            }
-
-            if (parameterName == null)
-            {
-                throw new ArgumentNullException(nameof(parameterName));
-            }
-
-            _indent--;
-
-            WriteMessage(
-                Resources.DefaultBuildLog_CreatedParameter,
-                parameterName,
-                parameterType.FullName,
-                instanceType.FullName);
         }
 
         /// <inheritdoc />
@@ -171,41 +168,12 @@
                 throw new ArgumentNullException(nameof(context));
             }
 
-            WriteMessage(
-                Resources.DefaultBuildLog_CreatingProperty,
+            WriteMessage(Resources.DefaultBuildLog_CreatingProperty,
                 propertyName,
                 propertyType.FullName,
                 context.GetType().FullName);
 
             _indent++;
-        }
-
-        /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">The <paramref name="propertyType" /> parameter is null.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="propertyName" /> parameter is null.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="context" /> parameter is null.</exception>
-        public void IgnoringProperty(Type propertyType, string propertyName, object context)
-        {
-            if (propertyType == null)
-            {
-                throw new ArgumentNullException(nameof(propertyType));
-            }
-
-            if (propertyName == null)
-            {
-                throw new ArgumentNullException(nameof(propertyName));
-            }
-           
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
-
-            WriteMessage(
-                Resources.DefaultBuildLog_IgnoringProperty,
-                propertyName,
-                propertyType.FullName,
-                context.GetType().FullName);
         }
 
         /// <inheritdoc />
@@ -244,6 +212,33 @@
             }
 
             WriteMessage(Resources.DefaultBuildLog_CreatingValue, type.FullName, generatorType.FullName);
+        }
+
+        /// <inheritdoc />
+        /// <exception cref="ArgumentNullException">The <paramref name="propertyType" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="propertyName" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="context" /> parameter is null.</exception>
+        public void IgnoringProperty(Type propertyType, string propertyName, object context)
+        {
+            if (propertyType == null)
+            {
+                throw new ArgumentNullException(nameof(propertyType));
+            }
+
+            if (propertyName == null)
+            {
+                throw new ArgumentNullException(nameof(propertyName));
+            }
+
+            if (context == null)
+            {
+                throw new ArgumentNullException(nameof(context));
+            }
+
+            WriteMessage(Resources.DefaultBuildLog_IgnoringProperty,
+                propertyName,
+                propertyType.FullName,
+                context.GetType().FullName);
         }
 
         /// <inheritdoc />
@@ -306,12 +301,7 @@
 
             if (_indent > 0)
             {
-                var lines = messageToWrite.Split(
-                    new[]
-                    {
-                        Environment.NewLine
-                    },
-                    StringSplitOptions.RemoveEmptyEntries);
+                var lines = messageToWrite.Split(new[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries);
                 var indent = new string(' ', _indent * 4);
 
                 // Add the indent to each line and rebuild the message

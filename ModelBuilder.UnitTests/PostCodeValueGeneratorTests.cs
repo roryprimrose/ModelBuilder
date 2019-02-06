@@ -1,7 +1,6 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
-    using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using FluentAssertions;
@@ -14,16 +13,13 @@
         [Fact]
         public void GenerateReturnsRandomCityWhenNoMatchingCityTest()
         {
-            var address = new Address
-            {
-                City = Guid.NewGuid().ToString()
-            };
-            var buildChain = new LinkedList<object>();
+            var address = new Address {City = Guid.NewGuid().ToString()};
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            buildChain.AddFirst(address);
+            buildChain.Push(address);
 
             var target = new PostCodeValueGenerator();
 
@@ -35,16 +31,13 @@
         [Fact]
         public void GenerateReturnsRandomPostCodeMatchingCaseInsensitiveCityTest()
         {
-            var address = new Address
-            {
-                City = "RIBAS"
-            };
-            var buildChain = new LinkedList<object>();
+            var address = new Address {City = "RIBAS"};
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            buildChain.AddFirst(address);
+            buildChain.Push(address);
 
             var target = new PostCodeValueGenerator();
 
@@ -62,16 +55,13 @@
         [Fact]
         public void GenerateReturnsRandomPostCodeMatchingCityTest()
         {
-            var address = new Address
-            {
-                City = "Ribas"
-            };
-            var buildChain = new LinkedList<object>();
+            var address = new Address {City = "Ribas"};
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            buildChain.AddFirst(address);
+            buildChain.Push(address);
 
             var target = new PostCodeValueGenerator();
 
@@ -88,12 +78,12 @@
         public void GenerateReturnsRandomPostCodeTest()
         {
             var address = new Address();
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            buildChain.AddFirst(address);
+            buildChain.Push(address);
 
             var target = new PostCodeValueGenerator();
 
@@ -131,16 +121,16 @@
         public void GenerateReturnsValuesForSeveralNameFormatsTest(string referenceName)
         {
             var address = new Address();
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            buildChain.AddFirst(address);
+            buildChain.Push(address);
 
             var target = new PostCodeValueGenerator();
 
-            var actual = (string)target.Generate(typeof(string), referenceName, executeStrategy);
+            var actual = (string) target.Generate(typeof(string), referenceName, executeStrategy);
 
             actual.Should().NotBeNullOrEmpty();
         }
@@ -151,7 +141,7 @@
         [InlineData(typeof(string), "Stuff")]
         public void GenerateThrowsExceptionWithInvalidParametersTest(Type type, string referenceName)
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -166,7 +156,7 @@
         [Fact]
         public void GenerateThrowsExceptionWithNullTypeTest()
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -203,9 +193,9 @@
         public void IsSupportedTest(Type type, string referenceName, bool expected)
         {
             var address = new Address();
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
 
-            buildChain.AddFirst(address);
+            buildChain.Push(address);
 
             var target = new PostCodeValueGenerator();
 

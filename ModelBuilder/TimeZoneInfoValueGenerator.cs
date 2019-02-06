@@ -4,7 +4,7 @@
 
     /// <summary>
     ///     The <see cref="TimeZoneInfoValueGenerator" />
-    ///     class is used to generate random <see cref="TimeZoneInfo"/> values.
+    ///     class is used to generate random <see cref="TimeZoneInfo" /> values.
     /// </summary>
     public class TimeZoneInfoValueGenerator : ValueGeneratorMatcher
     {

@@ -198,8 +198,7 @@
         /// <param name="compiler">The compiler.</param>
         /// <returns>The compiler.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="compiler" /> parameter is <c>null</c>.</exception>
-        [SuppressMessage(
-            "Microsoft.Design",
+        [SuppressMessage("Microsoft.Design",
             "CA1004:GenericMethodsShouldProvideTypeParameter",
             Justification =
                 "This signature is designed for ease of use rather than requiring that T is either a parameter or return type.")]
@@ -234,8 +233,7 @@
         ///     The <paramref name="expression" /> parameter does not match a property on the type
         ///     to generate.
         /// </exception>
-        [SuppressMessage(
-            "Microsoft.Design",
+        [SuppressMessage("Microsoft.Design",
             "CA1004:GenericMethodsShouldProvideTypeParameter",
             Justification =
                 "This signature is designed for ease of use rather than requiring that T is either a parameter or return type.")]
@@ -272,8 +270,7 @@
         /// <param name="compiler">The compiler.</param>
         /// <returns>The compiler.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="compiler" /> parameter is <c>null</c>.</exception>
-        [SuppressMessage(
-            "Microsoft.Design",
+        [SuppressMessage("Microsoft.Design",
             "CA1004:GenericMethodsShouldProvideTypeParameter",
             Justification =
                 "This signature is designed for ease of use rather than requiring that T is either a parameter or return type.")]
@@ -307,8 +304,7 @@
         ///     The <paramref name="expression" /> parameter does not match a property on the type
         ///     to generate.
         /// </exception>
-        [SuppressMessage(
-            "Microsoft.Design",
+        [SuppressMessage("Microsoft.Design",
             "CA1004:GenericMethodsShouldProvideTypeParameter",
             Justification =
                 "This signature is designed for ease of use rather than requiring that T is either a parameter or return type.")]
@@ -344,8 +340,7 @@
         /// <param name="compiler">The compiler.</param>
         /// <returns>The compiler.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="compiler" /> parameter is <c>null</c>.</exception>
-        [SuppressMessage(
-            "Microsoft.Design",
+        [SuppressMessage("Microsoft.Design",
             "CA1004:GenericMethodsShouldProvideTypeParameter",
             Justification =
                 "This signature is designed for ease of use rather than requiring that T is either a parameter or return type.")]
@@ -371,8 +366,7 @@
         /// <param name="compiler">The compiler.</param>
         /// <returns>The compiler.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="compiler" /> parameter is <c>null</c>.</exception>
-        [SuppressMessage(
-            "Microsoft.Design",
+        [SuppressMessage("Microsoft.Design",
             "CA1004:GenericMethodsShouldProvideTypeParameter",
             Justification =
                 "This signature is designed for ease of use rather than requiring that T is either a parameter or return type.")]
@@ -436,8 +430,7 @@
         /// <param name="compiler">The compiler.</param>
         /// <returns>The compiler.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="compiler" /> parameter is <c>null</c>.</exception>
-        [SuppressMessage(
-            "Microsoft.Design",
+        [SuppressMessage("Microsoft.Design",
             "CA1004:GenericMethodsShouldProvideTypeParameter",
             Justification =
                 "This signature is designed for ease of use rather than requiring that T is either a parameter or return type.")]
@@ -463,8 +456,7 @@
         /// <param name="compiler">The compiler.</param>
         /// <returns>The compiler.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="compiler" /> parameter is <c>null</c>.</exception>
-        [SuppressMessage(
-            "Microsoft.Design",
+        [SuppressMessage("Microsoft.Design",
             "CA1004:GenericMethodsShouldProvideTypeParameter",
             Justification =
                 "This signature is designed for ease of use rather than requiring that T is either a parameter or return type.")]
@@ -490,8 +482,7 @@
         /// <param name="compiler">The compiler.</param>
         /// <returns>The compiler.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="compiler" /> parameter is <c>null</c>.</exception>
-        [SuppressMessage(
-            "Microsoft.Design",
+        [SuppressMessage("Microsoft.Design",
             "CA1004:GenericMethodsShouldProvideTypeParameter",
             Justification =
                 "This signature is designed for ease of use rather than requiring that T is either a parameter or return type.")]
@@ -517,8 +508,7 @@
         /// <param name="compiler">The compiler.</param>
         /// <returns>The compiler.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="compiler" /> parameter is <c>null</c>.</exception>
-        [SuppressMessage(
-            "Microsoft.Design",
+        [SuppressMessage("Microsoft.Design",
             "CA1004:GenericMethodsShouldProvideTypeParameter",
             Justification =
                 "This signature is designed for ease of use rather than requiring that T is either a parameter or return type.")]
@@ -547,8 +537,7 @@
         /// <param name="compiler">The compiler.</param>
         /// <returns>The compiler.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="compiler" /> parameter is <c>null</c>.</exception>
-        [SuppressMessage(
-            "Microsoft.Design",
+        [SuppressMessage("Microsoft.Design",
             "CA1004:GenericMethodsShouldProvideTypeParameter",
             Justification =
                 "This signature is designed for ease of use rather than requiring that T is either a parameter or return type.")]
@@ -577,8 +566,7 @@
         /// <param name="compiler">The compiler.</param>
         /// <returns>The compiler.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="compiler" /> parameter is <c>null</c>.</exception>
-        [SuppressMessage(
-            "Microsoft.Design",
+        [SuppressMessage("Microsoft.Design",
             "CA1004:GenericMethodsShouldProvideTypeParameter",
             Justification =
                 "This signature is designed for ease of use rather than requiring that T is either a parameter or return type.")]
@@ -607,8 +595,7 @@
         /// <param name="compiler">The compiler.</param>
         /// <returns>The compiler.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="compiler" /> parameter is <c>null</c>.</exception>
-        [SuppressMessage(
-            "Microsoft.Design",
+        [SuppressMessage("Microsoft.Design",
             "CA1004:GenericMethodsShouldProvideTypeParameter",
             Justification =
                 "This signature is designed for ease of use rather than requiring that T is either a parameter or return type.")]
@@ -637,8 +624,7 @@
         /// <param name="compiler">The compiler.</param>
         /// <returns>The compiler.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="compiler" /> parameter is <c>null</c>.</exception>
-        [SuppressMessage(
-            "Microsoft.Design",
+        [SuppressMessage("Microsoft.Design",
             "CA1004:GenericMethodsShouldProvideTypeParameter",
             Justification =
                 "This signature is designed for ease of use rather than requiring that T is either a parameter or return type.")]
@@ -667,8 +653,7 @@
         /// <param name="compiler">The compiler.</param>
         /// <returns>The compiler.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="compiler" /> parameter is <c>null</c>.</exception>
-        [SuppressMessage(
-            "Microsoft.Design",
+        [SuppressMessage("Microsoft.Design",
             "CA1004:GenericMethodsShouldProvideTypeParameter",
             Justification =
                 "This signature is designed for ease of use rather than requiring that T is either a parameter or return type.")]
@@ -691,7 +676,6 @@
         }
 
 #if NET45
-
 /// <summary>
 ///     Scans available assemblies for <see cref="ICompilerModule" /> types that can configure the specified compiler.
 /// </summary>
@@ -751,8 +735,7 @@
         /// <param name="compiler">The compiler.</param>
         /// <returns>The compiler.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="compiler" /> parameter is <c>null</c>.</exception>
-        [SuppressMessage(
-            "Microsoft.Design",
+        [SuppressMessage("Microsoft.Design",
             "CA1004:GenericMethodsShouldProvideTypeParameter",
             Justification =
                 "This signature is designed for ease of use rather than requiring that T is either a parameter or return type.")]
@@ -800,8 +783,7 @@
         /// <param name="compiler">The compiler.</param>
         /// <returns>The compiler.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="compiler" /> parameter is <c>null</c>.</exception>
-        [SuppressMessage(
-            "Microsoft.Design",
+        [SuppressMessage("Microsoft.Design",
             "CA1004:GenericMethodsShouldProvideTypeParameter",
             Justification =
                 "This signature is designed for ease of use rather than requiring that T is either a parameter or return type.")]

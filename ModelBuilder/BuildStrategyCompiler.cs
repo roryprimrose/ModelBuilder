@@ -2,16 +2,16 @@
 {
     using System;
     using System.Collections.Generic;
-    using Properties;
+    using ModelBuilder.Properties;
 
     /// <summary>
-    /// The <see cref="BuildStrategyCompiler"/>
-    /// class is used to assist in creating a new <see cref="IBuildStrategy"/> instance.
+    ///     The <see cref="BuildStrategyCompiler" />
+    ///     class is used to assist in creating a new <see cref="IBuildStrategy" /> instance.
     /// </summary>
     public class BuildStrategyCompiler : IBuildStrategyCompiler
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="BuildStrategyCompiler"/> class.
+        ///     Initializes a new instance of the <see cref="BuildStrategyCompiler" /> class.
         /// </summary>
         public BuildStrategyCompiler()
         {
@@ -24,7 +24,7 @@
         }
 
         /// <inheritdoc />
-        /// <exception cref="InvalidOperationException">The <see cref="ConstructorResolver"/> property is <c>null</c>.</exception>
+        /// <exception cref="InvalidOperationException">The <see cref="ConstructorResolver" /> property is <c>null</c>.</exception>
         public IBuildStrategy Compile()
         {
             if (ConstructorResolver == null)
@@ -37,8 +37,7 @@
                 throw new InvalidOperationException(Resources.BuildStrategyCompiler_NullPropertyResolver);
             }
 
-            return new BuildStrategy(
-                ConstructorResolver,
+            return new BuildStrategy(ConstructorResolver,
                 PropertyResolver,
                 CreationRules,
                 TypeCreators,
@@ -47,12 +46,9 @@
                 ExecuteOrderRules,
                 PostBuildActions);
         }
-        
-        /// <inheritdoc />
-        public IConstructorResolver ConstructorResolver { get; set; }
 
         /// <inheritdoc />
-        public IPropertyResolver PropertyResolver { get; set; }
+        public IConstructorResolver ConstructorResolver { get; set; }
 
         /// <inheritdoc />
         public ICollection<CreationRule> CreationRules { get; }
@@ -65,6 +61,9 @@
 
         /// <inheritdoc />
         public ICollection<IPostBuildAction> PostBuildActions { get; }
+
+        /// <inheritdoc />
+        public IPropertyResolver PropertyResolver { get; set; }
 
         /// <inheritdoc />
         public ICollection<ITypeCreator> TypeCreators { get; }

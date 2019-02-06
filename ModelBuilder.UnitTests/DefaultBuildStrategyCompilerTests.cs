@@ -22,7 +22,7 @@
             target.ExecuteOrderRules.Should().NotBeEmpty();
             target.PostBuildActions.Should().BeEmpty();
         }
-        
+
         [Fact]
         public void DefaultExecuteOrderRulesReturnsExecutableRulesTest()
         {
@@ -44,7 +44,8 @@
         public void TypeCreatorsIncludesAllAvailableTypeCreatorsTest()
         {
             var types = from x in typeof(DefaultBuildStrategyCompiler).GetTypeInfo().Assembly.GetTypes()
-                where typeof(ITypeCreator).IsAssignableFrom(x) && x.GetTypeInfo().IsAbstract == false && x.GetTypeInfo().IsInterface == false
+                where typeof(ITypeCreator).IsAssignableFrom(x) && x.GetTypeInfo().IsAbstract == false
+                                                               && x.GetTypeInfo().IsInterface == false
                 select x;
 
             var target = new DefaultBuildStrategyCompiler();
@@ -67,9 +68,9 @@
         public void ValueGeneratorsIncludesAllAvailableValueGeneratorsExceptMailinatorTest()
         {
             var types = from x in typeof(DefaultBuildStrategyCompiler).GetTypeInfo().Assembly.GetTypes()
-                where
-                    typeof(IValueGenerator).IsAssignableFrom(x) && x.GetTypeInfo().IsAbstract == false && x.GetTypeInfo().IsInterface == false &&
-                    x != typeof(MailinatorEmailValueGenerator)
+                where typeof(IValueGenerator).IsAssignableFrom(x) && x.GetTypeInfo().IsAbstract == false
+                                                                  && x.GetTypeInfo().IsInterface == false
+                                                                  && x != typeof(MailinatorEmailValueGenerator)
                 select x;
 
             var target = new DefaultBuildStrategyCompiler();

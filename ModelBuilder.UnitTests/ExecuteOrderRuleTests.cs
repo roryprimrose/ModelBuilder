@@ -122,7 +122,7 @@
         {
             var priority = Environment.TickCount;
 
-            Action action = () => new ExecuteOrderRule(null, null, (string)null, priority);
+            Action action = () => new ExecuteOrderRule(null, null, (string) null, priority);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -132,7 +132,7 @@
         {
             var priority = Environment.TickCount;
 
-            Action action = () => new ExecuteOrderRule(null, null, (Regex)null, priority);
+            Action action = () => new ExecuteOrderRule(null, null, (Regex) null, priority);
 
             action.Should().Throw<ArgumentNullException>();
         }

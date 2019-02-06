@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace ModelBuilder.UnitTests
+﻿namespace ModelBuilder.UnitTests
 {
+    using System;
+
     public class IncrementingArrayTypeCreator : ArrayTypeCreator
     {
         protected override object CreateChildItem(Type type, IExecuteStrategy executeStrategy, object previousItem)

@@ -1,7 +1,6 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
-    using System.Collections.Generic;
     using System.IO;
     using FluentAssertions;
     using NSubstitute;
@@ -12,7 +11,7 @@
         [Fact]
         public void GenerateReturnsRandomValuesForGenderTypeTest()
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -24,7 +23,7 @@
 
             for (var index = 0; index < 1000; index++)
             {
-                var actual = (string)target.Generate(typeof(string), "Gender", executeStrategy);
+                var actual = (string) target.Generate(typeof(string), "Gender", executeStrategy);
 
                 if (actual == "Male")
                 {
@@ -48,7 +47,7 @@
         [Fact]
         public void GenerateReturnsValueForGenderTypeTest()
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -67,14 +66,14 @@
         [InlineData(typeof(string), "Sex", true)]
         public void GenerateReturnsValuesForSeveralNameFormatsTest(Type type, string referenceName, bool expected)
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
 
             var target = new GenderValueGenerator();
 
-            var actual = (string)target.Generate(type, referenceName, executeStrategy);
+            var actual = (string) target.Generate(type, referenceName, executeStrategy);
 
             actual.Should().NotBeNullOrEmpty();
         }
@@ -85,7 +84,7 @@
         [InlineData(typeof(string), "Stuff")]
         public void GenerateThrowsExceptionWithInvalidParametersTest(Type type, string referenceName)
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -96,7 +95,7 @@
 
             action.Should().Throw<NotSupportedException>();
         }
-        
+
         [Theory]
         [InlineData(typeof(Stream), "gender", false)]
         [InlineData(typeof(string), null, false)]

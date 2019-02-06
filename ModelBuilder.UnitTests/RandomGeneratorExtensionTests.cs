@@ -1,10 +1,10 @@
-﻿using System;
-using FluentAssertions;
-using NSubstitute;
-using Xunit;
-
-namespace ModelBuilder.UnitTests
+﻿namespace ModelBuilder.UnitTests
 {
+    using System;
+    using FluentAssertions;
+    using NSubstitute;
+    using Xunit;
+
     public class RandomGeneratorExtensionTests
     {
         [Fact]

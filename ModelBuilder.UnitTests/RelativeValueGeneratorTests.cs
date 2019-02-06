@@ -14,10 +14,7 @@
         [Fact]
         public void GetSourceValueReturnsNullFromSourceNullableIntPropertyTest()
         {
-            var context = new RelativeNullableInt
-            {
-                YearStarted = null
-            };
+            var context = new RelativeNullableInt {YearStarted = null};
 
             var target = new GeneratorWrapper<int?>(PropertyExpression.FirstName, new Regex("YearStarted"));
 
@@ -53,10 +50,7 @@
         [Fact]
         public void GetSourceValueReturnsValueFromSourceIntPropertyTest()
         {
-            var context = new Person
-            {
-                Priority = Environment.TickCount
-            };
+            var context = new Person {Priority = Environment.TickCount};
 
             var target = new GeneratorWrapper<int>(PropertyExpression.FirstName, new Regex("Priority"));
 
@@ -68,10 +62,7 @@
         [Fact]
         public void GetSourceValueReturnsValueFromSourceNullableIntPropertyTest()
         {
-            var context = new RelativeNullableInt
-            {
-                YearStarted = Environment.TickCount
-            };
+            var context = new RelativeNullableInt {YearStarted = Environment.TickCount};
 
             var target = new GeneratorWrapper<int?>(PropertyExpression.FirstName, new Regex("YearStarted"));
 
@@ -86,10 +77,7 @@
         [InlineData(Gender.Female, "Female")]
         public void GetSourceValueReturnsValueFromSourcePropertyTest(Gender gender, string expected)
         {
-            var context = new Person
-            {
-                Gender = gender
-            };
+            var context = new Person {Gender = gender};
 
             var target = new GeneratorWrapper<string>(PropertyExpression.FirstName, PropertyExpression.Gender);
 
@@ -101,10 +89,7 @@
         [Fact]
         public void GetSourceValueReturnsValueFromSourceStringPropertyTest()
         {
-            var context = new Person
-            {
-                LastName = Guid.NewGuid().ToString()
-            };
+            var context = new Person {LastName = Guid.NewGuid().ToString()};
 
             var target = new GeneratorWrapper<string>(PropertyExpression.FirstName, PropertyExpression.LastName);
 
@@ -118,7 +103,7 @@
         {
             var context = new Person();
 
-            var target = new GeneratorWrapper<string>(PropertyExpression.FirstName, (Regex)null, (Type)null);
+            var target = new GeneratorWrapper<string>(PropertyExpression.FirstName, (Regex) null, (Type) null);
 
             Action action = () => target.ReadSourceValue(context);
 
@@ -138,10 +123,9 @@
         [Fact]
         public void GetValueThrowsExceptionWithNullContextTest()
         {
-            var target = new GeneratorWrapper<string>(
+            var target = new GeneratorWrapper<string>(PropertyExpression.FirstName,
                 PropertyExpression.FirstName,
-                PropertyExpression.FirstName,
-                (Type)null);
+                (Type) null);
 
             Action action = () => target.ReadValue(PropertyExpression.LastName, null);
 
@@ -153,10 +137,9 @@
         {
             var context = new Person();
 
-            var target = new GeneratorWrapper<string>(
+            var target = new GeneratorWrapper<string>(PropertyExpression.FirstName,
                 PropertyExpression.FirstName,
-                PropertyExpression.FirstName,
-                (Type)null);
+                (Type) null);
 
             Action action = () => target.ReadValue(null, context);
 
@@ -168,7 +151,9 @@
         {
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
-            var sut = new GeneratorWrapper<string>(PropertyExpression.FirstName, PropertyExpression.Email, typeof(string));
+            var sut = new GeneratorWrapper<string>(PropertyExpression.FirstName,
+                PropertyExpression.Email,
+                typeof(string));
 
             var maleFound = false;
             var nonMaleFound = false;
@@ -201,14 +186,16 @@
         public void IsMaleReturnsRandomValueWhenNoGenderPropertyFoundTest()
         {
             var person = new PersonWithoutGender();
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            buildChain.AddFirst(person);
+            buildChain.Push(person);
 
-            var sut = new GeneratorWrapper<string>(PropertyExpression.FirstName, PropertyExpression.Email, typeof(string));
+            var sut = new GeneratorWrapper<string>(PropertyExpression.FirstName,
+                PropertyExpression.Email,
+                typeof(string));
 
             var maleFound = false;
             var nonMaleFound = false;
@@ -243,18 +230,17 @@
         [InlineData(Gender.Unknown, false)]
         public void IsMaleReturnsValueBasedOnGenderPropertyTest(Gender gender, bool expected)
         {
-            var person = new Person
-            {
-                Gender = gender
-            };
-            var buildChain = new LinkedList<object>();
+            var person = new Person {Gender = gender};
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            buildChain.AddFirst(person);
+            buildChain.Push(person);
 
-            var sut = new GeneratorWrapper<string>(PropertyExpression.FirstName, PropertyExpression.Email, typeof(string));
+            var sut = new GeneratorWrapper<string>(PropertyExpression.FirstName,
+                PropertyExpression.Email,
+                typeof(string));
 
             var actual = sut.GetIsMale(executeStrategy);
 
@@ -264,7 +250,9 @@
         [Fact]
         public void IsMaleThrowsExceptionWithNullExecuteStrategyTest()
         {
-            var sut = new GeneratorWrapper<string>(PropertyExpression.FirstName, PropertyExpression.Email, typeof(string));
+            var sut = new GeneratorWrapper<string>(PropertyExpression.FirstName,
+                PropertyExpression.Email,
+                typeof(string));
 
             Action action = () => sut.GetIsMale(null);
 
@@ -284,13 +272,13 @@
             Type contextType,
             bool expected)
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
 
             if (contextType != null)
             {
                 var context = Activator.CreateInstance(contextType);
 
-                buildChain.AddFirst(context);
+                buildChain.Push(context);
             }
 
             var target = new GeneratorWrapper<string>(PropertyExpression.FirstName, PropertyExpression.Gender);
@@ -304,9 +292,9 @@
         public void IsSupportedReturnsFalseWithNullBuildChainTest()
         {
             var context = new SlimModel();
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
 
-            buildChain.AddFirst(context);
+            buildChain.Push(context);
 
             var target = new GeneratorWrapper<string>(PropertyExpression.FirstName, typeof(string));
 
@@ -319,11 +307,11 @@
         public void IsSupportedReturnsTrueWhenSourceExpressionIsNullAndTargetExpressionMatchesReferenceNameTest()
         {
             var context = new SlimModel();
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
 
-            buildChain.AddFirst(context);
+            buildChain.Push(context);
 
-            var target = new GeneratorWrapper<string>(PropertyExpression.FirstName, (Regex)null);
+            var target = new GeneratorWrapper<string>(PropertyExpression.FirstName, (Regex) null);
 
             var actual = target.IsSupported(typeof(string), "FirstName", buildChain);
 
@@ -334,9 +322,9 @@
         public void IsSupportedReturnsTrueWhenTargetExpressionMatchesReferenceNameTest()
         {
             var context = new SlimModel();
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
 
-            buildChain.AddFirst(context);
+            buildChain.Push(context);
 
             var target = new GeneratorWrapper<string>(PropertyExpression.FirstName, typeof(string));
 
@@ -363,21 +351,18 @@
 
         private class GeneratorWrapper<T> : RelativeValueGenerator
         {
-            public GeneratorWrapper(Regex targetNameExpression, params Type[] types) : base(targetNameExpression, types)
+            public GeneratorWrapper(Regex targetNameExpression, params Type[] types)
+                : base(targetNameExpression, types)
             {
             }
 
-            public GeneratorWrapper(Regex targetNameExpression, Regex sourceNameExpression, params Type[] types) : base(
-                targetNameExpression,
-                sourceNameExpression,
-                types)
+            public GeneratorWrapper(Regex targetNameExpression, Regex sourceNameExpression, params Type[] types)
+                : base(targetNameExpression, sourceNameExpression, types)
             {
             }
 
-            public GeneratorWrapper(Regex targetNameExpression, Regex sourceNameExpression) : base(
-                targetNameExpression,
-                sourceNameExpression,
-                typeof(string))
+            public GeneratorWrapper(Regex targetNameExpression, Regex sourceNameExpression)
+                : base(targetNameExpression, sourceNameExpression, typeof(string))
             {
             }
 

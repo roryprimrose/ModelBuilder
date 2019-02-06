@@ -14,7 +14,7 @@
         {
             throw new NotImplementedException();
         }
-        
+
         public IConstructorResolver ConstructorResolver { get; }
 
         public ReadOnlyCollection<CreationRule> CreationRules { get; }

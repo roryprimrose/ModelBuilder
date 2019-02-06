@@ -1,14 +1,15 @@
-﻿using System;
+﻿#if NET452
 using System.IO;
-#if NET452
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 #endif
-using FluentAssertions;
-using Xunit;
 
 namespace ModelBuilder.UnitTests
 {
+    using System;
+    using FluentAssertions;
+    using Xunit;
+
     public class BuildExceptionTests
     {
         [Fact]

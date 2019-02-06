@@ -1,7 +1,6 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
-    using System.Collections.Generic;
 
     public class DummyExecuteStrategy : IExecuteStrategy<string>
     {
@@ -29,9 +28,10 @@
             throw new NotImplementedException();
         }
 
-        public LinkedList<object> BuildChain { get; } = new LinkedList<object>();
+        public IBuildChain BuildChain { get; } = new BuildHistory();
 
         public IBuildConfiguration Configuration { get; }
+
         public IBuildLog Log { get; }
     }
 }

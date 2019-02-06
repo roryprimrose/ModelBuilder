@@ -122,7 +122,7 @@
         [InlineData(typeof(Person[]))]
         public void CreateReturnsInstanceTest(Type type)
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -158,7 +158,7 @@
         [InlineData(typeof(Person[]), true)]
         public void CreateValidatesWhetherTypeIsSupportedTest(Type type, bool supported)
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -204,22 +204,19 @@
         {
             var expected = new Guid[15];
 
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.CreateWith(typeof(Guid)).Returns(Guid.NewGuid());
 
-            var target = new ArrayTypeCreator
-            {
-                MaxCount = 15
-            };
+            var target = new ArrayTypeCreator {MaxCount = 15};
 
             var actual = target.Populate(expected, executeStrategy);
 
             actual.Should().BeSameAs(expected);
 
-            var set = (Guid[])actual;
+            var set = (Guid[]) actual;
 
             set.Should().HaveCount(target.MaxCount);
             set.All(x => x != Guid.Empty).Should().BeTrue();
@@ -230,22 +227,19 @@
         {
             var expected = new Guid[15];
 
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.CreateWith(typeof(Guid)).Returns(Guid.NewGuid());
 
-            var target = new ArrayTypeCreator
-            {
-                MaxCount = 15
-            };
+            var target = new ArrayTypeCreator {MaxCount = 15};
 
             var actual = target.Populate(expected, executeStrategy);
 
             actual.Should().BeSameAs(expected);
 
-            var set = (Guid[])actual;
+            var set = (Guid[]) actual;
 
             set.Should().HaveCount(target.MaxCount);
             set.All(x => x != Guid.Empty).Should().BeTrue();
@@ -259,7 +253,7 @@
 
             var target = new IncrementingArrayTypeCreator();
 
-            var result = (int[])target.Populate(actual, executeStrategy);
+            var result = (int[]) target.Populate(actual, executeStrategy);
 
             var baseValue = result[0];
             var expected = new int[actual.Length];
@@ -280,7 +274,7 @@
 
             var target = new ArrayTypeCreator();
 
-            var result = (Person[])target.Populate(actual, executeStrategy);
+            var result = (Person[]) target.Populate(actual, executeStrategy);
 
             result.All(x => x != null).Should().BeTrue();
         }
@@ -290,22 +284,19 @@
         {
             var expected = new Guid[0];
 
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.CreateWith(typeof(Guid)).Returns(Guid.NewGuid());
 
-            var target = new ArrayTypeCreator
-            {
-                MaxCount = 15
-            };
+            var target = new ArrayTypeCreator {MaxCount = 15};
 
             var actual = target.Populate(expected, executeStrategy);
 
             actual.Should().BeSameAs(expected);
 
-            var set = (Guid[])actual;
+            var set = (Guid[]) actual;
 
             set.Should().BeEmpty();
         }
@@ -339,7 +330,7 @@
         {
             var instance = new Lazy<bool>(() => true);
 
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -385,10 +376,7 @@
         [Fact]
         public void SettingMaxCountShouldNotChangeDefaultMaxCountTest()
         {
-            var target = new ArrayTypeCreator
-            {
-                MaxCount = Environment.TickCount
-            };
+            var target = new ArrayTypeCreator {MaxCount = Environment.TickCount};
 
             ArrayTypeCreator.DefaultMaxCount.Should().NotBe(target.MaxCount);
         }

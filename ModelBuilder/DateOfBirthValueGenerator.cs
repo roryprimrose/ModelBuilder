@@ -1,7 +1,6 @@
 namespace ModelBuilder
 {
     using System;
-    using System.Reflection;
     using System.Text.RegularExpressions;
 
     /// <summary>
@@ -14,8 +13,7 @@ namespace ModelBuilder
         ///     Initializes a new instance of the <see cref="DateTimeValueGenerator" /> class.
         /// </summary>
         public DateOfBirthValueGenerator()
-            : base(
-                new Regex("dob|dateofbirth|born", RegexOptions.IgnoreCase),
+            : base(new Regex("dob|dateofbirth|born", RegexOptions.IgnoreCase),
                 typeof(DateTime),
                 typeof(DateTime?),
                 typeof(DateTimeOffset),
@@ -59,8 +57,11 @@ namespace ModelBuilder
 
             var offsetPoint = DateTimeOffset.UtcNow;
 
-            offsetPoint =
-                offsetPoint.AddYears(-years).AddMonths(-months).AddDays(-days).AddHours(-hours).AddMinutes(-minutes);
+            offsetPoint = offsetPoint.AddYears(-years)
+                .AddMonths(-months)
+                .AddDays(-days)
+                .AddHours(-hours)
+                .AddMinutes(-minutes);
 
             return offsetPoint;
         }

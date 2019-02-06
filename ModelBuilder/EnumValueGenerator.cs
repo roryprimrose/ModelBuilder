@@ -3,7 +3,6 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Reflection;
 
     /// <summary>
     ///     The <see cref="EnumValueGenerator" />
@@ -13,7 +12,7 @@
     {
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is null.</exception>
-        public override bool IsSupported(Type type, string referenceName, LinkedList<object> buildChain)
+        public override bool IsSupported(Type type, string referenceName, IBuildChain buildChain)
         {
             if (type == null)
             {

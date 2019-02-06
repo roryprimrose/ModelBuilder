@@ -1,7 +1,6 @@
 ﻿namespace ModelBuilder
 {
     using System;
-    using System.Collections.Generic;
     using System.Linq;
     using System.Text.RegularExpressions;
 
@@ -11,7 +10,7 @@
     /// </summary>
     public abstract class ValueGeneratorMatcher : ValueGeneratorBase
     {
-        private readonly Func<Type, string, LinkedList<object>, bool> _matcher;
+        private readonly Func<Type, string, IBuildChain, bool> _matcher;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="ValueGeneratorMatcher" /> class.
@@ -56,7 +55,7 @@
                 }
 
                 var matches = from x in types
-                    where (x == type) && referenceName.Equals(name, StringComparison.OrdinalIgnoreCase)
+                    where x == type && referenceName.Equals(name, StringComparison.OrdinalIgnoreCase)
                     select x;
 
                 return matches.Any();
@@ -91,7 +90,7 @@
                 }
 
                 var matches = from x in types
-                    where (x == type) && expression.IsMatch(name)
+                    where x == type && expression.IsMatch(name)
                     select x;
 
                 return matches.Any();
@@ -100,7 +99,7 @@
 
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is null.</exception>
-        public override bool IsSupported(Type type, string referenceName, LinkedList<object> buildChain)
+        public override bool IsSupported(Type type, string referenceName, IBuildChain buildChain)
         {
             if (type == null)
             {

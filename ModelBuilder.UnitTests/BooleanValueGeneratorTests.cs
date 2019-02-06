@@ -1,7 +1,6 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
-    using System.Collections.Generic;
     using FluentAssertions;
     using NSubstitute;
     using Xunit;
@@ -11,7 +10,7 @@
         [Fact]
         public void GenerateReturnsRandomValuesForBooleanTypeTest()
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -23,7 +22,7 @@
 
             for (var index = 0; index < 1000; index++)
             {
-                var actual = (bool)target.Generate(typeof(bool), null, executeStrategy);
+                var actual = (bool) target.Generate(typeof(bool), null, executeStrategy);
 
                 if (actual)
                 {
@@ -47,7 +46,7 @@
         [Fact]
         public void GenerateReturnsRandomValuesForNullabeBooleanTypeTest()
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -60,7 +59,7 @@
 
             for (var index = 0; index < 1000; index++)
             {
-                var actual = (bool?)target.Generate(typeof(bool?), null, executeStrategy);
+                var actual = (bool?) target.Generate(typeof(bool?), null, executeStrategy);
 
                 if (actual == null)
                 {
@@ -75,9 +74,9 @@
                     falseFound = true;
                 }
 
-                if (nullFound &&
-                    trueFound &&
-                    falseFound)
+                if (nullFound
+                    && trueFound
+                    && falseFound)
                 {
                     break;
                 }
@@ -91,7 +90,7 @@
         [Fact]
         public void GenerateReturnsValueForBooleanTypeTest()
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -106,7 +105,7 @@
         [Fact]
         public void GenerateReturnsValueForNullableBooleanTypeTest()
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);

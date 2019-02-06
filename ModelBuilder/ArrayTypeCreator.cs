@@ -1,10 +1,8 @@
 ﻿namespace ModelBuilder
 {
     using System;
-    using System.Collections.Generic;
     using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
-    using System.Reflection;
 
     /// <summary>
     ///     The <see cref="ArrayTypeCreator" />
@@ -14,7 +12,7 @@
     {
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is null.</exception>
-        public override bool CanCreate(Type type, string referenceName, LinkedList<object> buildChain)
+        public override bool CanCreate(Type type, string referenceName, IBuildChain buildChain)
         {
             // Creating using this creator has the same rules for populate as it does for create
             return CanPopulate(type, referenceName, buildChain);
@@ -22,7 +20,7 @@
 
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is null.</exception>
-        public override bool CanPopulate(Type type, string referenceName, LinkedList<object> buildChain)
+        public override bool CanPopulate(Type type, string referenceName, IBuildChain buildChain)
         {
             if (type == null)
             {
@@ -39,8 +37,10 @@
 
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is null.</exception>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0",
-             Justification = "The parameter is validated in the call to VerifyCreateRequest.")]
+        [SuppressMessage("Microsoft.Design",
+            "CA1062:Validate arguments of public methods",
+            MessageId = "0",
+            Justification = "The parameter is validated in the call to VerifyCreateRequest.")]
         public override object Create(
             Type type,
             string referenceName,
@@ -51,16 +51,10 @@
 
             var count = Generator.NextValue(1, MaxCount);
 
-            var parameters = new object[]
-            {
-                count
-            };
+            var parameters = new object[] {count};
 
             // Array has a dark-magic constructor that takes an int to define the size of the array
-            var parameterTypes = new[]
-            {
-                typeof(int)
-            };
+            var parameterTypes = new[] {typeof(int)};
             var constructor = type.GetConstructor(parameterTypes);
 
             Debug.Assert(constructor != null, "No constructor was found on the array");

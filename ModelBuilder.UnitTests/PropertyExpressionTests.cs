@@ -1,9 +1,8 @@
-﻿using System.Text.RegularExpressions;
-using FluentAssertions;
-using Xunit;
-
-namespace ModelBuilder.UnitTests
+﻿namespace ModelBuilder.UnitTests
 {
+    using FluentAssertions;
+    using Xunit;
+
     public class PropertyExpressionTests
     {
         [Theory]

@@ -1,7 +1,6 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
-    using System.Collections.Generic;
     using FluentAssertions;
     using NSubstitute;
     using Xunit;
@@ -11,7 +10,7 @@
         [Fact]
         public void GenerateCanReturnNullAndRandomValuesTest()
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -23,7 +22,7 @@
 
             for (var index = 0; index < 1000; index++)
             {
-                var value = (Guid?)target.Generate(typeof(Guid?), null, executeStrategy);
+                var value = (Guid?) target.Generate(typeof(Guid?), null, executeStrategy);
 
                 if (value == null)
                 {
@@ -50,7 +49,7 @@
         [InlineData(typeof(string), false)]
         public void GenerateEvaluatesWhetherTypeIsSupportedTest(Type type, bool supportedType)
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -72,15 +71,15 @@
         [Fact]
         public void GenerateReturnsRandomGuidValueTest()
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
 
             var target = new GuidValueGenerator();
 
-            var first = (Guid)target.Generate(typeof(Guid), null, executeStrategy);
-            var second = (Guid)target.Generate(typeof(Guid), null, executeStrategy);
+            var first = (Guid) target.Generate(typeof(Guid), null, executeStrategy);
+            var second = (Guid) target.Generate(typeof(Guid), null, executeStrategy);
 
             first.Should().NotBeEmpty();
             second.Should().NotBeEmpty();
@@ -103,9 +102,9 @@
         [Fact]
         public void IsSupportedThrowsExceptionWithNullTypeTest()
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
 
-            buildChain.AddFirst(Guid.NewGuid().ToString());
+            buildChain.Push(Guid.NewGuid().ToString());
 
             var target = new GuidValueGenerator();
 

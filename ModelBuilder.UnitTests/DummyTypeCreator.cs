@@ -1,17 +1,16 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
-    using System.Collections.Generic;
     using NSubstitute;
 
     public class DummyTypeCreator : TypeCreatorBase
     {
-        public override bool CanCreate(Type type, string referenceName, LinkedList<object> buildChain)
+        public override bool CanCreate(Type type, string referenceName, IBuildChain buildChain)
         {
             return false;
         }
 
-        public override bool CanPopulate(Type type, string referenceName, LinkedList<object> buildChain)
+        public override bool CanPopulate(Type type, string referenceName, IBuildChain buildChain)
         {
             return false;
         }

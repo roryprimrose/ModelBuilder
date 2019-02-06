@@ -14,10 +14,8 @@ namespace ModelBuilder
         /// <summary>
         ///     Initializes a new instance of the <see cref="DomainNameValueGenerator" /> class.
         /// </summary>
-        public CultureValueGenerator() : base(
-            new Regex("Culture", RegexOptions.IgnoreCase),
-            typeof(string),
-            typeof(CultureInfo))
+        public CultureValueGenerator()
+            : base(new Regex("Culture", RegexOptions.IgnoreCase), typeof(string), typeof(CultureInfo))
         {
         }
 

@@ -17,31 +17,18 @@
             {
                 new CreationRule(typeof(string), "Test", int.MaxValue, "Stuff")
             };
-            var typeCreators = new List<ITypeCreator>
-            {
-                new DefaultTypeCreator()
-            };
-            var valueGenerators = new List<IValueGenerator>
-            {
-                new AddressValueGenerator()
-            };
-            var ignoreRules = new List<IgnoreRule>
-            {
-                new IgnoreRule(typeof(Person), "FirstName")
-            };
+            var typeCreators = new List<ITypeCreator> {new DefaultTypeCreator()};
+            var valueGenerators = new List<IValueGenerator> {new AddressValueGenerator()};
+            var ignoreRules = new List<IgnoreRule> {new IgnoreRule(typeof(Person), "FirstName")};
             var executeOrderRules = new List<ExecuteOrderRule>
             {
                 new ExecuteOrderRule(typeof(Person), typeof(string), "LastName", int.MinValue)
             };
-            var postBuildActions = new List<IPostBuildAction>
-            {
-                Substitute.For<IPostBuildAction>()
-            };
+            var postBuildActions = new List<IPostBuildAction> {Substitute.For<IPostBuildAction>()};
 
             var target = new BuildStrategyCompiler
             {
-                ConstructorResolver = constructorResolver,
-                PropertyResolver = propertyResolver
+                ConstructorResolver = constructorResolver, PropertyResolver = propertyResolver
             };
 
             target.CreationRules.Add(creationRules[0]);
@@ -68,10 +55,7 @@
         {
             var propertyResolver = Substitute.For<IPropertyResolver>();
 
-            var target = new BuildStrategyCompiler
-            {
-                PropertyResolver = propertyResolver
-            };
+            var target = new BuildStrategyCompiler {PropertyResolver = propertyResolver};
 
             Action action = () => target.Compile();
 
@@ -83,10 +67,7 @@
         {
             var constructorResolver = Substitute.For<IConstructorResolver>();
 
-            var target = new BuildStrategyCompiler
-            {
-                ConstructorResolver = constructorResolver
-            };
+            var target = new BuildStrategyCompiler {ConstructorResolver = constructorResolver};
 
             Action action = () => target.Compile();
 

@@ -40,7 +40,7 @@
         [Fact]
         public void CanPopulateThrowsExceptionWithNullTypeTest()
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
 
             var target = new TypeCreatorWrapper();
 
@@ -52,7 +52,7 @@
         [Fact]
         public void CreateDoesNotThrowsExceptionWhenCreateVerificationPassesTest()
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -67,7 +67,7 @@
         [Fact]
         public void CreateThrowsExceptionWhenCreateVerificationFailsTest()
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -84,6 +84,8 @@
         {
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
+            executeStrategy.BuildChain.Returns((IBuildChain) null);
+
             var target = new TypeCreatorWrapper();
 
             Action action = () => target.Create(typeof(string), "Name", executeStrategy);
@@ -94,7 +96,7 @@
         [Fact]
         public void CreateThrowsExceptionWithNullStrategyTest()
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -109,7 +111,7 @@
         [Fact]
         public void CreateThrowsExceptionWithNullTypeTest()
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -132,7 +134,7 @@
         [Fact]
         public void PopulateDoesNotThrowsExceptionWhenPopulateVerificationPassesTest()
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -149,7 +151,7 @@
         [Fact]
         public void PopulateReturnsProvidedInstanceTest()
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -166,7 +168,7 @@
         [Fact]
         public void PopulateThrowsExceptionWhenPopulateVerificationFailsTest()
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -193,7 +195,7 @@
         [Fact]
         public void PopulateThrowsExceptionWithNullInstanceTest()
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -209,6 +211,8 @@
         public void PopulateThrowsExceptionWithNullStrategyBuildChainTest()
         {
             var executeStrategy = Substitute.For<IExecuteStrategy>();
+            
+            executeStrategy.BuildChain.Returns((IBuildChain) null);
 
             var target = new TypeCreatorWrapper();
 
@@ -220,7 +224,7 @@
         [Fact]
         public void PopulateThrowsExceptionWithNullTypeTest()
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -256,6 +260,8 @@
         public void VerifyCreateRequestThrowsExceptionWithNullStrategyBuildChainTest()
         {
             var strategy = Substitute.For<IExecuteStrategy>();
+            
+            strategy.BuildChain.Returns((IBuildChain) null);
 
             var target = new TypeCreatorWrapper();
 
@@ -288,6 +294,8 @@
         public void VerifyPopulateRequestThrowsExceptionWithNullStrategyBuildChainTest()
         {
             var strategy = Substitute.For<IExecuteStrategy>();
+            
+            strategy.BuildChain.Returns((IBuildChain) null);
 
             var target = new TypeCreatorWrapper();
 
@@ -308,7 +316,7 @@
 
         private class TypeCreatorWrapper : TypeCreatorBase
         {
-            public override bool CanCreate(Type type, string referenceName, LinkedList<object> buildChain)
+            public override bool CanCreate(Type type, string referenceName, IBuildChain buildChain)
             {
                 var canCreate = base.CanCreate(type, referenceName, buildChain);
 
@@ -320,7 +328,7 @@
                 return type == typeof(List<string>);
             }
 
-            public override bool CanPopulate(Type type, string referenceName, LinkedList<object> buildChain)
+            public override bool CanPopulate(Type type, string referenceName, IBuildChain buildChain)
             {
                 var canPopulate = base.CanPopulate(type, referenceName, buildChain);
 

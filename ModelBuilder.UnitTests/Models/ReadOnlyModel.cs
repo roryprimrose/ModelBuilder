@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace ModelBuilder.UnitTests
+﻿namespace ModelBuilder.UnitTests
 {
+    using System;
+
     public class ReadOnlyModel
     {
         public ReadOnlyModel(Guid value)
@@ -9,6 +9,6 @@ namespace ModelBuilder.UnitTests
             Value = value;
         }
 
-        public Guid Value { get; private set; }
+        public Guid Value { get; }
     }
 }

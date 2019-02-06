@@ -96,8 +96,7 @@
         /// <returns>A list of the instances.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="instances" /> parameter is null.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="action" /> parameter is null.</exception>
-        [SuppressMessage(
-            "Microsoft.Design",
+        [SuppressMessage("Microsoft.Design",
             "CA1002:DoNotExposeGenericLists",
             Justification =
                 "For usability in the calling code, the return type reflects the actual type to avoid unnecessary conversion or casting.")]
@@ -133,8 +132,7 @@
         /// <returns>A list of the instances.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="instances" /> parameter is null.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="action" /> parameter is null.</exception>
-        [SuppressMessage(
-            "Microsoft.Design",
+        [SuppressMessage("Microsoft.Design",
             "CA1002:DoNotExposeGenericLists",
             Justification =
                 "For usability in the calling code, the return type reflects the actual type to avoid unnecessary conversion or casting.")]

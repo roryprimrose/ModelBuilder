@@ -29,7 +29,7 @@
         {
             var type = typeof(Person);
 
-            var target = (IPropertyResolver)null;
+            var target = (IPropertyResolver) null;
 
             Action action = () => target.GetProperties(type);
 
@@ -77,7 +77,7 @@
             var type = typeof(Person);
             var expression = new Regex("Stuff");
 
-            var target = (IPropertyResolver)null;
+            var target = (IPropertyResolver) null;
 
             Action action = () => target.GetProperties(type, expression);
 

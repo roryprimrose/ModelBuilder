@@ -1,7 +1,6 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
-    using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using FluentAssertions;
@@ -20,14 +19,14 @@
         [InlineData("addressline5")]
         public void GenerateReturnsNullForAddressLinesBeyondSecondTest(string referenceName)
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
 
             var target = new AddressValueGenerator();
 
-            var actual = (string)target.Generate(typeof(string), referenceName, executeStrategy);
+            var actual = (string) target.Generate(typeof(string), referenceName, executeStrategy);
 
             actual.Should().BeNullOrEmpty();
         }
@@ -35,7 +34,7 @@
         [Fact]
         public void GenerateReturnsRandomAddressTest()
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -72,7 +71,7 @@
         [InlineData("Addressline2")]
         public void GenerateReturnsStreetAddressTest(string propertyName)
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -98,7 +97,7 @@
         [InlineData("Addressline1")]
         public void GenerateReturnsUnitFloorLocationForSecondLineTest(string propertyName)
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -135,14 +134,14 @@
         [InlineData(typeof(string), "Addressline3", false)]
         public void GenerateReturnsValuesForSeveralNameFormatsTest(Type type, string referenceName, bool expected)
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
 
             var target = new AddressValueGenerator();
 
-            var actual = (string)target.Generate(type, referenceName, executeStrategy);
+            var actual = (string) target.Generate(type, referenceName, executeStrategy);
 
             if (expected)
             {
@@ -161,7 +160,7 @@
         [InlineData(typeof(string), "Stuff")]
         public void GenerateThrowsExceptionWithInvalidParametersTest(Type type, string referenceName)
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);

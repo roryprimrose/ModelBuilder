@@ -1,7 +1,6 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
-    using System.Collections.Generic;
     using System.IO;
     using FluentAssertions;
     using NSubstitute;
@@ -12,7 +11,7 @@
         [Fact]
         public void GenerateCanReturnNullAndRandomValuesTest()
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -48,7 +47,7 @@
         [Fact]
         public void GenerateReturnsOnlyAvailableEnumValueWhenSingleValueDefinedTest()
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -64,7 +63,7 @@
         [Fact]
         public void GenerateReturnsRandomFileAttributesValueTest()
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -83,7 +82,7 @@
         [Fact]
         public void GenerateReturnsRandomFlagsEnumValueTest()
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -106,7 +105,7 @@
         [Fact]
         public void GenerateReturnsRandomValueWhenTypeIsEnumTest()
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -138,7 +137,7 @@
         [Fact]
         public void GenerateReturnsSmallFlagsEnumTest()
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -165,9 +164,9 @@
                     third = true;
                 }
 
-                if (first &&
-                    second &&
-                    third)
+                if (first
+                    && second
+                    && third)
                 {
                     break;
                 }
@@ -181,7 +180,7 @@
         [Fact]
         public void GenerateReturnsZeroForEmptyEnumTest()
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -199,7 +198,7 @@
         [InlineData(typeof(string))]
         public void GenerateThrowsExceptionWithInvalidParametersTest(Type type)
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -210,7 +209,7 @@
 
             action.Should().Throw<NotSupportedException>();
         }
-        
+
         [Theory]
         [InlineData(typeof(Stream), false)]
         [InlineData(typeof(string), false)]

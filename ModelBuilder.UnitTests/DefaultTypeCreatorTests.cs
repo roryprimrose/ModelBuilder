@@ -1,7 +1,6 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
-    using System.Collections.Generic;
     using System.IO;
     using FluentAssertions;
     using NSubstitute;
@@ -10,25 +9,10 @@
     public class DefaultTypeCreatorTests
     {
         [Fact]
-        public void CreateReturnsInstanceCreatedWithDefaultConstructorWhenArgumentsAreNullTest()
-        {
-            var buildChain = new LinkedList<object>();
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            executeStrategy.BuildChain.Returns(buildChain);
-
-            var target = new DefaultTypeCreator();
-
-            var actual = target.Create(typeof(Person), null, executeStrategy, null);
-
-            actual.Should().NotBeNull();
-        }
-
-        [Fact]
         public void CreateReturnsInstanceCreatedWithDefaultConstructorWhenArgumentsAreEmptyTest()
         {
-            var buildChain = new LinkedList<object>();
-            var args = new object[]{ };
+            var buildChain = new BuildHistory();
+            var args = new object[] { };
 
             var strategy = Substitute.For<IExecuteStrategy>();
 
@@ -42,9 +26,24 @@
         }
 
         [Fact]
+        public void CreateReturnsInstanceCreatedWithDefaultConstructorWhenArgumentsAreNullTest()
+        {
+            var buildChain = new BuildHistory();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            var target = new DefaultTypeCreator();
+
+            var actual = target.Create(typeof(Person), null, executeStrategy, null);
+
+            actual.Should().NotBeNull();
+        }
+
+        [Fact]
         public void CreateReturnsInstanceCreatedWithMatchingParameterConstructorTest()
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var resolver = new DefaultConstructorResolver();
 
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -71,30 +70,27 @@
 
             actual.Should().BeOfType<Person>();
 
-            var person = (Person)actual;
+            var person = (Person) actual;
 
-            person.FirstName.Should().Be((string)args[0]);
-            person.LastName.Should().Be((string)args[1]);
-            person.DOB.Should().Be((DateTime)args[2]);
-            person.IsActive.Should().Be((bool)args[3]);
-            person.Id.Should().Be((Guid)args[4]);
-            person.Priority.Should().Be((int)args[5]);
+            person.FirstName.Should().Be((string) args[0]);
+            person.LastName.Should().Be((string) args[1]);
+            person.DOB.Should().Be((DateTime) args[2]);
+            person.IsActive.Should().Be((bool) args[3]);
+            person.Id.Should().Be((Guid) args[4]);
+            person.Priority.Should().Be((int) args[5]);
         }
 
         [Fact]
         public void CreateThrowsExceptionWhenNoAppropriateConstructorFoundTest()
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
 
             var args = new object[]
             {
-                Guid.NewGuid().ToString(),
-                Guid.NewGuid().ToString(),
-                Guid.NewGuid(),
-                Environment.TickCount
+                Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), Guid.NewGuid(), Environment.TickCount
             };
 
             var target = new DefaultTypeCreator();
@@ -107,7 +103,7 @@
         [Fact]
         public void CreateThrowsExceptionWhenNoTypeNotSupportedTest()
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);

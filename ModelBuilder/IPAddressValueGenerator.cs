@@ -1,7 +1,6 @@
 ﻿namespace ModelBuilder
 {
     using System;
-    using System.Collections.Generic;
     using System.Globalization;
     using System.Net;
 
@@ -13,7 +12,7 @@
     {
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is null.</exception>
-        public override bool IsSupported(Type type, string referenceName, LinkedList<object> buildChain)
+        public override bool IsSupported(Type type, string referenceName, IBuildChain buildChain)
         {
             if (type == null)
             {
@@ -57,8 +56,7 @@
 
             const string addressFormat = "{0}.{1}.{2}.{3}";
 
-            var address = string.Format(
-                CultureInfo.InvariantCulture,
+            var address = string.Format(CultureInfo.InvariantCulture,
                 addressFormat,
                 buffer[0],
                 buffer[1],

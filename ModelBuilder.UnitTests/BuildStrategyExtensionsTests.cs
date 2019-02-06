@@ -16,12 +16,11 @@
             var value = Guid.NewGuid();
 
             var generator = Substitute.For<IValueGenerator>();
-            var generators = new List<IValueGenerator>
-                {generator}.AsReadOnly();
+            var generators = new List<IValueGenerator> {generator}.AsReadOnly();
             var target = Substitute.For<IBuildStrategy>();
 
             target.ValueGenerators.Returns(generators);
-            generator.IsSupported(typeof(Guid), null, Arg.Any<LinkedList<object>>()).Returns(true);
+            generator.IsSupported(typeof(Guid), null, Arg.Any<IBuildChain>()).Returns(true);
             generator.Generate(typeof(Guid), null, Arg.Any<IExecuteStrategy>()).Returns(value);
 
             var actual = target.Create(typeof(Guid));
@@ -55,12 +54,11 @@
             var value = Guid.NewGuid();
 
             var generator = Substitute.For<IValueGenerator>();
-            var generators = new List<IValueGenerator>
-                {generator}.AsReadOnly();
+            var generators = new List<IValueGenerator> {generator}.AsReadOnly();
             var target = Substitute.For<IBuildStrategy>();
 
             target.ValueGenerators.Returns(generators);
-            generator.IsSupported(typeof(Guid), null, Arg.Any<LinkedList<object>>()).Returns(true);
+            generator.IsSupported(typeof(Guid), null, Arg.Any<IBuildChain>()).Returns(true);
             generator.Generate(typeof(Guid), null, Arg.Any<IExecuteStrategy>()).Returns(value);
 
             var actual = target.Create<Guid>();
@@ -84,12 +82,11 @@
             var value = Guid.NewGuid();
 
             var generator = Substitute.For<IValueGenerator>();
-            var generators = new List<IValueGenerator>
-                {generator}.AsReadOnly();
+            var generators = new List<IValueGenerator> {generator}.AsReadOnly();
             var target = Substitute.For<IBuildStrategy>();
 
             target.ValueGenerators.Returns(generators);
-            generator.IsSupported(typeof(Guid), null, Arg.Any<LinkedList<object>>()).Returns(true);
+            generator.IsSupported(typeof(Guid), null, Arg.Any<IBuildChain>()).Returns(true);
             generator.Generate(typeof(Guid), null, Arg.Any<IExecuteStrategy>()).Returns(value);
 
             var actual = target.CreateWith(typeof(Guid));
@@ -123,12 +120,11 @@
             var value = Guid.NewGuid();
 
             var generator = Substitute.For<IValueGenerator>();
-            var generators = new List<IValueGenerator>
-                {generator}.AsReadOnly();
+            var generators = new List<IValueGenerator> {generator}.AsReadOnly();
             var target = Substitute.For<IBuildStrategy>();
 
             target.ValueGenerators.Returns(generators);
-            generator.IsSupported(typeof(Guid), null, Arg.Any<LinkedList<object>>()).Returns(true);
+            generator.IsSupported(typeof(Guid), null, Arg.Any<IBuildChain>()).Returns(true);
             generator.Generate(typeof(Guid), null, Arg.Any<IExecuteStrategy>()).Returns(value);
 
             var actual = target.CreateWith<Guid>(null);
@@ -212,22 +208,17 @@
 
             var target = Substitute.For<IBuildStrategy>();
             var creator = Substitute.For<ITypeCreator>();
-            var creators = new List<ITypeCreator>
-                {creator}.AsReadOnly();
+            var creators = new List<ITypeCreator> {creator}.AsReadOnly();
             var generator = Substitute.For<IValueGenerator>();
-            var generators = new List<IValueGenerator>
-                {generator}.AsReadOnly();
+            var generators = new List<IValueGenerator> {generator}.AsReadOnly();
 
             target.TypeCreators.Returns(creators);
             target.ValueGenerators.Returns(generators);
-            creator.CanPopulate(typeof(SlimModel), null, Arg.Any<LinkedList<object>>()).Returns(true);
+            creator.CanPopulate(typeof(SlimModel), null, Arg.Any<IBuildChain>()).Returns(true);
             creator.Populate(expected, Arg.Any<IExecuteStrategy>()).Returns(expected);
-            generator.IsSupported(typeof(Guid), "Value", Arg.Is<LinkedList<object>>(x => x.Last.Value == expected))
-                .Returns(true);
-            generator.Generate(
-                typeof(Guid),
-                "Value",
-                Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last.Value == expected)).Returns(value);
+            generator.IsSupported(typeof(Guid), "Value", Arg.Is<IBuildChain>(x => x.Last == expected)).Returns(true);
+            generator.Generate(typeof(Guid), "Value", Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == expected))
+                .Returns(value);
 
             var actual = target.Populate(expected);
 
@@ -238,8 +229,7 @@
         public void UsingExecuteStrategyReturnsExecuteStrategyWithBuildStrategyConfigurationsTest()
         {
             var strategy = Model.BuildStrategy;
-            var ignoreRules = new List<IgnoreRule>
-                {new IgnoreRule(typeof(string), "Stuff")};
+            var ignoreRules = new List<IgnoreRule> {new IgnoreRule(typeof(string), "Stuff")};
 
             var buildLog = Substitute.For<IBuildLog>();
             var target = Substitute.For<IBuildStrategy>();

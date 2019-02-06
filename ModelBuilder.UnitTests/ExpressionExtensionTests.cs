@@ -8,17 +8,6 @@
 
     public class ExpressionExtensionTests
     {
-        private class StaticGetter
-        {
-            public static string Value
-            {
-                get
-                {
-                    return Guid.NewGuid().ToString();
-                }
-            }
-        }
-
         [Fact]
         public void GetPropertyReturnsPropertyInfoOfExpressionTest()
         {
@@ -79,6 +68,11 @@
         private PropertyInfo Wrapper<T>(Expression<Func<T, object>> expression)
         {
             return expression.GetProperty();
+        }
+
+        private class StaticGetter
+        {
+            public static string Value { get { return Guid.NewGuid().ToString(); } }
         }
     }
 }
