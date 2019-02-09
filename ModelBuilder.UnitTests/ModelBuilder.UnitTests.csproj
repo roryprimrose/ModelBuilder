@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp1.0;net452;netcoreapp2.0</TargetFrameworks>
+    <TargetFrameworks>netcoreapp1.0;net452</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>
@@ -18,18 +18,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ModelBuilder\ModelBuilder.csproj" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp2.0'">
-    <Reference Include="Watchium.Testing.Database">
-      <HintPath>..\..\..\Watchium.Testing\Watchium.Testing.Database\bin\Release\netstandard2.0\Watchium.Testing.Database.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="Watchium.Models">
-      <HintPath>..\..\..\Watchium.Models\Watchium.Models\bin\Release\netstandard2.0\Watchium.Models.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
   <ItemGroup>
