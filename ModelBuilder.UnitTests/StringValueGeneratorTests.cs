@@ -1,18 +1,16 @@
-﻿using System;
-using FluentAssertions;
-using Xunit;
-
-namespace ModelBuilder.UnitTests
+﻿namespace ModelBuilder.UnitTests
 {
-    using System.Collections.Generic;
+    using System;
+    using FluentAssertions;
     using NSubstitute;
+    using Xunit;
 
     public class StringValueGeneratorTests
     {
         [Fact]
         public void GenerateReturnsRandomValueTest()
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -32,7 +30,7 @@ namespace ModelBuilder.UnitTests
         [InlineData(typeof(string), true)]
         public void GenerateReturnsValidatesTypeSupportTest(Type type, bool supported)
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -43,14 +41,14 @@ namespace ModelBuilder.UnitTests
 
             if (supported)
             {
-                action.ShouldNotThrow();
+                action.Should().NotThrow();
             }
             else
             {
-                action.ShouldThrow<NotSupportedException>();
+                action.Should().Throw<NotSupportedException>();
             }
         }
-        
+
         [Theory]
         [InlineData(typeof(bool), false)]
         [InlineData(typeof(string), true)]
@@ -70,7 +68,7 @@ namespace ModelBuilder.UnitTests
 
             Action action = () => target.IsSupported(null, null, null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
     }
 }

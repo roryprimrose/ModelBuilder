@@ -1,7 +1,6 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
-    using System.Collections.Generic;
 
     public class NullExecuteStrategy : IExecuteStrategy
     {
@@ -19,9 +18,10 @@
             throw new NotImplementedException();
         }
 
-        public LinkedList<object> BuildChain { get; }
+        public IBuildChain BuildChain { get; }
 
         public IBuildConfiguration Configuration { get; }
+
         public IBuildLog Log { get; }
     }
 }

@@ -1,7 +1,6 @@
 namespace ModelBuilder
 {
     using System;
-    using System.Collections.Generic;
     using System.Globalization;
     using ModelBuilder.Properties;
 
@@ -15,7 +14,7 @@ namespace ModelBuilder
 
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is null.</exception>
-        public virtual bool CanCreate(Type type, string referenceName, LinkedList<object> buildChain)
+        public virtual bool CanCreate(Type type, string referenceName, IBuildChain buildChain)
         {
             if (type == null)
             {
@@ -37,7 +36,7 @@ namespace ModelBuilder
 
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is null.</exception>
-        public virtual bool CanPopulate(Type type, string referenceName, LinkedList<object> buildChain)
+        public virtual bool CanPopulate(Type type, string referenceName, IBuildChain buildChain)
         {
             if (type == null)
             {
@@ -145,18 +144,20 @@ namespace ModelBuilder
                 throw new ArgumentNullException(nameof(executeStrategy));
             }
 
-            if (executeStrategy.BuildChain == null)
+            // Calculate the build chain just once
+            var buildChain = executeStrategy.BuildChain;
+
+            if (buildChain == null)
             {
                 throw new InvalidOperationException(Resources.ExecuteStrategy_NoBuildChain);
             }
 
-            if (CanCreate(type, referenceName, executeStrategy.BuildChain))
+            if (CanCreate(type, referenceName, buildChain))
             {
                 return;
             }
 
-            var message = string.Format(
-                CultureInfo.CurrentCulture,
+            var message = string.Format(CultureInfo.CurrentCulture,
                 Resources.Error_GenerationNotSupportedFormat,
                 GetType().FullName,
                 type.FullName,
@@ -186,18 +187,20 @@ namespace ModelBuilder
                 throw new ArgumentNullException(nameof(executeStrategy));
             }
 
-            if (executeStrategy.BuildChain == null)
+            // Calculate the build chain just once
+            var buildChain = executeStrategy.BuildChain;
+
+            if (buildChain == null)
             {
                 throw new InvalidOperationException(Resources.ExecuteStrategy_NoBuildChain);
             }
 
-            if (CanPopulate(type, referenceName, executeStrategy.BuildChain))
+            if (CanPopulate(type, referenceName, buildChain))
             {
                 return;
             }
 
-            var message = string.Format(
-                CultureInfo.CurrentCulture,
+            var message = string.Format(CultureInfo.CurrentCulture,
                 Resources.Error_GenerationNotSupportedFormat,
                 GetType().FullName,
                 type.FullName,

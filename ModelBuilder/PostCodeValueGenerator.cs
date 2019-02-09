@@ -2,7 +2,6 @@
 {
     using System;
     using System.Linq;
-    using System.Text.RegularExpressions;
     using ModelBuilder.Data;
 
     /// <summary>
@@ -14,23 +13,23 @@
         /// <summary>
         ///     Initializes a new instance of the <see cref="PostCodeValueGenerator" /> class.
         /// </summary>
-        public PostCodeValueGenerator() : base(
-            PropertyExpression.PostCode,
-            typeof(string))
+        public PostCodeValueGenerator()
+            : base(PropertyExpression.PostCode, typeof(string))
         {
         }
 
         /// <inheritdoc />
         protected override object GenerateValue(Type type, string referenceName, IExecuteStrategy executeStrategy)
         {
-            var context = executeStrategy?.BuildChain?.Last?.Value;
+            var context = executeStrategy?.BuildChain?.Last;
             var city = GetValue<string>(PropertyExpression.City, context);
             Location location = null;
 
             if (string.IsNullOrWhiteSpace(city) == false)
             {
                 var locationMatches = TestData.Locations
-                    .Where(x => x.City.Equals(city, StringComparison.OrdinalIgnoreCase)).ToList();
+                    .Where(x => x.City.Equals(city, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
 
                 location = locationMatches.Next();
             }

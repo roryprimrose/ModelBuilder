@@ -1,7 +1,6 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
-    using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using FluentAssertions;
@@ -15,12 +14,12 @@
         public void GenerateReturnsRandomCityTest()
         {
             var address = new Address();
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            buildChain.AddFirst(address);
+            buildChain.Push(address);
 
             var target = new CityValueGenerator();
 
@@ -49,16 +48,13 @@
         [Fact]
         public void GenerateReturnsRandomStateMatchingCaseInsensitiveStateTest()
         {
-            var address = new Address
-            {
-                State = "ONTARIO"
-            };
-            var buildChain = new LinkedList<object>();
+            var address = new Address {State = "ONTARIO"};
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            buildChain.AddFirst(address);
+            buildChain.Push(address);
 
             var target = new CityValueGenerator();
 
@@ -76,16 +72,13 @@
         [Fact]
         public void GenerateReturnsRandomStateMatchingStateTest()
         {
-            var address = new Address
-            {
-                State = "Ontario"
-            };
-            var buildChain = new LinkedList<object>();
+            var address = new Address {State = "Ontario"};
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            buildChain.AddFirst(address);
+            buildChain.Push(address);
 
             var target = new CityValueGenerator();
 
@@ -101,16 +94,13 @@
         [Fact]
         public void GenerateReturnsRandomStateWhenNoMatchingStateTest()
         {
-            var address = new Address
-            {
-                State = Guid.NewGuid().ToString()
-            };
-            var buildChain = new LinkedList<object>();
+            var address = new Address {State = Guid.NewGuid().ToString()};
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            buildChain.AddFirst(address);
+            buildChain.Push(address);
 
             var target = new CityValueGenerator();
 
@@ -125,16 +115,16 @@
         public void GenerateReturnsValuesForSeveralNameFormatsTest(string referenceName)
         {
             var address = new Address();
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            buildChain.AddFirst(address);
+            buildChain.Push(address);
 
             var target = new CityValueGenerator();
 
-            var actual = (string)target.Generate(typeof(string), referenceName, executeStrategy);
+            var actual = (string) target.Generate(typeof(string), referenceName, executeStrategy);
 
             actual.Should().NotBeNullOrEmpty();
         }
@@ -146,18 +136,18 @@
         public void GenerateThrowsExceptionWithInvalidParametersTest(Type type, string referenceName)
         {
             var address = new Address();
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            buildChain.AddFirst(address);
+            buildChain.Push(address);
 
             var target = new CityValueGenerator();
 
             Action action = () => target.Generate(type, referenceName, executeStrategy);
 
-            action.ShouldThrow<NotSupportedException>();
+            action.Should().Throw<NotSupportedException>();
         }
 
         [Fact]
@@ -179,9 +169,9 @@
         public void IsSupportedTest(Type type, string referenceName, bool expected)
         {
             var address = new Address();
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
 
-            buildChain.AddFirst(address);
+            buildChain.Push(address);
 
             var target = new CityValueGenerator();
 
@@ -197,7 +187,7 @@
 
             Action action = () => target.IsSupported(null, null, null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
     }
 }

@@ -17,31 +17,18 @@
             {
                 new CreationRule(typeof(string), "Test", int.MaxValue, "Stuff")
             };
-            var typeCreators = new List<ITypeCreator>
-            {
-                new DefaultTypeCreator()
-            };
-            var valueGenerators = new List<IValueGenerator>
-            {
-                new AddressValueGenerator()
-            };
-            var ignoreRules = new List<IgnoreRule>
-            {
-                new IgnoreRule(typeof(Person), "FirstName")
-            };
+            var typeCreators = new List<ITypeCreator> {new DefaultTypeCreator()};
+            var valueGenerators = new List<IValueGenerator> {new AddressValueGenerator()};
+            var ignoreRules = new List<IgnoreRule> {new IgnoreRule(typeof(Person), "FirstName")};
             var executeOrderRules = new List<ExecuteOrderRule>
             {
                 new ExecuteOrderRule(typeof(Person), typeof(string), "LastName", int.MinValue)
             };
-            var postBuildActions = new List<IPostBuildAction>
-            {
-                Substitute.For<IPostBuildAction>()
-            };
+            var postBuildActions = new List<IPostBuildAction> {Substitute.For<IPostBuildAction>()};
 
             var target = new BuildStrategyCompiler
             {
-                ConstructorResolver = constructorResolver,
-                PropertyResolver = propertyResolver
+                ConstructorResolver = constructorResolver, PropertyResolver = propertyResolver
             };
 
             target.CreationRules.Add(creationRules[0]);
@@ -55,12 +42,12 @@
 
             actual.ConstructorResolver.Should().Be(constructorResolver);
             actual.PropertyResolver.Should().Be(propertyResolver);
-            actual.CreationRules.ShouldBeEquivalentTo(creationRules);
-            actual.TypeCreators.ShouldBeEquivalentTo(typeCreators);
-            actual.ValueGenerators.ShouldBeEquivalentTo(valueGenerators);
-            actual.IgnoreRules.ShouldBeEquivalentTo(ignoreRules);
-            actual.ExecuteOrderRules.ShouldBeEquivalentTo(executeOrderRules);
-            actual.PostBuildActions.ShouldBeEquivalentTo(postBuildActions);
+            actual.CreationRules.Should().BeEquivalentTo(creationRules);
+            actual.TypeCreators.Should().BeEquivalentTo(typeCreators);
+            actual.ValueGenerators.Should().BeEquivalentTo(valueGenerators);
+            actual.IgnoreRules.Should().BeEquivalentTo(ignoreRules);
+            actual.ExecuteOrderRules.Should().BeEquivalentTo(executeOrderRules);
+            actual.PostBuildActions.Should().BeEquivalentTo(postBuildActions);
         }
 
         [Fact]
@@ -68,14 +55,11 @@
         {
             var propertyResolver = Substitute.For<IPropertyResolver>();
 
-            var target = new BuildStrategyCompiler
-            {
-                PropertyResolver = propertyResolver
-            };
+            var target = new BuildStrategyCompiler {PropertyResolver = propertyResolver};
 
             Action action = () => target.Compile();
 
-            action.ShouldThrow<InvalidOperationException>();
+            action.Should().Throw<InvalidOperationException>();
         }
 
         [Fact]
@@ -83,14 +67,11 @@
         {
             var constructorResolver = Substitute.For<IConstructorResolver>();
 
-            var target = new BuildStrategyCompiler
-            {
-                ConstructorResolver = constructorResolver
-            };
+            var target = new BuildStrategyCompiler {ConstructorResolver = constructorResolver};
 
             Action action = () => target.Compile();
 
-            action.ShouldThrow<InvalidOperationException>();
+            action.Should().Throw<InvalidOperationException>();
         }
 
         [Fact]

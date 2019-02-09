@@ -11,7 +11,8 @@
         /// <summary>
         ///     Initializes a new instance of the <see cref="StringValueGenerator" /> class.
         /// </summary>
-        public StringValueGenerator() : base(typeof(string))
+        public StringValueGenerator()
+            : base(typeof(string))
         {
         }
 

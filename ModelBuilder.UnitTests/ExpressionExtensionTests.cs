@@ -8,17 +8,6 @@
 
     public class ExpressionExtensionTests
     {
-        private class StaticGetter
-        {
-            public static string Value
-            {
-                get
-                {
-                    return Guid.NewGuid().ToString();
-                }
-            }
-        }
-
         [Fact]
         public void GetPropertyReturnsPropertyInfoOfExpressionTest()
         {
@@ -33,7 +22,7 @@
         {
             Action action = () => Wrapper<WithStatic>(x => WithStatic.Second);
 
-            action.ShouldThrow<ArgumentException>();
+            action.Should().Throw<ArgumentException>();
         }
 
         [Fact]
@@ -41,7 +30,7 @@
         {
             Action action = () => Wrapper<WithStatic>(x => StaticGetter.Value);
 
-            action.ShouldThrow<ArgumentException>();
+            action.Should().Throw<ArgumentException>();
         }
 
         [Fact]
@@ -49,7 +38,7 @@
         {
             Action action = () => Wrapper<Person>(x => x.Priority.ToString().Length);
 
-            action.ShouldThrow<ArgumentException>();
+            action.Should().Throw<ArgumentException>();
         }
 
         [Fact]
@@ -57,7 +46,7 @@
         {
             Action action = () => Wrapper<Person>(x => x.MinAge);
 
-            action.ShouldThrow<ArgumentException>();
+            action.Should().Throw<ArgumentException>();
         }
 
         [Fact]
@@ -65,7 +54,7 @@
         {
             Action action = () => Wrapper<Person>(x => x.DoSomething());
 
-            action.ShouldThrow<ArgumentException>();
+            action.Should().Throw<ArgumentException>();
         }
 
         [Fact]
@@ -73,12 +62,17 @@
         {
             Action action = () => Wrapper<Person>(null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         private PropertyInfo Wrapper<T>(Expression<Func<T, object>> expression)
         {
             return expression.GetProperty();
+        }
+
+        private class StaticGetter
+        {
+            public static string Value { get { return Guid.NewGuid().ToString(); } }
         }
     }
 }

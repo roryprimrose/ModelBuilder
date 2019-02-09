@@ -1,7 +1,6 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
-    using System.Collections.Generic;
     using FluentAssertions;
     using NSubstitute;
     using Xunit;
@@ -10,7 +9,7 @@
     {
         [Theory]
         [ClassData(typeof(NumericTypeDataSource))]
-        public void GenerateCanEvalutateManyTimesTest(Type type, bool typeSupported, double min, double max)
+        public void GenerateCanEvaluateManyTimesTest(Type type, bool typeSupported, double min, double max)
         {
             if (typeSupported == false)
             {
@@ -20,7 +19,7 @@
 
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
 
             executeStrategy.BuildChain.Returns(buildChain);
 
@@ -30,8 +29,8 @@
             {
                 var value = target.Generate(type, "Age", executeStrategy);
 
-                if (type.IsNullable() &&
-                    (value == null))
+                if (type.IsNullable()
+                    && value == null)
                 {
                     // Nullable values could be returned so nothing more to assert
                     return;
@@ -58,7 +57,7 @@
         {
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
 
             executeStrategy.BuildChain.Returns(buildChain);
 
@@ -69,7 +68,7 @@
 
             for (var index = 0; index < 1000; index++)
             {
-                var value = (int?)target.Generate(typeof(int?), "Age", executeStrategy);
+                var value = (int?) target.Generate(typeof(int?), "Age", executeStrategy);
 
                 if (value == null)
                 {
@@ -102,7 +101,7 @@
 
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
 
             executeStrategy.BuildChain.Returns(buildChain);
 
@@ -110,8 +109,8 @@
 
             var value = target.Generate(type, "Age", executeStrategy);
 
-            if (type.IsNullable() &&
-                (value == null))
+            if (type.IsNullable()
+                && value == null)
             {
                 // We can't run the assertions because null is a valid outcome
                 return;
@@ -140,7 +139,7 @@
             double min,
             double max)
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -149,16 +148,16 @@
 
             Action action = () => target.Generate(type, "Stuff", executeStrategy);
 
-            action.ShouldThrow<NotSupportedException>();
+            action.Should().Throw<NotSupportedException>();
         }
-        
+
         [Theory]
         [ClassData(typeof(NumericTypeDataSource))]
         public void GenerateValidatesRequestedTypeTest(Type type, bool typeSupported, double min, double max)
         {
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
 
             executeStrategy.BuildChain.Returns(buildChain);
 
@@ -168,11 +167,11 @@
 
             if (typeSupported)
             {
-                action.ShouldNotThrow();
+                action.Should().NotThrow();
             }
             else
             {
-                action.ShouldThrow<NotSupportedException>();
+                action.Should().Throw<NotSupportedException>();
             }
         }
 
@@ -266,7 +265,7 @@
 
             Action action = () => target.IsSupported(null, null, null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -294,10 +293,7 @@
         [Fact]
         public void SettingMaxAgeShouldNotChangeDefaultMaxAgeTest()
         {
-            var target = new AgeValueGenerator
-            {
-                MaxAge = Environment.TickCount
-            };
+            var target = new AgeValueGenerator {MaxAge = Environment.TickCount};
 
             AgeValueGenerator.DefaultMaxAge.Should().NotBe(target.MaxAge);
         }

@@ -1,7 +1,6 @@
 ﻿namespace ModelBuilder
 {
     using System;
-    using System.Collections.Generic;
 
     /// <summary>
     ///     The <see cref="ITypeCreator" />
@@ -16,7 +15,7 @@
         /// <param name="referenceName">Identifies the possible parameter or property name the instance is intended for.</param>
         /// <param name="buildChain">The chain of instances built up to this point.</param>
         /// <returns><c>true</c> if this creator can create the type; otherwise <c>false</c>.</returns>
-        bool CanCreate(Type type, string referenceName, LinkedList<object> buildChain);
+        bool CanCreate(Type type, string referenceName, IBuildChain buildChain);
 
         /// <summary>
         ///     Returns whether this type creator can populate the specified type.
@@ -25,7 +24,7 @@
         /// <param name="referenceName">Identifies the possible parameter or property name the instance is intended for.</param>
         /// <param name="buildChain">The chain of instances built up to this point.</param>
         /// <returns><c>true</c> if this creator can populate the type; otherwise <c>false</c>.</returns>
-        bool CanPopulate(Type type, string referenceName, LinkedList<object> buildChain);
+        bool CanPopulate(Type type, string referenceName, IBuildChain buildChain);
 
         /// <summary>
         ///     Creates an instance of the type with the specified arguments.

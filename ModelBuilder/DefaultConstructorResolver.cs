@@ -53,8 +53,8 @@
         {
             // Parameters are consulsted a lot here so get it into a dictionary first
             var availableConstructors = type.GetConstructors().ToDictionary(x => x, x => x.GetParameters());
-            var possibleConstructors =
-                availableConstructors.Where(x => x.Value.Length >= args.Count).OrderBy(x => x.Value.Length);
+            var possibleConstructors = availableConstructors.Where(x => x.Value.Length >= args.Count)
+                .OrderBy(x => x.Value.Length);
 
             foreach (var constructor in possibleConstructors)
             {
@@ -64,8 +64,7 @@
                 }
             }
 
-            var message = string.Format(
-                CultureInfo.CurrentCulture,
+            var message = string.Format(CultureInfo.CurrentCulture,
                 Resources.ConstructorResolver_NoValidConstructorFound,
                 type.FullName);
 
@@ -82,8 +81,7 @@
             if (constructor == null)
             {
                 var parameterTypes = types.Select(x => x.FullName).Aggregate((current, next) => current + ", " + next);
-                var message = string.Format(
-                    CultureInfo.CurrentCulture,
+                var message = string.Format(CultureInfo.CurrentCulture,
                     "No constructor found matching type {0} with parameters[{1}].",
                     type.FullName,
                     parameterTypes);
@@ -99,10 +97,10 @@
             var availableConstructors = type.GetConstructors().ToList();
 
             // Ignore any constructors that have a parameter with the type being created (a copy constructor)
-            var validConstructors =
-                availableConstructors.Where(x => x.GetParameters().Any(y => y.ParameterType == type) == false)
-                    .OrderBy(x => x.GetParameters().Length)
-                    .ToList();
+            var validConstructors = availableConstructors
+                .Where(x => x.GetParameters().Any(y => y.ParameterType == type) == false)
+                .OrderBy(x => x.GetParameters().Length)
+                .ToList();
 
             var bestConstructor = validConstructors.FirstOrDefault();
 
@@ -115,15 +113,13 @@
 
             if (availableConstructors.Count > validConstructors.Count)
             {
-                message = string.Format(
-                    CultureInfo.CurrentCulture,
+                message = string.Format(CultureInfo.CurrentCulture,
                     Resources.ConstructorResolver_NoValidConstructorFound,
                     type.FullName);
             }
             else
             {
-                message = string.Format(
-                    CultureInfo.CurrentCulture,
+                message = string.Format(CultureInfo.CurrentCulture,
                     Resources.ConstructorResolver_NoPublicConstructorFound,
                     type.FullName);
             }
@@ -133,14 +129,13 @@
 
         private static bool ParametersMatchArguments(IList<ParameterInfo> parameters, IList<object> args)
         {
-            Debug.Assert(
-                args.Count <= parameters.Count,
+            Debug.Assert(args.Count <= parameters.Count,
                 "To many arguments have been provided to match with this constructor, check previous LINQ filter");
 
             var firstOptionalIndex = parameters.ToList().FindIndex(x => x.IsOptional);
 
-            if ((firstOptionalIndex == -1) &&
-                (parameters.Count != args.Count))
+            if (firstOptionalIndex == -1
+                && parameters.Count != args.Count)
             {
                 // There are no optional parameters on this constructor and a mismatch between the number of parameters <-> arguments
                 return false;

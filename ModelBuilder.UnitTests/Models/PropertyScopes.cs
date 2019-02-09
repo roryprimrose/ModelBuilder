@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace ModelBuilder.UnitTests
+﻿namespace ModelBuilder.UnitTests
 {
+    using System;
+
     public class PropertyScopes
     {
         public PropertyScopes()
@@ -10,12 +10,12 @@ namespace ModelBuilder.UnitTests
             GlobalValue = Guid.Empty;
         }
 
-        public Guid PrivateSet { get; private set; }
+        public static Guid GlobalValue { get; set; }
+
+        public Guid PrivateSet { get; }
 
         public Guid Public { get; set; }
 
         public Guid ReadOnly => Guid.Empty;
-
-        public static Guid GlobalValue { get; set; }
     }
 }

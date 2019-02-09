@@ -1,7 +1,6 @@
 ﻿namespace ModelBuilder
 {
     using System;
-    using System.Collections.Generic;
 
     /// <summary>
     ///     The <see cref="IExecuteStrategy" />
@@ -34,7 +33,7 @@
         /// <summary>
         ///     Gets the build chain for objects up to the current build execution.
         /// </summary>
-        LinkedList<object> BuildChain { get; }
+        IBuildChain BuildChain { get; }
 
         /// <summary>
         ///     Gets the build configuration.

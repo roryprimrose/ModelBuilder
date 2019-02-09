@@ -1,7 +1,6 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
-    using System.Collections.Generic;
     using System.IO;
     using FluentAssertions;
     using ModelBuilder.Data;
@@ -13,7 +12,7 @@
         [Fact]
         public void GenerateReturnsRandomDomainFromDefinedListTest()
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -28,7 +27,7 @@
         [Fact]
         public void GenerateReturnsRandomDomainTest()
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -50,14 +49,14 @@
         [InlineData(typeof(string), "Domain", true)]
         public void GenerateReturnsValuesForSeveralNameFormatsTest(Type type, string referenceName, bool expected)
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
 
             var target = new DomainNameValueGenerator();
 
-            var actual = (string)target.Generate(type, referenceName, executeStrategy);
+            var actual = (string) target.Generate(type, referenceName, executeStrategy);
 
             actual.Should().NotBeNullOrEmpty();
         }
@@ -68,7 +67,7 @@
         [InlineData(typeof(string), "Stuff")]
         public void GenerateThrowsExceptionWithInvalidParametersTest(Type type, string referenceName)
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -77,7 +76,7 @@
 
             Action action = () => target.Generate(type, referenceName, executeStrategy);
 
-            action.ShouldThrow<NotSupportedException>();
+            action.Should().Throw<NotSupportedException>();
         }
 
         [Fact]
@@ -112,7 +111,7 @@
 
             Action action = () => target.IsSupported(null, null, null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
     }
 }

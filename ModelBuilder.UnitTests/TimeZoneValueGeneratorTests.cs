@@ -1,12 +1,10 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
-    using System.Collections.Generic;
     using System.IO;
     using System.Linq;
-    using System.Text;
-    using Data;
     using FluentAssertions;
+    using ModelBuilder.Data;
     using NodaTime.TimeZones;
     using NSubstitute;
     using Xunit;
@@ -16,14 +14,13 @@
         [Fact]
         public void GenerateReturnsRandomTimeZoneMatchingCaseInsensitiveCountryTest()
         {
-            var address = new Address
-            { Country = "AUSTRALIA" };
-            var buildChain = new LinkedList<object>();
+            var address = new Address {Country = "AUSTRALIA"};
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            buildChain.AddFirst(address);
+            buildChain.Push(address);
 
             var target = new TimeZoneValueGenerator();
 
@@ -33,21 +30,21 @@
 
             var valueToMatch = address.Country.ToLowerInvariant();
 
-            TestData.TimeZones.Where(x => x.StartsWith(valueToMatch, StringComparison.OrdinalIgnoreCase)).Should()
+            TestData.TimeZones.Where(x => x.StartsWith(valueToMatch, StringComparison.OrdinalIgnoreCase))
+                .Should()
                 .Contain(actual);
         }
 
         [Fact]
         public void GenerateReturnsRandomTimeZoneMatchingCountryTest()
         {
-            var address = new Address
-            { Country = "Australia" };
-            var buildChain = new LinkedList<object>();
+            var address = new Address {Country = "Australia"};
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            buildChain.AddFirst(address);
+            buildChain.Push(address);
 
             var target = new TimeZoneValueGenerator();
 
@@ -61,17 +58,13 @@
         [Fact]
         public void GenerateReturnsRandomTimeZoneMatchingCountryWhenNoCityMatchTest()
         {
-            var address = new Address
-            {
-                City = Guid.NewGuid().ToString(),
-                Country = "Australia"
-            };
-            var buildChain = new LinkedList<object>();
+            var address = new Address {City = Guid.NewGuid().ToString(), Country = "Australia"};
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            buildChain.AddFirst(address);
+            buildChain.Push(address);
 
             var target = new TimeZoneValueGenerator();
 
@@ -85,14 +78,13 @@
         [Fact]
         public void GenerateReturnsRandomTimeZoneWhenNoMatchingCountryTest()
         {
-            var address = new Address
-            { Country = Guid.NewGuid().ToString() };
-            var buildChain = new LinkedList<object>();
+            var address = new Address {Country = Guid.NewGuid().ToString()};
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            buildChain.AddFirst(address);
+            buildChain.Push(address);
 
             var target = new TimeZoneValueGenerator();
 
@@ -105,12 +97,12 @@
         public void GenerateReturnsRandomValueTest()
         {
             var address = new Address();
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            buildChain.AddFirst(address);
+            buildChain.Push(address);
 
             var target = new TimeZoneValueGenerator();
 
@@ -128,12 +120,12 @@
         public void GenerateReturnsValueInNodaTimeDatabaseTest()
         {
             var address = new Address();
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            buildChain.AddFirst(address);
+            buildChain.Push(address);
 
             var target = new TimeZoneValueGenerator();
 
@@ -155,17 +147,13 @@
         [InlineData(null, "Canberra")]
         public void GenerateReturnsValueMatchingCityValuesTest(string country, string city)
         {
-            var address = new Address
-            {
-                Country = country,
-                City = city
-            };
-            var buildChain = new LinkedList<object>();
+            var address = new Address {Country = country, City = city};
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            buildChain.AddFirst(address);
+            buildChain.Push(address);
 
             var target = new TimeZoneValueGenerator();
 
@@ -181,16 +169,16 @@
         public void GenerateReturnsValuesForSeveralNameFormatsTest(Type type, string referenceName, bool expected)
         {
             var address = new Address();
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            buildChain.AddFirst(address);
+            buildChain.Push(address);
 
             var target = new TimeZoneValueGenerator();
 
-            var actual = (string)target.Generate(type, referenceName, executeStrategy);
+            var actual = (string) target.Generate(type, referenceName, executeStrategy);
 
             actual.Should().NotBeNullOrEmpty();
         }
@@ -201,7 +189,7 @@
         [InlineData(typeof(string), "Stuff")]
         public void GenerateThrowsExceptionWithInvalidParametersTest(Type type, string referenceName)
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var resolver = new DefaultPropertyResolver();
 
             var configuration = Substitute.For<IBuildConfiguration>();
@@ -215,7 +203,7 @@
 
             Action action = () => target.Generate(type, referenceName, executeStrategy);
 
-            action.ShouldThrow<NotSupportedException>();
+            action.Should().Throw<NotSupportedException>();
         }
 
         [Fact]
@@ -238,9 +226,9 @@
         public void IsSupportedTest(Type type, string referenceName, bool expected)
         {
             var address = new Address();
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
 
-            buildChain.AddFirst(address);
+            buildChain.Push(address);
 
             var target = new TimeZoneValueGenerator();
 
@@ -256,7 +244,7 @@
 
             Action action = () => target.IsSupported(null, null, null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]

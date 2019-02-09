@@ -2,7 +2,6 @@
 {
     using System;
     using System.Linq;
-    using System.Text.RegularExpressions;
     using ModelBuilder.Data;
 
     /// <summary>
@@ -22,13 +21,15 @@
         /// <inheritdoc />
         protected override object GenerateValue(Type type, string referenceName, IExecuteStrategy executeStrategy)
         {
-            var context = executeStrategy?.BuildChain?.Last?.Value;
+            var context = executeStrategy?.BuildChain?.Last;
             var state = GetValue<string>(PropertyExpression.State, context);
             Location location = null;
 
             if (string.IsNullOrWhiteSpace(state) == false)
             {
-                var locationMatches = TestData.Locations.Where(x => x.State.Equals(state, StringComparison.OrdinalIgnoreCase)).ToList();
+                var locationMatches = TestData.Locations
+                    .Where(x => x.State.Equals(state, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
 
                 location = locationMatches.Next();
             }

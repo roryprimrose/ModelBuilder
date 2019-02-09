@@ -1,7 +1,6 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
-    using System.Collections.Generic;
     using FluentAssertions;
     using NSubstitute;
     using Xunit;
@@ -14,7 +13,7 @@
             var nullFound = false;
             var valueFound = false;
 
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -23,7 +22,7 @@
 
             for (var index = 0; index < 1000; index++)
             {
-                var value = (DateTime?)target.Generate(typeof(DateTime?), "dob", executeStrategy);
+                var value = (DateTime?) target.Generate(typeof(DateTime?), "dob", executeStrategy);
 
                 if (value == null)
                 {
@@ -47,7 +46,7 @@
         [Fact]
         public void GenerateReturnsRandomDateTimeOffsetValueWithinLast100YearsTest()
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -69,7 +68,7 @@
         [Fact]
         public void GenerateReturnsRandomDateTimeValueWithinLast100YearsTest()
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -97,7 +96,7 @@
         [InlineData(typeof(DateTime), "Stuff")]
         public void GenerateThrowsExceptionWithInvalidParametersTest(Type type, string referenceName)
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -106,9 +105,9 @@
 
             Action action = () => target.Generate(type, referenceName, executeStrategy);
 
-            action.ShouldThrow<NotSupportedException>();
+            action.Should().Throw<NotSupportedException>();
         }
-        
+
         [Fact]
         public void HasHigherPriorityThanDateTimeValueGeneratorTest()
         {
@@ -151,7 +150,7 @@
 
             Action action = () => target.IsSupported(null, null, null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
     }
 }

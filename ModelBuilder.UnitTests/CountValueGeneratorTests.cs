@@ -1,7 +1,6 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
-    using System.Collections.Generic;
     using FluentAssertions;
     using NSubstitute;
     using Xunit;
@@ -12,7 +11,7 @@
         [ClassData(typeof(NumericTypeDataSource))]
         public void GenerateCanEvalutateManyTimesTest(Type type, bool isSupported, double min, double max)
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -29,8 +28,8 @@
             {
                 var value = target.Generate(type, "Count", executeStrategy);
 
-                if (type.IsNullable() &&
-                    (value == null))
+                if (type.IsNullable()
+                    && value == null)
                 {
                     // Nullable values could be returned so nothing more to assert
                     return;
@@ -51,11 +50,11 @@
                 convertedValue.Should().BeLessOrEqualTo(max);
             }
         }
-        
+
         [Fact]
         public void GenerateCanReturnNullAndNonNullValuesTest()
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -67,7 +66,7 @@
 
             for (var index = 0; index < 100000; index++)
             {
-                var value = (int?)target.Generate(typeof(int?), "Count", executeStrategy);
+                var value = (int?) target.Generate(typeof(int?), "Count", executeStrategy);
 
                 if (value == null)
                 {
@@ -98,7 +97,7 @@
                 return;
             }
 
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -107,8 +106,8 @@
 
             var value = target.Generate(type, "Count", executeStrategy);
 
-            if (type.IsNullable() &&
-                (value == null))
+            if (type.IsNullable()
+                && value == null)
             {
                 // We can't run the assertions because null is a valid outcome
                 return;
@@ -137,7 +136,7 @@
             double min,
             double max)
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -146,14 +145,14 @@
 
             Action action = () => target.Generate(type, "Stuff", executeStrategy);
 
-            action.ShouldThrow<NotSupportedException>();
+            action.Should().Throw<NotSupportedException>();
         }
-        
+
         [Theory]
         [ClassData(typeof(NumericTypeDataSource))]
         public void GenerateValidatesRequestedTypeTest(Type type, bool isSupported, double min, double max)
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -164,11 +163,11 @@
 
             if (isSupported)
             {
-                action.ShouldNotThrow();
+                action.Should().NotThrow();
             }
             else
             {
-                action.ShouldThrow<NotSupportedException>();
+                action.Should().Throw<NotSupportedException>();
             }
         }
 
@@ -272,7 +271,7 @@
 
             Action action = () => target.IsSupported(null, null, null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -309,10 +308,7 @@
         [Fact]
         public void SettingMaxCountShouldNotChangeDefaultMaxCountTest()
         {
-            var target = new CountValueGenerator
-            {
-                MaxCount = Environment.TickCount
-            };
+            var target = new CountValueGenerator {MaxCount = Environment.TickCount};
 
             CountValueGenerator.DefaultMaxCount.Should().NotBe(target.MaxCount);
         }

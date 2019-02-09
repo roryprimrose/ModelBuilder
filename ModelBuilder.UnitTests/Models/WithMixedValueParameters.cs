@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace ModelBuilder.UnitTests
+﻿namespace ModelBuilder.UnitTests
 {
+    using System;
+
     public class WithMixedValueParameters
     {
         public WithMixedValueParameters()
@@ -28,7 +28,7 @@ namespace ModelBuilder.UnitTests
             Id = id;
         }
 
-        public int Age => DateTime.UtcNow.Subtract(DOB).Days/365;
+        public int Age => DateTime.UtcNow.Subtract(DOB).Days / 365;
 
         public DateTime DOB { get; set; }
 

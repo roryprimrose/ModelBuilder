@@ -1,7 +1,6 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
-    using System.Collections.Generic;
     using System.Text.RegularExpressions;
     using FluentAssertions;
     using Xunit;
@@ -96,50 +95,53 @@
         [Fact]
         public void IsSupportedThrowsExceptionWithNullTypeTest()
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
 
             var target = new WrapperGenerator("Test");
 
             Action action = () => target.IsSupported(null, "Test", buildChain);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
         public void ThrowsExceptionWithNullExpressionTest()
         {
-            Action action = () => new WrapperGenerator((Regex)null);
+            Action action = () => new WrapperGenerator((Regex) null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
         public void ThrowsExceptionWithNullReferenceNameTest()
         {
-            Action action = () => new WrapperGenerator((string)null);
+            Action action = () => new WrapperGenerator((string) null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
         public void ThrowsExceptionWithNullTypesTest()
         {
-            Action action = () => new WrapperGenerator((Type[])null);
+            Action action = () => new WrapperGenerator((Type[]) null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         private class WrapperGenerator : ValueGeneratorMatcher
         {
-            public WrapperGenerator(params Type[] types) : base(types)
+            public WrapperGenerator(params Type[] types)
+                : base(types)
             {
             }
 
-            public WrapperGenerator(string referenceName, params Type[] types) : base(referenceName, types)
+            public WrapperGenerator(string referenceName, params Type[] types)
+                : base(referenceName, types)
             {
             }
 
-            public WrapperGenerator(Regex expression, params Type[] types) : base(expression, types)
+            public WrapperGenerator(Regex expression, params Type[] types)
+                : base(expression, types)
             {
             }
 

@@ -13,19 +13,21 @@
         /// <summary>
         ///     Initializes a new instance of the <see cref="EmailValueGenerator" /> class.
         /// </summary>
-        public EmailValueGenerator() : base(PropertyExpression.Email, typeof(string))
+        public EmailValueGenerator()
+            : base(PropertyExpression.Email, typeof(string))
         {
         }
 
         /// <inheritdoc />
-        [SuppressMessage("Microsoft.Globalization", "CA1308:NormalizeStringsToUppercase",
-             Justification = "Email addresses are lower case by convention.")]
+        [SuppressMessage("Microsoft.Globalization",
+            "CA1308:NormalizeStringsToUppercase",
+            Justification = "Email addresses are lower case by convention.")]
         protected override object GenerateValue(Type type, string referenceName, IExecuteStrategy executeStrategy)
         {
-            var context = executeStrategy?.BuildChain?.Last?.Value;
+            var context = executeStrategy?.BuildChain?.Last;
             var firstName = GetValue<string>(PropertyExpression.FirstName, context);
             var lastName = GetValue<string>(PropertyExpression.LastName, context);
-            
+
             if (firstName == null)
             {
                 if (IsMale(executeStrategy))
@@ -59,7 +61,7 @@
 
             return email.Replace(" ", string.Empty).ToLowerInvariant();
         }
-        
+
         /// <inheritdoc />
         public override int Priority { get; } = 1000;
 

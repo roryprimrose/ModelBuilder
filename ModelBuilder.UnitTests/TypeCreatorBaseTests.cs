@@ -34,25 +34,25 @@
 
             Action action = () => target.CanCreate(null, null, null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
         public void CanPopulateThrowsExceptionWithNullTypeTest()
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
 
             var target = new TypeCreatorWrapper();
 
             Action action = () => target.CanPopulate(null, "Name", buildChain);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
         public void CreateDoesNotThrowsExceptionWhenCreateVerificationPassesTest()
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -61,13 +61,13 @@
 
             Action action = () => target.Create(typeof(List<string>), null, executeStrategy);
 
-            action.ShouldNotThrow();
+            action.Should().NotThrow();
         }
 
         [Fact]
         public void CreateThrowsExceptionWhenCreateVerificationFailsTest()
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -76,7 +76,7 @@
 
             Action action = () => target.Create(typeof(bool), null, executeStrategy);
 
-            action.ShouldThrow<NotSupportedException>();
+            action.Should().Throw<NotSupportedException>();
         }
 
         [Fact]
@@ -84,17 +84,19 @@
         {
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
+            executeStrategy.BuildChain.Returns((IBuildChain) null);
+
             var target = new TypeCreatorWrapper();
 
             Action action = () => target.Create(typeof(string), "Name", executeStrategy);
 
-            action.ShouldThrow<InvalidOperationException>();
+            action.Should().Throw<InvalidOperationException>();
         }
 
         [Fact]
         public void CreateThrowsExceptionWithNullStrategyTest()
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -103,13 +105,13 @@
 
             Action action = () => target.Create(typeof(string), "Name", null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
         public void CreateThrowsExceptionWithNullTypeTest()
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -118,7 +120,7 @@
 
             Action action = () => target.Create(null, "Name", executeStrategy);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -132,7 +134,7 @@
         [Fact]
         public void PopulateDoesNotThrowsExceptionWhenPopulateVerificationPassesTest()
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -143,13 +145,13 @@
 
             Action action = () => target.Populate(value, executeStrategy);
 
-            action.ShouldNotThrow();
+            action.Should().NotThrow();
         }
 
         [Fact]
         public void PopulateReturnsProvidedInstanceTest()
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -166,7 +168,7 @@
         [Fact]
         public void PopulateThrowsExceptionWhenPopulateVerificationFailsTest()
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -175,7 +177,7 @@
 
             Action action = () => target.Populate(false, executeStrategy);
 
-            action.ShouldThrow<NotSupportedException>();
+            action.Should().Throw<NotSupportedException>();
         }
 
         [Fact]
@@ -187,13 +189,13 @@
 
             Action action = () => target.Populate(person, null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
         public void PopulateThrowsExceptionWithNullInstanceTest()
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -202,25 +204,27 @@
 
             Action action = () => target.Populate(null, executeStrategy);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
         public void PopulateThrowsExceptionWithNullStrategyBuildChainTest()
         {
             var executeStrategy = Substitute.For<IExecuteStrategy>();
+            
+            executeStrategy.BuildChain.Returns((IBuildChain) null);
 
             var target = new TypeCreatorWrapper();
 
             Action action = () => target.Populate(typeof(string), executeStrategy);
 
-            action.ShouldThrow<InvalidOperationException>();
+            action.Should().Throw<InvalidOperationException>();
         }
 
         [Fact]
         public void PopulateThrowsExceptionWithNullTypeTest()
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -229,7 +233,7 @@
 
             Action action = () => target.Populate(null, executeStrategy);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -249,19 +253,21 @@
 
             Action action = () => target.VerifyCreateRequestWithNullExecuteStrategy();
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
         public void VerifyCreateRequestThrowsExceptionWithNullStrategyBuildChainTest()
         {
             var strategy = Substitute.For<IExecuteStrategy>();
+            
+            strategy.BuildChain.Returns((IBuildChain) null);
 
             var target = new TypeCreatorWrapper();
 
             Action action = () => target.RunVerifyCreateRequest(typeof(string), "stuff", strategy);
 
-            action.ShouldThrow<InvalidOperationException>();
+            action.Should().Throw<InvalidOperationException>();
         }
 
         [Fact]
@@ -271,7 +277,7 @@
 
             Action action = () => target.VerifyCreateRequestWithNullType();
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -281,19 +287,21 @@
 
             Action action = () => target.VerifyPopulateRequestWithNullExecuteStrategy();
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
         public void VerifyPopulateRequestThrowsExceptionWithNullStrategyBuildChainTest()
         {
             var strategy = Substitute.For<IExecuteStrategy>();
+            
+            strategy.BuildChain.Returns((IBuildChain) null);
 
             var target = new TypeCreatorWrapper();
 
             Action action = () => target.RunVerifyPopulateRequest(typeof(string), "stuff", strategy);
 
-            action.ShouldThrow<InvalidOperationException>();
+            action.Should().Throw<InvalidOperationException>();
         }
 
         [Fact]
@@ -303,12 +311,12 @@
 
             Action action = () => target.VerifyPopulateRequestWithNullType();
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         private class TypeCreatorWrapper : TypeCreatorBase
         {
-            public override bool CanCreate(Type type, string referenceName, LinkedList<object> buildChain)
+            public override bool CanCreate(Type type, string referenceName, IBuildChain buildChain)
             {
                 var canCreate = base.CanCreate(type, referenceName, buildChain);
 
@@ -320,7 +328,7 @@
                 return type == typeof(List<string>);
             }
 
-            public override bool CanPopulate(Type type, string referenceName, LinkedList<object> buildChain)
+            public override bool CanPopulate(Type type, string referenceName, IBuildChain buildChain)
             {
                 var canPopulate = base.CanPopulate(type, referenceName, buildChain);
 

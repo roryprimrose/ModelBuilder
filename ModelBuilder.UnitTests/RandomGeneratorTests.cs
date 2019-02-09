@@ -33,7 +33,7 @@
 
             Action action = () => target.GetMax(null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Theory]
@@ -61,7 +61,7 @@
 
             Action action = () => target.GetMin(null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Theory]
@@ -87,7 +87,7 @@
 
             Action action = () => target.IsSupported(null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -109,7 +109,7 @@
 
             Action action = () => target.NextValue(null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Theory]
@@ -293,7 +293,7 @@
 
                 var actual = Convert.ToDouble(value);
 
-                if (unchecked(actual != (int)actual))
+                if (unchecked(actual != (int) actual))
                 {
                     decimalFound = true;
 
@@ -356,7 +356,7 @@
 
             Action action = () => target.NextValue(typeof(double), 1, 0);
 
-            action.ShouldThrow<ArgumentOutOfRangeException>();
+            action.Should().Throw<ArgumentOutOfRangeException>();
         }
 
         [Fact]
@@ -366,7 +366,7 @@
 
             Action action = () => target.NextValue(typeof(int), 0, Guid.NewGuid().ToString());
 
-            action.ShouldThrow<FormatException>();
+            action.Should().Throw<FormatException>();
         }
 
         [Fact]
@@ -376,7 +376,7 @@
 
             Action action = () => target.NextValue(typeof(int), Guid.NewGuid().ToString(), 0);
 
-            action.ShouldThrow<FormatException>();
+            action.Should().Throw<FormatException>();
         }
 
         [Fact]
@@ -386,7 +386,7 @@
 
             Action action = () => target.NextValue(typeof(int), 0, null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -396,7 +396,7 @@
 
             Action action = () => target.NextValue(typeof(int), null, 0);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -406,7 +406,7 @@
 
             Action action = () => target.NextValue(null, 0, 0);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Theory]
@@ -419,11 +419,11 @@
 
             if (typeSupported)
             {
-                action.ShouldNotThrow();
+                action.Should().NotThrow();
             }
             else
             {
-                action.ShouldThrow<NotSupportedException>();
+                action.Should().Throw<NotSupportedException>();
             }
         }
     }

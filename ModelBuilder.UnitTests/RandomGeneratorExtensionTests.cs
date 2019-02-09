@@ -1,10 +1,10 @@
-﻿using System;
-using FluentAssertions;
-using NSubstitute;
-using Xunit;
-
-namespace ModelBuilder.UnitTests
+﻿namespace ModelBuilder.UnitTests
 {
+    using System;
+    using FluentAssertions;
+    using NSubstitute;
+    using Xunit;
+
     public class RandomGeneratorExtensionTests
     {
         [Fact]
@@ -47,7 +47,7 @@ namespace ModelBuilder.UnitTests
 
             Action action = () => target.NextValue(1, 0);
 
-            action.ShouldThrow<ArgumentOutOfRangeException>();
+            action.Should().Throw<ArgumentOutOfRangeException>();
         }
 
         [Fact]
@@ -57,7 +57,7 @@ namespace ModelBuilder.UnitTests
 
             Action action = () => target.NextValue(1, 10);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -67,7 +67,7 @@ namespace ModelBuilder.UnitTests
 
             Action action = () => target.NextValue<int>();
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -77,7 +77,7 @@ namespace ModelBuilder.UnitTests
 
             Action action = () => target.NextValue('C', 'C');
 
-            action.ShouldThrow<NotSupportedException>();
+            action.Should().Throw<NotSupportedException>();
         }
 
         [Fact]
@@ -104,7 +104,7 @@ namespace ModelBuilder.UnitTests
 
             Action action = () => target.NextValue(100);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -133,7 +133,7 @@ namespace ModelBuilder.UnitTests
 
             Action action = () => target.NextValue(typeof(int), max);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -145,7 +145,7 @@ namespace ModelBuilder.UnitTests
 
             Action action = () => target.NextValue(null, max);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -172,7 +172,7 @@ namespace ModelBuilder.UnitTests
 
             Action action = () => target.NextValue(typeof(int));
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -182,7 +182,7 @@ namespace ModelBuilder.UnitTests
 
             Action action = () => target.NextValue((Type) null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
     }
 }

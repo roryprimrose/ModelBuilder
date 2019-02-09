@@ -1,7 +1,6 @@
 ﻿namespace ModelBuilder
 {
     using System;
-    using System.Collections.Generic;
 
     /// <summary>
     ///     The <see cref="IValueGenerator" />
@@ -27,11 +26,11 @@
         /// <summary>
         ///     Returns whether the specified type is supported by this generator.
         /// </summary>
-        /// <param name="type">The type to evaulate.</param>
+        /// <param name="type">The type to evaluate.</param>
         /// <param name="referenceName">Identifies the possible parameter or property name the value is intended for.</param>
         /// <param name="buildChain">The chain of instances built up to this point.</param>
         /// <returns><c>true</c> if the type is supported; otherwise <c>false</c>.</returns>
-        bool IsSupported(Type type, string referenceName, LinkedList<object> buildChain);
+        bool IsSupported(Type type, string referenceName, IBuildChain buildChain);
 
         /// <summary>
         ///     Gets the priority for this generator.

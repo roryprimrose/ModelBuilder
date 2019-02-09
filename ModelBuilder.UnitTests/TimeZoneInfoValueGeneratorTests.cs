@@ -1,7 +1,6 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
-    using System.Collections.Generic;
     using System.IO;
     using FluentAssertions;
     using NSubstitute;
@@ -12,15 +11,15 @@
         [Fact]
         public void GenerateReturnsRandomTimeZoneInfoValueTest()
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
 
             var target = new TimeZoneInfoValueGenerator();
 
-            var first = (TimeZoneInfo)target.Generate(typeof(TimeZoneInfo), null, executeStrategy);
-            var second = (TimeZoneInfo)target.Generate(typeof(TimeZoneInfo), null, executeStrategy);
+            var first = (TimeZoneInfo) target.Generate(typeof(TimeZoneInfo), null, executeStrategy);
+            var second = (TimeZoneInfo) target.Generate(typeof(TimeZoneInfo), null, executeStrategy);
 
             first.Should().NotBe(second);
         }
@@ -30,7 +29,7 @@
         [InlineData(typeof(string))]
         public void GenerateThrowsExceptionWithInvalidParametersTest(Type type)
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -39,9 +38,9 @@
 
             Action action = () => target.Generate(type, null, executeStrategy);
 
-            action.ShouldThrow<NotSupportedException>();
+            action.Should().Throw<NotSupportedException>();
         }
-        
+
         [Theory]
         [InlineData(typeof(string), false)]
         [InlineData(typeof(Stream), false)]
@@ -68,7 +67,7 @@
 
             Action action = () => target.IsSupported(null, null, null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
     }
 }

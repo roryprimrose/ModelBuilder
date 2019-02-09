@@ -20,16 +20,17 @@
             yield break;
         }
 
-        public IEnumerable<Person> AssignablePeople { get; private set; }
+        public IEnumerable<Person> AssignablePeople { get; }
 
-        public Company Company { get; private set; }
+        public Company Company { get; }
 
-        public ICollection<Person> People { get; private set; }
+        public ICollection<Person> People { get; }
+
         public int PrivateValue { get; }
 
         public Person ReadOnlyPerson { get; }
 
-        public IEnumerable<Person> RestrictedPeople { get; private set; }
+        public IEnumerable<Person> RestrictedPeople { get; }
 
         public Person Unassigned { get; private set; }
     }

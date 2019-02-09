@@ -22,8 +22,7 @@
         [Fact]
         public void CanPopulateReturnsFalseWhenPropertyIsPrivateTest()
         {
-            var propertyInfo = typeof(PrivateProp).GetProperty(
-                "Person",
+            var propertyInfo = typeof(PrivateProp).GetProperty("Person",
                 BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.GetProperty | BindingFlags.SetProperty);
 
             var sut = new DefaultPropertyResolver();
@@ -100,7 +99,7 @@
 
             Action action = () => sut.CanPopulate(null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -122,14 +121,7 @@
         {
             var configuration = new DefaultBuildStrategyCompiler().Compile();
             var instance = Model.Create<WithConstructorParameters>();
-            var args = new object[]
-            {
-                instance.First,
-                instance.Id,
-                instance.RefNumber,
-                instance.Number,
-                instance.Value
-            };
+            var args = new object[] {instance.First, instance.Id, instance.RefNumber, instance.Number, instance.Value};
 
             var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.First));
 
@@ -145,14 +137,7 @@
         {
             var configuration = new DefaultBuildStrategyCompiler().Compile();
             var instance = Model.Create<WithConstructorParameters>();
-            var args = new object[]
-            {
-                instance.First,
-                instance.Id,
-                instance.RefNumber,
-                instance.Number,
-                instance.Value
-            };
+            var args = new object[] {instance.First, instance.Id, instance.RefNumber, instance.Number, instance.Value};
 
             var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.Number));
 
@@ -168,14 +153,7 @@
         {
             var configuration = new DefaultBuildStrategyCompiler().Compile();
             var instance = Model.Create<WithConstructorParameters>();
-            var args = new object[]
-            {
-                new Company(),
-                instance.Id,
-                instance.RefNumber,
-                instance.Number,
-                instance.Value
-            };
+            var args = new object[] {new Company(), instance.Id, instance.RefNumber, instance.Number, instance.Value};
 
             var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.First));
 
@@ -191,14 +169,7 @@
         {
             var configuration = new DefaultBuildStrategyCompiler().Compile();
             var instance = Model.Create<WithConstructorParameters>();
-            var args = new object[]
-            {
-                instance.First,
-                Guid.NewGuid(),
-                null,
-                int.MinValue,
-                false
-            };
+            var args = new object[] {instance.First, Guid.NewGuid(), null, int.MinValue, false};
 
             var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.Number));
 
@@ -214,14 +185,7 @@
         {
             var configuration = new DefaultBuildStrategyCompiler().Compile();
             var instance = Model.Create<WithConstructorParameters>();
-            var args = new object[]
-            {
-                new Person(),
-                instance.Id,
-                instance.RefNumber,
-                instance.Number,
-                instance.Value
-            };
+            var args = new object[] {new Person(), instance.Id, instance.RefNumber, instance.Number, instance.Value};
 
             var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.First));
 
@@ -237,14 +201,7 @@
         {
             var configuration = new DefaultBuildStrategyCompiler().Compile();
             var instance = Model.Create<WithConstructorParameters>();
-            var args = new object[]
-            {
-                new Company(),
-                instance.Id,
-                instance.RefNumber,
-                instance.Number,
-                instance.Value
-            };
+            var args = new object[] {new Company(), instance.Id, instance.RefNumber, instance.Number, instance.Value};
 
             var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.First));
 
@@ -260,14 +217,7 @@
         {
             var configuration = new DefaultBuildStrategyCompiler().Compile();
             var instance = Model.Create<WithConstructorParameters>().Set(x => x.Id = Guid.Empty);
-            var args = new object[]
-            {
-                new Company(),
-                instance.Id,
-                instance.RefNumber,
-                instance.Number,
-                instance.Value
-            };
+            var args = new object[] {new Company(), instance.Id, instance.RefNumber, instance.Number, instance.Value};
 
             var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.Id));
 
@@ -280,15 +230,11 @@
 
         [Fact]
         public void
-            ShouldPopulatePropertyReturnsTrueWhenPropertyContainsNullAndPropertyTypeCannotBeCreatedForEqualityCheckingTest
-            ()
+            ShouldPopulatePropertyReturnsTrueWhenPropertyContainsNullAndPropertyTypeCannotBeCreatedForEqualityCheckingTest()
         {
             var configuration = new DefaultBuildStrategyCompiler().Compile();
             var instance = Model.Create<ReadOnlyModelParent>().Set(x => x.Child = null);
-            var args = new object[]
-            {
-                Guid.NewGuid()
-            };
+            var args = new object[] {Guid.NewGuid()};
 
             var propertyInfo = typeof(ReadOnlyModelParent).GetProperty(nameof(ReadOnlyModelParent.Child));
 
@@ -304,13 +250,7 @@
         {
             var configuration = new DefaultBuildStrategyCompiler().Compile();
             var instance = Model.Create<WithConstructorParameters>().Set(x => x.First = null);
-            var args = new object[]
-            {
-                instance.Id,
-                instance.RefNumber,
-                instance.Number,
-                instance.Value
-            };
+            var args = new object[] {instance.Id, instance.RefNumber, instance.Number, instance.Value};
 
             var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.First));
 
@@ -328,11 +268,7 @@
             var instance = Model.Create<WithConstructorParameters>();
             var args = new object[]
             {
-                new Company(),
-                Guid.NewGuid(),
-                instance.RefNumber,
-                instance.Number,
-                instance.Value
+                new Company(), Guid.NewGuid(), instance.RefNumber, instance.Number, instance.Value
             };
 
             var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.Id));
@@ -379,12 +315,7 @@
             var instance = Model.Create<WithConstructorParameters>();
             var args = new object[]
             {
-                null,
-                new Company(),
-                instance.Id,
-                instance.RefNumber,
-                instance.Number,
-                instance.Value
+                null, new Company(), instance.Id, instance.RefNumber, instance.Number, instance.Value
             };
 
             var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.First));
@@ -406,7 +337,7 @@
 
             Action action = () => sut.ShouldPopulateProperty(null, instance, propertyInfo, null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -419,7 +350,7 @@
 
             Action action = () => sut.ShouldPopulateProperty(configuration, null, propertyInfo, null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -432,7 +363,7 @@
 
             Action action = () => sut.ShouldPopulateProperty(configuration, instance, null, null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         private class PrivateProp

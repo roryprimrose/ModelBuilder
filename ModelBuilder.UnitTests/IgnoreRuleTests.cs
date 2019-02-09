@@ -1,15 +1,15 @@
-﻿using System;
-using FluentAssertions;
-using Xunit;
-
-namespace ModelBuilder.UnitTests
+﻿namespace ModelBuilder.UnitTests
 {
+    using System;
+    using FluentAssertions;
+    using Xunit;
+
     public class IgnoreRuleTests
     {
         [Fact]
         public void ReturnsConstructorValuesTest()
         {
-            var type = typeof (string);
+            var type = typeof(string);
             var name = Guid.NewGuid().ToString();
 
             var target = new IgnoreRule(type, name);
@@ -21,17 +21,17 @@ namespace ModelBuilder.UnitTests
         [Fact]
         public void ThrowsExceptionWhenCreatedWithEmptyNameTest()
         {
-            Action action = () => new IgnoreRule(typeof (string), string.Empty);
+            Action action = () => new IgnoreRule(typeof(string), string.Empty);
 
-            action.ShouldThrow<ArgumentException>();
+            action.Should().Throw<ArgumentException>();
         }
 
         [Fact]
         public void ThrowsExceptionWhenCreatedWithNullNameTest()
         {
-            Action action = () => new IgnoreRule(typeof (string), null);
+            Action action = () => new IgnoreRule(typeof(string), null);
 
-            action.ShouldThrow<ArgumentException>();
+            action.Should().Throw<ArgumentException>();
         }
 
         [Fact]
@@ -41,15 +41,15 @@ namespace ModelBuilder.UnitTests
 
             Action action = () => { new IgnoreRule(null, name); };
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
         public void ThrowsExceptionWhenCreatedWithWhiteSpaceNameTest()
         {
-            Action action = () => new IgnoreRule(typeof (string), "  ");
+            Action action = () => new IgnoreRule(typeof(string), "  ");
 
-            action.ShouldThrow<ArgumentException>();
+            action.Should().Throw<ArgumentException>();
         }
     }
 }

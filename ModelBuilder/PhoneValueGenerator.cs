@@ -14,21 +14,23 @@
         /// <summary>
         ///     Initializes a new instance of the <see cref="PhoneValueGenerator" /> class.
         /// </summary>
-        public PhoneValueGenerator() : base(new Regex("Phone|Cell|Mobile|Fax", RegexOptions.IgnoreCase), typeof(string))
+        public PhoneValueGenerator()
+            : base(new Regex("Phone|Cell|Mobile|Fax", RegexOptions.IgnoreCase), typeof(string))
         {
         }
 
         /// <inheritdoc />
         protected override object GenerateValue(Type type, string referenceName, IExecuteStrategy executeStrategy)
         {
-            var context = executeStrategy?.BuildChain?.Last?.Value;
+            var context = executeStrategy?.BuildChain?.Last;
             var country = GetValue<string>(PropertyExpression.Country, context);
             Location location = null;
 
             if (string.IsNullOrWhiteSpace(country) == false)
             {
                 var locationMatches = TestData.Locations
-                    .Where(x => x.Country.Equals(country, StringComparison.OrdinalIgnoreCase)).ToList();
+                    .Where(x => x.Country.Equals(country, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
 
                 location = locationMatches.Next();
             }

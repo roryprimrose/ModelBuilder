@@ -1,6 +1,5 @@
 ﻿namespace ModelBuilder.UnitTests
 {
-    using System.Collections.Generic;
     using System.Linq;
     using FluentAssertions;
     using ModelBuilder.Data;
@@ -13,16 +12,16 @@
         public void GeneratorReturnsNameTest()
         {
             var person = new PersonWithoutGender();
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            buildChain.AddLast(person);
+            buildChain.Push(person);
 
             var target = new LastNameValueGenerator();
 
-            var actual = (string)target.Generate(typeof(string), "LastName", executeStrategy);
+            var actual = (string) target.Generate(typeof(string), "LastName", executeStrategy);
 
             TestData.LastNames.Any(x => x == actual).Should().BeTrue();
         }

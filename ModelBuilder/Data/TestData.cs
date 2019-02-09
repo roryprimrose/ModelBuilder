@@ -2,11 +2,8 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Collections.ObjectModel;
     using System.Diagnostics.CodeAnalysis;
-    using System.IO;
     using System.Linq;
-    using System.Xml.Serialization;
     using ModelBuilder.Properties;
 
     /// <summary>
@@ -15,8 +12,7 @@
     /// </summary>
     public static class TestData
     {
-        [SuppressMessage(
-            "Microsoft.Performance",
+        [SuppressMessage("Microsoft.Performance",
             "CA1810:InitializeReferenceTypeStaticFieldsInline",
             Justification =
                 "This is done in the constructor for the better performance of splitting males an females in a single iteration.")]
@@ -31,7 +27,7 @@
             TimeZones = ParseValues(Resources.TimeZones);
             Domains = ParseValues(Resources.Domains);
         }
-        
+
         private static List<Location> ParseLocations(string locations)
         {
             var lines = ParseValues(locations);
@@ -49,16 +45,11 @@
 
         private static List<string> ParseValues(string values)
         {
-            var items = values.Split(
-                new[]
-                {
-                    Environment.NewLine
-                },
-                StringSplitOptions.RemoveEmptyEntries);
+            var items = values.Split(new[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries);
 
             return items.ToList();
         }
-        
+
         /// <summary>
         ///     Gets a test data set of companies.
         /// </summary>
@@ -93,7 +84,7 @@
         ///     Gets a test data set of male names.
         /// </summary>
         public static IReadOnlyList<string> MaleNames { get; }
-        
+
         /// <summary>
         ///     Gets a test data set of time zones.
         /// </summary>

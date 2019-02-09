@@ -3,7 +3,6 @@
     using System;
     using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
-    using System.Linq;
 
     /// <summary>
     ///     The <see cref="DefaultTypeCreator" />
@@ -12,8 +11,10 @@
     public class DefaultTypeCreator : TypeCreatorBase
     {
         /// <inheritdoc />
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0",
-             Justification = "Type is validated by the base class")]
+        [SuppressMessage("Microsoft.Design",
+            "CA1062:Validate arguments of public methods",
+            MessageId = "0",
+            Justification = "Type is validated by the base class")]
         protected override object CreateInstance(
             Type type,
             string referenceName,

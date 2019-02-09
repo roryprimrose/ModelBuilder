@@ -20,8 +20,7 @@
             var executeOrderRules = new List<ExecuteOrderRule>();
             var postBuildActions = new List<IPostBuildAction>();
 
-            var target = new BuildStrategy(
-                constructorResolver,
+            var target = new BuildStrategy(constructorResolver,
                 propertyResolver,
                 creationRules,
                 typeCreators,
@@ -47,8 +46,7 @@
             var executeOrderRules = new List<ExecuteOrderRule>();
             var postBuildActions = new List<IPostBuildAction>();
 
-            var target = new BuildStrategy(
-                constructorResolver,
+            var target = new BuildStrategy(constructorResolver,
                 propertyResolver,
                 creationRules,
                 typeCreators,
@@ -75,8 +73,7 @@
             var executeOrderRules = new List<ExecuteOrderRule>();
             var postBuildActions = new List<IPostBuildAction>();
 
-            var target = new BuildStrategy(
-                constructorResolver,
+            var target = new BuildStrategy(constructorResolver,
                 propertyResolver,
                 creationRules,
                 typeCreators,
@@ -99,29 +96,16 @@
             {
                 new CreationRule(typeof(string), "Test", int.MaxValue, "Stuff")
             };
-            var typeCreators = new List<ITypeCreator>
-            {
-                new DefaultTypeCreator()
-            };
-            var valueGenerators = new List<IValueGenerator>
-            {
-                new AddressValueGenerator()
-            };
-            var ignoreRules = new List<IgnoreRule>
-            {
-                new IgnoreRule(typeof(Person), "FirstName")
-            };
+            var typeCreators = new List<ITypeCreator> {new DefaultTypeCreator()};
+            var valueGenerators = new List<IValueGenerator> {new AddressValueGenerator()};
+            var ignoreRules = new List<IgnoreRule> {new IgnoreRule(typeof(Person), "FirstName")};
             var executeOrderRules = new List<ExecuteOrderRule>
             {
                 new ExecuteOrderRule(typeof(Person), typeof(string), "LastName", int.MinValue)
             };
-            var postBuildActions = new List<IPostBuildAction>
-            {
-                Substitute.For<IPostBuildAction>()
-            };
+            var postBuildActions = new List<IPostBuildAction> {Substitute.For<IPostBuildAction>()};
 
-            var target = new BuildStrategy(
-                constructorResolver,
+            var target = new BuildStrategy(constructorResolver,
                 propertyResolver,
                 creationRules,
                 typeCreators,
@@ -132,12 +116,12 @@
 
             target.ConstructorResolver.Should().Be(constructorResolver);
             target.PropertyResolver.Should().Be(propertyResolver);
-            target.CreationRules.ShouldBeEquivalentTo(creationRules);
-            target.TypeCreators.ShouldBeEquivalentTo(typeCreators);
-            target.ValueGenerators.ShouldBeEquivalentTo(valueGenerators);
-            target.IgnoreRules.ShouldBeEquivalentTo(ignoreRules);
-            target.ExecuteOrderRules.ShouldBeEquivalentTo(executeOrderRules);
-            target.PostBuildActions.ShouldBeEquivalentTo(postBuildActions);
+            target.CreationRules.Should().BeEquivalentTo(creationRules);
+            target.TypeCreators.Should().BeEquivalentTo(typeCreators);
+            target.ValueGenerators.Should().BeEquivalentTo(valueGenerators);
+            target.IgnoreRules.Should().BeEquivalentTo(ignoreRules);
+            target.ExecuteOrderRules.Should().BeEquivalentTo(executeOrderRules);
+            target.PostBuildActions.Should().BeEquivalentTo(postBuildActions);
         }
 
         [Fact]
@@ -147,7 +131,7 @@
 
             var target = new BuildStrategy(expected);
 
-            target.ShouldBeEquivalentTo(expected);
+            target.Should().BeEquivalentTo(expected);
         }
 
         [Fact]
@@ -161,8 +145,7 @@
             var executeOrderRules = new List<ExecuteOrderRule>();
             var postBuildActions = new List<IPostBuildAction>();
 
-            Action action = () => new BuildStrategy(
-                null,
+            Action action = () => new BuildStrategy(null,
                 propertyResolver,
                 creationRules,
                 typeCreators,
@@ -171,7 +154,7 @@
                 executeOrderRules,
                 postBuildActions);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -185,8 +168,7 @@
             var executeOrderRules = new List<ExecuteOrderRule>();
             var postBuildActions = new List<IPostBuildAction>();
 
-            Action action = () => new BuildStrategy(
-                constructorResolver,
+            Action action = () => new BuildStrategy(constructorResolver,
                 propertyResolver,
                 null,
                 typeCreators,
@@ -195,7 +177,7 @@
                 executeOrderRules,
                 postBuildActions);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -209,8 +191,7 @@
             var ignoreRules = new List<IgnoreRule>();
             var postBuildActions = new List<IPostBuildAction>();
 
-            Action action = () => new BuildStrategy(
-                constructorResolver,
+            Action action = () => new BuildStrategy(constructorResolver,
                 propertyResolver,
                 creationRules,
                 typeCreators,
@@ -219,7 +200,7 @@
                 null,
                 postBuildActions);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -233,8 +214,7 @@
             var executeOrderRules = new List<ExecuteOrderRule>();
             var postBuildActions = new List<IPostBuildAction>();
 
-            Action action = () => new BuildStrategy(
-                constructorResolver,
+            Action action = () => new BuildStrategy(constructorResolver,
                 propertyResolver,
                 creationRules,
                 typeCreators,
@@ -243,7 +223,7 @@
                 executeOrderRules,
                 postBuildActions);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -257,8 +237,7 @@
             var ignoreRules = new List<IgnoreRule>();
             var executeOrderRules = new List<ExecuteOrderRule>();
 
-            Action action = () => new BuildStrategy(
-                constructorResolver,
+            Action action = () => new BuildStrategy(constructorResolver,
                 propertyResolver,
                 creationRules,
                 typeCreators,
@@ -267,7 +246,7 @@
                 executeOrderRules,
                 null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -281,8 +260,7 @@
             var executeOrderRules = new List<ExecuteOrderRule>();
             var postBuildActions = new List<IPostBuildAction>();
 
-            Action action = () => new BuildStrategy(
-                constructorResolver,
+            Action action = () => new BuildStrategy(constructorResolver,
                 null,
                 creationRules,
                 typeCreators,
@@ -291,7 +269,7 @@
                 executeOrderRules,
                 postBuildActions);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -299,7 +277,7 @@
         {
             Action action = () => new BuildStrategy(null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -313,8 +291,7 @@
             var executeOrderRules = new List<ExecuteOrderRule>();
             var postBuildActions = new List<IPostBuildAction>();
 
-            Action action = () => new BuildStrategy(
-                constructorResolver,
+            Action action = () => new BuildStrategy(constructorResolver,
                 propertyResolver,
                 creationRules,
                 null,
@@ -323,7 +300,7 @@
                 executeOrderRules,
                 postBuildActions);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -337,8 +314,7 @@
             var executeOrderRules = new List<ExecuteOrderRule>();
             var postBuildActions = new List<IPostBuildAction>();
 
-            Action action = () => new BuildStrategy(
-                constructorResolver,
+            Action action = () => new BuildStrategy(constructorResolver,
                 propertyResolver,
                 creationRules,
                 typeCreators,
@@ -347,7 +323,7 @@
                 executeOrderRules,
                 postBuildActions);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
     }
 }

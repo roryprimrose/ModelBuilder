@@ -29,7 +29,7 @@
             _func = evaluator;
             Priority = priority;
         }
-        
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="ExecuteOrderRule" /> class.
         /// </summary>
@@ -43,29 +43,29 @@
         /// </exception>
         public ExecuteOrderRule(Type declaringType, Type propertyType, Regex propertyExpression, int priority)
         {
-            if (declaringType == null &&
-                propertyType == null &&
-                propertyExpression == null)
+            if (declaringType == null
+                && propertyType == null
+                && propertyExpression == null)
             {
                 throw new ArgumentNullException(Resources.NoOwnerTypePropertyTypeOrPropertyExpression);
             }
 
             _func = (parentType, propType, name) =>
             {
-                if (declaringType != null &&
-                    declaringType != parentType)
+                if (declaringType != null
+                    && declaringType != parentType)
                 {
                     return false;
                 }
 
-                if (propertyType != null &&
-                    propertyType != propType)
+                if (propertyType != null
+                    && propertyType != propType)
                 {
                     return false;
                 }
 
-                if (propertyExpression != null &&
-                    propertyExpression.IsMatch(name) == false)
+                if (propertyExpression != null
+                    && propertyExpression.IsMatch(name) == false)
                 {
                     return false;
                 }
@@ -75,7 +75,7 @@
 
             Priority = priority;
         }
-        
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="ExecuteOrderRule" /> class.
         /// </summary>
@@ -89,29 +89,29 @@
         /// </exception>
         public ExecuteOrderRule(Type declaringType, Type propertyType, string propertyName, int priority)
         {
-            if (declaringType == null &&
-                propertyType == null &&
-                propertyName == null)
+            if (declaringType == null
+                && propertyType == null
+                && propertyName == null)
             {
                 throw new ArgumentNullException(Resources.NoOwnerTypePropertyTypeOrPropertyName);
             }
 
             _func = (parentType, propType, name) =>
             {
-                if (declaringType != null &&
-                    declaringType != parentType)
+                if (declaringType != null
+                    && declaringType != parentType)
                 {
                     return false;
                 }
 
-                if (propertyType != null &&
-                    propertyType != propType)
+                if (propertyType != null
+                    && propertyType != propType)
                 {
                     return false;
                 }
 
-                if (propertyName != null &&
-                    propertyName != name)
+                if (propertyName != null
+                    && propertyName != name)
                 {
                     return false;
                 }
@@ -121,7 +121,7 @@
 
             Priority = priority;
         }
-        
+
         /// <summary>
         ///     Gets whether the specified type and property name match this rule.
         /// </summary>

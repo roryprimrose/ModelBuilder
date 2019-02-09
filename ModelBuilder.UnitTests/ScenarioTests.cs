@@ -51,10 +51,15 @@
         [Fact]
         public void CanCreateCustomBuildStrategyToCreateModelsTest()
         {
-            var strategy = Model.DefaultBuildStrategy.Clone().Set(x => x.ValueGenerators.Clear())
-                .AddValueGenerator<StringValueGenerator>().AddValueGenerator<NumericValueGenerator>()
-                .AddValueGenerator<BooleanValueGenerator>().AddValueGenerator<GuidValueGenerator>()
-                .AddValueGenerator<DateTimeValueGenerator>().AddValueGenerator<EnumValueGenerator>().Compile();
+            var strategy = Model.DefaultBuildStrategy.Clone()
+                .Set(x => x.ValueGenerators.Clear())
+                .AddValueGenerator<StringValueGenerator>()
+                .AddValueGenerator<NumericValueGenerator>()
+                .AddValueGenerator<BooleanValueGenerator>()
+                .AddValueGenerator<GuidValueGenerator>()
+                .AddValueGenerator<DateTimeValueGenerator>()
+                .AddValueGenerator<EnumValueGenerator>()
+                .Compile();
 
             var actual = strategy.Create<Person>();
 
@@ -214,7 +219,9 @@
         public void CreateBuildsLogOfPostActionsTest()
         {
             // We must explicitly add the module that brings in DummyPostBuildAction because module scanning not available in all frameworks that run this test
-            var strategy = Model.DefaultBuildStrategy.Clone().AddCompilerModule<TestCompilerModule>().Compile()
+            var strategy = Model.DefaultBuildStrategy.Clone()
+                .AddCompilerModule<TestCompilerModule>()
+                .Compile()
                 .GetExecuteStrategy<Company>();
 
             strategy.Create();
@@ -369,7 +376,7 @@
         {
             var typeCreator = Substitute.For<ITypeCreator>();
 
-            typeCreator.CanCreate(typeof(Address), "Address", Arg.Any<LinkedList<object>>()).Returns(true);
+            typeCreator.CanCreate(typeof(Address), "Address", Arg.Any<IBuildChain>()).Returns(true);
             typeCreator.Priority.Returns(int.MaxValue);
             typeCreator.AutoDetectConstructor.Returns(true);
             typeCreator.AutoPopulate.Returns(true);
@@ -384,8 +391,11 @@
 
             Action action = () => target.CreateWith();
 
-            var exception = action.ShouldThrow<BuildException>().Where(x => x.Message != null)
-                .Where(x => x.BuildLog != null).Which;
+            var exception = action.Should()
+                .Throw<BuildException>()
+                .Where(x => x.Message != null)
+                .Where(x => x.BuildLog != null)
+                .Which;
 
             _output.WriteLine(exception.Message);
         }
@@ -393,22 +403,15 @@
         [Fact]
         public void CreateWithDoesNotSetPropertiesProvidedByConstructorTest()
         {
-            var args = new object[]
-            {
-                new Company(),
-                Guid.NewGuid(),
-                123,
-                456,
-                true
-            };
-            
+            var args = new object[] {new Company(), Guid.NewGuid(), 123, 456, true};
+
             var actual = Model.CreateWith<WithConstructorParameters>(args);
 
             actual.First.Should().BeSameAs(args[0]);
-            actual.Id.Should().Be((Guid)args[1]);
-            actual.RefNumber.Should().Be((int?)args[2]);
-            actual.Number.Should().Be((int)args[3]);
-            actual.Value.Should().Be((bool)args[4]);
+            actual.Id.Should().Be((Guid) args[1]);
+            actual.RefNumber.Should().Be((int?) args[2]);
+            actual.Number.Should().Be((int) args[3]);
+            actual.Value.Should().Be((bool) args[4]);
         }
 
         [Fact]
@@ -446,14 +449,7 @@
 
             target.Initialize(configuration, buildLog);
 
-            var args = new object[]
-            {
-                null,
-                Guid.Empty,
-                null,
-                0,
-                false
-            };
+            var args = new object[] {null, Guid.Empty, null, 0, false};
 
             var actual = Model.CreateWith<WithConstructorParameters>(args);
 
@@ -473,15 +469,12 @@
 
             target.Initialize(configuration, buildLog);
 
-            var args = new object[]
-            {
-                Guid.NewGuid().ToString()
-            };
+            var args = new object[] {Guid.NewGuid().ToString()};
 
             var actual = Model.CreateWith<WithMixedValueParameters>(args);
 
-            actual.FirstName.Should().NotBe((string)args[0]);
-            actual.LastName.Should().NotBe((string)args[0]);
+            actual.FirstName.Should().NotBe((string) args[0]);
+            actual.LastName.Should().NotBe((string) args[0]);
         }
 
         [Fact]
@@ -489,18 +482,20 @@
         {
             var expected = Guid.NewGuid();
 
-            var strategy = Model.DefaultBuildStrategy.Clone().AddCreationRule<Person>(x => x.Id, 100, expected)
+            var strategy = Model.DefaultBuildStrategy.Clone()
+                .AddCreationRule<Person>(x => x.Id, 100, expected)
                 .Compile();
 
             var actual = strategy.Create<List<Person>>();
 
             actual.All(x => x.Id == expected).Should().BeTrue();
         }
-        
+
         [Fact]
         public void IgnoringSkipsPropertyAssignmentOfNestedObjectsTest()
         {
-            var actual = Model.Ignoring<Person>(x => x.FirstName).Ignoring<Address>(x => x.AddressLine1)
+            var actual = Model.Ignoring<Person>(x => x.FirstName)
+                .Ignoring<Address>(x => x.AddressLine1)
                 .Create<Person>();
 
             actual.Should().NotBeNull();
@@ -527,7 +522,8 @@
         public void MailinatorEmailGeneratorIsAssignedAgainstAllInstancesTest()
         {
             var strategy = new DefaultBuildStrategyCompiler().RemoveValueGenerator<EmailValueGenerator>()
-                .AddValueGenerator<MailinatorEmailValueGenerator>().Compile();
+                .AddValueGenerator<MailinatorEmailValueGenerator>()
+                .Compile();
 
             var actual = strategy.Create<List<Person>>();
 
@@ -621,19 +617,18 @@
             for (var index = 0; index < MaxTasks; index++)
             {
                 var loopIndex = index;
-                var task = Task<string>.Factory.StartNew(
-                    () =>
-                    {
-                        var strategy = buildStrategy.GetExecuteStrategy<Empty>();
+                var task = Task<string>.Factory.StartNew(() =>
+                {
+                    var strategy = buildStrategy.GetExecuteStrategy<Empty>();
 
-                        strategy.CreateWith();
+                    strategy.CreateWith();
 
-                        return "Iteration " + loopIndex
+                    return "Iteration " + loopIndex
 #if NET452
                                + " on thread " + System.Threading.Thread.CurrentThread.ManagedThreadId
 #endif
-                                            + Environment.NewLine + strategy.Log.Output;
-                    });
+                                        + Environment.NewLine + strategy.Log.Output;
+                });
 
                 tasks.Add(task);
             }

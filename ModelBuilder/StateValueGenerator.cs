@@ -2,7 +2,6 @@
 {
     using System;
     using System.Linq;
-    using System.Text.RegularExpressions;
     using ModelBuilder.Data;
 
     /// <summary>
@@ -14,24 +13,27 @@
         /// <summary>
         ///     Initializes a new instance of the <see cref="StateValueGenerator" /> class.
         /// </summary>
-        public StateValueGenerator() : base(PropertyExpression.State, typeof(string))
+        public StateValueGenerator()
+            : base(PropertyExpression.State, typeof(string))
         {
         }
 
         /// <inheritdoc />
         protected override object GenerateValue(Type type, string referenceName, IExecuteStrategy executeStrategy)
         {
-            var context = executeStrategy?.BuildChain?.Last?.Value;
+            var context = executeStrategy?.BuildChain?.Last;
             var country = GetValue<string>(PropertyExpression.Country, context);
             Location location = null;
 
             if (string.IsNullOrWhiteSpace(country) == false)
             {
-                var locationMatches = TestData.Locations.Where(x => x.Country.Equals(country, StringComparison.OrdinalIgnoreCase)).ToList();
+                var locationMatches = TestData.Locations
+                    .Where(x => x.Country.Equals(country, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
 
                 location = locationMatches.Next();
             }
-            
+
             if (location == null)
             {
                 // There was either no country or no match on the country
@@ -43,5 +45,5 @@
 
         /// <inheritdoc />
         public override int Priority { get; } = 1000;
-    } 
+    }
 }

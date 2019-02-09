@@ -1,14 +1,15 @@
-﻿using System;
+﻿#if NET452
 using System.IO;
-#if NET452
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 #endif
-using FluentAssertions;
-using Xunit;
 
 namespace ModelBuilder.UnitTests
 {
+    using System;
+    using FluentAssertions;
+    using Xunit;
+
     public class BuildExceptionTests
     {
         [Fact]
@@ -110,7 +111,7 @@ namespace ModelBuilder.UnitTests
                 outputException.ReferenceName.Should().Be(referenceName);
                 outputException.Context.Should().BeNull();
                 outputException.BuildLog.Should().Be(buildLog);
-                outputException.InnerException.Message.ShouldBeEquivalentTo(inner.Message);
+                outputException.InnerException.Message.Should().BeEquivalentTo(inner.Message);
             }
         }
 
@@ -123,7 +124,7 @@ namespace ModelBuilder.UnitTests
 
             Action action = () => { target.GetObjectData(null, streamingContext); };
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 #endif
     }

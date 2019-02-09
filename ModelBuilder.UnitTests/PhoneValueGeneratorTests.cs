@@ -1,7 +1,6 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
-    using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using FluentAssertions;
@@ -14,16 +13,13 @@
         [Fact]
         public void GenerateReturnsRandomPhoneMatchingCaseInsensitiveCountryTest()
         {
-            var address = new Address
-            {
-                Country = "UNITED STATES"
-            };
-            var buildChain = new LinkedList<object>();
+            var address = new Address {Country = "UNITED STATES"};
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            buildChain.AddFirst(address);
+            buildChain.Push(address);
 
             var target = new PhoneValueGenerator();
 
@@ -41,16 +37,13 @@
         [Fact]
         public void GenerateReturnsRandomPhoneMatchingCountryTest()
         {
-            var address = new Address
-            {
-                Country = "United States"
-            };
-            var buildChain = new LinkedList<object>();
+            var address = new Address {Country = "United States"};
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            buildChain.AddFirst(address);
+            buildChain.Push(address);
 
             var target = new PhoneValueGenerator();
 
@@ -66,16 +59,13 @@
         [Fact]
         public void GenerateReturnsRandomPhoneWhenNoMatchingCountryTest()
         {
-            var address = new Address
-            {
-                Country = Guid.NewGuid().ToString()
-            };
-            var buildChain = new LinkedList<object>();
+            var address = new Address {Country = Guid.NewGuid().ToString()};
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            buildChain.AddFirst(address);
+            buildChain.Push(address);
 
             var target = new PhoneValueGenerator();
 
@@ -88,12 +78,12 @@
         public void GenerateReturnsRandomValueTest()
         {
             var address = new Address();
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            buildChain.AddFirst(address);
+            buildChain.Push(address);
 
             var target = new PhoneValueGenerator();
 
@@ -135,16 +125,16 @@
         public void GenerateReturnsValuesForSeveralNameFormatsTest(Type type, string referenceName, bool expected)
         {
             var address = new Address();
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            buildChain.AddFirst(address);
+            buildChain.Push(address);
 
             var target = new PhoneValueGenerator();
 
-            var actual = (string)target.Generate(type, referenceName, executeStrategy);
+            var actual = (string) target.Generate(type, referenceName, executeStrategy);
 
             actual.Should().NotBeNullOrEmpty();
         }
@@ -155,7 +145,7 @@
         [InlineData(typeof(string), "Stuff")]
         public void GenerateThrowsExceptionWithInvalidParametersTest(Type type, string referenceName)
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -164,7 +154,7 @@
 
             Action action = () => target.Generate(type, referenceName, executeStrategy);
 
-            action.ShouldThrow<NotSupportedException>();
+            action.Should().Throw<NotSupportedException>();
         }
 
         [Fact]
@@ -207,9 +197,9 @@
         public void IsSupportedTest(Type type, string referenceName, bool expected)
         {
             var address = new Address();
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
 
-            buildChain.AddFirst(address);
+            buildChain.Push(address);
 
             var target = new PhoneValueGenerator();
 
@@ -225,7 +215,7 @@
 
             Action action = () => target.IsSupported(null, null, null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]

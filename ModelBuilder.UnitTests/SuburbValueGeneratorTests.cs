@@ -1,20 +1,18 @@
-﻿using System;
-using System.IO;
-using FluentAssertions;
-using Xunit;
-
-namespace ModelBuilder.UnitTests
+﻿namespace ModelBuilder.UnitTests
 {
-    using System.Collections.Generic;
+    using System;
+    using System.IO;
+    using FluentAssertions;
     using ModelBuilder.Data;
     using NSubstitute;
+    using Xunit;
 
     public class SuburbValueGeneratorTests
     {
         [Fact]
         public void GenerateReturnsRandomSuburbTest()
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -36,7 +34,7 @@ namespace ModelBuilder.UnitTests
         [InlineData(typeof(string), "Suburb", true)]
         public void GenerateReturnsValuesForSeveralNameFormatsTest(Type type, string referenceName, bool expected)
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -54,7 +52,7 @@ namespace ModelBuilder.UnitTests
         [InlineData(typeof(string), "Stuff")]
         public void GenerateThrowsExceptionWithInvalidParametersTest(Type type, string referenceName)
         {
-            var buildChain = new LinkedList<object>();
+            var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -63,9 +61,9 @@ namespace ModelBuilder.UnitTests
 
             Action action = () => target.Generate(type, referenceName, executeStrategy);
 
-            action.ShouldThrow<NotSupportedException>();
+            action.Should().Throw<NotSupportedException>();
         }
-        
+
         [Fact]
         public void HasHigherPriorityThanStringValueGeneratorTest()
         {
@@ -98,7 +96,7 @@ namespace ModelBuilder.UnitTests
 
             Action action = () => target.IsSupported(null, null, null);
 
-            action.ShouldThrow<ArgumentNullException>();
+            action.Should().Throw<ArgumentNullException>();
         }
     }
 }

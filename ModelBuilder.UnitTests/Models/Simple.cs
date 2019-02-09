@@ -1,12 +1,13 @@
-﻿using System;
-
-namespace ModelBuilder.UnitTests
+﻿namespace ModelBuilder.UnitTests
 {
+    using System;
+
     public class Simple
     {
-        public int Age => DateTime.UtcNow.Subtract(DOB).Days/365;
+        public int Age => DateTime.UtcNow.Subtract(DOB).Days / 365;
 
         public DateTime DOB { get; set; }
+
         public string FirstName { get; set; }
 
         public Guid Id { get; set; }

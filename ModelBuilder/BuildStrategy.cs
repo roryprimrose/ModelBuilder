@@ -36,15 +36,15 @@
             IEnumerable<IValueGenerator> valueGenerators,
             IEnumerable<IgnoreRule> ignoreRules,
             IEnumerable<ExecuteOrderRule> executeOrderRules,
-            IEnumerable<IPostBuildAction> postBuildActions) : base(
-            constructorResolver,
-            propertyResolver,
-            creationRules,
-            typeCreators,
-            valueGenerators,
-            ignoreRules,
-            executeOrderRules,
-            postBuildActions)
+            IEnumerable<IPostBuildAction> postBuildActions)
+            : base(constructorResolver,
+                propertyResolver,
+                creationRules,
+                typeCreators,
+                valueGenerators,
+                ignoreRules,
+                executeOrderRules,
+                postBuildActions)
         {
         }
 
@@ -53,7 +53,8 @@
         /// </summary>
         /// <param name="strategy">The build strategy.</param>
         /// <exception cref="ArgumentNullException">The <paramref name="strategy" /> parameter is null.</exception>
-        public BuildStrategy(IBuildStrategy strategy) : base(strategy)
+        public BuildStrategy(IBuildStrategy strategy)
+            : base(strategy)
         {
         }
 

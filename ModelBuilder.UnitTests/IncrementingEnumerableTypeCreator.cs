@@ -1,11 +1,10 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
-    using System.Collections.Generic;
 
     public class IncrementingEnumerableTypeCreator : EnumerableTypeCreator
     {
-        public override bool CanCreate(Type type, string referenceName, LinkedList<object> buildChain)
+        public override bool CanCreate(Type type, string referenceName, IBuildChain buildChain)
         {
             if (base.CanCreate(type, referenceName, buildChain) == false)
             {
@@ -24,7 +23,7 @@
             return generator.IsSupported(baseType);
         }
 
-        public override bool CanPopulate(Type type, string referenceName, LinkedList<object> buildChain)
+        public override bool CanPopulate(Type type, string referenceName, IBuildChain buildChain)
         {
             if (base.CanPopulate(type, referenceName, buildChain) == false)
             {

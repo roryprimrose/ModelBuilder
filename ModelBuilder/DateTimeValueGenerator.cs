@@ -12,8 +12,7 @@
         ///     Initializes a new instance of the <see cref="DateTimeValueGenerator" /> class.
         /// </summary>
         public DateTimeValueGenerator()
-            : base(
-                typeof(DateTime),
+            : base(typeof(DateTime),
                 typeof(DateTime?),
                 typeof(DateTimeOffset),
                 typeof(DateTimeOffset?),
@@ -40,7 +39,7 @@
                 // Hijack the type to generator so we can continue with the normal code pointed at the correct type to generate
                 generateType = type.GetGenericArguments()[0];
             }
-            
+
             var tenYears = TimeSpan.FromDays(3650);
             var shift = Generator.NextValue(0, tenYears.TotalSeconds);
 

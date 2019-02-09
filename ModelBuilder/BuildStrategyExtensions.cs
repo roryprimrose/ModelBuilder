@@ -109,8 +109,9 @@ namespace ModelBuilder
         ///     The <paramref name="expression" /> parameter does not match a property on the type
         ///     to generate.
         /// </exception>
-        [SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters",
-             Justification = "This type is required in order to support the fluent syntax of call sites.")]
+        [SuppressMessage("Microsoft.Design",
+            "CA1011:ConsiderPassingBaseTypesAsParameters",
+            Justification = "This type is required in order to support the fluent syntax of call sites.")]
         public static IBuildStrategy Ignoring<T>(
             this IBuildStrategy buildStrategy,
             Expression<Func<T, object>> expression)
@@ -169,8 +170,7 @@ namespace ModelBuilder
 
             if (buildLog == null)
             {
-                var message = string.Format(
-                    CultureInfo.CurrentCulture,
+                var message = string.Format(CultureInfo.CurrentCulture,
                     Resources.BuildStrategy_BuildLogRequired,
                     buildStrategy.GetType().FullName,
                     nameof(IBuildLog),

@@ -1,7 +1,6 @@
 namespace ModelBuilder
 {
     using System;
-    using System.Collections.Generic;
 
     /// <summary>
     ///     The <see cref="CountValueGenerator" />
@@ -10,7 +9,7 @@ namespace ModelBuilder
     public class CountValueGenerator : NumericValueGenerator
     {
         /// <inheritdoc />
-        public override bool IsSupported(Type type, string referenceName, LinkedList<object> buildChain)
+        public override bool IsSupported(Type type, string referenceName, IBuildChain buildChain)
         {
             var baseSupported = base.IsSupported(type, referenceName, buildChain);
 
