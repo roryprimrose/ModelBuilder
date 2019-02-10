@@ -29,6 +29,8 @@
 
         public ReadOnlyCollection<ITypeCreator> TypeCreators { get; }
 
+        public ReadOnlyCollection<TypeMappingRule> TypeMappingRules { get; }
+
         public ReadOnlyCollection<IValueGenerator> ValueGenerators { get; }
     }
 }

@@ -35,6 +35,7 @@
             IEnumerable<ITypeCreator> typeCreators,
             IEnumerable<IValueGenerator> valueGenerators,
             IEnumerable<IgnoreRule> ignoreRules,
+            IEnumerable<TypeMappingRule> typeMappingRules,
             IEnumerable<ExecuteOrderRule> executeOrderRules,
             IEnumerable<IPostBuildAction> postBuildActions)
             : base(constructorResolver,
@@ -43,6 +44,7 @@
                 typeCreators,
                 valueGenerators,
                 ignoreRules,
+                typeMappingRules,
                 executeOrderRules,
                 postBuildActions)
         {

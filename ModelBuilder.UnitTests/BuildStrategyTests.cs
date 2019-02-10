@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using FluentAssertions;
     using NSubstitute;
     using Xunit;
@@ -17,6 +18,7 @@
             var typeCreators = new List<ITypeCreator>();
             var valueGenerators = new List<IValueGenerator>();
             var ignoreRules = new List<IgnoreRule>();
+            var typeMappingRules = new List<TypeMappingRule>();
             var executeOrderRules = new List<ExecuteOrderRule>();
             var postBuildActions = new List<IPostBuildAction>();
 
@@ -26,6 +28,7 @@
                 typeCreators,
                 valueGenerators,
                 ignoreRules,
+                typeMappingRules,
                 executeOrderRules,
                 postBuildActions);
 
@@ -43,6 +46,7 @@
             var typeCreators = new List<ITypeCreator>();
             var valueGenerators = new List<IValueGenerator>();
             var ignoreRules = new List<IgnoreRule>();
+            var typeMappingRules = new List<TypeMappingRule>();
             var executeOrderRules = new List<ExecuteOrderRule>();
             var postBuildActions = new List<IPostBuildAction>();
 
@@ -52,6 +56,7 @@
                 typeCreators,
                 valueGenerators,
                 ignoreRules,
+                typeMappingRules,
                 executeOrderRules,
                 postBuildActions);
 
@@ -70,6 +75,7 @@
             var typeCreators = new List<ITypeCreator>();
             var valueGenerators = new List<IValueGenerator>();
             var ignoreRules = new List<IgnoreRule>();
+            var typeMappingRules = new List<TypeMappingRule>();
             var executeOrderRules = new List<ExecuteOrderRule>();
             var postBuildActions = new List<IPostBuildAction>();
 
@@ -79,6 +85,7 @@
                 typeCreators,
                 valueGenerators,
                 ignoreRules,
+                typeMappingRules,
                 executeOrderRules,
                 postBuildActions);
 
@@ -99,6 +106,8 @@
             var typeCreators = new List<ITypeCreator> {new DefaultTypeCreator()};
             var valueGenerators = new List<IValueGenerator> {new AddressValueGenerator()};
             var ignoreRules = new List<IgnoreRule> {new IgnoreRule(typeof(Person), "FirstName")};
+            var typeMappingRules =
+                new List<TypeMappingRule> {new TypeMappingRule(typeof(Stream), typeof(MemoryStream))};
             var executeOrderRules = new List<ExecuteOrderRule>
             {
                 new ExecuteOrderRule(typeof(Person), typeof(string), "LastName", int.MinValue)
@@ -111,6 +120,7 @@
                 typeCreators,
                 valueGenerators,
                 ignoreRules,
+                typeMappingRules,
                 executeOrderRules,
                 postBuildActions);
 
@@ -120,6 +130,7 @@
             target.TypeCreators.Should().BeEquivalentTo(typeCreators);
             target.ValueGenerators.Should().BeEquivalentTo(valueGenerators);
             target.IgnoreRules.Should().BeEquivalentTo(ignoreRules);
+            target.TypeMappingRules.Should().BeEquivalentTo(typeMappingRules);
             target.ExecuteOrderRules.Should().BeEquivalentTo(executeOrderRules);
             target.PostBuildActions.Should().BeEquivalentTo(postBuildActions);
         }
@@ -142,6 +153,7 @@
             var typeCreators = new List<ITypeCreator>();
             var valueGenerators = new List<IValueGenerator>();
             var ignoreRules = new List<IgnoreRule>();
+            var typeMappingRules = new List<TypeMappingRule>();
             var executeOrderRules = new List<ExecuteOrderRule>();
             var postBuildActions = new List<IPostBuildAction>();
 
@@ -151,6 +163,7 @@
                 typeCreators,
                 valueGenerators,
                 ignoreRules,
+                typeMappingRules,
                 executeOrderRules,
                 postBuildActions);
 
@@ -165,6 +178,7 @@
             var typeCreators = new List<ITypeCreator>();
             var valueGenerators = new List<IValueGenerator>();
             var ignoreRules = new List<IgnoreRule>();
+            var typeMappingRules = new List<TypeMappingRule>();
             var executeOrderRules = new List<ExecuteOrderRule>();
             var postBuildActions = new List<IPostBuildAction>();
 
@@ -174,6 +188,7 @@
                 typeCreators,
                 valueGenerators,
                 ignoreRules,
+                typeMappingRules,
                 executeOrderRules,
                 postBuildActions);
 
@@ -189,6 +204,7 @@
             var typeCreators = new List<ITypeCreator>();
             var valueGenerators = new List<IValueGenerator>();
             var ignoreRules = new List<IgnoreRule>();
+            var typeMappingRules = new List<TypeMappingRule>();
             var postBuildActions = new List<IPostBuildAction>();
 
             Action action = () => new BuildStrategy(constructorResolver,
@@ -197,6 +213,7 @@
                 typeCreators,
                 valueGenerators,
                 ignoreRules,
+                typeMappingRules,
                 null,
                 postBuildActions);
 
@@ -211,6 +228,7 @@
             var creationRules = new List<CreationRule>();
             var typeCreators = new List<ITypeCreator>();
             var valueGenerators = new List<IValueGenerator>();
+            var typeMappingRules = new List<TypeMappingRule>();
             var executeOrderRules = new List<ExecuteOrderRule>();
             var postBuildActions = new List<IPostBuildAction>();
 
@@ -220,6 +238,7 @@
                 typeCreators,
                 valueGenerators,
                 null,
+                typeMappingRules,
                 executeOrderRules,
                 postBuildActions);
 
@@ -235,6 +254,7 @@
             var typeCreators = new List<ITypeCreator>();
             var valueGenerators = new List<IValueGenerator>();
             var ignoreRules = new List<IgnoreRule>();
+            var typeMappingRules = new List<TypeMappingRule>();
             var executeOrderRules = new List<ExecuteOrderRule>();
 
             Action action = () => new BuildStrategy(constructorResolver,
@@ -243,6 +263,7 @@
                 typeCreators,
                 valueGenerators,
                 ignoreRules,
+                typeMappingRules,
                 executeOrderRules,
                 null);
 
@@ -257,6 +278,7 @@
             var typeCreators = new List<ITypeCreator>();
             var valueGenerators = new List<IValueGenerator>();
             var ignoreRules = new List<IgnoreRule>();
+            var typeMappingRules = new List<TypeMappingRule>();
             var executeOrderRules = new List<ExecuteOrderRule>();
             var postBuildActions = new List<IPostBuildAction>();
 
@@ -266,6 +288,7 @@
                 typeCreators,
                 valueGenerators,
                 ignoreRules,
+                typeMappingRules,
                 executeOrderRules,
                 postBuildActions);
 
@@ -288,6 +311,7 @@
             var creationRules = new List<CreationRule>();
             var valueGenerators = new List<IValueGenerator>();
             var ignoreRules = new List<IgnoreRule>();
+            var typeMappingRules = new List<TypeMappingRule>();
             var executeOrderRules = new List<ExecuteOrderRule>();
             var postBuildActions = new List<IPostBuildAction>();
 
@@ -297,6 +321,32 @@
                 null,
                 valueGenerators,
                 ignoreRules,
+                typeMappingRules,
+                executeOrderRules,
+                postBuildActions);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void ThrowsExceptionWhenCreatedWithNullTypeMappingRulesTest()
+        {
+            var constructorResolver = Substitute.For<IConstructorResolver>();
+            var propertyResolver = Substitute.For<IPropertyResolver>();
+            var creationRules = new List<CreationRule>();
+            var typeCreators = new List<ITypeCreator>();
+            var valueGenerators = new List<IValueGenerator>();
+            var ignoreRules = new List<IgnoreRule>();
+            var executeOrderRules = new List<ExecuteOrderRule>();
+            var postBuildActions = new List<IPostBuildAction>();
+
+            Action action = () => new BuildStrategy(constructorResolver,
+                propertyResolver,
+                creationRules,
+                typeCreators,
+                valueGenerators,
+                ignoreRules,
+                null,
                 executeOrderRules,
                 postBuildActions);
 
@@ -311,6 +361,7 @@
             var creationRules = new List<CreationRule>();
             var typeCreators = new List<ITypeCreator>();
             var ignoreRules = new List<IgnoreRule>();
+            var typeMappingRules = new List<TypeMappingRule>();
             var executeOrderRules = new List<ExecuteOrderRule>();
             var postBuildActions = new List<IPostBuildAction>();
 
@@ -320,6 +371,7 @@
                 typeCreators,
                 null,
                 ignoreRules,
+                typeMappingRules,
                 executeOrderRules,
                 postBuildActions);
 

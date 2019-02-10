@@ -28,6 +28,7 @@
             TypeCreators = new ReadOnlyCollection<ITypeCreator>(strategy.TypeCreators.ToList());
             ValueGenerators = new ReadOnlyCollection<IValueGenerator>(strategy.ValueGenerators.ToList());
             IgnoreRules = new ReadOnlyCollection<IgnoreRule>(strategy.IgnoreRules.ToList());
+            TypeMappingRules = new ReadOnlyCollection<TypeMappingRule>(strategy.TypeMappingRules.ToList());
             ExecuteOrderRules = new ReadOnlyCollection<ExecuteOrderRule>(strategy.ExecuteOrderRules.ToList());
             PostBuildActions = new ReadOnlyCollection<IPostBuildAction>(strategy.PostBuildActions.ToList());
             CreationRules = new ReadOnlyCollection<CreationRule>(strategy.CreationRules.ToList());
@@ -59,6 +60,7 @@
             IEnumerable<ITypeCreator> typeCreators,
             IEnumerable<IValueGenerator> valueGenerators,
             IEnumerable<IgnoreRule> ignoreRules,
+            IEnumerable<TypeMappingRule> typeMappingRules,
             IEnumerable<ExecuteOrderRule> executeOrderRules,
             IEnumerable<IPostBuildAction> postBuildActions)
         {
@@ -92,6 +94,11 @@
                 throw new ArgumentNullException(nameof(ignoreRules));
             }
 
+            if (typeMappingRules == null)
+            {
+                throw new ArgumentNullException(nameof(typeMappingRules));
+            }
+
             if (executeOrderRules == null)
             {
                 throw new ArgumentNullException(nameof(executeOrderRules));
@@ -110,6 +117,7 @@
             ExecuteOrderRules = new ReadOnlyCollection<ExecuteOrderRule>(executeOrderRules.ToList());
             PostBuildActions = new ReadOnlyCollection<IPostBuildAction>(postBuildActions.ToList());
             CreationRules = new ReadOnlyCollection<CreationRule>(creationRules.ToList());
+            TypeMappingRules = new ReadOnlyCollection<TypeMappingRule>(typeMappingRules.ToList());
         }
 
         /// <inheritdoc />
@@ -138,6 +146,9 @@
 
         /// <inheritdoc />
         public ReadOnlyCollection<ITypeCreator> TypeCreators { get; }
+
+        /// <inheritdoc />
+        public ReadOnlyCollection<TypeMappingRule> TypeMappingRules { get; }
 
         /// <inheritdoc />
         public ReadOnlyCollection<IValueGenerator> ValueGenerators { get; }
