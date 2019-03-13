@@ -83,6 +83,17 @@
 
             return BuildStrategy.Ignoring(expression);
         }
+        
+        /// <summary>
+        ///     Returns a <see cref="IBuildStrategy" /> with a new <see cref="TypeMappingRule" /> that matches the specified expression.
+        /// </summary>
+        /// <typeparam name="S">The source type to use for type mapping.</typeparam>
+        /// <typeparam name="T">The target type to use for type mapping.</typeparam>
+        /// <returns>A new build strategy.</returns>
+        public static IBuildStrategy Mapping<S, T>()
+        {
+            return BuildStrategy.Mapping<S, T>();
+        }
 
         /// <summary>
         ///     Populates the properties of the specified instance using the default build and execute strategies.

@@ -135,6 +135,32 @@ namespace ModelBuilder
         }
 
         /// <summary>
+        ///     Appends a new <see cref="TypeMappingRule" /> to the specified <see cref="IExecuteStrategy{T}" /> using the specified types.
+        /// </summary>
+        /// <typeparam name="S">The source type to use for type mapping.</typeparam>
+        /// <typeparam name="T">The target type to use for type mapping.</typeparam>
+        /// <param name="buildStrategy">The build strategy to clone.</param>
+        /// <returns>A cloned build strategy with the new rule.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="buildStrategy" /> parameter is null.</exception>
+        [SuppressMessage("Microsoft.Design",
+            "CA1011:ConsiderPassingBaseTypesAsParameters",
+            Justification = "This type is required in order to support the fluent syntax of call sites.")]
+        public static IBuildStrategy Mapping<S, T>(this IBuildStrategy buildStrategy)
+        {
+            if (buildStrategy == null)
+            {
+                throw new ArgumentNullException(nameof(buildStrategy));
+            }
+
+            var sourceType = typeof(S);
+            var targetType = typeof(T);
+
+            var rule = new TypeMappingRule(sourceType, targetType);
+
+            return buildStrategy.Clone().Add(rule).Compile();
+        }
+
+        /// <summary>
         ///     Populates the instance using the specified build strategy.
         /// </summary>
         /// <typeparam name="T">The type of instance to populate.</typeparam>
@@ -184,19 +210,6 @@ namespace ModelBuilder
             executeStrategy.Initialize(buildStrategy, buildLog);
 
             return executeStrategy;
-        }
-
-        /// <summary>
-        ///     Returns a new <see cref="IExecuteStrategy{T}" /> for the specified build strategy.
-        /// </summary>
-        /// <typeparam name="T">The type of execute strategy to return.</typeparam>
-        /// <param name="buildStrategy">The build strategy.</param>
-        /// <returns>A new execute strategy.</returns>
-        /// <exception cref="ArgumentNullException">The <paramref name="buildStrategy" /> parameter is null.</exception>
-        [Obsolete("This member will be removed in the next major version. Use UsingExecuteStrategy<T>() instead.")]
-        public static T With<T>(this IBuildStrategy buildStrategy) where T : IExecuteStrategy, new()
-        {
-            return UsingExecuteStrategy<T>(buildStrategy);
         }
     }
 }

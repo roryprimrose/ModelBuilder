@@ -6,6 +6,7 @@
     using System.Globalization;
     using System.Linq;
     using System.Reflection;
+    using System.Security.Cryptography.X509Certificates;
     using ModelBuilder.Properties;
 
     /// <summary>
@@ -138,14 +139,23 @@
             }
 
             EnsureInitialized();
+            
+            var typeToBuild = type;
+
+            var typeMappingRule = Configuration.TypeMappingRules?.Where(x => x.SourceType == type).FirstOrDefault();
+
+            if (typeMappingRule != null)
+            {
+                typeToBuild = typeMappingRule.TargetType;
+            }
 
             var buildChain = BuildChain;
 
-            var circularReference = buildChain.FirstOrDefault(x => x.GetType() == type);
+            var circularReference = buildChain.FirstOrDefault(x => x.GetType() == typeToBuild);
 
             if (circularReference != null)
             {
-                Log.CircularReferenceDetected(type);
+                Log.CircularReferenceDetected(typeToBuild);
 
                 return circularReference;
             }
@@ -172,7 +182,7 @@
             {
                 // Next check if this is a type supported by a value generator
                 var valueGenerator = Configuration.ValueGenerators
-                    ?.Where(x => x.IsSupported(type, referenceName, buildChain))
+                    ?.Where(x => x.IsSupported(typeToBuild, referenceName, buildChain))
                     .OrderByDescending(x => x.Priority)
                     .FirstOrDefault();
 
@@ -182,13 +192,13 @@
                     generatorType = valueGenerator.GetType();
 
                     // The value generator is targeted against the type of the reference being generated for
-                    targetType = type;
+                    targetType = typeToBuild;
                 }
             }
 
             if (generator != null)
             {
-                Log.CreatingValue(type, generatorType, context);
+                Log.CreatingValue(typeToBuild, generatorType, context);
 
                 try
                 {
@@ -207,31 +217,31 @@
                     var buildLog = Log.Output;
                     var message = string.Format(CultureInfo.CurrentCulture,
                         MessageFormat,
-                        type.FullName,
+                        typeToBuild.FullName,
                         generatorType.FullName,
                         ex.GetType().Name,
                         ex.Message,
                         Environment.NewLine,
                         buildLog);
 
-                    throw new BuildException(message, type, referenceName, context, buildLog, ex);
+                    throw new BuildException(message, typeToBuild, referenceName, context, buildLog, ex);
                 }
             }
 
-            var typeCreator = Configuration.TypeCreators?.Where(x => x.CanCreate(type, referenceName, buildChain))
+            var typeCreator = Configuration.TypeCreators?.Where(x => x.CanCreate(typeToBuild, referenceName, buildChain))
                 .OrderByDescending(x => x.Priority)
                 .FirstOrDefault();
 
             if (typeCreator == null)
             {
-                throw CreateBuildException(type, referenceName, context);
+                throw CreateBuildException(typeToBuild, referenceName, context);
             }
 
-            Log.CreatingType(type, typeCreator.GetType(), context);
+            Log.CreatingType(typeToBuild, typeCreator.GetType(), context);
 
             try
             {
-                var instance = CreateAndPopulate(type, referenceName, buildChain, args, typeCreator);
+                var instance = CreateAndPopulate(typeToBuild, referenceName, buildChain, args, typeCreator);
 
                 return instance;
             }
@@ -249,18 +259,18 @@
                 var buildLog = Log.Output;
                 var message = string.Format(CultureInfo.CurrentCulture,
                     MessageFormat,
-                    type.FullName,
+                    typeToBuild.FullName,
                     typeCreator.GetType().FullName,
                     ex.GetType().Name,
                     ex.Message,
                     Environment.NewLine,
                     buildLog);
 
-                throw new BuildException(message, type, referenceName, context, buildLog, ex);
+                throw new BuildException(message, typeToBuild, referenceName, context, buildLog, ex);
             }
             finally
             {
-                Log.CreatedType(type, context);
+                Log.CreatedType(typeToBuild, context);
             }
         }
 

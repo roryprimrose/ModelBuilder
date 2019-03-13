@@ -3,6 +3,7 @@
     using System;
     using System.Linq;
     using FluentAssertions;
+    using ModelBuilder.UnitTests.Models;
     using Xunit;
 
     public class ModelTests
@@ -46,6 +47,15 @@
             var actual = Model.Ignoring<Person>(x => x.FirstName).Create<Person>();
 
             actual.FirstName.Should().BeNull();
+        }
+
+        [Fact]
+        public void MappingUsesBuildStrategyToCreateInstanceTest()
+        {
+            var actual = Model.Mapping<ITestItem, TestItem>().Create<ITestItem>();
+
+            actual.Should().BeOfType<TestItem>();
+            actual.FirstName.Should().NotBeNullOrWhiteSpace();
         }
 
         [Fact]

@@ -92,6 +92,31 @@
         }
 
         /// <summary>
+        ///     Adds a new type mapping rule to the compiler.
+        /// </summary>
+        /// <param name="compiler">The compiler.</param>
+        /// <param name="rule">The rule.</param>
+        /// <returns>The compiler.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="compiler" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="rule" /> parameter is <c>null</c>.</exception>
+        public static IBuildStrategyCompiler Add(this IBuildStrategyCompiler compiler, TypeMappingRule rule)
+        {
+            if (compiler == null)
+            {
+                throw new ArgumentNullException(nameof(compiler));
+            }
+
+            if (rule == null)
+            {
+                throw new ArgumentNullException(nameof(rule));
+            }
+
+            compiler.TypeMappingRules.Add(rule);
+
+            return compiler;
+        }
+
+        /// <summary>
         ///     Adds a new creation rule to the compiler.
         /// </summary>
         /// <param name="compiler">The compiler.</param>
@@ -360,6 +385,32 @@
         }
 
         /// <summary>
+        ///     Adds a new type mapping rule to the compiler.
+        /// </summary>
+        /// <typeparam name="T">The type of rule to add.</typeparam>
+        /// <param name="compiler">The compiler.</param>
+        /// <returns>The compiler.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="compiler" /> parameter is <c>null</c>.</exception>
+        [SuppressMessage("Microsoft.Design",
+            "CA1004:GenericMethodsShouldProvideTypeParameter",
+            Justification =
+                "This signature is designed for ease of use rather than requiring that T is either a parameter or return type.")]
+        public static IBuildStrategyCompiler AddTypeMappingRule<T>(this IBuildStrategyCompiler compiler)
+            where T : TypeMappingRule, new()
+        {
+            if (compiler == null)
+            {
+                throw new ArgumentNullException(nameof(compiler));
+            }
+
+            var rule = new T();
+
+            compiler.TypeMappingRules.Add(rule);
+
+            return compiler;
+        }
+
+        /// <summary>
         ///     Adds a configuration of a compiler module to the compiler.
         /// </summary>
         /// <typeparam name="T">The type of compiler module to add.</typeparam>
@@ -583,6 +634,35 @@
             foreach (var rule in itemsToRemove)
             {
                 compiler.IgnoreRules.Remove(rule);
+            }
+
+            return compiler;
+        }
+
+        /// <summary>
+        ///     Removes type mapping rules from the compiler that match the specified type.
+        /// </summary>
+        /// <typeparam name="T">The type of rule to remove.</typeparam>
+        /// <param name="compiler">The compiler.</param>
+        /// <returns>The compiler.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="compiler" /> parameter is <c>null</c>.</exception>
+        [SuppressMessage("Microsoft.Design",
+            "CA1004:GenericMethodsShouldProvideTypeParameter",
+            Justification =
+                "This signature is designed for ease of use rather than requiring that T is either a parameter or return type.")]
+        public static IBuildStrategyCompiler RemoveTypeMappingRule<T>(this IBuildStrategyCompiler compiler)
+            where T : TypeMappingRule
+        {
+            if (compiler == null)
+            {
+                throw new ArgumentNullException(nameof(compiler));
+            }
+
+            var itemsToRemove = compiler.TypeMappingRules.Where(x => x.GetType().IsAssignableFrom(typeof(T))).ToList();
+
+            foreach (var rule in itemsToRemove)
+            {
+                compiler.TypeMappingRules.Remove(rule);
             }
 
             return compiler;

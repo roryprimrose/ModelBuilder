@@ -21,6 +21,7 @@
             actual.TypeCreators.Should().BeEquivalentTo(target.TypeCreators);
             actual.ValueGenerators.Should().BeEquivalentTo(target.ValueGenerators);
             actual.IgnoreRules.Should().BeEquivalentTo(target.IgnoreRules);
+            actual.TypeMappingRules.Should().BeEquivalentTo(target.TypeMappingRules);
             actual.ExecuteOrderRules.Should().BeEquivalentTo(target.ExecuteOrderRules);
         }
 

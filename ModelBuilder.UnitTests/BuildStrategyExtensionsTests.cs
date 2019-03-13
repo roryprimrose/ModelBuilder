@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.IO;
     using System.Linq;
     using FluentAssertions;
     using NSubstitute;
@@ -174,6 +175,32 @@
             IBuildStrategy target = null;
 
             Action action = () => target.Ignoring<Person>(x => x.Priority);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void MappingReturnsNewBuildStrategyWithTypeMappingRuleAppendedTest()
+        {
+            var target = Model.BuildStrategy;
+
+            var actual = target.Mapping<Stream, MemoryStream>();
+
+            actual.Should().NotBeSameAs(target);
+            actual.TypeMappingRules.Should().NotBeEmpty();
+
+            var matchingRule = actual.TypeMappingRules.FirstOrDefault(x =>
+                x.SourceType == typeof(Stream) && x.TargetType == typeof(MemoryStream));
+
+            matchingRule.Should().NotBeNull();
+        }
+
+        [Fact]
+        public void MappingThrowsExceptionWithNullStrategyTest()
+        {
+            IBuildStrategy target = null;
+
+            Action action = () => target.Mapping<Stream, MemoryStream>();
 
             action.Should().Throw<ArgumentNullException>();
         }
