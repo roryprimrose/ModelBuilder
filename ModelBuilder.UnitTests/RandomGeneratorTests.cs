@@ -9,8 +9,10 @@
     public class RandomGeneratorTests
     {
         [Theory]
-        [ClassData(typeof(NumericTypeDataSource))]
-        public void GetMaxEvaluatesRequestedTypeTest(Type type, bool typeSupported, double min, double max)
+        [ClassData(typeof(NumericTypeRangeDataSource))]
+        public void GetMaxEvaluatesRequestedTypeTest(Type type, bool typeSupported,
+            double min,
+            double max)
         {
             if (typeSupported == false)
             {
@@ -24,6 +26,7 @@
             var converted = Convert.ToDouble(actual);
 
             converted.Should().Be(max);
+            converted.Should().NotBe(min);
         }
 
         [Fact]
@@ -37,8 +40,10 @@
         }
 
         [Theory]
-        [ClassData(typeof(NumericTypeDataSource))]
-        public void GetMinEvaluatesRequestedTypeTest(Type type, bool typeSupported, double min, double max)
+        [ClassData(typeof(NumericTypeRangeDataSource))]
+        public void GetMinEvaluatesRequestedTypeTest(Type type, bool typeSupported,
+            double min,
+            double max)
         {
             if (typeSupported == false)
             {
@@ -52,6 +57,7 @@
             var converted = Convert.ToDouble(actual);
 
             converted.Should().Be(min);
+            converted.Should().NotBe(max);
         }
 
         [Fact]
@@ -66,7 +72,7 @@
 
         [Theory]
         [ClassData(typeof(NumericTypeDataSource))]
-        public void IsSupportedEvaluatesRequestedTypeTest(Type type, bool typeSupported, double min, double max)
+        public void IsSupportedEvaluatesRequestedTypeTest(Type type, bool typeSupported)
         {
             if (typeSupported == false)
             {
@@ -113,7 +119,7 @@
         }
 
         [Theory]
-        [ClassData(typeof(NumericTypeDataSource))]
+        [ClassData(typeof(NumericTypeRangeDataSource))]
         public void NextValueWithTypeCanEvalutateManyTimesTest(Type type, bool typeSupported, object min, object max)
         {
             if (typeSupported == false)
@@ -142,7 +148,7 @@
         }
 
         [Theory]
-        [ClassData(typeof(NumericTypeDataSource))]
+        [ClassData(typeof(NumericTypeRangeDataSource))]
         public void NextValueWithTypeCanReturnMaxValueTest(Type type, bool typeSupported, double min, double max)
         {
             if (typeSupported == false)
@@ -179,12 +185,15 @@
                 var expectedValue = Convert.ChangeType(max, type);
 
                 value.Should().Be(expectedValue);
+                value.Should().NotBe(min);
             }
         }
 
         [Theory]
-        [ClassData(typeof(NumericTypeDataSource))]
-        public void NextValueWithTypeCanReturnMinValueTest(Type type, bool typeSupported, double min, double max)
+        [ClassData(typeof(NumericTypeRangeDataSource))]
+        public void NextValueWithTypeCanReturnMinValueTest(Type type, bool typeSupported,
+            double min,
+            double max)
         {
             if (typeSupported == false)
             {
@@ -212,6 +221,7 @@
                 var expectedValue = Convert.ChangeType(min, type);
 
                 value.Should().Be(expectedValue);
+                value.Should().NotBe(max);
             }
         }
 
@@ -305,7 +315,7 @@
         }
 
         [Theory]
-        [ClassData(typeof(NumericTypeDataSource))]
+        [ClassData(typeof(NumericTypeRangeDataSource))]
         public void NextValueWithTypeReturnsNewValueTest(Type type, bool typeSupported, double min, double max)
         {
             if (typeSupported == false)
@@ -331,7 +341,7 @@
         }
 
         [Theory]
-        [ClassData(typeof(NumericTypeDataSource))]
+        [ClassData(typeof(NumericTypeRangeDataSource))]
         public void NextValueWithTypeReturnsRandomValueTest(Type type, bool typeSupported, double min, double max)
         {
             if (typeSupported == false)
@@ -410,7 +420,7 @@
         }
 
         [Theory]
-        [ClassData(typeof(NumericTypeDataSource))]
+        [ClassData(typeof(NumericTypeRangeDataSource))]
         public void NextValueWithTypeValidatesRequestedTypeTest(Type type, bool typeSupported, double min, double max)
         {
             var target = new RandomGenerator();

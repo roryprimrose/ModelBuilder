@@ -30,9 +30,9 @@
         }
 
         [Theory]
-        [InlineData(typeof(string), "company", true)]
-        [InlineData(typeof(string), "Company", true)]
-        public void GenerateReturnsValuesForSeveralNameFormatsTest(Type type, string referenceName, bool expected)
+        [InlineData(typeof(string), "company")]
+        [InlineData(typeof(string), "Company")]
+        public void GenerateReturnsValuesForSeveralNameFormatsTest(Type type, string referenceName)
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();

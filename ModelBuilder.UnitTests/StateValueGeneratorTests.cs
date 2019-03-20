@@ -107,11 +107,11 @@
         }
 
         [Theory]
-        [InlineData(typeof(string), "state", true)]
-        [InlineData(typeof(string), "State", true)]
-        [InlineData(typeof(string), "region", true)]
-        [InlineData(typeof(string), "Region", true)]
-        public void GenerateReturnsValuesForSeveralNameFormatsTest(Type type, string referenceName, bool expected)
+        [InlineData(typeof(string), "state")]
+        [InlineData(typeof(string), "State")]
+        [InlineData(typeof(string), "region")]
+        [InlineData(typeof(string), "Region")]
+        public void GenerateReturnsValuesForSeveralNameFormatsTest(Type type, string referenceName)
         {
             var address = new Address();
             var buildChain = new BuildHistory();

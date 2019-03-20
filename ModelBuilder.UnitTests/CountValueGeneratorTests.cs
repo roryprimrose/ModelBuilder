@@ -8,8 +8,8 @@
     public class CountValueGeneratorTests
     {
         [Theory]
-        [ClassData(typeof(NumericTypeDataSource))]
-        public void GenerateCanEvalutateManyTimesTest(Type type, bool isSupported, double min, double max)
+        [ClassData(typeof(NumericTypeRangeDataSource))]
+        public void GenerateCanEvaluateManyTimesTest(Type type, bool isSupported, double min, double max)
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -89,7 +89,7 @@
 
         [Theory]
         [ClassData(typeof(NumericTypeDataSource))]
-        public void GenerateReturnsNewValueTest(Type type, bool isSupported, double min, double max)
+        public void GenerateReturnsNewValueTest(Type type, bool isSupported)
         {
             if (isSupported == false)
             {
@@ -128,13 +128,8 @@
             convertedValue.Should().BeGreaterOrEqualTo(1);
         }
 
-        [Theory]
-        [ClassData(typeof(NumericTypeDataSource))]
-        public void GenerateThrowsExceptionWhenReferenceNotCountTest(
-            Type type,
-            bool isSupported,
-            double min,
-            double max)
+        [Fact]
+        public void GenerateThrowsExceptionWhenReferenceNotCountTest()
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -143,14 +138,14 @@
 
             var target = new CountValueGenerator();
 
-            Action action = () => target.Generate(type, "Stuff", executeStrategy);
+            Action action = () => target.Generate(typeof(int), "Stuff", executeStrategy);
 
             action.Should().Throw<NotSupportedException>();
         }
 
         [Theory]
         [ClassData(typeof(NumericTypeDataSource))]
-        public void GenerateValidatesRequestedTypeTest(Type type, bool isSupported, double min, double max)
+        public void GenerateValidatesRequestedTypeTest(Type type, bool isSupported)
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -192,7 +187,7 @@
 
         [Theory]
         [ClassData(typeof(NumericTypeDataSource))]
-        public void IsSupportedEvaluatesRequestedTypeTest(Type type, bool isSupported, double min, double max)
+        public void IsSupportedEvaluatesRequestedTypeTest(Type type, bool isSupported)
         {
             var target = new CountValueGenerator();
 
@@ -205,9 +200,7 @@
         [ClassData(typeof(NumericTypeDataSource))]
         public void IsSupportedReturnsFalseWhenReferenceNameIsNullTest(
             Type type,
-            bool isSupported,
-            double min,
-            double max)
+            bool isSupported)
         {
             if (isSupported == false)
             {
@@ -226,9 +219,7 @@
         [ClassData(typeof(NumericTypeDataSource))]
         public void IsSupportedReturnsFalseWhenReferenceNameNotCountTest(
             Type type,
-            bool isSupported,
-            double min,
-            double max)
+            bool isSupported)
         {
             if (isSupported == false)
             {
@@ -247,9 +238,7 @@
         [ClassData(typeof(NumericTypeDataSource))]
         public void IsSupportedReturnsTrueWhenReferenceNameIsCountTest(
             Type type,
-            bool isSupported,
-            double min,
-            double max)
+            bool isSupported)
         {
             if (isSupported == false)
             {

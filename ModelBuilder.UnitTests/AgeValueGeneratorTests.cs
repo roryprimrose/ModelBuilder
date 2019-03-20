@@ -8,7 +8,7 @@
     public class AgeValueGeneratorTests
     {
         [Theory]
-        [ClassData(typeof(NumericTypeDataSource))]
+        [ClassData(typeof(NumericTypeRangeDataSource))]
         public void GenerateCanEvaluateManyTimesTest(Type type, bool typeSupported, double min, double max)
         {
             if (typeSupported == false)
@@ -91,7 +91,7 @@
 
         [Theory]
         [ClassData(typeof(NumericTypeDataSource))]
-        public void GenerateReturnsNewValueTest(Type type, bool typeSupported, double min, double max)
+        public void GenerateReturnsNewValueTest(Type type, bool typeSupported)
         {
             if (typeSupported == false)
             {
@@ -131,13 +131,8 @@
             convertedValue.Should().BeGreaterOrEqualTo(1);
         }
 
-        [Theory]
-        [ClassData(typeof(NumericTypeDataSource))]
-        public void GenerateThrowsExceptionWhenReferenceNotAgeTest(
-            Type type,
-            bool typeSupported,
-            double min,
-            double max)
+        [Fact]
+        public void GenerateThrowsExceptionWhenReferenceNotAgeTest()
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -146,14 +141,14 @@
 
             var target = new AgeValueGenerator();
 
-            Action action = () => target.Generate(type, "Stuff", executeStrategy);
+            Action action = () => target.Generate(typeof(int), "Stuff", executeStrategy);
 
             action.Should().Throw<NotSupportedException>();
         }
 
         [Theory]
         [ClassData(typeof(NumericTypeDataSource))]
-        public void GenerateValidatesRequestedTypeTest(Type type, bool typeSupported, double min, double max)
+        public void GenerateValidatesRequestedTypeTest(Type type, bool typeSupported)
         {
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
@@ -186,7 +181,7 @@
 
         [Theory]
         [ClassData(typeof(NumericTypeDataSource))]
-        public void IsSupportedEvaluatesRequestedTypeTest(Type type, bool typeSupported, double min, double max)
+        public void IsSupportedEvaluatesRequestedTypeTest(Type type, bool typeSupported)
         {
             var target = new AgeValueGenerator();
 
@@ -199,9 +194,7 @@
         [ClassData(typeof(NumericTypeDataSource))]
         public void IsSupportedReturnsFalseWhenReferenceNameIsNullTest(
             Type type,
-            bool typeSupported,
-            double min,
-            double max)
+            bool typeSupported)
         {
             if (typeSupported == false)
             {
@@ -220,9 +213,7 @@
         [ClassData(typeof(NumericTypeDataSource))]
         public void IsSupportedReturnsFalseWhenReferenceNameNotAgeTest(
             Type type,
-            bool typeSupported,
-            double min,
-            double max)
+            bool typeSupported)
         {
             if (typeSupported == false)
             {
@@ -241,9 +232,7 @@
         [ClassData(typeof(NumericTypeDataSource))]
         public void IsSupportedReturnsTrueWhenReferenceNameIncludesAgeTest(
             Type type,
-            bool typeSupported,
-            double min,
-            double max)
+            bool typeSupported)
         {
             if (typeSupported == false)
             {

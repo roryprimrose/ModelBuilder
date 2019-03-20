@@ -30,9 +30,9 @@
         }
 
         [Theory]
-        [InlineData(typeof(string), "suburb", true)]
-        [InlineData(typeof(string), "Suburb", true)]
-        public void GenerateReturnsValuesForSeveralNameFormatsTest(Type type, string referenceName, bool expected)
+        [InlineData(typeof(string), "suburb")]
+        [InlineData(typeof(string), "Suburb")]
+        public void GenerateReturnsValuesForSeveralNameFormatsTest(Type type, string referenceName)
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();

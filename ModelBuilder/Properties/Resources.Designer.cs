@@ -819,5 +819,14 @@ namespace ModelBuilder.Properties {
                 return ResourceManager.GetString("TimeZones", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The type {0} is not assignable to {1}.
+        /// </summary>
+        internal static string TypeMappingRule_TypeNotAssignable {
+            get {
+                return ResourceManager.GetString("TypeMappingRule_TypeNotAssignable", resourceCulture);
+            }
+        }
     }
 }

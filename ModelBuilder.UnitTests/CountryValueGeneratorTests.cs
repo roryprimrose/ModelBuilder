@@ -39,9 +39,9 @@
         }
 
         [Theory]
-        [InlineData(typeof(string), "country", true)]
-        [InlineData(typeof(string), "Country", true)]
-        public void GenerateReturnsValuesForSeveralNameFormatsTest(Type type, string referenceName, bool expected)
+        [InlineData(typeof(string), "country")]
+        [InlineData(typeof(string), "Country")]
+        public void GenerateReturnsValuesForSeveralNameFormatsTest(Type type, string referenceName)
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();

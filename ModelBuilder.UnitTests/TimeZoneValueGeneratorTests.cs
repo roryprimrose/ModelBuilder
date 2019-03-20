@@ -163,10 +163,10 @@
         }
 
         [Theory]
-        [InlineData(typeof(string), "timezone", true)]
-        [InlineData(typeof(string), "TimeZone", true)]
-        [InlineData(typeof(string), "timeZone", true)]
-        public void GenerateReturnsValuesForSeveralNameFormatsTest(Type type, string referenceName, bool expected)
+        [InlineData(typeof(string), "timezone")]
+        [InlineData(typeof(string), "TimeZone")]
+        [InlineData(typeof(string), "timeZone")]
+        public void GenerateReturnsValuesForSeveralNameFormatsTest(Type type, string referenceName)
         {
             var address = new Address();
             var buildChain = new BuildHistory();

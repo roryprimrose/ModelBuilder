@@ -247,4 +247,7 @@
   <data name="DefaultBuildLog_MappingType" xml:space="preserve">
     <value>Mapped type requested from {0} to {1}</value>
   </data>
+  <data name="TypeMappingRule_TypeNotAssignable" xml:space="preserve">
+    <value>The type {0} is not assignable to {1}</value>
+  </data>
 </root>

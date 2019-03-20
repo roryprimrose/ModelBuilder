@@ -38,5 +38,27 @@
 
             action.Should().Throw<ArgumentNullException>();
         }
+
+        [Fact]
+        public void ThrowsExceptionWhenOrderOfTargetTypeAndSourceTypeAreBackward()
+        {
+            var sourceType = typeof(MemoryStream);
+            var targetType = typeof(Stream);
+
+            Action action = () => new TypeMappingRule(sourceType, targetType);
+
+            action.Should().Throw<ArgumentException>();
+        }
+
+        [Fact]
+        public void ThrowsExceptionWhenTargetTypeNotAssignableToSourceType()
+        {
+            var sourceType = typeof(Stream);
+            var targetType = typeof(Person);
+
+            Action action = () => new TypeMappingRule(sourceType, targetType);
+
+            action.Should().Throw<ArgumentException>();
+        }
     }
 }
