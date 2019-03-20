@@ -6,7 +6,6 @@
     using System.Globalization;
     using System.Linq;
     using System.Reflection;
-    using System.Security.Cryptography.X509Certificates;
     using ModelBuilder.Properties;
 
     /// <summary>
@@ -139,15 +138,8 @@
             }
 
             EnsureInitialized();
-            
-            var typeToBuild = type;
 
-            var typeMappingRule = Configuration.TypeMappingRules?.Where(x => x.SourceType == type).FirstOrDefault();
-
-            if (typeMappingRule != null)
-            {
-                typeToBuild = typeMappingRule.TargetType;
-            }
+            var typeToBuild = DetermineTypeToBuild(type);
 
             var buildChain = BuildChain;
 
@@ -228,7 +220,8 @@
                 }
             }
 
-            var typeCreator = Configuration.TypeCreators?.Where(x => x.CanCreate(typeToBuild, referenceName, buildChain))
+            var typeCreator = Configuration.TypeCreators
+                ?.Where(x => x.CanCreate(typeToBuild, referenceName, buildChain))
                 .OrderByDescending(x => x.Priority)
                 .FirstOrDefault();
 
@@ -476,6 +469,43 @@
             instance = typeCreator.Create(type, referenceName, this);
 
             return new Tuple<object, object[]>(instance, args);
+        }
+
+        private Type DetermineTypeToBuild(Type type)
+        {
+            var typeMappingRule = Configuration.TypeMappingRules?.Where(x => x.SourceType == type).FirstOrDefault();
+
+            if (typeMappingRule != null)
+            {
+                return typeMappingRule.TargetType;
+            }
+
+            // There is no type mapping for this type
+            if (type.TypeIsInterface()
+                || type.TypeIsAbstract())
+            {
+                // Automatically resolve a derived type within the same assembly
+                // Scanning assemblies under full framework here won't be supported at this stage
+                var assemblyTypes = type.GetTypeInfo().Assembly.GetTypes();
+                var possibleTypes = from x in assemblyTypes
+                    where x.TypeIsPublic()
+                        && x.TypeIsInterface() == false
+                        && x.TypeIsAbstract() == false
+                        && type.IsAssignableFrom(x)
+                    select x;
+
+                var matchingType = possibleTypes.FirstOrDefault(type.IsAssignableFrom);
+
+                if (matchingType == null)
+                {
+                    return type;
+                }
+
+                return matchingType;
+            }
+
+            return type;
+
         }
 
         private void EnsureInitialized()

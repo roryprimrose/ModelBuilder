@@ -63,6 +63,15 @@
             return type.GetTypeInfo().IsGenericTypeDefinition;
 #endif
         }
+        
+        public static bool TypeIsPublic(this Type type)
+        {
+#if NET45
+            return type.IsPublic;
+#else
+            return type.GetTypeInfo().IsPublic;
+#endif
+        }
 
         public static bool TypeIsInterface(this Type type)
         {

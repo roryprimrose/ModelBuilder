@@ -7,6 +7,7 @@
     using System.Linq;
     using System.Reflection;
     using FluentAssertions;
+    using ModelBuilder.UnitTests.Models;
     using NSubstitute;
     using NSubstitute.ExceptionExtensions;
     using Xunit;
@@ -325,14 +326,14 @@
             typeCreators.Add(typeCreator);
 
             buildStrategy.TypeCreators.Returns(typeCreators.AsReadOnly());
-            typeCreator.CanCreate(typeof(Stream), null, Arg.Any<IBuildChain>()).Returns(true);
-            typeCreator.Create(typeof(Stream), null, Arg.Any<IExecuteStrategy>()).Returns(null);
+            typeCreator.CanCreate(typeof(MemoryStream), null, Arg.Any<IBuildChain>()).Returns(true);
+            typeCreator.Create(typeof(MemoryStream), null, Arg.Any<IExecuteStrategy>()).Returns(null);
 
             var target = new DefaultExecuteStrategy();
 
             target.Initialize(buildStrategy, buildStrategy.GetBuildLog());
 
-            var actual = target.CreateWith(typeof(Stream));
+            var actual = target.CreateWith(typeof(MemoryStream));
 
             actual.Should().BeNull();
         }
@@ -439,6 +440,53 @@
             var actual = target.CreateWith(typeof(Person), args);
 
             actual.Should().BeSameAs(expected);
+        }
+
+        [Fact]
+        public void CreateWithReturnsValueFromCreatorWithAutomaticTypeMappingTest()
+        {
+            var model = new TestItem();
+            var value = Guid.NewGuid().ToString();
+            var typeCreators = new List<ITypeCreator>();
+            var valueGenerators = new List<IValueGenerator>();
+            var typeMappingRules = new List<TypeMappingRule>();
+
+            var propertyResolver = Substitute.For<IPropertyResolver>();
+            var buildStrategy = Substitute.For<IBuildStrategy>();
+            var creator = Substitute.For<ITypeCreator>();
+            var generator = Substitute.For<IValueGenerator>();
+
+            typeCreators.Add(creator);
+            valueGenerators.Add(generator);
+
+            buildStrategy.PropertyResolver.Returns(propertyResolver);
+            buildStrategy.TypeCreators.Returns(typeCreators.AsReadOnly());
+            buildStrategy.ValueGenerators.Returns(valueGenerators.AsReadOnly());
+            buildStrategy.TypeMappingRules.Returns(typeMappingRules.AsReadOnly());
+
+            var target = new DefaultExecuteStrategy();
+
+            target.Initialize(buildStrategy, buildStrategy.GetBuildLog());
+
+            propertyResolver.CanPopulate(Arg.Any<PropertyInfo>()).Returns(true);
+            propertyResolver.ShouldPopulateProperty(Arg.Any<IBuildConfiguration>(),
+                    Arg.Any<object>(),
+                    Arg.Any<PropertyInfo>(),
+                    Arg.Any<object[]>())
+                .Returns(true);
+            creator.CanCreate(typeof(TestItem), null, Arg.Any<IBuildChain>()).Returns(true);
+            creator.Create(typeof(TestItem), null, Arg.Any<IExecuteStrategy>()).Returns(model);
+            creator.Priority.Returns(1);
+            creator.AutoPopulate.Returns(true);
+            creator.Populate(model, target).Returns(model);
+            generator.IsSupported(typeof(string), "FirstName", Arg.Is<IBuildChain>(x => x.Last == model)).Returns(true);
+            generator.Generate(typeof(string), "FirstName", Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == model))
+                .Returns(value);
+
+            var actual = (ITestItem) target.CreateWith(typeof(ITestItem));
+
+            actual.Should().BeOfType<TestItem>();
+            actual.FirstName.Should().Be(value);
         }
 
         [Fact]
@@ -552,6 +600,54 @@
             var actual = target.CreateWith(typeof(Person));
 
             actual.Should().BeSameAs(expected);
+        }
+
+        [Fact]
+        public void CreateWithReturnsValueFromCreatorWithTypeMappingTest()
+        {
+            var model = new TestItem();
+            var value = Guid.NewGuid().ToString();
+            var typeCreators = new List<ITypeCreator>();
+            var valueGenerators = new List<IValueGenerator>();
+            var typeMapping = new TypeMappingRule(typeof(ITestItem), typeof(TestItem));
+            var typeMappingRules = new List<TypeMappingRule> {typeMapping};
+
+            var propertyResolver = Substitute.For<IPropertyResolver>();
+            var buildStrategy = Substitute.For<IBuildStrategy>();
+            var creator = Substitute.For<ITypeCreator>();
+            var generator = Substitute.For<IValueGenerator>();
+
+            typeCreators.Add(creator);
+            valueGenerators.Add(generator);
+
+            buildStrategy.PropertyResolver.Returns(propertyResolver);
+            buildStrategy.TypeCreators.Returns(typeCreators.AsReadOnly());
+            buildStrategy.ValueGenerators.Returns(valueGenerators.AsReadOnly());
+            buildStrategy.TypeMappingRules.Returns(typeMappingRules.AsReadOnly());
+
+            var target = new DefaultExecuteStrategy();
+
+            target.Initialize(buildStrategy, buildStrategy.GetBuildLog());
+
+            propertyResolver.CanPopulate(Arg.Any<PropertyInfo>()).Returns(true);
+            propertyResolver.ShouldPopulateProperty(Arg.Any<IBuildConfiguration>(),
+                    Arg.Any<object>(),
+                    Arg.Any<PropertyInfo>(),
+                    Arg.Any<object[]>())
+                .Returns(true);
+            creator.CanCreate(typeof(TestItem), null, Arg.Any<IBuildChain>()).Returns(true);
+            creator.Create(typeof(TestItem), null, Arg.Any<IExecuteStrategy>()).Returns(model);
+            creator.Priority.Returns(1);
+            creator.AutoPopulate.Returns(true);
+            creator.Populate(model, target).Returns(model);
+            generator.IsSupported(typeof(string), "FirstName", Arg.Is<IBuildChain>(x => x.Last == model)).Returns(true);
+            generator.Generate(typeof(string), "FirstName", Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == model))
+                .Returns(value);
+
+            var actual = (ITestItem) target.CreateWith(typeof(ITestItem));
+
+            actual.Should().BeOfType<TestItem>();
+            actual.FirstName.Should().Be(value);
         }
 
         [Fact]
@@ -771,6 +867,20 @@
             var actual = target.CreateWith(typeof(string));
 
             actual.Should().Be(expected);
+        }
+
+        [Fact]
+        public void CreateWithThrowsExceptionWhenAutomaticTypeMappingCantFindMatchTest()
+        {
+            var buildStrategy = Substitute.For<IBuildStrategy>();
+
+            var target = new DefaultExecuteStrategy();
+
+            target.Initialize(buildStrategy, buildStrategy.GetBuildLog());
+
+            Action action = () => target.CreateWith(typeof(ICantCreate));
+
+            action.Should().Throw<BuildException>();
         }
 
         [Fact]

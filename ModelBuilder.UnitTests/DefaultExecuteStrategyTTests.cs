@@ -52,11 +52,11 @@
             typeCreators.Add(typeCreator);
 
             buildStrategy.TypeCreators.Returns(typeCreators.AsReadOnly());
-            typeCreator.CanCreate(typeof(Stream), null, Arg.Any<IBuildChain>()).Returns(true);
-            typeCreator.CanPopulate(typeof(Stream), null, Arg.Any<IBuildChain>()).Returns(true);
-            typeCreator.Create(typeof(Stream), null, Arg.Any<IExecuteStrategy>()).Returns(null);
+            typeCreator.CanCreate(typeof(MemoryStream), null, Arg.Any<IBuildChain>()).Returns(true);
+            typeCreator.CanPopulate(typeof(MemoryStream), null, Arg.Any<IBuildChain>()).Returns(true);
+            typeCreator.Create(typeof(MemoryStream), null, Arg.Any<IExecuteStrategy>()).Returns(null);
 
-            var target = new DefaultExecuteStrategy<Stream>();
+            var target = new DefaultExecuteStrategy<MemoryStream>();
 
             target.Initialize(buildStrategy, buildStrategy.GetBuildLog());
 

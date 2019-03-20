@@ -32,6 +32,11 @@
             {
                 ExecuteOrderRules.Add(rule);
             }
+
+            foreach (var rule in DefaultTypeMappingRules)
+            {
+                TypeMappingRules.Add(rule);
+            }
         }
 
         private static IEnumerable<ExecuteOrderRule> DefaultExecuteOrderRules
@@ -71,6 +76,11 @@
                 yield return new EnumerableTypeCreator();
                 yield return new DefaultTypeCreator();
             }
+        }
+
+        private static IEnumerable<TypeMappingRule> DefaultTypeMappingRules
+        {
+            get { yield return new TypeMappingRule(typeof(Stream), typeof(MemoryStream)); }
         }
 
         private static IEnumerable<IValueGenerator> DefaultValueGenerators

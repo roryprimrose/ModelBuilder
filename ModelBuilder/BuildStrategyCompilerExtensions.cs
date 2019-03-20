@@ -780,6 +780,7 @@
                 module.Configure(compiler);
             }
         }
+
         private static Assembly[] GetAvailableAssemblies()
         {
             // NOTE: This is written this way so that a future version can use compiler
