@@ -315,6 +315,15 @@ namespace ModelBuilder.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Mapped type requested from {0} to {1}.
+        /// </summary>
+        internal static string DefaultBuildLog_MappingType {
+            get {
+                return ResourceManager.GetString("DefaultBuildLog_MappingType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to End populating instance {0}.
         /// </summary>
         internal static string DefaultBuildLog_PopulatedInstance {

@@ -477,6 +477,8 @@
 
             if (typeMappingRule != null)
             {
+                Log.MappedType(type, typeMappingRule.TargetType);
+
                 return typeMappingRule.TargetType;
             }
 
@@ -500,6 +502,8 @@
                 {
                     return type;
                 }
+                
+                Log.MappedType(type, matchingType);
 
                 return matchingType;
             }

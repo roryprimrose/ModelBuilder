@@ -11,7 +11,7 @@
         /// <summary>
         ///     Logs a build failure
         /// </summary>
-        /// <param name="ex">The expception to log.</param>
+        /// <param name="ex">The exception to log.</param>
         void BuildFailure(Exception ex);
 
         /// <summary>
@@ -89,6 +89,13 @@
         /// <param name="propertyName">The name of the property.</param>
         /// <param name="context">The possible context object the value is being created for.</param>
         void IgnoringProperty(Type propertyType, string propertyName, object context);
+
+        /// <summary>
+        ///     Logs that a type mapping has occurred.
+        /// </summary>
+        /// <param name="source">The original type requested.</param>
+        /// <param name="target">The type that will be created.</param>
+        void MappedType(Type source, Type target);
 
         /// <summary>
         ///     Logs that an instance has been populated.

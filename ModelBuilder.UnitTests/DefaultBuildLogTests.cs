@@ -1,6 +1,7 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
+    using System.IO;
     using System.Linq;
     using FluentAssertions;
     using Xunit;
@@ -317,6 +318,36 @@
             var target = new DefaultBuildLog();
 
             Action action = () => target.IgnoringProperty(propertyType, propertyName, context);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void MappedTypeAppendsLogEntryTest()
+        {
+            var target = new DefaultBuildLog();
+
+            target.MappedType(typeof(Stream), typeof(MemoryStream));
+
+            target.Output.Should().NotBeNullOrWhiteSpace();
+        }
+
+        [Fact]
+        public void MappedTypeThrowsExceptionWithNullSourceTypeTest()
+        {
+            var target = new DefaultBuildLog();
+
+            Action action = () => target.MappedType(null, typeof(MemoryStream));
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void MappedTypeThrowsExceptionWithNullTargetTypeTest()
+        {
+            var target = new DefaultBuildLog();
+
+            Action action = () => target.MappedType(typeof(Stream), null);
 
             action.Should().Throw<ArgumentNullException>();
         }
