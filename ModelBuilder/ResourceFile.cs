@@ -1,0 +1,39 @@
+﻿namespace ModelBuilder
+{
+    using System;
+    using System.IO;
+    using System.Reflection;
+
+    internal static class ResourceFile
+    {
+        internal static string Companies => Read(nameof(Companies));
+        internal static string Cultures => Read(nameof(Cultures));
+        internal static string Domains => Read(nameof(Domains));
+        internal static string FemaleNames => Read(nameof(FemaleNames));
+        internal static string LastNames => Read(nameof(LastNames));
+        internal static string Locations => Read(nameof(Locations));
+        internal static string MaleNames => Read(nameof(MaleNames));
+        internal static string TimeZones => Read(nameof(TimeZones));
+
+        private static string Read(string name)
+        {
+            var assembly = typeof(ResourceFile).GetTypeInfo().Assembly;
+
+            using (var stream = assembly.GetManifestResourceStream(name))
+            {
+                if (stream == null)
+                {
+                    var resourceNames = assembly.GetManifestResourceNames();
+
+                    throw new Exception(
+                        $"Resource {name} not found in {assembly.FullName}.  Valid resources are: {string.Join(", ", resourceNames)}.");
+                }
+
+                using (var reader = new StreamReader(stream))
+                {
+                    return reader.ReadToEnd();
+                }
+            }
+        }
+    }
+}
