@@ -32,12 +32,22 @@
         {
             var lines = ParseValues(locations);
             var parsedLines = new List<Location>(lines.Count);
+            var index = 0;
 
             foreach (var line in lines)
             {
-                var location = Location.Parse(line);
+                index++;
 
-                parsedLines.Add(location);
+                try
+                {
+                    var location = Location.Parse(line);
+
+                    parsedLines.Add(location);
+                }
+                catch (IndexOutOfRangeException e)
+                {
+                    throw new InvalidOperationException("Failed to process line '" + line + "' at index" + index, e);
+                }
             }
 
             return parsedLines;
