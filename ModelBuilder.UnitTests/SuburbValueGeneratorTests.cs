@@ -24,7 +24,17 @@
             first.Should().BeOfType<string>();
             first.As<string>().Should().NotBeNullOrWhiteSpace();
 
-            var second = target.Generate(typeof(string), "suburb", executeStrategy);
+            var second = first;
+
+            for (var index = 0; index < 1000; index++)
+            {
+                second = target.Generate(typeof(string), "suburb", executeStrategy);
+
+                if (first != second)
+                {
+                    break;
+                }
+            }
 
             first.Should().NotBe(second);
         }
@@ -41,7 +51,7 @@
 
             var target = new SuburbValueGenerator();
 
-            var actual = (string) target.Generate(type, referenceName, executeStrategy);
+            var actual = (string)target.Generate(type, referenceName, executeStrategy);
 
             TestData.LastNames.Should().Contain(actual);
         }

@@ -39,7 +39,17 @@
             first.Should().BeOfType<string>();
             first.As<string>().Should().NotBeNullOrWhiteSpace();
 
-            var second = target.Generate(typeof(string), "domain", executeStrategy);
+            var second = first;
+
+            for (var index = 0; index < 1000; index++)
+            {
+                second = target.Generate(typeof(string), "domain", executeStrategy);
+
+                if (first != second)
+                {
+                    break;
+                }
+            }
 
             first.Should().NotBe(second);
         }
@@ -56,7 +66,7 @@
 
             var target = new DomainNameValueGenerator();
 
-            var actual = (string) target.Generate(type, referenceName, executeStrategy);
+            var actual = (string)target.Generate(type, referenceName, executeStrategy);
 
             actual.Should().NotBeNullOrEmpty();
         }

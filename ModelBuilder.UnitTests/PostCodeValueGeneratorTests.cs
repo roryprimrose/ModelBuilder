@@ -92,21 +92,19 @@
             first.Should().BeOfType<string>();
             first.As<string>().Should().NotBeNullOrWhiteSpace();
 
-            var otherValueFound = false;
+            var second = first;
 
             for (var index = 0; index < 100; index++)
             {
-                var second = target.Generate(typeof(string), "Zip", executeStrategy);
+                second = target.Generate(typeof(string), "Zip", executeStrategy);
 
                 if (first != second)
                 {
-                    otherValueFound = true;
-
                     break;
                 }
             }
 
-            otherValueFound.Should().BeTrue();
+            first.Should().NotBe(second);
         }
 
         [Theory]

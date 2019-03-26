@@ -18,7 +18,18 @@
             var target = new StringValueGenerator();
 
             var first = target.Generate(typeof(string), null, executeStrategy);
-            var second = target.Generate(typeof(string), null, executeStrategy);
+
+            var second = first;
+
+            for (var index = 0; index < 1000; index++)
+            {
+                second = target.Generate(typeof(string), null, executeStrategy);
+
+                if (first != second)
+                {
+                    break;
+                }
+            }
 
             first.Should().NotBeNull();
             second.Should().NotBeNull();

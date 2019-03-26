@@ -14,7 +14,7 @@
         [Fact]
         public void GenerateReturnsRandomTimeZoneMatchingCaseInsensitiveCountryTest()
         {
-            var address = new Address {Country = "AUSTRALIA"};
+            var address = new Address { Country = "AUSTRALIA" };
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
@@ -38,7 +38,7 @@
         [Fact]
         public void GenerateReturnsRandomTimeZoneMatchingCountryTest()
         {
-            var address = new Address {Country = "Australia"};
+            var address = new Address { Country = "Australia" };
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
@@ -58,7 +58,7 @@
         [Fact]
         public void GenerateReturnsRandomTimeZoneMatchingCountryWhenNoCityMatchTest()
         {
-            var address = new Address {City = Guid.NewGuid().ToString(), Country = "Australia"};
+            var address = new Address { City = Guid.NewGuid().ToString(), Country = "Australia" };
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
@@ -78,7 +78,7 @@
         [Fact]
         public void GenerateReturnsRandomTimeZoneWhenNoMatchingCountryTest()
         {
-            var address = new Address {Country = Guid.NewGuid().ToString()};
+            var address = new Address { Country = Guid.NewGuid().ToString() };
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
@@ -111,7 +111,17 @@
             first.Should().BeOfType<string>();
             first.As<string>().Should().NotBeNullOrWhiteSpace();
 
-            var second = target.Generate(typeof(string), "timezone", executeStrategy);
+            var second = first;
+
+            for (var index = 0; index < 1000; index++)
+            {
+                second = target.Generate(typeof(string), "timezone", executeStrategy);
+
+                if (first != second)
+                {
+                    break;
+                }
+            }
 
             first.Should().NotBe(second);
         }
@@ -147,7 +157,7 @@
         [InlineData(null, "Canberra")]
         public void GenerateReturnsValueMatchingCityValuesTest(string country, string city)
         {
-            var address = new Address {Country = country, City = city};
+            var address = new Address { Country = country, City = city };
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
@@ -178,7 +188,7 @@
 
             var target = new TimeZoneValueGenerator();
 
-            var actual = (string) target.Generate(type, referenceName, executeStrategy);
+            var actual = (string)target.Generate(type, referenceName, executeStrategy);
 
             actual.Should().NotBeNullOrEmpty();
         }

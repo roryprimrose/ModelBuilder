@@ -23,7 +23,7 @@
 
             for (var index = 0; index < 1000; index++)
             {
-                var value = (SingleEnum?) target.Generate(typeof(SingleEnum?), null, executeStrategy);
+                var value = (SingleEnum?)target.Generate(typeof(SingleEnum?), null, executeStrategy);
 
                 if (value == null)
                 {
@@ -54,10 +54,10 @@
 
             var target = new EnumValueGenerator();
 
-            var first = target.Generate(typeof(SingleEnum), null, executeStrategy);
+            var actual = target.Generate(typeof(SingleEnum), null, executeStrategy);
 
-            first.Should().BeOfType<SingleEnum>();
-            first.Should().Be(SingleEnum.First);
+            actual.Should().BeOfType<SingleEnum>();
+            actual.Should().Be(SingleEnum.First);
         }
 
         [Fact]
@@ -74,7 +74,17 @@
 
             first.Should().BeOfType<FileAttributes>();
 
-            var second = target.Generate(typeof(FileAttributes), null, executeStrategy);
+            var second = first;
+
+            for (var index = 0; index < 1000; index++)
+            {
+                second = target.Generate(typeof(FileAttributes), null, executeStrategy);
+
+                if (first != second)
+                {
+                    break;
+                }
+            }
 
             first.Should().NotBe(second);
         }
@@ -97,7 +107,17 @@
 
             values.Should().NotContain(first);
 
-            var second = target.Generate(typeof(BigFlagsEnum), null, executeStrategy);
+            var second = first;
+
+            for (var index = 0; index < 1000; index++)
+            {
+                second = target.Generate(typeof(BigFlagsEnum), null, executeStrategy);
+
+                if (first != second)
+                {
+                    break;
+                }
+            }
 
             first.Should().NotBe(second);
         }
@@ -149,7 +169,7 @@
 
             for (var index = 0; index < 1000; index++)
             {
-                var actual = (SmallFlags) target.Generate(typeof(SmallFlags), null, executeStrategy);
+                var actual = (SmallFlags)target.Generate(typeof(SmallFlags), null, executeStrategy);
 
                 if (actual == SmallFlags.First)
                 {
@@ -187,10 +207,10 @@
 
             var target = new EnumValueGenerator();
 
-            var first = target.Generate(typeof(EmptyEnum), null, executeStrategy);
+            var actual = target.Generate(typeof(EmptyEnum), null, executeStrategy);
 
-            first.Should().BeOfType<EmptyEnum>();
-            first.Should().Be((EmptyEnum) 0);
+            actual.Should().BeOfType<EmptyEnum>();
+            actual.Should().Be((EmptyEnum)0);
         }
 
         [Theory]

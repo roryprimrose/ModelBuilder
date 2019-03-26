@@ -24,21 +24,19 @@
             first.Should().BeOfType<string>();
             first.As<string>().Should().NotBeNullOrWhiteSpace();
 
-            var otherValueFound = false;
+            var second = first;
 
-            for (var index = 0; index < 100; index++)
+            for (var index = 0; index < 1000; index++)
             {
-                var second = target.Generate(typeof(string), "culture", executeStrategy);
+                second = target.Generate(typeof(string), "culture", executeStrategy);
 
                 if (first != second)
                 {
-                    otherValueFound = true;
-
                     break;
                 }
             }
 
-            otherValueFound.Should().BeTrue();
+            first.Should().NotBe(second);
         }
 
 #if NET452
@@ -56,22 +54,20 @@
 
             first.Should().BeOfType<CultureInfo>();
             first.As<CultureInfo>().Should().NotBeNull();
+        
+            var second = first;
 
-            var otherValueFound = false;
-
-            for (var index = 0; index < 100; index++)
+            for (var index = 0; index < 1000; index++)
             {
-                var second = target.Generate(typeof(CultureInfo), "culture", executeStrategy);
+                second = target.Generate(typeof(CultureInfo), "culture", executeStrategy);
 
                 if (first.As<CultureInfo>().Name != second.As<CultureInfo>().Name)
                 {
-                    otherValueFound = true;
-
                     break;
                 }
             }
-
-            otherValueFound.Should().BeTrue();
+        
+            first.Should().NotBe(second);
         }
 #else
         [Fact]
@@ -89,22 +85,20 @@
             first.Should().BeOfType<CultureInfo>();
             first.As<CultureInfo>().Should().NotBeNull();
 
-            var otherValueFound = false;
+            var second = first;
 
-            for (var index = 0; index < 100; index++)
+            for (var index = 0; index < 1000; index++)
             {
-                var second = target.Generate(typeof(CultureInfo), "culture", executeStrategy);
+                second = target.Generate(typeof(CultureInfo), "culture", executeStrategy);
 
                 if (first.As<CultureInfo>().Name != second.As<CultureInfo>().Name)
                 {
-                    otherValueFound = true;
-
                     break;
                 }
             }
 
             // netstandard 1.5 will always return the CurrentUI CultureInfo
-            otherValueFound.Should().BeFalse();
+            first.Should().Be(second);
         }
 #endif
 

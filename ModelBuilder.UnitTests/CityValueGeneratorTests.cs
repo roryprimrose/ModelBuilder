@@ -30,7 +30,7 @@
 
             var otherValueFound = false;
 
-            for (var index = 0; index < 100; index++)
+            for (var index = 0; index < 1000; index++)
             {
                 var second = target.Generate(typeof(string), "city", executeStrategy);
 

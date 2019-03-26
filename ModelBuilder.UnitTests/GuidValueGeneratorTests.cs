@@ -22,7 +22,7 @@
 
             for (var index = 0; index < 1000; index++)
             {
-                var value = (Guid?) target.Generate(typeof(Guid?), null, executeStrategy);
+                var value = (Guid?)target.Generate(typeof(Guid?), null, executeStrategy);
 
                 if (value == null)
                 {
@@ -78,8 +78,19 @@
 
             var target = new GuidValueGenerator();
 
-            var first = (Guid) target.Generate(typeof(Guid), null, executeStrategy);
-            var second = (Guid) target.Generate(typeof(Guid), null, executeStrategy);
+            var first = (Guid)target.Generate(typeof(Guid), null, executeStrategy);
+
+            var second = first;
+
+            for (var index = 0; index < 1000; index++)
+            {
+                second = (Guid)target.Generate(typeof(Guid), null, executeStrategy);
+
+                if (first != second)
+                {
+                    break;
+                }
+            }
 
             first.Should().NotBeEmpty();
             second.Should().NotBeEmpty();

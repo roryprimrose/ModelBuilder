@@ -60,7 +60,17 @@
             first.As<DateTimeOffset>().Should().BeAfter(DateTimeOffset.UtcNow.AddYears(-100));
             first.As<DateTimeOffset>().Offset.Should().Be(TimeSpan.Zero);
 
-            var second = target.Generate(typeof(DateTimeOffset), "dob", executeStrategy);
+            var second = first;
+
+            for (var index = 0; index < 1000; index++)
+            {
+                second = target.Generate(typeof(DateTimeOffset), "dob", executeStrategy);
+
+                if (first != second)
+                {
+                    break;
+                }
+            }
 
             first.Should().NotBe(second);
         }
@@ -82,7 +92,17 @@
             first.As<DateTime>().Should().BeAfter(DateTime.UtcNow.AddYears(-100));
             first.As<DateTime>().Kind.Should().Be(DateTimeKind.Utc);
 
-            var second = target.Generate(typeof(DateTime), "dob", executeStrategy);
+            var second = first;
+
+            for (var index = 0; index < 1000; index++)
+            {
+                second = target.Generate(typeof(DateTime), "dob", executeStrategy);
+
+                if (first != second)
+                {
+                    break;
+                }
+            }
 
             first.Should().NotBe(second);
         }

@@ -50,9 +50,20 @@
         {
             var values = Model.Create<List<int>>();
 
-            var actual = values.Next();
+            var first = values.Next();
+            var second = first;
 
-            values.Should().Contain(actual);
+            for (var index = 0; index < 1000; index++)
+            {
+                second = values.Next();
+
+                if (first != second)
+                {
+                    break;
+                }
+            }
+
+            first.Should().NotBe(second);
         }
 
         [Fact]

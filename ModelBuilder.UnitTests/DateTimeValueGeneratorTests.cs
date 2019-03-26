@@ -86,7 +86,17 @@
             first.Should().BeOfType<DateTimeOffset>();
             first.As<DateTimeOffset>().Offset.Should().Be(TimeSpan.Zero);
 
-            var second = target.Generate(typeof(DateTimeOffset), null, executeStrategy);
+            var second = first;
+
+            for (var index = 0; index < 1000; index++)
+            {
+                second = target.Generate(typeof(DateTimeOffset), null, executeStrategy);
+
+                if (first != second)
+                {
+                    break;
+                }
+            }
 
             first.Should().NotBe(second);
         }
@@ -106,7 +116,17 @@
             first.Should().BeOfType<DateTime>();
             first.As<DateTime>().Kind.Should().Be(DateTimeKind.Utc);
 
-            var second = target.Generate(typeof(DateTime), null, executeStrategy);
+            var second = first;
+
+            for (var index = 0; index < 1000; index++)
+            {
+                second = target.Generate(typeof(DateTime), null, executeStrategy);
+
+                if (first != second)
+                {
+                    break;
+                }
+            }
 
             first.Should().NotBe(second);
         }
@@ -122,7 +142,18 @@
             var target = new DateTimeValueGenerator();
 
             var first = (TimeSpan) target.Generate(typeof(TimeSpan), null, executeStrategy);
-            var second = (TimeSpan) target.Generate(typeof(TimeSpan), null, executeStrategy);
+
+            var second = first;
+
+            for (var index = 0; index < 1000; index++)
+            {
+                second = (TimeSpan) target.Generate(typeof(TimeSpan), null, executeStrategy);
+
+                if (first != second)
+                {
+                    break;
+                }
+            }
 
             first.Should().NotBe(second);
         }

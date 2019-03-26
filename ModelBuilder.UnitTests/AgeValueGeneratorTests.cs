@@ -192,9 +192,7 @@
 
         [Theory]
         [ClassData(typeof(NumericTypeDataSource))]
-        public void IsSupportedReturnsFalseWhenReferenceNameIsNullTest(
-            Type type,
-            bool typeSupported)
+        public void IsSupportedReturnsFalseWhenReferenceNameIsNullTest(Type type, bool typeSupported)
         {
             if (typeSupported == false)
             {
@@ -211,9 +209,7 @@
 
         [Theory]
         [ClassData(typeof(NumericTypeDataSource))]
-        public void IsSupportedReturnsFalseWhenReferenceNameNotAgeTest(
-            Type type,
-            bool typeSupported)
+        public void IsSupportedReturnsFalseWhenReferenceNameNotAgeTest(Type type, bool typeSupported)
         {
             if (typeSupported == false)
             {
@@ -230,9 +226,7 @@
 
         [Theory]
         [ClassData(typeof(NumericTypeDataSource))]
-        public void IsSupportedReturnsTrueWhenReferenceNameIncludesAgeTest(
-            Type type,
-            bool typeSupported)
+        public void IsSupportedReturnsTrueWhenReferenceNameIncludesAgeTest(Type type, bool typeSupported)
         {
             if (typeSupported == false)
             {

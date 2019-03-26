@@ -198,9 +198,7 @@
 
         [Theory]
         [ClassData(typeof(NumericTypeDataSource))]
-        public void IsSupportedReturnsFalseWhenReferenceNameIsNullTest(
-            Type type,
-            bool isSupported)
+        public void IsSupportedReturnsFalseWhenReferenceNameIsNullTest(Type type, bool isSupported)
         {
             if (isSupported == false)
             {
@@ -217,9 +215,7 @@
 
         [Theory]
         [ClassData(typeof(NumericTypeDataSource))]
-        public void IsSupportedReturnsFalseWhenReferenceNameNotCountTest(
-            Type type,
-            bool isSupported)
+        public void IsSupportedReturnsFalseWhenReferenceNameNotCountTest(Type type, bool isSupported)
         {
             if (isSupported == false)
             {
@@ -236,9 +232,7 @@
 
         [Theory]
         [ClassData(typeof(NumericTypeDataSource))]
-        public void IsSupportedReturnsTrueWhenReferenceNameIsCountTest(
-            Type type,
-            bool isSupported)
+        public void IsSupportedReturnsTrueWhenReferenceNameIsCountTest(Type type, bool isSupported)
         {
             if (isSupported == false)
             {
