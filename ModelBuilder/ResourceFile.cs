@@ -18,8 +18,9 @@
         private static string Read(string name)
         {
             var assembly = typeof(ResourceFile).GetTypeInfo().Assembly;
+            var resourceName = "ModelBuilder.Resources." + name + ".txt";
 
-            using (var stream = assembly.GetManifestResourceStream(name))
+            using (var stream = assembly.GetManifestResourceStream(resourceName))
             {
                 if (stream == null)
                 {

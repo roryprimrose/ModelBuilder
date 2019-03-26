@@ -4,7 +4,6 @@
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
-    using ModelBuilder.Properties;
 
     /// <summary>
     ///     The <see cref="TestData" />
@@ -18,14 +17,14 @@
                 "This is done in the constructor for the better performance of splitting males an females in a single iteration.")]
         static TestData()
         {
-            Companies = ParseValues(Resources.Companies);
-            Locations = ParseLocations(Resources.Locations);
-            FemaleNames = ParseValues(Resources.FemaleNames);
-            MaleNames = ParseValues(Resources.MaleNames);
-            LastNames = ParseValues(Resources.LastNames);
-            Cultures = ParseValues(Resources.Cultures);
-            TimeZones = ParseValues(Resources.TimeZones);
-            Domains = ParseValues(Resources.Domains);
+            Companies = ParseValues(ResourceFile.Companies);
+            Locations = ParseLocations(ResourceFile.Locations);
+            FemaleNames = ParseValues(ResourceFile.FemaleNames);
+            MaleNames = ParseValues(ResourceFile.MaleNames);
+            LastNames = ParseValues(ResourceFile.LastNames);
+            Cultures = ParseValues(ResourceFile.Cultures);
+            TimeZones = ParseValues(ResourceFile.TimeZones);
+            Domains = ParseValues(ResourceFile.Domains);
         }
 
         private static List<Location> ParseLocations(string locations)
