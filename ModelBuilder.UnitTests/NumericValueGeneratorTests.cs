@@ -1,6 +1,7 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
+    using System.Reflection;
     using FluentAssertions;
     using NSubstitute;
     using Xunit;
@@ -124,7 +125,7 @@
 
             for (var index = 0; index < 100000; index++)
             {
-                var value = (int?) target.Generate(typeof(int?), null, executeStrategy);
+                var value = (int?)target.Generate(typeof(int?), null, executeStrategy);
 
                 if (value == null)
                 {
@@ -182,7 +183,7 @@
 
                 var actual = Convert.ToDouble(value);
 
-                if (unchecked(actual != (int) actual))
+                if (unchecked(actual != (int)actual))
                 {
                     decimalFound = true;
 

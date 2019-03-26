@@ -27,7 +27,10 @@
             new object[] {typeof(ulong?), true, ulong.MinValue, ulong.MaxValue},
             new object[] {typeof(double?), true, double.MinValue, double.MaxValue},
             new object[] {typeof(float?), true, float.MinValue, float.MaxValue},
-            new object[] {typeof(decimal), true, decimal.MinValue, decimal.MaxValue},
+
+            // TODO: Wait until xUnit fixes the bug at https://github.com/xunit/xunit/issues/1771 before adding this back in again
+            //new object[] {typeof(decimal), true, decimal.MinValue, decimal.MaxValue},
+
             new object[] {typeof(string), false, 0, 0}
         };
 
