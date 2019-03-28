@@ -92,6 +92,7 @@ The extensibility points controlling how to create models are:
 - CreationRules
 - IgnoreRules
 - ExecuteOrderRules
+- TypeMappingRules
 - PostBuildActions
 - ConstructorResolver
 
@@ -115,6 +116,7 @@ public class MyCustomCompilerModule : ICompilerModule
         compiler.Add(new MyCustomCreationRule());
         compiler.Add(new MyCustomTypeCreator());
         compiler.Add(new MyCustomValueGenerator());
+        compiler.Add(new MyTypeMappingRule());
 		
         // Or
         compiler.AddExecuteOrderRule<MyCustomExecuteOrderRule>();
@@ -123,21 +125,28 @@ public class MyCustomCompilerModule : ICompilerModule
         compiler.AddCreationRule<MyCustomCreationRule>();
         compiler.AddTypeCreator<MyCustomTypeCreator>();
         compiler.AddValueGenerator<MyCustomValueGenerator>();
+        compiler.AddTypeMappingRule<MyTypeMappingRule>();
     }
 }
 ```
 
-When running under the full .Net framework (from 4.5.2), ModelBuilder will automatically scan all the CompilerModule types found in the assemblies in the current AppDomain. It will then automatically configure the default BuildStrategyCompiler using those modules when calling Model.Create&lt;T&gt;. 
+When running under the full .Net framework (from 4.5.2), ModelBuilder will automatically scan all the CompilerModule types found in the assemblies in the current AppDomain. It will then automatically configure the default BuildStrategyCompiler using those modules when calling ```Model.Create<T>```. 
 
 The assembly scanning for CompilerModule types in .Net 4.5.2 is not available in netstandard 1.5. CompilerModules in netstandard 1.5 and higher must be manually added to a BuildStrategyCompiler using either ```compiler.Add(new MyCustomModule())``` or ```compiler.AddCompilerModule<MyCustomModule>()```.
 
+You may want to create multiple compiler modules that support different model construction designs. These can be used on the fly as well.
+
+```
+var model = Model.UsingModule<CustomModule>().Create<Person>();
+```
+
 ### BuildStrategy 
 
-A BuildStrategy contains the configuration of how to create models via all the above extesibility points. It exposes this configuration in a read-only manner. This ensures a consistent behaviour for creating models. BuildStrategy exposes an ExecuteStrategy instance via the GetExecuteStrategy&lt;T&gt; method.
+A BuildStrategy contains the configuration of how to create models via all the above extesibility points. It exposes this configuration in a read-only manner. This ensures a consistent behaviour for creating models. BuildStrategy exposes an ExecuteStrategy instance via the ```GetExecuteStrategy<T>``` method.
     
 Creating a model ultimately starts with a BuildStrategy configuration. There are a couple of options for building this configuration. 
 
-You can create a custom BuildStrategy from scratch by creating your own type that implements IBuildStrategy. You can then assign this instance as the default BuildStrategy against Model which is then used in calls to Model.Create&lt;T&gt;.
+You can create a custom BuildStrategy from scratch by creating your own type that implements IBuildStrategy. You can then assign this instance as the default BuildStrategy against Model which is then used in calls to ```Model.Create<T>```.
 
 ```
 Model.BuildStrategy = new CustomBuildStrategy();
@@ -150,12 +159,13 @@ var strategy = ModelBuilder.DefaultBuildStrategy
     .Clone()
     .AddTypeCreator<MyCustomTypeCreator>()
     .AddValueGenerator<MyCustomValueGenerator>()
-	.RemoveValueGenerator<EmailValueGenerator>()
-	.AddValueGenerator<MailinatorEmailValueGenerator>()
-	.AddCreationRule<Person>(x => x.IsAdministrator, false)
+    .RemoveValueGenerator<EmailValueGenerator>()
+    .AddValueGenerator<MailinatorEmailValueGenerator>()
+    .AddCreationRule<Person>(x => x.IsAdministrator, false)
     .AddIgnoreRule<Person>(x => x.FirstName)
     .AddExecuteOrderRule<Person>(x => x.LastName, 10)
-	.AddPostBuildAction<MyCustomPostBuildAction>()
+    .AddPostBuildAction<MyCustomPostBuildAction>()
+    .AddTypeMappingRule<MyCustomTypeMappingRule>()
     .Compile();
 
 Model.BuildStrategy = strategy;
@@ -164,7 +174,7 @@ Model.BuildStrategy = strategy;
 You may want to create multiple build strategies that support different model construction designs. These can be used on the fly as well.
 
 ```
-var model = Model.Using<CustomBuildStrategy>().Create<Person>();
+var model = Model.UsingBuildStrategy<CustomBuildStrategy>().Create<Person>();
 ```
 
 ### ExecuteStrategy
@@ -177,7 +187,7 @@ Type creators are used to create instances of classes, or reference types with t
 
 DefaultTypeCreator will create a new instance of a type using Activator.CreateInstance and supports the optional provision of constructor arguments.
 
-EnumerableTypeCreate will create instances of most types derived from IEnumerable&lt;T&gt;. It will also attempt to populate the instance with data.
+EnumerableTypeCreate will create instances of most types derived from ```IEnumerable<T>```. It will also attempt to populate the instance with data.
 
 ### Value generators
 
@@ -227,10 +237,54 @@ Generating random or pseudo-random data for a model dynamically is never going t
 
 For example, if a Person type exposes a Gender property then the FirstName property should ideally match that gender. The DefaultBuildStrategy supports this by defining that the GenderValueGenerator gets executed before the FirstNameValueGenerator which is executed before the StringValueGenerator. Another example of this is that the DefaultBuildStrategy defines the enum properties will be assigned before other property types because they tend to be reference data that might define how other properties are assigned.
 
+### Type Mapping Rules
+
+A constructor parameter or class property may define a type that is either an interface or an abstract class. ModelBuilder will not be able to create a value for these types without being configured with a custom TypeCreator or ConstructorResolver. Using a TypeMappingRule here is the easiest way of providing a hint to the ExecuteStrategy about how to create a specific type when the original type required cannot be created.
+
+For example, you may have a class that returns an interface property that is not already supported by a TypeCreator.
+
+```
+public interface IManifest
+{
+    bool IsCurrent();
+
+    DateTimeOffset Sent { get; set; }
+
+    DateTimeOffset ExpectedAt { get; set; }
+}
+
+public class Manifest : IManifest
+{
+    public bool IsCurrent()
+    {
+        var now = DateTimeOffset.UtcNow;
+
+        return (Sent < now && ExpectedAt > now);
+    }
+
+    public DateTimeOffset Sent { get; set; }
+
+    public DateTimeOffset ExpectedAt { get; set; }
+}
+
+public class ShippingContainer
+{
+    public IManifest Manifest { get; set; }
+}
+```
+
+ModelBuilder in this case will throw an exception with ```Model.Create<ShippingContainer>()```. A TypeMappingRule will help it understand that a request to create an IManifest object should actually create a Manifest object instead.
+
+```
+Model.Mapping<IManifest, Manifest>().Create<ShippingContainer>()
+```
+
+Where the DefaultExecuteStrategy is used and a type mapping is not defined for an interface or abstract type, the default strategy will attempt to find a derived type in the same assembly that defines the interface or abstract class. It will try to create an object using the first type it can automatically resolve. This reduces the number of times that a manual type mapping will be required however results may be non-deterministic.
+
 ### Post-Build Actions
 
 Post-build actions are much like the Set and SetEach extension methods. They provide the opportunity to tweak an instance after it has been created or populated. Suported post-build actions are evaluated in descending priority order after an instance has been created or populated.
 
 ### Constructor resolver
 
-The constructor resolver is used to assist in resolving the constructor to execute when creating child instances of a model in the DefaultExecuteStrategy&lt;T&gt;. This supports a scenario where a property type to create is a type that does not have a default constructor and no parameters are available to create with. The constructor resolver will guess which is the most appropriate constructor to use for which the execute strategy will then create the required parameters.
+The constructor resolver is used to assist in resolving the constructor to execute when creating child instances of a model in the ```DefaultExecuteStrategy<T>```. This supports a scenario where a property type to create is a type that does not have a default constructor and no parameters are available to create with. The constructor resolver will guess which is the most appropriate constructor to use for which the execute strategy will then create the required parameters.

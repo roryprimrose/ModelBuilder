@@ -10,6 +10,8 @@
     <NeutralLanguage>en-US</NeutralLanguage>
     <Copyright>Copyright © Neovolve 2016</Copyright>
     <IncludeSymbols>True</IncludeSymbols>
+    <PackageLicenseUrl>https://github.com/roryprimrose/ModelBuilder/blob/master/LICENSE.md</PackageLicenseUrl>
+    <RepositoryUrl>https://github.com/roryprimrose/ModelBuilder</RepositoryUrl>
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
