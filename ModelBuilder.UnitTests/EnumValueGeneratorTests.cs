@@ -24,7 +24,7 @@
 
             for (var index = 0; index < 1000; index++)
             {
-                var value = (SingleEnum?)target.Generate(typeof(SingleEnum?), null, executeStrategy);
+                var value = (SingleEnum?) target.Generate(typeof(SingleEnum?), null, executeStrategy);
 
                 if (value == null)
                 {
@@ -170,7 +170,7 @@
 
             for (var index = 0; index < 1000; index++)
             {
-                var actual = (SmallFlags)target.Generate(typeof(SmallFlags), null, executeStrategy);
+                var actual = (SmallFlags) target.Generate(typeof(SmallFlags), null, executeStrategy);
 
                 if (actual == SmallFlags.First)
                 {
@@ -211,7 +211,7 @@
             var actual = target.Generate(typeof(NoValues), null, executeStrategy);
 
             actual.Should().BeOfType<NoValues>();
-            actual.Should().Be((NoValues)0);
+            actual.Should().Be((NoValues) 0);
         }
 
         [Theory]

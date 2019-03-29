@@ -4,7 +4,7 @@
 
     public class NullExecuteStrategy : IExecuteStrategy
     {
-        public object CreateWith(Type type, params object[] args)
+        public object Create(Type type, params object[] args)
         {
             throw new NotImplementedException();
         }

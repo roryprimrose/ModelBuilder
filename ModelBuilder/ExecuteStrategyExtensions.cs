@@ -22,7 +22,7 @@ namespace ModelBuilder
                 throw new ArgumentNullException(nameof(executeStrategy));
             }
 
-            return executeStrategy.CreateWith();
+            return executeStrategy.Create();
         }
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace ModelBuilder
                 throw new ArgumentNullException(nameof(instanceType));
             }
 
-            return executeStrategy.CreateWith(instanceType);
+            return executeStrategy.Create(instanceType);
         }
     }
 }

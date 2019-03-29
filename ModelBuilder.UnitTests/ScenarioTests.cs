@@ -4,7 +4,6 @@
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Diagnostics.CodeAnalysis;
-    using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
     using FluentAssertions;
@@ -183,7 +182,7 @@
         {
             var strategy = Model.UsingExecuteStrategy<DefaultExecuteStrategy<Company>>();
 
-            strategy.Create();
+            ExecuteStrategyExtensions.Create(strategy);
 
             var actual = strategy.Log.Output;
 
@@ -197,7 +196,7 @@
         {
             var strategy = Model.UsingExecuteStrategy<DefaultExecuteStrategy<WithValueParameters>>();
 
-            strategy.Create();
+            ExecuteStrategyExtensions.Create(strategy);
 
             var actual = strategy.Log.Output;
 
@@ -212,7 +211,7 @@
             var builder = Model.BuildStrategy.Clone().AddIgnoreRule<Company>(x => x.Address).Compile();
             var strategy = builder.GetExecuteStrategy<Company>();
 
-            strategy.Create();
+            ExecuteStrategyExtensions.Create(strategy);
 
             var actual = strategy.Log.Output;
 
@@ -230,7 +229,7 @@
                 .Compile()
                 .GetExecuteStrategy<Company>();
 
-            strategy.Create();
+            ExecuteStrategyExtensions.Create(strategy);
 
             var actual = strategy.Log.Output;
 
@@ -254,6 +253,20 @@
 
             actual.First.Should().NotBeNullOrWhiteSpace();
             WithStatic.Second.Should().BeNullOrWhiteSpace();
+        }
+
+        [Fact]
+        public void CreateDoesNotSetPropertiesProvidedByConstructorTest()
+        {
+            var args = new object[] {new Company(), Guid.NewGuid(), 123, 456, true};
+
+            var actual = Model.Create<WithConstructorParameters>(args);
+
+            actual.First.Should().BeSameAs(args[0]);
+            actual.Id.Should().Be((Guid) args[1]);
+            actual.RefNumber.Should().Be((int?) args[2]);
+            actual.Number.Should().Be((int) args[3]);
+            actual.Value.Should().Be((bool) args[4]);
         }
 
         [Fact]
@@ -297,6 +310,16 @@
         }
 
         [Fact]
+        public void CreateReturnsCompanyWithEnumerableTypeCreatorUsageTest()
+        {
+            var actual = Model.Create<Company>();
+
+            actual.Should().NotBeNull();
+            actual.Name.Should().NotBeNullOrWhiteSpace();
+            actual.Staff.Should().NotBeEmpty();
+        }
+
+        [Fact]
         public void CreateReturnsEnumerableWithAutoPopulatedItemsInstanceTest()
         {
             var actual = Model.Create<IEnumerable<int>>().ToList();
@@ -320,6 +343,21 @@
 
             actual.Should().HaveCount(EnumerableTypeCreator.DefaultAutoPopulateCount);
             actual.All(x => x == 0).Should().BeFalse();
+        }
+
+        [Fact]
+        public void CreateReturnsPersonCreatedWithArgumentsTest()
+        {
+            var entity = Model.Create<Person>();
+            var actual = Model.Create<Person>(entity);
+
+            actual.Should().NotBeNull();
+            actual.DOB.Should().NotBe(default(DateTime));
+            actual.PersonalEmail.Should().Match("*@*.*");
+            actual.WorkEmail.Should().Match("*@*.*");
+            actual.FirstName.Should().NotBeNullOrWhiteSpace();
+            actual.LastName.Should().NotBeNullOrWhiteSpace();
+            actual.Priority.Should().NotBe(0);
         }
 
         [Fact]
@@ -368,6 +406,44 @@
         }
 
         [Fact]
+        public void CreateSetsPropertyValuesWhenConstructorParametersHaveDefaultValuesTest()
+        {
+            var buildLog = Substitute.For<IBuildLog>();
+            var configuration = Model.DefaultBuildStrategy;
+
+            var target = new DefaultExecuteStrategy();
+
+            target.Initialize(configuration, buildLog);
+
+            var args = new object[] {null, Guid.Empty, null, 0, false};
+
+            var actual = Model.Create<WithConstructorParameters>(args);
+
+            actual.First.Should().NotBeNull();
+            actual.Id.Should().NotBeEmpty();
+            (actual.RefNumber == null || actual.RefNumber != 0).Should().BeTrue();
+            actual.Number.Should().NotBe(0);
+        }
+
+        [Fact]
+        public void CreateSetsPropertyValueWhenNoMatchOnConstructorParameterTest()
+        {
+            var buildLog = Substitute.For<IBuildLog>();
+            var configuration = Model.DefaultBuildStrategy;
+
+            var target = new DefaultExecuteStrategy();
+
+            target.Initialize(configuration, buildLog);
+
+            var args = new object[] {Guid.NewGuid().ToString()};
+
+            var actual = Model.Create<WithMixedValueParameters>(args);
+
+            actual.FirstName.Should().NotBe((string) args[0]);
+            actual.LastName.Should().NotBe((string) args[0]);
+        }
+
+        [Fact]
         public void CreatesPropertyOfSameTypeWithCreatedInstanceTest()
         {
             var actual = Model.Create<Looper>();
@@ -395,7 +471,7 @@
 
             target.Initialize(buildStrategy, buildStrategy.GetBuildLog());
 
-            Action action = () => target.CreateWith();
+            Action action = () => target.Create();
 
             var exception = action.Should()
                 .Throw<BuildException>()
@@ -404,83 +480,6 @@
                 .Which;
 
             _output.WriteLine(exception.Message);
-        }
-
-        [Fact]
-        public void CreateWithDoesNotSetPropertiesProvidedByConstructorTest()
-        {
-            var args = new object[] {new Company(), Guid.NewGuid(), 123, 456, true};
-
-            var actual = Model.CreateWith<WithConstructorParameters>(args);
-
-            actual.First.Should().BeSameAs(args[0]);
-            actual.Id.Should().Be((Guid) args[1]);
-            actual.RefNumber.Should().Be((int?) args[2]);
-            actual.Number.Should().Be((int) args[3]);
-            actual.Value.Should().Be((bool) args[4]);
-        }
-
-        [Fact]
-        public void CreateWithReturnsCompanyWithEnumerableTypeCreatorUsageTest()
-        {
-            var actual = Model.Create<Company>();
-
-            actual.Should().NotBeNull();
-            actual.Name.Should().NotBeNullOrWhiteSpace();
-            actual.Staff.Should().NotBeEmpty();
-        }
-
-        [Fact]
-        public void CreateWithReturnsPersonCreatedWithArgumentsTest()
-        {
-            var entity = Model.Create<Person>();
-            var actual = Model.CreateWith<Person>(entity);
-
-            actual.Should().NotBeNull();
-            actual.DOB.Should().NotBe(default(DateTime));
-            actual.PersonalEmail.Should().Match("*@*.*");
-            actual.WorkEmail.Should().Match("*@*.*");
-            actual.FirstName.Should().NotBeNullOrWhiteSpace();
-            actual.LastName.Should().NotBeNullOrWhiteSpace();
-            actual.Priority.Should().NotBe(0);
-        }
-
-        [Fact]
-        public void CreateWithSetsPropertyValuesWhenConstructorParametersHaveDefaultValuesTest()
-        {
-            var buildLog = Substitute.For<IBuildLog>();
-            var configuration = Model.DefaultBuildStrategy;
-
-            var target = new DefaultExecuteStrategy();
-
-            target.Initialize(configuration, buildLog);
-
-            var args = new object[] {null, Guid.Empty, null, 0, false};
-
-            var actual = Model.CreateWith<WithConstructorParameters>(args);
-
-            actual.First.Should().NotBeNull();
-            actual.Id.Should().NotBeEmpty();
-            (actual.RefNumber == null || actual.RefNumber != 0).Should().BeTrue();
-            actual.Number.Should().NotBe(0);
-        }
-
-        [Fact]
-        public void CreateWithSetsPropertyValueWhenNoMatchOnConstructorParameterTest()
-        {
-            var buildLog = Substitute.For<IBuildLog>();
-            var configuration = Model.DefaultBuildStrategy;
-
-            var target = new DefaultExecuteStrategy();
-
-            target.Initialize(configuration, buildLog);
-
-            var args = new object[] {Guid.NewGuid().ToString()};
-
-            var actual = Model.CreateWith<WithMixedValueParameters>(args);
-
-            actual.FirstName.Should().NotBe((string) args[0]);
-            actual.LastName.Should().NotBe((string) args[0]);
         }
 
         [Fact]
@@ -513,7 +512,7 @@
         public void IgnoringSkipsPropertyAssignmentTest()
         {
             var entity = Model.Create<Person>();
-            var actual = Model.Ignoring<Person>(x => x.Id).Ignoring<Person>(x => x.IsActive).CreateWith<Person>(entity);
+            var actual = Model.Ignoring<Person>(x => x.Id).Ignoring<Person>(x => x.IsActive).Create<Person>(entity);
 
             actual.Should().NotBeNull();
             actual.DOB.Should().NotBe(default(DateTime));
@@ -533,8 +532,12 @@
 
             var actual = strategy.Create<List<Person>>();
 
-            actual.All(x => x.PersonalEmail.EndsWith("@mailinator.com", StringComparison.OrdinalIgnoreCase)).Should().BeTrue();
-            actual.All(x => x.WorkEmail.EndsWith("@mailinator.com", StringComparison.OrdinalIgnoreCase)).Should().BeTrue();
+            actual.All(x => x.PersonalEmail.EndsWith("@mailinator.com", StringComparison.OrdinalIgnoreCase))
+                .Should()
+                .BeTrue();
+            actual.All(x => x.WorkEmail.EndsWith("@mailinator.com", StringComparison.OrdinalIgnoreCase))
+                .Should()
+                .BeTrue();
         }
 
         [Fact]
@@ -627,7 +630,7 @@
                 {
                     var strategy = buildStrategy.GetExecuteStrategy<Empty>();
 
-                    strategy.CreateWith();
+                    strategy.Create();
 
                     return "Iteration " + loopIndex
 #if NET452

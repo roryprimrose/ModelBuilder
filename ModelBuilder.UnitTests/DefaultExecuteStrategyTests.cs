@@ -34,7 +34,7 @@
 
             target.BuildChain.Should().BeEmpty();
 
-            target.Create(typeof(Company));
+            ExecuteStrategyExtensions.Create(target, typeof(Company));
 
             target.BuildChain.Should().BeEmpty();
         }
@@ -62,90 +62,7 @@
         }
 
         [Fact]
-        public void CreateEvaluatesPostBuildActionsInOrderOfDescendingPriorityTest()
-        {
-            var firstAction = Substitute.For<IPostBuildAction>();
-            var secondAction = Substitute.For<IPostBuildAction>();
-            var buildStrategy = new DefaultBuildStrategyCompiler().Add(firstAction).Add(secondAction).Compile();
-            var executeCount = 0;
-
-            firstAction.IsSupported(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<IBuildChain>()).Returns(true);
-            secondAction.IsSupported(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<IBuildChain>()).Returns(true);
-            firstAction.WhenForAnyArgs(x => x.Execute(null, null, null))
-                .Do(x =>
-                {
-                    executeCount++;
-
-                    executeCount.Should().Be(1);
-                });
-            secondAction.WhenForAnyArgs(x => x.Execute(null, null, null))
-                .Do(x =>
-                {
-                    executeCount++;
-
-                    executeCount.Should().Be(2);
-                });
-
-            var target = new DefaultExecuteStrategy();
-
-            target.Initialize(buildStrategy, buildStrategy.GetBuildLog());
-
-            target.Create(typeof(Simple));
-
-            firstAction.Received().Execute(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<IBuildChain>());
-            secondAction.Received().Execute(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<IBuildChain>());
-        }
-
-        [Fact]
-        public void CreateEvaluatesPostBuildActionsOfNestedInstancesExposedAsReadOnlyPropertiesTest()
-        {
-            var postBuildAction = Substitute.For<IPostBuildAction>();
-            var buildStrategy = new DefaultBuildStrategyCompiler().Add(postBuildAction).Compile();
-
-            postBuildAction.IsSupported(typeof(Company), nameof(ReadOnlyParent.Company), Arg.Any<IBuildChain>())
-                .Returns(true);
-
-            var target = new DefaultExecuteStrategy();
-
-            target.Initialize(buildStrategy, buildStrategy.GetBuildLog());
-
-            target.Create(typeof(ReadOnlyParent));
-
-            postBuildAction.Received().Execute(typeof(Company), nameof(ReadOnlyParent.Company), Arg.Any<IBuildChain>());
-        }
-
-        [Fact]
-        public void CreateEvaluatesPostBuildActionsThatSupportTheBuildScenarioTest()
-        {
-            var firstAction = Substitute.For<IPostBuildAction>();
-            var secondAction = Substitute.For<IPostBuildAction>();
-            var buildStrategy = new DefaultBuildStrategyCompiler().Add(firstAction).Add(secondAction).Compile();
-
-            firstAction.IsSupported(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<IBuildChain>()).Returns(false);
-            secondAction.IsSupported(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<IBuildChain>()).Returns(true);
-
-            var target = new DefaultExecuteStrategy();
-
-            target.Initialize(buildStrategy, buildStrategy.GetBuildLog());
-
-            target.Create(typeof(Simple));
-
-            firstAction.DidNotReceive().Execute(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<IBuildChain>());
-            secondAction.Received().Execute(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<IBuildChain>());
-        }
-
-        [Fact]
-        public void CreateThrowsExceptionWhenNotInitializedTest()
-        {
-            var target = new DefaultExecuteStrategy();
-
-            Action action = () => target.Create(typeof(Person));
-
-            action.Should().Throw<InvalidOperationException>();
-        }
-
-        [Fact]
-        public void CreateWithDeterminesPropertiesToCreateByProvidingConstructorArgsForNestedTypeTest()
+        public void CreateDeterminesPropertiesToCreateByProvidingConstructorArgsForNestedTypeTest()
         {
             var number = Environment.TickCount;
             var value = Guid.NewGuid();
@@ -207,7 +124,7 @@
             valueGenerator.IsSupported(typeof(Guid), "value", Arg.Any<IBuildChain>()).Returns(true);
             valueGenerator.Generate(typeof(Guid), "value", Arg.Any<IExecuteStrategy>()).Returns(value);
 
-            var actual = target.CreateWith(typeof(AdditionalWrapper), number);
+            var actual = target.Create(typeof(AdditionalWrapper), number);
 
             actual.Should().NotBeNull();
             propertyResolver.Received(1)
@@ -218,7 +135,7 @@
         }
 
         [Fact]
-        public void CreateWithDoesNotBuildPropertiesWhenTypeCreatorDisablesAutoPopulateTest()
+        public void CreateDoesNotBuildPropertiesWhenTypeCreatorDisablesAutoPopulateTest()
         {
             var model = new SlimModel();
             var typeCreators = new List<ITypeCreator>();
@@ -242,14 +159,87 @@
             typeCreator.AutoPopulate.Returns(false);
             typeCreator.Populate(model, target).Returns(model);
 
-            var actual = (SlimModel) target.CreateWith(typeof(SlimModel));
+            var actual = (SlimModel) target.Create(typeof(SlimModel));
 
             actual.Should().BeSameAs(model);
             actual.Value.Should().BeEmpty();
         }
 
         [Fact]
-        public void CreateWithReturnsInstanceFromBuildChainWhenCircularReferenceDetectedTest()
+        public void CreateEvaluatesPostBuildActionsInOrderOfDescendingPriorityTest()
+        {
+            var firstAction = Substitute.For<IPostBuildAction>();
+            var secondAction = Substitute.For<IPostBuildAction>();
+            var buildStrategy = new DefaultBuildStrategyCompiler().Add(firstAction).Add(secondAction).Compile();
+            var executeCount = 0;
+
+            firstAction.IsSupported(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<IBuildChain>()).Returns(true);
+            secondAction.IsSupported(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<IBuildChain>()).Returns(true);
+            firstAction.WhenForAnyArgs(x => x.Execute(null, null, null))
+                .Do(x =>
+                {
+                    executeCount++;
+
+                    executeCount.Should().Be(1);
+                });
+            secondAction.WhenForAnyArgs(x => x.Execute(null, null, null))
+                .Do(x =>
+                {
+                    executeCount++;
+
+                    executeCount.Should().Be(2);
+                });
+
+            var target = new DefaultExecuteStrategy();
+
+            target.Initialize(buildStrategy, buildStrategy.GetBuildLog());
+
+            ExecuteStrategyExtensions.Create(target, typeof(Simple));
+
+            firstAction.Received().Execute(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<IBuildChain>());
+            secondAction.Received().Execute(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<IBuildChain>());
+        }
+
+        [Fact]
+        public void CreateEvaluatesPostBuildActionsOfNestedInstancesExposedAsReadOnlyPropertiesTest()
+        {
+            var postBuildAction = Substitute.For<IPostBuildAction>();
+            var buildStrategy = new DefaultBuildStrategyCompiler().Add(postBuildAction).Compile();
+
+            postBuildAction.IsSupported(typeof(Company), nameof(ReadOnlyParent.Company), Arg.Any<IBuildChain>())
+                .Returns(true);
+
+            var target = new DefaultExecuteStrategy();
+
+            target.Initialize(buildStrategy, buildStrategy.GetBuildLog());
+
+            ExecuteStrategyExtensions.Create(target, typeof(ReadOnlyParent));
+
+            postBuildAction.Received().Execute(typeof(Company), nameof(ReadOnlyParent.Company), Arg.Any<IBuildChain>());
+        }
+
+        [Fact]
+        public void CreateEvaluatesPostBuildActionsThatSupportTheBuildScenarioTest()
+        {
+            var firstAction = Substitute.For<IPostBuildAction>();
+            var secondAction = Substitute.For<IPostBuildAction>();
+            var buildStrategy = new DefaultBuildStrategyCompiler().Add(firstAction).Add(secondAction).Compile();
+
+            firstAction.IsSupported(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<IBuildChain>()).Returns(false);
+            secondAction.IsSupported(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<IBuildChain>()).Returns(true);
+
+            var target = new DefaultExecuteStrategy();
+
+            target.Initialize(buildStrategy, buildStrategy.GetBuildLog());
+
+            ExecuteStrategyExtensions.Create(target, typeof(Simple));
+
+            firstAction.DidNotReceive().Execute(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<IBuildChain>());
+            secondAction.Received().Execute(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<IBuildChain>());
+        }
+
+        [Fact]
+        public void CreateReturnsInstanceFromBuildChainWhenCircularReferenceDetectedTest()
         {
             var expected = new SelfReferrer();
             var id = Guid.NewGuid();
@@ -287,14 +277,14 @@
             generator.Generate(typeof(Guid), "Id", Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == expected))
                 .Returns(id);
 
-            var actual = (SelfReferrer) target.CreateWith(typeof(SelfReferrer));
+            var actual = (SelfReferrer) target.Create(typeof(SelfReferrer));
 
             actual.Should().Be(expected);
             actual.Id.Should().Be(id);
         }
 
         [Fact]
-        public void CreateWithReturnsNullWhenInstanceFailsToBeCreatedTest()
+        public void CreateReturnsNullWhenInstanceFailsToBeCreatedTest()
         {
             var typeCreators = new List<ITypeCreator>();
 
@@ -310,13 +300,13 @@
 
             target.Initialize(buildStrategy, buildStrategy.GetBuildLog());
 
-            var actual = target.CreateWith(typeof(SlimModel));
+            var actual = target.Create(typeof(SlimModel));
 
             actual.Should().BeNull();
         }
 
         [Fact]
-        public void CreateWithReturnsNullWhenNoReferenceTypeCreatedTest()
+        public void CreateReturnsNullWhenNoReferenceTypeCreatedTest()
         {
             var typeCreators = new List<ITypeCreator>();
 
@@ -333,13 +323,13 @@
 
             target.Initialize(buildStrategy, buildStrategy.GetBuildLog());
 
-            var actual = target.CreateWith(typeof(MemoryStream));
+            var actual = target.Create(typeof(MemoryStream));
 
             actual.Should().BeNull();
         }
 
         [Fact]
-        public void CreateWithReturnsNullWhenNoValueTypeCreatedTest()
+        public void CreateReturnsNullWhenNoValueTypeCreatedTest()
         {
             var valueGenerators = new List<IValueGenerator>();
 
@@ -356,13 +346,13 @@
 
             target.Initialize(buildStrategy, buildStrategy.GetBuildLog());
 
-            var actual = target.CreateWith(typeof(int));
+            var actual = target.Create(typeof(int));
 
             actual.Should().BeNull();
         }
 
         [Fact]
-        public void CreateWithReturnsReferenceTypeFromCreatorTest()
+        public void CreateReturnsReferenceTypeFromCreatorTest()
         {
             var expected = new SlimModel();
             var value = Guid.NewGuid();
@@ -400,14 +390,14 @@
             generator.Generate(typeof(Guid), "Value", Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == expected))
                 .Returns(value);
 
-            var actual = (SlimModel) target.CreateWith(typeof(SlimModel));
+            var actual = (SlimModel) target.Create(typeof(SlimModel));
 
             actual.Should().Be(expected);
             actual.Value.Should().Be(value);
         }
 
         [Fact]
-        public void CreateWithReturnsValueCreatedFromProvidedArgumentsTest()
+        public void CreateReturnsValueCreatedFromProvidedArgumentsTest()
         {
             var expected = new Person();
             var args = new object[]
@@ -437,13 +427,13 @@
             typeCreator.Populate(expected, target).Returns(expected);
             typeCreator.AutoPopulate.Returns(false);
 
-            var actual = target.CreateWith(typeof(Person), args);
+            var actual = target.Create(typeof(Person), args);
 
             actual.Should().BeSameAs(expected);
         }
 
         [Fact]
-        public void CreateWithReturnsValueFromCreatorWithAutomaticTypeMappingTest()
+        public void CreateReturnsValueFromCreatorWithAutomaticTypeMappingTest()
         {
             var model = new TestItem();
             var value = Guid.NewGuid().ToString();
@@ -483,14 +473,14 @@
             generator.Generate(typeof(string), "FirstName", Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == model))
                 .Returns(value);
 
-            var actual = (ITestItem) target.CreateWith(typeof(ITestItem));
+            var actual = (ITestItem) target.Create(typeof(ITestItem));
 
             actual.Should().BeOfType<TestItem>();
             actual.FirstName.Should().Be(value);
         }
 
         [Fact]
-        public void CreateWithReturnsValueFromCreatorWithHighestPriorityTest()
+        public void CreateReturnsValueFromCreatorWithHighestPriorityTest()
         {
             var firstModel = new SlimModel();
             var secondModel = new SlimModel();
@@ -536,14 +526,14 @@
             generator.Generate(typeof(Guid), "Value", Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == secondModel))
                 .Returns(value);
 
-            var actual = (SlimModel) target.CreateWith(typeof(SlimModel));
+            var actual = (SlimModel) target.Create(typeof(SlimModel));
 
             actual.Should().BeSameAs(secondModel);
             actual.Value.Should().Be(value);
         }
 
         [Fact]
-        public void CreateWithReturnsValueFromCreatorWithNoArgumentsAndDetectConstructorDisabledTest()
+        public void CreateReturnsValueFromCreatorWithNoArgumentsAndDetectConstructorDisabledTest()
         {
             var expected = new Person();
             var typeCreators = new List<ITypeCreator>();
@@ -565,13 +555,13 @@
             typeCreator.AutoPopulate.Returns(false);
             typeCreator.AutoDetectConstructor.Returns(false);
 
-            var actual = target.CreateWith(typeof(Person));
+            var actual = target.Create(typeof(Person));
 
             actual.Should().BeSameAs(expected);
         }
 
         [Fact]
-        public void CreateWithReturnsValueFromCreatorWithNoArgumentsAndDetectConstructorEnabledTest()
+        public void CreateReturnsValueFromCreatorWithNoArgumentsAndDetectConstructorEnabledTest()
         {
             var expected = new Person();
             var typeCreators = new List<ITypeCreator>();
@@ -597,13 +587,13 @@
             typeCreator.AutoPopulate.Returns(false);
             typeCreator.AutoDetectConstructor.Returns(true);
 
-            var actual = target.CreateWith(typeof(Person));
+            var actual = target.Create(typeof(Person));
 
             actual.Should().BeSameAs(expected);
         }
 
         [Fact]
-        public void CreateWithReturnsValueFromCreatorWithTypeMappingTest()
+        public void CreateReturnsValueFromCreatorWithTypeMappingTest()
         {
             var model = new TestItem();
             var value = Guid.NewGuid().ToString();
@@ -644,14 +634,14 @@
             generator.Generate(typeof(string), "FirstName", Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == model))
                 .Returns(value);
 
-            var actual = (ITestItem) target.CreateWith(typeof(ITestItem));
+            var actual = (ITestItem) target.Create(typeof(ITestItem));
 
             actual.Should().BeOfType<TestItem>();
             actual.FirstName.Should().Be(value);
         }
 
         [Fact]
-        public void CreateWithReturnsValueFromGeneratorWithHighestPriorityTest()
+        public void CreateReturnsValueFromGeneratorWithHighestPriorityTest()
         {
             var firstValue = Guid.NewGuid();
             var secondValue = Guid.NewGuid();
@@ -676,13 +666,13 @@
 
             target.Initialize(buildStrategy, buildStrategy.GetBuildLog());
 
-            var actual = target.CreateWith(typeof(Guid));
+            var actual = target.Create(typeof(Guid));
 
             actual.Should().Be(secondValue);
         }
 
         [Fact]
-        public void CreateWithReturnsValueFromResolvedConstructorAndBuiltParametersTest()
+        public void CreateReturnsValueFromResolvedConstructorAndBuiltParametersTest()
         {
             var value = Guid.NewGuid();
             var expected = new ReadOnlyModel(value);
@@ -715,14 +705,14 @@
             generator.IsSupported(typeof(Guid), "value", Arg.Any<IBuildChain>()).Returns(true);
             generator.Generate(typeof(Guid), "value", Arg.Any<IExecuteStrategy>()).Returns(value);
 
-            var actual = (ReadOnlyModel) target.CreateWith(typeof(ReadOnlyModel));
+            var actual = (ReadOnlyModel) target.Create(typeof(ReadOnlyModel));
 
             actual.Should().Be(expected);
             actual.Value.Should().Be(value);
         }
 
         [Fact]
-        public void CreateWithReturnsValueFromSupportedCreationRuleTest()
+        public void CreateReturnsValueFromSupportedCreationRuleTest()
         {
             var firstValue = Guid.NewGuid().ToString();
             var secondValue = Guid.NewGuid();
@@ -736,13 +726,13 @@
 
             target.Initialize(buildStrategy, buildStrategy.GetBuildLog());
 
-            var actual = (Person) target.CreateWith(typeof(Person));
+            var actual = (Person) target.Create(typeof(Person));
 
             actual.Id.Should().Be(secondValue);
         }
 
         [Fact]
-        public void CreateWithReturnsValueFromSupportedCreationRuleWithHigherPriorityTest()
+        public void CreateReturnsValueFromSupportedCreationRuleWithHigherPriorityTest()
         {
             var firstValue = Guid.NewGuid();
             var secondValue = Guid.NewGuid();
@@ -756,13 +746,13 @@
 
             target.Initialize(buildStrategy, buildStrategy.GetBuildLog());
 
-            var actual = (Person) target.CreateWith(typeof(Person));
+            var actual = (Person) target.Create(typeof(Person));
 
             actual.Id.Should().Be(secondValue);
         }
 
         [Fact]
-        public void CreateWithReturnsValueFromSupportedCreatorTest()
+        public void CreateReturnsValueFromSupportedCreatorTest()
         {
             var firstModel = new SlimModel();
             var secondModel = new SlimModel();
@@ -808,14 +798,14 @@
             generator.Generate(typeof(Guid), "Value", Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == secondModel))
                 .Returns(value);
 
-            var actual = (SlimModel) target.CreateWith(typeof(SlimModel));
+            var actual = (SlimModel) target.Create(typeof(SlimModel));
 
             actual.Should().BeSameAs(secondModel);
             actual.Value.Should().Be(value);
         }
 
         [Fact]
-        public void CreateWithReturnsValueFromSupportedGeneratorTest()
+        public void CreateReturnsValueFromSupportedGeneratorTest()
         {
             var firstValue = Guid.NewGuid();
             var secondValue = Guid.NewGuid();
@@ -840,13 +830,13 @@
 
             target.Initialize(buildStrategy, buildStrategy.GetBuildLog());
 
-            var actual = target.CreateWith(typeof(Guid));
+            var actual = target.Create(typeof(Guid));
 
             actual.Should().Be(secondValue);
         }
 
         [Fact]
-        public void CreateWithReturnsValueTypeFromGeneratorTest()
+        public void CreateReturnsValueTypeFromGeneratorTest()
         {
             var expected = Guid.NewGuid().ToString();
             var valueGenerators = new List<IValueGenerator>();
@@ -864,13 +854,13 @@
 
             target.Initialize(buildStrategy, buildStrategy.GetBuildLog());
 
-            var actual = target.CreateWith(typeof(string));
+            var actual = target.Create(typeof(string));
 
             actual.Should().Be(expected);
         }
 
         [Fact]
-        public void CreateWithThrowsExceptionWhenAutomaticTypeMappingCantFindMatchTest()
+        public void CreateThrowsExceptionWhenAutomaticTypeMappingCantFindMatchTest()
         {
             var buildStrategy = Substitute.For<IBuildStrategy>();
 
@@ -878,13 +868,13 @@
 
             target.Initialize(buildStrategy, buildStrategy.GetBuildLog());
 
-            Action action = () => target.CreateWith(typeof(ICantCreate));
+            Action action = () => target.Create(typeof(ICantCreate));
 
             action.Should().Throw<BuildException>();
         }
 
         [Fact]
-        public void CreateWithThrowsExceptionWhenConstructorParameterCannotBeCreatedTest()
+        public void CreateThrowsExceptionWhenConstructorParameterCannotBeCreatedTest()
         {
             var typeCreator = new DefaultTypeCreator();
             var typeCreators = new List<ITypeCreator>();
@@ -903,13 +893,13 @@
 
             target.Initialize(buildStrategy, buildStrategy.GetBuildLog());
 
-            Action action = () => target.CreateWith(typeof(ReadOnlyModel));
+            Action action = () => target.Create(typeof(ReadOnlyModel));
 
             action.Should().Throw<BuildException>();
         }
 
         [Fact]
-        public void CreateWithThrowsExceptionWhenCreatingTypeFailsTest()
+        public void CreateThrowsExceptionWhenCreatingTypeFailsTest()
         {
             var typeCreator = Substitute.For<ITypeCreator>();
 
@@ -926,7 +916,7 @@
 
             target.Initialize(buildStrategy, buildStrategy.GetBuildLog());
 
-            Action action = () => target.CreateWith(typeof(Person));
+            Action action = () => target.Create(typeof(Person));
 
             var exception = action.Should()
                 .Throw<BuildException>()
@@ -938,7 +928,7 @@
         }
 
         [Fact]
-        public void CreateWithThrowsExceptionWhenDerivedImplementationSuppliesNullTypeTest()
+        public void CreateThrowsExceptionWhenDerivedImplementationSuppliesNullTypeTest()
         {
             var buildLog = new DefaultBuildLog();
 
@@ -950,13 +940,13 @@
 
             target.Initialize(buildStrategy, buildStrategy.GetBuildLog());
 
-            Action action = () => target.CreateWith(typeof(int));
+            Action action = () => target.Create(typeof(int));
 
             action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
-        public void CreateWithThrowsExceptionWhenGeneratingValueFailsTest()
+        public void CreateThrowsExceptionWhenGeneratingValueFailsTest()
         {
             var person = new Person();
             var generators = new List<IValueGenerator>();
@@ -981,7 +971,7 @@
 
             target.Initialize(buildStrategy, buildStrategy.GetBuildLog());
 
-            Action action = () => target.CreateWith(typeof(Person));
+            Action action = () => target.Create(typeof(Person));
 
             var exception = action.Should()
                 .Throw<BuildException>()
@@ -993,7 +983,7 @@
         }
 
         [Fact]
-        public void CreateWithThrowsExceptionWhenGeneratingValueThrowsBuildExceptionTest()
+        public void CreateThrowsExceptionWhenGeneratingValueThrowsBuildExceptionTest()
         {
             var person = new Person();
             var generators = new List<IValueGenerator>();
@@ -1019,13 +1009,13 @@
 
             target.Initialize(buildStrategy, buildStrategy.GetBuildLog());
 
-            Action action = () => target.CreateWith(typeof(Person));
+            Action action = () => target.Create(typeof(Person));
 
             action.Should().Throw<BuildException>();
         }
 
         [Fact]
-        public void CreateWithThrowsExceptionWhenNoCreatorMatchFoundForReadOnlyChildPropertyTest()
+        public void CreateThrowsExceptionWhenNoCreatorMatchFoundForReadOnlyChildPropertyTest()
         {
             var expected = new SimpleReadOnlyParent();
             var generators = new List<IValueGenerator>();
@@ -1057,13 +1047,13 @@
 
             target.Initialize(buildStrategy, buildStrategy.GetBuildLog());
 
-            Action action = () => target.CreateWith(typeof(SimpleReadOnlyParent));
+            Action action = () => target.Create(typeof(SimpleReadOnlyParent));
 
             action.Should().Throw<BuildException>();
         }
 
         [Fact]
-        public void CreateWithThrowsExceptionWhenNoGeneratorOrCreatorMatchFoundForChildPropertyTest()
+        public void CreateThrowsExceptionWhenNoGeneratorOrCreatorMatchFoundForChildPropertyTest()
         {
             var person = new Person();
             var generators = new List<IValueGenerator>();
@@ -1095,13 +1085,13 @@
 
             target.Initialize(buildStrategy, buildStrategy.GetBuildLog());
 
-            Action action = () => target.CreateWith(typeof(Person));
+            Action action = () => target.Create(typeof(Person));
 
             action.Should().Throw<BuildException>();
         }
 
         [Fact]
-        public void CreateWithThrowsExceptionWhenNoGeneratorOrCreatorMatchFoundForConstructorParameterTest()
+        public void CreateThrowsExceptionWhenNoGeneratorOrCreatorMatchFoundForConstructorParameterTest()
         {
             var generators = new List<IValueGenerator>();
             var creators = new List<ITypeCreator>();
@@ -1126,13 +1116,13 @@
 
             target.Initialize(buildStrategy, buildStrategy.GetBuildLog());
 
-            Action action = () => target.CreateWith(typeof(KeyValuePair<string, Person>));
+            Action action = () => target.Create(typeof(KeyValuePair<string, Person>));
 
             action.Should().Throw<BuildException>();
         }
 
         [Fact]
-        public void CreateWithThrowsExceptionWhenNoGeneratorOrCreatorMatchFoundTest()
+        public void CreateThrowsExceptionWhenNoGeneratorOrCreatorMatchFoundTest()
         {
             var buildStrategy = Substitute.For<IBuildStrategy>();
 
@@ -1140,23 +1130,23 @@
 
             target.Initialize(buildStrategy, buildStrategy.GetBuildLog());
 
-            Action action = () => target.CreateWith(typeof(string));
+            Action action = () => target.Create(typeof(string));
 
             action.Should().Throw<BuildException>();
         }
 
         [Fact]
-        public void CreateWithThrowsExceptionWhenNotInitializedTest()
+        public void CreateThrowsExceptionWhenNotInitializedTest()
         {
             var target = new DefaultExecuteStrategy();
 
-            Action action = () => target.CreateWith(typeof(Person));
+            Action action = () => target.Create(typeof(Person));
 
             action.Should().Throw<InvalidOperationException>();
         }
 
         [Fact]
-        public void CreateWithThrowsExceptionWhenPropertyCannotBeCreatedTest()
+        public void CreateThrowsExceptionWhenPropertyCannotBeCreatedTest()
         {
             var typeCreator = new DefaultTypeCreator();
             var typeCreators = new List<ITypeCreator>();
@@ -1182,13 +1172,13 @@
 
             target.Initialize(buildStrategy, buildStrategy.GetBuildLog());
 
-            Action action = () => target.CreateWith(typeof(SlimModel));
+            Action action = () => target.Create(typeof(SlimModel));
 
             action.Should().Throw<BuildException>();
         }
 
         [Fact]
-        public void CreateWithThrowsExceptionWithNullTypeTest()
+        public void CreateThrowsExceptionWithNullTypeTest()
         {
             var buildStrategy = Substitute.For<IBuildStrategy>();
 
@@ -1196,7 +1186,7 @@
 
             target.Initialize(buildStrategy, buildStrategy.GetBuildLog());
 
-            Action action = () => target.CreateWith(null);
+            Action action = () => target.Create(null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -1852,7 +1842,7 @@
             generator.IsSupported(typeof(Guid), nameof(SlimModel.Value), Arg.Is<IBuildChain>(x => x.Last == instance))
                 .Returns(true);
 
-            target.Create(typeof(SlimModel));
+            ExecuteStrategyExtensions.Create(target, typeof(SlimModel));
 
             testPassed.Should().BeTrue();
         }
@@ -1950,7 +1940,7 @@
             generator.Generate(typeof(string), Arg.Any<string>(), Arg.Any<IExecuteStrategy>())
                 .Returns(Guid.NewGuid().ToString());
 
-            target.Create(typeof(Office));
+            ExecuteStrategyExtensions.Create(target, typeof(Office));
 
             testPassed.Should().BeTrue();
         }

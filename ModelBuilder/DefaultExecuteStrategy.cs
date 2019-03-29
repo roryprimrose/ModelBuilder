@@ -24,7 +24,7 @@
         ///     generate a requested type.
         /// </exception>
         /// <exception cref="BuildException">Failed to generate a requested type.</exception>
-        public object CreateWith(Type type, params object[] args)
+        public object Create(Type type, params object[] args)
         {
             if (type == null)
             {
@@ -131,7 +131,10 @@
         /// <returns>A new instance.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is null.</exception>
         /// <exception cref="NotSupportedException">The <paramref name="type" /> parameter can not be created using this strategy.</exception>
-        [SuppressMessage("Microsoft.Design", "CA1031", Justification = "Catching a generic Exception is required to ensure that any failure to build a value is handled.")]
+        [SuppressMessage("Microsoft.Design",
+            "CA1031",
+            Justification =
+                "Catching a generic Exception is required to ensure that any failure to build a value is handled.")]
         protected virtual object Build(Type type, string referenceName, object context, params object[] args)
         {
             if (type == null)
@@ -492,10 +495,8 @@
                 // Scanning assemblies under full framework here won't be supported at this stage
                 var assemblyTypes = type.GetTypeInfo().Assembly.GetTypes();
                 var possibleTypes = from x in assemblyTypes
-                    where x.TypeIsPublic()
-                        && x.TypeIsInterface() == false
-                        && x.TypeIsAbstract() == false
-                        && type.IsAssignableFrom(x)
+                    where x.TypeIsPublic() && x.TypeIsInterface() == false && x.TypeIsAbstract() == false
+                          && type.IsAssignableFrom(x)
                     select x;
 
                 var matchingType = possibleTypes.FirstOrDefault(type.IsAssignableFrom);
@@ -504,14 +505,13 @@
                 {
                     return type;
                 }
-                
+
                 Log.MappedType(type, matchingType);
 
                 return matchingType;
             }
 
             return type;
-
         }
 
         private void EnsureInitialized()

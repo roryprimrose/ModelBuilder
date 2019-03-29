@@ -1,11 +1,9 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
-    using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Linq;
     using System.Linq.Expressions;
-    using System.Reflection;
     using FluentAssertions;
     using ModelBuilder.UnitTests.Models;
     using NSubstitute;
@@ -877,13 +875,16 @@
         }
 
 #if NET452
-        [SuppressMessage("Microsoft.Design", "CA1034", Justification = "This type is used specifically for testing a particular scenario.")]
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1034", Justification =
+ "This type is used specifically for testing a particular scenario.")]
         public interface ISomeCompilerModule : ICompilerModule
         {
             // This verifies that the module scanner does not attempt to use interface modules
         }
 
-        [SuppressMessage("Microsoft.Design", "CA1034", Justification = "This type is used specifically for testing a particular scenario.")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1034", Justification =
+ "This type is used specifically for testing a particular scenario.")]
         public abstract class AbstractCompilerModule : ICompilerModule
         {
             public void Configure(IBuildStrategyCompiler compiler)

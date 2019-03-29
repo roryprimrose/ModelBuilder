@@ -41,7 +41,7 @@
                 action.Should().NotThrow();
             }
         }
-        
+
         [Fact]
         public void TypeCreatorsIncludesAllAvailableTypeCreatorsTest()
         {

@@ -1,7 +1,6 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
-    using System.Globalization;
     using System.IO;
     using System.Linq;
     using FluentAssertions;

@@ -20,7 +20,7 @@
         }
 
         [Fact]
-        public void CreateWithReturnsDefaultValueWhenInstanceFailsToBeCreatedTest()
+        public void CreateReturnsDefaultValueWhenInstanceFailsToBeCreatedTest()
         {
             var typeCreators = new List<ITypeCreator>();
 
@@ -37,13 +37,13 @@
 
             target.Initialize(buildStrategy, buildStrategy.GetBuildLog());
 
-            var actual = target.CreateWith();
+            var actual = target.Create();
 
             actual.Should().BeNull();
         }
 
         [Fact]
-        public void CreateWithReturnsDefaultValueWhenNoReferenceTypeCreatedTest()
+        public void CreateReturnsDefaultValueWhenNoReferenceTypeCreatedTest()
         {
             var typeCreators = new List<ITypeCreator>();
 
@@ -61,13 +61,13 @@
 
             target.Initialize(buildStrategy, buildStrategy.GetBuildLog());
 
-            var actual = target.CreateWith();
+            var actual = target.Create();
 
             actual.Should().BeNull();
         }
 
         [Fact]
-        public void CreateWithReturnsDefaultValueWhenNoValueTypeCreatedTest()
+        public void CreateReturnsDefaultValueWhenNoValueTypeCreatedTest()
         {
             var valueGenerators = new List<IValueGenerator>();
 
@@ -84,13 +84,13 @@
 
             target.Initialize(buildStrategy, buildStrategy.GetBuildLog());
 
-            var actual = target.CreateWith();
+            var actual = target.Create();
 
             actual.Should().Be(0);
         }
 
         [Fact]
-        public void CreateWithReturnsReferenceTypeFromCreatorTest()
+        public void CreateReturnsReferenceTypeFromCreatorTest()
         {
             var expected = new SlimModel();
             var value = Guid.NewGuid();
@@ -129,14 +129,14 @@
             generator.Generate(typeof(Guid), "Value", Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == expected))
                 .Returns(value);
 
-            var actual = target.CreateWith();
+            var actual = target.Create();
 
             actual.Should().Be(expected);
             actual.Value.Should().Be(value);
         }
 
         [Fact]
-        public void CreateWithReturnsValueCreatedFromProvidedArgumentsTest()
+        public void CreateReturnsValueCreatedFromProvidedArgumentsTest()
         {
             var expected = new Person();
             var args = new object[]
@@ -167,7 +167,7 @@
             typeCreator.Populate(expected, target).Returns(expected);
             typeCreator.AutoPopulate.Returns(false);
 
-            var actual = target.CreateWith(args);
+            var actual = target.Create(args);
 
             actual.Should().BeSameAs(expected);
         }

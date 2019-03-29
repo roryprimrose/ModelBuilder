@@ -13,31 +13,34 @@ namespace ModelBuilder
     public static class BuildStrategyExtensions
     {
         /// <summary>
-        ///     Creates an instance of <typeparamref name="T" /> using the specified build strategy.
+        ///     Creates an instance of <typeparamref name="T" /> using the specified build strategy and any provided constructor
+        ///     arguments.
         /// </summary>
         /// <typeparam name="T">The type of instance to create.</typeparam>
         /// <param name="buildStrategy">The build strategy to create the instance with.</param>
+        /// <param name="args">The constructor arguments to create the type with.</param>
         /// <returns>The new instance.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="buildStrategy" /> parameter is null.</exception>
-        public static T Create<T>(this IBuildStrategy buildStrategy)
+        public static T Create<T>(this IBuildStrategy buildStrategy, params object[] args)
         {
             if (buildStrategy == null)
             {
                 throw new ArgumentNullException(nameof(buildStrategy));
             }
 
-            return buildStrategy.CreateWith<T>();
+            return buildStrategy.UsingExecuteStrategy<DefaultExecuteStrategy<T>>().Create(args);
         }
 
         /// <summary>
-        ///     Creates an instance of a type using the specified build strategy.
+        ///     Creates an instance of a type using the specified build strategy and any provided constructor arguments.
         /// </summary>
         /// <param name="buildStrategy">The build strategy to create the instance with.</param>
         /// <param name="instanceType">The type of instance to create.</param>
+        /// <param name="args">The constructor arguments to create the type with.</param>
         /// <returns>The new instance.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="buildStrategy" /> parameter is null.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="instanceType" /> parameter is null.</exception>
-        public static object Create(this IBuildStrategy buildStrategy, Type instanceType)
+        public static object Create(this IBuildStrategy buildStrategy, Type instanceType, params object[] args)
         {
             if (buildStrategy == null)
             {
@@ -49,49 +52,7 @@ namespace ModelBuilder
                 throw new ArgumentNullException(nameof(instanceType));
             }
 
-            return buildStrategy.CreateWith(instanceType);
-        }
-
-        /// <summary>
-        ///     Creates an instance of <typeparamref name="T" /> using the specified build strategy and constructor arguments.
-        /// </summary>
-        /// <typeparam name="T">The type of instance to create.</typeparam>
-        /// <param name="buildStrategy">The build strategy to create the instance with.</param>
-        /// <param name="args">The constructor arguments to create the type with.</param>
-        /// <returns>The new instance.</returns>
-        /// <exception cref="ArgumentNullException">The <paramref name="buildStrategy" /> parameter is null.</exception>
-        public static T CreateWith<T>(this IBuildStrategy buildStrategy, params object[] args)
-        {
-            if (buildStrategy == null)
-            {
-                throw new ArgumentNullException(nameof(buildStrategy));
-            }
-
-            return buildStrategy.UsingExecuteStrategy<DefaultExecuteStrategy<T>>().CreateWith(args);
-        }
-
-        /// <summary>
-        ///     Creates an instance of a type using the specified build strategy and constructor arguments.
-        /// </summary>
-        /// <param name="buildStrategy">The build strategy to create the instance with.</param>
-        /// <param name="instanceType">The type of instance to create.</param>
-        /// <param name="args">The constructor arguments to create the type with.</param>
-        /// <returns>The new instance.</returns>
-        /// <exception cref="ArgumentNullException">The <paramref name="buildStrategy" /> parameter is null.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="instanceType" /> parameter is null.</exception>
-        public static object CreateWith(this IBuildStrategy buildStrategy, Type instanceType, params object[] args)
-        {
-            if (buildStrategy == null)
-            {
-                throw new ArgumentNullException(nameof(buildStrategy));
-            }
-
-            if (instanceType == null)
-            {
-                throw new ArgumentNullException(nameof(instanceType));
-            }
-
-            return buildStrategy.UsingExecuteStrategy<DefaultExecuteStrategy>().CreateWith(instanceType, args);
+            return buildStrategy.UsingExecuteStrategy<DefaultExecuteStrategy>().Create(instanceType, args);
         }
 
         /// <summary>
@@ -135,7 +96,8 @@ namespace ModelBuilder
         }
 
         /// <summary>
-        ///     Appends a new <see cref="TypeMappingRule" /> to the specified <see cref="IExecuteStrategy{T}" /> using the specified types.
+        ///     Appends a new <see cref="TypeMappingRule" /> to the specified <see cref="IExecuteStrategy{T}" /> using the
+        ///     specified types.
         /// </summary>
         /// <typeparam name="TSource">The source type to use for type mapping.</typeparam>
         /// <typeparam name="TTarget">The target type to use for type mapping.</typeparam>

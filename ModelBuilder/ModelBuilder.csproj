@@ -2,8 +2,11 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard1.5;net45</TargetFrameworks>
-    <CodeAnalysisRuleSet>..\Solution Items\Application.ruleset</CodeAnalysisRuleSet>
 
+    <CodeAnalysisRuleSet>..\Solution Items\Application.ruleset</CodeAnalysisRuleSet>
+    <NoWarn>AD0001</NoWarn>
+
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <Authors>rprimrose</Authors>
     <Company>Neovolve</Company>
     <Description>Provides build features for creating model data.</Description>
@@ -17,9 +20,10 @@
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin\Release\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningsAsErrors />
   </PropertyGroup>
-  
+
   <ItemGroup>
     <None Remove="Resources\Companies.txt" />
     <None Remove="Resources\Cultures.txt" />

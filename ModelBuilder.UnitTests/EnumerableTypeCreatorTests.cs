@@ -260,7 +260,7 @@
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
-            executeStrategy.CreateWith(typeof(Guid)).Returns(Guid.NewGuid());
+            executeStrategy.Create(typeof(Guid)).Returns(Guid.NewGuid());
 
             var target = new EnumerableTypeCreator {AutoPopulateCount = 15};
 
@@ -312,7 +312,7 @@
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
-            executeStrategy.CreateWith(typeof(Guid)).Returns(Guid.NewGuid());
+            executeStrategy.Create(typeof(Guid)).Returns(Guid.NewGuid());
 
             var target = new EnumerableTypeCreator {AutoPopulateCount = 15};
 

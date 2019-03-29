@@ -51,7 +51,7 @@
 
             var target = new SuburbValueGenerator();
 
-            var actual = (string)target.Generate(type, referenceName, executeStrategy);
+            var actual = (string) target.Generate(type, referenceName, executeStrategy);
 
             TestData.LastNames.Should().Contain(actual);
         }

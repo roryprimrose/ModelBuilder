@@ -8,11 +8,11 @@
     public interface IExecuteStrategy<T> : IExecuteStrategy
     {
         /// <summary>
-        ///     Creates a new instance of <typeparamref name="T" /> using the specified arguments.
+        ///     Creates a new instance of <typeparamref name="T" /> using any specified arguments.
         /// </summary>
         /// <param name="args">The constructor arguments of the type.</param>
         /// <returns>A new instance of <typeparamref name="T" /></returns>
-        T CreateWith(params object[] args);
+        T Create(params object[] args);
 
         /// <summary>
         ///     Populates values onto settable properties of the specified instance.

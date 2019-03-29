@@ -11,7 +11,7 @@ var model = Model.Create<Person>();
 This supports creating new instances of classes, nested classes and populating variables out of the box. It will also support providing constructor arguments to the top level type being created.
 
 ```
-var model = Model.CreateWith<Person>("Fred", "Smith");
+var model = Model.Create<Person>("Fred", "Smith");
 ```
 
 You may want to create a model that ignores setting a property for a specific construction.

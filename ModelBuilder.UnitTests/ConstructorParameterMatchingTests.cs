@@ -16,7 +16,7 @@
             var number = Model.Create<int>();
             var value = Model.Create<bool>();
 
-            var model = Model.CreateWith<WithConstructorParameters>(company, id, refNumber, number, value);
+            var model = Model.Create<WithConstructorParameters>(company, id, refNumber, number, value);
 
             model.First.Should().BeSameAs(company);
             model.Second.Should().NotBeSameAs(company);
@@ -31,7 +31,7 @@
             var number = Model.Create<int>();
             var value = Model.Create<bool>();
 
-            var model = Model.CreateWith<WithConstructorParameters>(company, id, refNumber, number, value);
+            var model = Model.Create<WithConstructorParameters>(company, id, refNumber, number, value);
 
             model.First.Should().NotBeNull();
         }
@@ -45,7 +45,7 @@
             var number = Model.Create<int>();
             var value = Model.Create<bool>();
 
-            var model = Model.CreateWith<WithConstructorParameters>(company, id, refNumber, number, value);
+            var model = Model.Create<WithConstructorParameters>(company, id, refNumber, number, value);
 
             model.Customer.Should().NotBeNull();
         }
@@ -59,7 +59,7 @@
             var number = Model.Create<int>();
             var value = Model.Create<bool>();
 
-            var model = Model.CreateWith<WithConstructorParameters>(company, id, refNumber, number, value);
+            var model = Model.Create<WithConstructorParameters>(company, id, refNumber, number, value);
 
             model.Id.Should().NotBeEmpty();
         }

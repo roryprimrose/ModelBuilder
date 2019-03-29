@@ -134,7 +134,7 @@
                 throw new ArgumentNullException(nameof(executeStrategy));
             }
 
-            return executeStrategy.CreateWith(type);
+            return executeStrategy.Create(type);
         }
 
         /// <summary>

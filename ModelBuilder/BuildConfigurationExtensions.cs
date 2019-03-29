@@ -36,7 +36,7 @@
             {
                 compiler.IgnoreRules.Add(ignoreRule);
             }
-            
+
             foreach (var typeMappingRule in configuration.TypeMappingRules)
             {
                 compiler.TypeMappingRules.Add(typeMappingRule);

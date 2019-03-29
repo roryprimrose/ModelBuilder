@@ -82,8 +82,9 @@
 
             actual.Should().NotBeNullOrWhiteSpace();
 
-            var matchingLocations =
-                TestData.Locations.Where(x => actual.Contains(x.StreetName, StringComparison.OrdinalIgnoreCase) && actual.Contains(x.StreetSuffix, StringComparison.OrdinalIgnoreCase));
+            var matchingLocations = TestData.Locations.Where(x =>
+                actual.Contains(x.StreetName, StringComparison.OrdinalIgnoreCase)
+                && actual.Contains(x.StreetSuffix, StringComparison.OrdinalIgnoreCase));
 
             matchingLocations.Should().NotBeEmpty();
         }

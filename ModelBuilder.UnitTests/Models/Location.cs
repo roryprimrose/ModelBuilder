@@ -7,10 +7,14 @@
     {
         public Uri First { get; set; }
 
-        [SuppressMessage("Microsoft.Design", "CA1056", Justification = "The code is written in this way to validate a test scenario.")]
+        [SuppressMessage("Microsoft.Design",
+            "CA1056",
+            Justification = "The code is written in this way to validate a test scenario.")]
         public string SecondUrl { get; set; }
 
-        [SuppressMessage("Microsoft.Design", "CA1056", Justification = "The code is written in this way to validate a test scenario.")]
+        [SuppressMessage("Microsoft.Design",
+            "CA1056",
+            Justification = "The code is written in this way to validate a test scenario.")]
         public string UriThird { get; set; }
     }
 }

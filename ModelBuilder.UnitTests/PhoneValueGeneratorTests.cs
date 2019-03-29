@@ -104,7 +104,7 @@
                     break;
                 }
             }
-            
+
             first.Should().NotBe(second);
         }
 

@@ -17,14 +17,6 @@
         }
 
         [Fact]
-        public void CreateWithThrowsExceptionWithNullInstanceTypeTest()
-        {
-            Action action = () => Model.CreateWith(null);
-
-            action.Should().Throw<ArgumentNullException>();
-        }
-
-        [Fact]
         public void DefaultBuildStrategyReturnsSameInstanceTest()
         {
             var firstActual = Model.DefaultBuildStrategy;

@@ -6,15 +6,6 @@
 
     internal static class ResourceFile
     {
-        internal static string Companies => Read(nameof(Companies));
-        internal static string Cultures => Read(nameof(Cultures));
-        internal static string Domains => Read(nameof(Domains));
-        internal static string FemaleNames => Read(nameof(FemaleNames));
-        internal static string LastNames => Read(nameof(LastNames));
-        internal static string Locations => Read(nameof(Locations));
-        internal static string MaleNames => Read(nameof(MaleNames));
-        internal static string TimeZones => Read(nameof(TimeZones));
-
         private static string Read(string name)
         {
             var assembly = typeof(ResourceFile).GetTypeInfo().Assembly;
@@ -25,7 +16,8 @@
                 if (stream == null)
                 {
                     var resourceNames = assembly.GetManifestResourceNames();
-                    var message = $"Resource {name} not found in {assembly.FullName}.  Valid resources are: {string.Join(", ", resourceNames)}.";
+                    var message =
+                        $"Resource {name} not found in {assembly.FullName}.  Valid resources are: {string.Join(", ", resourceNames)}.";
 
                     throw new InvalidOperationException(message);
                 }
@@ -36,5 +28,21 @@
                 }
             }
         }
+
+        internal static string Companies => Read(nameof(Companies));
+
+        internal static string Cultures => Read(nameof(Cultures));
+
+        internal static string Domains => Read(nameof(Domains));
+
+        internal static string FemaleNames => Read(nameof(FemaleNames));
+
+        internal static string LastNames => Read(nameof(LastNames));
+
+        internal static string Locations => Read(nameof(Locations));
+
+        internal static string MaleNames => Read(nameof(MaleNames));
+
+        internal static string TimeZones => Read(nameof(TimeZones));
     }
 }
