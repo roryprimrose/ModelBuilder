@@ -24,8 +24,6 @@ namespace ModelBuilder.Synchronous.UnitTests
         {
             var strategy = Substitute.For<IBuildStrategy>();
 
-            var existingStrategy = Model.BuildStrategy;
-
             try
             {
                 Model.BuildStrategy = strategy;
@@ -36,7 +34,7 @@ namespace ModelBuilder.Synchronous.UnitTests
             }
             finally
             {
-                Model.BuildStrategy = existingStrategy;
+                Model.BuildStrategy = Model.DefaultBuildStrategy;
             }
         }
 
