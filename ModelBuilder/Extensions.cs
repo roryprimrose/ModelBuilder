@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
 
@@ -57,7 +58,7 @@
             var generator = new RandomGenerator();
 
             var index = generator.NextValue(0, source.Count - 1);
-
+            Debug.WriteLine(index);
             return source[index];
         }
 

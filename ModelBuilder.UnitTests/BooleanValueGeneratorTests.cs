@@ -20,7 +20,7 @@
             var trueFound = false;
             var falseFound = false;
 
-            for (var index = 0; index < 1000; index++)
+            for (var index = 0; index < 100000; index++)
             {
                 var actual = (bool) target.Generate(typeof(bool), null, executeStrategy);
 
@@ -44,7 +44,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsRandomValuesForNullabeBooleanTypeTest()
+        public void GenerateReturnsRandomValuesForNullableBooleanTypeTest()
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -57,7 +57,7 @@
             var trueFound = false;
             var falseFound = false;
 
-            for (var index = 0; index < 1000; index++)
+            for (var index = 0; index < 100000; index++)
             {
                 var actual = (bool?) target.Generate(typeof(bool?), null, executeStrategy);
 

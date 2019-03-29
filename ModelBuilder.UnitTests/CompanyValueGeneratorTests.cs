@@ -10,7 +10,7 @@
     public class CompanyValueGeneratorTests
     {
         [Fact]
-        public void GenerateReturnsRandomCompanyTest()
+        public void GenerateReturnsRandomValueTest()
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -19,24 +19,37 @@
 
             var target = new CompanyValueGenerator();
 
-            var first = target.Generate(typeof(string), "company", executeStrategy);
-
-            first.Should().BeOfType<string>();
-            first.As<string>().Should().NotBeNullOrWhiteSpace();
-
+            var first =(string)  target.Generate(typeof(string), "company", executeStrategy);
+            
             var second = first;
 
-            for (var index = 0; index < 1000; index++)
+            for (var index = 0; index < 100000; index++)
             {
-                second = target.Generate(typeof(string), "company", executeStrategy);
+                second = (string) target.Generate(typeof(string), "company", executeStrategy);
 
-                if (first != second)
+                if (string.Equals(first, second, StringComparison.OrdinalIgnoreCase) == false)
                 {
                     break;
                 }
             }
 
             first.Should().NotBe(second);
+        }
+        
+        [Fact]
+        public void GenerateReturnsStringValueTest()
+        {
+            var buildChain = new BuildHistory();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            var target = new CompanyValueGenerator();
+
+            var actual = target.Generate(typeof(string), "company", executeStrategy);
+
+            actual.Should().BeOfType<string>();
+            actual.As<string>().Should().NotBeNullOrWhiteSpace();
         }
 
         [Theory]

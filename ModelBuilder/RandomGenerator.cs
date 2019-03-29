@@ -10,7 +10,7 @@
     /// </summary>
     public class RandomGenerator : IRandomGenerator
     {
-        private static readonly Random _random = new Random(Environment.TickCount);
+        private static readonly Random _random = new Random();
 
         /// <inheritdoc />
         public object GetMax(Type type)

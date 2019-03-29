@@ -37,7 +37,7 @@
 
             var sut = new BuildHistory();
 
-            for (var index = 0; index < 10; index++)
+            for (var index = 0; index < 100000; index++)
             {
                 var item = Model.Create<Person>();
 
@@ -116,7 +116,7 @@
 
             var sut = new BuildHistory();
 
-            for (var index = 0; index < 5; index++)
+            for (var index = 0; index < 100000; index++)
             {
                 var item = Model.Create<Person>();
 
@@ -207,7 +207,7 @@
 
             var sut = new BuildHistory();
 
-            for (var index = 0; index < 5; index++)
+            for (var index = 0; index < 100000; index++)
             {
                 var item = Model.Create<Person>();
 

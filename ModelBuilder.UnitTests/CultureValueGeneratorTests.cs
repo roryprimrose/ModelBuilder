@@ -10,7 +10,7 @@
     public class CultureValueGeneratorTests
     {
         [Fact]
-        public void GenerateReturnsRandomCultureTest()
+        public void GenerateReturnsRandomStringValueTest()
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -19,18 +19,15 @@
 
             var target = new CultureValueGenerator();
 
-            var first = target.Generate(typeof(string), "culture", executeStrategy);
-
-            first.Should().BeOfType<string>();
-            first.As<string>().Should().NotBeNullOrWhiteSpace();
+            var first = (string) target.Generate(typeof(string), "culture", executeStrategy);
 
             var second = first;
 
-            for (var index = 0; index < 1000; index++)
+            for (var index = 0; index < 100000; index++)
             {
-                second = target.Generate(typeof(string), "culture", executeStrategy);
+                second = (string) target.Generate(typeof(string), "culture", executeStrategy);
 
-                if (first != second)
+                if (string.Equals(first, second, StringComparison.OrdinalIgnoreCase) == false)
                 {
                     break;
                 }
@@ -39,6 +36,37 @@
             first.Should().NotBe(second);
         }
 
+        [Fact]
+        public void GenerateReturnsStringValueTest()
+        {
+            var buildChain = new BuildHistory();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            var target = new CultureValueGenerator();
+
+            var actual = target.Generate(typeof(string), "culture", executeStrategy);
+
+            actual.Should().BeOfType<string>();
+            actual.As<string>().Should().NotBeNullOrWhiteSpace();
+        }
+
+        [Fact]
+        public void GenerateReturnsCultureInfoValueTest()
+        {
+            var buildChain = new BuildHistory();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            var target = new CultureValueGenerator();
+
+            var actual = target.Generate(typeof(CultureInfo), "culture", executeStrategy);
+
+            actual.Should().BeOfType<CultureInfo>();
+            actual.As<CultureInfo>().Should().NotBeNull();
+        }
 #if NET452
         [Fact]
         public void GenerateReturnsRandomCultureInfoTest()
@@ -50,18 +78,15 @@
 
             var target = new CultureValueGenerator();
 
-            var first = target.Generate(typeof(CultureInfo), "culture", executeStrategy);
+            var first = (CultureInfo)target.Generate(typeof(CultureInfo), "culture", executeStrategy);
 
-            first.Should().BeOfType<CultureInfo>();
-            first.As<CultureInfo>().Should().NotBeNull();
-        
             var second = first;
 
-            for (var index = 0; index < 1000; index++)
+            for (var index = 0; index < 100000; index++)
             {
-                second = target.Generate(typeof(CultureInfo), "culture", executeStrategy);
+                second = (CultureInfo)target.Generate(typeof(CultureInfo), "culture", executeStrategy);
 
-                if (first.As<CultureInfo>().Name != second.As<CultureInfo>().Name)
+                if (string.Equals(first.Name, second.Name, StringComparison.OrdinalIgnoreCase) == false)
                 {
                     break;
                 }
@@ -80,18 +105,15 @@
 
             var target = new CultureValueGenerator();
 
-            var first = target.Generate(typeof(CultureInfo), "culture", executeStrategy);
-
-            first.Should().BeOfType<CultureInfo>();
-            first.As<CultureInfo>().Should().NotBeNull();
+            var first = (CultureInfo) target.Generate(typeof(CultureInfo), "culture", executeStrategy);
 
             var second = first;
 
-            for (var index = 0; index < 1000; index++)
+            for (var index = 0; index < 100000; index++)
             {
-                second = target.Generate(typeof(CultureInfo), "culture", executeStrategy);
+                second = (CultureInfo) target.Generate(typeof(CultureInfo), "culture", executeStrategy);
 
-                if (first.As<CultureInfo>().Name != second.As<CultureInfo>().Name)
+                if (string.Equals(first.Name, second.Name, StringComparison.OrdinalIgnoreCase) == false)
                 {
                     break;
                 }

@@ -20,7 +20,7 @@
 
             var target = new GuidValueGenerator();
 
-            for (var index = 0; index < 1000; index++)
+            for (var index = 0; index < 100000; index++)
             {
                 var value = (Guid?) target.Generate(typeof(Guid?), null, executeStrategy);
 
@@ -69,7 +69,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsRandomGuidValueTest()
+        public void GenerateReturnsRandomValueTest()
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -82,7 +82,7 @@
 
             var second = first;
 
-            for (var index = 0; index < 1000; index++)
+            for (var index = 0; index < 100000; index++)
             {
                 second = (Guid) target.Generate(typeof(Guid), null, executeStrategy);
 
@@ -95,6 +95,22 @@
             first.Should().NotBeEmpty();
             second.Should().NotBeEmpty();
             first.Should().NotBe(second);
+        }
+        
+        [Fact]
+        public void GenerateReturnsGuidValueTest()
+        {
+            var buildChain = new BuildHistory();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            var target = new GuidValueGenerator();
+
+            var actual = target.Generate(typeof(Guid), null, executeStrategy);
+            
+            actual.Should().BeOfType<Guid>();
+            actual.As<Guid>().Should().NotBeEmpty();
         }
 
         [Theory]

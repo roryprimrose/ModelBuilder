@@ -9,7 +9,7 @@
     public class CountryValueGeneratorTests
     {
         [Fact]
-        public void GenerateReturnsRandomCountryTest()
+        public void GenerateReturnsRandomValueTest()
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -18,18 +18,15 @@
 
             var target = new CountryValueGenerator();
 
-            var first = target.Generate(typeof(string), "country", executeStrategy);
-
-            first.Should().BeOfType<string>();
-            first.As<string>().Should().NotBeNullOrWhiteSpace();
+            var first = (string) target.Generate(typeof(string), "country", executeStrategy);
 
             var second = first;
 
             for (var index = 0; index < 100000; index++)
             {
-                second = target.Generate(typeof(string), "country", executeStrategy);
+                second = (string) target.Generate(typeof(string), "country", executeStrategy);
 
-                if (first != second)
+                if (string.Equals(first, second, StringComparison.OrdinalIgnoreCase) == false)
                 {
                     // We have proved that a different value can be returned
                     break;
@@ -37,6 +34,22 @@
             }
 
             first.Should().NotBe(second);
+        }
+
+        [Fact]
+        public void GenerateReturnsStringValueTest()
+        {
+            var buildChain = new BuildHistory();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            var target = new CountryValueGenerator();
+
+            var actual = (string) target.Generate(typeof(string), "country", executeStrategy);
+
+            actual.Should().BeOfType<string>();
+            actual.As<string>().Should().NotBeNullOrWhiteSpace();
         }
 
         [Theory]

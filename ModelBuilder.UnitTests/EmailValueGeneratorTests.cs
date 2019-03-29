@@ -115,7 +115,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsRandomEmailAddressTest()
+        public void GenerateReturnsRandomValueTest()
         {
             var firstPerson = new Person {FirstName = "De Jour", LastName = "Mc Cormick"};
             var firstBuildChain = new BuildHistory();
@@ -127,12 +127,8 @@
 
             var target = new EmailValueGenerator();
 
-            var first = target.Generate(typeof(string), "email", firstExecuteStrategy);
-
-            first.Should().BeOfType<string>();
-            first.As<string>().Should().NotBeNullOrWhiteSpace();
-            first.As<string>().Should().Contain("@");
-
+            var first = (string) target.Generate(typeof(string), "email", firstExecuteStrategy);
+            
             var secondPerson = new Person {FirstName = "Sam", LastName = "Johns"};
             var secondBuildChain = new BuildHistory();
             var secondExecuteStrategy = Substitute.For<IExecuteStrategy>();
@@ -143,17 +139,37 @@
 
             var second = first;
 
-            for (var index = 0; index < 1000; index++)
+            for (var index = 0; index < 100000; index++)
             {
-                second = target.Generate(typeof(string), "email", secondExecuteStrategy);
+                second = (string) target.Generate(typeof(string), "email", secondExecuteStrategy);
 
-                if (first != second)
+                if (string.Equals(first, second, StringComparison.OrdinalIgnoreCase) == false)
                 {
                     break;
                 }
             }
 
             first.Should().NotBe(second);
+        }
+        
+        [Fact]
+        public void GenerateReturnsStringValueTest()
+        {
+            var firstPerson = new Person {FirstName = "De Jour", LastName = "Mc Cormick"};
+            var firstBuildChain = new BuildHistory();
+            var firstExecuteStrategy = Substitute.For<IExecuteStrategy>();
+
+            firstExecuteStrategy.BuildChain.Returns(firstBuildChain);
+
+            firstBuildChain.Push(firstPerson);
+
+            var target = new EmailValueGenerator();
+
+            var actual = target.Generate(typeof(string), "email", firstExecuteStrategy);
+
+            actual.Should().BeOfType<string>();
+            actual.As<string>().Should().NotBeNullOrWhiteSpace();
+            actual.As<string>().Should().Contain("@");
         }
 
         [Fact]

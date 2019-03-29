@@ -22,7 +22,7 @@
 
             var target = new EnumValueGenerator();
 
-            for (var index = 0; index < 1000; index++)
+            for (var index = 0; index < 100000; index++)
             {
                 var value = (SingleEnum?) target.Generate(typeof(SingleEnum?), null, executeStrategy);
 
@@ -77,7 +77,7 @@
 
             var second = first;
 
-            for (var index = 0; index < 1000; index++)
+            for (var index = 0; index < 100000; index++)
             {
                 second = target.Generate(typeof(FileAttributes), null, executeStrategy);
 
@@ -109,7 +109,7 @@
 
             var second = first;
 
-            for (var index = 0; index < 1000; index++)
+            for (var index = 0; index < 100000; index++)
             {
                 second = target.Generate(typeof(BigValues), null, executeStrategy);
 
@@ -139,7 +139,7 @@
 
             var otherValueFound = false;
 
-            for (var index = 0; index < 50; index++)
+            for (var index = 0; index < 100000; index++)
             {
                 var second = target.Generate(typeof(BigEnum), null, executeStrategy);
 
@@ -167,7 +167,7 @@
             var second = false;
             var third = false;
 
-            for (var index = 0; index < 1000; index++)
+            for (var index = 0; index < 100000; index++)
             {
                 var actual = (SmallFlags) target.Generate(typeof(SmallFlags), null, executeStrategy);
 

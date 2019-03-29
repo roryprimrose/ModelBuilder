@@ -111,24 +111,40 @@
 
             var target = new TimeZoneValueGenerator();
 
-            var first = target.Generate(typeof(string), "timezone", executeStrategy);
-
-            first.Should().BeOfType<string>();
-            first.As<string>().Should().NotBeNullOrWhiteSpace();
+            var first = (string) target.Generate(typeof(string), "timezone", executeStrategy);
 
             var second = first;
 
-            for (var index = 0; index < 1000; index++)
+            for (var index = 0; index < 100000; index++)
             {
-                second = target.Generate(typeof(string), "timezone", executeStrategy);
+                second = (string) target.Generate(typeof(string), "timezone", executeStrategy);
 
-                if (first != second)
+                if (string.Equals(first, second, StringComparison.OrdinalIgnoreCase) == false)
                 {
                     break;
                 }
             }
 
             first.Should().NotBe(second);
+        }
+
+        [Fact]
+        public void GenerateReturnsStringValueTest()
+        {
+            var address = new Address();
+            var buildChain = new BuildHistory();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            buildChain.Push(address);
+
+            var target = new TimeZoneValueGenerator();
+
+            var actual = target.Generate(typeof(string), "timezone", executeStrategy);
+
+            actual.Should().BeOfType<string>();
+            actual.As<string>().Should().NotBeNullOrWhiteSpace();
         }
 
         [Fact]
@@ -146,7 +162,7 @@
 
             var ids = TzdbDateTimeZoneSource.Default.GetIds().ToList();
 
-            for (var index = 0; index < 1000; index++)
+            for (var index = 0; index < 100000; index++)
             {
                 var actual = target.Generate(typeof(string), "timezone", executeStrategy) as string;
 
