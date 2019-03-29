@@ -104,9 +104,8 @@
 
             first.Should().BeOfType<BigValues>();
 
-            var values = Enum.GetValues(typeof(BigValues));
-
-            values.Should().NotContain(first);
+            // Validate that the flags enum value has multiple values
+            first.ToString().Should().Contain(", ");
 
             var second = first;
 

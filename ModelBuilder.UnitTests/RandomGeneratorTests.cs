@@ -1,13 +1,22 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
+    using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
     using FluentAssertions;
     using Xunit;
+    using Xunit.Abstractions;
 
     public class RandomGeneratorTests
     {
+        private readonly ITestOutputHelper _output;
+
+        public RandomGeneratorTests(ITestOutputHelper output)
+        {
+            _output = output;
+        }
+
         [Theory]
         [ClassData(typeof(NumericTypeRangeDataSource))]
         public void GetMaxEvaluatesRequestedTypeTest(Type type, bool typeSupported, double min, double max)
@@ -112,6 +121,37 @@
             Action action = () => target.NextValue(null);
 
             action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void NextValueGeneratesHighCoverageOfValues()
+        {
+            var tracker = new Dictionary<int, int>();
+
+            var generator = new RandomGenerator();
+
+            for (var index = 0; index < 10000; index++)
+            {
+                var actual = generator.NextValue(0, 100000);
+
+                if (tracker.ContainsKey(actual))
+                {
+                    tracker[actual]++;
+                }
+                else
+                {
+                    tracker[actual] = 1;
+                }
+            }
+
+            _output.WriteLine("Generator created " + tracker.Count + " unique values");
+
+            foreach (var pair in tracker.OrderBy(x => x.Key))
+            {
+                _output.WriteLine(pair.Key + ": " + pair.Value);
+            }
+
+            tracker.Count.Should().BeGreaterThan(9000);
         }
 
         [Theory]
