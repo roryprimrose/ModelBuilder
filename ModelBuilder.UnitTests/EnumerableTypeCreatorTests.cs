@@ -8,6 +8,7 @@
     using System.Linq;
     using System.Net.NetworkInformation;
     using FluentAssertions;
+    using ModelBuilder.UnitTests.Models;
     using NSubstitute;
     using Xunit;
 

@@ -5,6 +5,7 @@
     using System.Collections.ObjectModel;
     using System.Linq;
     using FluentAssertions;
+    using ModelBuilder.UnitTests.Models;
     using Xunit;
 
     public class ExtensionsTests

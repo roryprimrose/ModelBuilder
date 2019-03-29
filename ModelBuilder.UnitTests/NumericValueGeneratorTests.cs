@@ -1,7 +1,7 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
-    using System.Reflection;
+    using System.Globalization;
     using FluentAssertions;
     using NSubstitute;
     using Xunit;
@@ -10,7 +10,7 @@
     {
         [Theory]
         [ClassData(typeof(NumericTypeRangeDataSource))]
-        public void GenerateCanEvalutateManyTimesTest(Type type, bool typeSupported, double min, double max)
+        public void GenerateCanEvaluateManyTimesTest(Type type, bool typeSupported, double min, double max)
         {
             if (typeSupported == false)
             {
@@ -45,7 +45,7 @@
 
                 value.Should().BeOfType(evaluateType);
 
-                var convertedValue = Convert.ToDouble(value);
+                var convertedValue = Convert.ToDouble(value, CultureInfo.InvariantCulture);
 
                 convertedValue.Should().BeGreaterOrEqualTo(min);
                 convertedValue.Should().BeLessOrEqualTo(max);
@@ -68,7 +68,7 @@
             {
                 var value = target.Generate(typeof(double), null, executeStrategy);
 
-                var actual = Convert.ToDouble(value);
+                var actual = Convert.ToDouble(value, CultureInfo.InvariantCulture);
 
                 if (actual.Equals(double.MaxValue) == false)
                 {
@@ -97,7 +97,7 @@
             {
                 var value = target.Generate(typeof(double), null, executeStrategy);
 
-                var actual = Convert.ToDouble(value);
+                var actual = Convert.ToDouble(value, CultureInfo.InvariantCulture);
 
                 if (actual.Equals(double.MinValue) == false)
                 {
@@ -125,7 +125,7 @@
 
             for (var index = 0; index < 100000; index++)
             {
-                var value = (int?)target.Generate(typeof(int?), null, executeStrategy);
+                var value = (int?) target.Generate(typeof(int?), null, executeStrategy);
 
                 if (value == null)
                 {
@@ -158,7 +158,7 @@
 
             var value = target.Generate(typeof(double), null, executeStrategy);
 
-            var actual = Convert.ToDouble(value);
+            var actual = Convert.ToDouble(value, CultureInfo.InvariantCulture);
 
             double.IsInfinity(actual).Should().BeFalse();
         }
@@ -181,9 +181,9 @@
             {
                 var value = target.Generate(type, null, executeStrategy);
 
-                var actual = Convert.ToDouble(value);
+                var actual = Convert.ToDouble(value, CultureInfo.InvariantCulture);
 
-                if (unchecked(actual != (int)actual))
+                if (unchecked(actual != (int) actual))
                 {
                     decimalFound = true;
 
@@ -229,7 +229,7 @@
 
             value.Should().BeOfType(evaluateType);
 
-            var convertedValue = Convert.ToDouble(value);
+            var convertedValue = Convert.ToDouble(value, CultureInfo.InvariantCulture);
 
             convertedValue.Should().BeGreaterOrEqualTo(min);
             convertedValue.Should().BeLessOrEqualTo(max);

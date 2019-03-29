@@ -3,6 +3,7 @@
     using System;
     using System.IO;
     using FluentAssertions;
+    using ModelBuilder.UnitTests.Models;
     using NSubstitute;
     using Xunit;
 
@@ -99,11 +100,11 @@
 
             var target = new EnumValueGenerator();
 
-            var first = target.Generate(typeof(BigFlagsEnum), null, executeStrategy);
+            var first = target.Generate(typeof(BigValues), null, executeStrategy);
 
-            first.Should().BeOfType<BigFlagsEnum>();
+            first.Should().BeOfType<BigValues>();
 
-            var values = Enum.GetValues(typeof(BigFlagsEnum));
+            var values = Enum.GetValues(typeof(BigValues));
 
             values.Should().NotContain(first);
 
@@ -111,7 +112,7 @@
 
             for (var index = 0; index < 1000; index++)
             {
-                second = target.Generate(typeof(BigFlagsEnum), null, executeStrategy);
+                second = target.Generate(typeof(BigValues), null, executeStrategy);
 
                 if (first != second)
                 {
@@ -207,10 +208,10 @@
 
             var target = new EnumValueGenerator();
 
-            var actual = target.Generate(typeof(EmptyEnum), null, executeStrategy);
+            var actual = target.Generate(typeof(NoValues), null, executeStrategy);
 
-            actual.Should().BeOfType<EmptyEnum>();
-            actual.Should().Be((EmptyEnum)0);
+            actual.Should().BeOfType<NoValues>();
+            actual.Should().Be((NoValues)0);
         }
 
         [Theory]
@@ -237,8 +238,8 @@
         [InlineData(typeof(SimpleEnum?), true)]
         [InlineData(typeof(BigEnum), true)]
         [InlineData(typeof(BigEnum?), true)]
-        [InlineData(typeof(BigFlagsEnum), true)]
-        [InlineData(typeof(BigFlagsEnum?), true)]
+        [InlineData(typeof(BigValues), true)]
+        [InlineData(typeof(BigValues?), true)]
         public void IsSupportedTest(Type type, bool expected)
         {
             var target = new EnumValueGenerator();

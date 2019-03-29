@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.IO;
     using FluentAssertions;
+    using ModelBuilder.UnitTests.Models;
     using NSubstitute;
     using Xunit;
 

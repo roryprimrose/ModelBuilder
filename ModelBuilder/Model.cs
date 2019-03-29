@@ -87,12 +87,12 @@
         /// <summary>
         ///     Returns a <see cref="IBuildStrategy" /> with a new <see cref="TypeMappingRule" /> that matches the specified expression.
         /// </summary>
-        /// <typeparam name="S">The source type to use for type mapping.</typeparam>
-        /// <typeparam name="T">The target type to use for type mapping.</typeparam>
+        /// <typeparam name="TSource">The source type to use for type mapping.</typeparam>
+        /// <typeparam name="TTarget">The target type to use for type mapping.</typeparam>
         /// <returns>A new build strategy.</returns>
-        public static IBuildStrategy Mapping<S, T>()
+        public static IBuildStrategy Mapping<TSource, TTarget>()
         {
-            return BuildStrategy.Mapping<S, T>();
+            return BuildStrategy.Mapping<TSource, TTarget>();
         }
 
         /// <summary>

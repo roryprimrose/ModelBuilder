@@ -2,6 +2,7 @@
 {
     using System;
     using FluentAssertions;
+    using ModelBuilder.UnitTests.Models;
     using Xunit;
 
     public class ConstructorParameterMatchingTests

@@ -1,9 +1,11 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
+    using System.Globalization;
     using System.Linq.Expressions;
     using System.Reflection;
     using FluentAssertions;
+    using ModelBuilder.UnitTests.Models;
     using Xunit;
 
     public class ExpressionExtensionTests
@@ -36,7 +38,7 @@
         [Fact]
         public void GetPropertyThrowsExceptionWhenPropertyNotOnTargetTypeTest()
         {
-            Action action = () => Wrapper<Person>(x => x.Priority.ToString().Length);
+            Action action = () => Wrapper<Person>(x => x.Priority.ToString(CultureInfo.InvariantCulture).Length);
 
             action.Should().Throw<ArgumentException>();
         }

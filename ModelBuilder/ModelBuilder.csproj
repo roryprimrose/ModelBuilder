@@ -2,6 +2,8 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard1.5;net45</TargetFrameworks>
+    <CodeAnalysisRuleSet>..\Solution Items\Application.ruleset</CodeAnalysisRuleSet>
+
     <Authors>rprimrose</Authors>
     <Company>Neovolve</Company>
     <Description>Provides build features for creating model data.</Description>
@@ -38,6 +40,10 @@
     <EmbeddedResource Include="Resources\Locations.txt" />
     <EmbeddedResource Include="Resources\MaleNames.txt" />
     <EmbeddedResource Include="Resources\TimeZones.txt" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.0" />
   </ItemGroup>
 
   <ItemGroup>

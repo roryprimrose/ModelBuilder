@@ -3,6 +3,7 @@
     using System;
     using System.Collections.ObjectModel;
     using System.Diagnostics;
+    using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
     using System.Linq;
     using System.Reflection;
@@ -130,6 +131,7 @@
         /// <returns>A new instance.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is null.</exception>
         /// <exception cref="NotSupportedException">The <paramref name="type" /> parameter can not be created using this strategy.</exception>
+        [SuppressMessage("Microsoft.Design", "CA1031", Justification = "Catching a generic Exception is required to ensure that any failure to build a value is handled.")]
         protected virtual object Build(Type type, string referenceName, object context, params object[] args)
         {
             if (type == null)

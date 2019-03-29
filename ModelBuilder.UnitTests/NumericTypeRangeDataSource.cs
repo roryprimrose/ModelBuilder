@@ -2,7 +2,11 @@
 {
     using System.Collections;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
 
+    [SuppressMessage("Code.Quality",
+        "CA1710",
+        Justification = "The data source not have the characteristics of a Collection.")]
     public class NumericTypeRangeDataSource : IEnumerable<object[]>
     {
         private readonly List<object[]> _data = new List<object[]>

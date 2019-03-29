@@ -1,6 +1,7 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
+    using System.Globalization;
     using FluentAssertions;
     using NSubstitute;
     using Xunit;
@@ -45,7 +46,7 @@
 
                 value.Should().BeOfType(evaluateType);
 
-                var convertedValue = Convert.ToDouble(value);
+                var convertedValue = Convert.ToDouble(value, CultureInfo.InvariantCulture);
 
                 convertedValue.Should().BeGreaterOrEqualTo(min);
                 convertedValue.Should().BeLessOrEqualTo(max);
@@ -125,7 +126,7 @@
 
             value.Should().BeOfType(evaluateType);
 
-            var convertedValue = Convert.ToDouble(value);
+            var convertedValue = Convert.ToDouble(value, CultureInfo.InvariantCulture);
 
             convertedValue.Should().BeLessOrEqualTo(target.MaxAge);
             convertedValue.Should().BeGreaterOrEqualTo(1);

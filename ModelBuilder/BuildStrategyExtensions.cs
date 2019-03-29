@@ -137,23 +137,23 @@ namespace ModelBuilder
         /// <summary>
         ///     Appends a new <see cref="TypeMappingRule" /> to the specified <see cref="IExecuteStrategy{T}" /> using the specified types.
         /// </summary>
-        /// <typeparam name="S">The source type to use for type mapping.</typeparam>
-        /// <typeparam name="T">The target type to use for type mapping.</typeparam>
+        /// <typeparam name="TSource">The source type to use for type mapping.</typeparam>
+        /// <typeparam name="TTarget">The target type to use for type mapping.</typeparam>
         /// <param name="buildStrategy">The build strategy to clone.</param>
         /// <returns>A cloned build strategy with the new rule.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="buildStrategy" /> parameter is null.</exception>
         [SuppressMessage("Microsoft.Design",
             "CA1011:ConsiderPassingBaseTypesAsParameters",
             Justification = "This type is required in order to support the fluent syntax of call sites.")]
-        public static IBuildStrategy Mapping<S, T>(this IBuildStrategy buildStrategy)
+        public static IBuildStrategy Mapping<TSource, TTarget>(this IBuildStrategy buildStrategy)
         {
             if (buildStrategy == null)
             {
                 throw new ArgumentNullException(nameof(buildStrategy));
             }
 
-            var sourceType = typeof(S);
-            var targetType = typeof(T);
+            var sourceType = typeof(TSource);
+            var targetType = typeof(TTarget);
 
             var rule = new TypeMappingRule(sourceType, targetType);
 

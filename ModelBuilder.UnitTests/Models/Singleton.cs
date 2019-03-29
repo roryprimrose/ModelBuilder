@@ -1,4 +1,4 @@
-﻿namespace ModelBuilder.UnitTests
+﻿namespace ModelBuilder.UnitTests.Models
 {
     public class Singleton
     {
@@ -7,5 +7,7 @@
         }
 
         public static Singleton Instance { get; } = new Singleton();
+
+        public string Value { get; set; }
     }
 }

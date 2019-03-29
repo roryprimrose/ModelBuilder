@@ -1,8 +1,10 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using System.Reflection;
     using FluentAssertions;
+    using ModelBuilder.UnitTests.Models;
     using Xunit;
 
     public class DefaultPropertyResolverTests
@@ -281,6 +283,7 @@
         }
 
         [Fact]
+        [SuppressMessage("Microsoft.Design", "CA1825", Justification = "The Array.Empty<T> is not available on net452.")]
         public void ShouldPopulatePropertyReturnsTrueWhenPropertyNotIgnoredAndEmptyArgumentsProvidedTest()
         {
             var configuration = new DefaultBuildStrategyCompiler().Compile();

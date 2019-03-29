@@ -25,9 +25,9 @@
                 if (stream == null)
                 {
                     var resourceNames = assembly.GetManifestResourceNames();
+                    var message = $"Resource {name} not found in {assembly.FullName}.  Valid resources are: {string.Join(", ", resourceNames)}.";
 
-                    throw new Exception(
-                        $"Resource {name} not found in {assembly.FullName}.  Valid resources are: {string.Join(", ", resourceNames)}.");
+                    throw new InvalidOperationException(message);
                 }
 
                 using (var reader = new StreamReader(stream))

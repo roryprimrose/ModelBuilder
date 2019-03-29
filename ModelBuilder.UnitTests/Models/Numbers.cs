@@ -1,4 +1,4 @@
-﻿namespace ModelBuilder.UnitTests
+﻿namespace ModelBuilder.UnitTests.Models
 {
     public class Numbers
     {

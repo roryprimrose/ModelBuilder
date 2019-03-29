@@ -1,11 +1,13 @@
 ﻿namespace ModelBuilder
 {
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
 
     /// <summary>
     ///     The <see cref="IBuildChain" />
     ///     interface defines the properties that allow inspection of build chain values.
     /// </summary>
+    [SuppressMessage("Code.Quality", "CA1710", Justification = "The build chain is enumerable, but does not have the characteristics of a Collection.")]
     public interface IBuildChain : IEnumerable<object>
     {
         /// <summary>

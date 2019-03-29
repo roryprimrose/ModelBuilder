@@ -5,6 +5,7 @@
     using System.Linq;
     using FluentAssertions;
     using ModelBuilder.Data;
+    using ModelBuilder.UnitTests.Models;
     using NSubstitute;
     using Xunit;
 
@@ -27,9 +28,9 @@
 
             actual.Should().NotBeNullOrWhiteSpace();
 
-            var valueToMatch = address.Country.ToLowerInvariant();
+            var valueToMatch = address.Country.ToUpperInvariant();
 
-            var possibleMatches = TestData.Locations.Where(x => x.Country.ToLowerInvariant() == valueToMatch);
+            var possibleMatches = TestData.Locations.Where(x => x.Country.ToUpperInvariant() == valueToMatch);
 
             possibleMatches.Select(x => x.State).Should().Contain(actual);
         }

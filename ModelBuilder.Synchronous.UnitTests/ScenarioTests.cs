@@ -5,6 +5,7 @@ namespace ModelBuilder.Synchronous.UnitTests
     using System.Reflection;
     using FluentAssertions;
     using ModelBuilder.UnitTests;
+    using ModelBuilder.UnitTests.Models;
     using NSubstitute;
     using Xunit;
 

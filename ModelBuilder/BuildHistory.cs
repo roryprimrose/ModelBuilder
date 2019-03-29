@@ -3,11 +3,13 @@
     using System;
     using System.Collections;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
 
     /// <summary>
     /// The <see cref="BuildHistory"/>
     /// class is used to track a hierarchy of objects being created.
     /// </summary>
+    [SuppressMessage("Code.Quality", "CA1710", Justification = "The history is enumerable, but does not have the characteristics of a Collection.")]
     public class BuildHistory : IBuildHistory
     {
         private readonly Stack<object> _buildHistory = new Stack<object>();

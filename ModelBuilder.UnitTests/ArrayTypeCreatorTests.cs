@@ -3,9 +3,11 @@
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Linq;
     using FluentAssertions;
+    using ModelBuilder.UnitTests.Models;
     using NSubstitute;
     using Xunit;
     using Xunit.Abstractions;
@@ -280,6 +282,7 @@
         }
 
         [Fact]
+        [SuppressMessage("Microsoft.Design", "CA1825", Justification = "The Array.Empty<T> is not available on net452.")]
         public void PopulateReturnsEmptyArrayWhenSourceHasZeroLengthTest()
         {
             var expected = new Guid[0];

@@ -5,6 +5,7 @@
     using System.Linq;
     using FluentAssertions;
     using ModelBuilder.Data;
+    using ModelBuilder.UnitTests.Models;
     using NodaTime.TimeZones;
     using NSubstitute;
     using Xunit;
@@ -14,7 +15,7 @@
         [Fact]
         public void GenerateReturnsRandomTimeZoneMatchingCaseInsensitiveCountryTest()
         {
-            var address = new Address { Country = "AUSTRALIA" };
+            var address = new Address {Country = "australia"};
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
@@ -28,7 +29,7 @@
 
             actual.Should().NotBeNullOrWhiteSpace();
 
-            var valueToMatch = address.Country.ToLowerInvariant();
+            var valueToMatch = address.Country.ToUpperInvariant();
 
             TestData.TimeZones.Where(x => x.StartsWith(valueToMatch, StringComparison.OrdinalIgnoreCase))
                 .Should()
@@ -38,7 +39,7 @@
         [Fact]
         public void GenerateReturnsRandomTimeZoneMatchingCountryTest()
         {
-            var address = new Address { Country = "Australia" };
+            var address = new Address {Country = "Australia"};
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
@@ -52,13 +53,15 @@
 
             actual.Should().NotBeNullOrWhiteSpace();
 
-            TestData.TimeZones.Where(x => x.StartsWith(address.Country)).Should().Contain(actual);
+            TestData.TimeZones.Where(x => x.StartsWith(address.Country, StringComparison.OrdinalIgnoreCase))
+                .Should()
+                .Contain(actual);
         }
 
         [Fact]
         public void GenerateReturnsRandomTimeZoneMatchingCountryWhenNoCityMatchTest()
         {
-            var address = new Address { City = Guid.NewGuid().ToString(), Country = "Australia" };
+            var address = new Address {City = Guid.NewGuid().ToString(), Country = "Australia"};
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
@@ -72,13 +75,15 @@
 
             actual.Should().NotBeNullOrWhiteSpace();
 
-            TestData.TimeZones.Where(x => x.StartsWith(address.Country)).Should().Contain(actual);
+            TestData.TimeZones.Where(x => x.StartsWith(address.Country, StringComparison.OrdinalIgnoreCase))
+                .Should()
+                .Contain(actual);
         }
 
         [Fact]
         public void GenerateReturnsRandomTimeZoneWhenNoMatchingCountryTest()
         {
-            var address = new Address { Country = Guid.NewGuid().ToString() };
+            var address = new Address {Country = Guid.NewGuid().ToString()};
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
@@ -139,7 +144,7 @@
 
             var target = new TimeZoneValueGenerator();
 
-            var ids = TzdbDateTimeZoneSource.Default.GetIds();
+            var ids = TzdbDateTimeZoneSource.Default.GetIds().ToList();
 
             for (var index = 0; index < 1000; index++)
             {
@@ -157,7 +162,7 @@
         [InlineData(null, "Canberra")]
         public void GenerateReturnsValueMatchingCityValuesTest(string country, string city)
         {
-            var address = new Address { Country = country, City = city };
+            var address = new Address {Country = country, City = city};
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
@@ -188,7 +193,7 @@
 
             var target = new TimeZoneValueGenerator();
 
-            var actual = (string)target.Generate(type, referenceName, executeStrategy);
+            var actual = (string) target.Generate(type, referenceName, executeStrategy);
 
             actual.Should().NotBeNullOrEmpty();
         }

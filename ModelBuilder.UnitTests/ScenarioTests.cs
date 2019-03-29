@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
@@ -13,6 +14,7 @@
     using NSubstitute.ExceptionExtensions;
     using Xunit;
     using Xunit.Abstractions;
+    using Location = ModelBuilder.UnitTests.Models.Location;
 
     public class ScenarioTests
     {
@@ -162,13 +164,16 @@
         }
 
         [Fact]
+        [SuppressMessage("Microsoft.Globalization",
+            "CA1308:NormalizeStringsToUppercase",
+            Justification = "Email addresses are lower case by convention.")]
         public void CreateBuildsEmailUsingValidCombinationOfValuesTest()
         {
             var actual = Model.Create<EmailParts>();
 
             var expected = actual.FirstName + "." + actual.LastName + "@" + actual.Domain;
 
-            expected = expected.Replace(" ", "").ToLowerInvariant();
+            expected = expected.Replace(" ", "", StringComparison.OrdinalIgnoreCase).ToLowerInvariant();
 
             actual.Email.Should().Be(expected);
         }
@@ -294,7 +299,7 @@
         [Fact]
         public void CreateReturnsEnumerableWithAutoPopulatedItemsInstanceTest()
         {
-            var actual = Model.Create<IEnumerable<int>>();
+            var actual = Model.Create<IEnumerable<int>>().ToList();
 
             actual.Should().HaveCount(EnumerableTypeCreator.DefaultAutoPopulateCount);
             actual.All(x => x == 0).Should().BeFalse();
@@ -528,8 +533,8 @@
 
             var actual = strategy.Create<List<Person>>();
 
-            actual.All(x => x.PersonalEmail.EndsWith("@mailinator.com")).Should().BeTrue();
-            actual.All(x => x.WorkEmail.EndsWith("@mailinator.com")).Should().BeTrue();
+            actual.All(x => x.PersonalEmail.EndsWith("@mailinator.com", StringComparison.OrdinalIgnoreCase)).Should().BeTrue();
+            actual.All(x => x.WorkEmail.EndsWith("@mailinator.com", StringComparison.OrdinalIgnoreCase)).Should().BeTrue();
         }
 
         [Fact]
@@ -578,7 +583,7 @@
             actual.Should().BeSameAs(expected);
             actual.Public.Should().NotBeEmpty();
             actual.PrivateSet.Should().BeEmpty();
-            actual.ReadOnly.Should().BeEmpty();
+            actual.CannotSetValue.Should().BeEmpty();
             PropertyScopes.GlobalValue.Should().BeEmpty();
         }
 

@@ -4,6 +4,7 @@
     using System.Linq;
     using System.Reflection;
     using FluentAssertions;
+    using ModelBuilder.UnitTests.Models;
     using Xunit;
 
     public class DefaultBuildStrategyCompilerTests

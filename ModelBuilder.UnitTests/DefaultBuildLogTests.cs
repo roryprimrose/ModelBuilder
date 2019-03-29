@@ -1,9 +1,11 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
+    using System.Globalization;
     using System.IO;
     using System.Linq;
     using FluentAssertions;
+    using ModelBuilder.UnitTests.Models;
     using Xunit;
 
     public class DefaultBuildLogTests
@@ -464,7 +466,7 @@
             {
                 throw new TimeoutException();
             }
-            catch (Exception ex)
+            catch (TimeoutException ex)
             {
                 // Get the exception with a valid stack trace
                 exception = ex;
@@ -477,7 +479,7 @@
             var lines = target.Output.Split(new[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries);
             var indentedLines = lines.Skip(1).Take(lines.Length - 2);
 
-            indentedLines.All(x => x.StartsWith("    ")).Should().BeTrue();
+            indentedLines.All(x => x.StartsWith("    ", StringComparison.OrdinalIgnoreCase)).Should().BeTrue();
         }
     }
 }
