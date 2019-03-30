@@ -44,7 +44,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsRandomValuesForNullabeBooleanTypeTest()
+        public void GenerateReturnsRandomValuesForNullableBooleanTypeTest()
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();

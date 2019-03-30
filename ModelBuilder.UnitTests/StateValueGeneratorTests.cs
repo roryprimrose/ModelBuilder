@@ -58,38 +58,6 @@
         }
 
         [Fact]
-        public void GenerateReturnsRandomStateTest()
-        {
-            var address = new Address();
-            var buildChain = new BuildHistory();
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            executeStrategy.BuildChain.Returns(buildChain);
-
-            buildChain.Push(address);
-
-            var target = new StateValueGenerator();
-
-            var first = target.Generate(typeof(string), "state", executeStrategy) as string;
-
-            first.Should().NotBeNullOrWhiteSpace();
-
-            string second = null;
-
-            for (var index = 0; index < 1000; index++)
-            {
-                second = target.Generate(typeof(string), "state", executeStrategy) as string;
-
-                if (first != second)
-                {
-                    break;
-                }
-            }
-
-            first.Should().NotBe(second);
-        }
-
-        [Fact]
         public void GenerateReturnsRandomStateWhenNoMatchingCountryTest()
         {
             var address = new Address {Country = Guid.NewGuid().ToString()};
@@ -105,6 +73,55 @@
             var actual = target.Generate(typeof(string), "state", executeStrategy) as string;
 
             TestData.Locations.Select(x => x.State).Should().Contain(actual);
+        }
+
+        [Fact]
+        public void GenerateReturnsRandomValueTest()
+        {
+            var address = new Address();
+            var buildChain = new BuildHistory();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            buildChain.Push(address);
+
+            var target = new StateValueGenerator();
+
+            var first = (string) target.Generate(typeof(string), "state", executeStrategy);
+
+            string second = null;
+
+            for (var index = 0; index < 1000; index++)
+            {
+                second = (string) target.Generate(typeof(string), "state", executeStrategy);
+
+                if (string.Equals(first, second, StringComparison.OrdinalIgnoreCase) == false)
+                {
+                    break;
+                }
+            }
+
+            first.Should().NotBe(second);
+        }
+
+        [Fact]
+        public void GenerateReturnsStringValueTest()
+        {
+            var address = new Address();
+            var buildChain = new BuildHistory();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            buildChain.Push(address);
+
+            var target = new StateValueGenerator();
+
+            var actual = target.Generate(typeof(string), "state", executeStrategy) as string;
+
+            actual.Should().BeOfType<string>();
+            actual.As<string>().Should().NotBeNullOrWhiteSpace();
         }
 
         [Theory]

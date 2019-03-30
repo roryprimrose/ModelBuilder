@@ -57,7 +57,7 @@
             var generator = new RandomGenerator();
 
             var index = generator.NextValue(0, source.Count - 1);
-
+           
             return source[index];
         }
 

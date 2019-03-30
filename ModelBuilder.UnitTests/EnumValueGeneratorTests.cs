@@ -139,7 +139,7 @@
 
             var otherValueFound = false;
 
-            for (var index = 0; index < 50; index++)
+            for (var index = 0; index < 1000; index++)
             {
                 var second = target.Generate(typeof(BigEnum), null, executeStrategy);
 

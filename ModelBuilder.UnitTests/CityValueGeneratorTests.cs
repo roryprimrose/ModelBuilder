@@ -12,41 +12,6 @@
     public class CityValueGeneratorTests
     {
         [Fact]
-        public void GenerateReturnsRandomCityTest()
-        {
-            var address = new Address();
-            var buildChain = new BuildHistory();
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            executeStrategy.BuildChain.Returns(buildChain);
-
-            buildChain.Push(address);
-
-            var target = new CityValueGenerator();
-
-            var first = target.Generate(typeof(string), "city", executeStrategy);
-
-            first.Should().BeOfType<string>();
-            first.As<string>().Should().NotBeNullOrWhiteSpace();
-
-            var otherValueFound = false;
-
-            for (var index = 0; index < 1000; index++)
-            {
-                var second = target.Generate(typeof(string), "city", executeStrategy);
-
-                if (first != second)
-                {
-                    otherValueFound = true;
-
-                    break;
-                }
-            }
-
-            otherValueFound.Should().BeTrue();
-        }
-
-        [Fact]
         public void GenerateReturnsRandomStateMatchingCaseInsensitiveStateTest()
         {
             var address = new Address {State = "ONTARIO"};
@@ -108,6 +73,55 @@
             var actual = target.Generate(typeof(string), "city", executeStrategy) as string;
 
             TestData.Locations.Select(x => x.City).Should().Contain(actual);
+        }
+
+        [Fact]
+        public void GenerateReturnsRandomValueTest()
+        {
+            var address = new Address();
+            var buildChain = new BuildHistory();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            buildChain.Push(address);
+
+            var target = new CityValueGenerator();
+
+            var first = (string) target.Generate(typeof(string), "city", executeStrategy);
+            
+            var second = first;
+
+            for (var index = 0; index < 1000; index++)
+            {
+                second = (string) target.Generate(typeof(string), "city", executeStrategy);
+
+                if (string.Equals(first, second, StringComparison.OrdinalIgnoreCase) == false)
+                {
+                    break;
+                }
+            }
+            
+            first.Should().NotBe(second);
+        }
+        
+        [Fact]
+        public void GenerateReturnsStringValueTest()
+        {
+            var address = new Address();
+            var buildChain = new BuildHistory();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            buildChain.Push(address);
+
+            var target = new CityValueGenerator();
+
+            var actual = target.Generate(typeof(string), "city", executeStrategy);
+
+            actual.Should().BeOfType<string>();
+            actual.As<string>().Should().NotBeNullOrWhiteSpace();
         }
 
         [Theory]

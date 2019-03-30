@@ -142,7 +142,7 @@
 
             matchingCities.Should().NotBeEmpty();
 
-            var matchingPostCodes = matchingStates.Where(x => x.PostCode == actual.Postcode).ToList();
+            var matchingPostCodes = matchingCities.Where(x => x.PostCode == actual.Postcode).ToList();
 
             matchingPostCodes.Should().NotBeEmpty();
         }

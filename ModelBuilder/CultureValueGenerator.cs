@@ -11,11 +11,13 @@ namespace ModelBuilder
     /// </summary>
     public class CultureValueGenerator : ValueGeneratorMatcher
     {
+        private static readonly Regex _matchNameExpression = new Regex("Culture", RegexOptions.IgnoreCase);
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="DomainNameValueGenerator" /> class.
         /// </summary>
         public CultureValueGenerator()
-            : base(new Regex("Culture", RegexOptions.IgnoreCase), typeof(string), typeof(CultureInfo))
+            : base(_matchNameExpression, typeof(string), typeof(CultureInfo))
         {
         }
 

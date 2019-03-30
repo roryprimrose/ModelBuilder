@@ -26,7 +26,7 @@
             {
                 second = (TimeZoneInfo) target.Generate(typeof(TimeZoneInfo), null, executeStrategy);
 
-                if (first != second)
+                if (first.Equals(second) == false)
                 {
                     break;
                 }

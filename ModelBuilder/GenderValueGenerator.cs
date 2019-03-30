@@ -9,11 +9,13 @@ namespace ModelBuilder
     /// </summary>
     public class GenderValueGenerator : ValueGeneratorMatcher
     {
+        private static readonly Regex _matchNameExpression = new Regex("Gender|Sex", RegexOptions.IgnoreCase);
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="GenderValueGenerator" /> class.
         /// </summary>
         public GenderValueGenerator()
-            : base(new Regex("Gender|Sex", RegexOptions.IgnoreCase), typeof(string))
+            : base(_matchNameExpression, typeof(string))
         {
         }
 

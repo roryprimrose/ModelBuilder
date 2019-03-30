@@ -10,11 +10,13 @@
     /// </summary>
     public class CompanyValueGenerator : ValueGeneratorMatcher
     {
+        private static readonly Regex _matchNameExpression = new Regex("Company", RegexOptions.IgnoreCase);
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="CompanyValueGenerator" /> class.
         /// </summary>
         public CompanyValueGenerator()
-            : base(new Regex("Company", RegexOptions.IgnoreCase), typeof(string))
+            : base(_matchNameExpression, typeof(string))
         {
         }
 
