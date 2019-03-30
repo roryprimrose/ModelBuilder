@@ -130,7 +130,7 @@
 
             var generator = new RandomGenerator();
 
-            for (var index = 0; index < 1000; index++)
+            for (var index = 0; index < 100000; index++)
             {
                 var actual = generator.NextValue(0, 100000);
 

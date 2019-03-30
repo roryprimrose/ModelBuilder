@@ -9,11 +9,13 @@ namespace ModelBuilder
     /// </summary>
     public class DateOfBirthValueGenerator : ValueGeneratorMatcher
     {
+        private static readonly Regex _matchNameExpression = new Regex("dob|dateofbirth|born", RegexOptions.IgnoreCase);
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="DateTimeValueGenerator" /> class.
         /// </summary>
         public DateOfBirthValueGenerator()
-            : base(new Regex("dob|dateofbirth|born", RegexOptions.IgnoreCase),
+            : base(_matchNameExpression,
                 typeof(DateTime),
                 typeof(DateTime?),
                 typeof(DateTimeOffset),

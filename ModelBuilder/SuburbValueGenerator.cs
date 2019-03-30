@@ -10,11 +10,13 @@
     /// </summary>
     public class SuburbValueGenerator : ValueGeneratorMatcher
     {
+        private static readonly Regex _matchNameExpression = new Regex("Suburb", RegexOptions.IgnoreCase);
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="SuburbValueGenerator" /> class.
         /// </summary>
         public SuburbValueGenerator()
-            : base(new Regex("Suburb", RegexOptions.IgnoreCase), typeof(string))
+            : base(_matchNameExpression, typeof(string))
         {
         }
 
