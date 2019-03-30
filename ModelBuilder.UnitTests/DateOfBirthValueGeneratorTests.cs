@@ -20,7 +20,7 @@
 
             var target = new DateOfBirthValueGenerator();
 
-            for (var index = 0; index < 100000; index++)
+            for (var index = 0; index < 1000; index++)
             {
                 var value = (DateTime?) target.Generate(typeof(DateTime?), "dob", executeStrategy);
 

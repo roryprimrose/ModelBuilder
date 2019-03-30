@@ -21,7 +21,7 @@
             var maleFound = false;
             var femaleFound = false;
 
-            for (var index = 0; index < 100000; index++)
+            for (var index = 0; index < 1000; index++)
             {
                 var actual = (string) target.Generate(typeof(string), "Gender", executeStrategy);
 

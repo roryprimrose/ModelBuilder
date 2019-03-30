@@ -20,7 +20,7 @@
 
             var target = new GuidValueGenerator();
 
-            for (var index = 0; index < 100000; index++)
+            for (var index = 0; index < 1000; index++)
             {
                 var value = (Guid?) target.Generate(typeof(Guid?), null, executeStrategy);
 

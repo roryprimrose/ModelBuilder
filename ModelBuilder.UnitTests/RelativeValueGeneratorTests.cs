@@ -158,7 +158,7 @@
             var maleFound = false;
             var nonMaleFound = false;
 
-            for (var index = 0; index < 100000; index++)
+            for (var index = 0; index < 1000; index++)
             {
                 var actual = sut.GetIsMale(executeStrategy);
 
@@ -200,7 +200,7 @@
             var maleFound = false;
             var nonMaleFound = false;
 
-            for (var index = 0; index < 100000; index++)
+            for (var index = 0; index < 1000; index++)
             {
                 var actual = sut.GetIsMale(executeStrategy);
 
