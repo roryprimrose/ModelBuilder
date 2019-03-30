@@ -22,7 +22,7 @@
 
             var second = first;
 
-            for (var index = 0; index < 100000; index++)
+            for (var index = 0; index < 1000; index++)
             {
                 second = (TimeZoneInfo) target.Generate(typeof(TimeZoneInfo), null, executeStrategy);
 

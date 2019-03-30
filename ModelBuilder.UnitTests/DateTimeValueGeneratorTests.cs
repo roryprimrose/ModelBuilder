@@ -18,7 +18,7 @@
 
             var target = new DateTimeValueGenerator();
 
-            for (var index = 0; index < 100000; index++)
+            for (var index = 0; index < 1000; index++)
             {
                 var value = (DateTime?) target.Generate(typeof(DateTime?), null, executeStrategy);
 
@@ -117,7 +117,7 @@
 
             var second = first;
 
-            for (var index = 0; index < 100000; index++)
+            for (var index = 0; index < 1000; index++)
             {
                 second = (DateTimeOffset) target.Generate(typeof(DateTimeOffset), null, executeStrategy);
 
@@ -146,7 +146,7 @@
 
             var second = first;
 
-            for (var index = 0; index < 100000; index++)
+            for (var index = 0; index < 1000; index++)
             {
                 second = (DateTime) target.Generate(typeof(DateTime), null, executeStrategy);
 
@@ -173,7 +173,7 @@
 
             var second = first;
 
-            for (var index = 0; index < 100000; index++)
+            for (var index = 0; index < 1000; index++)
             {
                 second = (TimeSpan) target.Generate(typeof(TimeSpan), null, executeStrategy);
 

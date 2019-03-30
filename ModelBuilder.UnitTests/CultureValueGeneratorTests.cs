@@ -23,7 +23,7 @@
 
             var second = first;
 
-            for (var index = 0; index < 100000; index++)
+            for (var index = 0; index < 1000; index++)
             {
                 second = (string) target.Generate(typeof(string), "culture", executeStrategy);
 
@@ -82,7 +82,7 @@
 
             var second = first;
 
-            for (var index = 0; index < 100000; index++)
+            for (var index = 0; index < 1000; index++)
             {
                 second = (CultureInfo)target.Generate(typeof(CultureInfo), "culture", executeStrategy);
 
@@ -109,7 +109,7 @@
 
             var second = first;
 
-            for (var index = 0; index < 100000; index++)
+            for (var index = 0; index < 1000; index++)
             {
                 second = (CultureInfo) target.Generate(typeof(CultureInfo), "culture", executeStrategy);
 

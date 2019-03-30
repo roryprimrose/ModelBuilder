@@ -130,7 +130,7 @@
 
             var generator = new RandomGenerator();
 
-            for (var index = 0; index < 100000; index++)
+            for (var index = 0; index < 1000; index++)
             {
                 var actual = generator.NextValue(0, 100000);
 
@@ -166,7 +166,7 @@
 
             var target = new RandomGenerator();
 
-            for (var index = 0; index < 100000; index++)
+            for (var index = 0; index < 1000; index++)
             {
                 var value = target.NextValue(type, min, max);
 
@@ -266,7 +266,7 @@
 
             var target = new RandomGenerator();
 
-            for (var index = 0; index < 100000; index++)
+            for (var index = 0; index < 1000; index++)
             {
                 var value = target.NextValue(typeof(double), double.MinValue, double.MaxValue);
 
@@ -290,7 +290,7 @@
 
             var target = new RandomGenerator();
 
-            for (var index = 0; index < 100000; index++)
+            for (var index = 0; index < 1000; index++)
             {
                 var value = target.NextValue(typeof(double), double.MinValue, double.MaxValue);
 
@@ -328,7 +328,7 @@
 
             var target = new RandomGenerator();
 
-            for (var index = 0; index < 100000; index++)
+            for (var index = 0; index < 1000; index++)
             {
                 var min = target.GetMin(type);
                 var max = target.GetMax(type);

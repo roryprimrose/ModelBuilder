@@ -45,7 +45,7 @@
 
             string second = null;
 
-            for (var index = 0; index < 100000; index++)
+            for (var index = 0; index < 1000; index++)
             {
                 second = (string) target.Generate(typeof(string), "address", executeStrategy) as string;
 

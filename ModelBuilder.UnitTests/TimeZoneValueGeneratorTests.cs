@@ -115,7 +115,7 @@
 
             var second = first;
 
-            for (var index = 0; index < 100000; index++)
+            for (var index = 0; index < 1000; index++)
             {
                 second = (string) target.Generate(typeof(string), "timezone", executeStrategy);
 
@@ -162,7 +162,7 @@
 
             var ids = TzdbDateTimeZoneSource.Default.GetIds().ToList();
 
-            for (var index = 0; index < 100000; index++)
+            for (var index = 0; index < 1000; index++)
             {
                 var actual = target.Generate(typeof(string), "timezone", executeStrategy) as string;
 

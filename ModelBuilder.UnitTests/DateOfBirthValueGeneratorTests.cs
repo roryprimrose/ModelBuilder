@@ -91,7 +91,7 @@
 
             var second = first;
 
-            for (var index = 0; index < 100000; index++)
+            for (var index = 0; index < 1000; index++)
             {
                 second = (DateTimeOffset) target.Generate(typeof(DateTimeOffset), "dob", executeStrategy);
 
@@ -122,7 +122,7 @@
 
             var second = first;
 
-            for (var index = 0; index < 100000; index++)
+            for (var index = 0; index < 1000; index++)
             {
                 second = (DateTime) target.Generate(typeof(DateTime), "dob", executeStrategy);
 
