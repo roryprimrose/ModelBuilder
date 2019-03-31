@@ -130,15 +130,13 @@ public class MyCustomCompilerModule : ICompilerModule
 }
 ```
 
-When running under the full .Net framework (from 4.5.2), ModelBuilder will automatically scan all the CompilerModule types found in the assemblies in the current AppDomain. It will then automatically configure the default BuildStrategyCompiler using those modules when calling ```Model.Create<T>```. 
-
-The assembly scanning for CompilerModule types in .Net 4.5.2 is not available in netstandard 1.5. CompilerModules in netstandard 1.5 and higher must be manually added to a BuildStrategyCompiler using either ```compiler.Add(new MyCustomModule())``` or ```compiler.AddCompilerModule<MyCustomModule>()```.
-
-You may want to create multiple compiler modules that support different model construction designs. These can be used on the fly as well.
+CompilerModules must be manually added to a BuildStrategyCompiler using either ```compiler.Add(new MyCustomModule())``` or ```compiler.AddCompilerModule<MyCustomModule>()```. These can be used on the fly as well.
 
 ```
-var model = Model.UsingModule<CustomModule>().Create<Person>();
+var model = Model.UsingModule<MyCustomCompilerModule>().Create<Person>();
 ```
+
+You may want to create multiple compiler modules that support different model construction designs. 
 
 ### BuildStrategy 
 

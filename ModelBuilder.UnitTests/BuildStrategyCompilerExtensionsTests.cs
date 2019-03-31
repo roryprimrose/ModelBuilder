@@ -873,50 +873,5 @@
 
             action.Should().Throw<ArgumentNullException>();
         }
-
-#if NET452
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1034", Justification =
- "This type is used specifically for testing a particular scenario.")]
-        public interface ISomeCompilerModule : ICompilerModule
-        {
-            // This verifies that the module scanner does not attempt to use interface modules
-        }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1034", Justification =
- "This type is used specifically for testing a particular scenario.")]
-        public abstract class AbstractCompilerModule : ICompilerModule
-        {
-            public void Configure(IBuildStrategyCompiler compiler)
-            {
-                // This verifies that the module scanner does not attempt to use abstract modules
-                throw new NotImplementedException();
-            }
-        }
-
-        [Fact]
-        public void ScanModulesPopulatesCompilerWithDetectedConfigurationTest()
-        {
-            var target = new BuildStrategyCompiler();
-
-            target.ScanModules();
-
-            target.ExecuteOrderRules.Should().ContainItemsAssignableTo<DummyExecuteOrderRule>();
-            target.IgnoreRules.Should().ContainItemsAssignableTo<DummyIgnoreRule>();
-            target.PostBuildActions.Should().ContainItemsAssignableTo<DummyPostBuildAction>();
-            target.CreationRules.Should().ContainItemsAssignableTo<DummyCreationRule>();
-            target.TypeCreators.Should().ContainItemsAssignableTo<DummyTypeCreator>();
-            target.ValueGenerators.Should().ContainItemsAssignableTo<DummyValueGenerator>();
-        }
-
-        [Fact]
-        public void ScanModulesThrowsExceptionWithNullCompilerTest()
-        {
-            Action action = () => BuildStrategyCompilerExtensions.ScanModules(null);
-
-            action.Should().Throw<ArgumentNullException>();
-        }
-
-#endif
     }
 }

@@ -223,7 +223,6 @@
         [Fact]
         public void CreateBuildsLogOfPostActionsTest()
         {
-            // We must explicitly add the module that brings in DummyPostBuildAction because module scanning not available in all frameworks that run this test
             var strategy = Model.DefaultBuildStrategy.Clone()
                 .AddCompilerModule<TestCompilerModule>()
                 .Compile()

@@ -120,10 +120,6 @@
         {
             var compiler = new DefaultBuildStrategyCompiler();
 
-#if NET45
-            compiler.ScanModules();
-#endif
-
             return compiler.Compile();
         }
 

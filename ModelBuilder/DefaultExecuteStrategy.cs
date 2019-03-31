@@ -492,7 +492,6 @@
                 || type.TypeIsAbstract())
             {
                 // Automatically resolve a derived type within the same assembly
-                // Scanning assemblies under full framework here won't be supported at this stage
                 var assemblyTypes = type.GetTypeInfo().Assembly.GetTypes();
                 var possibleTypes = from x in assemblyTypes
                     where x.TypeIsPublic() && x.TypeIsInterface() == false && x.TypeIsAbstract() == false
