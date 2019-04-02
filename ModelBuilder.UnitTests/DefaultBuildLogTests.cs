@@ -1,8 +1,10 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
+    using System.IO;
     using System.Linq;
     using FluentAssertions;
+    using ModelBuilder.UnitTests.Models;
     using Xunit;
 
     public class DefaultBuildLogTests
@@ -322,6 +324,36 @@
         }
 
         [Fact]
+        public void MappedTypeAppendsLogEntryTest()
+        {
+            var target = new DefaultBuildLog();
+
+            target.MappedType(typeof(Stream), typeof(MemoryStream));
+
+            target.Output.Should().NotBeNullOrWhiteSpace();
+        }
+
+        [Fact]
+        public void MappedTypeThrowsExceptionWithNullSourceTypeTest()
+        {
+            var target = new DefaultBuildLog();
+
+            Action action = () => target.MappedType(null, typeof(MemoryStream));
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void MappedTypeThrowsExceptionWithNullTargetTypeTest()
+        {
+            var target = new DefaultBuildLog();
+
+            Action action = () => target.MappedType(typeof(Stream), null);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
         public void PopulatedInstanceAppendsLogEntryTest()
         {
             var instance = new Person();
@@ -433,7 +465,7 @@
             {
                 throw new TimeoutException();
             }
-            catch (Exception ex)
+            catch (TimeoutException ex)
             {
                 // Get the exception with a valid stack trace
                 exception = ex;
@@ -446,7 +478,7 @@
             var lines = target.Output.Split(new[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries);
             var indentedLines = lines.Skip(1).Take(lines.Length - 2);
 
-            indentedLines.All(x => x.StartsWith("    ")).Should().BeTrue();
+            indentedLines.All(x => x.StartsWith("    ", StringComparison.OrdinalIgnoreCase)).Should().BeTrue();
         }
     }
 }

@@ -4,6 +4,7 @@
     using System.Linq;
     using System.Reflection;
     using FluentAssertions;
+    using ModelBuilder.UnitTests.Models;
     using Xunit;
 
     public class DefaultBuildStrategyCompilerTests
@@ -17,6 +18,7 @@
             target.ConstructorResolver.Should().BeOfType<DefaultConstructorResolver>();
             target.PropertyResolver.Should().BeOfType<DefaultPropertyResolver>();
             target.CreationRules.Should().BeEmpty();
+            target.TypeMappingRules.Should().BeEmpty();
             target.TypeCreators.Should().NotBeEmpty();
             target.ValueGenerators.Should().NotBeEmpty();
             target.ExecuteOrderRules.Should().NotBeEmpty();

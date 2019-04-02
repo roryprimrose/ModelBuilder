@@ -15,7 +15,7 @@
         ///     generate a requested type.
         /// </exception>
         /// <exception cref="BuildException">Failed to generate a requested type.</exception>
-        public virtual T CreateWith(params object[] args)
+        public virtual T Create(params object[] args)
         {
             var requestedType = typeof(T);
 

@@ -2,8 +2,7 @@
 {
     /// <summary>
     ///     The <see cref="ICompilerModule" />
-    ///     interface is used to define out to configure a <see cref="IBuildStrategyCompiler" /> using convention based
-    ///     scanning.
+    ///     interface is used to configure a <see cref="IBuildStrategyCompiler" />.
     /// </summary>
     public interface ICompilerModule
     {

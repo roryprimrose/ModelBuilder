@@ -1,6 +1,8 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
+    using System.Globalization;
     using System.IO;
     using System.Linq;
     using FluentAssertions;
@@ -9,6 +11,9 @@
     using NSubstitute;
     using Xunit;
 
+    [SuppressMessage("Microsoft.Globalization",
+        "CA1308:NormalizeStringsToUppercase",
+        Justification = "Email addresses are lower case by convention.")]
     public class EmailValueGeneratorTests
     {
         [Fact]
@@ -110,7 +115,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsRandomEmailAddressTest()
+        public void GenerateReturnsRandomValueTest()
         {
             var firstPerson = new Person {FirstName = "De Jour", LastName = "Mc Cormick"};
             var firstBuildChain = new BuildHistory();
@@ -122,12 +127,8 @@
 
             var target = new EmailValueGenerator();
 
-            var first = target.Generate(typeof(string), "email", firstExecuteStrategy);
-
-            first.Should().BeOfType<string>();
-            first.As<string>().Should().NotBeNullOrWhiteSpace();
-            first.As<string>().Should().Contain("@");
-
+            var first = (string) target.Generate(typeof(string), "email", firstExecuteStrategy);
+            
             var secondPerson = new Person {FirstName = "Sam", LastName = "Johns"};
             var secondBuildChain = new BuildHistory();
             var secondExecuteStrategy = Substitute.For<IExecuteStrategy>();
@@ -136,15 +137,45 @@
 
             secondBuildChain.Push(secondPerson);
 
-            var second = target.Generate(typeof(string), "email", secondExecuteStrategy);
+            var second = first;
+
+            for (var index = 0; index < 1000; index++)
+            {
+                second = (string) target.Generate(typeof(string), "email", secondExecuteStrategy);
+
+                if (string.Equals(first, second, StringComparison.OrdinalIgnoreCase) == false)
+                {
+                    break;
+                }
+            }
 
             first.Should().NotBe(second);
+        }
+        
+        [Fact]
+        public void GenerateReturnsStringValueTest()
+        {
+            var firstPerson = new Person {FirstName = "De Jour", LastName = "Mc Cormick"};
+            var firstBuildChain = new BuildHistory();
+            var firstExecuteStrategy = Substitute.For<IExecuteStrategy>();
+
+            firstExecuteStrategy.BuildChain.Returns(firstBuildChain);
+
+            firstBuildChain.Push(firstPerson);
+
+            var target = new EmailValueGenerator();
+
+            var actual = target.Generate(typeof(string), "email", firstExecuteStrategy);
+
+            actual.Should().BeOfType<string>();
+            actual.As<string>().Should().NotBeNullOrWhiteSpace();
+            actual.As<string>().Should().Contain("@");
         }
 
         [Fact]
         public void GenerateReturnsRandomEmailAddressUsingDomainOfContextTest()
         {
-            var parts = new EmailParts {Domain = Guid.NewGuid().ToString("N")};
+            var parts = new EmailParts {Domain = Guid.NewGuid().ToString("N", CultureInfo.InvariantCulture)};
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
@@ -164,7 +195,8 @@
         {
             var parts = new EmailParts
             {
-                FirstName = Guid.NewGuid().ToString("N"), LastName = Guid.NewGuid().ToString("N")
+                FirstName = Guid.NewGuid().ToString("N", CultureInfo.InvariantCulture),
+                LastName = Guid.NewGuid().ToString("N", CultureInfo.InvariantCulture)
             };
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -187,9 +219,9 @@
         {
             var parts = new EmailParts
             {
-                FirstName = Guid.NewGuid().ToString("N"),
-                LastName = Guid.NewGuid().ToString("N"),
-                Domain = Guid.NewGuid().ToString("N")
+                FirstName = Guid.NewGuid().ToString("N", CultureInfo.InvariantCulture),
+                LastName = Guid.NewGuid().ToString("N", CultureInfo.InvariantCulture),
+                Domain = Guid.NewGuid().ToString("N", CultureInfo.InvariantCulture)
             };
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -210,7 +242,7 @@
         [Fact]
         public void GenerateReturnsRandomEmailAddressUsingFirstOfContextTest()
         {
-            var person = new Person {FirstName = Guid.NewGuid().ToString("N")};
+            var person = new Person {FirstName = Guid.NewGuid().ToString("N", CultureInfo.InvariantCulture)};
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
@@ -230,7 +262,7 @@
         [Fact]
         public void GenerateReturnsRandomEmailAddressUsingLastNameOfContextTest()
         {
-            var person = new Person {LastName = Guid.NewGuid().ToString("N")};
+            var person = new Person {LastName = Guid.NewGuid().ToString("N", CultureInfo.InvariantCulture)};
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 

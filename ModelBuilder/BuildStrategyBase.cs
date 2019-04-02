@@ -28,6 +28,7 @@
             TypeCreators = new ReadOnlyCollection<ITypeCreator>(strategy.TypeCreators.ToList());
             ValueGenerators = new ReadOnlyCollection<IValueGenerator>(strategy.ValueGenerators.ToList());
             IgnoreRules = new ReadOnlyCollection<IgnoreRule>(strategy.IgnoreRules.ToList());
+            TypeMappingRules = new ReadOnlyCollection<TypeMappingRule>(strategy.TypeMappingRules.ToList());
             ExecuteOrderRules = new ReadOnlyCollection<ExecuteOrderRule>(strategy.ExecuteOrderRules.ToList());
             PostBuildActions = new ReadOnlyCollection<IPostBuildAction>(strategy.PostBuildActions.ToList());
             CreationRules = new ReadOnlyCollection<CreationRule>(strategy.CreationRules.ToList());
@@ -42,6 +43,7 @@
         /// <param name="typeCreators">The type creators.</param>
         /// <param name="valueGenerators">The value generators.</param>
         /// <param name="ignoreRules">The ignore rules.</param>
+        /// <param name="typeMappingRules">The type mapping rules.</param>
         /// <param name="executeOrderRules">The execute order rules.</param>
         /// <param name="postBuildActions">The post build actions.</param>
         /// <exception cref="ArgumentNullException">The <paramref name="constructorResolver" /> parameter is null.</exception>
@@ -50,6 +52,7 @@
         /// <exception cref="ArgumentNullException">The <paramref name="typeCreators" /> parameter is null.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="valueGenerators" /> parameter is null.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="ignoreRules" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="typeMappingRules" /> parameter is null.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="executeOrderRules" /> parameter is null.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="postBuildActions" /> parameter is null.</exception>
         protected BuildStrategyBase(
@@ -59,6 +62,7 @@
             IEnumerable<ITypeCreator> typeCreators,
             IEnumerable<IValueGenerator> valueGenerators,
             IEnumerable<IgnoreRule> ignoreRules,
+            IEnumerable<TypeMappingRule> typeMappingRules,
             IEnumerable<ExecuteOrderRule> executeOrderRules,
             IEnumerable<IPostBuildAction> postBuildActions)
         {
@@ -92,6 +96,11 @@
                 throw new ArgumentNullException(nameof(ignoreRules));
             }
 
+            if (typeMappingRules == null)
+            {
+                throw new ArgumentNullException(nameof(typeMappingRules));
+            }
+
             if (executeOrderRules == null)
             {
                 throw new ArgumentNullException(nameof(executeOrderRules));
@@ -110,6 +119,7 @@
             ExecuteOrderRules = new ReadOnlyCollection<ExecuteOrderRule>(executeOrderRules.ToList());
             PostBuildActions = new ReadOnlyCollection<IPostBuildAction>(postBuildActions.ToList());
             CreationRules = new ReadOnlyCollection<CreationRule>(creationRules.ToList());
+            TypeMappingRules = new ReadOnlyCollection<TypeMappingRule>(typeMappingRules.ToList());
         }
 
         /// <inheritdoc />
@@ -138,6 +148,9 @@
 
         /// <inheritdoc />
         public ReadOnlyCollection<ITypeCreator> TypeCreators { get; }
+
+        /// <inheritdoc />
+        public ReadOnlyCollection<TypeMappingRule> TypeMappingRules { get; }
 
         /// <inheritdoc />
         public ReadOnlyCollection<IValueGenerator> ValueGenerators { get; }

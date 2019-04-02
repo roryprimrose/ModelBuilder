@@ -1,15 +1,24 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
+    using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
-    using System.Reflection;
     using FluentAssertions;
     using Xunit;
+    using Xunit.Abstractions;
 
     public class RandomGeneratorTests
     {
+        private readonly ITestOutputHelper _output;
+
+        public RandomGeneratorTests(ITestOutputHelper output)
+        {
+            _output = output;
+        }
+
         [Theory]
-        [ClassData(typeof(NumericTypeDataSource))]
+        [ClassData(typeof(NumericTypeRangeDataSource))]
         public void GetMaxEvaluatesRequestedTypeTest(Type type, bool typeSupported, double min, double max)
         {
             if (typeSupported == false)
@@ -21,9 +30,10 @@
 
             var actual = target.GetMax(type);
 
-            var converted = Convert.ToDouble(actual);
+            var converted = Convert.ToDouble(actual, CultureInfo.InvariantCulture);
 
             converted.Should().Be(max);
+            converted.Should().NotBe(min);
         }
 
         [Fact]
@@ -37,7 +47,7 @@
         }
 
         [Theory]
-        [ClassData(typeof(NumericTypeDataSource))]
+        [ClassData(typeof(NumericTypeRangeDataSource))]
         public void GetMinEvaluatesRequestedTypeTest(Type type, bool typeSupported, double min, double max)
         {
             if (typeSupported == false)
@@ -49,9 +59,10 @@
 
             var actual = target.GetMin(type);
 
-            var converted = Convert.ToDouble(actual);
+            var converted = Convert.ToDouble(actual, CultureInfo.InvariantCulture);
 
             converted.Should().Be(min);
+            converted.Should().NotBe(max);
         }
 
         [Fact]
@@ -66,7 +77,7 @@
 
         [Theory]
         [ClassData(typeof(NumericTypeDataSource))]
-        public void IsSupportedEvaluatesRequestedTypeTest(Type type, bool typeSupported, double min, double max)
+        public void IsSupportedEvaluatesRequestedTypeTest(Type type, bool typeSupported)
         {
             if (typeSupported == false)
             {
@@ -77,7 +88,7 @@
 
             var actual = target.IsSupported(type);
 
-            actual.Should().Be(typeSupported);
+            actual.Should().BeTrue();
         }
 
         [Fact]
@@ -112,9 +123,40 @@
             action.Should().Throw<ArgumentNullException>();
         }
 
+        [Fact]
+        public void NextValueGeneratesHighCoverageOfValues()
+        {
+            var tracker = new Dictionary<int, int>();
+
+            var generator = new RandomGenerator();
+
+            for (var index = 0; index < 100000; index++)
+            {
+                var actual = generator.NextValue(0, 100000);
+
+                if (tracker.ContainsKey(actual))
+                {
+                    tracker[actual]++;
+                }
+                else
+                {
+                    tracker[actual] = 1;
+                }
+            }
+
+            _output.WriteLine("Generator created " + tracker.Count + " unique values");
+
+            foreach (var pair in tracker.OrderBy(x => x.Key))
+            {
+                _output.WriteLine(pair.Key + ": " + pair.Value);
+            }
+
+            tracker.Count.Should().BeGreaterThan(9000);
+        }
+
         [Theory]
-        [ClassData(typeof(NumericTypeDataSource))]
-        public void NextValueWithTypeCanEvalutateManyTimesTest(Type type, bool typeSupported, object min, object max)
+        [ClassData(typeof(NumericTypeRangeDataSource))]
+        public void NextValueWithTypeCanEvaluateManyTimesTest(Type type, bool typeSupported, object min, object max)
         {
             if (typeSupported == false)
             {
@@ -142,7 +184,7 @@
         }
 
         [Theory]
-        [ClassData(typeof(NumericTypeDataSource))]
+        [ClassData(typeof(NumericTypeRangeDataSource))]
         public void NextValueWithTypeCanReturnMaxValueTest(Type type, bool typeSupported, double min, double max)
         {
             if (typeSupported == false)
@@ -176,14 +218,15 @@
             }
             else
             {
-                var expectedValue = Convert.ChangeType(max, type);
+                var expectedValue = Convert.ChangeType(max, type, CultureInfo.InvariantCulture);
 
                 value.Should().Be(expectedValue);
+                value.Should().NotBe(min);
             }
         }
 
         [Theory]
-        [ClassData(typeof(NumericTypeDataSource))]
+        [ClassData(typeof(NumericTypeRangeDataSource))]
         public void NextValueWithTypeCanReturnMinValueTest(Type type, bool typeSupported, double min, double max)
         {
             if (typeSupported == false)
@@ -209,9 +252,10 @@
             }
             else
             {
-                var expectedValue = Convert.ChangeType(min, type);
+                var expectedValue = Convert.ChangeType(min, type, CultureInfo.InvariantCulture);
 
                 value.Should().Be(expectedValue);
+                value.Should().NotBe(max);
             }
         }
 
@@ -226,7 +270,7 @@
             {
                 var value = target.NextValue(typeof(double), double.MinValue, double.MaxValue);
 
-                var actual = Convert.ToDouble(value);
+                var actual = Convert.ToDouble(value, CultureInfo.InvariantCulture);
 
                 if (actual.Equals(double.MaxValue) == false)
                 {
@@ -246,11 +290,11 @@
 
             var target = new RandomGenerator();
 
-            for (var index = 0; index < 10000; index++)
+            for (var index = 0; index < 1000; index++)
             {
                 var value = target.NextValue(typeof(double), double.MinValue, double.MaxValue);
 
-                var actual = Convert.ToDouble(value);
+                var actual = Convert.ToDouble(value, CultureInfo.InvariantCulture);
 
                 if (actual.Equals(double.MinValue) == false)
                 {
@@ -270,7 +314,7 @@
 
             var value = target.NextValue(typeof(double), double.MinValue, double.MaxValue);
 
-            var actual = Convert.ToDouble(value);
+            var actual = Convert.ToDouble(value, CultureInfo.InvariantCulture);
 
             double.IsInfinity(actual).Should().BeFalse();
         }
@@ -291,7 +335,7 @@
 
                 var value = target.NextValue(type, min, max);
 
-                var actual = Convert.ToDouble(value);
+                var actual = Convert.ToDouble(value, CultureInfo.InvariantCulture);
 
                 if (unchecked(actual != (int) actual))
                 {
@@ -305,7 +349,7 @@
         }
 
         [Theory]
-        [ClassData(typeof(NumericTypeDataSource))]
+        [ClassData(typeof(NumericTypeRangeDataSource))]
         public void NextValueWithTypeReturnsNewValueTest(Type type, bool typeSupported, double min, double max)
         {
             if (typeSupported == false)
@@ -331,7 +375,7 @@
         }
 
         [Theory]
-        [ClassData(typeof(NumericTypeDataSource))]
+        [ClassData(typeof(NumericTypeRangeDataSource))]
         public void NextValueWithTypeReturnsRandomValueTest(Type type, bool typeSupported, double min, double max)
         {
             if (typeSupported == false)
@@ -343,7 +387,7 @@
 
             var actual = target.NextValue(type, min, max);
 
-            var converted = Convert.ToDouble(actual);
+            var converted = Convert.ToDouble(actual, CultureInfo.InvariantCulture);
 
             converted.Should().BeGreaterOrEqualTo(min);
             converted.Should().BeLessOrEqualTo(max);
@@ -410,7 +454,7 @@
         }
 
         [Theory]
-        [ClassData(typeof(NumericTypeDataSource))]
+        [ClassData(typeof(NumericTypeRangeDataSource))]
         public void NextValueWithTypeValidatesRequestedTypeTest(Type type, bool typeSupported, double min, double max)
         {
             var target = new RandomGenerator();

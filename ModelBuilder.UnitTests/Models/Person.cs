@@ -1,9 +1,13 @@
-﻿namespace ModelBuilder.UnitTests
+﻿namespace ModelBuilder.UnitTests.Models
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
 
     public class Person : Entity
     {
+        [SuppressMessage("Microsoft.Design",
+            "CA1051",
+            Justification = "The code is written in this way to validate a test scenario.")]
         public int MinAge = 0;
 
         public Person()
@@ -28,7 +32,7 @@
 
         public object DoSomething()
         {
-            return null;
+            return FirstName;
         }
 
         public Address Address { get; set; }

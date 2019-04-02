@@ -2,7 +2,9 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using FluentAssertions;
+    using ModelBuilder.UnitTests.Models;
     using NSubstitute;
     using Xunit;
 
@@ -20,6 +22,8 @@
             var typeCreators = new List<ITypeCreator> {new DefaultTypeCreator()};
             var valueGenerators = new List<IValueGenerator> {new AddressValueGenerator()};
             var ignoreRules = new List<IgnoreRule> {new IgnoreRule(typeof(Person), "FirstName")};
+            var typeMappingRules =
+                new List<TypeMappingRule> {new TypeMappingRule(typeof(Stream), typeof(MemoryStream))};
             var executeOrderRules = new List<ExecuteOrderRule>
             {
                 new ExecuteOrderRule(typeof(Person), typeof(string), "LastName", int.MinValue)
@@ -35,6 +39,7 @@
             target.TypeCreators.Add(typeCreators[0]);
             target.ValueGenerators.Add(valueGenerators[0]);
             target.IgnoreRules.Add(ignoreRules[0]);
+            target.TypeMappingRules.Add(typeMappingRules[0]);
             target.ExecuteOrderRules.Add(executeOrderRules[0]);
             target.PostBuildActions.Add(postBuildActions[0]);
 
@@ -46,6 +51,7 @@
             actual.TypeCreators.Should().BeEquivalentTo(typeCreators);
             actual.ValueGenerators.Should().BeEquivalentTo(valueGenerators);
             actual.IgnoreRules.Should().BeEquivalentTo(ignoreRules);
+            actual.TypeMappingRules.Should().BeEquivalentTo(typeMappingRules);
             actual.ExecuteOrderRules.Should().BeEquivalentTo(executeOrderRules);
             actual.PostBuildActions.Should().BeEquivalentTo(postBuildActions);
         }
@@ -84,6 +90,7 @@
             target.CreationRules.Should().NotBeNull();
             target.ExecuteOrderRules.Should().NotBeNull();
             target.IgnoreRules.Should().NotBeNull();
+            target.TypeMappingRules.Should().NotBeNull();
             target.TypeCreators.Should().NotBeNull();
             target.ValueGenerators.Should().NotBeNull();
             target.PostBuildActions.Should().NotBeNull();

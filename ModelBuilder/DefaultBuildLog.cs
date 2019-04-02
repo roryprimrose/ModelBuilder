@@ -242,6 +242,24 @@
         }
 
         /// <inheritdoc />
+        /// <exception cref="ArgumentNullException">The <paramref name="source" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="target" /> parameter is null.</exception>
+        public void MappedType(Type source, Type target)
+        {
+            if (source == null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
+
+            if (target == null)
+            {
+                throw new ArgumentNullException(nameof(target));
+            }
+
+            WriteMessage(Resources.DefaultBuildLog_MappingType, source.FullName, target.FullName);
+        }
+
+        /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="instance" /> parameter is null.</exception>
         public void PopulatedInstance(object instance)
         {

@@ -32,7 +32,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsRandomAddressTest()
+        public void GenerateReturnsRandomValueTest()
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -41,23 +41,37 @@
 
             var target = new AddressValueGenerator();
 
-            var first = target.Generate(typeof(string), "address", executeStrategy) as string;
-
-            first.Should().NotBeNullOrWhiteSpace();
+            var first = (string) target.Generate(typeof(string), "address", executeStrategy) as string;
 
             string second = null;
 
             for (var index = 0; index < 1000; index++)
             {
-                second = target.Generate(typeof(string), "address", executeStrategy) as string;
+                second = (string) target.Generate(typeof(string), "address", executeStrategy) as string;
 
-                if (first != second)
+                if (string.Equals(first, second, StringComparison.OrdinalIgnoreCase) == false)
                 {
                     break;
                 }
             }
 
             first.Should().NotBe(second);
+        }
+        
+        [Fact]
+        public void GenerateReturnsStringValueTest()
+        {
+            var buildChain = new BuildHistory();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            var target = new AddressValueGenerator();
+
+            var actual = target.Generate(typeof(string), "address", executeStrategy) as string;
+            
+            actual.Should().BeOfType<string>();
+            actual.As<string>().Should().NotBeNullOrWhiteSpace();
         }
 
         [Theory]
@@ -82,8 +96,9 @@
 
             actual.Should().NotBeNullOrWhiteSpace();
 
-            var matchingLocations =
-                TestData.Locations.Where(x => actual.Contains(x.StreetName) && actual.Contains(x.StreetSuffix));
+            var matchingLocations = TestData.Locations.Where(x =>
+                actual.Contains(x.StreetName, StringComparison.OrdinalIgnoreCase)
+                && actual.Contains(x.StreetSuffix, StringComparison.OrdinalIgnoreCase));
 
             matchingLocations.Should().NotBeEmpty();
         }

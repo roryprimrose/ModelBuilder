@@ -4,12 +4,12 @@
 
     public class DummyExecuteStrategy : IExecuteStrategy<string>
     {
-        public string CreateWith(params object[] args)
+        public string Create(params object[] args)
         {
             throw new NotImplementedException();
         }
 
-        public object CreateWith(Type type, params object[] args)
+        public object Create(Type type, params object[] args)
         {
             throw new NotImplementedException();
         }

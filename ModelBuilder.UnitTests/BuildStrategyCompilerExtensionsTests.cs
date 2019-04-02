@@ -1,10 +1,11 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
+    using System.IO;
     using System.Linq;
     using System.Linq.Expressions;
-    using System.Reflection;
     using FluentAssertions;
+    using ModelBuilder.UnitTests.Models;
     using NSubstitute;
     using Xunit;
 
@@ -170,9 +171,29 @@
         }
 
         [Fact]
+        public void AddTypeMappingRuleAddsRuleToCompilerTest()
+        {
+            var target = new BuildStrategyCompiler();
+
+            target.AddTypeMappingRule<DummyTypeMappingRule>();
+
+            var actual = target.TypeMappingRules.Single();
+
+            actual.Should().BeOfType<DummyTypeMappingRule>();
+        }
+
+        [Fact]
         public void AddIgnoreRuleThrowsExceptionWithNullCompilerTest()
         {
             Action action = () => BuildStrategyCompilerExtensions.AddIgnoreRule<DummyIgnoreRule>(null);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void AddTypeMappingRuleThrowsExceptionWithNullCompilerTest()
+        {
+            Action action = () => BuildStrategyCompilerExtensions.AddTypeMappingRule<DummyTypeMappingRule>(null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -397,6 +418,38 @@
         }
 
         [Fact]
+        public void AddWithTypeMappingRuleAddsRuleToCompilerTest()
+        {
+            var rule = new TypeMappingRule(typeof(Stream), typeof(MemoryStream));
+
+            var target = new BuildStrategyCompiler();
+
+            target.Add(rule);
+
+            target.TypeMappingRules.Should().Contain(rule);
+        }
+
+        [Fact]
+        public void AddWithTypeMappingRuleThrowsExceptionWithNullCompilerTest()
+        {
+            var rule = new TypeMappingRule(typeof(Stream), typeof(MemoryStream));
+
+            Action action = () => BuildStrategyCompilerExtensions.Add(null, rule);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void AddWithTypeMappingRuleThrowsExceptionWithNullRuleTest()
+        {
+            var target = Substitute.For<IBuildStrategyCompiler>();
+
+            Action action = () => target.Add((TypeMappingRule) null);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
         public void AddWithPostBuildActionAddsRuleToCompilerTest()
         {
             var postBuildAction = new DummyPostBuildAction();
@@ -584,6 +637,38 @@
         public void RemoveIgnoreRuleThrowsExceptionWithNullCompilerTest()
         {
             Action action = () => BuildStrategyCompilerExtensions.RemoveIgnoreRule<DummyIgnoreRule>(null);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void RemoveTypeMappingRuleRemovesMultipleMatchingRulesFromCompilerTest()
+        {
+            var target = new BuildStrategyCompiler();
+
+            target.AddTypeMappingRule<DummyTypeMappingRule>();
+            target.AddTypeMappingRule<DummyTypeMappingRule>();
+            target.AddTypeMappingRule<DummyTypeMappingRule>();
+            target.RemoveTypeMappingRule<DummyTypeMappingRule>();
+
+            target.TypeMappingRules.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void RemoveTypeMappingRuleRemovesRulesFromCompilerTest()
+        {
+            var target = new BuildStrategyCompiler();
+
+            target.AddTypeMappingRule<DummyTypeMappingRule>();
+            target.RemoveTypeMappingRule<DummyTypeMappingRule>();
+
+            target.TypeMappingRules.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void RemoveTypeMappingRuleThrowsExceptionWithNullCompilerTest()
+        {
+            Action action = () => BuildStrategyCompilerExtensions.RemoveTypeMappingRule<DummyTypeMappingRule>(null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -788,45 +873,5 @@
 
             action.Should().Throw<ArgumentNullException>();
         }
-
-#if NET452
-        public interface ISomeCompilerModule : ICompilerModule
-        {
-            // This verifies that the module scanner does not attempt to use interface modules
-        }
-
-        public abstract class AbstractCompilerModule : ICompilerModule
-        {
-            public void Configure(IBuildStrategyCompiler compiler)
-            {
-                // This verifies that the module scanner does not attempt to use abstract modules
-                throw new NotImplementedException();
-            }
-        }
-
-        [Fact]
-        public void ScanModulesPopulatesCompilerWithDetectedConfigurationTest()
-        {
-            var target = new BuildStrategyCompiler();
-
-            target.ScanModules();
-
-            target.ExecuteOrderRules.Should().ContainItemsAssignableTo<DummyExecuteOrderRule>();
-            target.IgnoreRules.Should().ContainItemsAssignableTo<DummyIgnoreRule>();
-            target.PostBuildActions.Should().ContainItemsAssignableTo<DummyPostBuildAction>();
-            target.CreationRules.Should().ContainItemsAssignableTo<DummyCreationRule>();
-            target.TypeCreators.Should().ContainItemsAssignableTo<DummyTypeCreator>();
-            target.ValueGenerators.Should().ContainItemsAssignableTo<DummyValueGenerator>();
-        }
-
-        [Fact]
-        public void ScanModulesThrowsExceptionWithNullCompilerTest()
-        {
-            Action action = () => BuildStrategyCompilerExtensions.ScanModules(null);
-
-            action.Should().Throw<ArgumentNullException>();
-        }
-
-#endif
     }
 }

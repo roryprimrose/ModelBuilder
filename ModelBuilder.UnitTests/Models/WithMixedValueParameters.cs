@@ -1,7 +1,9 @@
-﻿namespace ModelBuilder.UnitTests
+﻿namespace ModelBuilder.UnitTests.Models
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
 
+    [SuppressMessage("Microsoft.Usage", "CA1801", Justification = "Constructors are called indirectly.")]
     public class WithMixedValueParameters
     {
         public WithMixedValueParameters()

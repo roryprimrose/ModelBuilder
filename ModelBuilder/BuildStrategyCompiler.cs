@@ -21,6 +21,7 @@
             PostBuildActions = new List<IPostBuildAction>();
             TypeCreators = new List<ITypeCreator>();
             ValueGenerators = new List<IValueGenerator>();
+            TypeMappingRules = new List<TypeMappingRule>();
         }
 
         /// <inheritdoc />
@@ -43,6 +44,7 @@
                 TypeCreators,
                 ValueGenerators,
                 IgnoreRules,
+                TypeMappingRules,
                 ExecuteOrderRules,
                 PostBuildActions);
         }
@@ -67,6 +69,9 @@
 
         /// <inheritdoc />
         public ICollection<ITypeCreator> TypeCreators { get; }
+
+        /// <inheritdoc />
+        public ICollection<TypeMappingRule> TypeMappingRules { get; }
 
         /// <inheritdoc />
         public ICollection<IValueGenerator> ValueGenerators { get; }

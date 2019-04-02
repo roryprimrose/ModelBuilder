@@ -25,7 +25,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsRandomDomainTest()
+        public void GenerateReturnsRandomValueTest()
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -34,20 +34,43 @@
 
             var target = new DomainNameValueGenerator();
 
-            var first = target.Generate(typeof(string), "domain", executeStrategy);
+            var first = (string) target.Generate(typeof(string), "domain", executeStrategy);
 
-            first.Should().BeOfType<string>();
-            first.As<string>().Should().NotBeNullOrWhiteSpace();
+            var second = first;
 
-            var second = target.Generate(typeof(string), "domain", executeStrategy);
+            for (var index = 0; index < 1000; index++)
+            {
+                second = (string) target.Generate(typeof(string), "domain", executeStrategy);
+
+                if (string.Equals(first, second, StringComparison.OrdinalIgnoreCase) == false)
+                {
+                    break;
+                }
+            }
 
             first.Should().NotBe(second);
         }
 
+        [Fact]
+        public void GenerateReturnsStringTest()
+        {
+            var buildChain = new BuildHistory();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            var target = new DomainNameValueGenerator();
+
+            var actual = target.Generate(typeof(string), "domain", executeStrategy);
+
+            actual.Should().BeOfType<string>();
+            actual.As<string>().Should().NotBeNullOrWhiteSpace();
+        }
+
         [Theory]
-        [InlineData(typeof(string), "domain", true)]
-        [InlineData(typeof(string), "Domain", true)]
-        public void GenerateReturnsValuesForSeveralNameFormatsTest(Type type, string referenceName, bool expected)
+        [InlineData(typeof(string), "domain")]
+        [InlineData(typeof(string), "Domain")]
+        public void GenerateReturnsValuesForSeveralNameFormatsTest(Type type, string referenceName)
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();

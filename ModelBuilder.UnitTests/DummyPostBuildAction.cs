@@ -1,6 +1,7 @@
 namespace ModelBuilder.UnitTests
 {
     using System;
+    using ModelBuilder.UnitTests.Models;
 
     public class DummyPostBuildAction : IPostBuildAction
     {

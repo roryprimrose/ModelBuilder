@@ -1,6 +1,7 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
+    using System.Globalization;
     using FluentAssertions;
     using NSubstitute;
     using Xunit;
@@ -8,7 +9,7 @@
     public class AgeValueGeneratorTests
     {
         [Theory]
-        [ClassData(typeof(NumericTypeDataSource))]
+        [ClassData(typeof(NumericTypeRangeDataSource))]
         public void GenerateCanEvaluateManyTimesTest(Type type, bool typeSupported, double min, double max)
         {
             if (typeSupported == false)
@@ -45,7 +46,7 @@
 
                 value.Should().BeOfType(evaluateType);
 
-                var convertedValue = Convert.ToDouble(value);
+                var convertedValue = Convert.ToDouble(value, CultureInfo.InvariantCulture);
 
                 convertedValue.Should().BeGreaterOrEqualTo(min);
                 convertedValue.Should().BeLessOrEqualTo(max);
@@ -91,7 +92,7 @@
 
         [Theory]
         [ClassData(typeof(NumericTypeDataSource))]
-        public void GenerateReturnsNewValueTest(Type type, bool typeSupported, double min, double max)
+        public void GenerateReturnsNewValueTest(Type type, bool typeSupported)
         {
             if (typeSupported == false)
             {
@@ -125,19 +126,14 @@
 
             value.Should().BeOfType(evaluateType);
 
-            var convertedValue = Convert.ToDouble(value);
+            var convertedValue = Convert.ToDouble(value, CultureInfo.InvariantCulture);
 
             convertedValue.Should().BeLessOrEqualTo(target.MaxAge);
             convertedValue.Should().BeGreaterOrEqualTo(1);
         }
 
-        [Theory]
-        [ClassData(typeof(NumericTypeDataSource))]
-        public void GenerateThrowsExceptionWhenReferenceNotAgeTest(
-            Type type,
-            bool typeSupported,
-            double min,
-            double max)
+        [Fact]
+        public void GenerateThrowsExceptionWhenReferenceNotAgeTest()
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -146,14 +142,14 @@
 
             var target = new AgeValueGenerator();
 
-            Action action = () => target.Generate(type, "Stuff", executeStrategy);
+            Action action = () => target.Generate(typeof(int), "Stuff", executeStrategy);
 
             action.Should().Throw<NotSupportedException>();
         }
 
         [Theory]
         [ClassData(typeof(NumericTypeDataSource))]
-        public void GenerateValidatesRequestedTypeTest(Type type, bool typeSupported, double min, double max)
+        public void GenerateValidatesRequestedTypeTest(Type type, bool typeSupported)
         {
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
@@ -186,7 +182,7 @@
 
         [Theory]
         [ClassData(typeof(NumericTypeDataSource))]
-        public void IsSupportedEvaluatesRequestedTypeTest(Type type, bool typeSupported, double min, double max)
+        public void IsSupportedEvaluatesRequestedTypeTest(Type type, bool typeSupported)
         {
             var target = new AgeValueGenerator();
 
@@ -197,11 +193,7 @@
 
         [Theory]
         [ClassData(typeof(NumericTypeDataSource))]
-        public void IsSupportedReturnsFalseWhenReferenceNameIsNullTest(
-            Type type,
-            bool typeSupported,
-            double min,
-            double max)
+        public void IsSupportedReturnsFalseWhenReferenceNameIsNullTest(Type type, bool typeSupported)
         {
             if (typeSupported == false)
             {
@@ -218,11 +210,7 @@
 
         [Theory]
         [ClassData(typeof(NumericTypeDataSource))]
-        public void IsSupportedReturnsFalseWhenReferenceNameNotAgeTest(
-            Type type,
-            bool typeSupported,
-            double min,
-            double max)
+        public void IsSupportedReturnsFalseWhenReferenceNameNotAgeTest(Type type, bool typeSupported)
         {
             if (typeSupported == false)
             {
@@ -239,11 +227,7 @@
 
         [Theory]
         [ClassData(typeof(NumericTypeDataSource))]
-        public void IsSupportedReturnsTrueWhenReferenceNameIncludesAgeTest(
-            Type type,
-            bool typeSupported,
-            double min,
-            double max)
+        public void IsSupportedReturnsTrueWhenReferenceNameIncludesAgeTest(Type type, bool typeSupported)
         {
             if (typeSupported == false)
             {

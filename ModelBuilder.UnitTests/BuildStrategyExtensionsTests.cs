@@ -3,8 +3,10 @@
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.IO;
     using System.Linq;
     using FluentAssertions;
+    using ModelBuilder.UnitTests.Models;
     using NSubstitute;
     using Xunit;
 
@@ -77,72 +79,6 @@
         }
 
         [Fact]
-        public void CreateWithReturnsInstanceCreatedByDefaultExecuteStrategyTest()
-        {
-            var value = Guid.NewGuid();
-
-            var generator = Substitute.For<IValueGenerator>();
-            var generators = new List<IValueGenerator> {generator}.AsReadOnly();
-            var target = Substitute.For<IBuildStrategy>();
-
-            target.ValueGenerators.Returns(generators);
-            generator.IsSupported(typeof(Guid), null, Arg.Any<IBuildChain>()).Returns(true);
-            generator.Generate(typeof(Guid), null, Arg.Any<IExecuteStrategy>()).Returns(value);
-
-            var actual = target.CreateWith(typeof(Guid));
-
-            actual.Should().Be(value);
-        }
-
-        [Fact]
-        public void CreateWithThrowsExceptionWithNullInstanceTypeTest()
-        {
-            var target = Substitute.For<IBuildStrategy>();
-
-            Action action = () => target.CreateWith(null);
-
-            action.Should().Throw<ArgumentNullException>();
-        }
-
-        [Fact]
-        public void CreateWithThrowsExceptionWithNullStrategyTest()
-        {
-            IBuildStrategy target = null;
-
-            Action action = () => target.CreateWith(typeof(Guid));
-
-            action.Should().Throw<ArgumentNullException>();
-        }
-
-        [Fact]
-        public void CreateWithTReturnsInstanceCreatedByDefaultExecuteStrategyTest()
-        {
-            var value = Guid.NewGuid();
-
-            var generator = Substitute.For<IValueGenerator>();
-            var generators = new List<IValueGenerator> {generator}.AsReadOnly();
-            var target = Substitute.For<IBuildStrategy>();
-
-            target.ValueGenerators.Returns(generators);
-            generator.IsSupported(typeof(Guid), null, Arg.Any<IBuildChain>()).Returns(true);
-            generator.Generate(typeof(Guid), null, Arg.Any<IExecuteStrategy>()).Returns(value);
-
-            var actual = target.CreateWith<Guid>(null);
-
-            actual.Should().Be(value);
-        }
-
-        [Fact]
-        public void CreateWithTThrowsExceptionWithNullStrategyTest()
-        {
-            IBuildStrategy target = null;
-
-            Action action = () => target.CreateWith<Guid>();
-
-            action.Should().Throw<ArgumentNullException>();
-        }
-
-        [Fact]
         public void IgnoringReturnsNewBuildStrategyWithIgnoreRuleAppendedTest()
         {
             var target = Model.BuildStrategy;
@@ -174,6 +110,32 @@
             IBuildStrategy target = null;
 
             Action action = () => target.Ignoring<Person>(x => x.Priority);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void MappingReturnsNewBuildStrategyWithTypeMappingRuleAppendedTest()
+        {
+            var target = Model.BuildStrategy;
+
+            var actual = target.Mapping<Stream, MemoryStream>();
+
+            actual.Should().NotBeSameAs(target);
+            actual.TypeMappingRules.Should().NotBeEmpty();
+
+            var matchingRule = actual.TypeMappingRules.FirstOrDefault(x =>
+                x.SourceType == typeof(Stream) && x.TargetType == typeof(MemoryStream));
+
+            matchingRule.Should().NotBeNull();
+        }
+
+        [Fact]
+        public void MappingThrowsExceptionWithNullStrategyTest()
+        {
+            IBuildStrategy target = null;
+
+            Action action = () => target.Mapping<Stream, MemoryStream>();
 
             action.Should().Throw<ArgumentNullException>();
         }

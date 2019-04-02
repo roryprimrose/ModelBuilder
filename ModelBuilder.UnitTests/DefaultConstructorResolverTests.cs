@@ -1,8 +1,8 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
-    using System.IO;
     using FluentAssertions;
+    using ModelBuilder.UnitTests.Models;
     using Xunit;
     using Xunit.Abstractions;
 
@@ -325,92 +325,6 @@
             Action action = () => target.Resolve(null);
 
             action.Should().Throw<ArgumentNullException>();
-        }
-
-        public class Clone
-        {
-            public Clone(Clone source)
-            {
-            }
-
-            public Clone(Clone source, string value)
-            {
-            }
-
-            private Clone()
-            {
-            }
-
-            public static Clone Create()
-            {
-                return new Clone();
-            }
-        }
-
-        public class Copy
-        {
-            public Copy(Copy source)
-            {
-            }
-
-            private Copy()
-            {
-            }
-
-            public Copy Create()
-            {
-                return new Copy();
-            }
-        }
-
-        public class Derived
-        {
-            public Derived(string first, Company second)
-            {
-            }
-
-            public Derived(string first, SpecificCompany second, string third)
-            {
-            }
-        }
-
-        public class Optionals
-        {
-            public Optionals(string first)
-            {
-            }
-
-            public Optionals(string first, int second, string third, int fourth = 0, byte fifth = 4)
-            {
-            }
-        }
-
-        public class Other
-        {
-            public Other(Other source)
-            {
-            }
-
-            public Other(Other source, string value)
-            {
-            }
-
-            public Other(Guid id, string value, int priority)
-            {
-            }
-
-            public Other(Guid id, string value, int priority, Stream data)
-            {
-            }
-
-            private Other()
-            {
-            }
-
-            public Other Create()
-            {
-                return new Other();
-            }
         }
     }
 }

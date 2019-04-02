@@ -73,6 +73,15 @@
 #endif
         }
 
+        public static bool TypeIsPublic(this Type type)
+        {
+#if NET45
+            return type.IsPublic;
+#else
+            return type.GetTypeInfo().IsPublic;
+#endif
+        }
+
         public static bool TypeIsValueType(this Type type)
         {
 #if NET45

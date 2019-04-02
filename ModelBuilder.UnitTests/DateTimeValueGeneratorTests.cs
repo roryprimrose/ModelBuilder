@@ -72,6 +72,36 @@
         }
 
         [Fact]
+        public void GenerateReturnsDateTimeOffsetValueTest()
+        {
+            var buildChain = new BuildHistory();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            var target = new DateTimeValueGenerator();
+
+            var actual = target.Generate(typeof(DateTimeOffset), null, executeStrategy);
+
+            actual.Should().BeOfType<DateTimeOffset>();
+        }
+
+        [Fact]
+        public void GenerateReturnsDateTimeValueTest()
+        {
+            var buildChain = new BuildHistory();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            var target = new DateTimeValueGenerator();
+
+            var actual = target.Generate(typeof(DateTime), null, executeStrategy);
+
+            actual.Should().BeOfType<DateTime>();
+        }
+
+        [Fact]
         public void GenerateReturnsRandomDateTimeOffsetValueTest()
         {
             var buildChain = new BuildHistory();
@@ -81,12 +111,21 @@
 
             var target = new DateTimeValueGenerator();
 
-            var first = target.Generate(typeof(DateTimeOffset), null, executeStrategy);
+            var first = (DateTimeOffset) target.Generate(typeof(DateTimeOffset), null, executeStrategy);
 
-            first.Should().BeOfType<DateTimeOffset>();
             first.As<DateTimeOffset>().Offset.Should().Be(TimeSpan.Zero);
 
-            var second = target.Generate(typeof(DateTimeOffset), null, executeStrategy);
+            var second = first;
+
+            for (var index = 0; index < 1000; index++)
+            {
+                second = (DateTimeOffset) target.Generate(typeof(DateTimeOffset), null, executeStrategy);
+
+                if (first != second)
+                {
+                    break;
+                }
+            }
 
             first.Should().NotBe(second);
         }
@@ -101,12 +140,21 @@
 
             var target = new DateTimeValueGenerator();
 
-            var first = target.Generate(typeof(DateTime), null, executeStrategy);
+            var first = (DateTime) target.Generate(typeof(DateTime), null, executeStrategy);
 
-            first.Should().BeOfType<DateTime>();
             first.As<DateTime>().Kind.Should().Be(DateTimeKind.Utc);
 
-            var second = target.Generate(typeof(DateTime), null, executeStrategy);
+            var second = first;
+
+            for (var index = 0; index < 1000; index++)
+            {
+                second = (DateTime) target.Generate(typeof(DateTime), null, executeStrategy);
+
+                if (first != second)
+                {
+                    break;
+                }
+            }
 
             first.Should().NotBe(second);
         }
@@ -122,7 +170,18 @@
             var target = new DateTimeValueGenerator();
 
             var first = (TimeSpan) target.Generate(typeof(TimeSpan), null, executeStrategy);
-            var second = (TimeSpan) target.Generate(typeof(TimeSpan), null, executeStrategy);
+
+            var second = first;
+
+            for (var index = 0; index < 1000; index++)
+            {
+                second = (TimeSpan) target.Generate(typeof(TimeSpan), null, executeStrategy);
+
+                if (first != second)
+                {
+                    break;
+                }
+            }
 
             first.Should().NotBe(second);
         }

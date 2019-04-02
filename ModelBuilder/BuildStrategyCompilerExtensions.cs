@@ -5,11 +5,6 @@
     using System.Linq;
     using System.Linq.Expressions;
 
-#if NET45
-    using System.Collections.Generic;
-    using System.Reflection;
-#endif
-
     /// <summary>
     ///     The <see cref="BuildStrategyCompilerExtensions" />
     ///     class provides extension methods for the <see cref="IBuildStrategyCompiler" /> interface.
@@ -87,6 +82,31 @@
             }
 
             compiler.IgnoreRules.Add(rule);
+
+            return compiler;
+        }
+
+        /// <summary>
+        ///     Adds a new type mapping rule to the compiler.
+        /// </summary>
+        /// <param name="compiler">The compiler.</param>
+        /// <param name="rule">The rule.</param>
+        /// <returns>The compiler.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="compiler" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="rule" /> parameter is <c>null</c>.</exception>
+        public static IBuildStrategyCompiler Add(this IBuildStrategyCompiler compiler, TypeMappingRule rule)
+        {
+            if (compiler == null)
+            {
+                throw new ArgumentNullException(nameof(compiler));
+            }
+
+            if (rule == null)
+            {
+                throw new ArgumentNullException(nameof(rule));
+            }
+
+            compiler.TypeMappingRules.Add(rule);
 
             return compiler;
         }
@@ -360,6 +380,32 @@
         }
 
         /// <summary>
+        ///     Adds a new type mapping rule to the compiler.
+        /// </summary>
+        /// <typeparam name="T">The type of rule to add.</typeparam>
+        /// <param name="compiler">The compiler.</param>
+        /// <returns>The compiler.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="compiler" /> parameter is <c>null</c>.</exception>
+        [SuppressMessage("Microsoft.Design",
+            "CA1004:GenericMethodsShouldProvideTypeParameter",
+            Justification =
+                "This signature is designed for ease of use rather than requiring that T is either a parameter or return type.")]
+        public static IBuildStrategyCompiler AddTypeMappingRule<T>(this IBuildStrategyCompiler compiler)
+            where T : TypeMappingRule, new()
+        {
+            if (compiler == null)
+            {
+                throw new ArgumentNullException(nameof(compiler));
+            }
+
+            var rule = new T();
+
+            compiler.TypeMappingRules.Add(rule);
+
+            return compiler;
+        }
+
+        /// <summary>
         ///     Adds a configuration of a compiler module to the compiler.
         /// </summary>
         /// <typeparam name="T">The type of compiler module to add.</typeparam>
@@ -589,6 +635,35 @@
         }
 
         /// <summary>
+        ///     Removes type mapping rules from the compiler that match the specified type.
+        /// </summary>
+        /// <typeparam name="T">The type of rule to remove.</typeparam>
+        /// <param name="compiler">The compiler.</param>
+        /// <returns>The compiler.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="compiler" /> parameter is <c>null</c>.</exception>
+        [SuppressMessage("Microsoft.Design",
+            "CA1004:GenericMethodsShouldProvideTypeParameter",
+            Justification =
+                "This signature is designed for ease of use rather than requiring that T is either a parameter or return type.")]
+        public static IBuildStrategyCompiler RemoveTypeMappingRule<T>(this IBuildStrategyCompiler compiler)
+            where T : TypeMappingRule
+        {
+            if (compiler == null)
+            {
+                throw new ArgumentNullException(nameof(compiler));
+            }
+
+            var itemsToRemove = compiler.TypeMappingRules.Where(x => x.GetType().IsAssignableFrom(typeof(T))).ToList();
+
+            foreach (var rule in itemsToRemove)
+            {
+                compiler.TypeMappingRules.Remove(rule);
+            }
+
+            return compiler;
+        }
+
+        /// <summary>
         ///     Removes post-build actions from the compiler that match the specified type.
         /// </summary>
         /// <typeparam name="T">The type of post-build action to remove.</typeparam>
@@ -674,60 +749,7 @@
 
             return compiler;
         }
-
-#if NET45
-/// <summary>
-///     Scans available assemblies for <see cref="ICompilerModule" /> types that can configure the specified compiler.
-/// </summary>
-/// <param name="compiler">The compiler to configure.</param>
-/// <exception cref="ArgumentNullException">The <paramref name="compiler" /> parameter is <c>null</c>.</exception>
-        public static void ScanModules(this IBuildStrategyCompiler compiler)
-        {
-            if (compiler == null)
-            {
-                throw new ArgumentNullException(nameof(compiler));
-            }
-
-            var types = GetAvailableAssemblies().SelectMany(x => x.GetLoadableTypes());
-            var modules = from x in types
-                where typeof(ICompilerModule).IsAssignableFrom(x)
-                      && (x.TypeIsAbstract() == false)
-                      && (x.TypeIsInterface() == false)
-                select (ICompilerModule) Activator.CreateInstance(x);
-
-            foreach (var module in modules)
-            {
-                module.Configure(compiler);
-            }
-        }
-        private static Assembly[] GetAvailableAssemblies()
-        {
-            // NOTE: This is written this way so that a future version can use compiler
-            // constants to provide a different implementation for netstandard
-            var appDomain = AppDomain.CurrentDomain;
-
-            appDomain.ReflectionOnlyAssemblyResolve += (sender, args) => Assembly.ReflectionOnlyLoad(args.Name);
-
-            return appDomain.GetAssemblies();
-        }
-
-        private static IEnumerable<Type> GetLoadableTypes(this Assembly assembly)
-        {
-            IEnumerable<Type> types;
-
-            try
-            {
-                types = assembly.GetTypes();
-            }
-            catch (ReflectionTypeLoadException ex)
-            {
-                types = ex.Types.Where(x => x != null);
-            }
-
-            return types;
-        }
-#endif
-
+        
         /// <summary>
         ///     Sets the constructor resolver on the compiler.
         /// </summary>

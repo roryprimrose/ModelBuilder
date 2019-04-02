@@ -3,6 +3,7 @@
     using System;
     using System.Collections.ObjectModel;
     using System.Diagnostics;
+    using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
     using System.Linq;
     using System.Reflection;
@@ -23,7 +24,7 @@
         ///     generate a requested type.
         /// </exception>
         /// <exception cref="BuildException">Failed to generate a requested type.</exception>
-        public object CreateWith(Type type, params object[] args)
+        public object Create(Type type, params object[] args)
         {
             if (type == null)
             {
@@ -130,6 +131,10 @@
         /// <returns>A new instance.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is null.</exception>
         /// <exception cref="NotSupportedException">The <paramref name="type" /> parameter can not be created using this strategy.</exception>
+        [SuppressMessage("Microsoft.Design",
+            "CA1031",
+            Justification =
+                "Catching a generic Exception is required to ensure that any failure to build a value is handled.")]
         protected virtual object Build(Type type, string referenceName, object context, params object[] args)
         {
             if (type == null)
@@ -139,13 +144,15 @@
 
             EnsureInitialized();
 
+            var typeToBuild = DetermineTypeToBuild(type);
+
             var buildChain = BuildChain;
 
-            var circularReference = buildChain.FirstOrDefault(x => x.GetType() == type);
+            var circularReference = buildChain.FirstOrDefault(x => x.GetType() == typeToBuild);
 
             if (circularReference != null)
             {
-                Log.CircularReferenceDetected(type);
+                Log.CircularReferenceDetected(typeToBuild);
 
                 return circularReference;
             }
@@ -172,7 +179,7 @@
             {
                 // Next check if this is a type supported by a value generator
                 var valueGenerator = Configuration.ValueGenerators
-                    ?.Where(x => x.IsSupported(type, referenceName, buildChain))
+                    ?.Where(x => x.IsSupported(typeToBuild, referenceName, buildChain))
                     .OrderByDescending(x => x.Priority)
                     .FirstOrDefault();
 
@@ -182,13 +189,13 @@
                     generatorType = valueGenerator.GetType();
 
                     // The value generator is targeted against the type of the reference being generated for
-                    targetType = type;
+                    targetType = typeToBuild;
                 }
             }
 
             if (generator != null)
             {
-                Log.CreatingValue(type, generatorType, context);
+                Log.CreatingValue(typeToBuild, generatorType, context);
 
                 try
                 {
@@ -207,31 +214,32 @@
                     var buildLog = Log.Output;
                     var message = string.Format(CultureInfo.CurrentCulture,
                         MessageFormat,
-                        type.FullName,
+                        typeToBuild.FullName,
                         generatorType.FullName,
                         ex.GetType().Name,
                         ex.Message,
                         Environment.NewLine,
                         buildLog);
 
-                    throw new BuildException(message, type, referenceName, context, buildLog, ex);
+                    throw new BuildException(message, typeToBuild, referenceName, context, buildLog, ex);
                 }
             }
 
-            var typeCreator = Configuration.TypeCreators?.Where(x => x.CanCreate(type, referenceName, buildChain))
+            var typeCreator = Configuration.TypeCreators
+                ?.Where(x => x.CanCreate(typeToBuild, referenceName, buildChain))
                 .OrderByDescending(x => x.Priority)
                 .FirstOrDefault();
 
             if (typeCreator == null)
             {
-                throw CreateBuildException(type, referenceName, context);
+                throw CreateBuildException(typeToBuild, referenceName, context);
             }
 
-            Log.CreatingType(type, typeCreator.GetType(), context);
+            Log.CreatingType(typeToBuild, typeCreator.GetType(), context);
 
             try
             {
-                var instance = CreateAndPopulate(type, referenceName, buildChain, args, typeCreator);
+                var instance = CreateAndPopulate(typeToBuild, referenceName, buildChain, args, typeCreator);
 
                 return instance;
             }
@@ -249,18 +257,18 @@
                 var buildLog = Log.Output;
                 var message = string.Format(CultureInfo.CurrentCulture,
                     MessageFormat,
-                    type.FullName,
+                    typeToBuild.FullName,
                     typeCreator.GetType().FullName,
                     ex.GetType().Name,
                     ex.Message,
                     Environment.NewLine,
                     buildLog);
 
-                throw new BuildException(message, type, referenceName, context, buildLog, ex);
+                throw new BuildException(message, typeToBuild, referenceName, context, buildLog, ex);
             }
             finally
             {
-                Log.CreatedType(type, context);
+                Log.CreatedType(typeToBuild, context);
             }
         }
 
@@ -466,6 +474,43 @@
             instance = typeCreator.Create(type, referenceName, this);
 
             return new Tuple<object, object[]>(instance, args);
+        }
+
+        private Type DetermineTypeToBuild(Type type)
+        {
+            var typeMappingRule = Configuration.TypeMappingRules?.Where(x => x.SourceType == type).FirstOrDefault();
+
+            if (typeMappingRule != null)
+            {
+                Log.MappedType(type, typeMappingRule.TargetType);
+
+                return typeMappingRule.TargetType;
+            }
+
+            // There is no type mapping for this type
+            if (type.TypeIsInterface()
+                || type.TypeIsAbstract())
+            {
+                // Automatically resolve a derived type within the same assembly
+                var assemblyTypes = type.GetTypeInfo().Assembly.GetTypes();
+                var possibleTypes = from x in assemblyTypes
+                    where x.TypeIsPublic() && x.TypeIsInterface() == false && x.TypeIsAbstract() == false
+                          && type.IsAssignableFrom(x)
+                    select x;
+
+                var matchingType = possibleTypes.FirstOrDefault(type.IsAssignableFrom);
+
+                if (matchingType == null)
+                {
+                    return type;
+                }
+
+                Log.MappedType(type, matchingType);
+
+                return matchingType;
+            }
+
+            return type;
         }
 
         private void EnsureInitialized()

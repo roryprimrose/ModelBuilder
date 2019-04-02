@@ -3,6 +3,7 @@
     using System;
     using System.IO;
     using FluentAssertions;
+    using ModelBuilder.UnitTests.Models;
     using NSubstitute;
     using Xunit;
 
@@ -54,10 +55,10 @@
 
             var target = new EnumValueGenerator();
 
-            var first = target.Generate(typeof(SingleEnum), null, executeStrategy);
+            var actual = target.Generate(typeof(SingleEnum), null, executeStrategy);
 
-            first.Should().BeOfType<SingleEnum>();
-            first.Should().Be(SingleEnum.First);
+            actual.Should().BeOfType<SingleEnum>();
+            actual.Should().Be(SingleEnum.First);
         }
 
         [Fact]
@@ -74,7 +75,17 @@
 
             first.Should().BeOfType<FileAttributes>();
 
-            var second = target.Generate(typeof(FileAttributes), null, executeStrategy);
+            var second = first;
+
+            for (var index = 0; index < 1000; index++)
+            {
+                second = target.Generate(typeof(FileAttributes), null, executeStrategy);
+
+                if (first != second)
+                {
+                    break;
+                }
+            }
 
             first.Should().NotBe(second);
         }
@@ -89,15 +100,24 @@
 
             var target = new EnumValueGenerator();
 
-            var first = target.Generate(typeof(BigFlagsEnum), null, executeStrategy);
+            var first = target.Generate(typeof(BigValues), null, executeStrategy);
 
-            first.Should().BeOfType<BigFlagsEnum>();
+            first.Should().BeOfType<BigValues>();
 
-            var values = Enum.GetValues(typeof(BigFlagsEnum));
+            // Validate that the flags enum value has multiple values
+            first.ToString().Should().Contain(", ");
 
-            values.Should().NotContain(first);
+            var second = first;
 
-            var second = target.Generate(typeof(BigFlagsEnum), null, executeStrategy);
+            for (var index = 0; index < 1000; index++)
+            {
+                second = target.Generate(typeof(BigValues), null, executeStrategy);
+
+                if (first != second)
+                {
+                    break;
+                }
+            }
 
             first.Should().NotBe(second);
         }
@@ -119,7 +139,7 @@
 
             var otherValueFound = false;
 
-            for (var index = 0; index < 50; index++)
+            for (var index = 0; index < 1000; index++)
             {
                 var second = target.Generate(typeof(BigEnum), null, executeStrategy);
 
@@ -187,10 +207,10 @@
 
             var target = new EnumValueGenerator();
 
-            var first = target.Generate(typeof(EmptyEnum), null, executeStrategy);
+            var actual = target.Generate(typeof(NoValues), null, executeStrategy);
 
-            first.Should().BeOfType<EmptyEnum>();
-            first.Should().Be((EmptyEnum) 0);
+            actual.Should().BeOfType<NoValues>();
+            actual.Should().Be((NoValues) 0);
         }
 
         [Theory]
@@ -217,8 +237,8 @@
         [InlineData(typeof(SimpleEnum?), true)]
         [InlineData(typeof(BigEnum), true)]
         [InlineData(typeof(BigEnum?), true)]
-        [InlineData(typeof(BigFlagsEnum), true)]
-        [InlineData(typeof(BigFlagsEnum?), true)]
+        [InlineData(typeof(BigValues), true)]
+        [InlineData(typeof(BigValues?), true)]
         public void IsSupportedTest(Type type, bool expected)
         {
             var target = new EnumValueGenerator();

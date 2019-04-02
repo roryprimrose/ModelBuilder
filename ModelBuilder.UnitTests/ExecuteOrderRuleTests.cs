@@ -2,9 +2,9 @@
 {
     using System;
     using System.IO;
-    using System.Reflection;
     using System.Text.RegularExpressions;
     using FluentAssertions;
+    using ModelBuilder.UnitTests.Models;
     using Xunit;
 
     public class ExecuteOrderRuleTests

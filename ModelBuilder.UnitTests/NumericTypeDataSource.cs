@@ -2,34 +2,15 @@
 {
     using System.Collections;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
+    using System.Linq;
 
+    [SuppressMessage("Code.Quality",
+        "CA1710",
+        Justification = "The data source not have the characteristics of a Collection.")]
     public class NumericTypeDataSource : IEnumerable<object[]>
     {
-        private readonly List<object[]> _data = new List<object[]>
-        {
-            new object[] {typeof(sbyte), true, sbyte.MinValue, sbyte.MaxValue},
-            new object[] {typeof(byte), true, byte.MinValue, byte.MaxValue},
-            new object[] {typeof(short), true, short.MinValue, short.MaxValue},
-            new object[] {typeof(ushort), true, ushort.MinValue, ushort.MaxValue},
-            new object[] {typeof(int), true, int.MinValue, int.MaxValue},
-            new object[] {typeof(uint), true, uint.MinValue, uint.MaxValue},
-            new object[] {typeof(long), true, long.MinValue, long.MaxValue},
-            new object[] {typeof(ulong), true, ulong.MinValue, ulong.MaxValue},
-            new object[] {typeof(double), true, double.MinValue, double.MaxValue},
-            new object[] {typeof(float), true, float.MinValue, float.MaxValue},
-            new object[] {typeof(sbyte?), true, sbyte.MinValue, sbyte.MaxValue},
-            new object[] {typeof(byte?), true, byte.MinValue, byte.MaxValue},
-            new object[] {typeof(short?), true, short.MinValue, short.MaxValue},
-            new object[] {typeof(ushort?), true, ushort.MinValue, ushort.MaxValue},
-            new object[] {typeof(int?), true, int.MinValue, int.MaxValue},
-            new object[] {typeof(uint?), true, uint.MinValue, uint.MaxValue},
-            new object[] {typeof(long?), true, long.MinValue, long.MaxValue},
-            new object[] {typeof(ulong?), true, ulong.MinValue, ulong.MaxValue},
-            new object[] {typeof(double?), true, double.MinValue, double.MaxValue},
-            new object[] {typeof(float?), true, float.MinValue, float.MaxValue},
-            new object[] {typeof(decimal), true, decimal.MinValue, decimal.MaxValue},
-            new object[] {typeof(string), false, 0, 0}
-        };
+        private readonly List<object[]> _data = BuildValues();
 
         public IEnumerator<object[]> GetEnumerator()
         {
@@ -39,6 +20,13 @@
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
+        }
+
+        private static List<object[]> BuildValues()
+        {
+            var source = new NumericTypeRangeDataSource();
+
+            return source.Select(x => new[] {x[0], x[1]}).ToList();
         }
     }
 }

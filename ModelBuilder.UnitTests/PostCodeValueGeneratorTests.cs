@@ -5,6 +5,7 @@
     using System.Linq;
     using FluentAssertions;
     using ModelBuilder.Data;
+    using ModelBuilder.UnitTests.Models;
     using NSubstitute;
     using Xunit;
 
@@ -45,9 +46,9 @@
 
             actual.Should().NotBeNullOrWhiteSpace();
 
-            var valueToMatch = address.City.ToLowerInvariant();
+            var valueToMatch = address.City.ToUpperInvariant();
 
-            var possibleMatches = TestData.Locations.Where(x => x.City.ToLowerInvariant() == valueToMatch);
+            var possibleMatches = TestData.Locations.Where(x => x.City.ToUpperInvariant() == valueToMatch);
 
             possibleMatches.Select(x => x.PostCode).Should().Contain(actual);
         }
@@ -87,26 +88,40 @@
 
             var target = new PostCodeValueGenerator();
 
-            var first = target.Generate(typeof(string), "Zip", executeStrategy);
+            var first = (string) target.Generate(typeof(string), "Zip", executeStrategy);
 
-            first.Should().BeOfType<string>();
-            first.As<string>().Should().NotBeNullOrWhiteSpace();
+            var second = first;
 
-            var otherValueFound = false;
-
-            for (var index = 0; index < 100; index++)
+            for (var index = 0; index < 1000; index++)
             {
-                var second = target.Generate(typeof(string), "Zip", executeStrategy);
+                second = (string) target.Generate(typeof(string), "Zip", executeStrategy);
 
-                if (first != second)
+                if (string.Equals(first, second, StringComparison.OrdinalIgnoreCase) == false)
                 {
-                    otherValueFound = true;
-
                     break;
                 }
             }
 
-            otherValueFound.Should().BeTrue();
+            first.Should().NotBe(second);
+        }
+
+        [Fact]
+        public void GenerateReturnsStringValueTest()
+        {
+            var address = new Address();
+            var buildChain = new BuildHistory();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            buildChain.Push(address);
+
+            var target = new PostCodeValueGenerator();
+
+            var actual = target.Generate(typeof(string), "Zip", executeStrategy);
+
+            actual.Should().BeOfType<string>();
+            actual.As<string>().Should().NotBeNullOrWhiteSpace();
         }
 
         [Theory]

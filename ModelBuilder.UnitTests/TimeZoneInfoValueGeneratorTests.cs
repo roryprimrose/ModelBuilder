@@ -19,7 +19,18 @@
             var target = new TimeZoneInfoValueGenerator();
 
             var first = (TimeZoneInfo) target.Generate(typeof(TimeZoneInfo), null, executeStrategy);
-            var second = (TimeZoneInfo) target.Generate(typeof(TimeZoneInfo), null, executeStrategy);
+
+            var second = first;
+
+            for (var index = 0; index < 1000; index++)
+            {
+                second = (TimeZoneInfo) target.Generate(typeof(TimeZoneInfo), null, executeStrategy);
+
+                if (first.Equals(second) == false)
+                {
+                    break;
+                }
+            }
 
             first.Should().NotBe(second);
         }

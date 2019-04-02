@@ -5,6 +5,7 @@
     using System.Linq;
     using FluentAssertions;
     using ModelBuilder.Data;
+    using ModelBuilder.UnitTests.Models;
     using NodaTime.TimeZones;
     using NSubstitute;
     using Xunit;
@@ -14,7 +15,7 @@
         [Fact]
         public void GenerateReturnsRandomTimeZoneMatchingCaseInsensitiveCountryTest()
         {
-            var address = new Address {Country = "AUSTRALIA"};
+            var address = new Address {Country = "australia"};
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
@@ -28,7 +29,7 @@
 
             actual.Should().NotBeNullOrWhiteSpace();
 
-            var valueToMatch = address.Country.ToLowerInvariant();
+            var valueToMatch = address.Country.ToUpperInvariant();
 
             TestData.TimeZones.Where(x => x.StartsWith(valueToMatch, StringComparison.OrdinalIgnoreCase))
                 .Should()
@@ -52,7 +53,9 @@
 
             actual.Should().NotBeNullOrWhiteSpace();
 
-            TestData.TimeZones.Where(x => x.StartsWith(address.Country)).Should().Contain(actual);
+            TestData.TimeZones.Where(x => x.StartsWith(address.Country, StringComparison.OrdinalIgnoreCase))
+                .Should()
+                .Contain(actual);
         }
 
         [Fact]
@@ -72,7 +75,9 @@
 
             actual.Should().NotBeNullOrWhiteSpace();
 
-            TestData.TimeZones.Where(x => x.StartsWith(address.Country)).Should().Contain(actual);
+            TestData.TimeZones.Where(x => x.StartsWith(address.Country, StringComparison.OrdinalIgnoreCase))
+                .Should()
+                .Contain(actual);
         }
 
         [Fact]
@@ -106,14 +111,40 @@
 
             var target = new TimeZoneValueGenerator();
 
-            var first = target.Generate(typeof(string), "timezone", executeStrategy);
+            var first = (string) target.Generate(typeof(string), "timezone", executeStrategy);
 
-            first.Should().BeOfType<string>();
-            first.As<string>().Should().NotBeNullOrWhiteSpace();
+            var second = first;
 
-            var second = target.Generate(typeof(string), "timezone", executeStrategy);
+            for (var index = 0; index < 1000; index++)
+            {
+                second = (string) target.Generate(typeof(string), "timezone", executeStrategy);
+
+                if (string.Equals(first, second, StringComparison.OrdinalIgnoreCase) == false)
+                {
+                    break;
+                }
+            }
 
             first.Should().NotBe(second);
+        }
+
+        [Fact]
+        public void GenerateReturnsStringValueTest()
+        {
+            var address = new Address();
+            var buildChain = new BuildHistory();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            buildChain.Push(address);
+
+            var target = new TimeZoneValueGenerator();
+
+            var actual = target.Generate(typeof(string), "timezone", executeStrategy);
+
+            actual.Should().BeOfType<string>();
+            actual.As<string>().Should().NotBeNullOrWhiteSpace();
         }
 
         [Fact]
@@ -129,9 +160,9 @@
 
             var target = new TimeZoneValueGenerator();
 
-            var ids = TzdbDateTimeZoneSource.Default.GetIds();
+            var ids = TzdbDateTimeZoneSource.Default.GetIds().ToList();
 
-            for (var index = 0; index < 10000; index++)
+            for (var index = 0; index < 1000; index++)
             {
                 var actual = target.Generate(typeof(string), "timezone", executeStrategy) as string;
 
@@ -163,10 +194,10 @@
         }
 
         [Theory]
-        [InlineData(typeof(string), "timezone", true)]
-        [InlineData(typeof(string), "TimeZone", true)]
-        [InlineData(typeof(string), "timeZone", true)]
-        public void GenerateReturnsValuesForSeveralNameFormatsTest(Type type, string referenceName, bool expected)
+        [InlineData(typeof(string), "timezone")]
+        [InlineData(typeof(string), "TimeZone")]
+        [InlineData(typeof(string), "timeZone")]
+        public void GenerateReturnsValuesForSeveralNameFormatsTest(Type type, string referenceName)
         {
             var address = new Address();
             var buildChain = new BuildHistory();

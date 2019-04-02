@@ -3,9 +3,11 @@
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Linq;
     using FluentAssertions;
+    using ModelBuilder.UnitTests.Models;
     using NSubstitute;
     using Xunit;
     using Xunit.Abstractions;
@@ -208,7 +210,7 @@
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
-            executeStrategy.CreateWith(typeof(Guid)).Returns(Guid.NewGuid());
+            executeStrategy.Create(typeof(Guid)).Returns(Guid.NewGuid());
 
             var target = new ArrayTypeCreator {MaxCount = 15};
 
@@ -231,7 +233,7 @@
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
-            executeStrategy.CreateWith(typeof(Guid)).Returns(Guid.NewGuid());
+            executeStrategy.Create(typeof(Guid)).Returns(Guid.NewGuid());
 
             var target = new ArrayTypeCreator {MaxCount = 15};
 
@@ -280,6 +282,9 @@
         }
 
         [Fact]
+        [SuppressMessage("Microsoft.Design",
+            "CA1825",
+            Justification = "The Array.Empty<T> is not available on net452.")]
         public void PopulateReturnsEmptyArrayWhenSourceHasZeroLengthTest()
         {
             var expected = new Guid[0];
@@ -288,7 +293,7 @@
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
-            executeStrategy.CreateWith(typeof(Guid)).Returns(Guid.NewGuid());
+            executeStrategy.Create(typeof(Guid)).Returns(Guid.NewGuid());
 
             var target = new ArrayTypeCreator {MaxCount = 15};
 

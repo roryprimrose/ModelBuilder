@@ -1,6 +1,7 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
+    using System.Globalization;
 
     public class IncrementingArrayTypeCreator : ArrayTypeCreator
     {
@@ -12,11 +13,11 @@
             }
 
             // Use a double as the base type then convert later
-            var value = Convert.ToDouble(previousItem);
+            var value = Convert.ToDouble(previousItem, CultureInfo.InvariantCulture);
 
             value++;
 
-            var converted = Convert.ChangeType(value, type);
+            var converted = Convert.ChangeType(value, type, CultureInfo.InvariantCulture);
 
             return converted;
         }

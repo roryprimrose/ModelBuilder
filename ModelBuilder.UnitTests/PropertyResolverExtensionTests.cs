@@ -4,6 +4,7 @@
     using System.Linq;
     using System.Text.RegularExpressions;
     using FluentAssertions;
+    using ModelBuilder.UnitTests.Models;
     using Xunit;
 
     public class PropertyResolverExtensionTests

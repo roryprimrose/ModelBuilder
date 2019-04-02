@@ -37,6 +37,11 @@
                 compiler.IgnoreRules.Add(ignoreRule);
             }
 
+            foreach (var typeMappingRule in configuration.TypeMappingRules)
+            {
+                compiler.TypeMappingRules.Add(typeMappingRule);
+            }
+
             foreach (var creationRule in configuration.CreationRules)
             {
                 compiler.CreationRules.Add(creationRule);

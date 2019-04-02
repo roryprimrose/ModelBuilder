@@ -207,10 +207,6 @@
   <data name="BuildStrategyCompiler_NullPropertyResolver" xml:space="preserve">
     <value>The PropertyResolver is null. A property resolver must be provided in order to create a build strategy</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="Cultures" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Cultures.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-  </data>
   <data name="NoPropertyTypeOrPropertyExpression" xml:space="preserve">
     <value>Either propertyType or propertyExpression must be supplied</value>
   </data>
@@ -223,25 +219,10 @@
   <data name="NoOwnerTypePropertyTypeOrPropertyName" xml:space="preserve">
     <value>Either declaringType, propertyType or propertyName must be supplied</value>
   </data>
-  <data name="FemaleNames" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\FemaleNames.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  <data name="DefaultBuildLog_MappingType" xml:space="preserve">
+    <value>Mapped type requested from {0} to {1}</value>
   </data>
-  <data name="LastNames" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\LastNames.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-  </data>
-  <data name="MaleNames" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\MaleNames.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-  </data>
-  <data name="Locations" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Locations.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-  </data>
-  <data name="TimeZones" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\TimeZones.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-  </data>
-  <data name="Domains" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Domains.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-  </data>
-  <data name="Companies" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Companies.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  <data name="TypeMappingRule_TypeNotAssignable" xml:space="preserve">
+    <value>The type {0} is not assignable to {1}</value>
   </data>
 </root>

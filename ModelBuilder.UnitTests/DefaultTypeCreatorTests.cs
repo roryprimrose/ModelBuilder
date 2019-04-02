@@ -1,14 +1,19 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using FluentAssertions;
+    using ModelBuilder.UnitTests.Models;
     using NSubstitute;
     using Xunit;
 
     public class DefaultTypeCreatorTests
     {
         [Fact]
+        [SuppressMessage("Microsoft.Design",
+            "CA1825",
+            Justification = "The Array.Empty<T> is not available on net452.")]
         public void CreateReturnsInstanceCreatedWithDefaultConstructorWhenArgumentsAreEmptyTest()
         {
             var buildChain = new BuildHistory();

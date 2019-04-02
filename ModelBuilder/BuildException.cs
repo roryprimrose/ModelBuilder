@@ -92,7 +92,7 @@ namespace ModelBuilder
         /// The <paramref name="info"/> parameter is null. 
         /// </exception>
         /// <exception cref="SerializationException">
-        /// The class name is null or <see cref="P:System.Exception.HResult"/> is zero (0). 
+        /// The class name is null or <see cref="System.Exception.HResult"/> is zero (0). 
         /// </exception>
         protected BuildException(
             SerializationInfo info,

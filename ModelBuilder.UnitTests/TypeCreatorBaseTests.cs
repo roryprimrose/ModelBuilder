@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.IO;
     using FluentAssertions;
+    using ModelBuilder.UnitTests.Models;
     using NSubstitute;
     using Xunit;
 
@@ -211,7 +212,7 @@
         public void PopulateThrowsExceptionWithNullStrategyBuildChainTest()
         {
             var executeStrategy = Substitute.For<IExecuteStrategy>();
-            
+
             executeStrategy.BuildChain.Returns((IBuildChain) null);
 
             var target = new TypeCreatorWrapper();
@@ -260,7 +261,7 @@
         public void VerifyCreateRequestThrowsExceptionWithNullStrategyBuildChainTest()
         {
             var strategy = Substitute.For<IExecuteStrategy>();
-            
+
             strategy.BuildChain.Returns((IBuildChain) null);
 
             var target = new TypeCreatorWrapper();
@@ -294,7 +295,7 @@
         public void VerifyPopulateRequestThrowsExceptionWithNullStrategyBuildChainTest()
         {
             var strategy = Substitute.For<IExecuteStrategy>();
-            
+
             strategy.BuildChain.Returns((IBuildChain) null);
 
             var target = new TypeCreatorWrapper();

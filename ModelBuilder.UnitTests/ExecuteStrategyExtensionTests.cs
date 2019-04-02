@@ -8,15 +8,15 @@
     public class ExecuteStrategyExtensionTests
     {
         [Fact]
-        public void CreateReturnsValueFromCreateWithWhileNotUsingParametersTest()
+        public void CreateReturnsValueFromCreateWhileNotUsingParametersTest()
         {
             var expected = Guid.NewGuid().ToString();
 
             var target = Substitute.For<IExecuteStrategy>();
 
-            target.CreateWith(typeof(string)).Returns(expected);
+            target.Create(typeof(string)).Returns(expected);
 
-            var actual = target.Create(typeof(string));
+            var actual = ExecuteStrategyExtensions.Create(target, typeof(string));
 
             actual.Should().Be(expected);
         }
@@ -26,7 +26,7 @@
         {
             var target = Substitute.For<IExecuteStrategy>();
 
-            Action action = () => target.Create(null);
+            Action action = () => ExecuteStrategyExtensions.Create(target, null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -36,21 +36,21 @@
         {
             IExecuteStrategy target = null;
 
-            Action action = () => target.Create(typeof(string));
+            Action action = () => ExecuteStrategyExtensions.Create(target, typeof(string));
 
             action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
-        public void CreateTReturnsValueFromCreateWithWhileNotUsingParametersTest()
+        public void CreateTReturnsValueFromCreateWhileNotUsingParametersTest()
         {
             var expected = Guid.NewGuid().ToString();
 
             var target = Substitute.For<IExecuteStrategy<string>>();
 
-            target.CreateWith().Returns(expected);
+            target.Create().Returns(expected);
 
-            var actual = target.Create();
+            var actual = ExecuteStrategyExtensions.Create(target);
 
             actual.Should().Be(expected);
         }
@@ -60,7 +60,7 @@
         {
             IExecuteStrategy<string> target = null;
 
-            Action action = () => target.Create();
+            Action action = () => ExecuteStrategyExtensions.Create(target);
 
             action.Should().Throw<ArgumentNullException>();
         }

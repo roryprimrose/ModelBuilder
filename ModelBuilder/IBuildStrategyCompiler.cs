@@ -51,6 +51,11 @@
         ICollection<ITypeCreator> TypeCreators { get; }
 
         /// <summary>
+        ///     Gets the type mapping rules used to identify the target type to build.
+        /// </summary>
+        ICollection<TypeMappingRule> TypeMappingRules { get; }
+
+        /// <summary>
         ///     Gets the value generators used to generate flat values.
         /// </summary>
         ICollection<IValueGenerator> ValueGenerators { get; }

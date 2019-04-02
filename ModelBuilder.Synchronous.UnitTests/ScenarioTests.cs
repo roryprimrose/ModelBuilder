@@ -5,6 +5,7 @@ namespace ModelBuilder.Synchronous.UnitTests
     using System.Reflection;
     using FluentAssertions;
     using ModelBuilder.UnitTests;
+    using ModelBuilder.UnitTests.Models;
     using NSubstitute;
     using Xunit;
 
@@ -23,8 +24,6 @@ namespace ModelBuilder.Synchronous.UnitTests
         {
             var strategy = Substitute.For<IBuildStrategy>();
 
-            var existingStrategy = Model.BuildStrategy;
-
             try
             {
                 Model.BuildStrategy = strategy;
@@ -35,7 +34,7 @@ namespace ModelBuilder.Synchronous.UnitTests
             }
             finally
             {
-                Model.BuildStrategy = existingStrategy;
+                Model.BuildStrategy = Model.DefaultBuildStrategy;
             }
         }
 
@@ -86,6 +85,36 @@ namespace ModelBuilder.Synchronous.UnitTests
         }
 
         [Fact]
+        public void CreateTUsesBuildStrategyToCreateInstanceWithParametersTest()
+        {
+            var value = Guid.NewGuid();
+            var expected = new ReadOnlyModel(value);
+
+            var build = Substitute.For<IBuildStrategy>();
+            var creator = Substitute.For<ITypeCreator>();
+            var creators = new List<ITypeCreator> {creator}.AsReadOnly();
+
+            build.TypeCreators.Returns(creators);
+            creator.CanCreate(typeof(ReadOnlyModel), null, Arg.Any<IBuildChain>()).Returns(true);
+            creator.CanPopulate(typeof(ReadOnlyModel), null, Arg.Any<IBuildChain>()).Returns(true);
+            creator.Create(typeof(ReadOnlyModel), null, Arg.Any<IExecuteStrategy>(), value).Returns(expected);
+            creator.Populate(expected, Arg.Any<IExecuteStrategy>()).Returns(expected);
+
+            try
+            {
+                Model.BuildStrategy = build;
+
+                var actual = Model.Create<ReadOnlyModel>(value);
+
+                actual.Value.Should().Be(value);
+            }
+            finally
+            {
+                Model.BuildStrategy = Model.DefaultBuildStrategy;
+            }
+        }
+
+        [Fact]
         public void CreateUsesBuildStrategyToCreateInstanceTest()
         {
             var value = Guid.NewGuid();
@@ -113,37 +142,7 @@ namespace ModelBuilder.Synchronous.UnitTests
         }
 
         [Fact]
-        public void CreateWithTUsesBuildStrategyToCreateInstanceWithParametersTest()
-        {
-            var value = Guid.NewGuid();
-            var expected = new ReadOnlyModel(value);
-
-            var build = Substitute.For<IBuildStrategy>();
-            var creator = Substitute.For<ITypeCreator>();
-            var creators = new List<ITypeCreator> {creator}.AsReadOnly();
-
-            build.TypeCreators.Returns(creators);
-            creator.CanCreate(typeof(ReadOnlyModel), null, Arg.Any<IBuildChain>()).Returns(true);
-            creator.CanPopulate(typeof(ReadOnlyModel), null, Arg.Any<IBuildChain>()).Returns(true);
-            creator.Create(typeof(ReadOnlyModel), null, Arg.Any<IExecuteStrategy>(), value).Returns(expected);
-            creator.Populate(expected, Arg.Any<IExecuteStrategy>()).Returns(expected);
-
-            try
-            {
-                Model.BuildStrategy = build;
-
-                var actual = Model.CreateWith<ReadOnlyModel>(value);
-
-                actual.Value.Should().Be(value);
-            }
-            finally
-            {
-                Model.BuildStrategy = Model.DefaultBuildStrategy;
-            }
-        }
-
-        [Fact]
-        public void CreateWithUsesBuildStrategyToCreateInstanceWithParametersTest()
+        public void CreateUsesBuildStrategyToCreateInstanceWithParametersTest()
         {
             var value = Guid.NewGuid();
             var expected = new ReadOnlyModel(value);
@@ -161,7 +160,7 @@ namespace ModelBuilder.Synchronous.UnitTests
             {
                 Model.BuildStrategy = build;
 
-                var actual = (ReadOnlyModel) Model.CreateWith(typeof(ReadOnlyModel), value);
+                var actual = (ReadOnlyModel) Model.Create(typeof(ReadOnlyModel), value);
 
                 actual.Value.Should().Be(value);
             }

@@ -19,9 +19,9 @@
 
             var target = new UriValueGenerator();
 
-            var actual = target.Generate(typeof(string), "uri", executeStrategy).As<string>().ToLowerInvariant();
+            var actual = target.Generate(typeof(string), "uri", executeStrategy).As<string>();
 
-            TestData.Domains.Any(x => actual.Contains(x)).Should().BeTrue();
+            TestData.Domains.Any(x => actual.Contains(x, StringComparison.OrdinalIgnoreCase)).Should().BeTrue();
         }
 
         [Fact]
@@ -34,9 +34,9 @@
 
             var target = new UriValueGenerator();
 
-            var actual = target.Generate(typeof(string), "uri", executeStrategy).As<string>().ToLowerInvariant();
+            var actual = target.Generate(typeof(string), "url", executeStrategy).As<string>();
 
-            TestData.Domains.Any(x => actual.Contains(x)).Should().BeTrue();
+            TestData.Domains.Any(x => actual.Contains(x, StringComparison.OrdinalIgnoreCase)).Should().BeTrue();
         }
 
         [Fact]
@@ -51,7 +51,9 @@
 
             var actual = target.Generate(typeof(Uri), null, executeStrategy).As<Uri>();
 
-            TestData.Domains.Any(x => actual.AbsoluteUri.Contains(x)).Should().BeTrue();
+            TestData.Domains.Any(x => actual.AbsoluteUri.Contains(x, StringComparison.OrdinalIgnoreCase))
+                .Should()
+                .BeTrue();
         }
 
         [Theory]
@@ -123,7 +125,7 @@
         }
 
         [Fact]
-        public void PriorityIsHigherThanStringValueGeneratorProprityTest()
+        public void PriorityIsHigherThanStringValueGeneratorPriorityTest()
         {
             var target = new UriValueGenerator();
             var other = new StringValueGenerator();

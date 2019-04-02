@@ -44,6 +44,36 @@
         }
 
         [Fact]
+        public void GenerateReturnsDateTimeOffsetValueTest()
+        {
+            var buildChain = new BuildHistory();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            var target = new DateOfBirthValueGenerator();
+
+            var actual = target.Generate(typeof(DateTimeOffset), "dob", executeStrategy);
+
+            actual.Should().BeOfType<DateTimeOffset>();
+        }
+
+        [Fact]
+        public void GenerateReturnsDateTimeValueTest()
+        {
+            var buildChain = new BuildHistory();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            var target = new DateOfBirthValueGenerator();
+
+            var actual = target.Generate(typeof(DateTime), "dob", executeStrategy);
+
+            actual.Should().BeOfType<DateTime>();
+        }
+
+        [Fact]
         public void GenerateReturnsRandomDateTimeOffsetValueWithinLast100YearsTest()
         {
             var buildChain = new BuildHistory();
@@ -53,14 +83,23 @@
 
             var target = new DateOfBirthValueGenerator();
 
-            var first = target.Generate(typeof(DateTimeOffset), "dob", executeStrategy);
+            var first = (DateTimeOffset) target.Generate(typeof(DateTimeOffset), "dob", executeStrategy);
 
-            first.Should().BeOfType<DateTimeOffset>();
             first.As<DateTimeOffset>().Should().BeBefore(DateTimeOffset.UtcNow);
             first.As<DateTimeOffset>().Should().BeAfter(DateTimeOffset.UtcNow.AddYears(-100));
             first.As<DateTimeOffset>().Offset.Should().Be(TimeSpan.Zero);
 
-            var second = target.Generate(typeof(DateTimeOffset), "dob", executeStrategy);
+            var second = first;
+
+            for (var index = 0; index < 1000; index++)
+            {
+                second = (DateTimeOffset) target.Generate(typeof(DateTimeOffset), "dob", executeStrategy);
+
+                if (first != second)
+                {
+                    break;
+                }
+            }
 
             first.Should().NotBe(second);
         }
@@ -75,14 +114,23 @@
 
             var target = new DateOfBirthValueGenerator();
 
-            var first = target.Generate(typeof(DateTime), "dob", executeStrategy);
+            var first = (DateTime) target.Generate(typeof(DateTime), "dob", executeStrategy);
 
-            first.Should().BeOfType<DateTime>();
             first.As<DateTime>().Should().BeBefore(DateTime.UtcNow);
             first.As<DateTime>().Should().BeAfter(DateTime.UtcNow.AddYears(-100));
             first.As<DateTime>().Kind.Should().Be(DateTimeKind.Utc);
 
-            var second = target.Generate(typeof(DateTime), "dob", executeStrategy);
+            var second = first;
+
+            for (var index = 0; index < 1000; index++)
+            {
+                second = (DateTime) target.Generate(typeof(DateTime), "dob", executeStrategy);
+
+                if (first != second)
+                {
+                    break;
+                }
+            }
 
             first.Should().NotBe(second);
         }

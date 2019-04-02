@@ -5,6 +5,7 @@
     using System.Linq;
     using FluentAssertions;
     using ModelBuilder.Data;
+    using ModelBuilder.UnitTests.Models;
     using NSubstitute;
     using Xunit;
 
@@ -27,9 +28,9 @@
 
             actual.Should().NotBeNullOrWhiteSpace();
 
-            var valueToMatch = address.Country.ToLowerInvariant();
+            var valueToMatch = address.Country.ToUpperInvariant();
 
-            var possibleMatches = TestData.Locations.Where(x => x.Country.ToLowerInvariant() == valueToMatch);
+            var possibleMatches = TestData.Locations.Where(x => x.Country.ToUpperInvariant() == valueToMatch);
 
             possibleMatches.Select(x => x.Phone).Should().Contain(actual);
         }
@@ -87,42 +88,68 @@
 
             var target = new PhoneValueGenerator();
 
-            var first = target.Generate(typeof(string), "cell", executeStrategy);
+            var first = (string) target.Generate(typeof(string), "cell", executeStrategy);
 
-            first.Should().BeOfType<string>();
-            first.As<string>().Should().NotBeNullOrWhiteSpace();
+            var second = first;
 
-            var second = target.Generate(typeof(string), "cell", executeStrategy);
+            for (var index = 0; index < 1000; index++)
+            {
+                second = (string) target.Generate(typeof(string), "cell", executeStrategy);
+
+                if (string.Equals(first, second, StringComparison.OrdinalIgnoreCase) == false)
+                {
+                    break;
+                }
+            }
 
             first.Should().NotBe(second);
         }
+        
+        [Fact]
+        public void GenerateReturnsStringValueTest()
+        {
+            var address = new Address();
+            var buildChain = new BuildHistory();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            buildChain.Push(address);
+
+            var target = new PhoneValueGenerator();
+
+            var actual = target.Generate(typeof(string), "cell", executeStrategy);
+
+            actual.Should().BeOfType<string>();
+            actual.As<string>().Should().NotBeNullOrWhiteSpace();
+        }
 
         [Theory]
-        [InlineData(typeof(string), "cell", true)]
-        [InlineData(typeof(string), "Cell", true)]
-        [InlineData(typeof(string), "cellNumber", true)]
-        [InlineData(typeof(string), "CellNumber", true)]
-        [InlineData(typeof(string), "cellnumber", true)]
-        [InlineData(typeof(string), "Cellnumber", true)]
-        [InlineData(typeof(string), "mobile", true)]
-        [InlineData(typeof(string), "Mobile", true)]
-        [InlineData(typeof(string), "mobileNumber", true)]
-        [InlineData(typeof(string), "MobileNumber", true)]
-        [InlineData(typeof(string), "mobilenumber", true)]
-        [InlineData(typeof(string), "Mobilenumber", true)]
-        [InlineData(typeof(string), "phone", true)]
-        [InlineData(typeof(string), "Phone", true)]
-        [InlineData(typeof(string), "phoneNumber", true)]
-        [InlineData(typeof(string), "PhoneNumber", true)]
-        [InlineData(typeof(string), "phonenumber", true)]
-        [InlineData(typeof(string), "Phonenumber", true)]
-        [InlineData(typeof(string), "fax", true)]
-        [InlineData(typeof(string), "Fax", true)]
-        [InlineData(typeof(string), "faxNumber", true)]
-        [InlineData(typeof(string), "FaxNumber", true)]
-        [InlineData(typeof(string), "faxnumber", true)]
-        [InlineData(typeof(string), "Faxnumber", true)]
-        public void GenerateReturnsValuesForSeveralNameFormatsTest(Type type, string referenceName, bool expected)
+        [InlineData(typeof(string), "cell")]
+        [InlineData(typeof(string), "Cell")]
+        [InlineData(typeof(string), "cellNumber")]
+        [InlineData(typeof(string), "CellNumber")]
+        [InlineData(typeof(string), "cellnumber")]
+        [InlineData(typeof(string), "Cellnumber")]
+        [InlineData(typeof(string), "mobile")]
+        [InlineData(typeof(string), "Mobile")]
+        [InlineData(typeof(string), "mobileNumber")]
+        [InlineData(typeof(string), "MobileNumber")]
+        [InlineData(typeof(string), "mobilenumber")]
+        [InlineData(typeof(string), "Mobilenumber")]
+        [InlineData(typeof(string), "phone")]
+        [InlineData(typeof(string), "Phone")]
+        [InlineData(typeof(string), "phoneNumber")]
+        [InlineData(typeof(string), "PhoneNumber")]
+        [InlineData(typeof(string), "phonenumber")]
+        [InlineData(typeof(string), "Phonenumber")]
+        [InlineData(typeof(string), "fax")]
+        [InlineData(typeof(string), "Fax")]
+        [InlineData(typeof(string), "faxNumber")]
+        [InlineData(typeof(string), "FaxNumber")]
+        [InlineData(typeof(string), "faxnumber")]
+        [InlineData(typeof(string), "Faxnumber")]
+        public void GenerateReturnsValuesForSeveralNameFormatsTest(Type type, string referenceName)
         {
             var address = new Address();
             var buildChain = new BuildHistory();

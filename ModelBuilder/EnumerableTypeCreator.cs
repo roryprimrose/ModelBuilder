@@ -22,10 +22,10 @@
             typeof(MulticastIPAddressInformationCollection),
             typeof(UnicastIPAddressInformationCollection),
 #endif
-            typeof(Dictionary<,>.KeyCollection),
-            typeof(Dictionary<,>.ValueCollection),
-            typeof(SortedDictionary<,>.KeyCollection),
-            typeof(SortedDictionary<,>.ValueCollection)
+            typeof(Dictionary<, >.KeyCollection),
+            typeof(Dictionary<, >.ValueCollection),
+            typeof(SortedDictionary<, >.KeyCollection),
+            typeof(SortedDictionary<, >.ValueCollection)
         };
 
         /// <inheritdoc />
@@ -135,7 +135,7 @@
                 throw new ArgumentNullException(nameof(executeStrategy));
             }
 
-            return executeStrategy.CreateWith(type);
+            return executeStrategy.Create(type);
         }
 
         /// <inheritdoc />

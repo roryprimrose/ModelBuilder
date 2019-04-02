@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using FluentAssertions;
+    using ModelBuilder.UnitTests.Models;
     using Xunit;
 
     public class BuildHistoryTests
@@ -27,6 +28,30 @@
             }
 
             sut.Count.Should().Be(itemCount);
+        }
+
+        [Fact]
+        public void EnumerableReturnsAllItems()
+        {
+            var items = new List<object>();
+
+            var sut = new BuildHistory();
+
+            for (var index = 0; index < 10; index++)
+            {
+                var item = Model.Create<Person>();
+
+                items.Add(item);
+
+                sut.Push(item);
+            }
+
+            items.Reverse();
+
+            foreach (var item in sut)
+            {
+                items.Should().Contain(item);
+            }
         }
 
         [Theory]

@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26403.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModelBuilder", "ModelBuilder\ModelBuilder.csproj", "{3DBFFD63-7442-4C4C-B123-C9BE88AC9667}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModelBuilder", "ModelBuilder\ModelBuilder.csproj", "{3DBFFD63-7442-4C4C-B123-C9BE88AC9667}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModelBuilder.UnitTests", "ModelBuilder.UnitTests\ModelBuilder.UnitTests.csproj", "{CF3897C3-F068-4C11-8207-C9255A30E3DF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModelBuilder.UnitTests", "ModelBuilder.UnitTests\ModelBuilder.UnitTests.csproj", "{CF3897C3-F068-4C11-8207-C9255A30E3DF}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DF0B60D9-E857-4192-803B-AB334B984FE9}"
 	ProjectSection(SolutionItems) = preProject
@@ -17,10 +17,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{EBCF1633-3948-4DE6-A189-04FB1BD5EB06}"
 	ProjectSection(SolutionItems) = preProject
+		LICENSE.md = LICENSE.md
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModelBuilder.Synchronous.UnitTests", "ModelBuilder.Synchronous.UnitTests\ModelBuilder.Synchronous.UnitTests.csproj", "{BD0AE434-FB52-40C8-800E-49E77E6515EA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModelBuilder.Synchronous.UnitTests", "ModelBuilder.Synchronous.UnitTests\ModelBuilder.Synchronous.UnitTests.csproj", "{BD0AE434-FB52-40C8-800E-49E77E6515EA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -71,5 +72,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7E3F3847-F45A-456C-8D85-36113183984E}
 	EndGlobalSection
 EndGlobal

@@ -60,11 +60,11 @@
         }
 
         [Theory]
-        [InlineData(typeof(string), "gender", true)]
-        [InlineData(typeof(string), "Gender", true)]
-        [InlineData(typeof(string), "sex", true)]
-        [InlineData(typeof(string), "Sex", true)]
-        public void GenerateReturnsValuesForSeveralNameFormatsTest(Type type, string referenceName, bool expected)
+        [InlineData(typeof(string), "gender")]
+        [InlineData(typeof(string), "Gender")]
+        [InlineData(typeof(string), "sex")]
+        [InlineData(typeof(string), "Sex")]
+        public void GenerateReturnsValuesForSeveralNameFormatsTest(Type type, string referenceName)
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();

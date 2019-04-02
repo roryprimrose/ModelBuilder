@@ -3,7 +3,7 @@
     using System.Collections.ObjectModel;
 
     /// <summary>
-    ///     The <see cref="IBuildStrategy" />
+    ///     The <see cref="IBuildConfiguration" />
     ///     interface defines the configuration used to create and populate instances.
     /// </summary>
     public interface IBuildConfiguration
@@ -43,6 +43,11 @@
         ///     Gets the type creators used to create instances.
         /// </summary>
         ReadOnlyCollection<ITypeCreator> TypeCreators { get; }
+
+        /// <summary>
+        ///     Gets the rules used to map between types before attempting to create a value of the source type.
+        /// </summary>
+        ReadOnlyCollection<TypeMappingRule> TypeMappingRules { get; }
 
         /// <summary>
         ///     Gets the value generators used to generate flat values.

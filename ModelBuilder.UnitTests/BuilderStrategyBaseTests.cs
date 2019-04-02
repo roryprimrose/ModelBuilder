@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using FluentAssertions;
+    using ModelBuilder.UnitTests.Models;
     using NSubstitute;
     using Xunit;
 
@@ -18,6 +19,7 @@
             var typeCreators = Model.BuildStrategy.TypeCreators.ToList();
             var valueGenerators = Model.BuildStrategy.ValueGenerators.ToList();
             var ignoreRules = new List<IgnoreRule> {new IgnoreRule(typeof(Person), "FirstName")};
+            var typeMappingRules = Model.BuildStrategy.TypeMappingRules;
             var executeOrderRules = Model.BuildStrategy.ExecuteOrderRules.ToList();
             var postBuildActions = new List<IPostBuildAction> {Substitute.For<IPostBuildAction>()};
 
@@ -27,6 +29,7 @@
                 typeCreators,
                 valueGenerators,
                 ignoreRules,
+                typeMappingRules,
                 executeOrderRules,
                 postBuildActions);
 
@@ -58,6 +61,7 @@
             var creationRules = Model.BuildStrategy.CreationRules;
             var valueGenerators = Model.BuildStrategy.ValueGenerators;
             var ignoreRules = Model.BuildStrategy.IgnoreRules;
+            var typeMappingRules = Model.BuildStrategy.TypeMappingRules;
             var executeOrderRules = Model.BuildStrategy.ExecuteOrderRules;
             var postBuildActions = Model.BuildStrategy.PostBuildActions;
 
@@ -67,6 +71,7 @@
                 typeCreators,
                 valueGenerators,
                 ignoreRules,
+                typeMappingRules,
                 executeOrderRules,
                 postBuildActions);
 
@@ -81,6 +86,7 @@
             var typeCreators = Model.BuildStrategy.TypeCreators;
             var valueGenerators = Model.BuildStrategy.ValueGenerators;
             var ignoreRules = Model.BuildStrategy.IgnoreRules;
+            var typeMappingRules = Model.BuildStrategy.TypeMappingRules;
             var executeOrderRules = Model.BuildStrategy.ExecuteOrderRules;
             var postBuildActions = Model.BuildStrategy.PostBuildActions;
 
@@ -90,6 +96,7 @@
                 typeCreators,
                 valueGenerators,
                 ignoreRules,
+                typeMappingRules,
                 executeOrderRules,
                 postBuildActions);
 
@@ -105,6 +112,7 @@
             var typeCreators = Model.BuildStrategy.TypeCreators;
             var valueGenerators = Model.BuildStrategy.ValueGenerators;
             var ignoreRules = Model.BuildStrategy.IgnoreRules;
+            var typeMappingRules = Model.BuildStrategy.TypeMappingRules;
             var postBuildActions = Model.BuildStrategy.PostBuildActions;
 
             Action action = () => new BuilderStrategyWrapper(constructorResolver,
@@ -113,6 +121,7 @@
                 typeCreators,
                 valueGenerators,
                 ignoreRules,
+                typeMappingRules,
                 null,
                 postBuildActions);
 
@@ -127,6 +136,7 @@
             var creationRules = Model.BuildStrategy.CreationRules;
             var typeCreators = Model.BuildStrategy.TypeCreators;
             var valueGenerators = Model.BuildStrategy.ValueGenerators;
+            var typeMappingRules = Model.BuildStrategy.TypeMappingRules;
             var executeOrderRules = Model.BuildStrategy.ExecuteOrderRules;
             var postBuildActions = Model.BuildStrategy.PostBuildActions;
 
@@ -136,6 +146,7 @@
                 typeCreators,
                 valueGenerators,
                 null,
+                typeMappingRules,
                 executeOrderRules,
                 postBuildActions);
 
@@ -151,6 +162,7 @@
             var typeCreators = Model.BuildStrategy.TypeCreators;
             var valueGenerators = Model.BuildStrategy.ValueGenerators;
             var ignoreRules = Model.BuildStrategy.IgnoreRules;
+            var typeMappingRules = Model.BuildStrategy.TypeMappingRules;
             var executeOrderRules = Model.BuildStrategy.ExecuteOrderRules;
 
             Action action = () => new BuilderStrategyWrapper(constructorResolver,
@@ -159,6 +171,7 @@
                 typeCreators,
                 valueGenerators,
                 ignoreRules,
+                typeMappingRules,
                 executeOrderRules,
                 null);
 
@@ -173,6 +186,7 @@
             var creationRules = Model.BuildStrategy.CreationRules;
             var valueGenerators = Model.BuildStrategy.ValueGenerators;
             var ignoreRules = Model.BuildStrategy.IgnoreRules;
+            var typeMappingRules = Model.BuildStrategy.TypeMappingRules;
             var executeOrderRules = Model.BuildStrategy.ExecuteOrderRules;
             var postBuildActions = Model.BuildStrategy.PostBuildActions;
 
@@ -182,6 +196,7 @@
                 typeCreators,
                 valueGenerators,
                 ignoreRules,
+                typeMappingRules,
                 executeOrderRules,
                 postBuildActions);
 
@@ -204,6 +219,7 @@
             var creationRules = Model.BuildStrategy.CreationRules;
             var valueGenerators = Model.BuildStrategy.ValueGenerators;
             var ignoreRules = Model.BuildStrategy.IgnoreRules;
+            var typeMappingRules = Model.BuildStrategy.TypeMappingRules;
             var executeOrderRules = Model.BuildStrategy.ExecuteOrderRules;
             var postBuildActions = Model.BuildStrategy.PostBuildActions;
 
@@ -213,6 +229,32 @@
                 null,
                 valueGenerators,
                 ignoreRules,
+                typeMappingRules,
+                executeOrderRules,
+                postBuildActions);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void ThrowsExceptionWhenCreatedWithNullTypeMappingRulesTest()
+        {
+            var constructorResolver = Model.BuildStrategy.ConstructorResolver;
+            var propertyResolver = Model.BuildStrategy.PropertyResolver;
+            var creationRules = Model.BuildStrategy.CreationRules;
+            var typeCreators = Model.BuildStrategy.TypeCreators;
+            var valueGenerators = Model.BuildStrategy.ValueGenerators;
+            var ignoreRules = Model.BuildStrategy.IgnoreRules;
+            var executeOrderRules = Model.BuildStrategy.ExecuteOrderRules;
+            var postBuildActions = Model.BuildStrategy.PostBuildActions;
+
+            Action action = () => new BuilderStrategyWrapper(constructorResolver,
+                propertyResolver,
+                creationRules,
+                typeCreators,
+                valueGenerators,
+                ignoreRules,
+                null,
                 executeOrderRules,
                 postBuildActions);
 
@@ -227,6 +269,8 @@
             var creationRules = Model.BuildStrategy.CreationRules;
             var typeCreators = Model.BuildStrategy.TypeCreators;
             var ignoreRules = Model.BuildStrategy.IgnoreRules;
+            var typeMappingRules = Model.BuildStrategy.TypeMappingRules;
+
             var executeOrderRules = Model.BuildStrategy.ExecuteOrderRules;
             var postBuildActions = Model.BuildStrategy.PostBuildActions;
 
@@ -236,6 +280,7 @@
                 typeCreators,
                 null,
                 ignoreRules,
+                typeMappingRules,
                 executeOrderRules,
                 postBuildActions);
 
@@ -256,6 +301,7 @@
                 IEnumerable<ITypeCreator> typeCreators,
                 IEnumerable<IValueGenerator> valueGenerators,
                 IEnumerable<IgnoreRule> ignoreRules,
+                IEnumerable<TypeMappingRule> typeMappingRules,
                 IEnumerable<ExecuteOrderRule> executeOrderRules,
                 IEnumerable<IPostBuildAction> postBuildActions)
                 : base(constructorResolver,
@@ -264,6 +310,7 @@
                     typeCreators,
                     valueGenerators,
                     ignoreRules,
+                    typeMappingRules,
                     executeOrderRules,
                     postBuildActions)
             {

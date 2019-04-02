@@ -1,6 +1,7 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
+    using System.Globalization;
     using FluentAssertions;
     using NSubstitute;
     using Xunit;
@@ -8,8 +9,8 @@
     public class NumericValueGeneratorTests
     {
         [Theory]
-        [ClassData(typeof(NumericTypeDataSource))]
-        public void GenerateCanEvalutateManyTimesTest(Type type, bool typeSupported, double min, double max)
+        [ClassData(typeof(NumericTypeRangeDataSource))]
+        public void GenerateCanEvaluateManyTimesTest(Type type, bool typeSupported, double min, double max)
         {
             if (typeSupported == false)
             {
@@ -44,7 +45,7 @@
 
                 value.Should().BeOfType(evaluateType);
 
-                var convertedValue = Convert.ToDouble(value);
+                var convertedValue = Convert.ToDouble(value, CultureInfo.InvariantCulture);
 
                 convertedValue.Should().BeGreaterOrEqualTo(min);
                 convertedValue.Should().BeLessOrEqualTo(max);
@@ -67,7 +68,7 @@
             {
                 var value = target.Generate(typeof(double), null, executeStrategy);
 
-                var actual = Convert.ToDouble(value);
+                var actual = Convert.ToDouble(value, CultureInfo.InvariantCulture);
 
                 if (actual.Equals(double.MaxValue) == false)
                 {
@@ -92,11 +93,11 @@
 
             var target = new NumericValueGenerator();
 
-            for (var index = 0; index < 10000; index++)
+            for (var index = 0; index < 1000; index++)
             {
                 var value = target.Generate(typeof(double), null, executeStrategy);
 
-                var actual = Convert.ToDouble(value);
+                var actual = Convert.ToDouble(value, CultureInfo.InvariantCulture);
 
                 if (actual.Equals(double.MinValue) == false)
                 {
@@ -122,7 +123,7 @@
 
             var target = new NumericValueGenerator();
 
-            for (var index = 0; index < 100000; index++)
+            for (var index = 0; index < 1000; index++)
             {
                 var value = (int?) target.Generate(typeof(int?), null, executeStrategy);
 
@@ -157,7 +158,7 @@
 
             var value = target.Generate(typeof(double), null, executeStrategy);
 
-            var actual = Convert.ToDouble(value);
+            var actual = Convert.ToDouble(value, CultureInfo.InvariantCulture);
 
             double.IsInfinity(actual).Should().BeFalse();
         }
@@ -180,7 +181,7 @@
             {
                 var value = target.Generate(type, null, executeStrategy);
 
-                var actual = Convert.ToDouble(value);
+                var actual = Convert.ToDouble(value, CultureInfo.InvariantCulture);
 
                 if (unchecked(actual != (int) actual))
                 {
@@ -194,7 +195,7 @@
         }
 
         [Theory]
-        [ClassData(typeof(NumericTypeDataSource))]
+        [ClassData(typeof(NumericTypeRangeDataSource))]
         public void GenerateReturnsNewValueTest(Type type, bool typeSupported, double min, double max)
         {
             if (typeSupported == false)
@@ -228,7 +229,7 @@
 
             value.Should().BeOfType(evaluateType);
 
-            var convertedValue = Convert.ToDouble(value);
+            var convertedValue = Convert.ToDouble(value, CultureInfo.InvariantCulture);
 
             convertedValue.Should().BeGreaterOrEqualTo(min);
             convertedValue.Should().BeLessOrEqualTo(max);
@@ -236,7 +237,7 @@
 
         [Theory]
         [ClassData(typeof(NumericTypeDataSource))]
-        public void GenerateValidatesRequestedTypeTest(Type type, bool typeSupported, double min, double max)
+        public void GenerateValidatesRequestedTypeTest(Type type, bool typeSupported)
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -259,7 +260,7 @@
 
         [Theory]
         [ClassData(typeof(NumericTypeDataSource))]
-        public void IsSupportedEvaluatesRequestedTypeTest(Type type, bool typeSupported, double min, double max)
+        public void IsSupportedEvaluatesRequestedTypeTest(Type type, bool typeSupported)
         {
             var target = new NumericValueGenerator();
 

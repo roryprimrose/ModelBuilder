@@ -1,5 +1,10 @@
-﻿namespace ModelBuilder.UnitTests
+﻿namespace ModelBuilder.UnitTests.Models
 {
+    using System.Diagnostics.CodeAnalysis;
+
+    [SuppressMessage("Microsoft.Design",
+        "CA1028",
+        Justification = "This base type is used specifically for testing scenarios for that data type.")]
     public enum BigEnum : ulong
     {
         Flag1 = 0x00000001,
