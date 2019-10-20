@@ -225,4 +225,7 @@
   <data name="TypeMappingRule_TypeNotAssignable" xml:space="preserve">
     <value>The type {0} is not assignable to {1}</value>
   </data>
+  <data name="DefaultTypeCreator_NoMatchingConstructor" xml:space="preserve">
+    <value>No constructor found matching type.</value>
+  </data>
 </root>
