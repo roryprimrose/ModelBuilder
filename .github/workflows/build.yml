@@ -10,6 +10,18 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v1
+
+    - name: Fetch tags and master for GitVersion
+      uses: actions/checkout@v1
+      run: |
+        git fetch --tags
+        git branch --create-reflog master origin/master
+
+    - name: GitVersion
+      uses: docker://gittools/gitversion:5.0.2-linux
+      with:
+        args: /github/workspace /nofetch /exec /bin/sh /execargs "-c \"echo $GitVersion_NuGetVersionV2 > /github/workspace/version.txt\""
+    
     - name: Setup dotnet
       uses: actions/setup-dotnet@v1
       with:
@@ -17,6 +29,6 @@ jobs:
     - name: Restore
       run: dotnet restore
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build --no-restore -f netstandard1.5
     - name: Test
-      run: dotnet test --no-build
+      run: dotnet test --no-build -f netstandard1.5
