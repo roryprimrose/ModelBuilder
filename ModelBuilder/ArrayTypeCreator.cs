@@ -3,6 +3,7 @@
     using System;
     using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
+    using System.Reflection;
 
     /// <summary>
     ///     The <see cref="ArrayTypeCreator" />
@@ -27,7 +28,7 @@
                 throw new ArgumentNullException(nameof(type));
             }
 
-            if (type.TypeIsArray())
+            if (type.IsArray)
             {
                 return true;
             }

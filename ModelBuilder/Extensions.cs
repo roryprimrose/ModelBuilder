@@ -24,7 +24,7 @@
                 throw new ArgumentNullException(nameof(type));
             }
 
-            if (type.TypeIsGenericType() == false)
+            if (type.IsGenericType == false)
             {
                 return false;
             }

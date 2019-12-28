@@ -490,13 +490,13 @@
             }
 
             // There is no type mapping for this type
-            if (type.TypeIsInterface()
-                || type.TypeIsAbstract())
+            if (type.IsInterface
+                || type.IsAbstract)
             {
                 // Automatically resolve a derived type within the same assembly
                 var assemblyTypes = type.GetTypeInfo().Assembly.GetTypes();
                 var possibleTypes = from x in assemblyTypes
-                    where x.TypeIsPublic() && x.TypeIsInterface() == false && x.TypeIsAbstract() == false
+                    where x.IsPublic && x.IsInterface == false && x.IsAbstract == false
                           && type.IsAssignableFrom(x)
                     select x;
 

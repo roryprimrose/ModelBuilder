@@ -36,8 +36,8 @@
                 throw new ArgumentNullException(nameof(type));
             }
 
-            if (type.TypeIsClass()
-                && type.TypeIsAbstract())
+            if (type.IsClass
+                && type.IsAbstract)
             {
                 // This is an abstract class so we can't create it
                 return false;
@@ -56,7 +56,7 @@
                 return false;
             }
 
-            if (type.TypeIsInterface())
+            if (type.IsInterface)
             {
                 var listGenericType = typeof(List<string>).GetGenericTypeDefinition();
                 var listType = listGenericType.MakeGenericType(internalType);
@@ -150,7 +150,7 @@
         {
             Debug.Assert(type != null, "type != null");
 
-            if (type.TypeIsInterface())
+            if (type.IsInterface)
             {
                 var internalType = FindEnumerableTypeArgument(type);
                 var genericTypeDefinition = typeof(List<string>).GetGenericTypeDefinition();
@@ -225,7 +225,7 @@
 
         private static Type GetEnumerableTypeArgument(Type type)
         {
-            if (type.TypeIsGenericType() == false)
+            if (type.IsGenericType == false)
             {
                 return null;
             }
@@ -267,8 +267,8 @@
         {
             foreach (var unsupportedType in _unsupportedTypes)
             {
-                if (unsupportedType.TypeIsGenericTypeDefinition()
-                    && type.TypeIsGenericType())
+                if (unsupportedType.IsGenericTypeDefinition
+                    && type.IsGenericType)
                 {
                     var typeDefinition = type.GetGenericTypeDefinition();
 

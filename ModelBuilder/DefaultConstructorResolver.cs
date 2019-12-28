@@ -161,7 +161,7 @@
                         continue;
                     }
 
-                    if (parameter.ParameterType.TypeIsValueType())
+                    if (parameter.ParameterType.IsValueType)
                     {
                         // This is a null argument which is not equivalent to a value type
                         // This is not a matching constructor
