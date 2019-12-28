@@ -1,5 +1,8 @@
 ﻿namespace ModelBuilder.Data
 {
+    using System;
+    using ModelBuilder.Properties;
+
     /// <summary>
     ///     The <see cref="Location" />
     ///     class defines location information.
@@ -13,6 +16,11 @@
         /// <returns>The location.</returns>
         public static Location Parse(string csvData)
         {
+            if (string.IsNullOrWhiteSpace(csvData))
+            {
+                throw new ArgumentException(Resources.ArgumentException_NullOrWhiteSpace, nameof(csvData));
+            }
+
             // This data is expected to be in the following CSV format 
             // Country,State,City,PostCode,StreetName,StreetSuffix,Phone
             var parts = csvData.Split(',');

@@ -348,7 +348,7 @@
         }
 
         [Fact]
-        public void ProrityReturnsHigherThanDefaultTypeCreatorTest()
+        public void PriorityReturnsHigherThanDefaultTypeCreatorTest()
         {
             var target = new ArrayTypeCreator();
             var other = new DefaultTypeCreator();

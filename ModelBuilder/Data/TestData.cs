@@ -22,7 +22,6 @@
             FemaleNames = ParseValues(ResourceFile.FemaleNames);
             MaleNames = ParseValues(ResourceFile.MaleNames);
             LastNames = ParseValues(ResourceFile.LastNames);
-            Cultures = ParseValues(ResourceFile.Cultures);
             TimeZones = ParseValues(ResourceFile.TimeZones);
             Domains = ParseValues(ResourceFile.Domains);
         }
@@ -63,11 +62,6 @@
         ///     Gets a test data set of companies.
         /// </summary>
         public static IReadOnlyList<string> Companies { get; }
-
-        /// <summary>
-        ///     Gets a test data set of cultures.
-        /// </summary>
-        public static IReadOnlyList<string> Cultures { get; }
 
         /// <summary>
         ///     Gets a test data set of domains.

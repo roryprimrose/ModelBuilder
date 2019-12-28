@@ -5,6 +5,7 @@
     using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
     using System.Net.NetworkInformation;
+    using System.Reflection;
 
     /// <summary>
     ///     The <see cref="EnumerableTypeCreator" />
@@ -16,12 +17,10 @@
         {
             typeof(ArraySegment<>),
             typeof(IPAddressCollection),
-#if NET45
             typeof(GatewayIPAddressInformationCollection),
             typeof(IPAddressInformationCollection),
             typeof(MulticastIPAddressInformationCollection),
             typeof(UnicastIPAddressInformationCollection),
-#endif
             typeof(Dictionary<, >.KeyCollection),
             typeof(Dictionary<, >.ValueCollection),
             typeof(SortedDictionary<, >.KeyCollection),
@@ -181,6 +180,8 @@
             // Get the Add method
             var addMethod = collectionType.GetMethod("Add");
 
+            Debug.Assert(addMethod != null, nameof(addMethod) + " != null");
+
             object previousItem = null;
 
             for (var index = 0; index < AutoPopulateCount; index++)
@@ -242,12 +243,16 @@
             return type.GetGenericArguments()[0];
         }
 
-        private static bool IsReadOnlyType(Type type)
+        private static bool IsReadOnlyType(MemberInfo type)
         {
             // Check if the type is a ReadOnly type
             // We can't check for the implementation of IReadOnlyCollection<T> because this was introduced in .Net 4.5 
             // however this library targets 4.0
+#if NETSTANDARD2_0
             if (type.Name.Contains("ReadOnly"))
+#else
+                if (type.Name.Contains("ReadOnly", StringComparison.OrdinalIgnoreCase))
+#endif
             {
                 // Looks like this is read only type
                 // This covers ReadOnlyCollection in .Net 4.0 and above

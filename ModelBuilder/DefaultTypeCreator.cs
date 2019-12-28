@@ -3,6 +3,7 @@
     using System;
     using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
+    using ModelBuilder.Properties;
 
     /// <summary>
     ///     The <see cref="DefaultTypeCreator" />
@@ -37,7 +38,7 @@
 
             if (constructor == null)
             {
-                throw new MissingMemberException("No constructor found matching type.");
+                throw new MissingMemberException(Resources.DefaultTypeCreator_NoMatchingConstructor);
             }
 
             return constructor.Invoke(args);

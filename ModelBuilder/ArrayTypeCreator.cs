@@ -100,7 +100,11 @@
             else
             {
                 // The type of item in the array has a default value of null so we need to attempt to parse the name from the name of the array type itself
+#if NETSTANDARD2_0
                 var typeName = instanceType.AssemblyQualifiedName?.Replace("[]", string.Empty);
+#else
+                var typeName = instanceType.AssemblyQualifiedName?.Replace("[]", string.Empty, StringComparison.OrdinalIgnoreCase);
+#endif
 
                 itemType = Type.GetType(typeName);
             }

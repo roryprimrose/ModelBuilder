@@ -632,9 +632,7 @@
                     strategy.Create();
 
                     return "Iteration " + loopIndex
-#if NET452
                                + " on thread " + System.Threading.Thread.CurrentThread.ManagedThreadId
-#endif
                                         + Environment.NewLine + strategy.Log.Output;
                 });
 

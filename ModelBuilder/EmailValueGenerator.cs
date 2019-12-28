@@ -59,7 +59,11 @@
 
             var email = firstName + "." + lastName + "@" + domain;
 
+#if NETSTANDARD2_0
             return email.Replace(" ", string.Empty).ToLowerInvariant();
+#else
+            return email.Replace(" ", string.Empty, StringComparison.CurrentCulture).ToLowerInvariant();
+#endif
         }
 
         /// <inheritdoc />

@@ -24,7 +24,6 @@ namespace ModelBuilder
         /// <inheritdoc />
         protected override object GenerateValue(Type type, string referenceName, IExecuteStrategy executeStrategy)
         {
-#if NET45
             var cultures = CultureInfo.GetCultures(CultureTypes.AllCultures);
             var index = Generator.NextValue(0, cultures.Length - 1);
             var culture = cultures[index];
@@ -35,18 +34,6 @@ namespace ModelBuilder
             }
 
             return culture;
-#else
-            var cultureName = TestData.Cultures.Next();
-
-            if (type == typeof(string))
-            {
-                return cultureName;
-            }
-
-            // netstandard 1.5 does not support loading or enumerating system cultures
-            // TODO: Review loading cultures under netstandard 2.0 when released
-            return CultureInfo.CurrentUICulture;
-#endif
         }
 
         /// <inheritdoc />

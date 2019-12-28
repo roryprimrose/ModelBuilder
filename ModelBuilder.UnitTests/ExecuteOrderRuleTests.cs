@@ -32,6 +32,16 @@
         }
 
         [Fact]
+        public void IsMatchThrowsExceptionWithNullProperty()
+        {
+            var target = new ExecuteOrderRule((declaringType, propertyType, name) => false, 1000);
+
+            Action action = () => target.IsMatch(null);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
         public void IsMatchReturnsWhetherEvaluatorMatchesTest()
         {
             var target = new ExecuteOrderRule((declaringType, propertyType, name) => false, 1000);

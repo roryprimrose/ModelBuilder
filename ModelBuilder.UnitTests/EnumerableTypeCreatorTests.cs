@@ -42,12 +42,10 @@
         [InlineData(typeof(IReadOnlyList<int>), false)]
         [InlineData(typeof(ArraySegment<string>), false)]
         [InlineData(typeof(IPAddressCollection), false)]
-#if NET452
         [InlineData(typeof(GatewayIPAddressInformationCollection), false)]
         [InlineData(typeof(IPAddressInformationCollection), false)]
         [InlineData(typeof(MulticastIPAddressInformationCollection), false)]
         [InlineData(typeof(UnicastIPAddressInformationCollection), false)]
-#endif
         [InlineData(typeof(Dictionary<, >.KeyCollection), false)]
         [InlineData(typeof(Dictionary<, >.ValueCollection), false)]
         [InlineData(typeof(Dictionary<string, int>), true)]
@@ -91,12 +89,10 @@
         [InlineData(typeof(IEnumerable<string>), false)]
         [InlineData(typeof(ArraySegment<string>), false)]
         [InlineData(typeof(IPAddressCollection), false)]
-#if NET452
         [InlineData(typeof(GatewayIPAddressInformationCollection), false)]
         [InlineData(typeof(IPAddressInformationCollection), false)]
         [InlineData(typeof(MulticastIPAddressInformationCollection), false)]
         [InlineData(typeof(UnicastIPAddressInformationCollection), false)]
-#endif
         [InlineData(typeof(Dictionary<, >.KeyCollection), false)]
         [InlineData(typeof(Dictionary<, >.ValueCollection), false)]
         [InlineData(typeof(SortedDictionary<, >.KeyCollection), false)]
@@ -184,7 +180,7 @@
         [InlineData(typeof(IEnumerable<int>))]
         [InlineData(typeof(ICollection<int>))]
         [InlineData(typeof(IList<int>))]
-        public void CreateReturnsNewListOfSpecfiedTypeTest(Type targetType)
+        public void CreateReturnsNewListOfSpecifiedTypeTest(Type targetType)
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -211,12 +207,10 @@
         [InlineData(typeof(IReadOnlyList<int>), false)]
         [InlineData(typeof(ArraySegment<string>), false)]
         [InlineData(typeof(IPAddressCollection), false)]
-#if NET452
         [InlineData(typeof(GatewayIPAddressInformationCollection), false)]
         [InlineData(typeof(IPAddressInformationCollection), false)]
         [InlineData(typeof(MulticastIPAddressInformationCollection), false)]
         [InlineData(typeof(UnicastIPAddressInformationCollection), false)]
-#endif
         [InlineData(typeof(Dictionary<, >.KeyCollection), false)]
         [InlineData(typeof(Dictionary<, >.ValueCollection), false)]
         [InlineData(typeof(SortedDictionary<, >.KeyCollection), false)]
@@ -365,7 +359,7 @@
         }
 
         [Fact]
-        public void ProrityReturnsHigherThanDefaultTypeCreatorTest()
+        public void PriorityReturnsHigherThanDefaultTypeCreatorTest()
         {
             var target = new EnumerableTypeCreator();
             var other = new DefaultTypeCreator();

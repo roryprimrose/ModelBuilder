@@ -146,6 +146,8 @@
 
             var typeToBuild = DetermineTypeToBuild(type);
 
+            Debug.Assert(typeToBuild != null, nameof(typeToBuild) + " != null");
+
             var buildChain = BuildChain;
 
             var circularReference = buildChain.FirstOrDefault(x => x.GetType() == typeToBuild);
