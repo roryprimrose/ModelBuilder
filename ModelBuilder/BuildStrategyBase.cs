@@ -25,13 +25,13 @@
 
             ConstructorResolver = strategy.ConstructorResolver;
             PropertyResolver = strategy.PropertyResolver;
-            TypeCreators = new ReadOnlyCollection<ITypeCreator>(strategy.TypeCreators.ToList());
-            ValueGenerators = new ReadOnlyCollection<IValueGenerator>(strategy.ValueGenerators.ToList());
-            IgnoreRules = new ReadOnlyCollection<IgnoreRule>(strategy.IgnoreRules.ToList());
-            TypeMappingRules = new ReadOnlyCollection<TypeMappingRule>(strategy.TypeMappingRules.ToList());
-            ExecuteOrderRules = new ReadOnlyCollection<ExecuteOrderRule>(strategy.ExecuteOrderRules.ToList());
-            PostBuildActions = new ReadOnlyCollection<IPostBuildAction>(strategy.PostBuildActions.ToList());
-            CreationRules = new ReadOnlyCollection<CreationRule>(strategy.CreationRules.ToList());
+            TypeCreators = AsReadOnly(strategy.TypeCreators);
+            ValueGenerators = AsReadOnly(strategy.ValueGenerators);
+            IgnoreRules = AsReadOnly(strategy.IgnoreRules);
+            TypeMappingRules = AsReadOnly(strategy.TypeMappingRules);
+            ExecuteOrderRules = AsReadOnly(strategy.ExecuteOrderRules);
+            PostBuildActions = AsReadOnly(strategy.PostBuildActions);
+            CreationRules = AsReadOnly(strategy.CreationRules);
         }
 
         /// <summary>
@@ -127,6 +127,11 @@
 
         /// <inheritdoc />
         public abstract IExecuteStrategy<T> GetExecuteStrategy<T>();
+
+        private static ReadOnlyCollection<T> AsReadOnly<T>(IEnumerable<T> source)
+        {
+            return new ReadOnlyCollection<T>(source.ToList());
+        }
 
         /// <inheritdoc />
         public IConstructorResolver ConstructorResolver { get; }

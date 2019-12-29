@@ -11,8 +11,7 @@
     /// </summary>
     public class AddressValueGenerator : ValueGeneratorMatcher
     {
-        private static readonly Regex _matchNameExpression =
-            new Regex("(?<!email.*)address", RegexOptions.IgnoreCase);
+        private static readonly Regex _matchNameExpression = new Regex("(?<!email.*)address", RegexOptions.IgnoreCase);
 
         private static readonly Regex _multipleAddressExpression = new Regex(
             "Address(Line)?(?<Number>\\d+)",
@@ -21,8 +20,7 @@
         /// <summary>
         ///     Initializes a new instance of the <see cref="AddressValueGenerator" /> class.
         /// </summary>
-        public AddressValueGenerator()
-            : base(_matchNameExpression, typeof(string))
+        public AddressValueGenerator() : base(_matchNameExpression, typeof(string))
         {
         }
 
@@ -40,7 +38,7 @@
                 {
                     var floor = Generator.NextValue(1, 15);
                     var unitIndex = Generator.NextValue(0, 15);
-                    var unit = (char) (65 + unitIndex);
+                    var unit = (char)(65 + unitIndex);
 
                     // Return a Unit Xy, Floor X style value
                     return "Unit " + floor + unit + ", Floor " + floor;

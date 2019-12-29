@@ -1,10 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard1.5</TargetFramework>
+    <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
 
     <CodeAnalysisRuleSet>..\Solution Items\Application.ruleset</CodeAnalysisRuleSet>
     <NoWarn>AD0001</NoWarn>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <LangVersion>8.0</LangVersion>
 
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <Authors>rprimrose</Authors>
@@ -12,13 +14,12 @@
     <Description>Provides build features for creating model data.</Description>
     <PackageProjectUrl>https://github.com/roryprimrose/ModelBuilder</PackageProjectUrl>
     <PackageTags>Model Builder DTO Testing</PackageTags>
-    <NeutralLanguage>en-US</NeutralLanguage>
     <Copyright>Copyright © Neovolve 2016</Copyright>
     <IncludeSymbols>True</IncludeSymbols>
-    <PackageLicenseUrl>https://github.com/roryprimrose/ModelBuilder/blob/master/LICENSE.md</PackageLicenseUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/roryprimrose/ModelBuilder</RepositoryUrl>
   </PropertyGroup>
-  
+
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <WarningsAsErrors />
@@ -26,7 +27,6 @@
 
   <ItemGroup>
     <None Remove="Resources\Companies.txt" />
-    <None Remove="Resources\Cultures.txt" />
     <None Remove="Resources\Domains.txt" />
     <None Remove="Resources\FemaleNames.txt" />
     <None Remove="Resources\LastNames.txt" />
@@ -34,10 +34,9 @@
     <None Remove="Resources\MaleNames.txt" />
     <None Remove="Resources\TimeZones.txt" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <EmbeddedResource Include="Resources\Companies.txt" />
-    <EmbeddedResource Include="Resources\Cultures.txt" />
     <EmbeddedResource Include="Resources\Domains.txt" />
     <EmbeddedResource Include="Resources\FemaleNames.txt" />
     <EmbeddedResource Include="Resources\LastNames.txt" />
@@ -45,9 +44,9 @@
     <EmbeddedResource Include="Resources\MaleNames.txt" />
     <EmbeddedResource Include="Resources\TimeZones.txt" />
   </ItemGroup>
-  
+
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.6">
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -67,5 +66,5 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
-  
+
 </Project>

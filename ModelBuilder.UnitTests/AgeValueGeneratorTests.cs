@@ -30,8 +30,8 @@
             {
                 var value = target.Generate(type, "Age", executeStrategy);
 
-                if (type.IsNullable()
-                    && value == null)
+                if (type.IsNullable() &&
+                    value == null)
                 {
                     // Nullable values could be returned so nothing more to assert
                     return;
@@ -69,7 +69,7 @@
 
             for (var index = 0; index < 1000; index++)
             {
-                var value = (int?) target.Generate(typeof(int?), "Age", executeStrategy);
+                var value = (int?)target.Generate(typeof(int?), "Age", executeStrategy);
 
                 if (value == null)
                 {
@@ -110,8 +110,8 @@
 
             var value = target.Generate(type, "Age", executeStrategy);
 
-            if (type.IsNullable()
-                && value == null)
+            if (type.IsNullable() &&
+                value == null)
             {
                 // We can't run the assertions because null is a valid outcome
                 return;
@@ -277,7 +277,10 @@
         [Fact]
         public void SettingMaxAgeShouldNotChangeDefaultMaxAgeTest()
         {
-            var target = new AgeValueGenerator {MaxAge = Environment.TickCount};
+            var target = new AgeValueGenerator
+            {
+                MaxAge = Environment.TickCount
+            };
 
             AgeValueGenerator.DefaultMaxAge.Should().NotBe(target.MaxAge);
         }

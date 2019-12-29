@@ -25,13 +25,12 @@
         [Fact]
         public void PopulatesInstanceTypePropertyWhenConstructorParameterMatchesDefaultTypeValueTest()
         {
-            Company company = null;
             var id = Model.Create<Guid>();
             var refNumber = Model.Create<int?>();
             var number = Model.Create<int>();
             var value = Model.Create<bool>();
 
-            var model = Model.Create<WithConstructorParameters>(company, id, refNumber, number, value);
+            var model = Model.Create<WithConstructorParameters>((Company)null, id, refNumber, number, value);
 
             model.First.Should().NotBeNull();
         }

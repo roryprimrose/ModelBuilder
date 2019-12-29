@@ -13,13 +13,13 @@
         /// <summary>
         ///     Initializes a new instance of the <see cref="EmailValueGenerator" /> class.
         /// </summary>
-        public EmailValueGenerator()
-            : base(PropertyExpression.Email, typeof(string))
+        public EmailValueGenerator() : base(PropertyExpression.Email, typeof(string))
         {
         }
 
         /// <inheritdoc />
-        [SuppressMessage("Microsoft.Globalization",
+        [SuppressMessage(
+            "Microsoft.Globalization",
             "CA1308:NormalizeStringsToUppercase",
             Justification = "Email addresses are lower case by convention.")]
         protected override object GenerateValue(Type type, string referenceName, IExecuteStrategy executeStrategy)
@@ -59,7 +59,11 @@
 
             var email = firstName + "." + lastName + "@" + domain;
 
+#if NETSTANDARD2_0
             return email.Replace(" ", string.Empty).ToLowerInvariant();
+#else
+            return email.Replace(" ", string.Empty, StringComparison.CurrentCulture).ToLowerInvariant();
+#endif
         }
 
         /// <inheritdoc />

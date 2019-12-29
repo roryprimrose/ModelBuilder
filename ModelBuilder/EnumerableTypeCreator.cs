@@ -5,6 +5,7 @@
     using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
     using System.Net.NetworkInformation;
+    using System.Reflection;
 
     /// <summary>
     ///     The <see cref="EnumerableTypeCreator" />
@@ -16,16 +17,14 @@
         {
             typeof(ArraySegment<>),
             typeof(IPAddressCollection),
-#if NET45
             typeof(GatewayIPAddressInformationCollection),
             typeof(IPAddressInformationCollection),
             typeof(MulticastIPAddressInformationCollection),
             typeof(UnicastIPAddressInformationCollection),
-#endif
-            typeof(Dictionary<, >.KeyCollection),
-            typeof(Dictionary<, >.ValueCollection),
-            typeof(SortedDictionary<, >.KeyCollection),
-            typeof(SortedDictionary<, >.ValueCollection)
+            typeof(Dictionary<,>.KeyCollection),
+            typeof(Dictionary<,>.ValueCollection),
+            typeof(SortedDictionary<,>.KeyCollection),
+            typeof(SortedDictionary<,>.ValueCollection)
         };
 
         /// <inheritdoc />
@@ -37,8 +36,8 @@
                 throw new ArgumentNullException(nameof(type));
             }
 
-            if (type.TypeIsClass()
-                && type.TypeIsAbstract())
+            if (type.IsClass &&
+                type.IsAbstract)
             {
                 // This is an abstract class so we can't create it
                 return false;
@@ -57,7 +56,7 @@
                 return false;
             }
 
-            if (type.TypeIsInterface())
+            if (type.IsInterface)
             {
                 var listGenericType = typeof(List<string>).GetGenericTypeDefinition();
                 var listType = listGenericType.MakeGenericType(internalType);
@@ -139,7 +138,8 @@
         }
 
         /// <inheritdoc />
-        [SuppressMessage("Microsoft.Design",
+        [SuppressMessage(
+            "Microsoft.Design",
             "CA1062:Validate arguments of public methods",
             MessageId = "0",
             Justification = "Type is validated by the base class")]
@@ -151,7 +151,7 @@
         {
             Debug.Assert(type != null, "type != null");
 
-            if (type.TypeIsInterface())
+            if (type.IsInterface)
             {
                 var internalType = FindEnumerableTypeArgument(type);
                 var genericTypeDefinition = typeof(List<string>).GetGenericTypeDefinition();
@@ -164,7 +164,8 @@
         }
 
         /// <inheritdoc />
-        [SuppressMessage("Microsoft.Design",
+        [SuppressMessage(
+            "Microsoft.Design",
             "CA1062:Validate arguments of public methods",
             MessageId = "0",
             Justification = "Instance is validated by the base class")]
@@ -181,13 +182,20 @@
             // Get the Add method
             var addMethod = collectionType.GetMethod("Add");
 
+            Debug.Assert(addMethod != null, nameof(addMethod) + " != null");
+
             object previousItem = null;
 
             for (var index = 0; index < AutoPopulateCount; index++)
             {
                 var childInstance = CreateChildItem(internalType, executeStrategy, previousItem);
 
-                addMethod.Invoke(instance, new[] {childInstance});
+                addMethod.Invoke(
+                    instance,
+                    new[]
+                    {
+                        childInstance
+                    });
 
                 previousItem = childInstance;
             }
@@ -224,7 +232,7 @@
 
         private static Type GetEnumerableTypeArgument(Type type)
         {
-            if (type.TypeIsGenericType() == false)
+            if (type.IsGenericType == false)
             {
                 return null;
             }
@@ -242,12 +250,16 @@
             return type.GetGenericArguments()[0];
         }
 
-        private static bool IsReadOnlyType(Type type)
+        private static bool IsReadOnlyType(MemberInfo type)
         {
             // Check if the type is a ReadOnly type
             // We can't check for the implementation of IReadOnlyCollection<T> because this was introduced in .Net 4.5 
             // however this library targets 4.0
+#if NETSTANDARD2_0
             if (type.Name.Contains("ReadOnly"))
+#else
+            if (type.Name.Contains("ReadOnly", StringComparison.OrdinalIgnoreCase))
+#endif
             {
                 // Looks like this is read only type
                 // This covers ReadOnlyCollection in .Net 4.0 and above
@@ -262,8 +274,8 @@
         {
             foreach (var unsupportedType in _unsupportedTypes)
             {
-                if (unsupportedType.TypeIsGenericTypeDefinition()
-                    && type.TypeIsGenericType())
+                if (unsupportedType.IsGenericTypeDefinition &&
+                    type.IsGenericType)
                 {
                     var typeDefinition = type.GetGenericTypeDefinition();
 

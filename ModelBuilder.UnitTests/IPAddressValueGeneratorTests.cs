@@ -73,14 +73,14 @@
         }
 
         [Theory]
-        [InlineData(typeof(string), (string) null, false)]
+        [InlineData(typeof(string), (string)null, false)]
         [InlineData(typeof(string), "", false)]
         [InlineData(typeof(string), "Stuff", false)]
         [InlineData(typeof(bool), "IPAddress", false)]
         [InlineData(typeof(string), "IPAddress", true)]
         [InlineData(typeof(string), "ipaddress", true)]
         [InlineData(typeof(string), "IPADDRESS", true)]
-        [InlineData(typeof(IPAddress), (string) null, true)]
+        [InlineData(typeof(IPAddress), (string)null, true)]
         public void IsSupportedReturnsWhetherScenarioIsValidTest(Type type, string referenceName, bool supported)
         {
             var target = new IPAddressValueGenerator();
@@ -105,7 +105,7 @@
         }
 
         [Fact]
-        public void PriorityIsHigherThanStringValueGeneratorProprityTest()
+        public void PriorityIsHigherThanStringValueGeneratorPriorityTest()
         {
             var target = new IPAddressValueGenerator();
             var other = new StringValueGenerator();

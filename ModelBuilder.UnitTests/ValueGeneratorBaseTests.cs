@@ -47,7 +47,7 @@
             var type = typeof(string);
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
-            executeStrategy.BuildChain.Returns((IBuildChain) null);
+            executeStrategy.BuildChain.Returns((IBuildChain)null);
 
             var target = Substitute.ForPartsOf<ValueGeneratorBase>();
 
@@ -113,7 +113,7 @@
             var type = typeof(string);
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
-            executeStrategy.BuildChain.Returns((IBuildChain) null);
+            executeStrategy.BuildChain.Returns((IBuildChain)null);
 
             var target = new Wrapper();
 
@@ -160,11 +160,6 @@
             public override bool IsSupported(Type type, string referenceName, IBuildChain buildChain)
             {
                 return _isSupported;
-            }
-
-            public void RunVerifyGenerateRequest(Type type, string referenceName, IExecuteStrategy executeStrategy)
-            {
-                VerifyGenerateRequest(type, referenceName, executeStrategy);
             }
 
             protected override object GenerateValue(Type type, string referenceName, IExecuteStrategy executeStrategy)

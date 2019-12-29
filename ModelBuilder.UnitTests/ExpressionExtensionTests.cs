@@ -74,7 +74,13 @@
 
         private class StaticGetter
         {
-            public static string Value { get { return Guid.NewGuid().ToString(); } }
+            public static string Value
+            {
+                get
+                {
+                    return Guid.NewGuid().ToString();
+                }
+            }
         }
     }
 }

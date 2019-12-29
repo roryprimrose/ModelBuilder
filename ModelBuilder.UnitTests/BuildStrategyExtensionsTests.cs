@@ -18,7 +18,10 @@
             var value = Guid.NewGuid();
 
             var generator = Substitute.For<IValueGenerator>();
-            var generators = new List<IValueGenerator> {generator}.AsReadOnly();
+            var generators = new List<IValueGenerator>
+            {
+                generator
+            }.AsReadOnly();
             var target = Substitute.For<IBuildStrategy>();
 
             target.ValueGenerators.Returns(generators);
@@ -43,9 +46,7 @@
         [Fact]
         public void CreateThrowsExceptionWithNullStrategyTest()
         {
-            IBuildStrategy target = null;
-
-            Action action = () => target.Create(typeof(Guid));
+            Action action = () => ((IBuildStrategy)null).Create(typeof(Guid));
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -56,7 +57,10 @@
             var value = Guid.NewGuid();
 
             var generator = Substitute.For<IValueGenerator>();
-            var generators = new List<IValueGenerator> {generator}.AsReadOnly();
+            var generators = new List<IValueGenerator>
+            {
+                generator
+            }.AsReadOnly();
             var target = Substitute.For<IBuildStrategy>();
 
             target.ValueGenerators.Returns(generators);
@@ -71,9 +75,7 @@
         [Fact]
         public void CreateTThrowsExceptionWithNullStrategyTest()
         {
-            IBuildStrategy target = null;
-
-            Action action = () => target.Create<Guid>();
+            Action action = () => ((IBuildStrategy)null).Create<Guid>();
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -107,9 +109,7 @@
         [Fact]
         public void IgnoringThrowsExceptionWithNullStrategyTest()
         {
-            IBuildStrategy target = null;
-
-            Action action = () => target.Ignoring<Person>(x => x.Priority);
+            Action action = () => ((IBuildStrategy)null).Ignoring<Person>(x => x.Priority);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -124,8 +124,8 @@
             actual.Should().NotBeSameAs(target);
             actual.TypeMappingRules.Should().NotBeEmpty();
 
-            var matchingRule = actual.TypeMappingRules.FirstOrDefault(x =>
-                x.SourceType == typeof(Stream) && x.TargetType == typeof(MemoryStream));
+            var matchingRule = actual.TypeMappingRules.FirstOrDefault(
+                x => x.SourceType == typeof(Stream) && x.TargetType == typeof(MemoryStream));
 
             matchingRule.Should().NotBeNull();
         }
@@ -133,9 +133,7 @@
         [Fact]
         public void MappingThrowsExceptionWithNullStrategyTest()
         {
-            IBuildStrategy target = null;
-
-            Action action = () => target.Mapping<Stream, MemoryStream>();
+            Action action = () => ((IBuildStrategy)null).Mapping<Stream, MemoryStream>();
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -145,9 +143,7 @@
         {
             var model = new Person();
 
-            IBuildStrategy target = null;
-
-            Action action = () => target.Populate(model);
+            Action action = () => ((IBuildStrategy)null).Populate(model);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -170,9 +166,15 @@
 
             var target = Substitute.For<IBuildStrategy>();
             var creator = Substitute.For<ITypeCreator>();
-            var creators = new List<ITypeCreator> {creator}.AsReadOnly();
+            var creators = new List<ITypeCreator>
+            {
+                creator
+            }.AsReadOnly();
             var generator = Substitute.For<IValueGenerator>();
-            var generators = new List<IValueGenerator> {generator}.AsReadOnly();
+            var generators = new List<IValueGenerator>
+            {
+                generator
+            }.AsReadOnly();
 
             target.TypeCreators.Returns(creators);
             target.ValueGenerators.Returns(generators);
@@ -191,7 +193,10 @@
         public void UsingExecuteStrategyReturnsExecuteStrategyWithBuildStrategyConfigurationsTest()
         {
             var strategy = Model.BuildStrategy;
-            var ignoreRules = new List<IgnoreRule> {new IgnoreRule(typeof(string), "Stuff")};
+            var ignoreRules = new List<IgnoreRule>
+            {
+                new IgnoreRule(typeof(string), "Stuff")
+            };
 
             var buildLog = Substitute.For<IBuildLog>();
             var target = Substitute.For<IBuildStrategy>();
@@ -216,7 +221,7 @@
         {
             var target = Substitute.For<IBuildStrategy>();
 
-            target.GetBuildLog().Returns((IBuildLog) null);
+            target.GetBuildLog().Returns((IBuildLog)null);
 
             Action action = () => target.UsingExecuteStrategy<DefaultExecuteStrategy>();
 
@@ -226,9 +231,7 @@
         [Fact]
         public void UsingExecuteStrategyThrowsExceptionWithNullStrategyTest()
         {
-            IBuildStrategy target = null;
-
-            Action action = () => target.UsingExecuteStrategy<NullExecuteStrategy>();
+            Action action = () => ((IBuildStrategy)null).UsingExecuteStrategy<NullExecuteStrategy>();
 
             action.Should().Throw<ArgumentNullException>();
         }

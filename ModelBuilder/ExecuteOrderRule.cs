@@ -43,29 +43,29 @@
         /// </exception>
         public ExecuteOrderRule(Type declaringType, Type propertyType, Regex propertyExpression, int priority)
         {
-            if (declaringType == null
-                && propertyType == null
-                && propertyExpression == null)
+            if (declaringType == null &&
+                propertyType == null &&
+                propertyExpression == null)
             {
                 throw new ArgumentNullException(Resources.NoOwnerTypePropertyTypeOrPropertyExpression);
             }
 
             _func = (parentType, propType, name) =>
             {
-                if (declaringType != null
-                    && declaringType != parentType)
+                if (declaringType != null &&
+                    declaringType != parentType)
                 {
                     return false;
                 }
 
-                if (propertyType != null
-                    && propertyType != propType)
+                if (propertyType != null &&
+                    propertyType != propType)
                 {
                     return false;
                 }
 
-                if (propertyExpression != null
-                    && propertyExpression.IsMatch(name) == false)
+                if (propertyExpression != null &&
+                    propertyExpression.IsMatch(name) == false)
                 {
                     return false;
                 }
@@ -89,29 +89,29 @@
         /// </exception>
         public ExecuteOrderRule(Type declaringType, Type propertyType, string propertyName, int priority)
         {
-            if (declaringType == null
-                && propertyType == null
-                && propertyName == null)
+            if (declaringType == null &&
+                propertyType == null &&
+                propertyName == null)
             {
                 throw new ArgumentNullException(Resources.NoOwnerTypePropertyTypeOrPropertyName);
             }
 
             _func = (parentType, propType, name) =>
             {
-                if (declaringType != null
-                    && declaringType != parentType)
+                if (declaringType != null &&
+                    declaringType != parentType)
                 {
                     return false;
                 }
 
-                if (propertyType != null
-                    && propertyType != propType)
+                if (propertyType != null &&
+                    propertyType != propType)
                 {
                     return false;
                 }
 
-                if (propertyName != null
-                    && propertyName != name)
+                if (propertyName != null &&
+                    propertyName != name)
                 {
                     return false;
                 }
@@ -129,6 +129,11 @@
         /// <returns><c>true</c> if the rule matches the specified type and property name; otherwise <c>false</c>.</returns>
         public bool IsMatch(PropertyInfo property)
         {
+            if (property == null)
+            {
+                throw new ArgumentNullException(nameof(property));
+            }
+
             return _func(property.DeclaringType, property.PropertyType, property.Name);
         }
 

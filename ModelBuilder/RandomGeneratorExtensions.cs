@@ -26,7 +26,7 @@ namespace ModelBuilder
             var min = generator.GetMin(type);
             var value = generator.NextValue(type, min, max);
 
-            return (T) value;
+            return (T)value;
         }
 
         /// <summary>
@@ -46,7 +46,7 @@ namespace ModelBuilder
             var type = typeof(T);
             var min = generator.GetMin(type);
 
-            return (T) generator.NextValue(type, min, max);
+            return (T)generator.NextValue(type, min, max);
         }
 
         /// <summary>
@@ -66,7 +66,7 @@ namespace ModelBuilder
 
             var type = typeof(T);
 
-            return (T) generator.NextValue(type, min, max);
+            return (T)generator.NextValue(type, min, max);
         }
 
         /// <summary>

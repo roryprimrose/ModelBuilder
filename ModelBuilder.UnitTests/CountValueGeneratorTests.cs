@@ -29,8 +29,8 @@
             {
                 var value = target.Generate(type, "Count", executeStrategy);
 
-                if (type.IsNullable()
-                    && value == null)
+                if (type.IsNullable() &&
+                    value == null)
                 {
                     // Nullable values could be returned so nothing more to assert
                     return;
@@ -67,7 +67,7 @@
 
             for (var index = 0; index < 1000; index++)
             {
-                var value = (int?) target.Generate(typeof(int?), "Count", executeStrategy);
+                var value = (int?)target.Generate(typeof(int?), "Count", executeStrategy);
 
                 if (value == null)
                 {
@@ -107,8 +107,8 @@
 
             var value = target.Generate(type, "Count", executeStrategy);
 
-            if (type.IsNullable()
-                && value == null)
+            if (type.IsNullable() &&
+                value == null)
             {
                 // We can't run the assertions because null is a valid outcome
                 return;
@@ -292,7 +292,10 @@
         [Fact]
         public void SettingMaxCountShouldNotChangeDefaultMaxCountTest()
         {
-            var target = new CountValueGenerator {MaxCount = Environment.TickCount};
+            var target = new CountValueGenerator
+            {
+                MaxCount = Environment.TickCount
+            };
 
             CountValueGenerator.DefaultMaxCount.Should().NotBe(target.MaxCount);
         }

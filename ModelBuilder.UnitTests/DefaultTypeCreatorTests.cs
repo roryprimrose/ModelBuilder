@@ -11,13 +11,16 @@
     public class DefaultTypeCreatorTests
     {
         [Fact]
-        [SuppressMessage("Microsoft.Design",
+        [SuppressMessage(
+            "Microsoft.Design",
             "CA1825",
             Justification = "The Array.Empty<T> is not available on net452.")]
         public void CreateReturnsInstanceCreatedWithDefaultConstructorWhenArgumentsAreEmptyTest()
         {
             var buildChain = new BuildHistory();
-            var args = new object[] { };
+            var args = new object[]
+            {
+            };
 
             var strategy = Substitute.For<IExecuteStrategy>();
 
@@ -75,14 +78,14 @@
 
             actual.Should().BeOfType<Person>();
 
-            var person = (Person) actual;
+            var person = (Person)actual;
 
-            person.FirstName.Should().Be((string) args[0]);
-            person.LastName.Should().Be((string) args[1]);
-            person.DOB.Should().Be((DateTime) args[2]);
-            person.IsActive.Should().Be((bool) args[3]);
-            person.Id.Should().Be((Guid) args[4]);
-            person.Priority.Should().Be((int) args[5]);
+            person.FirstName.Should().Be((string)args[0]);
+            person.LastName.Should().Be((string)args[1]);
+            person.DOB.Should().Be((DateTime)args[2]);
+            person.IsActive.Should().Be((bool)args[3]);
+            person.Id.Should().Be((Guid)args[4]);
+            person.Priority.Should().Be((int)args[5]);
         }
 
         [Fact]

@@ -212,13 +212,16 @@
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Create(typeof(Guid)).Returns(Guid.NewGuid());
 
-            var target = new ArrayTypeCreator {MaxCount = 15};
+            var target = new ArrayTypeCreator
+            {
+                MaxCount = 15
+            };
 
             var actual = target.Populate(expected, executeStrategy);
 
             actual.Should().BeSameAs(expected);
 
-            var set = (Guid[]) actual;
+            var set = (Guid[])actual;
 
             set.Should().HaveCount(target.MaxCount);
             set.All(x => x != Guid.Empty).Should().BeTrue();
@@ -235,13 +238,16 @@
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Create(typeof(Guid)).Returns(Guid.NewGuid());
 
-            var target = new ArrayTypeCreator {MaxCount = 15};
+            var target = new ArrayTypeCreator
+            {
+                MaxCount = 15
+            };
 
             var actual = target.Populate(expected, executeStrategy);
 
             actual.Should().BeSameAs(expected);
 
-            var set = (Guid[]) actual;
+            var set = (Guid[])actual;
 
             set.Should().HaveCount(target.MaxCount);
             set.All(x => x != Guid.Empty).Should().BeTrue();
@@ -255,7 +261,7 @@
 
             var target = new IncrementingArrayTypeCreator();
 
-            var result = (int[]) target.Populate(actual, executeStrategy);
+            var result = (int[])target.Populate(actual, executeStrategy);
 
             var baseValue = result[0];
             var expected = new int[actual.Length];
@@ -276,13 +282,14 @@
 
             var target = new ArrayTypeCreator();
 
-            var result = (Person[]) target.Populate(actual, executeStrategy);
+            var result = (Person[])target.Populate(actual, executeStrategy);
 
             result.All(x => x != null).Should().BeTrue();
         }
 
         [Fact]
-        [SuppressMessage("Microsoft.Design",
+        [SuppressMessage(
+            "Microsoft.Design",
             "CA1825",
             Justification = "The Array.Empty<T> is not available on net452.")]
         public void PopulateReturnsEmptyArrayWhenSourceHasZeroLengthTest()
@@ -295,13 +302,16 @@
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Create(typeof(Guid)).Returns(Guid.NewGuid());
 
-            var target = new ArrayTypeCreator {MaxCount = 15};
+            var target = new ArrayTypeCreator
+            {
+                MaxCount = 15
+            };
 
             var actual = target.Populate(expected, executeStrategy);
 
             actual.Should().BeSameAs(expected);
 
-            var set = (Guid[]) actual;
+            var set = (Guid[])actual;
 
             set.Should().BeEmpty();
         }
@@ -348,7 +358,7 @@
         }
 
         [Fact]
-        public void ProrityReturnsHigherThanDefaultTypeCreatorTest()
+        public void PriorityReturnsHigherThanDefaultTypeCreatorTest()
         {
             var target = new ArrayTypeCreator();
             var other = new DefaultTypeCreator();
@@ -381,7 +391,10 @@
         [Fact]
         public void SettingMaxCountShouldNotChangeDefaultMaxCountTest()
         {
-            var target = new ArrayTypeCreator {MaxCount = Environment.TickCount};
+            var target = new ArrayTypeCreator
+            {
+                MaxCount = Environment.TickCount
+            };
 
             ArrayTypeCreator.DefaultMaxCount.Should().NotBe(target.MaxCount);
         }

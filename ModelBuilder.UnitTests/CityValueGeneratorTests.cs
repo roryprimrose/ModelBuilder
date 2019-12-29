@@ -14,7 +14,10 @@
         [Fact]
         public void GenerateReturnsRandomStateMatchingCaseInsensitiveStateTest()
         {
-            var address = new Address {State = "ONTARIO"};
+            var address = new Address
+            {
+                State = "ONTARIO"
+            };
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
@@ -38,7 +41,10 @@
         [Fact]
         public void GenerateReturnsRandomStateMatchingStateTest()
         {
-            var address = new Address {State = "Ontario"};
+            var address = new Address
+            {
+                State = "Ontario"
+            };
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
@@ -60,7 +66,10 @@
         [Fact]
         public void GenerateReturnsRandomStateWhenNoMatchingStateTest()
         {
-            var address = new Address {State = Guid.NewGuid().ToString()};
+            var address = new Address
+            {
+                State = Guid.NewGuid().ToString()
+            };
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
@@ -88,23 +97,23 @@
 
             var target = new CityValueGenerator();
 
-            var first = (string) target.Generate(typeof(string), "city", executeStrategy);
-            
+            var first = (string)target.Generate(typeof(string), "city", executeStrategy);
+
             var second = first;
 
             for (var index = 0; index < 1000; index++)
             {
-                second = (string) target.Generate(typeof(string), "city", executeStrategy);
+                second = (string)target.Generate(typeof(string), "city", executeStrategy);
 
                 if (string.Equals(first, second, StringComparison.OrdinalIgnoreCase) == false)
                 {
                     break;
                 }
             }
-            
+
             first.Should().NotBe(second);
         }
-        
+
         [Fact]
         public void GenerateReturnsStringValueTest()
         {
@@ -139,7 +148,7 @@
 
             var target = new CityValueGenerator();
 
-            var actual = (string) target.Generate(typeof(string), referenceName, executeStrategy);
+            var actual = (string)target.Generate(typeof(string), referenceName, executeStrategy);
 
             actual.Should().NotBeNullOrEmpty();
         }

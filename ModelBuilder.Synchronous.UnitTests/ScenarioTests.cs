@@ -64,7 +64,10 @@ namespace ModelBuilder.Synchronous.UnitTests
 
             var build = Substitute.For<IBuildStrategy>();
             var generator = Substitute.For<IValueGenerator>();
-            var generators = new List<IValueGenerator> {generator}.AsReadOnly();
+            var generators = new List<IValueGenerator>
+            {
+                generator
+            }.AsReadOnly();
 
             build.ValueGenerators.Returns(generators);
             generator.IsSupported(typeof(Guid), null, Arg.Any<IBuildChain>()).Returns(true);
@@ -92,7 +95,10 @@ namespace ModelBuilder.Synchronous.UnitTests
 
             var build = Substitute.For<IBuildStrategy>();
             var creator = Substitute.For<ITypeCreator>();
-            var creators = new List<ITypeCreator> {creator}.AsReadOnly();
+            var creators = new List<ITypeCreator>
+            {
+                creator
+            }.AsReadOnly();
 
             build.TypeCreators.Returns(creators);
             creator.CanCreate(typeof(ReadOnlyModel), null, Arg.Any<IBuildChain>()).Returns(true);
@@ -121,7 +127,10 @@ namespace ModelBuilder.Synchronous.UnitTests
 
             var build = Substitute.For<IBuildStrategy>();
             var generator = Substitute.For<IValueGenerator>();
-            var generators = new List<IValueGenerator> {generator}.AsReadOnly();
+            var generators = new List<IValueGenerator>
+            {
+                generator
+            }.AsReadOnly();
 
             build.ValueGenerators.Returns(generators);
             generator.IsSupported(typeof(Guid), null, Arg.Any<IBuildChain>()).Returns(true);
@@ -149,7 +158,10 @@ namespace ModelBuilder.Synchronous.UnitTests
 
             var build = Substitute.For<IBuildStrategy>();
             var creator = Substitute.For<ITypeCreator>();
-            var creators = new List<ITypeCreator> {creator}.AsReadOnly();
+            var creators = new List<ITypeCreator>
+            {
+                creator
+            }.AsReadOnly();
 
             build.TypeCreators.Returns(creators);
             creator.CanCreate(typeof(ReadOnlyModel), null, Arg.Any<IBuildChain>()).Returns(true);
@@ -160,7 +172,7 @@ namespace ModelBuilder.Synchronous.UnitTests
             {
                 Model.BuildStrategy = build;
 
-                var actual = (ReadOnlyModel) Model.Create(typeof(ReadOnlyModel), value);
+                var actual = (ReadOnlyModel)Model.Create(typeof(ReadOnlyModel), value);
 
                 actual.Value.Should().Be(value);
             }
@@ -175,9 +187,15 @@ namespace ModelBuilder.Synchronous.UnitTests
         {
             var build = Substitute.For<IBuildStrategy>();
             var generator = Substitute.For<IValueGenerator>();
-            var generators = new List<IValueGenerator> {generator}.AsReadOnly();
+            var generators = new List<IValueGenerator>
+            {
+                generator
+            }.AsReadOnly();
             var creator = Substitute.For<ITypeCreator>();
-            var creators = new List<ITypeCreator> {creator}.AsReadOnly();
+            var creators = new List<ITypeCreator>
+            {
+                creator
+            }.AsReadOnly();
             var ignoreRules = new List<IgnoreRule>().AsReadOnly();
             var resolver = Substitute.For<IConstructorResolver>();
 
@@ -210,19 +228,25 @@ namespace ModelBuilder.Synchronous.UnitTests
             var creator = Substitute.For<ITypeCreator>();
             var propertyResolver = Substitute.For<IPropertyResolver>();
 
-            var creators = new List<ITypeCreator> {creator}.AsReadOnly();
+            var creators = new List<ITypeCreator>
+            {
+                creator
+            }.AsReadOnly();
             var generator = Substitute.For<IValueGenerator>();
-            var generators = new List<IValueGenerator> {generator}.AsReadOnly();
+            var generators = new List<IValueGenerator>
+            {
+                generator
+            }.AsReadOnly();
 
             build.PropertyResolver.Returns(propertyResolver);
             build.TypeCreators.Returns(creators);
             build.ValueGenerators.Returns(generators);
             propertyResolver.CanPopulate(Arg.Any<PropertyInfo>()).Returns(true);
-            propertyResolver.ShouldPopulateProperty(Arg.Any<IBuildConfiguration>(),
-                    Arg.Any<object>(),
-                    Arg.Any<PropertyInfo>(),
-                    Arg.Any<object[]>())
-                .Returns(true);
+            propertyResolver.ShouldPopulateProperty(
+                Arg.Any<IBuildConfiguration>(),
+                Arg.Any<object>(),
+                Arg.Any<PropertyInfo>(),
+                Arg.Any<object[]>()).Returns(true);
             creator.CanPopulate(typeof(SlimModel), null, Arg.Any<IBuildChain>()).Returns(true);
             creator.Populate(expected, Arg.Any<IExecuteStrategy>()).Returns(expected);
             creator.AutoPopulate.Returns(true);

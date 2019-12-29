@@ -25,6 +25,7 @@
         {
             var targetType = typeof(MemoryStream);
 
+            // ReSharper disable once ObjectCreationAsStatement
             Action action = () => new TypeMappingRule(null, targetType);
 
             action.Should().Throw<ArgumentNullException>();
@@ -35,6 +36,7 @@
         {
             var sourceType = typeof(Stream);
 
+            // ReSharper disable once ObjectCreationAsStatement
             Action action = () => new TypeMappingRule(sourceType, null);
 
             action.Should().Throw<ArgumentNullException>();
@@ -46,6 +48,7 @@
             var sourceType = typeof(MemoryStream);
             var targetType = typeof(Stream);
 
+            // ReSharper disable once ObjectCreationAsStatement
             Action action = () => new TypeMappingRule(sourceType, targetType);
 
             action.Should().Throw<ArgumentException>();
@@ -57,6 +60,7 @@
             var sourceType = typeof(Stream);
             var targetType = typeof(Person);
 
+            // ReSharper disable once ObjectCreationAsStatement
             Action action = () => new TypeMappingRule(sourceType, targetType);
 
             action.Should().Throw<ArgumentException>();

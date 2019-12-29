@@ -70,7 +70,8 @@ namespace ModelBuilder
         ///     The <paramref name="expression" /> parameter does not match a property on the type
         ///     to generate.
         /// </exception>
-        [SuppressMessage("Microsoft.Design",
+        [SuppressMessage(
+            "Microsoft.Design",
             "CA1011:ConsiderPassingBaseTypesAsParameters",
             Justification = "This type is required in order to support the fluent syntax of call sites.")]
         public static IBuildStrategy Ignoring<T>(
@@ -104,7 +105,8 @@ namespace ModelBuilder
         /// <param name="buildStrategy">The build strategy to clone.</param>
         /// <returns>A cloned build strategy with the new rule.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="buildStrategy" /> parameter is null.</exception>
-        [SuppressMessage("Microsoft.Design",
+        [SuppressMessage(
+            "Microsoft.Design",
             "CA1011:ConsiderPassingBaseTypesAsParameters",
             Justification = "This type is required in order to support the fluent syntax of call sites.")]
         public static IBuildStrategy Mapping<TSource, TTarget>(this IBuildStrategy buildStrategy)
@@ -158,7 +160,8 @@ namespace ModelBuilder
 
             if (buildLog == null)
             {
-                var message = string.Format(CultureInfo.CurrentCulture,
+                var message = string.Format(
+                    CultureInfo.CurrentCulture,
                     Resources.BuildStrategy_BuildLogRequired,
                     buildStrategy.GetType().FullName,
                     nameof(IBuildLog),

@@ -23,7 +23,7 @@
 
             for (var index = 0; index < 1000; index++)
             {
-                var actual = (string) target.Generate(typeof(string), "Gender", executeStrategy);
+                var actual = (string)target.Generate(typeof(string), "Gender", executeStrategy);
 
                 if (actual == "Male")
                 {
@@ -73,7 +73,7 @@
 
             var target = new GenderValueGenerator();
 
-            var actual = (string) target.Generate(type, referenceName, executeStrategy);
+            var actual = (string)target.Generate(type, referenceName, executeStrategy);
 
             actual.Should().NotBeNullOrEmpty();
         }

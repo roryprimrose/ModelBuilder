@@ -15,14 +15,6 @@
         }
 
         [Fact]
-        public void CulturesReturnsTestDataTest()
-        {
-            var target = TestData.Cultures;
-
-            target.Should().NotBeEmpty();
-        }
-
-        [Fact]
         public void DomainsReturnsTestDataTest()
         {
             var target = TestData.Domains;

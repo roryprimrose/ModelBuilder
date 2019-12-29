@@ -21,12 +21,12 @@ namespace ModelBuilder
                 throw new ArgumentNullException(nameof(type));
             }
 
-            if (type.TypeIsInterface())
+            if (type.IsInterface)
             {
                 return false;
             }
 
-            if (type.TypeIsAbstract())
+            if (type.IsAbstract)
             {
                 return false;
             }
@@ -157,7 +157,8 @@ namespace ModelBuilder
                 return;
             }
 
-            var message = string.Format(CultureInfo.CurrentCulture,
+            var message = string.Format(
+                CultureInfo.CurrentCulture,
                 Resources.Error_GenerationNotSupportedFormat,
                 GetType().FullName,
                 type.FullName,
@@ -200,7 +201,8 @@ namespace ModelBuilder
                 return;
             }
 
-            var message = string.Format(CultureInfo.CurrentCulture,
+            var message = string.Format(
+                CultureInfo.CurrentCulture,
                 Resources.Error_GenerationNotSupportedFormat,
                 GetType().FullName,
                 type.FullName,

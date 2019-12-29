@@ -21,6 +21,7 @@
         [Fact]
         public void ThrowsExceptionWhenCreatedWithEmptyNameTest()
         {
+            // ReSharper disable once ObjectCreationAsStatement
             Action action = () => new IgnoreRule(typeof(string), string.Empty);
 
             action.Should().Throw<ArgumentException>();
@@ -29,6 +30,7 @@
         [Fact]
         public void ThrowsExceptionWhenCreatedWithNullNameTest()
         {
+            // ReSharper disable once ObjectCreationAsStatement
             Action action = () => new IgnoreRule(typeof(string), null);
 
             action.Should().Throw<ArgumentException>();
@@ -39,6 +41,7 @@
         {
             var name = Guid.NewGuid().ToString();
 
+            // ReSharper disable once ObjectCreationAsStatement
             Action action = () => { new IgnoreRule(null, name); };
 
             action.Should().Throw<ArgumentNullException>();
@@ -47,6 +50,7 @@
         [Fact]
         public void ThrowsExceptionWhenCreatedWithWhiteSpaceNameTest()
         {
+            // ReSharper disable once ObjectCreationAsStatement
             Action action = () => new IgnoreRule(typeof(string), "  ");
 
             action.Should().Throw<ArgumentException>();

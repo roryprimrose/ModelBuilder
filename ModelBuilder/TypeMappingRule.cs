@@ -24,7 +24,8 @@
 
             if (SourceType.IsAssignableFrom(TargetType) == false)
             {
-                var message = string.Format(CultureInfo.CurrentCulture,
+                var message = string.Format(
+                    CultureInfo.CurrentCulture,
                     Resources.TypeMappingRule_TypeNotAssignable,
                     sourceType.FullName,
                     targetType.FullName);

@@ -11,13 +11,13 @@
         /// <summary>
         ///     Initializes a new instance of the <see cref="DateTimeValueGenerator" /> class.
         /// </summary>
-        public DateTimeValueGenerator()
-            : base(typeof(DateTime),
-                typeof(DateTime?),
-                typeof(DateTimeOffset),
-                typeof(DateTimeOffset?),
-                typeof(TimeSpan),
-                typeof(TimeSpan?))
+        public DateTimeValueGenerator() : base(
+            typeof(DateTime),
+            typeof(DateTime?),
+            typeof(DateTimeOffset),
+            typeof(DateTimeOffset?),
+            typeof(TimeSpan),
+            typeof(TimeSpan?))
         {
         }
 

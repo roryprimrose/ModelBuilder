@@ -14,7 +14,10 @@
         [Fact]
         public void GenerateReturnsRandomStateMatchingCaseInsensitiveCountryTest()
         {
-            var address = new Address {Country = "UNITED STATES"};
+            var address = new Address
+            {
+                Country = "UNITED STATES"
+            };
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
@@ -38,7 +41,10 @@
         [Fact]
         public void GenerateReturnsRandomStateMatchingCountryTest()
         {
-            var address = new Address {Country = "United States"};
+            var address = new Address
+            {
+                Country = "United States"
+            };
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
@@ -60,7 +66,10 @@
         [Fact]
         public void GenerateReturnsRandomStateWhenNoMatchingCountryTest()
         {
-            var address = new Address {Country = Guid.NewGuid().ToString()};
+            var address = new Address
+            {
+                Country = Guid.NewGuid().ToString()
+            };
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
@@ -88,13 +97,13 @@
 
             var target = new StateValueGenerator();
 
-            var first = (string) target.Generate(typeof(string), "state", executeStrategy);
+            var first = (string)target.Generate(typeof(string), "state", executeStrategy);
 
             string second = null;
 
             for (var index = 0; index < 1000; index++)
             {
-                second = (string) target.Generate(typeof(string), "state", executeStrategy);
+                second = (string)target.Generate(typeof(string), "state", executeStrategy);
 
                 if (string.Equals(first, second, StringComparison.OrdinalIgnoreCase) == false)
                 {
@@ -141,7 +150,7 @@
 
             var target = new StateValueGenerator();
 
-            var actual = (string) target.Generate(type, referenceName, executeStrategy);
+            var actual = (string)target.Generate(type, referenceName, executeStrategy);
 
             actual.Should().NotBeNullOrEmpty();
         }

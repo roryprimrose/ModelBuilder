@@ -107,7 +107,8 @@
         [Fact]
         public void ThrowsExceptionWithNullExpressionTest()
         {
-            Action action = () => new WrapperGenerator((Regex) null);
+            // ReSharper disable once ObjectCreationAsStatement
+            Action action = () => new WrapperGenerator((Regex)null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -115,7 +116,8 @@
         [Fact]
         public void ThrowsExceptionWithNullReferenceNameTest()
         {
-            Action action = () => new WrapperGenerator((string) null);
+            // ReSharper disable once ObjectCreationAsStatement
+            Action action = () => new WrapperGenerator((string)null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -123,25 +125,23 @@
         [Fact]
         public void ThrowsExceptionWithNullTypesTest()
         {
-            Action action = () => new WrapperGenerator((Type[]) null);
+            // ReSharper disable once ObjectCreationAsStatement
+            Action action = () => new WrapperGenerator((Type[])null);
 
             action.Should().Throw<ArgumentNullException>();
         }
 
         private class WrapperGenerator : ValueGeneratorMatcher
         {
-            public WrapperGenerator(params Type[] types)
-                : base(types)
+            public WrapperGenerator(params Type[] types) : base(types)
             {
             }
 
-            public WrapperGenerator(string referenceName, params Type[] types)
-                : base(referenceName, types)
+            public WrapperGenerator(string referenceName, params Type[] types) : base(referenceName, types)
             {
             }
 
-            public WrapperGenerator(Regex expression, params Type[] types)
-                : base(expression, types)
+            public WrapperGenerator(Regex expression, params Type[] types) : base(expression, types)
             {
             }
 

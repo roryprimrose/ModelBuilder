@@ -29,9 +29,7 @@
         [Fact]
         public void IsNullableThrowsExceptionWithNullTypeTest()
         {
-            Type target = null;
-
-            Action action = () => target.IsNullable();
+            Action action = () => ((Type)null).IsNullable();
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -79,13 +77,18 @@
         public void SetEachCollectionRunsActionAgainstInstanceTest()
         {
             var index = 0;
-            var target = new Collection<Person> {new Person(), new Person()};
-
-            var actual = target.SetEach(x =>
+            var target = new Collection<Person>
             {
-                index++;
-                x.Priority = index;
-            });
+                new Person(),
+                new Person()
+            };
+
+            var actual = target.SetEach(
+                x =>
+                {
+                    index++;
+                    x.Priority = index;
+                });
 
             actual.Should().BeSameAs(target);
             actual.Count.Should().Be(2);
@@ -106,9 +109,7 @@
         [Fact]
         public void SetEachCollectionThrowsExceptionWithNullInstanceTest()
         {
-            Collection<string> target = null;
-
-            Action action = () => target.SetEach(x => { });
+            Action action = () => ((Collection<string>)null).SetEach(x => { });
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -116,7 +117,15 @@
         [Fact]
         public void SetEachDictionaryRunsActionAgainstInstanceTest()
         {
-            var target = new Dictionary<Guid, Person> {{Guid.NewGuid(), new Person()}, {Guid.NewGuid(), new Person()}};
+            var target = new Dictionary<Guid, Person>
+            {
+                {
+                    Guid.NewGuid(), new Person()
+                },
+                {
+                    Guid.NewGuid(), new Person()
+                }
+            };
 
             var actual = target.SetEach(x => { x.Value.Id = x.Key; });
 
@@ -142,11 +151,12 @@
             var index = 0;
             var target = BuildPeople();
 
-            var actual = target.SetEach(x =>
-            {
-                index++;
-                x.Priority = index;
-            });
+            var actual = target.SetEach(
+                x =>
+                {
+                    index++;
+                    x.Priority = index;
+                });
 
             actual.Count.Should().Be(2);
             actual[0].Priority.Should().Be(1);
@@ -156,9 +166,7 @@
         [Fact]
         public void SetEachIEnumerableThrowsExceptionWithNullInstanceTest()
         {
-            IEnumerable<string> target = null;
-
-            Action action = () => target.SetEach(x => { });
+            Action action = () => ((IEnumerable<string>)null).SetEach(x => { });
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -167,13 +175,18 @@
         public void SetEachListAsIEnumerableRunsActionAgainstInstanceTest()
         {
             var index = 0;
-            var target = new List<Person> {new Person(), new Person()};
-
-            var actual = target.SetEach(x =>
+            var target = new List<Person>
             {
-                index++;
-                x.Priority = index;
-            });
+                new Person(),
+                new Person()
+            };
+
+            var actual = target.SetEach(
+                x =>
+                {
+                    index++;
+                    x.Priority = index;
+                });
 
             actual.Should().BeSameAs(target);
             actual.Count.Should().Be(2);
@@ -194,9 +207,7 @@
         [Fact]
         public void SetEachListThrowsExceptionWithNullInstanceTest()
         {
-            List<string> target = null;
-
-            Action action = () => target.SetEach(x => { });
+            Action action = () => ((List<string>)null).SetEach(x => { });
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -205,14 +216,19 @@
         public void SetEachReadOnlyCollectionRunsActionAgainstInstanceTest()
         {
             var index = 0;
-            var source = new List<Person> {new Person(), new Person()};
+            var source = new List<Person>
+            {
+                new Person(),
+                new Person()
+            };
             var target = new ReadOnlyCollection<Person>(source);
 
-            var actual = target.SetEach(x =>
-            {
-                index++;
-                x.Priority = index;
-            });
+            var actual = target.SetEach(
+                x =>
+                {
+                    index++;
+                    x.Priority = index;
+                });
 
             actual.Should().BeSameAs(target);
             actual.Count.Should().Be(2);
@@ -245,17 +261,21 @@
         [Fact]
         public void SetThrowsExceptionWithNullInstanceTest()
         {
-            object target = null;
-
-            Action action = () => target.Set(x => { });
+            Action action = () => ((object)null).Set(x => { });
 
             action.Should().Throw<ArgumentNullException>();
         }
 
         private IEnumerable<Person> BuildPeople()
         {
-            yield return new Person {Id = Guid.NewGuid()};
-            yield return new Person {Id = Guid.NewGuid()};
+            yield return new Person
+            {
+                Id = Guid.NewGuid()
+            };
+            yield return new Person
+            {
+                Id = Guid.NewGuid()
+            };
         }
     }
 }

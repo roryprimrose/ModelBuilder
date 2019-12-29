@@ -9,7 +9,8 @@
     ///     The <see cref="BuildHistory" />
     ///     class is used to track a hierarchy of objects being created.
     /// </summary>
-    [SuppressMessage("Code.Quality",
+    [SuppressMessage(
+        "Code.Quality",
         "CA1710",
         Justification = "The history is enumerable, but does not have the characteristics of a Collection.")]
     public class BuildHistory : IBuildHistory

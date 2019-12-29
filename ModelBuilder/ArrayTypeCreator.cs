@@ -27,7 +27,7 @@
                 throw new ArgumentNullException(nameof(type));
             }
 
-            if (type.TypeIsArray())
+            if (type.IsArray)
             {
                 return true;
             }
@@ -37,7 +37,8 @@
 
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is null.</exception>
-        [SuppressMessage("Microsoft.Design",
+        [SuppressMessage(
+            "Microsoft.Design",
             "CA1062:Validate arguments of public methods",
             MessageId = "0",
             Justification = "The parameter is validated in the call to VerifyCreateRequest.")]
@@ -51,10 +52,16 @@
 
             var count = Generator.NextValue(1, MaxCount);
 
-            var parameters = new object[] {count};
+            var parameters = new object[]
+            {
+                count
+            };
 
             // Array has a dark-magic constructor that takes an int to define the size of the array
-            var parameterTypes = new[] {typeof(int)};
+            var parameterTypes = new[]
+            {
+                typeof(int)
+            };
             var constructor = type.GetConstructor(parameterTypes);
 
             Debug.Assert(constructor != null, "No constructor was found on the array");
@@ -83,7 +90,12 @@
 
             var target = instance as Array;
 
-            if (target?.Length == 0)
+            if (target == null)
+            {
+                return base.Populate(instance, executeStrategy);
+            }
+
+            if (target.Length == 0)
             {
                 return base.Populate(instance, executeStrategy);
             }
@@ -100,7 +112,14 @@
             else
             {
                 // The type of item in the array has a default value of null so we need to attempt to parse the name from the name of the array type itself
+#if NETSTANDARD2_0
                 var typeName = instanceType.AssemblyQualifiedName?.Replace("[]", string.Empty);
+#else
+                var typeName = instanceType.AssemblyQualifiedName?.Replace(
+                    "[]",
+                    string.Empty,
+                    StringComparison.OrdinalIgnoreCase);
+#endif
 
                 itemType = Type.GetType(typeName);
             }

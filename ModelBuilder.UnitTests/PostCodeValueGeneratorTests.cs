@@ -14,7 +14,10 @@
         [Fact]
         public void GenerateReturnsRandomCityWhenNoMatchingCityTest()
         {
-            var address = new Address {City = Guid.NewGuid().ToString()};
+            var address = new Address
+            {
+                City = Guid.NewGuid().ToString()
+            };
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
@@ -32,7 +35,10 @@
         [Fact]
         public void GenerateReturnsRandomPostCodeMatchingCaseInsensitiveCityTest()
         {
-            var address = new Address {City = "RIBAS"};
+            var address = new Address
+            {
+                City = "RIBAS"
+            };
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
@@ -56,7 +62,10 @@
         [Fact]
         public void GenerateReturnsRandomPostCodeMatchingCityTest()
         {
-            var address = new Address {City = "Ribas"};
+            var address = new Address
+            {
+                City = "Ribas"
+            };
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
@@ -88,13 +97,13 @@
 
             var target = new PostCodeValueGenerator();
 
-            var first = (string) target.Generate(typeof(string), "Zip", executeStrategy);
+            var first = (string)target.Generate(typeof(string), "Zip", executeStrategy);
 
             var second = first;
 
             for (var index = 0; index < 1000; index++)
             {
-                second = (string) target.Generate(typeof(string), "Zip", executeStrategy);
+                second = (string)target.Generate(typeof(string), "Zip", executeStrategy);
 
                 if (string.Equals(first, second, StringComparison.OrdinalIgnoreCase) == false)
                 {
@@ -145,7 +154,7 @@
 
             var target = new PostCodeValueGenerator();
 
-            var actual = (string) target.Generate(typeof(string), referenceName, executeStrategy);
+            var actual = (string)target.Generate(typeof(string), referenceName, executeStrategy);
 
             actual.Should().NotBeNullOrEmpty();
         }

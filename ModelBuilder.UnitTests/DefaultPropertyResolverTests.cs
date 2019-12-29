@@ -24,7 +24,8 @@
         [Fact]
         public void CanPopulateReturnsFalseWhenPropertyIsPrivateTest()
         {
-            var propertyInfo = typeof(PrivateProp).GetProperty("Person",
+            var propertyInfo = typeof(PrivateProp).GetProperty(
+                "Person",
                 BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.GetProperty | BindingFlags.SetProperty);
 
             var sut = new DefaultPropertyResolver();
@@ -35,7 +36,7 @@
         }
 
         [Fact]
-        public void CanPopulateReturnsFalseWhenPropertySetterIsStaticTest()
+        public void CanPopulateReturnsFalseWhenPropertiesetterIsStaticTest()
         {
             var propertyInfo = typeof(StaticSetter).GetProperty(nameof(StaticSetter.Person));
 
@@ -71,7 +72,7 @@
         }
 
         [Fact]
-        public void CanPopulateReturnsTrueWhenPropertySetterIsPublicTest()
+        public void CanPopulateReturnsTrueWhenPropertiesetterIsPublicTest()
         {
             var propertyInfo = typeof(Address).GetProperty(nameof(Address.AddressLine1));
 
@@ -123,7 +124,10 @@
         {
             var configuration = new DefaultBuildStrategyCompiler().Compile();
             var instance = Model.Create<WithConstructorParameters>();
-            var args = new object[] {instance.First, instance.Id, instance.RefNumber, instance.Number, instance.Value};
+            var args = new object[]
+            {
+                instance.First, instance.Id, instance.RefNumber, instance.Number, instance.Value
+            };
 
             var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.First));
 
@@ -139,7 +143,10 @@
         {
             var configuration = new DefaultBuildStrategyCompiler().Compile();
             var instance = Model.Create<WithConstructorParameters>();
-            var args = new object[] {instance.First, instance.Id, instance.RefNumber, instance.Number, instance.Value};
+            var args = new object[]
+            {
+                instance.First, instance.Id, instance.RefNumber, instance.Number, instance.Value
+            };
 
             var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.Number));
 
@@ -155,7 +162,10 @@
         {
             var configuration = new DefaultBuildStrategyCompiler().Compile();
             var instance = Model.Create<WithConstructorParameters>();
-            var args = new object[] {new Company(), instance.Id, instance.RefNumber, instance.Number, instance.Value};
+            var args = new object[]
+            {
+                new Company(), instance.Id, instance.RefNumber, instance.Number, instance.Value
+            };
 
             var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.First));
 
@@ -171,7 +181,10 @@
         {
             var configuration = new DefaultBuildStrategyCompiler().Compile();
             var instance = Model.Create<WithConstructorParameters>();
-            var args = new object[] {instance.First, Guid.NewGuid(), null, int.MinValue, false};
+            var args = new object[]
+            {
+                instance.First, Guid.NewGuid(), null, int.MinValue, false
+            };
 
             var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.Number));
 
@@ -187,7 +200,10 @@
         {
             var configuration = new DefaultBuildStrategyCompiler().Compile();
             var instance = Model.Create<WithConstructorParameters>();
-            var args = new object[] {new Person(), instance.Id, instance.RefNumber, instance.Number, instance.Value};
+            var args = new object[]
+            {
+                new Person(), instance.Id, instance.RefNumber, instance.Number, instance.Value
+            };
 
             var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.First));
 
@@ -203,7 +219,10 @@
         {
             var configuration = new DefaultBuildStrategyCompiler().Compile();
             var instance = Model.Create<WithConstructorParameters>();
-            var args = new object[] {new Company(), instance.Id, instance.RefNumber, instance.Number, instance.Value};
+            var args = new object[]
+            {
+                new Company(), instance.Id, instance.RefNumber, instance.Number, instance.Value
+            };
 
             var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.First));
 
@@ -219,7 +238,10 @@
         {
             var configuration = new DefaultBuildStrategyCompiler().Compile();
             var instance = Model.Create<WithConstructorParameters>().Set(x => x.Id = Guid.Empty);
-            var args = new object[] {new Company(), instance.Id, instance.RefNumber, instance.Number, instance.Value};
+            var args = new object[]
+            {
+                new Company(), instance.Id, instance.RefNumber, instance.Number, instance.Value
+            };
 
             var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.Id));
 
@@ -236,7 +258,10 @@
         {
             var configuration = new DefaultBuildStrategyCompiler().Compile();
             var instance = Model.Create<ReadOnlyModelParent>().Set(x => x.Child = null);
-            var args = new object[] {Guid.NewGuid()};
+            var args = new object[]
+            {
+                Guid.NewGuid()
+            };
 
             var propertyInfo = typeof(ReadOnlyModelParent).GetProperty(nameof(ReadOnlyModelParent.Child));
 
@@ -252,7 +277,10 @@
         {
             var configuration = new DefaultBuildStrategyCompiler().Compile();
             var instance = Model.Create<WithConstructorParameters>().Set(x => x.First = null);
-            var args = new object[] {instance.Id, instance.RefNumber, instance.Number, instance.Value};
+            var args = new object[]
+            {
+                instance.Id, instance.RefNumber, instance.Number, instance.Value
+            };
 
             var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.First));
 
@@ -283,7 +311,8 @@
         }
 
         [Fact]
-        [SuppressMessage("Microsoft.Design",
+        [SuppressMessage(
+            "Microsoft.Design",
             "CA1825",
             Justification = "The Array.Empty<T> is not available on net452.")]
         public void ShouldPopulatePropertyReturnsTrueWhenPropertyNotIgnoredAndEmptyArgumentsProvidedTest()
@@ -314,7 +343,7 @@
         }
 
         [Fact]
-        public void ShouldPopulatePropertySkipsNullValuesTest()
+        public void ShouldPopulatePropertieskipsNullValuesTest()
         {
             var configuration = new DefaultBuildStrategyCompiler().Compile();
             var instance = Model.Create<WithConstructorParameters>();

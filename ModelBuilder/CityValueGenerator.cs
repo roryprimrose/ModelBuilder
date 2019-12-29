@@ -13,8 +13,7 @@
         /// <summary>
         ///     Initializes a new instance of the <see cref="CityValueGenerator" /> class.
         /// </summary>
-        public CityValueGenerator()
-            : base(PropertyExpression.City, typeof(string))
+        public CityValueGenerator() : base(PropertyExpression.City, typeof(string))
         {
         }
 
@@ -28,8 +27,7 @@
             if (string.IsNullOrWhiteSpace(state) == false)
             {
                 var locationMatches = TestData.Locations
-                    .Where(x => x.State.Equals(state, StringComparison.OrdinalIgnoreCase))
-                    .ToList();
+                    .Where(x => x.State.Equals(state, StringComparison.OrdinalIgnoreCase)).ToList();
 
                 location = locationMatches.Next();
             }
