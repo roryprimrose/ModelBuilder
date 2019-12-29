@@ -310,7 +310,6 @@
             WriteMessage(Resources.DefaultBuildLog_PostBuild, type.FullName, postBuildType.FullName);
         }
 
-        /// <inheritdoc />
         private void WriteMessage(string message, params object[] args)
         {
             Debug.Assert(message != null, "No message has been provided");

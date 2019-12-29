@@ -162,11 +162,6 @@
                 return _isSupported;
             }
 
-            public void RunVerifyGenerateRequest(Type type, string referenceName, IExecuteStrategy executeStrategy)
-            {
-                VerifyGenerateRequest(type, referenceName, executeStrategy);
-            }
-
             protected override object GenerateValue(Type type, string referenceName, IExecuteStrategy executeStrategy)
             {
                 return _value;

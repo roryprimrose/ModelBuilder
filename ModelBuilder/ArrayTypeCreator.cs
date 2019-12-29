@@ -90,7 +90,12 @@
 
             var target = instance as Array;
 
-            if (target?.Length == 0)
+            if (target == null)
+            {
+                return base.Populate(instance, executeStrategy);
+            }
+
+            if (target.Length == 0)
             {
                 return base.Populate(instance, executeStrategy);
             }

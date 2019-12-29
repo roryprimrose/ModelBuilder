@@ -107,7 +107,7 @@
         [InlineData(null, "FirstName", true)]
         [InlineData(typeof(string), null, true)]
         [InlineData(typeof(string), "FirstName", false)]
-        public void CreatedPropertyValidatesPropertysTest(Type propertyType, string propertyName, bool includeContext)
+        public void CreatedPropertyValidatesPropertiesTest(Type propertyType, string propertyName, bool includeContext)
         {
             Person context = null;
 
@@ -202,7 +202,7 @@
         [InlineData(null, "FirstName", true)]
         [InlineData(typeof(string), null, true)]
         [InlineData(typeof(string), "FirstName", false)]
-        public void CreatingPropertyValidatesPropertysTest(Type propertyType, string propertyName, bool includeContext)
+        public void CreatingPropertyValidatesPropertiesTest(Type propertyType, string propertyName, bool includeContext)
         {
             Person context = null;
 
@@ -307,7 +307,7 @@
         [InlineData(null, "FirstName", true)]
         [InlineData(typeof(string), null, true)]
         [InlineData(typeof(string), "FirstName", false)]
-        public void IgnoringPropertyValidatesPropertysTest(Type propertyType, string propertyName, bool includeContext)
+        public void IgnoringPropertyValidatesPropertiesTest(Type propertyType, string propertyName, bool includeContext)
         {
             Person context = null;
 

@@ -29,9 +29,7 @@
         [Fact]
         public void IsNullableThrowsExceptionWithNullTypeTest()
         {
-            Type target = null;
-
-            Action action = () => target.IsNullable();
+            Action action = () => ((Type)null).IsNullable();
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -111,9 +109,7 @@
         [Fact]
         public void SetEachCollectionThrowsExceptionWithNullInstanceTest()
         {
-            Collection<string> target = null;
-
-            Action action = () => target.SetEach(x => { });
+            Action action = () => ((Collection<string>)null).SetEach(x => { });
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -170,9 +166,7 @@
         [Fact]
         public void SetEachIEnumerableThrowsExceptionWithNullInstanceTest()
         {
-            IEnumerable<string> target = null;
-
-            Action action = () => target.SetEach(x => { });
+            Action action = () => ((IEnumerable<string>)null).SetEach(x => { });
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -213,9 +207,7 @@
         [Fact]
         public void SetEachListThrowsExceptionWithNullInstanceTest()
         {
-            List<string> target = null;
-
-            Action action = () => target.SetEach(x => { });
+            Action action = () => ((List<string>)null).SetEach(x => { });
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -269,9 +261,7 @@
         [Fact]
         public void SetThrowsExceptionWithNullInstanceTest()
         {
-            object target = null;
-
-            Action action = () => target.Set(x => { });
+            Action action = () => ((object)null).Set(x => { });
 
             action.Should().Throw<ArgumentNullException>();
         }

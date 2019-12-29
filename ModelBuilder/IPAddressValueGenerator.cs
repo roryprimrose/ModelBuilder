@@ -54,11 +54,11 @@
                 return new IPAddress(buffer);
             }
 
-            const string addressFormat = "{0}.{1}.{2}.{3}";
+            const string AddressFormat = "{0}.{1}.{2}.{3}";
 
             var address = string.Format(
                 CultureInfo.InvariantCulture,
-                addressFormat,
+                AddressFormat,
                 buffer[0],
                 buffer[1],
                 buffer[2],

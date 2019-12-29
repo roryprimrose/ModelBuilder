@@ -8,17 +8,9 @@
     using ModelBuilder.UnitTests.Models;
     using NSubstitute;
     using Xunit;
-    using Xunit.Abstractions;
 
     public class DefaultExecuteStrategyTTests
     {
-        private readonly ITestOutputHelper _output;
-
-        public DefaultExecuteStrategyTTests(ITestOutputHelper output)
-        {
-            _output = output;
-        }
-
         [Fact]
         public void CreateReturnsDefaultValueWhenInstanceFailsToBeCreatedTest()
         {

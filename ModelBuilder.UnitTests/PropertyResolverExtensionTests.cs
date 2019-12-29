@@ -30,15 +30,13 @@
         {
             var type = typeof(Person);
 
-            var target = (IPropertyResolver)null;
-
-            Action action = () => target.GetProperties(type);
+            Action action = () => ((IPropertyResolver)null).GetProperties(type);
 
             action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
-        public void GetPropertiesThrowsExecptionWithNullTypeTest()
+        public void GetPropertiesThrowsExceptionWithNullTypeTest()
         {
             var target = new DefaultPropertyResolver();
 
@@ -78,15 +76,13 @@
             var type = typeof(Person);
             var expression = new Regex("Stuff");
 
-            var target = (IPropertyResolver)null;
-
-            Action action = () => target.GetProperties(type, expression);
+            Action action = () => ((IPropertyResolver)null).GetProperties(type, expression);
 
             action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
-        public void GetPropertiesWithExpressionThrowsExecptionWithNullExpressionTest()
+        public void GetPropertiesWithExpressionThrowsExceptionWithNullExpressionTest()
         {
             var type = typeof(Person);
 
@@ -98,7 +94,7 @@
         }
 
         [Fact]
-        public void GetPropertiesWithExpressionThrowsExecptionWithNullTypeTest()
+        public void GetPropertiesWithExpressionThrowsExceptionWithNullTypeTest()
         {
             var expression = new Regex("Stuff");
 

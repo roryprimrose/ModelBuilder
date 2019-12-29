@@ -36,7 +36,7 @@
         }
 
         [Fact]
-        public void CanPopulateReturnsFalseWhenPropertySetterIsStaticTest()
+        public void CanPopulateReturnsFalseWhenPropertiesetterIsStaticTest()
         {
             var propertyInfo = typeof(StaticSetter).GetProperty(nameof(StaticSetter.Person));
 
@@ -72,7 +72,7 @@
         }
 
         [Fact]
-        public void CanPopulateReturnsTrueWhenPropertySetterIsPublicTest()
+        public void CanPopulateReturnsTrueWhenPropertiesetterIsPublicTest()
         {
             var propertyInfo = typeof(Address).GetProperty(nameof(Address.AddressLine1));
 
@@ -343,7 +343,7 @@
         }
 
         [Fact]
-        public void ShouldPopulatePropertySkipsNullValuesTest()
+        public void ShouldPopulatePropertieskipsNullValuesTest()
         {
             var configuration = new DefaultBuildStrategyCompiler().Compile();
             var instance = Model.Create<WithConstructorParameters>();

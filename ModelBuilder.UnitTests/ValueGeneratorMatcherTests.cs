@@ -107,6 +107,7 @@
         [Fact]
         public void ThrowsExceptionWithNullExpressionTest()
         {
+            // ReSharper disable once ObjectCreationAsStatement
             Action action = () => new WrapperGenerator((Regex)null);
 
             action.Should().Throw<ArgumentNullException>();
@@ -115,6 +116,7 @@
         [Fact]
         public void ThrowsExceptionWithNullReferenceNameTest()
         {
+            // ReSharper disable once ObjectCreationAsStatement
             Action action = () => new WrapperGenerator((string)null);
 
             action.Should().Throw<ArgumentNullException>();
@@ -123,6 +125,7 @@
         [Fact]
         public void ThrowsExceptionWithNullTypesTest()
         {
+            // ReSharper disable once ObjectCreationAsStatement
             Action action = () => new WrapperGenerator((Type[])null);
 
             action.Should().Throw<ArgumentNullException>();

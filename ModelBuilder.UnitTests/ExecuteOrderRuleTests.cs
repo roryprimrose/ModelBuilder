@@ -132,6 +132,7 @@
         {
             var priority = Environment.TickCount;
 
+            // ReSharper disable once ObjectCreationAsStatement
             Action action = () => new ExecuteOrderRule(null, null, (string)null, priority);
 
             action.Should().Throw<ArgumentNullException>();
@@ -142,6 +143,7 @@
         {
             var priority = Environment.TickCount;
 
+            // ReSharper disable once ObjectCreationAsStatement
             Action action = () => new ExecuteOrderRule(null, null, (Regex)null, priority);
 
             action.Should().Throw<ArgumentNullException>();
@@ -152,6 +154,7 @@
         {
             var priority = Environment.TickCount;
 
+            // ReSharper disable once ObjectCreationAsStatement
             Action action = () => new ExecuteOrderRule(null, priority);
 
             action.Should().Throw<ArgumentNullException>();

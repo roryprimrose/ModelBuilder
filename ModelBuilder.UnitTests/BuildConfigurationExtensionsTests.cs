@@ -28,9 +28,7 @@
         [Fact]
         public void CloneThrowsExceptionWithNullBuildStrategyTest()
         {
-            IBuildStrategy target = null;
-
-            Action action = () => target.Clone();
+            Action action = () => ((IBuildStrategy)null).Clone();
 
             action.Should().Throw<ArgumentNullException>();
         }

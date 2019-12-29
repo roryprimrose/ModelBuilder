@@ -360,6 +360,7 @@
         [Fact]
         public void ThrowsExceptionWithNullTargetExpressionAndTypesTest()
         {
+            // ReSharper disable once ObjectCreationAsStatement
             Action action = () => new GeneratorWrapper<string>(null, PropertyExpression.FirstName, typeof(string));
 
             action.Should().Throw<ArgumentException>();
@@ -368,6 +369,7 @@
         [Fact]
         public void ThrowsExceptionWithNullTargetExpressionTest()
         {
+            // ReSharper disable once ObjectCreationAsStatement
             Action action = () => new GeneratorWrapper<string>(null, PropertyExpression.Gender);
 
             action.Should().Throw<ArgumentException>();

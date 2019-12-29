@@ -1,4 +1,5 @@
-﻿namespace ModelBuilder.UnitTests
+﻿// ReSharper disable CollectionNeverUpdated.Local
+namespace ModelBuilder.UnitTests
 {
     using System;
     using System.Collections.Generic;
@@ -176,6 +177,7 @@
             var executeOrderRules = new List<ExecuteOrderRule>();
             var postBuildActions = new List<IPostBuildAction>();
 
+            // ReSharper disable once ObjectCreationAsStatement
             Action action = () => new BuildStrategy(
                 null,
                 propertyResolver,
@@ -202,6 +204,7 @@
             var executeOrderRules = new List<ExecuteOrderRule>();
             var postBuildActions = new List<IPostBuildAction>();
 
+            // ReSharper disable once ObjectCreationAsStatement
             Action action = () => new BuildStrategy(
                 constructorResolver,
                 propertyResolver,
@@ -228,6 +231,7 @@
             var typeMappingRules = new List<TypeMappingRule>();
             var postBuildActions = new List<IPostBuildAction>();
 
+            // ReSharper disable once ObjectCreationAsStatement
             Action action = () => new BuildStrategy(
                 constructorResolver,
                 propertyResolver,
@@ -254,6 +258,7 @@
             var executeOrderRules = new List<ExecuteOrderRule>();
             var postBuildActions = new List<IPostBuildAction>();
 
+            // ReSharper disable once ObjectCreationAsStatement
             Action action = () => new BuildStrategy(
                 constructorResolver,
                 propertyResolver,
@@ -280,6 +285,7 @@
             var typeMappingRules = new List<TypeMappingRule>();
             var executeOrderRules = new List<ExecuteOrderRule>();
 
+            // ReSharper disable once ObjectCreationAsStatement
             Action action = () => new BuildStrategy(
                 constructorResolver,
                 propertyResolver,
@@ -306,6 +312,7 @@
             var executeOrderRules = new List<ExecuteOrderRule>();
             var postBuildActions = new List<IPostBuildAction>();
 
+            // ReSharper disable once ObjectCreationAsStatement
             Action action = () => new BuildStrategy(
                 constructorResolver,
                 null,
@@ -321,8 +328,9 @@
         }
 
         [Fact]
-        public void ThrowsExceptionWhenCreatedWithNullStragegyTest()
+        public void ThrowsExceptionWhenCreatedWithNullStrategyTest()
         {
+            // ReSharper disable once ObjectCreationAsStatement
             Action action = () => new BuildStrategy(null);
 
             action.Should().Throw<ArgumentNullException>();
@@ -340,6 +348,7 @@
             var executeOrderRules = new List<ExecuteOrderRule>();
             var postBuildActions = new List<IPostBuildAction>();
 
+            // ReSharper disable once ObjectCreationAsStatement
             Action action = () => new BuildStrategy(
                 constructorResolver,
                 propertyResolver,
@@ -366,6 +375,7 @@
             var executeOrderRules = new List<ExecuteOrderRule>();
             var postBuildActions = new List<IPostBuildAction>();
 
+            // ReSharper disable once ObjectCreationAsStatement
             Action action = () => new BuildStrategy(
                 constructorResolver,
                 propertyResolver,
@@ -392,6 +402,7 @@
             var executeOrderRules = new List<ExecuteOrderRule>();
             var postBuildActions = new List<IPostBuildAction>();
 
+            // ReSharper disable once ObjectCreationAsStatement
             Action action = () => new BuildStrategy(
                 constructorResolver,
                 propertyResolver,

@@ -46,9 +46,7 @@
         [Fact]
         public void CreateThrowsExceptionWithNullStrategyTest()
         {
-            IBuildStrategy target = null;
-
-            Action action = () => target.Create(typeof(Guid));
+            Action action = () => ((IBuildStrategy)null).Create(typeof(Guid));
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -77,9 +75,7 @@
         [Fact]
         public void CreateTThrowsExceptionWithNullStrategyTest()
         {
-            IBuildStrategy target = null;
-
-            Action action = () => target.Create<Guid>();
+            Action action = () => ((IBuildStrategy)null).Create<Guid>();
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -113,9 +109,7 @@
         [Fact]
         public void IgnoringThrowsExceptionWithNullStrategyTest()
         {
-            IBuildStrategy target = null;
-
-            Action action = () => target.Ignoring<Person>(x => x.Priority);
+            Action action = () => ((IBuildStrategy)null).Ignoring<Person>(x => x.Priority);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -139,9 +133,7 @@
         [Fact]
         public void MappingThrowsExceptionWithNullStrategyTest()
         {
-            IBuildStrategy target = null;
-
-            Action action = () => target.Mapping<Stream, MemoryStream>();
+            Action action = () => ((IBuildStrategy)null).Mapping<Stream, MemoryStream>();
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -151,9 +143,7 @@
         {
             var model = new Person();
 
-            IBuildStrategy target = null;
-
-            Action action = () => target.Populate(model);
+            Action action = () => ((IBuildStrategy)null).Populate(model);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -241,9 +231,7 @@
         [Fact]
         public void UsingExecuteStrategyThrowsExceptionWithNullStrategyTest()
         {
-            IBuildStrategy target = null;
-
-            Action action = () => target.UsingExecuteStrategy<NullExecuteStrategy>();
+            Action action = () => ((IBuildStrategy)null).UsingExecuteStrategy<NullExecuteStrategy>();
 
             action.Should().Throw<ArgumentNullException>();
         }

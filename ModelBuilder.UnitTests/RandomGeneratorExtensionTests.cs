@@ -53,9 +53,7 @@
         [Fact]
         public void NextValueThrowsExceptionWithMinimumAndMaximumWhenGeneratorIsNullTest()
         {
-            RandomGenerator target = null;
-
-            Action action = () => target.NextValue(1, 10);
+            Action action = () => ((RandomGenerator)null).NextValue(1, 10);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -63,9 +61,7 @@
         [Fact]
         public void NextValueThrowsExceptionWithNullGeneratorTest()
         {
-            IRandomGenerator target = null;
-
-            Action action = () => target.NextValue<int>();
+            Action action = () => ((IRandomGenerator)null).NextValue<int>();
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -100,9 +96,7 @@
         [Fact]
         public void NextValueWithMaxThrowsExceptionWithNullGeneratorTest()
         {
-            IRandomGenerator target = null;
-
-            Action action = () => target.NextValue(100);
+            Action action = () => ((IRandomGenerator)null).NextValue(100);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -129,9 +123,7 @@
         {
             var max = Environment.TickCount;
 
-            IRandomGenerator target = null;
-
-            Action action = () => target.NextValue(typeof(int), max);
+            Action action = () => ((IRandomGenerator)null).NextValue(typeof(int), max);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -168,9 +160,7 @@
         [Fact]
         public void NextValueWithTypeThrowsExceptionWithNullGeneratorTest()
         {
-            IRandomGenerator target = null;
-
-            Action action = () => target.NextValue(typeof(int));
+            Action action = () => ((IRandomGenerator)null).NextValue(typeof(int));
 
             action.Should().Throw<ArgumentNullException>();
         }

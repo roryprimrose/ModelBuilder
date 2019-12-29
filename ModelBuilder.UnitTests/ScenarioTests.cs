@@ -574,7 +574,7 @@
         [Fact]
         public void PopulateOnlySetsPublicInstancePropertiesOnlyTest()
         {
-            var expected = new PropertyScopes();
+            var expected = new PropertyScope();
 
             var actual = Model.Populate(expected);
 
@@ -582,7 +582,7 @@
             actual.Public.Should().NotBeEmpty();
             actual.PrivateSet.Should().BeEmpty();
             actual.CannotSetValue.Should().BeEmpty();
-            PropertyScopes.GlobalValue.Should().BeEmpty();
+            PropertyScope.GlobalValue.Should().BeEmpty();
         }
 
         [Fact]

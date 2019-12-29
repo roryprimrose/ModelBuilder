@@ -72,6 +72,7 @@
             var executeOrderRules = Model.BuildStrategy.ExecuteOrderRules;
             var postBuildActions = Model.BuildStrategy.PostBuildActions;
 
+            // ReSharper disable once ObjectCreationAsStatement
             Action action = () => new BuilderStrategyWrapper(
                 null,
                 propertyResolver,
@@ -98,6 +99,7 @@
             var executeOrderRules = Model.BuildStrategy.ExecuteOrderRules;
             var postBuildActions = Model.BuildStrategy.PostBuildActions;
 
+            // ReSharper disable once ObjectCreationAsStatement
             Action action = () => new BuilderStrategyWrapper(
                 constructorResolver,
                 propertyResolver,
@@ -124,6 +126,7 @@
             var typeMappingRules = Model.BuildStrategy.TypeMappingRules;
             var postBuildActions = Model.BuildStrategy.PostBuildActions;
 
+            // ReSharper disable once ObjectCreationAsStatement
             Action action = () => new BuilderStrategyWrapper(
                 constructorResolver,
                 propertyResolver,
@@ -150,6 +153,7 @@
             var executeOrderRules = Model.BuildStrategy.ExecuteOrderRules;
             var postBuildActions = Model.BuildStrategy.PostBuildActions;
 
+            // ReSharper disable once ObjectCreationAsStatement
             Action action = () => new BuilderStrategyWrapper(
                 constructorResolver,
                 propertyResolver,
@@ -176,6 +180,7 @@
             var typeMappingRules = Model.BuildStrategy.TypeMappingRules;
             var executeOrderRules = Model.BuildStrategy.ExecuteOrderRules;
 
+            // ReSharper disable once ObjectCreationAsStatement
             Action action = () => new BuilderStrategyWrapper(
                 constructorResolver,
                 propertyResolver,
@@ -202,6 +207,7 @@
             var executeOrderRules = Model.BuildStrategy.ExecuteOrderRules;
             var postBuildActions = Model.BuildStrategy.PostBuildActions;
 
+            // ReSharper disable once ObjectCreationAsStatement
             Action action = () => new BuilderStrategyWrapper(
                 constructorResolver,
                 null,
@@ -219,6 +225,7 @@
         [Fact]
         public void ThrowsExceptionWhenCreatedWithNullStrategyTest()
         {
+            // ReSharper disable once ObjectCreationAsStatement
             Action action = () => new BuilderStrategyWrapper(null);
 
             action.Should().Throw<ArgumentNullException>();
@@ -236,6 +243,7 @@
             var executeOrderRules = Model.BuildStrategy.ExecuteOrderRules;
             var postBuildActions = Model.BuildStrategy.PostBuildActions;
 
+            // ReSharper disable once ObjectCreationAsStatement
             Action action = () => new BuilderStrategyWrapper(
                 constructorResolver,
                 propertyResolver,
@@ -262,6 +270,7 @@
             var executeOrderRules = Model.BuildStrategy.ExecuteOrderRules;
             var postBuildActions = Model.BuildStrategy.PostBuildActions;
 
+            // ReSharper disable once ObjectCreationAsStatement
             Action action = () => new BuilderStrategyWrapper(
                 constructorResolver,
                 propertyResolver,
@@ -289,6 +298,7 @@
             var executeOrderRules = Model.BuildStrategy.ExecuteOrderRules;
             var postBuildActions = Model.BuildStrategy.PostBuildActions;
 
+            // ReSharper disable once ObjectCreationAsStatement
             Action action = () => new BuilderStrategyWrapper(
                 constructorResolver,
                 propertyResolver,

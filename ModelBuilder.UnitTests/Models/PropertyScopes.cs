@@ -3,9 +3,9 @@
     using System;
     using System.Diagnostics.CodeAnalysis;
 
-    public class PropertyScopes
+    public class PropertyScope
     {
-        public PropertyScopes()
+        public PropertyScope()
         {
             PrivateSet = Guid.Empty;
             GlobalValue = Guid.Empty;
