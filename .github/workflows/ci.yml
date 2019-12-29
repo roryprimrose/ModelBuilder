@@ -42,10 +42,20 @@ jobs:
         fileVersion: ${{ steps.gitversion.outputs.MajorMinorPatch }}
         informationalVersion: ${{ steps.gitversion.outputs.InformationalVersion }}
 
-    - name: Setup dotnet
+    - name: Setup dotnet v2.1
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: '3.0.100' # SDK Version to use.
+        dotnet-version: '2.1.300' # SDK Version to use.
+
+#    - name: Setup dotnet v2.2
+#      uses: actions/setup-dotnet@v1
+#      with:
+#        dotnet-version: '2.2.207' # SDK Version to use.
+
+    - name: Setup dotnet v3.1
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '3.1.100' # SDK Version to use.
 
     - name: Restore
       run: dotnet restore
@@ -81,13 +91,13 @@ jobs:
       run: mono $NUGET_EXE push $GITHUB_WORKSPACE/staging/${{ env.PROJECT_NAME }}.*.symbols.nupkg $MYGET_APIKEY -source https://www.myget.org/F/divergic/api/v2/package
       if: github.event_name == 'pull_request'
 
-    - name: Add GitHub registry to NuGet config
-      run: mono $NUGET_EXE sources add -name "GPR" -Source https://nuget.pkg.github.com/divergic/index.json -UserName roryprimrose -Password ${{ secrets.GITHUB_TOKEN }}
-      if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v')
- 
-    - name: Push generated package to GitHub registry
-      run: mono $NUGET_EXE push $GITHUB_WORKSPACE/staging/${{ env.PROJECT_NAME }}.*.symbols.nupkg -Source "GPR"
-      if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v')
+#    - name: Add GitHub registry to NuGet config
+#      run: mono $NUGET_EXE sources add -name "GPR" -Source https://nuget.pkg.github.com/divergic/index.json -UserName roryprimrose -Password ${{ secrets.GITHUB_TOKEN }}
+#      if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v')
+# 
+#    - name: Push generated package to GitHub registry
+#      run: mono $NUGET_EXE push $GITHUB_WORKSPACE/staging/${{ env.PROJECT_NAME }}.*.symbols.nupkg -Source "GPR"
+#      if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v')
 
     - name: Publish to NuGet.org
       env: 
