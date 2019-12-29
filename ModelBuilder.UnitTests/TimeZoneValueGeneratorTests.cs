@@ -15,7 +15,10 @@
         [Fact]
         public void GenerateReturnsRandomTimeZoneMatchingCaseInsensitiveCountryTest()
         {
-            var address = new Address {Country = "australia"};
+            var address = new Address
+            {
+                Country = "australia"
+            };
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
@@ -31,15 +34,17 @@
 
             var valueToMatch = address.Country.ToUpperInvariant();
 
-            TestData.TimeZones.Where(x => x.StartsWith(valueToMatch, StringComparison.OrdinalIgnoreCase))
-                .Should()
+            TestData.TimeZones.Where(x => x.StartsWith(valueToMatch, StringComparison.OrdinalIgnoreCase)).Should()
                 .Contain(actual);
         }
 
         [Fact]
         public void GenerateReturnsRandomTimeZoneMatchingCountryTest()
         {
-            var address = new Address {Country = "Australia"};
+            var address = new Address
+            {
+                Country = "Australia"
+            };
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
@@ -53,15 +58,18 @@
 
             actual.Should().NotBeNullOrWhiteSpace();
 
-            TestData.TimeZones.Where(x => x.StartsWith(address.Country, StringComparison.OrdinalIgnoreCase))
-                .Should()
+            TestData.TimeZones.Where(x => x.StartsWith(address.Country, StringComparison.OrdinalIgnoreCase)).Should()
                 .Contain(actual);
         }
 
         [Fact]
         public void GenerateReturnsRandomTimeZoneMatchingCountryWhenNoCityMatchTest()
         {
-            var address = new Address {City = Guid.NewGuid().ToString(), Country = "Australia"};
+            var address = new Address
+            {
+                City = Guid.NewGuid().ToString(),
+                Country = "Australia"
+            };
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
@@ -75,15 +83,17 @@
 
             actual.Should().NotBeNullOrWhiteSpace();
 
-            TestData.TimeZones.Where(x => x.StartsWith(address.Country, StringComparison.OrdinalIgnoreCase))
-                .Should()
+            TestData.TimeZones.Where(x => x.StartsWith(address.Country, StringComparison.OrdinalIgnoreCase)).Should()
                 .Contain(actual);
         }
 
         [Fact]
         public void GenerateReturnsRandomTimeZoneWhenNoMatchingCountryTest()
         {
-            var address = new Address {Country = Guid.NewGuid().ToString()};
+            var address = new Address
+            {
+                Country = Guid.NewGuid().ToString()
+            };
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
@@ -111,13 +121,13 @@
 
             var target = new TimeZoneValueGenerator();
 
-            var first = (string) target.Generate(typeof(string), "timezone", executeStrategy);
+            var first = (string)target.Generate(typeof(string), "timezone", executeStrategy);
 
             var second = first;
 
             for (var index = 0; index < 1000; index++)
             {
-                second = (string) target.Generate(typeof(string), "timezone", executeStrategy);
+                second = (string)target.Generate(typeof(string), "timezone", executeStrategy);
 
                 if (string.Equals(first, second, StringComparison.OrdinalIgnoreCase) == false)
                 {
@@ -178,7 +188,11 @@
         [InlineData(null, "Canberra")]
         public void GenerateReturnsValueMatchingCityValuesTest(string country, string city)
         {
-            var address = new Address {Country = country, City = city};
+            var address = new Address
+            {
+                Country = country,
+                City = city
+            };
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
@@ -209,7 +223,7 @@
 
             var target = new TimeZoneValueGenerator();
 
-            var actual = (string) target.Generate(type, referenceName, executeStrategy);
+            var actual = (string)target.Generate(type, referenceName, executeStrategy);
 
             actual.Should().NotBeNullOrEmpty();
         }

@@ -13,8 +13,7 @@
         /// <summary>
         ///     Initializes a new instance of the <see cref="TimeZoneValueGenerator" /> class.
         /// </summary>
-        public TimeZoneValueGenerator()
-            : base(PropertyExpression.TimeZone, typeof(string))
+        public TimeZoneValueGenerator() : base(PropertyExpression.TimeZone, typeof(string))
         {
         }
 
@@ -36,13 +35,11 @@
             if (location != null)
             {
                 var countryMatches = TestData.TimeZones
-                    .Where(x => x.StartsWith(location.Country, StringComparison.OrdinalIgnoreCase))
-                    .ToList();
+                    .Where(x => x.StartsWith(location.Country, StringComparison.OrdinalIgnoreCase)).ToList();
 
                 // Attempt to find a timezone that contains the city
                 var cityMatches = countryMatches
-                    .Where(x => x.EndsWith(location.City, StringComparison.OrdinalIgnoreCase))
-                    .ToList();
+                    .Where(x => x.EndsWith(location.City, StringComparison.OrdinalIgnoreCase)).ToList();
 
                 timeZone = cityMatches.Next();
 
@@ -67,10 +64,9 @@
             var city = GetValue<string>(PropertyExpression.City, context) ?? "";
             var country = GetValue<string>(PropertyExpression.Country, context) ?? "";
 
-            var allPossibleMatches = TestData.Locations.Where(x =>
-                    x.City.Equals(city, StringComparison.OrdinalIgnoreCase)
-                    || x.Country.Equals(country, StringComparison.OrdinalIgnoreCase))
-                .ToList();
+            var allPossibleMatches = TestData.Locations.Where(
+                x => x.City.Equals(city, StringComparison.OrdinalIgnoreCase) ||
+                     x.Country.Equals(country, StringComparison.OrdinalIgnoreCase)).ToList();
 
             if (string.IsNullOrWhiteSpace(city) == false)
             {
@@ -91,8 +87,7 @@
             }
 
             var countryMatches = allPossibleMatches
-                .Where(x => x.Country.Equals(country, StringComparison.OrdinalIgnoreCase))
-                .ToList();
+                .Where(x => x.Country.Equals(country, StringComparison.OrdinalIgnoreCase)).ToList();
 
             return countryMatches.Next();
         }

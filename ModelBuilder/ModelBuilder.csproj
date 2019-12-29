@@ -5,6 +5,8 @@
 
     <CodeAnalysisRuleSet>..\Solution Items\Application.ruleset</CodeAnalysisRuleSet>
     <NoWarn>AD0001</NoWarn>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <LangVersion>8.0</LangVersion>
 
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <Authors>rprimrose</Authors>
@@ -12,13 +14,12 @@
     <Description>Provides build features for creating model data.</Description>
     <PackageProjectUrl>https://github.com/roryprimrose/ModelBuilder</PackageProjectUrl>
     <PackageTags>Model Builder DTO Testing</PackageTags>
-    <NeutralLanguage>en-US</NeutralLanguage>
     <Copyright>Copyright © Neovolve 2016</Copyright>
     <IncludeSymbols>True</IncludeSymbols>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/roryprimrose/ModelBuilder</RepositoryUrl>
   </PropertyGroup>
-  
+
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <WarningsAsErrors />
@@ -33,7 +34,7 @@
     <None Remove="Resources\MaleNames.txt" />
     <None Remove="Resources\TimeZones.txt" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <EmbeddedResource Include="Resources\Companies.txt" />
     <EmbeddedResource Include="Resources\Domains.txt" />
@@ -43,7 +44,7 @@
     <EmbeddedResource Include="Resources\MaleNames.txt" />
     <EmbeddedResource Include="Resources\TimeZones.txt" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8">
       <PrivateAssets>all</PrivateAssets>
@@ -65,5 +66,5 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
-  
+
 </Project>

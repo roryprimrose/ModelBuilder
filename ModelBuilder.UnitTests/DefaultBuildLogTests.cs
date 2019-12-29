@@ -475,7 +475,12 @@
             target.BuildFailure(exception);
             target.CreatedType(typeof(Person), null);
 
-            var lines = target.Output.Split(new[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries);
+            var lines = target.Output.Split(
+                new[]
+                {
+                    Environment.NewLine
+                },
+                StringSplitOptions.RemoveEmptyEntries);
             var indentedLines = lines.Skip(1).Take(lines.Length - 2);
 
             indentedLines.All(x => x.StartsWith("    ", StringComparison.OrdinalIgnoreCase)).Should().BeTrue();

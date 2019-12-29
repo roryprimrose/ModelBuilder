@@ -56,7 +56,8 @@
 
             const string addressFormat = "{0}.{1}.{2}.{3}";
 
-            var address = string.Format(CultureInfo.InvariantCulture,
+            var address = string.Format(
+                CultureInfo.InvariantCulture,
                 addressFormat,
                 buffer[0],
                 buffer[1],

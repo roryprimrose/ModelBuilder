@@ -14,8 +14,7 @@
         /// <summary>
         ///     Initializes a new instance of the <see cref="PhoneValueGenerator" /> class.
         /// </summary>
-        public PhoneValueGenerator()
-            : base(new Regex("Phone|Cell|Mobile|Fax", RegexOptions.IgnoreCase), typeof(string))
+        public PhoneValueGenerator() : base(new Regex("Phone|Cell|Mobile|Fax", RegexOptions.IgnoreCase), typeof(string))
         {
         }
 
@@ -29,8 +28,7 @@
             if (string.IsNullOrWhiteSpace(country) == false)
             {
                 var locationMatches = TestData.Locations
-                    .Where(x => x.Country.Equals(country, StringComparison.OrdinalIgnoreCase))
-                    .ToList();
+                    .Where(x => x.Country.Equals(country, StringComparison.OrdinalIgnoreCase)).ToList();
 
                 location = locationMatches.Next();
             }

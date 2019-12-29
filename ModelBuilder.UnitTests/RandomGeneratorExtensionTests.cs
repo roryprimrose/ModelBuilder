@@ -180,7 +180,7 @@
         {
             var target = Substitute.For<IRandomGenerator>();
 
-            Action action = () => target.NextValue((Type) null);
+            Action action = () => target.NextValue((Type)null);
 
             action.Should().Throw<ArgumentNullException>();
         }

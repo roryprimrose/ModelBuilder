@@ -265,14 +265,14 @@
             // results in out of bound values
             if (checkType == typeof(decimal))
             {
-                var minBoundary = (double) decimal.MinValue;
+                var minBoundary = (double)decimal.MinValue;
 
                 if (value <= minBoundary)
                 {
                     return decimal.MinValue;
                 }
 
-                var maxBoundary = (double) decimal.MaxValue;
+                var maxBoundary = (double)decimal.MaxValue;
 
                 if (value >= maxBoundary)
                 {
@@ -281,7 +281,7 @@
             }
             else if (checkType == typeof(long))
             {
-                var maxBoundary = (double) long.MaxValue;
+                var maxBoundary = (double)long.MaxValue;
 
                 if (value >= maxBoundary)
                 {
@@ -290,7 +290,7 @@
             }
             else if (checkType == typeof(ulong))
             {
-                var maxBoundary = (double) ulong.MaxValue;
+                var maxBoundary = (double)ulong.MaxValue;
 
                 if (value >= maxBoundary)
                 {
@@ -325,7 +325,7 @@
             {
                 var next = NextValue(typeof(byte), byte.MinValue, byte.MaxValue);
 
-                buffer[index] = (byte) next;
+                buffer[index] = (byte)next;
             }
         }
 
@@ -399,7 +399,8 @@
 
             if (IsSupported(type) == false)
             {
-                var message = string.Format(CultureInfo.CurrentCulture,
+                var message = string.Format(
+                    CultureInfo.CurrentCulture,
                     Resources.Error_TypeNotSupportedFormat,
                     GetType().FullName,
                     type.FullName);

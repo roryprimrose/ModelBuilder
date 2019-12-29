@@ -21,10 +21,10 @@
             typeof(IPAddressInformationCollection),
             typeof(MulticastIPAddressInformationCollection),
             typeof(UnicastIPAddressInformationCollection),
-            typeof(Dictionary<, >.KeyCollection),
-            typeof(Dictionary<, >.ValueCollection),
-            typeof(SortedDictionary<, >.KeyCollection),
-            typeof(SortedDictionary<, >.ValueCollection)
+            typeof(Dictionary<,>.KeyCollection),
+            typeof(Dictionary<,>.ValueCollection),
+            typeof(SortedDictionary<,>.KeyCollection),
+            typeof(SortedDictionary<,>.ValueCollection)
         };
 
         /// <inheritdoc />
@@ -36,8 +36,8 @@
                 throw new ArgumentNullException(nameof(type));
             }
 
-            if (type.IsClass
-                && type.IsAbstract)
+            if (type.IsClass &&
+                type.IsAbstract)
             {
                 // This is an abstract class so we can't create it
                 return false;
@@ -138,7 +138,8 @@
         }
 
         /// <inheritdoc />
-        [SuppressMessage("Microsoft.Design",
+        [SuppressMessage(
+            "Microsoft.Design",
             "CA1062:Validate arguments of public methods",
             MessageId = "0",
             Justification = "Type is validated by the base class")]
@@ -163,7 +164,8 @@
         }
 
         /// <inheritdoc />
-        [SuppressMessage("Microsoft.Design",
+        [SuppressMessage(
+            "Microsoft.Design",
             "CA1062:Validate arguments of public methods",
             MessageId = "0",
             Justification = "Instance is validated by the base class")]
@@ -188,7 +190,12 @@
             {
                 var childInstance = CreateChildItem(internalType, executeStrategy, previousItem);
 
-                addMethod.Invoke(instance, new[] {childInstance});
+                addMethod.Invoke(
+                    instance,
+                    new[]
+                    {
+                        childInstance
+                    });
 
                 previousItem = childInstance;
             }
@@ -251,7 +258,7 @@
 #if NETSTANDARD2_0
             if (type.Name.Contains("ReadOnly"))
 #else
-                if (type.Name.Contains("ReadOnly", StringComparison.OrdinalIgnoreCase))
+            if (type.Name.Contains("ReadOnly", StringComparison.OrdinalIgnoreCase))
 #endif
             {
                 // Looks like this is read only type
@@ -267,8 +274,8 @@
         {
             foreach (var unsupportedType in _unsupportedTypes)
             {
-                if (unsupportedType.IsGenericTypeDefinition
-                    && type.IsGenericType)
+                if (unsupportedType.IsGenericTypeDefinition &&
+                    type.IsGenericType)
                 {
                     var typeDefinition = type.GetGenericTypeDefinition();
 

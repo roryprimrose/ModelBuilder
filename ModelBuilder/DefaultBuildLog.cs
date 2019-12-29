@@ -69,7 +69,8 @@
 
             _indent--;
 
-            WriteMessage(Resources.DefaultBuildLog_CreatedParameter,
+            WriteMessage(
+                Resources.DefaultBuildLog_CreatedParameter,
                 parameterName,
                 parameterType.FullName,
                 instanceType.FullName);
@@ -98,7 +99,8 @@
 
             _indent--;
 
-            WriteMessage(Resources.DefaultBuildLog_CreatedProperty,
+            WriteMessage(
+                Resources.DefaultBuildLog_CreatedProperty,
                 propertyName,
                 propertyType.FullName,
                 context.GetType().FullName);
@@ -139,7 +141,8 @@
                 throw new ArgumentNullException(nameof(parameterName));
             }
 
-            WriteMessage(Resources.DefaultBuildLog_CreatingParameter,
+            WriteMessage(
+                Resources.DefaultBuildLog_CreatingParameter,
                 parameterName,
                 parameterType.FullName,
                 instanceType.FullName);
@@ -168,7 +171,8 @@
                 throw new ArgumentNullException(nameof(context));
             }
 
-            WriteMessage(Resources.DefaultBuildLog_CreatingProperty,
+            WriteMessage(
+                Resources.DefaultBuildLog_CreatingProperty,
                 propertyName,
                 propertyType.FullName,
                 context.GetType().FullName);
@@ -235,7 +239,8 @@
                 throw new ArgumentNullException(nameof(context));
             }
 
-            WriteMessage(Resources.DefaultBuildLog_IgnoringProperty,
+            WriteMessage(
+                Resources.DefaultBuildLog_IgnoringProperty,
                 propertyName,
                 propertyType.FullName,
                 context.GetType().FullName);
@@ -319,7 +324,12 @@
 
             if (_indent > 0)
             {
-                var lines = messageToWrite.Split(new[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries);
+                var lines = messageToWrite.Split(
+                    new[]
+                    {
+                        Environment.NewLine
+                    },
+                    StringSplitOptions.RemoveEmptyEntries);
                 var indent = new string(' ', _indent * 4);
 
                 // Add the indent to each line and rebuild the message

@@ -14,7 +14,10 @@
         [Fact]
         public void GenerateReturnsRandomPhoneMatchingCaseInsensitiveCountryTest()
         {
-            var address = new Address {Country = "UNITED STATES"};
+            var address = new Address
+            {
+                Country = "UNITED STATES"
+            };
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
@@ -38,7 +41,10 @@
         [Fact]
         public void GenerateReturnsRandomPhoneMatchingCountryTest()
         {
-            var address = new Address {Country = "United States"};
+            var address = new Address
+            {
+                Country = "United States"
+            };
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
@@ -60,7 +66,10 @@
         [Fact]
         public void GenerateReturnsRandomPhoneWhenNoMatchingCountryTest()
         {
-            var address = new Address {Country = Guid.NewGuid().ToString()};
+            var address = new Address
+            {
+                Country = Guid.NewGuid().ToString()
+            };
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
@@ -88,13 +97,13 @@
 
             var target = new PhoneValueGenerator();
 
-            var first = (string) target.Generate(typeof(string), "cell", executeStrategy);
+            var first = (string)target.Generate(typeof(string), "cell", executeStrategy);
 
             var second = first;
 
             for (var index = 0; index < 1000; index++)
             {
-                second = (string) target.Generate(typeof(string), "cell", executeStrategy);
+                second = (string)target.Generate(typeof(string), "cell", executeStrategy);
 
                 if (string.Equals(first, second, StringComparison.OrdinalIgnoreCase) == false)
                 {
@@ -104,7 +113,7 @@
 
             first.Should().NotBe(second);
         }
-        
+
         [Fact]
         public void GenerateReturnsStringValueTest()
         {
@@ -161,7 +170,7 @@
 
             var target = new PhoneValueGenerator();
 
-            var actual = (string) target.Generate(type, referenceName, executeStrategy);
+            var actual = (string)target.Generate(type, referenceName, executeStrategy);
 
             actual.Should().NotBeNullOrEmpty();
         }

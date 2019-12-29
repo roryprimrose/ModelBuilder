@@ -46,11 +46,11 @@
         [InlineData(typeof(IPAddressInformationCollection), false)]
         [InlineData(typeof(MulticastIPAddressInformationCollection), false)]
         [InlineData(typeof(UnicastIPAddressInformationCollection), false)]
-        [InlineData(typeof(Dictionary<, >.KeyCollection), false)]
-        [InlineData(typeof(Dictionary<, >.ValueCollection), false)]
+        [InlineData(typeof(Dictionary<,>.KeyCollection), false)]
+        [InlineData(typeof(Dictionary<,>.ValueCollection), false)]
         [InlineData(typeof(Dictionary<string, int>), true)]
-        [InlineData(typeof(SortedDictionary<, >.KeyCollection), false)]
-        [InlineData(typeof(SortedDictionary<, >.ValueCollection), false)]
+        [InlineData(typeof(SortedDictionary<,>.KeyCollection), false)]
+        [InlineData(typeof(SortedDictionary<,>.ValueCollection), false)]
         [InlineData(typeof(IEnumerable<string>), true)]
         [InlineData(typeof(ICollection<string>), true)]
         [InlineData(typeof(Collection<string>), true)]
@@ -93,10 +93,10 @@
         [InlineData(typeof(IPAddressInformationCollection), false)]
         [InlineData(typeof(MulticastIPAddressInformationCollection), false)]
         [InlineData(typeof(UnicastIPAddressInformationCollection), false)]
-        [InlineData(typeof(Dictionary<, >.KeyCollection), false)]
-        [InlineData(typeof(Dictionary<, >.ValueCollection), false)]
-        [InlineData(typeof(SortedDictionary<, >.KeyCollection), false)]
-        [InlineData(typeof(SortedDictionary<, >.ValueCollection), false)]
+        [InlineData(typeof(Dictionary<,>.KeyCollection), false)]
+        [InlineData(typeof(Dictionary<,>.ValueCollection), false)]
+        [InlineData(typeof(SortedDictionary<,>.KeyCollection), false)]
+        [InlineData(typeof(SortedDictionary<,>.ValueCollection), false)]
         [InlineData(typeof(AbstractCollection<Person>), true)]
         [InlineData(typeof(IDictionary<string, int>), true)]
         [InlineData(typeof(Dictionary<string, int>), true)]
@@ -148,7 +148,7 @@
 
             var target = new IncrementingEnumerableTypeCreator();
 
-            var result = (IList<int>) target.Create(typeof(IList<int>), null, executeStrategy);
+            var result = (IList<int>)target.Create(typeof(IList<int>), null, executeStrategy);
 
             result.Should().BeEmpty();
         }
@@ -211,10 +211,10 @@
         [InlineData(typeof(IPAddressInformationCollection), false)]
         [InlineData(typeof(MulticastIPAddressInformationCollection), false)]
         [InlineData(typeof(UnicastIPAddressInformationCollection), false)]
-        [InlineData(typeof(Dictionary<, >.KeyCollection), false)]
-        [InlineData(typeof(Dictionary<, >.ValueCollection), false)]
-        [InlineData(typeof(SortedDictionary<, >.KeyCollection), false)]
-        [InlineData(typeof(SortedDictionary<, >.ValueCollection), false)]
+        [InlineData(typeof(Dictionary<,>.KeyCollection), false)]
+        [InlineData(typeof(Dictionary<,>.ValueCollection), false)]
+        [InlineData(typeof(SortedDictionary<,>.KeyCollection), false)]
+        [InlineData(typeof(SortedDictionary<,>.ValueCollection), false)]
         [InlineData(typeof(Dictionary<string, int>), true)]
         [InlineData(typeof(IEnumerable<string>), true)]
         [InlineData(typeof(ICollection<string>), true)]
@@ -256,13 +256,16 @@
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Create(typeof(Guid)).Returns(Guid.NewGuid());
 
-            var target = new EnumerableTypeCreator {AutoPopulateCount = 15};
+            var target = new EnumerableTypeCreator
+            {
+                AutoPopulateCount = 15
+            };
 
             var actual = target.Populate(expected, executeStrategy);
 
             actual.Should().BeSameAs(expected);
 
-            var set = (Collection<Guid>) actual;
+            var set = (Collection<Guid>)actual;
 
             set.Should().HaveCount(target.AutoPopulateCount);
             set.All(x => x != Guid.Empty).Should().BeTrue();
@@ -292,7 +295,7 @@
 
             target.Populate(actual, executeStrategy);
 
-            var converted = (IEnumerable) actual;
+            var converted = (IEnumerable)actual;
 
             converted.Should().NotBeEmpty();
         }
@@ -308,13 +311,16 @@
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Create(typeof(Guid)).Returns(Guid.NewGuid());
 
-            var target = new EnumerableTypeCreator {AutoPopulateCount = 15};
+            var target = new EnumerableTypeCreator
+            {
+                AutoPopulateCount = 15
+            };
 
             var actual = target.Populate(expected, executeStrategy);
 
             actual.Should().BeSameAs(expected);
 
-            var set = (List<Guid>) actual;
+            var set = (List<Guid>)actual;
 
             set.Should().HaveCount(target.AutoPopulateCount);
             set.All(x => x != Guid.Empty).Should().BeTrue();
@@ -328,7 +334,7 @@
 
             var target = new IncrementingEnumerableTypeCreator();
 
-            var result = (List<int>) target.Populate(actual, executeStrategy);
+            var result = (List<int>)target.Populate(actual, executeStrategy);
 
             var baseValue = result[0];
             var expected = new List<int>(target.AutoPopulateCount);
@@ -370,7 +376,10 @@
         [Fact]
         public void SettingAutoPopulateCountShouldNotChangeDefaultAutoPopulateCountTest()
         {
-            var target = new EnumerableTypeCreator {AutoPopulateCount = Environment.TickCount};
+            var target = new EnumerableTypeCreator
+            {
+                AutoPopulateCount = Environment.TickCount
+            };
 
             EnumerableTypeCreator.DefaultAutoPopulateCount.Should().NotBe(target.AutoPopulateCount);
         }

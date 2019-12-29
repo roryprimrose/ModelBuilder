@@ -11,7 +11,8 @@
     /// </summary>
     public static class TestData
     {
-        [SuppressMessage("Microsoft.Performance",
+        [SuppressMessage(
+            "Microsoft.Performance",
             "CA1810:InitializeReferenceTypeStaticFieldsInline",
             Justification =
                 "This is done in the constructor for the better performance of splitting males an females in a single iteration.")]
@@ -53,7 +54,12 @@
 
         private static List<string> ParseValues(string values)
         {
-            var items = values.Split(new[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries);
+            var items = values.Split(
+                new[]
+                {
+                    Environment.NewLine
+                },
+                StringSplitOptions.RemoveEmptyEntries);
 
             return items.ToList();
         }

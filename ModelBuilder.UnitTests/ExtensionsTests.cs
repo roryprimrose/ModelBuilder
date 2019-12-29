@@ -79,13 +79,18 @@
         public void SetEachCollectionRunsActionAgainstInstanceTest()
         {
             var index = 0;
-            var target = new Collection<Person> {new Person(), new Person()};
-
-            var actual = target.SetEach(x =>
+            var target = new Collection<Person>
             {
-                index++;
-                x.Priority = index;
-            });
+                new Person(),
+                new Person()
+            };
+
+            var actual = target.SetEach(
+                x =>
+                {
+                    index++;
+                    x.Priority = index;
+                });
 
             actual.Should().BeSameAs(target);
             actual.Count.Should().Be(2);
@@ -116,7 +121,15 @@
         [Fact]
         public void SetEachDictionaryRunsActionAgainstInstanceTest()
         {
-            var target = new Dictionary<Guid, Person> {{Guid.NewGuid(), new Person()}, {Guid.NewGuid(), new Person()}};
+            var target = new Dictionary<Guid, Person>
+            {
+                {
+                    Guid.NewGuid(), new Person()
+                },
+                {
+                    Guid.NewGuid(), new Person()
+                }
+            };
 
             var actual = target.SetEach(x => { x.Value.Id = x.Key; });
 
@@ -142,11 +155,12 @@
             var index = 0;
             var target = BuildPeople();
 
-            var actual = target.SetEach(x =>
-            {
-                index++;
-                x.Priority = index;
-            });
+            var actual = target.SetEach(
+                x =>
+                {
+                    index++;
+                    x.Priority = index;
+                });
 
             actual.Count.Should().Be(2);
             actual[0].Priority.Should().Be(1);
@@ -167,13 +181,18 @@
         public void SetEachListAsIEnumerableRunsActionAgainstInstanceTest()
         {
             var index = 0;
-            var target = new List<Person> {new Person(), new Person()};
-
-            var actual = target.SetEach(x =>
+            var target = new List<Person>
             {
-                index++;
-                x.Priority = index;
-            });
+                new Person(),
+                new Person()
+            };
+
+            var actual = target.SetEach(
+                x =>
+                {
+                    index++;
+                    x.Priority = index;
+                });
 
             actual.Should().BeSameAs(target);
             actual.Count.Should().Be(2);
@@ -205,14 +224,19 @@
         public void SetEachReadOnlyCollectionRunsActionAgainstInstanceTest()
         {
             var index = 0;
-            var source = new List<Person> {new Person(), new Person()};
+            var source = new List<Person>
+            {
+                new Person(),
+                new Person()
+            };
             var target = new ReadOnlyCollection<Person>(source);
 
-            var actual = target.SetEach(x =>
-            {
-                index++;
-                x.Priority = index;
-            });
+            var actual = target.SetEach(
+                x =>
+                {
+                    index++;
+                    x.Priority = index;
+                });
 
             actual.Should().BeSameAs(target);
             actual.Count.Should().Be(2);
@@ -254,8 +278,14 @@
 
         private IEnumerable<Person> BuildPeople()
         {
-            yield return new Person {Id = Guid.NewGuid()};
-            yield return new Person {Id = Guid.NewGuid()};
+            yield return new Person
+            {
+                Id = Guid.NewGuid()
+            };
+            yield return new Person
+            {
+                Id = Guid.NewGuid()
+            };
         }
     }
 }

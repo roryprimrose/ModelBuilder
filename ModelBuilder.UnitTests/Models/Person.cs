@@ -5,7 +5,8 @@
 
     public class Person : Entity
     {
-        [SuppressMessage("Microsoft.Design",
+        [SuppressMessage(
+            "Microsoft.Design",
             "CA1051",
             Justification = "The code is written in this way to validate a test scenario.")]
         public int MinAge = 0;

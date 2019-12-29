@@ -3,7 +3,6 @@ namespace ModelBuilder
     using System;
     using System.Globalization;
     using System.Text.RegularExpressions;
-    using ModelBuilder.Data;
 
     /// <summary>
     ///     The <see cref="CultureValueGenerator" />
@@ -16,8 +15,7 @@ namespace ModelBuilder
         /// <summary>
         ///     Initializes a new instance of the <see cref="DomainNameValueGenerator" /> class.
         /// </summary>
-        public CultureValueGenerator()
-            : base(_matchNameExpression, typeof(string), typeof(CultureInfo))
+        public CultureValueGenerator() : base(_matchNameExpression, typeof(string), typeof(CultureInfo))
         {
         }
 

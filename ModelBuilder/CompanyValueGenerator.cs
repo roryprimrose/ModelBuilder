@@ -15,8 +15,7 @@
         /// <summary>
         ///     Initializes a new instance of the <see cref="CompanyValueGenerator" /> class.
         /// </summary>
-        public CompanyValueGenerator()
-            : base(_matchNameExpression, typeof(string))
+        public CompanyValueGenerator() : base(_matchNameExpression, typeof(string))
         {
         }
 

@@ -12,7 +12,10 @@
         [Fact]
         public void GeneratorReturnsFemaleNameWhenGenderIsFemaleTest()
         {
-            var person = new Person {Gender = Gender.Female};
+            var person = new Person
+            {
+                Gender = Gender.Female
+            };
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
@@ -22,7 +25,7 @@
 
             var target = new FirstNameValueGenerator();
 
-            var actual = (string) target.Generate(typeof(string), "FirstName", executeStrategy);
+            var actual = (string)target.Generate(typeof(string), "FirstName", executeStrategy);
 
             TestData.FemaleNames.Any(x => x == actual).Should().BeTrue();
         }
@@ -30,7 +33,10 @@
         [Fact]
         public void GeneratorReturnsFemaleNameWhenGenderIsUnknownTest()
         {
-            var person = new Person {Gender = Gender.Unknown};
+            var person = new Person
+            {
+                Gender = Gender.Unknown
+            };
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
@@ -40,7 +46,7 @@
 
             var target = new FirstNameValueGenerator();
 
-            var actual = (string) target.Generate(typeof(string), "FirstName", executeStrategy);
+            var actual = (string)target.Generate(typeof(string), "FirstName", executeStrategy);
 
             TestData.FemaleNames.Any(x => x == actual).Should().BeTrue();
         }
@@ -48,7 +54,10 @@
         [Fact]
         public void GeneratorReturnsMaleNameWhenGenderIsMaleTest()
         {
-            var person = new Person {Gender = Gender.Male};
+            var person = new Person
+            {
+                Gender = Gender.Male
+            };
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
@@ -58,7 +67,7 @@
 
             var target = new FirstNameValueGenerator();
 
-            var actual = (string) target.Generate(typeof(string), "FirstName", executeStrategy);
+            var actual = (string)target.Generate(typeof(string), "FirstName", executeStrategy);
 
             TestData.MaleNames.Any(x => x == actual).Should().BeTrue();
         }
@@ -76,7 +85,7 @@
 
             var target = new FirstNameValueGenerator();
 
-            var actual = (string) target.Generate(typeof(string), "FirstName", executeStrategy);
+            var actual = (string)target.Generate(typeof(string), "FirstName", executeStrategy);
 
             if (TestData.MaleNames.Any(x => x == actual))
             {

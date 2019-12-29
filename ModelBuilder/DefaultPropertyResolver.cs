@@ -93,8 +93,8 @@ namespace ModelBuilder
             var type = instance.GetType();
 
             // Check if there is a matching ignore rule
-            var ignoreRule = configuration.IgnoreRules?.FirstOrDefault(x =>
-                x.TargetType.IsAssignableFrom(type) && x.PropertyName == propertyInfo.Name);
+            var ignoreRule = configuration.IgnoreRules?.FirstOrDefault(
+                x => x.TargetType.IsAssignableFrom(type) && x.PropertyName == propertyInfo.Name);
 
             if (ignoreRule != null)
             {
@@ -139,8 +139,8 @@ namespace ModelBuilder
             }
 
             // Check for instance types (ignoring strings)
-            if (propertyInfo.PropertyType.IsValueType == false
-                && propertyInfo.PropertyType != typeof(string))
+            if (propertyInfo.PropertyType.IsValueType == false &&
+                propertyInfo.PropertyType != typeof(string))
             {
                 // This is an interface or class type
                 // Look for a matching instance
@@ -211,7 +211,8 @@ namespace ModelBuilder
             return false;
         }
 
-        [SuppressMessage("Microsoft.Design",
+        [SuppressMessage(
+            "Microsoft.Design",
             "CA1031:DoNotCatchGeneralExceptionTypes",
             Justification = "Any failure to create the value will default to null for value comparisons.")]
         private static object GetDefaultValue(Type type)

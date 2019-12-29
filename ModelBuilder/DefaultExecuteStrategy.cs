@@ -67,8 +67,7 @@
             {
                 var type = instance.GetType();
                 var typeCreator = Configuration.TypeCreators?.Where(x => x.CanPopulate(type, null, BuildChain))
-                    .OrderByDescending(x => x.Priority)
-                    .FirstOrDefault();
+                    .OrderByDescending(x => x.Priority).FirstOrDefault();
 
                 if (typeCreator == null)
                 {
@@ -131,7 +130,8 @@
         /// <returns>A new instance.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is null.</exception>
         /// <exception cref="NotSupportedException">The <paramref name="type" /> parameter can not be created using this strategy.</exception>
-        [SuppressMessage("Microsoft.Design",
+        [SuppressMessage(
+            "Microsoft.Design",
             "CA1031",
             Justification =
                 "Catching a generic Exception is required to ensure that any failure to build a value is handled.")]
@@ -166,8 +166,7 @@
 
             // First check if there is a creation rule
             var creationRule = Configuration.CreationRules?.Where(x => x.IsMatch(contextType, referenceName))
-                .OrderByDescending(x => x.Priority)
-                .FirstOrDefault();
+                .OrderByDescending(x => x.Priority).FirstOrDefault();
 
             if (creationRule != null)
             {
@@ -182,8 +181,7 @@
                 // Next check if this is a type supported by a value generator
                 var valueGenerator = Configuration.ValueGenerators
                     ?.Where(x => x.IsSupported(typeToBuild, referenceName, buildChain))
-                    .OrderByDescending(x => x.Priority)
-                    .FirstOrDefault();
+                    .OrderByDescending(x => x.Priority).FirstOrDefault();
 
                 if (valueGenerator != null)
                 {
@@ -214,7 +212,8 @@
                     const string MessageFormat =
                         "Failed to create value for type {0} using value generator {1}, {2}: {3}{4}{4}At the time of the failure, the build log was:{4}{4}{5}";
                     var buildLog = Log.Output;
-                    var message = string.Format(CultureInfo.CurrentCulture,
+                    var message = string.Format(
+                        CultureInfo.CurrentCulture,
                         MessageFormat,
                         typeToBuild.FullName,
                         generatorType.FullName,
@@ -228,8 +227,7 @@
             }
 
             var typeCreator = Configuration.TypeCreators
-                ?.Where(x => x.CanCreate(typeToBuild, referenceName, buildChain))
-                .OrderByDescending(x => x.Priority)
+                ?.Where(x => x.CanCreate(typeToBuild, referenceName, buildChain)).OrderByDescending(x => x.Priority)
                 .FirstOrDefault();
 
             if (typeCreator == null)
@@ -257,7 +255,8 @@
                 const string MessageFormat =
                     "Failed to create type {0} using type creator {1}, {2}: {3}{4}{4}At the time of the failure, the build log was:{4}{4}{5}";
                 var buildLog = Log.Output;
-                var message = string.Format(CultureInfo.CurrentCulture,
+                var message = string.Format(
+                    CultureInfo.CurrentCulture,
                     MessageFormat,
                     typeToBuild.FullName,
                     typeCreator.GetType().FullName,
@@ -325,8 +324,7 @@
             // Attempt to find a type creator for this type that will help us figure out how it should be populated
             var typeCreator = Configuration.TypeCreators
                 ?.Where(x => x.CanPopulate(propertyType, propertyInfo.Name, BuildChain))
-                .OrderByDescending(x => x.Priority)
-                .FirstOrDefault();
+                .OrderByDescending(x => x.Priority).FirstOrDefault();
 
             if (typeCreator == null)
             {
@@ -378,7 +376,8 @@
             {
                 if (context != null)
                 {
-                    message = string.Format(CultureInfo.CurrentCulture,
+                    message = string.Format(
+                        CultureInfo.CurrentCulture,
                         Resources.NoMatchingCreatorOrGeneratorFoundWithNameAndContext,
                         type.FullName,
                         referenceName,
@@ -386,7 +385,8 @@
                 }
                 else
                 {
-                    message = string.Format(CultureInfo.CurrentCulture,
+                    message = string.Format(
+                        CultureInfo.CurrentCulture,
                         Resources.NoMatchingCreatorOrGeneratorFoundWithName,
                         type.FullName,
                         referenceName);
@@ -394,7 +394,8 @@
             }
             else
             {
-                message = string.Format(CultureInfo.CurrentCulture,
+                message = string.Format(
+                    CultureInfo.CurrentCulture,
                     Resources.NoMatchingCreatorOrGeneratorFound,
                     type.FullName);
             }
@@ -406,7 +407,8 @@
             const string MessageFormat =
                 "Failed to create instance of type {0}, {1}: {2}{3}{3}At the time of the failure, the build log was:{3}{3}{4}";
             var buildLog = Log.Output;
-            var failureMessage = string.Format(CultureInfo.CurrentCulture,
+            var failureMessage = string.Format(
+                CultureInfo.CurrentCulture,
                 MessageFormat,
                 type.FullName,
                 ex.GetType().Name,
@@ -490,14 +492,13 @@
             }
 
             // There is no type mapping for this type
-            if (type.IsInterface
-                || type.IsAbstract)
+            if (type.IsInterface ||
+                type.IsAbstract)
             {
                 // Automatically resolve a derived type within the same assembly
                 var assemblyTypes = type.GetTypeInfo().Assembly.GetTypes();
                 var possibleTypes = from x in assemblyTypes
-                    where x.IsPublic && x.IsInterface == false && x.IsAbstract == false
-                          && type.IsAssignableFrom(x)
+                    where x.IsPublic && x.IsInterface == false && x.IsAbstract == false && type.IsAssignableFrom(x)
                     select x;
 
                 var matchingType = possibleTypes.FirstOrDefault(type.IsAssignableFrom);
@@ -519,7 +520,8 @@
         {
             if (Configuration == null)
             {
-                var message = string.Format(CultureInfo.CurrentCulture,
+                var message = string.Format(
+                    CultureInfo.CurrentCulture,
                     "The {0} has not be initialized. You must invoke {1} first to provide the build configuration and the build log.",
                     GetType().FullName,
                     nameof(EnsureInitialized));
@@ -575,8 +577,7 @@
                 var buildChain = BuildChain;
 
                 var postBuildActions = Configuration.PostBuildActions
-                    ?.Where(x => x.IsSupported(type, referenceName, buildChain))
-                    .OrderByDescending(x => x.Priority);
+                    ?.Where(x => x.IsSupported(type, referenceName, buildChain)).OrderByDescending(x => x.Priority);
 
                 if (postBuildActions != null)
                 {

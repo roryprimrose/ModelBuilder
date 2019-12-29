@@ -3,7 +3,6 @@
     using System;
     using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
-    using System.Reflection;
 
     /// <summary>
     ///     The <see cref="ArrayTypeCreator" />
@@ -38,7 +37,8 @@
 
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is null.</exception>
-        [SuppressMessage("Microsoft.Design",
+        [SuppressMessage(
+            "Microsoft.Design",
             "CA1062:Validate arguments of public methods",
             MessageId = "0",
             Justification = "The parameter is validated in the call to VerifyCreateRequest.")]
@@ -52,10 +52,16 @@
 
             var count = Generator.NextValue(1, MaxCount);
 
-            var parameters = new object[] {count};
+            var parameters = new object[]
+            {
+                count
+            };
 
             // Array has a dark-magic constructor that takes an int to define the size of the array
-            var parameterTypes = new[] {typeof(int)};
+            var parameterTypes = new[]
+            {
+                typeof(int)
+            };
             var constructor = type.GetConstructor(parameterTypes);
 
             Debug.Assert(constructor != null, "No constructor was found on the array");
@@ -104,7 +110,10 @@
 #if NETSTANDARD2_0
                 var typeName = instanceType.AssemblyQualifiedName?.Replace("[]", string.Empty);
 #else
-                var typeName = instanceType.AssemblyQualifiedName?.Replace("[]", string.Empty, StringComparison.OrdinalIgnoreCase);
+                var typeName = instanceType.AssemblyQualifiedName?.Replace(
+                    "[]",
+                    string.Empty,
+                    StringComparison.OrdinalIgnoreCase);
 #endif
 
                 itemType = Type.GetType(typeName);

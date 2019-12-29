@@ -5,6 +5,7 @@
     using System.Collections.ObjectModel;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
     using FluentAssertions;
     using ModelBuilder.Data;
@@ -53,15 +54,10 @@
         [Fact]
         public void CanCreateCustomBuildStrategyToCreateModelsTest()
         {
-            var strategy = Model.DefaultBuildStrategy.Clone()
-                .Set(x => x.ValueGenerators.Clear())
-                .AddValueGenerator<StringValueGenerator>()
-                .AddValueGenerator<NumericValueGenerator>()
-                .AddValueGenerator<BooleanValueGenerator>()
-                .AddValueGenerator<GuidValueGenerator>()
-                .AddValueGenerator<DateTimeValueGenerator>()
-                .AddValueGenerator<EnumValueGenerator>()
-                .Compile();
+            var strategy = Model.DefaultBuildStrategy.Clone().Set(x => x.ValueGenerators.Clear())
+                .AddValueGenerator<StringValueGenerator>().AddValueGenerator<NumericValueGenerator>()
+                .AddValueGenerator<BooleanValueGenerator>().AddValueGenerator<GuidValueGenerator>()
+                .AddValueGenerator<DateTimeValueGenerator>().AddValueGenerator<EnumValueGenerator>().Compile();
 
             var actual = strategy.Create<Person>();
 
@@ -163,7 +159,8 @@
         }
 
         [Fact]
-        [SuppressMessage("Microsoft.Globalization",
+        [SuppressMessage(
+            "Microsoft.Globalization",
             "CA1308:NormalizeStringsToUppercase",
             Justification = "Email addresses are lower case by convention.")]
         public void CreateBuildsEmailUsingValidCombinationOfValuesTest()
@@ -223,9 +220,7 @@
         [Fact]
         public void CreateBuildsLogOfPostActionsTest()
         {
-            var strategy = Model.DefaultBuildStrategy.Clone()
-                .AddCompilerModule<TestCompilerModule>()
-                .Compile()
+            var strategy = Model.DefaultBuildStrategy.Clone().AddCompilerModule<TestCompilerModule>().Compile()
                 .GetExecuteStrategy<Company>();
 
             ExecuteStrategyExtensions.Create(strategy);
@@ -257,15 +252,18 @@
         [Fact]
         public void CreateDoesNotSetPropertiesProvidedByConstructorTest()
         {
-            var args = new object[] {new Company(), Guid.NewGuid(), 123, 456, true};
+            var args = new object[]
+            {
+                new Company(), Guid.NewGuid(), 123, 456, true
+            };
 
             var actual = Model.Create<WithConstructorParameters>(args);
 
             actual.First.Should().BeSameAs(args[0]);
-            actual.Id.Should().Be((Guid) args[1]);
-            actual.RefNumber.Should().Be((int?) args[2]);
-            actual.Number.Should().Be((int) args[3]);
-            actual.Value.Should().Be((bool) args[4]);
+            actual.Id.Should().Be((Guid)args[1]);
+            actual.RefNumber.Should().Be((int?)args[2]);
+            actual.Number.Should().Be((int)args[3]);
+            actual.Value.Should().Be((bool)args[4]);
         }
 
         [Fact]
@@ -351,7 +349,7 @@
             var actual = Model.Create<Person>(entity);
 
             actual.Should().NotBeNull();
-            actual.DOB.Should().NotBe(default(DateTime));
+            actual.DOB.Should().NotBe(default);
             actual.PersonalEmail.Should().Match("*@*.*");
             actual.WorkEmail.Should().Match("*@*.*");
             actual.FirstName.Should().NotBeNullOrWhiteSpace();
@@ -365,7 +363,7 @@
             var actual = Model.Create<Simple>();
 
             actual.Should().NotBeNull();
-            actual.DOB.Should().NotBe(default(DateTime));
+            actual.DOB.Should().NotBe(default);
             actual.FirstName.Should().NotBeNullOrWhiteSpace();
             actual.LastName.Should().NotBeNullOrWhiteSpace();
             actual.Id.Should().NotBeEmpty();
@@ -414,7 +412,10 @@
 
             target.Initialize(configuration, buildLog);
 
-            var args = new object[] {null, Guid.Empty, null, 0, false};
+            var args = new object[]
+            {
+                null, Guid.Empty, null, 0, false
+            };
 
             var actual = Model.Create<WithConstructorParameters>(args);
 
@@ -434,12 +435,15 @@
 
             target.Initialize(configuration, buildLog);
 
-            var args = new object[] {Guid.NewGuid().ToString()};
+            var args = new object[]
+            {
+                Guid.NewGuid().ToString()
+            };
 
             var actual = Model.Create<WithMixedValueParameters>(args);
 
-            actual.FirstName.Should().NotBe((string) args[0]);
-            actual.LastName.Should().NotBe((string) args[0]);
+            actual.FirstName.Should().NotBe((string)args[0]);
+            actual.LastName.Should().NotBe((string)args[0]);
         }
 
         [Fact]
@@ -472,11 +476,8 @@
 
             Action action = () => target.Create();
 
-            var exception = action.Should()
-                .Throw<BuildException>()
-                .Where(x => x.Message != null)
-                .Where(x => x.BuildLog != null)
-                .Which;
+            var exception = action.Should().Throw<BuildException>().Where(x => x.Message != null)
+                .Where(x => x.BuildLog != null).Which;
 
             _output.WriteLine(exception.Message);
         }
@@ -486,8 +487,7 @@
         {
             var expected = Guid.NewGuid();
 
-            var strategy = Model.DefaultBuildStrategy.Clone()
-                .AddCreationRule<Person>(x => x.Id, 100, expected)
+            var strategy = Model.DefaultBuildStrategy.Clone().AddCreationRule<Person>(x => x.Id, 100, expected)
                 .Compile();
 
             var actual = strategy.Create<List<Person>>();
@@ -498,8 +498,7 @@
         [Fact]
         public void IgnoringSkipsPropertyAssignmentOfNestedObjectsTest()
         {
-            var actual = Model.Ignoring<Person>(x => x.FirstName)
-                .Ignoring<Address>(x => x.AddressLine1)
+            var actual = Model.Ignoring<Person>(x => x.FirstName).Ignoring<Address>(x => x.AddressLine1)
                 .Create<Person>();
 
             actual.Should().NotBeNull();
@@ -514,7 +513,7 @@
             var actual = Model.Ignoring<Person>(x => x.Id).Ignoring<Person>(x => x.IsActive).Create<Person>(entity);
 
             actual.Should().NotBeNull();
-            actual.DOB.Should().NotBe(default(DateTime));
+            actual.DOB.Should().NotBe(default);
             actual.FirstName.Should().NotBeNullOrWhiteSpace();
             actual.LastName.Should().NotBeNullOrWhiteSpace();
             actual.Priority.Should().NotBe(0);
@@ -526,16 +525,13 @@
         public void MailinatorEmailGeneratorIsAssignedAgainstAllInstancesTest()
         {
             var strategy = new DefaultBuildStrategyCompiler().RemoveValueGenerator<EmailValueGenerator>()
-                .AddValueGenerator<MailinatorEmailValueGenerator>()
-                .Compile();
+                .AddValueGenerator<MailinatorEmailValueGenerator>().Compile();
 
             var actual = strategy.Create<List<Person>>();
 
-            actual.All(x => x.PersonalEmail.EndsWith("@mailinator.com", StringComparison.OrdinalIgnoreCase))
-                .Should()
+            actual.All(x => x.PersonalEmail.EndsWith("@mailinator.com", StringComparison.OrdinalIgnoreCase)).Should()
                 .BeTrue();
-            actual.All(x => x.WorkEmail.EndsWith("@mailinator.com", StringComparison.OrdinalIgnoreCase))
-                .Should()
+            actual.All(x => x.WorkEmail.EndsWith("@mailinator.com", StringComparison.OrdinalIgnoreCase)).Should()
                 .BeTrue();
         }
 
@@ -546,7 +542,7 @@
             var actual = Model.Populate(entity);
 
             actual.Should().NotBeNull();
-            actual.DOB.Should().NotBe(default(DateTime));
+            actual.DOB.Should().NotBe(default);
             actual.FirstName.Should().NotBeNullOrWhiteSpace();
             actual.LastName.Should().NotBeNullOrWhiteSpace();
             actual.Id.Should().NotBeEmpty();
@@ -625,16 +621,16 @@
             for (var index = 0; index < MaxTasks; index++)
             {
                 var loopIndex = index;
-                var task = Task<string>.Factory.StartNew(() =>
-                {
-                    var strategy = buildStrategy.GetExecuteStrategy<Empty>();
+                var task = Task<string>.Factory.StartNew(
+                    () =>
+                    {
+                        var strategy = buildStrategy.GetExecuteStrategy<Empty>();
 
-                    strategy.Create();
+                        strategy.Create();
 
-                    return "Iteration " + loopIndex
-                               + " on thread " + System.Threading.Thread.CurrentThread.ManagedThreadId
-                                        + Environment.NewLine + strategy.Log.Output;
-                });
+                        return "Iteration " + loopIndex + " on thread " + Thread.CurrentThread.ManagedThreadId +
+                               Environment.NewLine + strategy.Log.Output;
+                    });
 
                 tasks.Add(task);
             }

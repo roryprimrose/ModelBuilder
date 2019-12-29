@@ -4,7 +4,8 @@
     using System.Collections.ObjectModel;
     using System.Diagnostics.CodeAnalysis;
 
-    [SuppressMessage("Microsoft.Usage",
+    [SuppressMessage(
+        "Microsoft.Usage",
         "CA2227",
         Justification = "This base type is used specifically for testing scenarios for that data type.")]
     public class EnumerableParent

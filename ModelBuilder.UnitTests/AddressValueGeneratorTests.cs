@@ -26,7 +26,7 @@
 
             var target = new AddressValueGenerator();
 
-            var actual = (string) target.Generate(typeof(string), referenceName, executeStrategy);
+            var actual = (string)target.Generate(typeof(string), referenceName, executeStrategy);
 
             actual.Should().BeNullOrEmpty();
         }
@@ -41,13 +41,13 @@
 
             var target = new AddressValueGenerator();
 
-            var first = (string) target.Generate(typeof(string), "address", executeStrategy) as string;
+            var first = (string)target.Generate(typeof(string), "address", executeStrategy);
 
             string second = null;
 
             for (var index = 0; index < 1000; index++)
             {
-                second = (string) target.Generate(typeof(string), "address", executeStrategy) as string;
+                second = (string)target.Generate(typeof(string), "address", executeStrategy);
 
                 if (string.Equals(first, second, StringComparison.OrdinalIgnoreCase) == false)
                 {
@@ -56,22 +56,6 @@
             }
 
             first.Should().NotBe(second);
-        }
-        
-        [Fact]
-        public void GenerateReturnsStringValueTest()
-        {
-            var buildChain = new BuildHistory();
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            executeStrategy.BuildChain.Returns(buildChain);
-
-            var target = new AddressValueGenerator();
-
-            var actual = target.Generate(typeof(string), "address", executeStrategy) as string;
-            
-            actual.Should().BeOfType<string>();
-            actual.As<string>().Should().NotBeNullOrWhiteSpace();
         }
 
         [Theory]
@@ -96,11 +80,28 @@
 
             actual.Should().NotBeNullOrWhiteSpace();
 
-            var matchingLocations = TestData.Locations.Where(x =>
-                actual.Contains(x.StreetName, StringComparison.OrdinalIgnoreCase)
-                && actual.Contains(x.StreetSuffix, StringComparison.OrdinalIgnoreCase));
+            var matchingLocations = TestData.Locations.Where(
+                x => actual.Contains(x.StreetName, StringComparison.OrdinalIgnoreCase) && actual.Contains(
+                         x.StreetSuffix,
+                         StringComparison.OrdinalIgnoreCase));
 
             matchingLocations.Should().NotBeEmpty();
+        }
+
+        [Fact]
+        public void GenerateReturnsStringValueTest()
+        {
+            var buildChain = new BuildHistory();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            var target = new AddressValueGenerator();
+
+            var actual = target.Generate(typeof(string), "address", executeStrategy) as string;
+
+            actual.Should().BeOfType<string>();
+            actual.As<string>().Should().NotBeNullOrWhiteSpace();
         }
 
         [Theory]
@@ -156,7 +157,7 @@
 
             var target = new AddressValueGenerator();
 
-            var actual = (string) target.Generate(type, referenceName, executeStrategy);
+            var actual = (string)target.Generate(type, referenceName, executeStrategy);
 
             if (expected)
             {

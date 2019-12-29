@@ -115,11 +115,11 @@
 
             buildStrategy.PropertyResolver.Returns(propertyResolver);
             propertyResolver.CanPopulate(Arg.Any<PropertyInfo>()).Returns(true);
-            propertyResolver.ShouldPopulateProperty(Arg.Any<IBuildConfiguration>(),
-                    Arg.Any<object>(),
-                    Arg.Any<PropertyInfo>(),
-                    Arg.Any<object[]>())
-                .Returns(true);
+            propertyResolver.ShouldPopulateProperty(
+                Arg.Any<IBuildConfiguration>(),
+                Arg.Any<object>(),
+                Arg.Any<PropertyInfo>(),
+                Arg.Any<object[]>()).Returns(true);
             typeCreator.CanCreate(typeof(SlimModel), null, Arg.Any<IBuildChain>()).Returns(true);
             typeCreator.CanPopulate(typeof(SlimModel), null, Arg.Any<IBuildChain>()).Returns(true);
             typeCreator.Create(typeof(SlimModel), null, Arg.Any<IExecuteStrategy>()).Returns(expected);
@@ -194,11 +194,11 @@
 
             buildStrategy.PropertyResolver.Returns(propertyResolver);
             propertyResolver.CanPopulate(Arg.Any<PropertyInfo>()).Returns(true);
-            propertyResolver.ShouldPopulateProperty(Arg.Any<IBuildConfiguration>(),
-                    Arg.Any<object>(),
-                    Arg.Any<PropertyInfo>(),
-                    Arg.Any<object[]>())
-                .Returns(true);
+            propertyResolver.ShouldPopulateProperty(
+                Arg.Any<IBuildConfiguration>(),
+                Arg.Any<object>(),
+                Arg.Any<PropertyInfo>(),
+                Arg.Any<object[]>()).Returns(true);
             buildStrategy.TypeCreators.Returns(typeCreators.AsReadOnly());
             buildStrategy.ValueGenerators.Returns(valueGenerators.AsReadOnly());
 
@@ -211,29 +211,28 @@
             typeCreator.AutoPopulate.Returns(true);
             enumerableTypeCreator.AutoPopulate.Returns(false);
             enumerableTypeCreator.CanCreate(
-                    typeof(IEnumerable<Person>),
-                    "Staff",
-                    Arg.Is<IBuildChain>(x => x.Last == expected))
-                .Returns(true);
-            enumerableTypeCreator.Create(typeof(IEnumerable<Person>),
-                    "Staff",
-                    Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == expected))
-                .Returns(staff);
+                typeof(IEnumerable<Person>),
+                "Staff",
+                Arg.Is<IBuildChain>(x => x.Last == expected)).Returns(true);
+            enumerableTypeCreator.Create(
+                typeof(IEnumerable<Person>),
+                "Staff",
+                Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == expected)).Returns(staff);
             enumerableTypeCreator.Populate(staff, target).Returns(staff);
             valueGenerator.IsSupported(typeof(string), "Name", Arg.Is<IBuildChain>(x => x.Last == expected))
                 .Returns(true);
-            valueGenerator
-                .Generate(typeof(string), "Name", Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == expected))
-                .Returns(name);
+            valueGenerator.Generate(
+                typeof(string),
+                "Name",
+                Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == expected)).Returns(name);
             valueGenerator.IsSupported(typeof(string), "Address", Arg.Is<IBuildChain>(x => x.Last == expected))
                 .Returns(true);
             valueGenerator.Generate(
-                    typeof(string),
-                    "Address",
-                    Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == expected))
-                .Returns(address);
+                typeof(string),
+                "Address",
+                Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == expected)).Returns(address);
 
-            var actual = (Company) target.Populate((object) expected);
+            var actual = (Company)target.Populate((object)expected);
 
             actual.Should().BeSameAs(expected);
             actual.Name.Should().Be(name);

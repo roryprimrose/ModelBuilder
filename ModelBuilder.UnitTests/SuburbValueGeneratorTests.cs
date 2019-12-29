@@ -19,13 +19,13 @@
 
             var target = new SuburbValueGenerator();
 
-            var first = (string) target.Generate(typeof(string), "suburb", executeStrategy);
+            var first = (string)target.Generate(typeof(string), "suburb", executeStrategy);
 
             var second = first;
 
             for (var index = 0; index < 1000; index++)
             {
-                second = (string) target.Generate(typeof(string), "suburb", executeStrategy);
+                second = (string)target.Generate(typeof(string), "suburb", executeStrategy);
 
                 if (string.Equals(first, second, StringComparison.OrdinalIgnoreCase) == false)
                 {
@@ -64,7 +64,7 @@
 
             var target = new SuburbValueGenerator();
 
-            var actual = (string) target.Generate(type, referenceName, executeStrategy);
+            var actual = (string)target.Generate(type, referenceName, executeStrategy);
 
             TestData.LastNames.Should().Contain(actual);
         }

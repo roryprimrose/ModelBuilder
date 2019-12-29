@@ -10,49 +10,6 @@
     public class CultureValueGeneratorTests
     {
         [Fact]
-        public void GenerateReturnsRandomStringValueTest()
-        {
-            var buildChain = new BuildHistory();
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            executeStrategy.BuildChain.Returns(buildChain);
-
-            var target = new CultureValueGenerator();
-
-            var first = (string) target.Generate(typeof(string), "culture", executeStrategy);
-
-            var second = first;
-
-            for (var index = 0; index < 1000; index++)
-            {
-                second = (string) target.Generate(typeof(string), "culture", executeStrategy);
-
-                if (string.Equals(first, second, StringComparison.OrdinalIgnoreCase) == false)
-                {
-                    break;
-                }
-            }
-
-            first.Should().NotBe(second);
-        }
-
-        [Fact]
-        public void GenerateReturnsStringValueTest()
-        {
-            var buildChain = new BuildHistory();
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            executeStrategy.BuildChain.Returns(buildChain);
-
-            var target = new CultureValueGenerator();
-
-            var actual = target.Generate(typeof(string), "culture", executeStrategy);
-
-            actual.Should().BeOfType<string>();
-            actual.As<string>().Should().NotBeNullOrWhiteSpace();
-        }
-
-        [Fact]
         public void GenerateReturnsCultureInfoValueTest()
         {
             var buildChain = new BuildHistory();
@@ -91,8 +48,51 @@
                     break;
                 }
             }
-        
+
             first.Should().NotBe(second);
+        }
+
+        [Fact]
+        public void GenerateReturnsRandomStringValueTest()
+        {
+            var buildChain = new BuildHistory();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            var target = new CultureValueGenerator();
+
+            var first = (string)target.Generate(typeof(string), "culture", executeStrategy);
+
+            var second = first;
+
+            for (var index = 0; index < 1000; index++)
+            {
+                second = (string)target.Generate(typeof(string), "culture", executeStrategy);
+
+                if (string.Equals(first, second, StringComparison.OrdinalIgnoreCase) == false)
+                {
+                    break;
+                }
+            }
+
+            first.Should().NotBe(second);
+        }
+
+        [Fact]
+        public void GenerateReturnsStringValueTest()
+        {
+            var buildChain = new BuildHistory();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            var target = new CultureValueGenerator();
+
+            var actual = target.Generate(typeof(string), "culture", executeStrategy);
+
+            actual.Should().BeOfType<string>();
+            actual.As<string>().Should().NotBeNullOrWhiteSpace();
         }
 
         [Theory]

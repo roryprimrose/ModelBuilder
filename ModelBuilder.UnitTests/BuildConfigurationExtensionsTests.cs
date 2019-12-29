@@ -11,8 +11,7 @@
         public void CloneReturnsCompilerWithBuildStrategyConfigurationTest()
         {
             var target = new DefaultBuildStrategyCompiler().AddIgnoreRule<Person>(x => x.Address)
-                .AddCreationRule<Company>(x => x.Address, 100, "stuff")
-                .Compile();
+                .AddCreationRule<Company>(x => x.Address, 100, "stuff").Compile();
 
             var actual = target.Clone();
 

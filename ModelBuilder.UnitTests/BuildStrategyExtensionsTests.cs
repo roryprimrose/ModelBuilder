@@ -18,7 +18,10 @@
             var value = Guid.NewGuid();
 
             var generator = Substitute.For<IValueGenerator>();
-            var generators = new List<IValueGenerator> {generator}.AsReadOnly();
+            var generators = new List<IValueGenerator>
+            {
+                generator
+            }.AsReadOnly();
             var target = Substitute.For<IBuildStrategy>();
 
             target.ValueGenerators.Returns(generators);
@@ -56,7 +59,10 @@
             var value = Guid.NewGuid();
 
             var generator = Substitute.For<IValueGenerator>();
-            var generators = new List<IValueGenerator> {generator}.AsReadOnly();
+            var generators = new List<IValueGenerator>
+            {
+                generator
+            }.AsReadOnly();
             var target = Substitute.For<IBuildStrategy>();
 
             target.ValueGenerators.Returns(generators);
@@ -124,8 +130,8 @@
             actual.Should().NotBeSameAs(target);
             actual.TypeMappingRules.Should().NotBeEmpty();
 
-            var matchingRule = actual.TypeMappingRules.FirstOrDefault(x =>
-                x.SourceType == typeof(Stream) && x.TargetType == typeof(MemoryStream));
+            var matchingRule = actual.TypeMappingRules.FirstOrDefault(
+                x => x.SourceType == typeof(Stream) && x.TargetType == typeof(MemoryStream));
 
             matchingRule.Should().NotBeNull();
         }
@@ -170,9 +176,15 @@
 
             var target = Substitute.For<IBuildStrategy>();
             var creator = Substitute.For<ITypeCreator>();
-            var creators = new List<ITypeCreator> {creator}.AsReadOnly();
+            var creators = new List<ITypeCreator>
+            {
+                creator
+            }.AsReadOnly();
             var generator = Substitute.For<IValueGenerator>();
-            var generators = new List<IValueGenerator> {generator}.AsReadOnly();
+            var generators = new List<IValueGenerator>
+            {
+                generator
+            }.AsReadOnly();
 
             target.TypeCreators.Returns(creators);
             target.ValueGenerators.Returns(generators);
@@ -191,7 +203,10 @@
         public void UsingExecuteStrategyReturnsExecuteStrategyWithBuildStrategyConfigurationsTest()
         {
             var strategy = Model.BuildStrategy;
-            var ignoreRules = new List<IgnoreRule> {new IgnoreRule(typeof(string), "Stuff")};
+            var ignoreRules = new List<IgnoreRule>
+            {
+                new IgnoreRule(typeof(string), "Stuff")
+            };
 
             var buildLog = Substitute.For<IBuildLog>();
             var target = Substitute.For<IBuildStrategy>();
@@ -216,7 +231,7 @@
         {
             var target = Substitute.For<IBuildStrategy>();
 
-            target.GetBuildLog().Returns((IBuildLog) null);
+            target.GetBuildLog().Returns((IBuildLog)null);
 
             Action action = () => target.UsingExecuteStrategy<DefaultExecuteStrategy>();
 

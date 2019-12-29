@@ -11,8 +11,7 @@
         /// <summary>
         ///     Initializes a new instance of the <see cref="BooleanValueGenerator" /> class.
         /// </summary>
-        public BooleanValueGenerator()
-            : base(typeof(bool), typeof(bool?))
+        public BooleanValueGenerator() : base(typeof(bool), typeof(bool?))
         {
         }
 

@@ -14,12 +14,12 @@ namespace ModelBuilder
         /// <summary>
         ///     Initializes a new instance of the <see cref="DateTimeValueGenerator" /> class.
         /// </summary>
-        public DateOfBirthValueGenerator()
-            : base(_matchNameExpression,
-                typeof(DateTime),
-                typeof(DateTime?),
-                typeof(DateTimeOffset),
-                typeof(DateTimeOffset?))
+        public DateOfBirthValueGenerator() : base(
+            _matchNameExpression,
+            typeof(DateTime),
+            typeof(DateTime?),
+            typeof(DateTimeOffset),
+            typeof(DateTimeOffset?))
         {
         }
 
@@ -59,10 +59,7 @@ namespace ModelBuilder
 
             var offsetPoint = DateTimeOffset.UtcNow;
 
-            offsetPoint = offsetPoint.AddYears(-years)
-                .AddMonths(-months)
-                .AddDays(-days)
-                .AddHours(-hours)
+            offsetPoint = offsetPoint.AddYears(-years).AddMonths(-months).AddDays(-days).AddHours(-hours)
                 .AddMinutes(-minutes);
 
             return offsetPoint;

@@ -14,7 +14,10 @@
         [Fact]
         public void GetSourceValueReturnsNullFromSourceNullableIntPropertyTest()
         {
-            var context = new RelativeNullableInt {YearStarted = null};
+            var context = new RelativeNullableInt
+            {
+                YearStarted = null
+            };
 
             var target = new GeneratorWrapper<int?>(PropertyExpression.FirstName, new Regex("YearStarted"));
 
@@ -50,7 +53,10 @@
         [Fact]
         public void GetSourceValueReturnsValueFromSourceIntPropertyTest()
         {
-            var context = new Person {Priority = Environment.TickCount};
+            var context = new Person
+            {
+                Priority = Environment.TickCount
+            };
 
             var target = new GeneratorWrapper<int>(PropertyExpression.FirstName, new Regex("Priority"));
 
@@ -62,7 +68,10 @@
         [Fact]
         public void GetSourceValueReturnsValueFromSourceNullableIntPropertyTest()
         {
-            var context = new RelativeNullableInt {YearStarted = Environment.TickCount};
+            var context = new RelativeNullableInt
+            {
+                YearStarted = Environment.TickCount
+            };
 
             var target = new GeneratorWrapper<int?>(PropertyExpression.FirstName, new Regex("YearStarted"));
 
@@ -77,7 +86,10 @@
         [InlineData(Gender.Female, "Female")]
         public void GetSourceValueReturnsValueFromSourcePropertyTest(Gender gender, string expected)
         {
-            var context = new Person {Gender = gender};
+            var context = new Person
+            {
+                Gender = gender
+            };
 
             var target = new GeneratorWrapper<string>(PropertyExpression.FirstName, PropertyExpression.Gender);
 
@@ -89,7 +101,10 @@
         [Fact]
         public void GetSourceValueReturnsValueFromSourceStringPropertyTest()
         {
-            var context = new Person {LastName = Guid.NewGuid().ToString()};
+            var context = new Person
+            {
+                LastName = Guid.NewGuid().ToString()
+            };
 
             var target = new GeneratorWrapper<string>(PropertyExpression.FirstName, PropertyExpression.LastName);
 
@@ -103,7 +118,7 @@
         {
             var context = new Person();
 
-            var target = new GeneratorWrapper<string>(PropertyExpression.FirstName, (Regex) null, (Type) null);
+            var target = new GeneratorWrapper<string>(PropertyExpression.FirstName, (Regex)null, (Type)null);
 
             Action action = () => target.ReadSourceValue(context);
 
@@ -123,9 +138,10 @@
         [Fact]
         public void GetValueThrowsExceptionWithNullContextTest()
         {
-            var target = new GeneratorWrapper<string>(PropertyExpression.FirstName,
+            var target = new GeneratorWrapper<string>(
                 PropertyExpression.FirstName,
-                (Type) null);
+                PropertyExpression.FirstName,
+                (Type)null);
 
             Action action = () => target.ReadValue(PropertyExpression.LastName, null);
 
@@ -137,9 +153,10 @@
         {
             var context = new Person();
 
-            var target = new GeneratorWrapper<string>(PropertyExpression.FirstName,
+            var target = new GeneratorWrapper<string>(
                 PropertyExpression.FirstName,
-                (Type) null);
+                PropertyExpression.FirstName,
+                (Type)null);
 
             Action action = () => target.ReadValue(null, context);
 
@@ -151,7 +168,8 @@
         {
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
-            var sut = new GeneratorWrapper<string>(PropertyExpression.FirstName,
+            var sut = new GeneratorWrapper<string>(
+                PropertyExpression.FirstName,
                 PropertyExpression.Email,
                 typeof(string));
 
@@ -193,7 +211,8 @@
 
             buildChain.Push(person);
 
-            var sut = new GeneratorWrapper<string>(PropertyExpression.FirstName,
+            var sut = new GeneratorWrapper<string>(
+                PropertyExpression.FirstName,
                 PropertyExpression.Email,
                 typeof(string));
 
@@ -230,7 +249,10 @@
         [InlineData(Gender.Unknown, false)]
         public void IsMaleReturnsValueBasedOnGenderPropertyTest(Gender gender, bool expected)
         {
-            var person = new Person {Gender = gender};
+            var person = new Person
+            {
+                Gender = gender
+            };
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
@@ -238,7 +260,8 @@
 
             buildChain.Push(person);
 
-            var sut = new GeneratorWrapper<string>(PropertyExpression.FirstName,
+            var sut = new GeneratorWrapper<string>(
+                PropertyExpression.FirstName,
                 PropertyExpression.Email,
                 typeof(string));
 
@@ -250,7 +273,8 @@
         [Fact]
         public void IsMaleThrowsExceptionWithNullExecuteStrategyTest()
         {
-            var sut = new GeneratorWrapper<string>(PropertyExpression.FirstName,
+            var sut = new GeneratorWrapper<string>(
+                PropertyExpression.FirstName,
                 PropertyExpression.Email,
                 typeof(string));
 
@@ -311,7 +335,7 @@
 
             buildChain.Push(context);
 
-            var target = new GeneratorWrapper<string>(PropertyExpression.FirstName, (Regex) null);
+            var target = new GeneratorWrapper<string>(PropertyExpression.FirstName, (Regex)null);
 
             var actual = target.IsSupported(typeof(string), "FirstName", buildChain);
 
@@ -351,18 +375,21 @@
 
         private class GeneratorWrapper<T> : RelativeValueGenerator
         {
-            public GeneratorWrapper(Regex targetNameExpression, params Type[] types)
-                : base(targetNameExpression, types)
+            public GeneratorWrapper(Regex targetNameExpression, params Type[] types) : base(targetNameExpression, types)
             {
             }
 
-            public GeneratorWrapper(Regex targetNameExpression, Regex sourceNameExpression, params Type[] types)
-                : base(targetNameExpression, sourceNameExpression, types)
+            public GeneratorWrapper(Regex targetNameExpression, Regex sourceNameExpression, params Type[] types) : base(
+                targetNameExpression,
+                sourceNameExpression,
+                types)
             {
             }
 
-            public GeneratorWrapper(Regex targetNameExpression, Regex sourceNameExpression)
-                : base(targetNameExpression, sourceNameExpression, typeof(string))
+            public GeneratorWrapper(Regex targetNameExpression, Regex sourceNameExpression) : base(
+                targetNameExpression,
+                sourceNameExpression,
+                typeof(string))
             {
             }
 

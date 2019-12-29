@@ -18,12 +18,19 @@
             var creationRules = Model.BuildStrategy.CreationRules.ToList();
             var typeCreators = Model.BuildStrategy.TypeCreators.ToList();
             var valueGenerators = Model.BuildStrategy.ValueGenerators.ToList();
-            var ignoreRules = new List<IgnoreRule> {new IgnoreRule(typeof(Person), "FirstName")};
+            var ignoreRules = new List<IgnoreRule>
+            {
+                new IgnoreRule(typeof(Person), "FirstName")
+            };
             var typeMappingRules = Model.BuildStrategy.TypeMappingRules;
             var executeOrderRules = Model.BuildStrategy.ExecuteOrderRules.ToList();
-            var postBuildActions = new List<IPostBuildAction> {Substitute.For<IPostBuildAction>()};
+            var postBuildActions = new List<IPostBuildAction>
+            {
+                Substitute.For<IPostBuildAction>()
+            };
 
-            var actual = new BuilderStrategyWrapper(constructorResolver,
+            var actual = new BuilderStrategyWrapper(
+                constructorResolver,
                 propertyResolver,
                 creationRules,
                 typeCreators,
@@ -65,7 +72,8 @@
             var executeOrderRules = Model.BuildStrategy.ExecuteOrderRules;
             var postBuildActions = Model.BuildStrategy.PostBuildActions;
 
-            Action action = () => new BuilderStrategyWrapper(null,
+            Action action = () => new BuilderStrategyWrapper(
+                null,
                 propertyResolver,
                 creationRules,
                 typeCreators,
@@ -90,7 +98,8 @@
             var executeOrderRules = Model.BuildStrategy.ExecuteOrderRules;
             var postBuildActions = Model.BuildStrategy.PostBuildActions;
 
-            Action action = () => new BuilderStrategyWrapper(constructorResolver,
+            Action action = () => new BuilderStrategyWrapper(
+                constructorResolver,
                 propertyResolver,
                 null,
                 typeCreators,
@@ -115,7 +124,8 @@
             var typeMappingRules = Model.BuildStrategy.TypeMappingRules;
             var postBuildActions = Model.BuildStrategy.PostBuildActions;
 
-            Action action = () => new BuilderStrategyWrapper(constructorResolver,
+            Action action = () => new BuilderStrategyWrapper(
+                constructorResolver,
                 propertyResolver,
                 creationRules,
                 typeCreators,
@@ -140,7 +150,8 @@
             var executeOrderRules = Model.BuildStrategy.ExecuteOrderRules;
             var postBuildActions = Model.BuildStrategy.PostBuildActions;
 
-            Action action = () => new BuilderStrategyWrapper(constructorResolver,
+            Action action = () => new BuilderStrategyWrapper(
+                constructorResolver,
                 propertyResolver,
                 creationRules,
                 typeCreators,
@@ -165,7 +176,8 @@
             var typeMappingRules = Model.BuildStrategy.TypeMappingRules;
             var executeOrderRules = Model.BuildStrategy.ExecuteOrderRules;
 
-            Action action = () => new BuilderStrategyWrapper(constructorResolver,
+            Action action = () => new BuilderStrategyWrapper(
+                constructorResolver,
                 propertyResolver,
                 creationRules,
                 typeCreators,
@@ -190,7 +202,8 @@
             var executeOrderRules = Model.BuildStrategy.ExecuteOrderRules;
             var postBuildActions = Model.BuildStrategy.PostBuildActions;
 
-            Action action = () => new BuilderStrategyWrapper(constructorResolver,
+            Action action = () => new BuilderStrategyWrapper(
+                constructorResolver,
                 null,
                 creationRules,
                 typeCreators,
@@ -223,7 +236,8 @@
             var executeOrderRules = Model.BuildStrategy.ExecuteOrderRules;
             var postBuildActions = Model.BuildStrategy.PostBuildActions;
 
-            Action action = () => new BuilderStrategyWrapper(constructorResolver,
+            Action action = () => new BuilderStrategyWrapper(
+                constructorResolver,
                 propertyResolver,
                 creationRules,
                 null,
@@ -248,7 +262,8 @@
             var executeOrderRules = Model.BuildStrategy.ExecuteOrderRules;
             var postBuildActions = Model.BuildStrategy.PostBuildActions;
 
-            Action action = () => new BuilderStrategyWrapper(constructorResolver,
+            Action action = () => new BuilderStrategyWrapper(
+                constructorResolver,
                 propertyResolver,
                 creationRules,
                 typeCreators,
@@ -274,7 +289,8 @@
             var executeOrderRules = Model.BuildStrategy.ExecuteOrderRules;
             var postBuildActions = Model.BuildStrategy.PostBuildActions;
 
-            Action action = () => new BuilderStrategyWrapper(constructorResolver,
+            Action action = () => new BuilderStrategyWrapper(
+                constructorResolver,
                 propertyResolver,
                 creationRules,
                 typeCreators,
@@ -289,8 +305,7 @@
 
         private class BuilderStrategyWrapper : BuildStrategyBase
         {
-            public BuilderStrategyWrapper(IBuildStrategy strategy)
-                : base(strategy)
+            public BuilderStrategyWrapper(IBuildStrategy strategy) : base(strategy)
             {
             }
 
@@ -303,16 +318,16 @@
                 IEnumerable<IgnoreRule> ignoreRules,
                 IEnumerable<TypeMappingRule> typeMappingRules,
                 IEnumerable<ExecuteOrderRule> executeOrderRules,
-                IEnumerable<IPostBuildAction> postBuildActions)
-                : base(constructorResolver,
-                    propertyResolver,
-                    creationRules,
-                    typeCreators,
-                    valueGenerators,
-                    ignoreRules,
-                    typeMappingRules,
-                    executeOrderRules,
-                    postBuildActions)
+                IEnumerable<IPostBuildAction> postBuildActions) : base(
+                constructorResolver,
+                propertyResolver,
+                creationRules,
+                typeCreators,
+                valueGenerators,
+                ignoreRules,
+                typeMappingRules,
+                executeOrderRules,
+                postBuildActions)
             {
             }
 

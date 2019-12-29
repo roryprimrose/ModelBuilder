@@ -157,7 +157,8 @@ namespace ModelBuilder
                 return;
             }
 
-            var message = string.Format(CultureInfo.CurrentCulture,
+            var message = string.Format(
+                CultureInfo.CurrentCulture,
                 Resources.Error_GenerationNotSupportedFormat,
                 GetType().FullName,
                 type.FullName,
@@ -200,7 +201,8 @@ namespace ModelBuilder
                 return;
             }
 
-            var message = string.Format(CultureInfo.CurrentCulture,
+            var message = string.Format(
+                CultureInfo.CurrentCulture,
                 Resources.Error_GenerationNotSupportedFormat,
                 GetType().FullName,
                 type.FullName,

@@ -20,7 +20,7 @@
         {
             var target = new DefaultConstructorResolver();
 
-            var constructor = target.Resolve(typeof(Person), (Person) null);
+            var constructor = target.Resolve(typeof(Person), (Person)null);
 
             constructor.GetParameters().Length.Should().Be(1);
         }
@@ -28,7 +28,10 @@
         [Fact]
         public void ResolveMatchesConstructorWithDerivedParameterTypesTest()
         {
-            var person = new Person {Id = Guid.NewGuid()};
+            var person = new Person
+            {
+                Id = Guid.NewGuid()
+            };
 
             var target = new DefaultConstructorResolver();
 
@@ -40,7 +43,10 @@
         [Fact]
         public void ResolveMatchesConstructorWithMatchingParametersTypesTest()
         {
-            var args = new object[] {"first", "last", DateTime.UtcNow, true, Guid.NewGuid(), Environment.TickCount};
+            var args = new object[]
+            {
+                "first", "last", DateTime.UtcNow, true, Guid.NewGuid(), Environment.TickCount
+            };
 
             var target = new DefaultConstructorResolver();
 
@@ -223,8 +229,13 @@
         {
             var target = new DefaultConstructorResolver();
 
-            Action action = () =>
-                target.Resolve(typeof(Other), Guid.NewGuid(), null, 123, null, "ThisParamDoesn'tMatch");
+            Action action = () => target.Resolve(
+                typeof(Other),
+                Guid.NewGuid(),
+                null,
+                123,
+                null,
+                "ThisParamDoesn'tMatch");
 
             _output.WriteLine(action.Should().Throw<MissingMemberException>().And.Message);
         }
@@ -296,7 +307,8 @@
 
             var priority = Convert.ToDouble(Environment.TickCount);
 
-            Action action = () => target.Resolve(typeof(WithValueParameters),
+            Action action = () => target.Resolve(
+                typeof(WithValueParameters),
                 "first",
                 "last",
                 DateTime.UtcNow,

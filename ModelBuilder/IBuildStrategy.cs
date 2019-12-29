@@ -11,7 +11,8 @@
         /// <summary>
         ///     Gets the build log for items created by this strategy.
         /// </summary>
-        [SuppressMessage("Microsoft.Design",
+        [SuppressMessage(
+            "Microsoft.Design",
             "CA1024:UsePropertiesWhereAppropriate",
             Justification = "A method is used to encourage returning a new instance for each invocation.")]
         IBuildLog GetBuildLog();
