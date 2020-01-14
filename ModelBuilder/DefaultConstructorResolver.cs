@@ -64,7 +64,8 @@
                 }
             }
 
-            var message = string.Format(CultureInfo.CurrentCulture,
+            var message = string.Format(
+                CultureInfo.CurrentCulture,
                 Resources.ConstructorResolver_NoValidConstructorFound,
                 type.FullName);
 
@@ -81,7 +82,8 @@
             if (constructor == null)
             {
                 var parameterTypes = types.Select(x => x.FullName).Aggregate((current, next) => current + ", " + next);
-                var message = string.Format(CultureInfo.CurrentCulture,
+                var message = string.Format(
+                    CultureInfo.CurrentCulture,
                     "No constructor found matching type {0} with parameters[{1}].",
                     type.FullName,
                     parameterTypes);
@@ -99,8 +101,7 @@
             // Ignore any constructors that have a parameter with the type being created (a copy constructor)
             var validConstructors = availableConstructors
                 .Where(x => x.GetParameters().Any(y => y.ParameterType == type) == false)
-                .OrderBy(x => x.GetParameters().Length)
-                .ToList();
+                .OrderBy(x => x.GetParameters().Length).ToList();
 
             var bestConstructor = validConstructors.FirstOrDefault();
 
@@ -113,13 +114,15 @@
 
             if (availableConstructors.Count > validConstructors.Count)
             {
-                message = string.Format(CultureInfo.CurrentCulture,
+                message = string.Format(
+                    CultureInfo.CurrentCulture,
                     Resources.ConstructorResolver_NoValidConstructorFound,
                     type.FullName);
             }
             else
             {
-                message = string.Format(CultureInfo.CurrentCulture,
+                message = string.Format(
+                    CultureInfo.CurrentCulture,
                     Resources.ConstructorResolver_NoPublicConstructorFound,
                     type.FullName);
             }
@@ -129,7 +132,8 @@
 
         private static bool ParametersMatchArguments(IList<ParameterInfo> parameters, IList<object> args)
         {
-            Debug.Assert(args.Count <= parameters.Count,
+            Debug.Assert(
+                args.Count <= parameters.Count,
                 "To many arguments have been provided to match with this constructor, check previous LINQ filter");
 
             var firstOptionalIndex = parameters.ToList().FindIndex(x => x.IsOptional);
@@ -161,7 +165,7 @@
                         continue;
                     }
 
-                    if (parameter.ParameterType.TypeIsValueType())
+                    if (parameter.ParameterType.IsValueType)
                     {
                         // This is a null argument which is not equivalent to a value type
                         // This is not a matching constructor

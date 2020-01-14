@@ -15,7 +15,10 @@
 
         public Copy Create()
         {
-            return new Copy {Value = Value};
+            return new Copy
+            {
+                Value = Value
+            };
         }
 
         public string Value { get; set; }

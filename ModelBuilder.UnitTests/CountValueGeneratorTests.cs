@@ -292,7 +292,10 @@
         [Fact]
         public void SettingMaxCountShouldNotChangeDefaultMaxCountTest()
         {
-            var target = new CountValueGenerator {MaxCount = Environment.TickCount};
+            var target = new CountValueGenerator
+            {
+                MaxCount = Environment.TickCount
+            };
 
             CountValueGenerator.DefaultMaxCount.Should().NotBe(target.MaxCount);
         }

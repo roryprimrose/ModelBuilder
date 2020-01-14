@@ -212,13 +212,41 @@
         }
 
         /// <summary>
+        ///     Adds a configuration of a compiler module to the compiler.
+        /// </summary>
+        /// <typeparam name="T">The type of compiler module to add.</typeparam>
+        /// <param name="compiler">The compiler.</param>
+        /// <returns>The compiler.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="compiler" /> parameter is <c>null</c>.</exception>
+        [SuppressMessage(
+            "Microsoft.Design",
+            "CA1004:GenericMethodsShouldProvideTypeParameter",
+            Justification =
+                "This signature is designed for ease of use rather than requiring that T is either a parameter or return type.")]
+        public static IBuildStrategyCompiler AddCompilerModule<T>(this IBuildStrategyCompiler compiler)
+            where T : ICompilerModule, new()
+        {
+            if (compiler == null)
+            {
+                throw new ArgumentNullException(nameof(compiler));
+            }
+
+            var module = new T();
+
+            module.Configure(compiler);
+
+            return compiler;
+        }
+
+        /// <summary>
         ///     Adds a new creation rule to the compiler.
         /// </summary>
         /// <typeparam name="T">The type of rule to add.</typeparam>
         /// <param name="compiler">The compiler.</param>
         /// <returns>The compiler.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="compiler" /> parameter is <c>null</c>.</exception>
-        [SuppressMessage("Microsoft.Design",
+        [SuppressMessage(
+            "Microsoft.Design",
             "CA1004:GenericMethodsShouldProvideTypeParameter",
             Justification =
                 "This signature is designed for ease of use rather than requiring that T is either a parameter or return type.")]
@@ -253,7 +281,8 @@
         ///     The <paramref name="expression" /> parameter does not match a property on the type
         ///     to generate.
         /// </exception>
-        [SuppressMessage("Microsoft.Design",
+        [SuppressMessage(
+            "Microsoft.Design",
             "CA1004:GenericMethodsShouldProvideTypeParameter",
             Justification =
                 "This signature is designed for ease of use rather than requiring that T is either a parameter or return type.")]
@@ -290,7 +319,8 @@
         /// <param name="compiler">The compiler.</param>
         /// <returns>The compiler.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="compiler" /> parameter is <c>null</c>.</exception>
-        [SuppressMessage("Microsoft.Design",
+        [SuppressMessage(
+            "Microsoft.Design",
             "CA1004:GenericMethodsShouldProvideTypeParameter",
             Justification =
                 "This signature is designed for ease of use rather than requiring that T is either a parameter or return type.")]
@@ -324,7 +354,8 @@
         ///     The <paramref name="expression" /> parameter does not match a property on the type
         ///     to generate.
         /// </exception>
-        [SuppressMessage("Microsoft.Design",
+        [SuppressMessage(
+            "Microsoft.Design",
             "CA1004:GenericMethodsShouldProvideTypeParameter",
             Justification =
                 "This signature is designed for ease of use rather than requiring that T is either a parameter or return type.")]
@@ -360,7 +391,8 @@
         /// <param name="compiler">The compiler.</param>
         /// <returns>The compiler.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="compiler" /> parameter is <c>null</c>.</exception>
-        [SuppressMessage("Microsoft.Design",
+        [SuppressMessage(
+            "Microsoft.Design",
             "CA1004:GenericMethodsShouldProvideTypeParameter",
             Justification =
                 "This signature is designed for ease of use rather than requiring that T is either a parameter or return type.")]
@@ -375,58 +407,6 @@
             var rule = new T();
 
             compiler.IgnoreRules.Add(rule);
-
-            return compiler;
-        }
-
-        /// <summary>
-        ///     Adds a new type mapping rule to the compiler.
-        /// </summary>
-        /// <typeparam name="T">The type of rule to add.</typeparam>
-        /// <param name="compiler">The compiler.</param>
-        /// <returns>The compiler.</returns>
-        /// <exception cref="ArgumentNullException">The <paramref name="compiler" /> parameter is <c>null</c>.</exception>
-        [SuppressMessage("Microsoft.Design",
-            "CA1004:GenericMethodsShouldProvideTypeParameter",
-            Justification =
-                "This signature is designed for ease of use rather than requiring that T is either a parameter or return type.")]
-        public static IBuildStrategyCompiler AddTypeMappingRule<T>(this IBuildStrategyCompiler compiler)
-            where T : TypeMappingRule, new()
-        {
-            if (compiler == null)
-            {
-                throw new ArgumentNullException(nameof(compiler));
-            }
-
-            var rule = new T();
-
-            compiler.TypeMappingRules.Add(rule);
-
-            return compiler;
-        }
-
-        /// <summary>
-        ///     Adds a configuration of a compiler module to the compiler.
-        /// </summary>
-        /// <typeparam name="T">The type of compiler module to add.</typeparam>
-        /// <param name="compiler">The compiler.</param>
-        /// <returns>The compiler.</returns>
-        /// <exception cref="ArgumentNullException">The <paramref name="compiler" /> parameter is <c>null</c>.</exception>
-        [SuppressMessage("Microsoft.Design",
-            "CA1004:GenericMethodsShouldProvideTypeParameter",
-            Justification =
-                "This signature is designed for ease of use rather than requiring that T is either a parameter or return type.")]
-        public static IBuildStrategyCompiler AddCompilerModule<T>(this IBuildStrategyCompiler compiler)
-            where T : ICompilerModule, new()
-        {
-            if (compiler == null)
-            {
-                throw new ArgumentNullException(nameof(compiler));
-            }
-
-            var module = new T();
-
-            module.Configure(compiler);
 
             return compiler;
         }
@@ -476,7 +456,8 @@
         /// <param name="compiler">The compiler.</param>
         /// <returns>The compiler.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="compiler" /> parameter is <c>null</c>.</exception>
-        [SuppressMessage("Microsoft.Design",
+        [SuppressMessage(
+            "Microsoft.Design",
             "CA1004:GenericMethodsShouldProvideTypeParameter",
             Justification =
                 "This signature is designed for ease of use rather than requiring that T is either a parameter or return type.")]
@@ -502,7 +483,8 @@
         /// <param name="compiler">The compiler.</param>
         /// <returns>The compiler.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="compiler" /> parameter is <c>null</c>.</exception>
-        [SuppressMessage("Microsoft.Design",
+        [SuppressMessage(
+            "Microsoft.Design",
             "CA1004:GenericMethodsShouldProvideTypeParameter",
             Justification =
                 "This signature is designed for ease of use rather than requiring that T is either a parameter or return type.")]
@@ -522,13 +504,41 @@
         }
 
         /// <summary>
+        ///     Adds a new type mapping rule to the compiler.
+        /// </summary>
+        /// <typeparam name="T">The type of rule to add.</typeparam>
+        /// <param name="compiler">The compiler.</param>
+        /// <returns>The compiler.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="compiler" /> parameter is <c>null</c>.</exception>
+        [SuppressMessage(
+            "Microsoft.Design",
+            "CA1004:GenericMethodsShouldProvideTypeParameter",
+            Justification =
+                "This signature is designed for ease of use rather than requiring that T is either a parameter or return type.")]
+        public static IBuildStrategyCompiler AddTypeMappingRule<T>(this IBuildStrategyCompiler compiler)
+            where T : TypeMappingRule, new()
+        {
+            if (compiler == null)
+            {
+                throw new ArgumentNullException(nameof(compiler));
+            }
+
+            var rule = new T();
+
+            compiler.TypeMappingRules.Add(rule);
+
+            return compiler;
+        }
+
+        /// <summary>
         ///     Adds a new value generator to the compiler.
         /// </summary>
         /// <typeparam name="T">The type of value generator to add.</typeparam>
         /// <param name="compiler">The compiler.</param>
         /// <returns>The compiler.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="compiler" /> parameter is <c>null</c>.</exception>
-        [SuppressMessage("Microsoft.Design",
+        [SuppressMessage(
+            "Microsoft.Design",
             "CA1004:GenericMethodsShouldProvideTypeParameter",
             Justification =
                 "This signature is designed for ease of use rather than requiring that T is either a parameter or return type.")]
@@ -554,7 +564,8 @@
         /// <param name="compiler">The compiler.</param>
         /// <returns>The compiler.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="compiler" /> parameter is <c>null</c>.</exception>
-        [SuppressMessage("Microsoft.Design",
+        [SuppressMessage(
+            "Microsoft.Design",
             "CA1004:GenericMethodsShouldProvideTypeParameter",
             Justification =
                 "This signature is designed for ease of use rather than requiring that T is either a parameter or return type.")]
@@ -583,7 +594,8 @@
         /// <param name="compiler">The compiler.</param>
         /// <returns>The compiler.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="compiler" /> parameter is <c>null</c>.</exception>
-        [SuppressMessage("Microsoft.Design",
+        [SuppressMessage(
+            "Microsoft.Design",
             "CA1004:GenericMethodsShouldProvideTypeParameter",
             Justification =
                 "This signature is designed for ease of use rather than requiring that T is either a parameter or return type.")]
@@ -612,7 +624,8 @@
         /// <param name="compiler">The compiler.</param>
         /// <returns>The compiler.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="compiler" /> parameter is <c>null</c>.</exception>
-        [SuppressMessage("Microsoft.Design",
+        [SuppressMessage(
+            "Microsoft.Design",
             "CA1004:GenericMethodsShouldProvideTypeParameter",
             Justification =
                 "This signature is designed for ease of use rather than requiring that T is either a parameter or return type.")]
@@ -635,42 +648,14 @@
         }
 
         /// <summary>
-        ///     Removes type mapping rules from the compiler that match the specified type.
-        /// </summary>
-        /// <typeparam name="T">The type of rule to remove.</typeparam>
-        /// <param name="compiler">The compiler.</param>
-        /// <returns>The compiler.</returns>
-        /// <exception cref="ArgumentNullException">The <paramref name="compiler" /> parameter is <c>null</c>.</exception>
-        [SuppressMessage("Microsoft.Design",
-            "CA1004:GenericMethodsShouldProvideTypeParameter",
-            Justification =
-                "This signature is designed for ease of use rather than requiring that T is either a parameter or return type.")]
-        public static IBuildStrategyCompiler RemoveTypeMappingRule<T>(this IBuildStrategyCompiler compiler)
-            where T : TypeMappingRule
-        {
-            if (compiler == null)
-            {
-                throw new ArgumentNullException(nameof(compiler));
-            }
-
-            var itemsToRemove = compiler.TypeMappingRules.Where(x => x.GetType().IsAssignableFrom(typeof(T))).ToList();
-
-            foreach (var rule in itemsToRemove)
-            {
-                compiler.TypeMappingRules.Remove(rule);
-            }
-
-            return compiler;
-        }
-
-        /// <summary>
         ///     Removes post-build actions from the compiler that match the specified type.
         /// </summary>
         /// <typeparam name="T">The type of post-build action to remove.</typeparam>
         /// <param name="compiler">The compiler.</param>
         /// <returns>The compiler.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="compiler" /> parameter is <c>null</c>.</exception>
-        [SuppressMessage("Microsoft.Design",
+        [SuppressMessage(
+            "Microsoft.Design",
             "CA1004:GenericMethodsShouldProvideTypeParameter",
             Justification =
                 "This signature is designed for ease of use rather than requiring that T is either a parameter or return type.")]
@@ -699,7 +684,8 @@
         /// <param name="compiler">The compiler.</param>
         /// <returns>The compiler.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="compiler" /> parameter is <c>null</c>.</exception>
-        [SuppressMessage("Microsoft.Design",
+        [SuppressMessage(
+            "Microsoft.Design",
             "CA1004:GenericMethodsShouldProvideTypeParameter",
             Justification =
                 "This signature is designed for ease of use rather than requiring that T is either a parameter or return type.")]
@@ -722,13 +708,44 @@
         }
 
         /// <summary>
+        ///     Removes type mapping rules from the compiler that match the specified type.
+        /// </summary>
+        /// <typeparam name="T">The type of rule to remove.</typeparam>
+        /// <param name="compiler">The compiler.</param>
+        /// <returns>The compiler.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="compiler" /> parameter is <c>null</c>.</exception>
+        [SuppressMessage(
+            "Microsoft.Design",
+            "CA1004:GenericMethodsShouldProvideTypeParameter",
+            Justification =
+                "This signature is designed for ease of use rather than requiring that T is either a parameter or return type.")]
+        public static IBuildStrategyCompiler RemoveTypeMappingRule<T>(this IBuildStrategyCompiler compiler)
+            where T : TypeMappingRule
+        {
+            if (compiler == null)
+            {
+                throw new ArgumentNullException(nameof(compiler));
+            }
+
+            var itemsToRemove = compiler.TypeMappingRules.Where(x => x.GetType().IsAssignableFrom(typeof(T))).ToList();
+
+            foreach (var rule in itemsToRemove)
+            {
+                compiler.TypeMappingRules.Remove(rule);
+            }
+
+            return compiler;
+        }
+
+        /// <summary>
         ///     Removes value generators from the compiler that match the specified type.
         /// </summary>
         /// <typeparam name="T">The type of value generator to remove.</typeparam>
         /// <param name="compiler">The compiler.</param>
         /// <returns>The compiler.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="compiler" /> parameter is <c>null</c>.</exception>
-        [SuppressMessage("Microsoft.Design",
+        [SuppressMessage(
+            "Microsoft.Design",
             "CA1004:GenericMethodsShouldProvideTypeParameter",
             Justification =
                 "This signature is designed for ease of use rather than requiring that T is either a parameter or return type.")]
@@ -749,7 +766,7 @@
 
             return compiler;
         }
-        
+
         /// <summary>
         ///     Sets the constructor resolver on the compiler.
         /// </summary>
@@ -757,7 +774,8 @@
         /// <param name="compiler">The compiler.</param>
         /// <returns>The compiler.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="compiler" /> parameter is <c>null</c>.</exception>
-        [SuppressMessage("Microsoft.Design",
+        [SuppressMessage(
+            "Microsoft.Design",
             "CA1004:GenericMethodsShouldProvideTypeParameter",
             Justification =
                 "This signature is designed for ease of use rather than requiring that T is either a parameter or return type.")]
@@ -805,7 +823,8 @@
         /// <param name="compiler">The compiler.</param>
         /// <returns>The compiler.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="compiler" /> parameter is <c>null</c>.</exception>
-        [SuppressMessage("Microsoft.Design",
+        [SuppressMessage(
+            "Microsoft.Design",
             "CA1004:GenericMethodsShouldProvideTypeParameter",
             Justification =
                 "This signature is designed for ease of use rather than requiring that T is either a parameter or return type.")]

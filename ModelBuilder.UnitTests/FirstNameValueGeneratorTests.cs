@@ -12,7 +12,10 @@
         [Fact]
         public void GeneratorReturnsFemaleNameWhenGenderIsFemaleTest()
         {
-            var person = new Person {Gender = Gender.Female};
+            var person = new Person
+            {
+                Gender = Gender.Female
+            };
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
@@ -30,7 +33,10 @@
         [Fact]
         public void GeneratorReturnsFemaleNameWhenGenderIsUnknownTest()
         {
-            var person = new Person {Gender = Gender.Unknown};
+            var person = new Person
+            {
+                Gender = Gender.Unknown
+            };
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
@@ -48,7 +54,10 @@
         [Fact]
         public void GeneratorReturnsMaleNameWhenGenderIsMaleTest()
         {
-            var person = new Person {Gender = Gender.Male};
+            var person = new Person
+            {
+                Gender = Gender.Male
+            };
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 

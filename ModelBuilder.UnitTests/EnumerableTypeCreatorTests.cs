@@ -42,17 +42,15 @@
         [InlineData(typeof(IReadOnlyList<int>), false)]
         [InlineData(typeof(ArraySegment<string>), false)]
         [InlineData(typeof(IPAddressCollection), false)]
-#if NET452
         [InlineData(typeof(GatewayIPAddressInformationCollection), false)]
         [InlineData(typeof(IPAddressInformationCollection), false)]
         [InlineData(typeof(MulticastIPAddressInformationCollection), false)]
         [InlineData(typeof(UnicastIPAddressInformationCollection), false)]
-#endif
-        [InlineData(typeof(Dictionary<, >.KeyCollection), false)]
-        [InlineData(typeof(Dictionary<, >.ValueCollection), false)]
+        [InlineData(typeof(Dictionary<,>.KeyCollection), false)]
+        [InlineData(typeof(Dictionary<,>.ValueCollection), false)]
         [InlineData(typeof(Dictionary<string, int>), true)]
-        [InlineData(typeof(SortedDictionary<, >.KeyCollection), false)]
-        [InlineData(typeof(SortedDictionary<, >.ValueCollection), false)]
+        [InlineData(typeof(SortedDictionary<,>.KeyCollection), false)]
+        [InlineData(typeof(SortedDictionary<,>.ValueCollection), false)]
         [InlineData(typeof(IEnumerable<string>), true)]
         [InlineData(typeof(ICollection<string>), true)]
         [InlineData(typeof(Collection<string>), true)]
@@ -91,16 +89,14 @@
         [InlineData(typeof(IEnumerable<string>), false)]
         [InlineData(typeof(ArraySegment<string>), false)]
         [InlineData(typeof(IPAddressCollection), false)]
-#if NET452
         [InlineData(typeof(GatewayIPAddressInformationCollection), false)]
         [InlineData(typeof(IPAddressInformationCollection), false)]
         [InlineData(typeof(MulticastIPAddressInformationCollection), false)]
         [InlineData(typeof(UnicastIPAddressInformationCollection), false)]
-#endif
-        [InlineData(typeof(Dictionary<, >.KeyCollection), false)]
-        [InlineData(typeof(Dictionary<, >.ValueCollection), false)]
-        [InlineData(typeof(SortedDictionary<, >.KeyCollection), false)]
-        [InlineData(typeof(SortedDictionary<, >.ValueCollection), false)]
+        [InlineData(typeof(Dictionary<,>.KeyCollection), false)]
+        [InlineData(typeof(Dictionary<,>.ValueCollection), false)]
+        [InlineData(typeof(SortedDictionary<,>.KeyCollection), false)]
+        [InlineData(typeof(SortedDictionary<,>.ValueCollection), false)]
         [InlineData(typeof(AbstractCollection<Person>), true)]
         [InlineData(typeof(IDictionary<string, int>), true)]
         [InlineData(typeof(Dictionary<string, int>), true)]
@@ -184,7 +180,7 @@
         [InlineData(typeof(IEnumerable<int>))]
         [InlineData(typeof(ICollection<int>))]
         [InlineData(typeof(IList<int>))]
-        public void CreateReturnsNewListOfSpecfiedTypeTest(Type targetType)
+        public void CreateReturnsNewListOfSpecifiedTypeTest(Type targetType)
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -211,16 +207,14 @@
         [InlineData(typeof(IReadOnlyList<int>), false)]
         [InlineData(typeof(ArraySegment<string>), false)]
         [InlineData(typeof(IPAddressCollection), false)]
-#if NET452
         [InlineData(typeof(GatewayIPAddressInformationCollection), false)]
         [InlineData(typeof(IPAddressInformationCollection), false)]
         [InlineData(typeof(MulticastIPAddressInformationCollection), false)]
         [InlineData(typeof(UnicastIPAddressInformationCollection), false)]
-#endif
-        [InlineData(typeof(Dictionary<, >.KeyCollection), false)]
-        [InlineData(typeof(Dictionary<, >.ValueCollection), false)]
-        [InlineData(typeof(SortedDictionary<, >.KeyCollection), false)]
-        [InlineData(typeof(SortedDictionary<, >.ValueCollection), false)]
+        [InlineData(typeof(Dictionary<,>.KeyCollection), false)]
+        [InlineData(typeof(Dictionary<,>.ValueCollection), false)]
+        [InlineData(typeof(SortedDictionary<,>.KeyCollection), false)]
+        [InlineData(typeof(SortedDictionary<,>.ValueCollection), false)]
         [InlineData(typeof(Dictionary<string, int>), true)]
         [InlineData(typeof(IEnumerable<string>), true)]
         [InlineData(typeof(ICollection<string>), true)]
@@ -262,7 +256,10 @@
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Create(typeof(Guid)).Returns(Guid.NewGuid());
 
-            var target = new EnumerableTypeCreator {AutoPopulateCount = 15};
+            var target = new EnumerableTypeCreator
+            {
+                AutoPopulateCount = 15
+            };
 
             var actual = target.Populate(expected, executeStrategy);
 
@@ -314,7 +311,10 @@
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Create(typeof(Guid)).Returns(Guid.NewGuid());
 
-            var target = new EnumerableTypeCreator {AutoPopulateCount = 15};
+            var target = new EnumerableTypeCreator
+            {
+                AutoPopulateCount = 15
+            };
 
             var actual = target.Populate(expected, executeStrategy);
 
@@ -365,7 +365,7 @@
         }
 
         [Fact]
-        public void ProrityReturnsHigherThanDefaultTypeCreatorTest()
+        public void PriorityReturnsHigherThanDefaultTypeCreatorTest()
         {
             var target = new EnumerableTypeCreator();
             var other = new DefaultTypeCreator();
@@ -376,7 +376,10 @@
         [Fact]
         public void SettingAutoPopulateCountShouldNotChangeDefaultAutoPopulateCountTest()
         {
-            var target = new EnumerableTypeCreator {AutoPopulateCount = Environment.TickCount};
+            var target = new EnumerableTypeCreator
+            {
+                AutoPopulateCount = Environment.TickCount
+            };
 
             EnumerableTypeCreator.DefaultAutoPopulateCount.Should().NotBe(target.AutoPopulateCount);
         }

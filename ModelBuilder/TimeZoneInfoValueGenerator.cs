@@ -11,8 +11,7 @@
         /// <summary>
         ///     Initializes a new instance of the <see cref="TimeZoneInfoValueGenerator" /> class.
         /// </summary>
-        public TimeZoneInfoValueGenerator()
-            : base(typeof(TimeZoneInfo))
+        public TimeZoneInfoValueGenerator() : base(typeof(TimeZoneInfo))
         {
         }
 

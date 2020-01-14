@@ -14,7 +14,10 @@
         [Fact]
         public void GenerateReturnsRandomPhoneMatchingCaseInsensitiveCountryTest()
         {
-            var address = new Address {Country = "UNITED STATES"};
+            var address = new Address
+            {
+                Country = "UNITED STATES"
+            };
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
@@ -38,7 +41,10 @@
         [Fact]
         public void GenerateReturnsRandomPhoneMatchingCountryTest()
         {
-            var address = new Address {Country = "United States"};
+            var address = new Address
+            {
+                Country = "United States"
+            };
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
@@ -60,7 +66,10 @@
         [Fact]
         public void GenerateReturnsRandomPhoneWhenNoMatchingCountryTest()
         {
-            var address = new Address {Country = Guid.NewGuid().ToString()};
+            var address = new Address
+            {
+                Country = Guid.NewGuid().ToString()
+            };
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
@@ -104,7 +113,7 @@
 
             first.Should().NotBe(second);
         }
-        
+
         [Fact]
         public void GenerateReturnsStringValueTest()
         {

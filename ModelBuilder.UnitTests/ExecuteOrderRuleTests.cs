@@ -92,6 +92,16 @@
         }
 
         [Fact]
+        public void IsMatchThrowsExceptionWithNullProperty()
+        {
+            var target = new ExecuteOrderRule((declaringType, propertyType, name) => false, 1000);
+
+            Action action = () => target.IsMatch(null);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
         public void ReturnsConstructorValuesPropertyTypeOnlyTest()
         {
             var declaringType = typeof(Person);
@@ -122,6 +132,7 @@
         {
             var priority = Environment.TickCount;
 
+            // ReSharper disable once ObjectCreationAsStatement
             Action action = () => new ExecuteOrderRule(null, null, (string) null, priority);
 
             action.Should().Throw<ArgumentNullException>();
@@ -132,6 +143,7 @@
         {
             var priority = Environment.TickCount;
 
+            // ReSharper disable once ObjectCreationAsStatement
             Action action = () => new ExecuteOrderRule(null, null, (Regex) null, priority);
 
             action.Should().Throw<ArgumentNullException>();
@@ -142,6 +154,7 @@
         {
             var priority = Environment.TickCount;
 
+            // ReSharper disable once ObjectCreationAsStatement
             Action action = () => new ExecuteOrderRule(null, priority);
 
             action.Should().Throw<ArgumentNullException>();

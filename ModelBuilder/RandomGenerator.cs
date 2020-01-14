@@ -399,7 +399,8 @@
 
             if (IsSupported(type) == false)
             {
-                var message = string.Format(CultureInfo.CurrentCulture,
+                var message = string.Format(
+                    CultureInfo.CurrentCulture,
                     Resources.Error_TypeNotSupportedFormat,
                     GetType().FullName,
                     type.FullName);

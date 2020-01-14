@@ -107,7 +107,7 @@
         [InlineData(null, "FirstName", true)]
         [InlineData(typeof(string), null, true)]
         [InlineData(typeof(string), "FirstName", false)]
-        public void CreatedPropertyValidatesPropertysTest(Type propertyType, string propertyName, bool includeContext)
+        public void CreatedPropertyValidatesPropertiesTest(Type propertyType, string propertyName, bool includeContext)
         {
             Person context = null;
 
@@ -202,7 +202,7 @@
         [InlineData(null, "FirstName", true)]
         [InlineData(typeof(string), null, true)]
         [InlineData(typeof(string), "FirstName", false)]
-        public void CreatingPropertyValidatesPropertysTest(Type propertyType, string propertyName, bool includeContext)
+        public void CreatingPropertyValidatesPropertiesTest(Type propertyType, string propertyName, bool includeContext)
         {
             Person context = null;
 
@@ -307,7 +307,7 @@
         [InlineData(null, "FirstName", true)]
         [InlineData(typeof(string), null, true)]
         [InlineData(typeof(string), "FirstName", false)]
-        public void IgnoringPropertyValidatesPropertysTest(Type propertyType, string propertyName, bool includeContext)
+        public void IgnoringPropertyValidatesPropertiesTest(Type propertyType, string propertyName, bool includeContext)
         {
             Person context = null;
 
@@ -475,7 +475,12 @@
             target.BuildFailure(exception);
             target.CreatedType(typeof(Person), null);
 
-            var lines = target.Output.Split(new[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries);
+            var lines = target.Output.Split(
+                new[]
+                {
+                    Environment.NewLine
+                },
+                StringSplitOptions.RemoveEmptyEntries);
             var indentedLines = lines.Skip(1).Take(lines.Length - 2);
 
             indentedLines.All(x => x.StartsWith("    ", StringComparison.OrdinalIgnoreCase)).Should().BeTrue();

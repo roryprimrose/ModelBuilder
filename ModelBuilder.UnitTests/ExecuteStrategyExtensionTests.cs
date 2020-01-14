@@ -34,9 +34,7 @@
         [Fact]
         public void CreateThrowsExceptionWithNullStrategyTest()
         {
-            IExecuteStrategy target = null;
-
-            Action action = () => ExecuteStrategyExtensions.Create(target, typeof(string));
+            Action action = () => ExecuteStrategyExtensions.Create(null, typeof(string));
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -58,9 +56,7 @@
         [Fact]
         public void CreateTThrowsExceptionWithNullStrategyTest()
         {
-            IExecuteStrategy<string> target = null;
-
-            Action action = () => ExecuteStrategyExtensions.Create(target);
+            Action action = () => ExecuteStrategyExtensions.Create((IExecuteStrategy<string>) null);
 
             action.Should().Throw<ArgumentNullException>();
         }

@@ -19,8 +19,8 @@
 
             var target = new CompanyValueGenerator();
 
-            var first =(string)  target.Generate(typeof(string), "company", executeStrategy);
-            
+            var first = (string) target.Generate(typeof(string), "company", executeStrategy);
+
             var second = first;
 
             for (var index = 0; index < 1000; index++)
@@ -35,7 +35,7 @@
 
             first.Should().NotBe(second);
         }
-        
+
         [Fact]
         public void GenerateReturnsStringValueTest()
         {

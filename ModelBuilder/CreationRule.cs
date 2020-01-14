@@ -40,8 +40,10 @@
         /// <param name="priority">The priority of the rule.</param>
         /// <param name="value">The static value returned by the rule.</param>
         /// <exception cref="ArgumentNullException">The <paramref name="evaluator" /> parameter is null.</exception>
-        public CreationRule(Func<Type, string, bool> evaluator, int priority, object value)
-            : this(evaluator, priority, (type, name, context) => value)
+        public CreationRule(Func<Type, string, bool> evaluator, int priority, object value) : this(
+            evaluator,
+            priority,
+            (type, name, context) => value)
         {
         }
 
@@ -101,8 +103,11 @@
         ///     The <paramref name="targetType" /> and <paramref name="propertyExpression" />
         ///     parameters are both null.
         /// </exception>
-        public CreationRule(Type targetType, Regex propertyExpression, int priority, object value)
-            : this(targetType, propertyExpression, priority, (type, name, buildChain) => value)
+        public CreationRule(Type targetType, Regex propertyExpression, int priority, object value) : this(
+            targetType,
+            propertyExpression,
+            priority,
+            (type, name, buildChain) => value)
         {
         }
 
@@ -162,8 +167,11 @@
         ///     The <paramref name="targetType" /> and <paramref name="propertyName" />
         ///     parameters are both null.
         /// </exception>
-        public CreationRule(Type targetType, string propertyName, int priority, object value)
-            : this(targetType, propertyName, priority, (type, name, buildChain) => value)
+        public CreationRule(Type targetType, string propertyName, int priority, object value) : this(
+            targetType,
+            propertyName,
+            priority,
+            (type, name, buildChain) => value)
         {
         }
 
@@ -184,7 +192,8 @@
                     typeName = type.FullName;
                 }
 
-                var message = string.Format(CultureInfo.CurrentCulture,
+                var message = string.Format(
+                    CultureInfo.CurrentCulture,
                     Resources.Rule_InvalidMatch,
                     GetType().Name,
                     typeName,

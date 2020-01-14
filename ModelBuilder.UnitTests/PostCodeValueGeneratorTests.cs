@@ -14,7 +14,10 @@
         [Fact]
         public void GenerateReturnsRandomCityWhenNoMatchingCityTest()
         {
-            var address = new Address {City = Guid.NewGuid().ToString()};
+            var address = new Address
+            {
+                City = Guid.NewGuid().ToString()
+            };
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
@@ -32,7 +35,10 @@
         [Fact]
         public void GenerateReturnsRandomPostCodeMatchingCaseInsensitiveCityTest()
         {
-            var address = new Address {City = "RIBAS"};
+            var address = new Address
+            {
+                City = "RIBAS"
+            };
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
@@ -56,7 +62,10 @@
         [Fact]
         public void GenerateReturnsRandomPostCodeMatchingCityTest()
         {
-            var address = new Address {City = "Ribas"};
+            var address = new Address
+            {
+                City = "Ribas"
+            };
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 

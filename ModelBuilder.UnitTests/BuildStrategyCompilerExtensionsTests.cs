@@ -171,29 +171,9 @@
         }
 
         [Fact]
-        public void AddTypeMappingRuleAddsRuleToCompilerTest()
-        {
-            var target = new BuildStrategyCompiler();
-
-            target.AddTypeMappingRule<DummyTypeMappingRule>();
-
-            var actual = target.TypeMappingRules.Single();
-
-            actual.Should().BeOfType<DummyTypeMappingRule>();
-        }
-
-        [Fact]
         public void AddIgnoreRuleThrowsExceptionWithNullCompilerTest()
         {
             Action action = () => BuildStrategyCompilerExtensions.AddIgnoreRule<DummyIgnoreRule>(null);
-
-            action.Should().Throw<ArgumentNullException>();
-        }
-
-        [Fact]
-        public void AddTypeMappingRuleThrowsExceptionWithNullCompilerTest()
-        {
-            Action action = () => BuildStrategyCompilerExtensions.AddTypeMappingRule<DummyTypeMappingRule>(null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -265,6 +245,26 @@
         public void AddTypeCreatorThrowsExceptionWithNullCompilerTest()
         {
             Action action = () => BuildStrategyCompilerExtensions.AddTypeCreator<DefaultTypeCreator>(null);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void AddTypeMappingRuleAddsRuleToCompilerTest()
+        {
+            var target = new BuildStrategyCompiler();
+
+            target.AddTypeMappingRule<DummyTypeMappingRule>();
+
+            var actual = target.TypeMappingRules.Single();
+
+            actual.Should().BeOfType<DummyTypeMappingRule>();
+        }
+
+        [Fact]
+        public void AddTypeMappingRuleThrowsExceptionWithNullCompilerTest()
+        {
+            Action action = () => BuildStrategyCompilerExtensions.AddTypeMappingRule<DummyTypeMappingRule>(null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -418,38 +418,6 @@
         }
 
         [Fact]
-        public void AddWithTypeMappingRuleAddsRuleToCompilerTest()
-        {
-            var rule = new TypeMappingRule(typeof(Stream), typeof(MemoryStream));
-
-            var target = new BuildStrategyCompiler();
-
-            target.Add(rule);
-
-            target.TypeMappingRules.Should().Contain(rule);
-        }
-
-        [Fact]
-        public void AddWithTypeMappingRuleThrowsExceptionWithNullCompilerTest()
-        {
-            var rule = new TypeMappingRule(typeof(Stream), typeof(MemoryStream));
-
-            Action action = () => BuildStrategyCompilerExtensions.Add(null, rule);
-
-            action.Should().Throw<ArgumentNullException>();
-        }
-
-        [Fact]
-        public void AddWithTypeMappingRuleThrowsExceptionWithNullRuleTest()
-        {
-            var target = Substitute.For<IBuildStrategyCompiler>();
-
-            Action action = () => target.Add((TypeMappingRule) null);
-
-            action.Should().Throw<ArgumentNullException>();
-        }
-
-        [Fact]
         public void AddWithPostBuildActionAddsRuleToCompilerTest()
         {
             var postBuildAction = new DummyPostBuildAction();
@@ -509,6 +477,38 @@
             var target = Substitute.For<IBuildStrategyCompiler>();
 
             Action action = () => target.Add((ITypeCreator) null);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void AddWithTypeMappingRuleAddsRuleToCompilerTest()
+        {
+            var rule = new TypeMappingRule(typeof(Stream), typeof(MemoryStream));
+
+            var target = new BuildStrategyCompiler();
+
+            target.Add(rule);
+
+            target.TypeMappingRules.Should().Contain(rule);
+        }
+
+        [Fact]
+        public void AddWithTypeMappingRuleThrowsExceptionWithNullCompilerTest()
+        {
+            var rule = new TypeMappingRule(typeof(Stream), typeof(MemoryStream));
+
+            Action action = () => BuildStrategyCompilerExtensions.Add(null, rule);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void AddWithTypeMappingRuleThrowsExceptionWithNullRuleTest()
+        {
+            var target = Substitute.For<IBuildStrategyCompiler>();
+
+            Action action = () => target.Add((TypeMappingRule) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -642,38 +642,6 @@
         }
 
         [Fact]
-        public void RemoveTypeMappingRuleRemovesMultipleMatchingRulesFromCompilerTest()
-        {
-            var target = new BuildStrategyCompiler();
-
-            target.AddTypeMappingRule<DummyTypeMappingRule>();
-            target.AddTypeMappingRule<DummyTypeMappingRule>();
-            target.AddTypeMappingRule<DummyTypeMappingRule>();
-            target.RemoveTypeMappingRule<DummyTypeMappingRule>();
-
-            target.TypeMappingRules.Should().BeEmpty();
-        }
-
-        [Fact]
-        public void RemoveTypeMappingRuleRemovesRulesFromCompilerTest()
-        {
-            var target = new BuildStrategyCompiler();
-
-            target.AddTypeMappingRule<DummyTypeMappingRule>();
-            target.RemoveTypeMappingRule<DummyTypeMappingRule>();
-
-            target.TypeMappingRules.Should().BeEmpty();
-        }
-
-        [Fact]
-        public void RemoveTypeMappingRuleThrowsExceptionWithNullCompilerTest()
-        {
-            Action action = () => BuildStrategyCompilerExtensions.RemoveTypeMappingRule<DummyTypeMappingRule>(null);
-
-            action.Should().Throw<ArgumentNullException>();
-        }
-
-        [Fact]
         public void RemovePostBuildActionRemovesMultipleMatchingRulesFromCompilerTest()
         {
             var target = new BuildStrategyCompiler();
@@ -733,6 +701,38 @@
         public void RemoveTypeCreatorThrowsExceptionWithNullCompilerTest()
         {
             Action action = () => BuildStrategyCompilerExtensions.RemoveTypeCreator<DefaultTypeCreator>(null);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void RemoveTypeMappingRuleRemovesMultipleMatchingRulesFromCompilerTest()
+        {
+            var target = new BuildStrategyCompiler();
+
+            target.AddTypeMappingRule<DummyTypeMappingRule>();
+            target.AddTypeMappingRule<DummyTypeMappingRule>();
+            target.AddTypeMappingRule<DummyTypeMappingRule>();
+            target.RemoveTypeMappingRule<DummyTypeMappingRule>();
+
+            target.TypeMappingRules.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void RemoveTypeMappingRuleRemovesRulesFromCompilerTest()
+        {
+            var target = new BuildStrategyCompiler();
+
+            target.AddTypeMappingRule<DummyTypeMappingRule>();
+            target.RemoveTypeMappingRule<DummyTypeMappingRule>();
+
+            target.TypeMappingRules.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void RemoveTypeMappingRuleThrowsExceptionWithNullCompilerTest()
+        {
+            Action action = () => BuildStrategyCompilerExtensions.RemoveTypeMappingRule<DummyTypeMappingRule>(null);
 
             action.Should().Throw<ArgumentNullException>();
         }

@@ -10,6 +10,49 @@
     public class CultureValueGeneratorTests
     {
         [Fact]
+        public void GenerateReturnsCultureInfoValueTest()
+        {
+            var buildChain = new BuildHistory();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            var target = new CultureValueGenerator();
+
+            var actual = target.Generate(typeof(CultureInfo), "culture", executeStrategy);
+
+            actual.Should().BeOfType<CultureInfo>();
+            actual.As<CultureInfo>().Should().NotBeNull();
+        }
+
+        [Fact]
+        public void GenerateReturnsRandomCultureInfoTest()
+        {
+            var buildChain = new BuildHistory();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            var target = new CultureValueGenerator();
+
+            var first = (CultureInfo) target.Generate(typeof(CultureInfo), "culture", executeStrategy);
+
+            var second = first;
+
+            for (var index = 0; index < 1000; index++)
+            {
+                second = (CultureInfo) target.Generate(typeof(CultureInfo), "culture", executeStrategy);
+
+                if (string.Equals(first.Name, second.Name, StringComparison.OrdinalIgnoreCase) == false)
+                {
+                    break;
+                }
+            }
+
+            first.Should().NotBe(second);
+        }
+
+        [Fact]
         public void GenerateReturnsRandomStringValueTest()
         {
             var buildChain = new BuildHistory();
@@ -51,78 +94,6 @@
             actual.Should().BeOfType<string>();
             actual.As<string>().Should().NotBeNullOrWhiteSpace();
         }
-
-        [Fact]
-        public void GenerateReturnsCultureInfoValueTest()
-        {
-            var buildChain = new BuildHistory();
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            executeStrategy.BuildChain.Returns(buildChain);
-
-            var target = new CultureValueGenerator();
-
-            var actual = target.Generate(typeof(CultureInfo), "culture", executeStrategy);
-
-            actual.Should().BeOfType<CultureInfo>();
-            actual.As<CultureInfo>().Should().NotBeNull();
-        }
-#if NET452
-        [Fact]
-        public void GenerateReturnsRandomCultureInfoTest()
-        {
-            var buildChain = new BuildHistory();
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            executeStrategy.BuildChain.Returns(buildChain);
-
-            var target = new CultureValueGenerator();
-
-            var first = (CultureInfo)target.Generate(typeof(CultureInfo), "culture", executeStrategy);
-
-            var second = first;
-
-            for (var index = 0; index < 1000; index++)
-            {
-                second = (CultureInfo)target.Generate(typeof(CultureInfo), "culture", executeStrategy);
-
-                if (string.Equals(first.Name, second.Name, StringComparison.OrdinalIgnoreCase) == false)
-                {
-                    break;
-                }
-            }
-        
-            first.Should().NotBe(second);
-        }
-#else
-        [Fact]
-        public void GenerateReturnsCurrentUICultureTest()
-        {
-            var buildChain = new BuildHistory();
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            executeStrategy.BuildChain.Returns(buildChain);
-
-            var target = new CultureValueGenerator();
-
-            var first = (CultureInfo) target.Generate(typeof(CultureInfo), "culture", executeStrategy);
-
-            var second = first;
-
-            for (var index = 0; index < 1000; index++)
-            {
-                second = (CultureInfo) target.Generate(typeof(CultureInfo), "culture", executeStrategy);
-
-                if (string.Equals(first.Name, second.Name, StringComparison.OrdinalIgnoreCase) == false)
-                {
-                    break;
-                }
-            }
-
-            // netstandard 1.5 will always return the CurrentUI CultureInfo
-            first.Should().Be(second);
-        }
-#endif
 
         [Theory]
         [InlineData(typeof(string), "culture")]

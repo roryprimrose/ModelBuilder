@@ -129,6 +129,11 @@
         /// <returns><c>true</c> if the rule matches the specified type and property name; otherwise <c>false</c>.</returns>
         public bool IsMatch(PropertyInfo property)
         {
+            if (property == null)
+            {
+                throw new ArgumentNullException(nameof(property));
+            }
+
             return _func(property.DeclaringType, property.PropertyType, property.Name);
         }
 

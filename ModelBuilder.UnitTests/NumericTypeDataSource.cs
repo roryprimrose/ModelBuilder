@@ -5,7 +5,8 @@
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
 
-    [SuppressMessage("Code.Quality",
+    [SuppressMessage(
+        "Code.Quality",
         "CA1710",
         Justification = "The data source not have the characteristics of a Collection.")]
     public class NumericTypeDataSource : IEnumerable<object[]>
@@ -26,7 +27,11 @@
         {
             var source = new NumericTypeRangeDataSource();
 
-            return source.Select(x => new[] {x[0], x[1]}).ToList();
+            return source.Select(
+                x => new[]
+                {
+                    x[0], x[1]
+                }).ToList();
         }
     }
 }

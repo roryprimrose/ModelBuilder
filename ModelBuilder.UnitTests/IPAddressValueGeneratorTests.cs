@@ -105,7 +105,7 @@
         }
 
         [Fact]
-        public void PriorityIsHigherThanStringValueGeneratorProprityTest()
+        public void PriorityIsHigherThanStringValueGeneratorPriorityTest()
         {
             var target = new IPAddressValueGenerator();
             var other = new StringValueGenerator();

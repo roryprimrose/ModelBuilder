@@ -10,7 +10,6 @@
 
 namespace ModelBuilder.Properties {
     using System;
-    using System.Reflection;
     
     
     /// <summary>
@@ -20,7 +19,7 @@ namespace ModelBuilder.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -40,7 +39,7 @@ namespace ModelBuilder.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ModelBuilder.Properties.Resources", typeof(Resources).GetTypeInfo().Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ModelBuilder.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -229,6 +228,24 @@ namespace ModelBuilder.Properties {
         internal static string DefaultBuildLog_PostBuild {
             get {
                 return ResourceManager.GetString("DefaultBuildLog_PostBuild", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to determine type to build..
+        /// </summary>
+        internal static string DefaultBuildStrategy_UndeterminedTargetType {
+            get {
+                return ResourceManager.GetString("DefaultBuildStrategy_UndeterminedTargetType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No constructor found matching type..
+        /// </summary>
+        internal static string DefaultTypeCreator_NoMatchingConstructor {
+            get {
+                return ResourceManager.GetString("DefaultTypeCreator_NoMatchingConstructor", resourceCulture);
             }
         }
         

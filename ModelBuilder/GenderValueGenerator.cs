@@ -14,8 +14,7 @@ namespace ModelBuilder
         /// <summary>
         ///     Initializes a new instance of the <see cref="GenderValueGenerator" /> class.
         /// </summary>
-        public GenderValueGenerator()
-            : base(_matchNameExpression, typeof(string))
+        public GenderValueGenerator() : base(_matchNameExpression, typeof(string))
         {
         }
 

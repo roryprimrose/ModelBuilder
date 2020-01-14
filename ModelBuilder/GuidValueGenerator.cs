@@ -11,8 +11,7 @@
         /// <summary>
         ///     Initializes a new instance of the <see cref="GuidValueGenerator" /> class.
         /// </summary>
-        public GuidValueGenerator()
-            : base(typeof(Guid), typeof(Guid?))
+        public GuidValueGenerator() : base(typeof(Guid), typeof(Guid?))
         {
         }
 

@@ -3,6 +3,7 @@
     using System;
     using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
+    using ModelBuilder.Properties;
 
     /// <summary>
     ///     The <see cref="DefaultTypeCreator" />
@@ -11,7 +12,8 @@
     public class DefaultTypeCreator : TypeCreatorBase
     {
         /// <inheritdoc />
-        [SuppressMessage("Microsoft.Design",
+        [SuppressMessage(
+            "Microsoft.Design",
             "CA1062:Validate arguments of public methods",
             MessageId = "0",
             Justification = "Type is validated by the base class")]
@@ -37,7 +39,7 @@
 
             if (constructor == null)
             {
-                throw new MissingMemberException("No constructor found matching type.");
+                throw new MissingMemberException(Resources.DefaultTypeCreator_NoMatchingConstructor);
             }
 
             return constructor.Invoke(args);

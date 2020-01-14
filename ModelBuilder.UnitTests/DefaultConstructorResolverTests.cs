@@ -28,7 +28,10 @@
         [Fact]
         public void ResolveMatchesConstructorWithDerivedParameterTypesTest()
         {
-            var person = new Person {Id = Guid.NewGuid()};
+            var person = new Person
+            {
+                Id = Guid.NewGuid()
+            };
 
             var target = new DefaultConstructorResolver();
 
@@ -40,7 +43,10 @@
         [Fact]
         public void ResolveMatchesConstructorWithMatchingParametersTypesTest()
         {
-            var args = new object[] {"first", "last", DateTime.UtcNow, true, Guid.NewGuid(), Environment.TickCount};
+            var args = new object[]
+            {
+                "first", "last", DateTime.UtcNow, true, Guid.NewGuid(), Environment.TickCount
+            };
 
             var target = new DefaultConstructorResolver();
 
@@ -62,8 +68,6 @@
         [Fact]
         public void ResolveReturnsConstructorWhenArgsContainsNullableParameterWithNullValueTest()
         {
-            var source = Clone.Create();
-
             var target = new DefaultConstructorResolver();
 
             var actual = target.Resolve(typeof(WithConstructorParameters), null, Guid.NewGuid(), null, 123, true);
@@ -223,8 +227,13 @@
         {
             var target = new DefaultConstructorResolver();
 
-            Action action = () =>
-                target.Resolve(typeof(Other), Guid.NewGuid(), null, 123, null, "ThisParamDoesn'tMatch");
+            Action action = () => target.Resolve(
+                typeof(Other),
+                Guid.NewGuid(),
+                null,
+                123,
+                null,
+                "ThisParamDoesn'tMatch");
 
             _output.WriteLine(action.Should().Throw<MissingMemberException>().And.Message);
         }
@@ -296,7 +305,8 @@
 
             var priority = Convert.ToDouble(Environment.TickCount);
 
-            Action action = () => target.Resolve(typeof(WithValueParameters),
+            Action action = () => target.Resolve(
+                typeof(WithValueParameters),
                 "first",
                 "last",
                 DateTime.UtcNow,

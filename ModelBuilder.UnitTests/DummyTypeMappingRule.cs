@@ -4,8 +4,7 @@
 
     public class DummyTypeMappingRule : TypeMappingRule
     {
-        public DummyTypeMappingRule()
-            : base(typeof(Stream), typeof(MemoryStream))
+        public DummyTypeMappingRule() : base(typeof(Stream), typeof(MemoryStream))
         {
         }
     }

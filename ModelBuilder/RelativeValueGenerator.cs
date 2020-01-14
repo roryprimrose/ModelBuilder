@@ -23,8 +23,10 @@
         /// <param name="types">The types the generator can match.</param>
         /// <exception cref="ArgumentNullException">The <paramref name="targetNameExpression" /> parameter is null.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="types" /> parameter is null.</exception>
-        protected RelativeValueGenerator(Regex targetNameExpression, params Type[] types)
-            : this(targetNameExpression, null, types)
+        protected RelativeValueGenerator(Regex targetNameExpression, params Type[] types) : this(
+            targetNameExpression,
+            null,
+            types)
         {
         }
 
@@ -145,14 +147,14 @@
 
             if (property == null)
             {
-                return default(T);
+                return default;
             }
 
             var value = property.GetValue(context, null);
 
             if (value == null)
             {
-                return default(T);
+                return default;
             }
 
             var expectedType = typeof(T);

@@ -37,9 +37,9 @@
         {
             get
             {
-                yield return new ExecuteOrderRule((declaringType, propertyType, name) => propertyType.TypeIsEnum(),
-                    4000);
-                yield return new ExecuteOrderRule((declaringType, propertyType, name) => propertyType.TypeIsValueType(),
+                yield return new ExecuteOrderRule((declaringType, propertyType, name) => propertyType.IsEnum, 4000);
+                yield return new ExecuteOrderRule(
+                    (declaringType, propertyType, name) => propertyType.IsValueType,
                     3000);
 
                 // Populate personal properties in a specific order for scenarios where a value generator may use the values in order to set other values
@@ -57,8 +57,7 @@
 
                 // Populate strings before other reference types
                 yield return new ExecuteOrderRule(null, typeof(string), (string) null, 2000);
-                yield return new ExecuteOrderRule((declaringType, propertyType, name) => propertyType.TypeIsClass(),
-                    1000);
+                yield return new ExecuteOrderRule((declaringType, propertyType, name) => propertyType.IsClass, 1000);
             }
         }
 

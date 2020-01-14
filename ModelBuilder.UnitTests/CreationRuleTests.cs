@@ -61,7 +61,8 @@
             var priority = Environment.TickCount;
             var expected = Guid.NewGuid().ToString();
 
-            var target = new CreationRule((checkType, referenceName) => true,
+            var target = new CreationRule(
+                (checkType, referenceName) => true,
                 priority,
                 (createType, referenceName, context) => expected);
 
@@ -79,7 +80,8 @@
             var priority = Environment.TickCount;
             var expected = Guid.NewGuid().ToString();
 
-            var target = new CreationRule(typeof(string),
+            var target = new CreationRule(
+                typeof(string),
                 expression,
                 priority,
                 (createType, referenceName, context) => expected);
@@ -97,7 +99,8 @@
             var priority = Environment.TickCount;
             var expected = Guid.NewGuid().ToString();
 
-            var target = new CreationRule(typeof(string),
+            var target = new CreationRule(
+                typeof(string),
                 name,
                 priority,
                 (createType, referenceName, context) => expected);
@@ -183,6 +186,7 @@
         [Fact]
         public void ThrowsExceptionWithNullCreatorForEvaluatorCreatorConstructorTest()
         {
+            // ReSharper disable once ObjectCreationAsStatement
             Action action = () => new CreationRule((type, referenceName) => true, 10, null);
 
             action.Should().Throw<ArgumentNullException>();
@@ -191,6 +195,7 @@
         [Fact]
         public void ThrowsExceptionWithNullCreatorForExpressionAndCreatorConstructorTest()
         {
+            // ReSharper disable once ObjectCreationAsStatement
             Action action = () => new CreationRule(typeof(string), new Regex(".+"), 10, null);
 
             action.Should().Throw<ArgumentNullException>();
@@ -199,6 +204,7 @@
         [Fact]
         public void ThrowsExceptionWithNullCreatorForReferenceNameAndCreatorConstructorTest()
         {
+            // ReSharper disable once ObjectCreationAsStatement
             Action action = () => new CreationRule(typeof(string), Guid.NewGuid().ToString(), 10, null);
 
             action.Should().Throw<ArgumentNullException>();
@@ -207,6 +213,7 @@
         [Fact]
         public void ThrowsExceptionWithNullEvaluatorForEvaluatorCreatorConstructorTest()
         {
+            // ReSharper disable once ObjectCreationAsStatement
             Action action = () => new CreationRule(null, 10, (type, referenceName, context) => null);
 
             action.Should().Throw<ArgumentNullException>();
@@ -215,6 +222,7 @@
         [Fact]
         public void ThrowsExceptionWithNullEvaluatorForEvaluatorValueConstructorTest()
         {
+            // ReSharper disable once ObjectCreationAsStatement
             Action action = () => new CreationRule(null, 10, (object) null);
 
             action.Should().Throw<ArgumentNullException>();
@@ -223,6 +231,7 @@
         [Fact]
         public void ThrowsExceptionWithNullTypeAndExpressionForExpressionAndCreatorConstructorTest()
         {
+            // ReSharper disable once ObjectCreationAsStatement
             Action action = () => new CreationRule(null, (Regex) null, 10, (type, referenceName, context) => null);
 
             action.Should().Throw<ArgumentNullException>();
@@ -231,6 +240,7 @@
         [Fact]
         public void ThrowsExceptionWithNullTypeAndExpressionForExpressionAndValueConstructorTest()
         {
+            // ReSharper disable once ObjectCreationAsStatement
             Action action = () => new CreationRule(null, (Regex) null, 10, (object) null);
 
             action.Should().Throw<ArgumentNullException>();
@@ -239,6 +249,7 @@
         [Fact]
         public void ThrowsExceptionWithNullTypeAndReferenceNameForReferenceNameAndCreatorConstructorTest()
         {
+            // ReSharper disable once ObjectCreationAsStatement
             Action action = () => new CreationRule(null, (string) null, 10, (type, referenceName, context) => null);
 
             action.Should().Throw<ArgumentNullException>();
@@ -247,6 +258,7 @@
         [Fact]
         public void ThrowsExceptionWithNullTypeAndReferenceNameForReferenceNameAndValueConstructorTest()
         {
+            // ReSharper disable once ObjectCreationAsStatement
             Action action = () => new CreationRule(null, (string) null, 10, (object) null);
 
             action.Should().Throw<ArgumentNullException>();

@@ -11,13 +11,16 @@
     public class DefaultTypeCreatorTests
     {
         [Fact]
-        [SuppressMessage("Microsoft.Design",
+        [SuppressMessage(
+            "Microsoft.Design",
             "CA1825",
             Justification = "The Array.Empty<T> is not available on net452.")]
         public void CreateReturnsInstanceCreatedWithDefaultConstructorWhenArgumentsAreEmptyTest()
         {
             var buildChain = new BuildHistory();
-            var args = new object[] { };
+            var args = new object[]
+            {
+            };
 
             var strategy = Substitute.For<IExecuteStrategy>();
 

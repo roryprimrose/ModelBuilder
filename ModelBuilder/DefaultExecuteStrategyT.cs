@@ -23,7 +23,7 @@
 
             if (instance == null)
             {
-                return default(T);
+                return default;
             }
 
             return (T) instance;

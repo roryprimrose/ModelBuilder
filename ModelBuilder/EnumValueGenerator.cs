@@ -26,7 +26,7 @@
                 generateType = type.GetGenericArguments()[0];
             }
 
-            if (generateType.TypeIsEnum())
+            if (generateType.IsEnum)
             {
                 return true;
             }

@@ -277,7 +277,10 @@
         [Fact]
         public void SettingMaxAgeShouldNotChangeDefaultMaxAgeTest()
         {
-            var target = new AgeValueGenerator {MaxAge = Environment.TickCount};
+            var target = new AgeValueGenerator
+            {
+                MaxAge = Environment.TickCount
+            };
 
             AgeValueGenerator.DefaultMaxAge.Should().NotBe(target.MaxAge);
         }

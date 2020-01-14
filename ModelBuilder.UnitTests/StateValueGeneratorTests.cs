@@ -14,7 +14,10 @@
         [Fact]
         public void GenerateReturnsRandomStateMatchingCaseInsensitiveCountryTest()
         {
-            var address = new Address {Country = "UNITED STATES"};
+            var address = new Address
+            {
+                Country = "UNITED STATES"
+            };
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
@@ -38,7 +41,10 @@
         [Fact]
         public void GenerateReturnsRandomStateMatchingCountryTest()
         {
-            var address = new Address {Country = "United States"};
+            var address = new Address
+            {
+                Country = "United States"
+            };
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
@@ -60,7 +66,10 @@
         [Fact]
         public void GenerateReturnsRandomStateWhenNoMatchingCountryTest()
         {
-            var address = new Address {Country = Guid.NewGuid().ToString()};
+            var address = new Address
+            {
+                Country = Guid.NewGuid().ToString()
+            };
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 

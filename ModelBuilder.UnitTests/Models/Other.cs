@@ -29,7 +29,10 @@
 
         public Other Create()
         {
-            return new Other {Value = Value};
+            return new Other
+            {
+                Value = Value
+            };
         }
 
         public string Value { get; set; }

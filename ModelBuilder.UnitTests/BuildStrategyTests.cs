@@ -1,4 +1,6 @@
-﻿namespace ModelBuilder.UnitTests
+﻿// ReSharper disable CollectionNeverUpdated.Local
+
+namespace ModelBuilder.UnitTests
 {
     using System;
     using System.Collections.Generic;
@@ -23,7 +25,8 @@
             var executeOrderRules = new List<ExecuteOrderRule>();
             var postBuildActions = new List<IPostBuildAction>();
 
-            var target = new BuildStrategy(constructorResolver,
+            var target = new BuildStrategy(
+                constructorResolver,
                 propertyResolver,
                 creationRules,
                 typeCreators,
@@ -51,7 +54,8 @@
             var executeOrderRules = new List<ExecuteOrderRule>();
             var postBuildActions = new List<IPostBuildAction>();
 
-            var target = new BuildStrategy(constructorResolver,
+            var target = new BuildStrategy(
+                constructorResolver,
                 propertyResolver,
                 creationRules,
                 typeCreators,
@@ -80,7 +84,8 @@
             var executeOrderRules = new List<ExecuteOrderRule>();
             var postBuildActions = new List<IPostBuildAction>();
 
-            var target = new BuildStrategy(constructorResolver,
+            var target = new BuildStrategy(
+                constructorResolver,
                 propertyResolver,
                 creationRules,
                 typeCreators,
@@ -104,18 +109,33 @@
             {
                 new CreationRule(typeof(string), "Test", int.MaxValue, "Stuff")
             };
-            var typeCreators = new List<ITypeCreator> {new DefaultTypeCreator()};
-            var valueGenerators = new List<IValueGenerator> {new AddressValueGenerator()};
-            var ignoreRules = new List<IgnoreRule> {new IgnoreRule(typeof(Person), "FirstName")};
-            var typeMappingRules =
-                new List<TypeMappingRule> {new TypeMappingRule(typeof(Stream), typeof(MemoryStream))};
+            var typeCreators = new List<ITypeCreator>
+            {
+                new DefaultTypeCreator()
+            };
+            var valueGenerators = new List<IValueGenerator>
+            {
+                new AddressValueGenerator()
+            };
+            var ignoreRules = new List<IgnoreRule>
+            {
+                new IgnoreRule(typeof(Person), "FirstName")
+            };
+            var typeMappingRules = new List<TypeMappingRule>
+            {
+                new TypeMappingRule(typeof(Stream), typeof(MemoryStream))
+            };
             var executeOrderRules = new List<ExecuteOrderRule>
             {
                 new ExecuteOrderRule(typeof(Person), typeof(string), "LastName", int.MinValue)
             };
-            var postBuildActions = new List<IPostBuildAction> {Substitute.For<IPostBuildAction>()};
+            var postBuildActions = new List<IPostBuildAction>
+            {
+                Substitute.For<IPostBuildAction>()
+            };
 
-            var target = new BuildStrategy(constructorResolver,
+            var target = new BuildStrategy(
+                constructorResolver,
                 propertyResolver,
                 creationRules,
                 typeCreators,
@@ -158,7 +178,9 @@
             var executeOrderRules = new List<ExecuteOrderRule>();
             var postBuildActions = new List<IPostBuildAction>();
 
-            Action action = () => new BuildStrategy(null,
+            // ReSharper disable once ObjectCreationAsStatement
+            Action action = () => new BuildStrategy(
+                null,
                 propertyResolver,
                 creationRules,
                 typeCreators,
@@ -183,7 +205,9 @@
             var executeOrderRules = new List<ExecuteOrderRule>();
             var postBuildActions = new List<IPostBuildAction>();
 
-            Action action = () => new BuildStrategy(constructorResolver,
+            // ReSharper disable once ObjectCreationAsStatement
+            Action action = () => new BuildStrategy(
+                constructorResolver,
                 propertyResolver,
                 null,
                 typeCreators,
@@ -208,7 +232,9 @@
             var typeMappingRules = new List<TypeMappingRule>();
             var postBuildActions = new List<IPostBuildAction>();
 
-            Action action = () => new BuildStrategy(constructorResolver,
+            // ReSharper disable once ObjectCreationAsStatement
+            Action action = () => new BuildStrategy(
+                constructorResolver,
                 propertyResolver,
                 creationRules,
                 typeCreators,
@@ -233,7 +259,9 @@
             var executeOrderRules = new List<ExecuteOrderRule>();
             var postBuildActions = new List<IPostBuildAction>();
 
-            Action action = () => new BuildStrategy(constructorResolver,
+            // ReSharper disable once ObjectCreationAsStatement
+            Action action = () => new BuildStrategy(
+                constructorResolver,
                 propertyResolver,
                 creationRules,
                 typeCreators,
@@ -258,7 +286,9 @@
             var typeMappingRules = new List<TypeMappingRule>();
             var executeOrderRules = new List<ExecuteOrderRule>();
 
-            Action action = () => new BuildStrategy(constructorResolver,
+            // ReSharper disable once ObjectCreationAsStatement
+            Action action = () => new BuildStrategy(
+                constructorResolver,
                 propertyResolver,
                 creationRules,
                 typeCreators,
@@ -283,7 +313,9 @@
             var executeOrderRules = new List<ExecuteOrderRule>();
             var postBuildActions = new List<IPostBuildAction>();
 
-            Action action = () => new BuildStrategy(constructorResolver,
+            // ReSharper disable once ObjectCreationAsStatement
+            Action action = () => new BuildStrategy(
+                constructorResolver,
                 null,
                 creationRules,
                 typeCreators,
@@ -297,8 +329,9 @@
         }
 
         [Fact]
-        public void ThrowsExceptionWhenCreatedWithNullStragegyTest()
+        public void ThrowsExceptionWhenCreatedWithNullStrategyTest()
         {
+            // ReSharper disable once ObjectCreationAsStatement
             Action action = () => new BuildStrategy(null);
 
             action.Should().Throw<ArgumentNullException>();
@@ -316,7 +349,9 @@
             var executeOrderRules = new List<ExecuteOrderRule>();
             var postBuildActions = new List<IPostBuildAction>();
 
-            Action action = () => new BuildStrategy(constructorResolver,
+            // ReSharper disable once ObjectCreationAsStatement
+            Action action = () => new BuildStrategy(
+                constructorResolver,
                 propertyResolver,
                 creationRules,
                 null,
@@ -341,7 +376,9 @@
             var executeOrderRules = new List<ExecuteOrderRule>();
             var postBuildActions = new List<IPostBuildAction>();
 
-            Action action = () => new BuildStrategy(constructorResolver,
+            // ReSharper disable once ObjectCreationAsStatement
+            Action action = () => new BuildStrategy(
+                constructorResolver,
                 propertyResolver,
                 creationRules,
                 typeCreators,
@@ -366,7 +403,9 @@
             var executeOrderRules = new List<ExecuteOrderRule>();
             var postBuildActions = new List<IPostBuildAction>();
 
-            Action action = () => new BuildStrategy(constructorResolver,
+            // ReSharper disable once ObjectCreationAsStatement
+            Action action = () => new BuildStrategy(
+                constructorResolver,
                 propertyResolver,
                 creationRules,
                 typeCreators,

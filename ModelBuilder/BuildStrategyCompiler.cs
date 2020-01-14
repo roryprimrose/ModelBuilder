@@ -38,7 +38,8 @@
                 throw new InvalidOperationException(Resources.BuildStrategyCompiler_NullPropertyResolver);
             }
 
-            return new BuildStrategy(ConstructorResolver,
+            return new BuildStrategy(
+                ConstructorResolver,
                 PropertyResolver,
                 CreationRules,
                 TypeCreators,

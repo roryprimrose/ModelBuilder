@@ -51,8 +51,7 @@
 
             var actual = target.Generate(typeof(Uri), null, executeStrategy).As<Uri>();
 
-            TestData.Domains.Any(x => actual.AbsoluteUri.Contains(x, StringComparison.OrdinalIgnoreCase))
-                .Should()
+            TestData.Domains.Any(x => actual.AbsoluteUri.Contains(x, StringComparison.OrdinalIgnoreCase)).Should()
                 .BeTrue();
         }
 

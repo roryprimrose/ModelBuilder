@@ -15,8 +15,7 @@
         /// <summary>
         ///     Initializes a new instance of the <see cref="SuburbValueGenerator" /> class.
         /// </summary>
-        public SuburbValueGenerator()
-            : base(_matchNameExpression, typeof(string))
+        public SuburbValueGenerator() : base(_matchNameExpression, typeof(string))
         {
         }
 

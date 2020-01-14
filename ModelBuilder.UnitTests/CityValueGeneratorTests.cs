@@ -14,7 +14,10 @@
         [Fact]
         public void GenerateReturnsRandomStateMatchingCaseInsensitiveStateTest()
         {
-            var address = new Address {State = "ONTARIO"};
+            var address = new Address
+            {
+                State = "ONTARIO"
+            };
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
@@ -38,7 +41,10 @@
         [Fact]
         public void GenerateReturnsRandomStateMatchingStateTest()
         {
-            var address = new Address {State = "Ontario"};
+            var address = new Address
+            {
+                State = "Ontario"
+            };
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
@@ -60,7 +66,10 @@
         [Fact]
         public void GenerateReturnsRandomStateWhenNoMatchingStateTest()
         {
-            var address = new Address {State = Guid.NewGuid().ToString()};
+            var address = new Address
+            {
+                State = Guid.NewGuid().ToString()
+            };
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
@@ -89,7 +98,7 @@
             var target = new CityValueGenerator();
 
             var first = (string) target.Generate(typeof(string), "city", executeStrategy);
-            
+
             var second = first;
 
             for (var index = 0; index < 1000; index++)
@@ -101,10 +110,10 @@
                     break;
                 }
             }
-            
+
             first.Should().NotBe(second);
         }
-        
+
         [Fact]
         public void GenerateReturnsStringValueTest()
         {

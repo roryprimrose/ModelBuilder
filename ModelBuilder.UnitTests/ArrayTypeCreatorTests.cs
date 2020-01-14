@@ -212,7 +212,10 @@
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Create(typeof(Guid)).Returns(Guid.NewGuid());
 
-            var target = new ArrayTypeCreator {MaxCount = 15};
+            var target = new ArrayTypeCreator
+            {
+                MaxCount = 15
+            };
 
             var actual = target.Populate(expected, executeStrategy);
 
@@ -235,7 +238,10 @@
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Create(typeof(Guid)).Returns(Guid.NewGuid());
 
-            var target = new ArrayTypeCreator {MaxCount = 15};
+            var target = new ArrayTypeCreator
+            {
+                MaxCount = 15
+            };
 
             var actual = target.Populate(expected, executeStrategy);
 
@@ -282,7 +288,8 @@
         }
 
         [Fact]
-        [SuppressMessage("Microsoft.Design",
+        [SuppressMessage(
+            "Microsoft.Design",
             "CA1825",
             Justification = "The Array.Empty<T> is not available on net452.")]
         public void PopulateReturnsEmptyArrayWhenSourceHasZeroLengthTest()
@@ -295,7 +302,10 @@
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Create(typeof(Guid)).Returns(Guid.NewGuid());
 
-            var target = new ArrayTypeCreator {MaxCount = 15};
+            var target = new ArrayTypeCreator
+            {
+                MaxCount = 15
+            };
 
             var actual = target.Populate(expected, executeStrategy);
 
@@ -348,7 +358,7 @@
         }
 
         [Fact]
-        public void ProrityReturnsHigherThanDefaultTypeCreatorTest()
+        public void PriorityReturnsHigherThanDefaultTypeCreatorTest()
         {
             var target = new ArrayTypeCreator();
             var other = new DefaultTypeCreator();
@@ -381,7 +391,10 @@
         [Fact]
         public void SettingMaxCountShouldNotChangeDefaultMaxCountTest()
         {
-            var target = new ArrayTypeCreator {MaxCount = Environment.TickCount};
+            var target = new ArrayTypeCreator
+            {
+                MaxCount = Environment.TickCount
+            };
 
             ArrayTypeCreator.DefaultMaxCount.Should().NotBe(target.MaxCount);
         }
