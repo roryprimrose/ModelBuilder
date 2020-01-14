@@ -232,6 +232,15 @@ namespace ModelBuilder.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to determine type to build..
+        /// </summary>
+        internal static string DefaultBuildStrategy_UndeterminedTargetType {
+            get {
+                return ResourceManager.GetString("DefaultBuildStrategy_UndeterminedTargetType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No constructor found matching type..
         /// </summary>
         internal static string DefaultTypeCreator_NoMatchingConstructor {

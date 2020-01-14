@@ -146,7 +146,10 @@
 
             var typeToBuild = DetermineTypeToBuild(type);
 
-            Debug.Assert(typeToBuild != null, nameof(typeToBuild) + " != null");
+            if (typeToBuild == null)
+            {
+                throw new BuildException(Resources.DefaultBuildStrategy_UndeterminedTargetType, type, referenceName, context, Log.Output);
+            }
 
             var buildChain = BuildChain;
 

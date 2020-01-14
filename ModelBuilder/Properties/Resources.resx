@@ -228,4 +228,7 @@
   <data name="DefaultTypeCreator_NoMatchingConstructor" xml:space="preserve">
     <value>No constructor found matching type.</value>
   </data>
+  <data name="DefaultBuildStrategy_UndeterminedTargetType" xml:space="preserve">
+    <value>Failed to determine type to build.</value>
+  </data>
 </root>

@@ -3,7 +3,7 @@
     using System;
     using System.Reflection;
     using System.Text.RegularExpressions;
-    using ModelBuilder.Properties;
+    using Properties;
 
     /// <summary>
     ///     The <see cref="ExecuteOrderRule" />
@@ -43,9 +43,9 @@
         /// </exception>
         public ExecuteOrderRule(Type declaringType, Type propertyType, Regex propertyExpression, int priority)
         {
-            if (declaringType == null &&
-                propertyType == null &&
-                propertyExpression == null)
+            if (declaringType == null
+                && propertyType == null
+                && propertyExpression == null)
             {
                 throw new ArgumentNullException(Resources.NoOwnerTypePropertyTypeOrPropertyExpression);
             }
