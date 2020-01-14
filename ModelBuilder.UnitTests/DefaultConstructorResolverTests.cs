@@ -2,7 +2,7 @@
 {
     using System;
     using FluentAssertions;
-    using ModelBuilder.UnitTests.Models;
+    using Models;
     using Xunit;
     using Xunit.Abstractions;
 
@@ -20,7 +20,7 @@
         {
             var target = new DefaultConstructorResolver();
 
-            var constructor = target.Resolve(typeof(Person), (Person)null);
+            var constructor = target.Resolve(typeof(Person), (Person) null);
 
             constructor.GetParameters().Length.Should().Be(1);
         }

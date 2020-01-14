@@ -4,7 +4,7 @@
     using System.Collections.Generic;
     using System.IO;
     using FluentAssertions;
-    using ModelBuilder.UnitTests.Models;
+    using Models;
     using NSubstitute;
     using Xunit;
 
@@ -85,7 +85,7 @@
         {
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
-            executeStrategy.BuildChain.Returns((IBuildChain)null);
+            executeStrategy.BuildChain.Returns((IBuildChain) null);
 
             var target = new TypeCreatorWrapper();
 
@@ -213,7 +213,7 @@
         {
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
-            executeStrategy.BuildChain.Returns((IBuildChain)null);
+            executeStrategy.BuildChain.Returns((IBuildChain) null);
 
             var target = new TypeCreatorWrapper();
 
@@ -262,7 +262,7 @@
         {
             var strategy = Substitute.For<IExecuteStrategy>();
 
-            strategy.BuildChain.Returns((IBuildChain)null);
+            strategy.BuildChain.Returns((IBuildChain) null);
 
             var target = new TypeCreatorWrapper();
 
@@ -296,7 +296,7 @@
         {
             var strategy = Substitute.For<IExecuteStrategy>();
 
-            strategy.BuildChain.Returns((IBuildChain)null);
+            strategy.BuildChain.Returns((IBuildChain) null);
 
             var target = new TypeCreatorWrapper();
 

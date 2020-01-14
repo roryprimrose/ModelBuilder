@@ -3,7 +3,7 @@
     using System;
     using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
-    using ModelBuilder.Properties;
+    using Properties;
 
     /// <summary>
     ///     The <see cref="DefaultTypeCreator" />

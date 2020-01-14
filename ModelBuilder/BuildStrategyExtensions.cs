@@ -4,7 +4,7 @@ namespace ModelBuilder
     using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
     using System.Linq.Expressions;
-    using ModelBuilder.Properties;
+    using Properties;
 
     /// <summary>
     ///     The <see cref="Extensions" />

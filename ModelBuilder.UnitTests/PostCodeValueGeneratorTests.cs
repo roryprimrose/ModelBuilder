@@ -5,7 +5,7 @@
     using System.Linq;
     using FluentAssertions;
     using ModelBuilder.Data;
-    using ModelBuilder.UnitTests.Models;
+    using Models;
     using NSubstitute;
     using Xunit;
 
@@ -97,13 +97,13 @@
 
             var target = new PostCodeValueGenerator();
 
-            var first = (string)target.Generate(typeof(string), "Zip", executeStrategy);
+            var first = (string) target.Generate(typeof(string), "Zip", executeStrategy);
 
             var second = first;
 
             for (var index = 0; index < 1000; index++)
             {
-                second = (string)target.Generate(typeof(string), "Zip", executeStrategy);
+                second = (string) target.Generate(typeof(string), "Zip", executeStrategy);
 
                 if (string.Equals(first, second, StringComparison.OrdinalIgnoreCase) == false)
                 {
@@ -154,7 +154,7 @@
 
             var target = new PostCodeValueGenerator();
 
-            var actual = (string)target.Generate(typeof(string), referenceName, executeStrategy);
+            var actual = (string) target.Generate(typeof(string), referenceName, executeStrategy);
 
             actual.Should().NotBeNullOrEmpty();
         }

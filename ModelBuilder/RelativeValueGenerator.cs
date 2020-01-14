@@ -5,7 +5,7 @@
     using System.Linq;
     using System.Reflection;
     using System.Text.RegularExpressions;
-    using ModelBuilder.Properties;
+    using Properties;
 
     /// <summary>
     ///     The <see cref="RelativeValueGenerator" />
@@ -165,7 +165,7 @@
                 expectedType = expectedType.GetGenericArguments()[0];
             }
 
-            return (T)Convert.ChangeType(value, expectedType, CultureInfo.CurrentCulture);
+            return (T) Convert.ChangeType(value, expectedType, CultureInfo.CurrentCulture);
         }
 
         /// <summary>

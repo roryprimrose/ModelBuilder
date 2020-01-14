@@ -20,7 +20,7 @@
 
             for (var index = 0; index < 1000; index++)
             {
-                var value = (DateTime?)target.Generate(typeof(DateTime?), null, executeStrategy);
+                var value = (DateTime?) target.Generate(typeof(DateTime?), null, executeStrategy);
 
                 if (value == null)
                 {
@@ -111,7 +111,7 @@
 
             var target = new DateTimeValueGenerator();
 
-            var first = (DateTimeOffset)target.Generate(typeof(DateTimeOffset), null, executeStrategy);
+            var first = (DateTimeOffset) target.Generate(typeof(DateTimeOffset), null, executeStrategy);
 
             first.As<DateTimeOffset>().Offset.Should().Be(TimeSpan.Zero);
 
@@ -119,7 +119,7 @@
 
             for (var index = 0; index < 1000; index++)
             {
-                second = (DateTimeOffset)target.Generate(typeof(DateTimeOffset), null, executeStrategy);
+                second = (DateTimeOffset) target.Generate(typeof(DateTimeOffset), null, executeStrategy);
 
                 if (first != second)
                 {
@@ -140,7 +140,7 @@
 
             var target = new DateTimeValueGenerator();
 
-            var first = (DateTime)target.Generate(typeof(DateTime), null, executeStrategy);
+            var first = (DateTime) target.Generate(typeof(DateTime), null, executeStrategy);
 
             first.As<DateTime>().Kind.Should().Be(DateTimeKind.Utc);
 
@@ -148,7 +148,7 @@
 
             for (var index = 0; index < 1000; index++)
             {
-                second = (DateTime)target.Generate(typeof(DateTime), null, executeStrategy);
+                second = (DateTime) target.Generate(typeof(DateTime), null, executeStrategy);
 
                 if (first != second)
                 {
@@ -169,13 +169,13 @@
 
             var target = new DateTimeValueGenerator();
 
-            var first = (TimeSpan)target.Generate(typeof(TimeSpan), null, executeStrategy);
+            var first = (TimeSpan) target.Generate(typeof(TimeSpan), null, executeStrategy);
 
             var second = first;
 
             for (var index = 0; index < 1000; index++)
             {
-                second = (TimeSpan)target.Generate(typeof(TimeSpan), null, executeStrategy);
+                second = (TimeSpan) target.Generate(typeof(TimeSpan), null, executeStrategy);
 
                 if (first != second)
                 {

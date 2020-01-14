@@ -4,7 +4,7 @@
     using System.IO;
     using System.Linq;
     using FluentAssertions;
-    using ModelBuilder.UnitTests.Models;
+    using Models;
     using Xunit;
 
     public class DefaultBuildLogTests

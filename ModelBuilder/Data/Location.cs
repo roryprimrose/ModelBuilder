@@ -1,7 +1,7 @@
 ﻿namespace ModelBuilder.Data
 {
     using System;
-    using ModelBuilder.Properties;
+    using Properties;
 
     /// <summary>
     ///     The <see cref="Location" />

@@ -22,7 +22,7 @@
 
             for (var index = 0; index < 1000; index++)
             {
-                var value = (DateTime?)target.Generate(typeof(DateTime?), "dob", executeStrategy);
+                var value = (DateTime?) target.Generate(typeof(DateTime?), "dob", executeStrategy);
 
                 if (value == null)
                 {
@@ -83,7 +83,7 @@
 
             var target = new DateOfBirthValueGenerator();
 
-            var first = (DateTimeOffset)target.Generate(typeof(DateTimeOffset), "dob", executeStrategy);
+            var first = (DateTimeOffset) target.Generate(typeof(DateTimeOffset), "dob", executeStrategy);
 
             first.As<DateTimeOffset>().Should().BeBefore(DateTimeOffset.UtcNow);
             first.As<DateTimeOffset>().Should().BeAfter(DateTimeOffset.UtcNow.AddYears(-100));
@@ -93,7 +93,7 @@
 
             for (var index = 0; index < 1000; index++)
             {
-                second = (DateTimeOffset)target.Generate(typeof(DateTimeOffset), "dob", executeStrategy);
+                second = (DateTimeOffset) target.Generate(typeof(DateTimeOffset), "dob", executeStrategy);
 
                 if (first != second)
                 {
@@ -114,7 +114,7 @@
 
             var target = new DateOfBirthValueGenerator();
 
-            var first = (DateTime)target.Generate(typeof(DateTime), "dob", executeStrategy);
+            var first = (DateTime) target.Generate(typeof(DateTime), "dob", executeStrategy);
 
             first.As<DateTime>().Should().BeBefore(DateTime.UtcNow);
             first.As<DateTime>().Should().BeAfter(DateTime.UtcNow.AddYears(-100));
@@ -124,7 +124,7 @@
 
             for (var index = 0; index < 1000; index++)
             {
-                second = (DateTime)target.Generate(typeof(DateTime), "dob", executeStrategy);
+                second = (DateTime) target.Generate(typeof(DateTime), "dob", executeStrategy);
 
                 if (first != second)
                 {

@@ -4,7 +4,7 @@
     using System.Linq;
     using System.Text.RegularExpressions;
     using FluentAssertions;
-    using ModelBuilder.UnitTests.Models;
+    using Models;
     using Xunit;
 
     public class PropertyResolverExtensionTests
@@ -30,7 +30,7 @@
         {
             var type = typeof(Person);
 
-            Action action = () => ((IPropertyResolver)null).GetProperties(type);
+            Action action = () => ((IPropertyResolver) null).GetProperties(type);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -71,17 +71,6 @@
         }
 
         [Fact]
-        public void GetPropertiesWithExpressionThrowsExceptionWithNullResolverTest()
-        {
-            var type = typeof(Person);
-            var expression = new Regex("Stuff");
-
-            Action action = () => ((IPropertyResolver)null).GetProperties(type, expression);
-
-            action.Should().Throw<ArgumentNullException>();
-        }
-
-        [Fact]
         public void GetPropertiesWithExpressionThrowsExceptionWithNullExpressionTest()
         {
             var type = typeof(Person);
@@ -89,6 +78,17 @@
             var target = new DefaultPropertyResolver();
 
             Action action = () => target.GetProperties(type, null);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void GetPropertiesWithExpressionThrowsExceptionWithNullResolverTest()
+        {
+            var type = typeof(Person);
+            var expression = new Regex("Stuff");
+
+            Action action = () => ((IPropertyResolver) null).GetProperties(type, expression);
 
             action.Should().Throw<ArgumentNullException>();
         }

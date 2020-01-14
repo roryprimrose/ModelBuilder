@@ -2,7 +2,7 @@
 {
     using System;
     using FluentAssertions;
-    using ModelBuilder.UnitTests.Models;
+    using Models;
     using Xunit;
 
     public class BuildExceptionTests

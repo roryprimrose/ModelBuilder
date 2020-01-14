@@ -7,7 +7,7 @@
     using System.Linq;
     using System.Reflection;
     using FluentAssertions;
-    using ModelBuilder.UnitTests.Models;
+    using Models;
     using NSubstitute;
     using NSubstitute.ExceptionExtensions;
     using Xunit;
@@ -112,14 +112,14 @@
             typeCreator.AutoDetectConstructor.Returns(true);
             typeCreator.CanCreate(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<IBuildChain>()).Returns(true);
             typeCreator.Create(typeof(AdditionalWrapper), null, Arg.Any<IExecuteStrategy>(), Arg.Any<object[]>())
-                .Returns(x => new AdditionalWrapper((int)((object[])x[3])[0]));
+                .Returns(x => new AdditionalWrapper((int) ((object[]) x[3])[0]));
             typeCreator.Create(typeof(ReadOnlyModel), "model", Arg.Any<IExecuteStrategy>(), value)
-                .Returns(x => new ReadOnlyModel((Guid)((object[])x[3])[0]));
+                .Returns(x => new ReadOnlyModel((Guid) ((object[]) x[3])[0]));
             typeCreator.Create(
                 typeof(ReadOnlyModelWrapper),
                 nameof(AdditionalWrapper.Child),
                 Arg.Any<IExecuteStrategy>(),
-                Arg.Any<object[]>()).Returns(x => new ReadOnlyModelWrapper((ReadOnlyModel)((object[])x[3])[0]));
+                Arg.Any<object[]>()).Returns(x => new ReadOnlyModelWrapper((ReadOnlyModel) ((object[]) x[3])[0]));
             typeCreator.Populate(Arg.Any<object>(), Arg.Any<IExecuteStrategy>()).Returns(x => x[0]);
             valueGenerator.IsSupported(typeof(Guid), "value", Arg.Any<IBuildChain>()).Returns(true);
             valueGenerator.Generate(typeof(Guid), "value", Arg.Any<IExecuteStrategy>()).Returns(value);
@@ -131,7 +131,7 @@
                 buildStrategy,
                 Arg.Is<object>(x => x.GetType() == typeof(ReadOnlyModel)),
                 Arg.Is<PropertyInfo>(x => x.Name == nameof(ReadOnlyModel.Value)),
-                Arg.Is<object[]>(x => (Guid)x[0] == value));
+                Arg.Is<object[]>(x => (Guid) x[0] == value));
         }
 
         [Fact]
@@ -159,7 +159,7 @@
             typeCreator.AutoPopulate.Returns(false);
             typeCreator.Populate(model, target).Returns(model);
 
-            var actual = (SlimModel)target.Create(typeof(SlimModel));
+            var actual = (SlimModel) target.Create(typeof(SlimModel));
 
             actual.Should().BeSameAs(model);
             actual.Value.Should().BeEmpty();
@@ -277,7 +277,7 @@
             generator.Generate(typeof(Guid), "Id", Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == expected))
                 .Returns(id);
 
-            var actual = (SelfReferrer)target.Create(typeof(SelfReferrer));
+            var actual = (SelfReferrer) target.Create(typeof(SelfReferrer));
 
             actual.Should().Be(expected);
             actual.Id.Should().Be(id);
@@ -390,7 +390,7 @@
             generator.Generate(typeof(Guid), "Value", Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == expected))
                 .Returns(value);
 
-            var actual = (SlimModel)target.Create(typeof(SlimModel));
+            var actual = (SlimModel) target.Create(typeof(SlimModel));
 
             actual.Should().Be(expected);
             actual.Value.Should().Be(value);
@@ -473,7 +473,7 @@
             generator.Generate(typeof(string), "FirstName", Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == model))
                 .Returns(value);
 
-            var actual = (ITestItem)target.Create(typeof(ITestItem));
+            var actual = (ITestItem) target.Create(typeof(ITestItem));
 
             actual.Should().BeOfType<TestItem>();
             actual.FirstName.Should().Be(value);
@@ -526,7 +526,7 @@
             generator.Generate(typeof(Guid), "Value", Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == secondModel))
                 .Returns(value);
 
-            var actual = (SlimModel)target.Create(typeof(SlimModel));
+            var actual = (SlimModel) target.Create(typeof(SlimModel));
 
             actual.Should().BeSameAs(secondModel);
             actual.Value.Should().Be(value);
@@ -637,7 +637,7 @@
             generator.Generate(typeof(string), "FirstName", Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == model))
                 .Returns(value);
 
-            var actual = (ITestItem)target.Create(typeof(ITestItem));
+            var actual = (ITestItem) target.Create(typeof(ITestItem));
 
             actual.Should().BeOfType<TestItem>();
             actual.FirstName.Should().Be(value);
@@ -708,7 +708,7 @@
             generator.IsSupported(typeof(Guid), "value", Arg.Any<IBuildChain>()).Returns(true);
             generator.Generate(typeof(Guid), "value", Arg.Any<IExecuteStrategy>()).Returns(value);
 
-            var actual = (ReadOnlyModel)target.Create(typeof(ReadOnlyModel));
+            var actual = (ReadOnlyModel) target.Create(typeof(ReadOnlyModel));
 
             actual.Should().Be(expected);
             actual.Value.Should().Be(value);
@@ -728,7 +728,7 @@
 
             target.Initialize(buildStrategy, buildStrategy.GetBuildLog());
 
-            var actual = (Person)target.Create(typeof(Person));
+            var actual = (Person) target.Create(typeof(Person));
 
             actual.Id.Should().Be(secondValue);
         }
@@ -747,7 +747,7 @@
 
             target.Initialize(buildStrategy, buildStrategy.GetBuildLog());
 
-            var actual = (Person)target.Create(typeof(Person));
+            var actual = (Person) target.Create(typeof(Person));
 
             actual.Id.Should().Be(secondValue);
         }
@@ -799,7 +799,7 @@
             generator.Generate(typeof(Guid), "Value", Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == secondModel))
                 .Returns(value);
 
-            var actual = (SlimModel)target.Create(typeof(SlimModel));
+            var actual = (SlimModel) target.Create(typeof(SlimModel));
 
             actual.Should().BeSameAs(secondModel);
             actual.Value.Should().Be(value);
@@ -1302,7 +1302,7 @@
                 "Address",
                 Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == expected)).Returns(address);
 
-            var actual = (Company)target.Populate(expected);
+            var actual = (Company) target.Populate(expected);
 
             actual.Should().BeSameAs(expected);
             actual.Name.Should().Be(name);
@@ -1370,7 +1370,7 @@
                 "Address",
                 Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == expected)).Returns(address);
 
-            var actual = (Company)target.Populate(expected);
+            var actual = (Company) target.Populate(expected);
 
             actual.Should().BeSameAs(expected);
             actual.Name.Should().Be(name);
@@ -1438,7 +1438,7 @@
             personTypeCreator.AutoPopulate.Returns(false);
             personTypeCreator.Populate(fourth, target).Returns(fourth);
 
-            var actual = (PopulateOrderItem)target.Populate(expected);
+            var actual = (PopulateOrderItem) target.Populate(expected);
 
             actual.Should().BeSameAs(expected);
             actual.Z.Should().Be(first);
@@ -1513,7 +1513,7 @@
                 "Address",
                 Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == expected)).Returns(address);
 
-            var actual = (Company)target.Populate(expected);
+            var actual = (Company) target.Populate(expected);
 
             actual.Should().BeSameAs(expected);
             actual.Name.Should().Be(name);
@@ -1587,7 +1587,7 @@
                 "Address",
                 Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == expected)).Returns(address);
 
-            var actual = (Company)target.Populate(expected);
+            var actual = (Company) target.Populate(expected);
 
             actual.Should().BeSameAs(expected);
             actual.Name.Should().Be(name);
@@ -1661,7 +1661,7 @@
                 "Address",
                 Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == expected)).Returns(address);
 
-            var actual = (Company)target.Populate(expected);
+            var actual = (Company) target.Populate(expected);
 
             actual.Should().BeSameAs(expected);
             actual.Name.Should().Be(name);
@@ -2000,7 +2000,7 @@
             generator.Generate(typeof(Guid), "Id", Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == expected))
                 .Returns(id);
 
-            var actual = (SelfReferrer)target.Populate(expected);
+            var actual = (SelfReferrer) target.Populate(expected);
 
             actual.Should().Be(expected);
             actual.Id.Should().Be(id);
@@ -2073,7 +2073,7 @@
                 "Address",
                 Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == expected)).Returns(address);
 
-            var actual = (Company)target.Populate(expected);
+            var actual = (Company) target.Populate(expected);
 
             actual.Should().BeSameAs(expected);
             actual.Name.Should().BeNullOrEmpty();
@@ -2152,7 +2152,7 @@
                 "Address",
                 Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == expected)).Returns(address);
 
-            var actual = (Company)target.Populate(expected);
+            var actual = (Company) target.Populate(expected);
 
             actual.Should().BeSameAs(expected);
             actual.Name.Should().BeNullOrEmpty();
@@ -2271,7 +2271,7 @@
             valueGenerator.Generate(typeof(Guid), "Value", Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == expected))
                 .Returns(value);
 
-            var actual = (SlimModel)target.Populate(expected);
+            var actual = (SlimModel) target.Populate(expected);
 
             actual.Value.Should().Be(value);
             otherTypeCreator.DidNotReceive().Populate(Arg.Any<object>(), Arg.Any<IExecuteStrategy>());

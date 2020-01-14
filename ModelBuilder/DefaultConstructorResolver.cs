@@ -6,7 +6,7 @@
     using System.Globalization;
     using System.Linq;
     using System.Reflection;
-    using ModelBuilder.Properties;
+    using Properties;
 
     /// <summary>
     ///     The <see cref="DefaultConstructorResolver" />
@@ -138,8 +138,8 @@
 
             var firstOptionalIndex = parameters.ToList().FindIndex(x => x.IsOptional);
 
-            if (firstOptionalIndex == -1 &&
-                parameters.Count != args.Count)
+            if (firstOptionalIndex == -1
+                && parameters.Count != args.Count)
             {
                 // There are no optional parameters on this constructor and a mismatch between the number of parameters <-> arguments
                 return false;

@@ -7,7 +7,7 @@
     using System.Linq;
     using FluentAssertions;
     using ModelBuilder.Data;
-    using ModelBuilder.UnitTests.Models;
+    using Models;
     using NSubstitute;
     using Xunit;
 
@@ -30,7 +30,7 @@
 
             var target = new MailinatorEmailValueGenerator();
 
-            var actual = (string)target.Generate(typeof(string), "email", executeStrategy);
+            var actual = (string) target.Generate(typeof(string), "email", executeStrategy);
 
             actual.Should().EndWith("mailinator.com");
         }
@@ -48,7 +48,7 @@
 
             var target = new EmailValueGenerator();
 
-            var actual = (string)target.Generate(typeof(string), "email", executeStrategy);
+            var actual = (string) target.Generate(typeof(string), "email", executeStrategy);
 
             var domain = actual.Substring(actual.IndexOf("@", StringComparison.Ordinal) + 1);
 
@@ -72,7 +72,7 @@
 
             var target = new EmailValueGenerator();
 
-            var actual = (string)target.Generate(typeof(string), "email", executeStrategy);
+            var actual = (string) target.Generate(typeof(string), "email", executeStrategy);
 
             var expected = "dejour.mccormick";
 
@@ -95,7 +95,7 @@
 
             var target = new EmailValueGenerator();
 
-            var actual = (string)target.Generate(typeof(string), "email", executeStrategy);
+            var actual = (string) target.Generate(typeof(string), "email", executeStrategy);
 
             var firstName = actual.Substring(0, actual.IndexOf(".", StringComparison.OrdinalIgnoreCase));
 
@@ -118,7 +118,7 @@
 
             var target = new EmailValueGenerator();
 
-            var actual = (string)target.Generate(typeof(string), "email", executeStrategy);
+            var actual = (string) target.Generate(typeof(string), "email", executeStrategy);
 
             var firstName = actual.Substring(0, actual.IndexOf(".", StringComparison.Ordinal));
 
@@ -141,7 +141,7 @@
 
             var target = new EmailValueGenerator();
 
-            var actual = (string)target.Generate(typeof(string), "email", executeStrategy);
+            var actual = (string) target.Generate(typeof(string), "email", executeStrategy);
 
             actual.Should().EndWith(parts.Domain);
         }
@@ -163,7 +163,7 @@
 
             var target = new EmailValueGenerator();
 
-            var actual = (string)target.Generate(typeof(string), "email", executeStrategy);
+            var actual = (string) target.Generate(typeof(string), "email", executeStrategy);
 
             var expected = parts.FirstName + "." + parts.LastName;
 
@@ -188,7 +188,7 @@
 
             var target = new EmailValueGenerator();
 
-            var actual = (string)target.Generate(typeof(string), "email", executeStrategy);
+            var actual = (string) target.Generate(typeof(string), "email", executeStrategy);
 
             var expected = parts.FirstName + "." + parts.LastName + "@" + parts.Domain;
 
@@ -211,7 +211,7 @@
 
             var target = new EmailValueGenerator();
 
-            var actual = (string)target.Generate(typeof(string), "email", executeStrategy);
+            var actual = (string) target.Generate(typeof(string), "email", executeStrategy);
 
             var expected = person.FirstName.Substring(0, 1);
 
@@ -234,7 +234,7 @@
 
             var target = new EmailValueGenerator();
 
-            var actual = (string)target.Generate(typeof(string), "email", executeStrategy);
+            var actual = (string) target.Generate(typeof(string), "email", executeStrategy);
 
             var expected = person.LastName;
 
@@ -258,7 +258,7 @@
 
             var target = new EmailValueGenerator();
 
-            var first = (string)target.Generate(typeof(string), "email", firstExecuteStrategy);
+            var first = (string) target.Generate(typeof(string), "email", firstExecuteStrategy);
 
             var secondPerson = new Person
             {
@@ -276,7 +276,7 @@
 
             for (var index = 0; index < 1000; index++)
             {
-                second = (string)target.Generate(typeof(string), "email", secondExecuteStrategy);
+                second = (string) target.Generate(typeof(string), "email", secondExecuteStrategy);
 
                 if (string.Equals(first, second, StringComparison.OrdinalIgnoreCase) == false)
                 {
@@ -324,7 +324,7 @@
 
             var target = new EmailValueGenerator();
 
-            var actual = (string)target.Generate(typeof(string), "email", executeStrategy);
+            var actual = (string) target.Generate(typeof(string), "email", executeStrategy);
 
             actual.Should().NotBeNullOrWhiteSpace();
         }

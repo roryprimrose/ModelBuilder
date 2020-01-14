@@ -35,13 +35,13 @@
 
             var target = new CultureValueGenerator();
 
-            var first = (CultureInfo)target.Generate(typeof(CultureInfo), "culture", executeStrategy);
+            var first = (CultureInfo) target.Generate(typeof(CultureInfo), "culture", executeStrategy);
 
             var second = first;
 
             for (var index = 0; index < 1000; index++)
             {
-                second = (CultureInfo)target.Generate(typeof(CultureInfo), "culture", executeStrategy);
+                second = (CultureInfo) target.Generate(typeof(CultureInfo), "culture", executeStrategy);
 
                 if (string.Equals(first.Name, second.Name, StringComparison.OrdinalIgnoreCase) == false)
                 {
@@ -62,13 +62,13 @@
 
             var target = new CultureValueGenerator();
 
-            var first = (string)target.Generate(typeof(string), "culture", executeStrategy);
+            var first = (string) target.Generate(typeof(string), "culture", executeStrategy);
 
             var second = first;
 
             for (var index = 0; index < 1000; index++)
             {
-                second = (string)target.Generate(typeof(string), "culture", executeStrategy);
+                second = (string) target.Generate(typeof(string), "culture", executeStrategy);
 
                 if (string.Equals(first, second, StringComparison.OrdinalIgnoreCase) == false)
                 {

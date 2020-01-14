@@ -53,7 +53,7 @@
         [Fact]
         public void NextValueThrowsExceptionWithMinimumAndMaximumWhenGeneratorIsNullTest()
         {
-            Action action = () => ((RandomGenerator)null).NextValue(1, 10);
+            Action action = () => ((RandomGenerator) null).NextValue(1, 10);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -61,7 +61,7 @@
         [Fact]
         public void NextValueThrowsExceptionWithNullGeneratorTest()
         {
-            Action action = () => ((IRandomGenerator)null).NextValue<int>();
+            Action action = () => ((IRandomGenerator) null).NextValue<int>();
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -96,7 +96,7 @@
         [Fact]
         public void NextValueWithMaxThrowsExceptionWithNullGeneratorTest()
         {
-            Action action = () => ((IRandomGenerator)null).NextValue(100);
+            Action action = () => ((IRandomGenerator) null).NextValue(100);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -123,7 +123,7 @@
         {
             var max = Environment.TickCount;
 
-            Action action = () => ((IRandomGenerator)null).NextValue(typeof(int), max);
+            Action action = () => ((IRandomGenerator) null).NextValue(typeof(int), max);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -160,7 +160,7 @@
         [Fact]
         public void NextValueWithTypeThrowsExceptionWithNullGeneratorTest()
         {
-            Action action = () => ((IRandomGenerator)null).NextValue(typeof(int));
+            Action action = () => ((IRandomGenerator) null).NextValue(typeof(int));
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -170,7 +170,7 @@
         {
             var target = Substitute.For<IRandomGenerator>();
 
-            Action action = () => target.NextValue((Type)null);
+            Action action = () => target.NextValue((Type) null);
 
             action.Should().Throw<ArgumentNullException>();
         }

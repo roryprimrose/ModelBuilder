@@ -7,7 +7,7 @@
     using System.Globalization;
     using System.Linq;
     using System.Reflection;
-    using ModelBuilder.Properties;
+    using Properties;
 
     /// <summary>
     ///     The <see cref="DefaultExecuteStrategy{T}" />
@@ -148,7 +148,8 @@
 
             if (typeToBuild == null)
             {
-                throw new BuildException(Resources.DefaultBuildStrategy_UndeterminedTargetType, type, referenceName, context, Log.Output);
+                throw new BuildException(Resources.DefaultBuildStrategy_UndeterminedTargetType, type, referenceName,
+                    context, Log.Output);
             }
 
             var buildChain = BuildChain;
@@ -495,8 +496,8 @@
             }
 
             // There is no type mapping for this type
-            if (type.IsInterface ||
-                type.IsAbstract)
+            if (type.IsInterface
+                || type.IsAbstract)
             {
                 // Automatically resolve a derived type within the same assembly
                 var assemblyTypes = type.GetTypeInfo().Assembly.GetTypes();

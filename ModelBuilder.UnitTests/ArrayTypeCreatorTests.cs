@@ -7,7 +7,7 @@
     using System.IO;
     using System.Linq;
     using FluentAssertions;
-    using ModelBuilder.UnitTests.Models;
+    using Models;
     using NSubstitute;
     using Xunit;
     using Xunit.Abstractions;
@@ -221,7 +221,7 @@
 
             actual.Should().BeSameAs(expected);
 
-            var set = (Guid[])actual;
+            var set = (Guid[]) actual;
 
             set.Should().HaveCount(target.MaxCount);
             set.All(x => x != Guid.Empty).Should().BeTrue();
@@ -247,7 +247,7 @@
 
             actual.Should().BeSameAs(expected);
 
-            var set = (Guid[])actual;
+            var set = (Guid[]) actual;
 
             set.Should().HaveCount(target.MaxCount);
             set.All(x => x != Guid.Empty).Should().BeTrue();
@@ -261,7 +261,7 @@
 
             var target = new IncrementingArrayTypeCreator();
 
-            var result = (int[])target.Populate(actual, executeStrategy);
+            var result = (int[]) target.Populate(actual, executeStrategy);
 
             var baseValue = result[0];
             var expected = new int[actual.Length];
@@ -282,7 +282,7 @@
 
             var target = new ArrayTypeCreator();
 
-            var result = (Person[])target.Populate(actual, executeStrategy);
+            var result = (Person[]) target.Populate(actual, executeStrategy);
 
             result.All(x => x != null).Should().BeTrue();
         }
@@ -311,7 +311,7 @@
 
             actual.Should().BeSameAs(expected);
 
-            var set = (Guid[])actual;
+            var set = (Guid[]) actual;
 
             set.Should().BeEmpty();
         }

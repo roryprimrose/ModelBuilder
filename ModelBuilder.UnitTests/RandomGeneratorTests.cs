@@ -337,7 +337,7 @@
 
                 var actual = Convert.ToDouble(value, CultureInfo.InvariantCulture);
 
-                if (unchecked(actual != (int)actual))
+                if (unchecked(actual != (int) actual))
                 {
                     decimalFound = true;
 

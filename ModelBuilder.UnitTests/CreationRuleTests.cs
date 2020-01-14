@@ -113,7 +113,7 @@
         [Fact]
         public void CreateThrowsExceptionWhenRuleDoesNotMatchCriteriaTest()
         {
-            var target = new CreationRule(typeof(string), string.Empty, 10, (object)null);
+            var target = new CreationRule(typeof(string), string.Empty, 10, (object) null);
 
             Action action = () => target.Create(typeof(Guid), string.Empty, null);
 
@@ -134,7 +134,7 @@
         {
             var priority = Environment.TickCount;
 
-            var target = new CreationRule(type, name, priority, (object)null);
+            var target = new CreationRule(type, name, priority, (object) null);
 
             var actual = target.IsMatch(matchType, matchName);
 
@@ -164,7 +164,7 @@
             var priority = Environment.TickCount;
             var regex = new Regex(expression);
 
-            var target = new CreationRule(type, regex, priority, (object)null);
+            var target = new CreationRule(type, regex, priority, (object) null);
 
             var actual = target.IsMatch(matchType, matchName);
 
@@ -178,7 +178,7 @@
             var name = Guid.NewGuid().ToString();
             var priority = Environment.TickCount;
 
-            var target = new CreationRule(type, name, priority, (object)null);
+            var target = new CreationRule(type, name, priority, (object) null);
 
             target.Priority.Should().Be(priority);
         }
@@ -223,7 +223,7 @@
         public void ThrowsExceptionWithNullEvaluatorForEvaluatorValueConstructorTest()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Action action = () => new CreationRule(null, 10, (object)null);
+            Action action = () => new CreationRule(null, 10, (object) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -232,7 +232,7 @@
         public void ThrowsExceptionWithNullTypeAndExpressionForExpressionAndCreatorConstructorTest()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Action action = () => new CreationRule(null, (Regex)null, 10, (type, referenceName, context) => null);
+            Action action = () => new CreationRule(null, (Regex) null, 10, (type, referenceName, context) => null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -241,7 +241,7 @@
         public void ThrowsExceptionWithNullTypeAndExpressionForExpressionAndValueConstructorTest()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Action action = () => new CreationRule(null, (Regex)null, 10, (object)null);
+            Action action = () => new CreationRule(null, (Regex) null, 10, (object) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -250,7 +250,7 @@
         public void ThrowsExceptionWithNullTypeAndReferenceNameForReferenceNameAndCreatorConstructorTest()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Action action = () => new CreationRule(null, (string)null, 10, (type, referenceName, context) => null);
+            Action action = () => new CreationRule(null, (string) null, 10, (type, referenceName, context) => null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -259,7 +259,7 @@
         public void ThrowsExceptionWithNullTypeAndReferenceNameForReferenceNameAndValueConstructorTest()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Action action = () => new CreationRule(null, (string)null, 10, (object)null);
+            Action action = () => new CreationRule(null, (string) null, 10, (object) null);
 
             action.Should().Throw<ArgumentNullException>();
         }

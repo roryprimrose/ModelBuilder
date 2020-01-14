@@ -5,7 +5,7 @@
     using System.Linq;
     using System.Linq.Expressions;
     using System.Reflection;
-    using ModelBuilder.Properties;
+    using Properties;
 
     /// <summary>
     ///     The <see cref="Extensions" />
@@ -71,7 +71,7 @@
 
             if (unaryExpression != null)
             {
-                property = ((MemberExpression)unaryExpression.Operand).Member as PropertyInfo;
+                property = ((MemberExpression) unaryExpression.Operand).Member as PropertyInfo;
             }
 
             if (property != null)

@@ -26,7 +26,7 @@
 
             var target = new AddressValueGenerator();
 
-            var actual = (string)target.Generate(typeof(string), referenceName, executeStrategy);
+            var actual = (string) target.Generate(typeof(string), referenceName, executeStrategy);
 
             actual.Should().BeNullOrEmpty();
         }
@@ -41,13 +41,13 @@
 
             var target = new AddressValueGenerator();
 
-            var first = (string)target.Generate(typeof(string), "address", executeStrategy);
+            var first = (string) target.Generate(typeof(string), "address", executeStrategy);
 
             string second = null;
 
             for (var index = 0; index < 1000; index++)
             {
-                second = (string)target.Generate(typeof(string), "address", executeStrategy);
+                second = (string) target.Generate(typeof(string), "address", executeStrategy);
 
                 if (string.Equals(first, second, StringComparison.OrdinalIgnoreCase) == false)
                 {
@@ -157,7 +157,7 @@
 
             var target = new AddressValueGenerator();
 
-            var actual = (string)target.Generate(type, referenceName, executeStrategy);
+            var actual = (string) target.Generate(type, referenceName, executeStrategy);
 
             if (expected)
             {

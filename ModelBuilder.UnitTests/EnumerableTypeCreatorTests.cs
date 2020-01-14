@@ -8,7 +8,7 @@
     using System.Linq;
     using System.Net.NetworkInformation;
     using FluentAssertions;
-    using ModelBuilder.UnitTests.Models;
+    using Models;
     using NSubstitute;
     using Xunit;
 
@@ -148,7 +148,7 @@
 
             var target = new IncrementingEnumerableTypeCreator();
 
-            var result = (IList<int>)target.Create(typeof(IList<int>), null, executeStrategy);
+            var result = (IList<int>) target.Create(typeof(IList<int>), null, executeStrategy);
 
             result.Should().BeEmpty();
         }
@@ -265,7 +265,7 @@
 
             actual.Should().BeSameAs(expected);
 
-            var set = (Collection<Guid>)actual;
+            var set = (Collection<Guid>) actual;
 
             set.Should().HaveCount(target.AutoPopulateCount);
             set.All(x => x != Guid.Empty).Should().BeTrue();
@@ -295,7 +295,7 @@
 
             target.Populate(actual, executeStrategy);
 
-            var converted = (IEnumerable)actual;
+            var converted = (IEnumerable) actual;
 
             converted.Should().NotBeEmpty();
         }
@@ -320,7 +320,7 @@
 
             actual.Should().BeSameAs(expected);
 
-            var set = (List<Guid>)actual;
+            var set = (List<Guid>) actual;
 
             set.Should().HaveCount(target.AutoPopulateCount);
             set.All(x => x != Guid.Empty).Should().BeTrue();
@@ -334,7 +334,7 @@
 
             var target = new IncrementingEnumerableTypeCreator();
 
-            var result = (List<int>)target.Populate(actual, executeStrategy);
+            var result = (List<int>) target.Populate(actual, executeStrategy);
 
             var baseValue = result[0];
             var expected = new List<int>(target.AutoPopulateCount);

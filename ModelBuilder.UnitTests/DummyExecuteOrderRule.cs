@@ -1,7 +1,7 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
-    using ModelBuilder.UnitTests.Models;
+    using Models;
 
     public class DummyExecuteOrderRule : ExecuteOrderRule
     {

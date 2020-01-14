@@ -3,7 +3,7 @@
     using System;
     using System.Globalization;
     using System.Text.RegularExpressions;
-    using ModelBuilder.Data;
+    using Data;
 
     /// <summary>
     ///     The <see cref="AddressValueGenerator" />
@@ -38,7 +38,7 @@
                 {
                     var floor = Generator.NextValue(1, 15);
                     var unitIndex = Generator.NextValue(0, 15);
-                    var unit = (char)(65 + unitIndex);
+                    var unit = (char) (65 + unitIndex);
 
                     // Return a Unit Xy, Floor X style value
                     return "Unit " + floor + unit + ", Floor " + floor;

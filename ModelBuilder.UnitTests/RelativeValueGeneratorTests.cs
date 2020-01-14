@@ -5,7 +5,7 @@
     using System.Text.RegularExpressions;
     using FluentAssertions;
     using FluentAssertions.Execution;
-    using ModelBuilder.UnitTests.Models;
+    using Models;
     using NSubstitute;
     using Xunit;
 
@@ -118,7 +118,7 @@
         {
             var context = new Person();
 
-            var target = new GeneratorWrapper<string>(PropertyExpression.FirstName, (Regex)null, (Type)null);
+            var target = new GeneratorWrapper<string>(PropertyExpression.FirstName, (Regex) null, (Type) null);
 
             Action action = () => target.ReadSourceValue(context);
 
@@ -141,7 +141,7 @@
             var target = new GeneratorWrapper<string>(
                 PropertyExpression.FirstName,
                 PropertyExpression.FirstName,
-                (Type)null);
+                (Type) null);
 
             Action action = () => target.ReadValue(PropertyExpression.LastName, null);
 
@@ -156,7 +156,7 @@
             var target = new GeneratorWrapper<string>(
                 PropertyExpression.FirstName,
                 PropertyExpression.FirstName,
-                (Type)null);
+                (Type) null);
 
             Action action = () => target.ReadValue(null, context);
 
@@ -335,7 +335,7 @@
 
             buildChain.Push(context);
 
-            var target = new GeneratorWrapper<string>(PropertyExpression.FirstName, (Regex)null);
+            var target = new GeneratorWrapper<string>(PropertyExpression.FirstName, (Regex) null);
 
             var actual = target.IsSupported(typeof(string), "FirstName", buildChain);
 

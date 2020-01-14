@@ -172,7 +172,7 @@ namespace ModelBuilder.Synchronous.UnitTests
             {
                 Model.BuildStrategy = build;
 
-                var actual = (ReadOnlyModel)Model.Create(typeof(ReadOnlyModel), value);
+                var actual = (ReadOnlyModel) Model.Create(typeof(ReadOnlyModel), value);
 
                 actual.Value.Should().Be(value);
             }

@@ -18,13 +18,13 @@
 
             var target = new CountryValueGenerator();
 
-            var first = (string)target.Generate(typeof(string), "country", executeStrategy);
+            var first = (string) target.Generate(typeof(string), "country", executeStrategy);
 
             var second = first;
 
             for (var index = 0; index < 1000; index++)
             {
-                second = (string)target.Generate(typeof(string), "country", executeStrategy);
+                second = (string) target.Generate(typeof(string), "country", executeStrategy);
 
                 if (string.Equals(first, second, StringComparison.OrdinalIgnoreCase) == false)
                 {
@@ -46,7 +46,7 @@
 
             var target = new CountryValueGenerator();
 
-            var actual = (string)target.Generate(typeof(string), "country", executeStrategy);
+            var actual = (string) target.Generate(typeof(string), "country", executeStrategy);
 
             actual.Should().BeOfType<string>();
             actual.As<string>().Should().NotBeNullOrWhiteSpace();
@@ -64,7 +64,7 @@
 
             var target = new CountryValueGenerator();
 
-            var actual = (string)target.Generate(type, referenceName, executeStrategy);
+            var actual = (string) target.Generate(type, referenceName, executeStrategy);
 
             actual.Should().NotBeNullOrEmpty();
         }

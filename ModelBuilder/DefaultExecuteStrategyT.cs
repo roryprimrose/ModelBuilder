@@ -26,7 +26,7 @@
                 return default;
             }
 
-            return (T)instance;
+            return (T) instance;
         }
 
         /// <inheritdoc />
@@ -38,7 +38,7 @@
         /// <exception cref="BuildException">Failed to generate a requested type.</exception>
         public virtual T Populate(T instance)
         {
-            return (T)Populate((object)instance);
+            return (T) Populate((object) instance);
         }
     }
 }

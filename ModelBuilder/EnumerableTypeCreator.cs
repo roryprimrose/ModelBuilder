@@ -36,8 +36,8 @@
                 throw new ArgumentNullException(nameof(type));
             }
 
-            if (type.IsClass &&
-                type.IsAbstract)
+            if (type.IsClass
+                && type.IsAbstract)
             {
                 // This is an abstract class so we can't create it
                 return false;
@@ -274,8 +274,8 @@
         {
             foreach (var unsupportedType in _unsupportedTypes)
             {
-                if (unsupportedType.IsGenericTypeDefinition &&
-                    type.IsGenericType)
+                if (unsupportedType.IsGenericTypeDefinition
+                    && type.IsGenericType)
                 {
                     var typeDefinition = type.GetGenericTypeDefinition();
 

@@ -19,13 +19,13 @@
 
             var target = new CompanyValueGenerator();
 
-            var first = (string)target.Generate(typeof(string), "company", executeStrategy);
+            var first = (string) target.Generate(typeof(string), "company", executeStrategy);
 
             var second = first;
 
             for (var index = 0; index < 1000; index++)
             {
-                second = (string)target.Generate(typeof(string), "company", executeStrategy);
+                second = (string) target.Generate(typeof(string), "company", executeStrategy);
 
                 if (string.Equals(first, second, StringComparison.OrdinalIgnoreCase) == false)
                 {
@@ -64,7 +64,7 @@
 
             var target = new CompanyValueGenerator();
 
-            var actual = (string)target.Generate(type, referenceName, executeStrategy);
+            var actual = (string) target.Generate(type, referenceName, executeStrategy);
 
             TestData.Companies.Should().Contain(actual);
         }

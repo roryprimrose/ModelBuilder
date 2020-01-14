@@ -139,8 +139,8 @@ namespace ModelBuilder
             }
 
             // Check for instance types (ignoring strings)
-            if (propertyInfo.PropertyType.IsValueType == false &&
-                propertyInfo.PropertyType != typeof(string))
+            if (propertyInfo.PropertyType.IsValueType == false
+                && propertyInfo.PropertyType != typeof(string))
             {
                 // This is an interface or class type
                 // Look for a matching instance

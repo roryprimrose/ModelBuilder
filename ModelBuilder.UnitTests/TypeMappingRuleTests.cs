@@ -3,7 +3,7 @@
     using System;
     using System.IO;
     using FluentAssertions;
-    using ModelBuilder.UnitTests.Models;
+    using Models;
     using Xunit;
 
     public class TypeMappingRuleTests

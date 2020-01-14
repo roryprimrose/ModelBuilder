@@ -2,7 +2,7 @@
 {
     using System;
     using System.Diagnostics.CodeAnalysis;
-    using ModelBuilder.Data;
+    using Data;
 
     /// <summary>
     ///     The <see cref="EmailValueGenerator" />

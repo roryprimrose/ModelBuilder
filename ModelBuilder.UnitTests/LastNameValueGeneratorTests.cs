@@ -3,7 +3,7 @@
     using System.Linq;
     using FluentAssertions;
     using ModelBuilder.Data;
-    using ModelBuilder.UnitTests.Models;
+    using Models;
     using NSubstitute;
     using Xunit;
 
@@ -22,7 +22,7 @@
 
             var target = new LastNameValueGenerator();
 
-            var actual = (string)target.Generate(typeof(string), "LastName", executeStrategy);
+            var actual = (string) target.Generate(typeof(string), "LastName", executeStrategy);
 
             TestData.LastNames.Any(x => x == actual).Should().BeTrue();
         }

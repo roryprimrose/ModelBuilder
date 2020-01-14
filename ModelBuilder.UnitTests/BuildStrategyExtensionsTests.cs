@@ -6,7 +6,7 @@
     using System.IO;
     using System.Linq;
     using FluentAssertions;
-    using ModelBuilder.UnitTests.Models;
+    using Models;
     using NSubstitute;
     using Xunit;
 
@@ -46,7 +46,7 @@
         [Fact]
         public void CreateThrowsExceptionWithNullStrategyTest()
         {
-            Action action = () => ((IBuildStrategy)null).Create(typeof(Guid));
+            Action action = () => ((IBuildStrategy) null).Create(typeof(Guid));
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -75,7 +75,7 @@
         [Fact]
         public void CreateTThrowsExceptionWithNullStrategyTest()
         {
-            Action action = () => ((IBuildStrategy)null).Create<Guid>();
+            Action action = () => ((IBuildStrategy) null).Create<Guid>();
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -109,7 +109,7 @@
         [Fact]
         public void IgnoringThrowsExceptionWithNullStrategyTest()
         {
-            Action action = () => ((IBuildStrategy)null).Ignoring<Person>(x => x.Priority);
+            Action action = () => ((IBuildStrategy) null).Ignoring<Person>(x => x.Priority);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -133,7 +133,7 @@
         [Fact]
         public void MappingThrowsExceptionWithNullStrategyTest()
         {
-            Action action = () => ((IBuildStrategy)null).Mapping<Stream, MemoryStream>();
+            Action action = () => ((IBuildStrategy) null).Mapping<Stream, MemoryStream>();
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -143,7 +143,7 @@
         {
             var model = new Person();
 
-            Action action = () => ((IBuildStrategy)null).Populate(model);
+            Action action = () => ((IBuildStrategy) null).Populate(model);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -221,7 +221,7 @@
         {
             var target = Substitute.For<IBuildStrategy>();
 
-            target.GetBuildLog().Returns((IBuildLog)null);
+            target.GetBuildLog().Returns((IBuildLog) null);
 
             Action action = () => target.UsingExecuteStrategy<DefaultExecuteStrategy>();
 
@@ -231,7 +231,7 @@
         [Fact]
         public void UsingExecuteStrategyThrowsExceptionWithNullStrategyTest()
         {
-            Action action = () => ((IBuildStrategy)null).UsingExecuteStrategy<NullExecuteStrategy>();
+            Action action = () => ((IBuildStrategy) null).UsingExecuteStrategy<NullExecuteStrategy>();
 
             action.Should().Throw<ArgumentNullException>();
         }

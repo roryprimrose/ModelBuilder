@@ -10,10 +10,7 @@
 
         public Person W
         {
-            get
-            {
-                return _w;
-            }
+            get { return _w; }
             set
             {
                 if (_x == null)
@@ -28,10 +25,7 @@
 
         public string X
         {
-            get
-            {
-                return _x;
-            }
+            get { return _x; }
             set
             {
                 if (_y == int.MinValue)
@@ -46,13 +40,10 @@
 
         public int Y
         {
-            get
-            {
-                return _y;
-            }
+            get { return _y; }
             set
             {
-                if (Z == (SimpleEnum)int.MinValue)
+                if (Z == (SimpleEnum) int.MinValue)
                 {
                     throw new InvalidOperationException(
                         "Execution order was not run as expected because the enum was not assigned before the int");
@@ -62,6 +53,6 @@
             }
         }
 
-        public SimpleEnum Z { get; set; } = (SimpleEnum)int.MinValue;
+        public SimpleEnum Z { get; set; } = (SimpleEnum) int.MinValue;
     }
 }

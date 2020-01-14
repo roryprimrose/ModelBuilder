@@ -4,11 +4,23 @@
     using System.Diagnostics.CodeAnalysis;
     using System.Reflection;
     using FluentAssertions;
-    using ModelBuilder.UnitTests.Models;
+    using Models;
     using Xunit;
 
     public class DefaultPropertyResolverTests
     {
+        [Fact]
+        public void CanPopulateReturnsFalseWhenPropertiesetterIsStaticTest()
+        {
+            var propertyInfo = typeof(StaticSetter).GetProperty(nameof(StaticSetter.Person));
+
+            var sut = new DefaultPropertyResolver();
+
+            var actual = sut.CanPopulate(propertyInfo);
+
+            actual.Should().BeFalse();
+        }
+
         [Fact]
         public void CanPopulateReturnsFalseWhenPropertyGetterIsStaticTest()
         {
@@ -27,18 +39,6 @@
             var propertyInfo = typeof(PrivateProp).GetProperty(
                 "Person",
                 BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.GetProperty | BindingFlags.SetProperty);
-
-            var sut = new DefaultPropertyResolver();
-
-            var actual = sut.CanPopulate(propertyInfo);
-
-            actual.Should().BeFalse();
-        }
-
-        [Fact]
-        public void CanPopulateReturnsFalseWhenPropertiesetterIsStaticTest()
-        {
-            var propertyInfo = typeof(StaticSetter).GetProperty(nameof(StaticSetter.Person));
 
             var sut = new DefaultPropertyResolver();
 
@@ -103,6 +103,25 @@
             Action action = () => sut.CanPopulate(null);
 
             action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void ShouldPopulatePropertieskipsNullValuesTest()
+        {
+            var configuration = new DefaultBuildStrategyCompiler().Compile();
+            var instance = Model.Create<WithConstructorParameters>();
+            var args = new object[]
+            {
+                null, new Company(), instance.Id, instance.RefNumber, instance.Number, instance.Value
+            };
+
+            var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.First));
+
+            var sut = new DefaultPropertyResolver();
+
+            var actual = sut.ShouldPopulateProperty(configuration, instance, propertyInfo, args);
+
+            actual.Should().BeTrue();
         }
 
         [Fact]
@@ -338,25 +357,6 @@
             var sut = new DefaultPropertyResolver();
 
             var actual = sut.ShouldPopulateProperty(configuration, instance, propertyInfo, null);
-
-            actual.Should().BeTrue();
-        }
-
-        [Fact]
-        public void ShouldPopulatePropertieskipsNullValuesTest()
-        {
-            var configuration = new DefaultBuildStrategyCompiler().Compile();
-            var instance = Model.Create<WithConstructorParameters>();
-            var args = new object[]
-            {
-                null, new Company(), instance.Id, instance.RefNumber, instance.Number, instance.Value
-            };
-
-            var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.First));
-
-            var sut = new DefaultPropertyResolver();
-
-            var actual = sut.ShouldPopulateProperty(configuration, instance, propertyInfo, args);
 
             actual.Should().BeTrue();
         }

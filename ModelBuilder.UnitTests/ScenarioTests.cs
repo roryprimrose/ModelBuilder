@@ -9,12 +9,12 @@
     using System.Threading.Tasks;
     using FluentAssertions;
     using ModelBuilder.Data;
-    using ModelBuilder.UnitTests.Models;
+    using Models;
     using NSubstitute;
     using NSubstitute.ExceptionExtensions;
     using Xunit;
     using Xunit.Abstractions;
-    using Location = ModelBuilder.UnitTests.Models.Location;
+    using Location = Models.Location;
 
     public class ScenarioTests
     {
@@ -260,10 +260,10 @@
             var actual = Model.Create<WithConstructorParameters>(args);
 
             actual.First.Should().BeSameAs(args[0]);
-            actual.Id.Should().Be((Guid)args[1]);
-            actual.RefNumber.Should().Be((int?)args[2]);
-            actual.Number.Should().Be((int)args[3]);
-            actual.Value.Should().Be((bool)args[4]);
+            actual.Id.Should().Be((Guid) args[1]);
+            actual.RefNumber.Should().Be((int?) args[2]);
+            actual.Number.Should().Be((int) args[3]);
+            actual.Value.Should().Be((bool) args[4]);
         }
 
         [Fact]
@@ -442,8 +442,8 @@
 
             var actual = Model.Create<WithMixedValueParameters>(args);
 
-            actual.FirstName.Should().NotBe((string)args[0]);
-            actual.LastName.Should().NotBe((string)args[0]);
+            actual.FirstName.Should().NotBe((string) args[0]);
+            actual.LastName.Should().NotBe((string) args[0]);
         }
 
         [Fact]

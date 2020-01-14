@@ -1,11 +1,12 @@
 ﻿// ReSharper disable CollectionNeverUpdated.Local
+
 namespace ModelBuilder.UnitTests
 {
     using System;
     using System.Collections.Generic;
     using System.IO;
     using FluentAssertions;
-    using ModelBuilder.UnitTests.Models;
+    using Models;
     using NSubstitute;
     using Xunit;
 

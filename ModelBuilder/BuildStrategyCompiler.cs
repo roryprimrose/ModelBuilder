@@ -2,7 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
-    using ModelBuilder.Properties;
+    using Properties;
 
     /// <summary>
     ///     The <see cref="BuildStrategyCompiler" />

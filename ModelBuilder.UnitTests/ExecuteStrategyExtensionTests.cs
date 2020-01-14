@@ -56,7 +56,7 @@
         [Fact]
         public void CreateTThrowsExceptionWithNullStrategyTest()
         {
-            Action action = () => ExecuteStrategyExtensions.Create((IExecuteStrategy<string>)null);
+            Action action = () => ExecuteStrategyExtensions.Create((IExecuteStrategy<string>) null);
 
             action.Should().Throw<ArgumentNullException>();
         }

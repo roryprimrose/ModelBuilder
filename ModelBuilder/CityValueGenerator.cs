@@ -2,7 +2,7 @@
 {
     using System;
     using System.Linq;
-    using ModelBuilder.Data;
+    using Data;
 
     /// <summary>
     ///     The <see cref="CityValueGenerator" />

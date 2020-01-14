@@ -5,7 +5,7 @@
     using System.Globalization;
     using System.Linq;
     using System.Text;
-    using ModelBuilder.Properties;
+    using Properties;
 
     /// <summary>
     ///     The <see cref="DefaultBuildLog" />

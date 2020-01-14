@@ -22,7 +22,7 @@
 
             for (var index = 0; index < 1000; index++)
             {
-                var actual = (bool)target.Generate(typeof(bool), null, executeStrategy);
+                var actual = (bool) target.Generate(typeof(bool), null, executeStrategy);
 
                 if (actual)
                 {
@@ -59,7 +59,7 @@
 
             for (var index = 0; index < 1000; index++)
             {
-                var actual = (bool?)target.Generate(typeof(bool?), null, executeStrategy);
+                var actual = (bool?) target.Generate(typeof(bool?), null, executeStrategy);
 
                 if (actual == null)
                 {
@@ -74,9 +74,9 @@
                     falseFound = true;
                 }
 
-                if (nullFound &&
-                    trueFound &&
-                    falseFound)
+                if (nullFound
+                    && trueFound
+                    && falseFound)
                 {
                     break;
                 }

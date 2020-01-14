@@ -5,7 +5,7 @@
     using System.Linq;
     using FluentAssertions;
     using ModelBuilder.Data;
-    using ModelBuilder.UnitTests.Models;
+    using Models;
     using NSubstitute;
     using Xunit;
 
@@ -97,13 +97,13 @@
 
             var target = new StateValueGenerator();
 
-            var first = (string)target.Generate(typeof(string), "state", executeStrategy);
+            var first = (string) target.Generate(typeof(string), "state", executeStrategy);
 
             string second = null;
 
             for (var index = 0; index < 1000; index++)
             {
-                second = (string)target.Generate(typeof(string), "state", executeStrategy);
+                second = (string) target.Generate(typeof(string), "state", executeStrategy);
 
                 if (string.Equals(first, second, StringComparison.OrdinalIgnoreCase) == false)
                 {
@@ -150,7 +150,7 @@
 
             var target = new StateValueGenerator();
 
-            var actual = (string)target.Generate(type, referenceName, executeStrategy);
+            var actual = (string) target.Generate(type, referenceName, executeStrategy);
 
             actual.Should().NotBeNullOrEmpty();
         }

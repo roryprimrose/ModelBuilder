@@ -2,7 +2,7 @@
 {
     using System;
     using System.Text.RegularExpressions;
-    using ModelBuilder.Data;
+    using Data;
 
     /// <summary>
     ///     The <see cref="SuburbValueGenerator" />

@@ -5,7 +5,7 @@
     using System.Collections.ObjectModel;
     using System.Linq;
     using FluentAssertions;
-    using ModelBuilder.UnitTests.Models;
+    using Models;
     using Xunit;
 
     public class ExtensionsTests
@@ -29,7 +29,7 @@
         [Fact]
         public void IsNullableThrowsExceptionWithNullTypeTest()
         {
-            Action action = () => ((Type)null).IsNullable();
+            Action action = () => ((Type) null).IsNullable();
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -109,7 +109,7 @@
         [Fact]
         public void SetEachCollectionThrowsExceptionWithNullInstanceTest()
         {
-            Action action = () => ((Collection<string>)null).SetEach(x => { });
+            Action action = () => ((Collection<string>) null).SetEach(x => { });
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -166,7 +166,7 @@
         [Fact]
         public void SetEachIEnumerableThrowsExceptionWithNullInstanceTest()
         {
-            Action action = () => ((IEnumerable<string>)null).SetEach(x => { });
+            Action action = () => ((IEnumerable<string>) null).SetEach(x => { });
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -207,7 +207,7 @@
         [Fact]
         public void SetEachListThrowsExceptionWithNullInstanceTest()
         {
-            Action action = () => ((List<string>)null).SetEach(x => { });
+            Action action = () => ((List<string>) null).SetEach(x => { });
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -261,7 +261,7 @@
         [Fact]
         public void SetThrowsExceptionWithNullInstanceTest()
         {
-            Action action = () => ((object)null).Set(x => { });
+            Action action = () => ((object) null).Set(x => { });
 
             action.Should().Throw<ArgumentNullException>();
         }

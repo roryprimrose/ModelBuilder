@@ -3,7 +3,7 @@
     using System.Linq;
     using FluentAssertions;
     using ModelBuilder.Data;
-    using ModelBuilder.UnitTests.Models;
+    using Models;
     using NSubstitute;
     using Xunit;
 
@@ -25,7 +25,7 @@
 
             var target = new FirstNameValueGenerator();
 
-            var actual = (string)target.Generate(typeof(string), "FirstName", executeStrategy);
+            var actual = (string) target.Generate(typeof(string), "FirstName", executeStrategy);
 
             TestData.FemaleNames.Any(x => x == actual).Should().BeTrue();
         }
@@ -46,7 +46,7 @@
 
             var target = new FirstNameValueGenerator();
 
-            var actual = (string)target.Generate(typeof(string), "FirstName", executeStrategy);
+            var actual = (string) target.Generate(typeof(string), "FirstName", executeStrategy);
 
             TestData.FemaleNames.Any(x => x == actual).Should().BeTrue();
         }
@@ -67,7 +67,7 @@
 
             var target = new FirstNameValueGenerator();
 
-            var actual = (string)target.Generate(typeof(string), "FirstName", executeStrategy);
+            var actual = (string) target.Generate(typeof(string), "FirstName", executeStrategy);
 
             TestData.MaleNames.Any(x => x == actual).Should().BeTrue();
         }
@@ -85,7 +85,7 @@
 
             var target = new FirstNameValueGenerator();
 
-            var actual = (string)target.Generate(typeof(string), "FirstName", executeStrategy);
+            var actual = (string) target.Generate(typeof(string), "FirstName", executeStrategy);
 
             if (TestData.MaleNames.Any(x => x == actual))
             {

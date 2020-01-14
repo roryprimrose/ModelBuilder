@@ -4,7 +4,7 @@
     using System.IO;
     using System.Text.RegularExpressions;
     using FluentAssertions;
-    using ModelBuilder.UnitTests.Models;
+    using Models;
     using Xunit;
 
     public class ExecuteOrderRuleTests
@@ -133,7 +133,7 @@
             var priority = Environment.TickCount;
 
             // ReSharper disable once ObjectCreationAsStatement
-            Action action = () => new ExecuteOrderRule(null, null, (string)null, priority);
+            Action action = () => new ExecuteOrderRule(null, null, (string) null, priority);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -144,7 +144,7 @@
             var priority = Environment.TickCount;
 
             // ReSharper disable once ObjectCreationAsStatement
-            Action action = () => new ExecuteOrderRule(null, null, (Regex)null, priority);
+            Action action = () => new ExecuteOrderRule(null, null, (Regex) null, priority);
 
             action.Should().Throw<ArgumentNullException>();
         }

@@ -2,7 +2,7 @@ namespace ModelBuilder
 {
     using System;
     using System.Globalization;
-    using ModelBuilder.Properties;
+    using Properties;
 
     /// <summary>
     ///     The <see cref="TypeCreatorBase" />

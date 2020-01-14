@@ -5,7 +5,7 @@
     using System.Linq.Expressions;
     using System.Reflection;
     using FluentAssertions;
-    using ModelBuilder.UnitTests.Models;
+    using Models;
     using Xunit;
 
     public class ExpressionExtensionTests
@@ -74,13 +74,7 @@
 
         private class StaticGetter
         {
-            public static string Value
-            {
-                get
-                {
-                    return Guid.NewGuid().ToString();
-                }
-            }
+            public static string Value { get { return Guid.NewGuid().ToString(); } }
         }
     }
 }

@@ -56,7 +56,7 @@
         }
 
         [Theory]
-        [InlineData(typeof(string), (string)null, false)]
+        [InlineData(typeof(string), (string) null, false)]
         [InlineData(typeof(string), "", false)]
         [InlineData(typeof(string), "Stuff", false)]
         [InlineData(typeof(bool), "Uri", false)]
@@ -66,7 +66,7 @@
         [InlineData(typeof(string), "Url", true)]
         [InlineData(typeof(string), "URL", true)]
         [InlineData(typeof(string), "url", true)]
-        [InlineData(typeof(Uri), (string)null, true)]
+        [InlineData(typeof(Uri), (string) null, true)]
         public void GenerateValidatesUnsupportedScenariosTest(Type type, string referenceName, bool supported)
         {
             var buildChain = new BuildHistory();
@@ -89,7 +89,7 @@
         }
 
         [Theory]
-        [InlineData(typeof(string), (string)null, false)]
+        [InlineData(typeof(string), (string) null, false)]
         [InlineData(typeof(string), "", false)]
         [InlineData(typeof(string), "Stuff", false)]
         [InlineData(typeof(bool), "Uri", false)]
@@ -99,7 +99,7 @@
         [InlineData(typeof(string), "Url", true)]
         [InlineData(typeof(string), "URL", true)]
         [InlineData(typeof(string), "url", true)]
-        [InlineData(typeof(Uri), (string)null, true)]
+        [InlineData(typeof(Uri), (string) null, true)]
         public void IsSupportedReturnsWhetherScenarioIsValidTest(Type type, string referenceName, bool supported)
         {
             var target = new UriValueGenerator();

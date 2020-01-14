@@ -2,7 +2,7 @@
 {
     using System;
     using FluentAssertions;
-    using ModelBuilder.UnitTests.Models;
+    using Models;
     using Xunit;
 
     public class ConstructorParameterMatchingTests
@@ -30,7 +30,7 @@
             var number = Model.Create<int>();
             var value = Model.Create<bool>();
 
-            var model = Model.Create<WithConstructorParameters>((Company)null, id, refNumber, number, value);
+            var model = Model.Create<WithConstructorParameters>((Company) null, id, refNumber, number, value);
 
             model.First.Should().NotBeNull();
         }

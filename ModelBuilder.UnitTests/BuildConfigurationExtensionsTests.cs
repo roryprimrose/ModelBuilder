@@ -2,7 +2,7 @@
 {
     using System;
     using FluentAssertions;
-    using ModelBuilder.UnitTests.Models;
+    using Models;
     using Xunit;
 
     public class BuildConfigurationExtensionsTests
@@ -28,7 +28,7 @@
         [Fact]
         public void CloneThrowsExceptionWithNullBuildStrategyTest()
         {
-            Action action = () => ((IBuildStrategy)null).Clone();
+            Action action = () => ((IBuildStrategy) null).Clone();
 
             action.Should().Throw<ArgumentNullException>();
         }

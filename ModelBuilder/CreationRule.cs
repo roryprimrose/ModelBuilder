@@ -3,7 +3,7 @@
     using System;
     using System.Globalization;
     using System.Text.RegularExpressions;
-    using ModelBuilder.Properties;
+    using Properties;
 
     /// <summary>
     ///     The <see cref="CreationRule" />
@@ -65,22 +65,22 @@
             int priority,
             Func<Type, string, IExecuteStrategy, object> creator)
         {
-            if (targetType == null &&
-                propertyExpression == null)
+            if (targetType == null
+                && propertyExpression == null)
             {
                 throw new ArgumentNullException(Resources.NoTargetTypeOrPropertyExpression);
             }
 
             _evaluator = (type, name) =>
             {
-                if (targetType != null &&
-                    targetType != type)
+                if (targetType != null
+                    && targetType != type)
                 {
                     return false;
                 }
 
-                if (propertyExpression != null &&
-                    propertyExpression.IsMatch(name) == false)
+                if (propertyExpression != null
+                    && propertyExpression.IsMatch(name) == false)
                 {
                     return false;
                 }
@@ -129,22 +129,22 @@
             int priority,
             Func<Type, string, IExecuteStrategy, object> creator)
         {
-            if (targetType == null &&
-                propertyName == null)
+            if (targetType == null
+                && propertyName == null)
             {
                 throw new ArgumentNullException(Resources.NoTargetTypeOrPropertyName);
             }
 
             _evaluator = (type, name) =>
             {
-                if (targetType != null &&
-                    targetType != type)
+                if (targetType != null
+                    && targetType != type)
                 {
                     return false;
                 }
 
-                if (propertyName != null &&
-                    propertyName != name)
+                if (propertyName != null
+                    && propertyName != name)
                 {
                     return false;
                 }

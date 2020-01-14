@@ -5,7 +5,7 @@
     using System.IO;
     using System.Reflection;
     using FluentAssertions;
-    using ModelBuilder.UnitTests.Models;
+    using Models;
     using NSubstitute;
     using Xunit;
 
@@ -224,7 +224,7 @@
                 "Address",
                 Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == expected)).Returns(address);
 
-            var actual = (Company)target.Populate((object)expected);
+            var actual = (Company) target.Populate((object) expected);
 
             actual.Should().BeSameAs(expected);
             actual.Name.Should().Be(name);

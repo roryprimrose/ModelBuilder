@@ -56,7 +56,7 @@
                 yield return new ExecuteOrderRule(null, null, PropertyExpression.TimeZone, 2360);
 
                 // Populate strings before other reference types
-                yield return new ExecuteOrderRule(null, typeof(string), (string)null, 2000);
+                yield return new ExecuteOrderRule(null, typeof(string), (string) null, 2000);
                 yield return new ExecuteOrderRule((declaringType, propertyType, name) => propertyType.IsClass, 1000);
             }
         }
