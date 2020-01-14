@@ -1,7 +1,7 @@
 namespace ModelBuilder
 {
     using System;
-    using Data;
+    using ModelBuilder.Data;
 
     /// <summary>
     ///     The <see cref="DomainNameValueGenerator" />

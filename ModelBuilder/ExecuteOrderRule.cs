@@ -3,7 +3,7 @@
     using System;
     using System.Reflection;
     using System.Text.RegularExpressions;
-    using Properties;
+    using ModelBuilder.Properties;
 
     /// <summary>
     ///     The <see cref="ExecuteOrderRule" />

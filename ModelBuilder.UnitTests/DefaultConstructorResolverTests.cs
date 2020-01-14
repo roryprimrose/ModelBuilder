@@ -2,7 +2,7 @@
 {
     using System;
     using FluentAssertions;
-    using Models;
+    using ModelBuilder.UnitTests.Models;
     using Xunit;
     using Xunit.Abstractions;
 

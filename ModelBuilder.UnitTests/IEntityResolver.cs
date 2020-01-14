@@ -1,7 +1,7 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
-    using Models;
+    using ModelBuilder.UnitTests.Models;
 
     public interface IEntityResolver
     {

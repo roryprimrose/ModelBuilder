@@ -2,7 +2,7 @@
 {
     using System;
     using System.Text.RegularExpressions;
-    using Data;
+    using ModelBuilder.Data;
 
     /// <summary>
     ///     The <see cref="CompanyValueGenerator" />

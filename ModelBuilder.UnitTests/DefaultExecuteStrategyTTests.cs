@@ -5,7 +5,7 @@
     using System.IO;
     using System.Reflection;
     using FluentAssertions;
-    using Models;
+    using ModelBuilder.UnitTests.Models;
     using NSubstitute;
     using Xunit;
 

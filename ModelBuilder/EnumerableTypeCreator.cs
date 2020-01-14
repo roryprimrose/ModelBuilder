@@ -21,10 +21,10 @@
             typeof(IPAddressInformationCollection),
             typeof(MulticastIPAddressInformationCollection),
             typeof(UnicastIPAddressInformationCollection),
-            typeof(Dictionary<,>.KeyCollection),
-            typeof(Dictionary<,>.ValueCollection),
-            typeof(SortedDictionary<,>.KeyCollection),
-            typeof(SortedDictionary<,>.ValueCollection)
+            typeof(Dictionary<A, A>.KeyCollection),
+            typeof(Dictionary<A, A>.ValueCollection),
+            typeof(SortedDictionary<A, A>.KeyCollection),
+            typeof(SortedDictionary<A, A>.ValueCollection)
         };
 
         /// <inheritdoc />

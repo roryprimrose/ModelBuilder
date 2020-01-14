@@ -4,7 +4,7 @@
     using System.Diagnostics.CodeAnalysis;
     using System.Reflection;
     using FluentAssertions;
-    using Models;
+    using ModelBuilder.UnitTests.Models;
     using Xunit;
 
     public class DefaultPropertyResolverTests

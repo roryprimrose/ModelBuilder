@@ -1,7 +1,7 @@
 ﻿namespace ModelBuilder
 {
     using System;
-    using Properties;
+    using ModelBuilder.Properties;
 
     /// <summary>
     ///     The <see cref="IgnoreRule" />

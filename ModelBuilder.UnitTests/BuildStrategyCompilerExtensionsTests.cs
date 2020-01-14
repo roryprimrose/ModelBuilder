@@ -5,7 +5,7 @@
     using System.Linq;
     using System.Linq.Expressions;
     using FluentAssertions;
-    using Models;
+    using ModelBuilder.UnitTests.Models;
     using NSubstitute;
     using Xunit;
 

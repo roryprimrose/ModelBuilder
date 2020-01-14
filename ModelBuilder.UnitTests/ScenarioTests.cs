@@ -9,12 +9,12 @@
     using System.Threading.Tasks;
     using FluentAssertions;
     using ModelBuilder.Data;
-    using Models;
+    using ModelBuilder.UnitTests.Models;
     using NSubstitute;
     using NSubstitute.ExceptionExtensions;
     using Xunit;
     using Xunit.Abstractions;
-    using Location = Models.Location;
+    using Location = ModelBuilder.UnitTests.Models.Location;
 
     public class ScenarioTests
     {

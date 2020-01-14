@@ -2,7 +2,7 @@
 {
     using System;
     using System.Globalization;
-    using Properties;
+    using ModelBuilder.Properties;
 
     /// <summary>
     ///     The <see cref="ValueGeneratorBase" />

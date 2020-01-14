@@ -4,7 +4,7 @@
     using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using FluentAssertions;
-    using Models;
+    using ModelBuilder.UnitTests.Models;
     using NSubstitute;
     using Xunit;
 

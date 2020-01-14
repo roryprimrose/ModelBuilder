@@ -6,7 +6,7 @@
     using System.Globalization;
     using System.Linq;
     using System.Reflection;
-    using Properties;
+    using ModelBuilder.Properties;
 
     /// <summary>
     ///     The <see cref="DefaultConstructorResolver" />

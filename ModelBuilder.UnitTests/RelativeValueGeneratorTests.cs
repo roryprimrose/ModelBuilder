@@ -5,7 +5,7 @@
     using System.Text.RegularExpressions;
     using FluentAssertions;
     using FluentAssertions.Execution;
-    using Models;
+    using ModelBuilder.UnitTests.Models;
     using NSubstitute;
     using Xunit;
 

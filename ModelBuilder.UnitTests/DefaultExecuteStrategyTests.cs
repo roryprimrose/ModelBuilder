@@ -7,7 +7,7 @@
     using System.Linq;
     using System.Reflection;
     using FluentAssertions;
-    using Models;
+    using ModelBuilder.UnitTests.Models;
     using NSubstitute;
     using NSubstitute.ExceptionExtensions;
     using Xunit;

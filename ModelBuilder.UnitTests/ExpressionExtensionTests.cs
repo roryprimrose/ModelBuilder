@@ -5,7 +5,7 @@
     using System.Linq.Expressions;
     using System.Reflection;
     using FluentAssertions;
-    using Models;
+    using ModelBuilder.UnitTests.Models;
     using Xunit;
 
     public class ExpressionExtensionTests

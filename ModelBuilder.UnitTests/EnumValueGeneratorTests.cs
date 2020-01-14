@@ -3,7 +3,7 @@
     using System;
     using System.IO;
     using FluentAssertions;
-    using Models;
+    using ModelBuilder.UnitTests.Models;
     using NSubstitute;
     using Xunit;
 

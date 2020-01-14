@@ -3,7 +3,7 @@
     using System;
     using System.Globalization;
     using System.Text.RegularExpressions;
-    using Data;
+    using ModelBuilder.Data;
 
     /// <summary>
     ///     The <see cref="AddressValueGenerator" />
