@@ -380,9 +380,11 @@
         [Fact]
         public void IsSupportedThrowsExceptionWithNullContextTest()
         {
+            var buildChain = Substitute.For<IBuildChain>();
+
             var target = new EmailValueGenerator();
 
-            var actual = target.IsSupported(typeof(string), "email", null);
+            var actual = target.IsSupported(typeof(string), "email", buildChain);
 
             actual.Should().BeFalse();
         }

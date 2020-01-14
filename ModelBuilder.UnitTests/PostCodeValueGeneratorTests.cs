@@ -33,6 +33,27 @@
         }
 
         [Fact]
+        public void GenerateReturnsRandomCountryWhenNoMatchingCountryTest()
+        {
+            var address = new Address
+            {
+                Country = Guid.NewGuid().ToString()
+            };
+            var buildChain = new BuildHistory();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            buildChain.Push(address);
+
+            var target = new PostCodeValueGenerator();
+
+            var actual = target.Generate(typeof(string), "PostCode", executeStrategy) as string;
+
+            TestData.Locations.Select(x => x.PostCode).Should().Contain(actual);
+        }
+
+        [Fact]
         public void GenerateReturnsRandomPostCodeMatchingCaseInsensitiveCityTest()
         {
             var address = new Address
@@ -55,6 +76,60 @@
             var valueToMatch = address.City.ToUpperInvariant();
 
             var possibleMatches = TestData.Locations.Where(x => x.City.ToUpperInvariant() == valueToMatch);
+
+            possibleMatches.Select(x => x.PostCode).Should().Contain(actual);
+        }
+
+        [Fact]
+        public void GenerateReturnsRandomPostCodeMatchingCaseInsensitiveCountryTest()
+        {
+            var address = new Address
+            {
+                Country = "AUSTRALIA"
+            };
+            var buildChain = new BuildHistory();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            buildChain.Push(address);
+
+            var target = new PostCodeValueGenerator();
+
+            var actual = target.Generate(typeof(string), "PostCode", executeStrategy) as string;
+
+            actual.Should().NotBeNullOrWhiteSpace();
+
+            var valueToMatch = address.Country.ToUpperInvariant();
+
+            var possibleMatches = TestData.Locations.Where(x => x.Country.ToUpperInvariant() == valueToMatch);
+
+            possibleMatches.Select(x => x.PostCode).Should().Contain(actual);
+        }
+
+        [Fact]
+        public void GenerateReturnsRandomPostCodeMatchingCaseInsensitiveStateTest()
+        {
+            var address = new Address
+            {
+                State = "AUSTRALIAN CAPITAL TERRITORY"
+            };
+            var buildChain = new BuildHistory();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            buildChain.Push(address);
+
+            var target = new PostCodeValueGenerator();
+
+            var actual = target.Generate(typeof(string), "PostCode", executeStrategy) as string;
+
+            actual.Should().NotBeNullOrWhiteSpace();
+
+            var valueToMatch = address.State.ToUpperInvariant();
+
+            var possibleMatches = TestData.Locations.Where(x => x.State.ToUpperInvariant() == valueToMatch);
 
             possibleMatches.Select(x => x.PostCode).Should().Contain(actual);
         }
@@ -85,6 +160,56 @@
         }
 
         [Fact]
+        public void GenerateReturnsRandomPostCodeMatchingCountryTest()
+        {
+            var address = new Address
+            {
+                Country = "Australia"
+            };
+            var buildChain = new BuildHistory();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            buildChain.Push(address);
+
+            var target = new PostCodeValueGenerator();
+
+            var actual = target.Generate(typeof(string), "PostCode", executeStrategy) as string;
+
+            actual.Should().NotBeNullOrWhiteSpace();
+
+            var possibleMatches = TestData.Locations.Where(x => x.Country == address.Country);
+
+            possibleMatches.Select(x => x.PostCode).Should().Contain(actual);
+        }
+
+        [Fact]
+        public void GenerateReturnsRandomPostCodeMatchingStateTest()
+        {
+            var address = new Address
+            {
+                State = "Australian Capital Territory"
+            };
+            var buildChain = new BuildHistory();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            buildChain.Push(address);
+
+            var target = new PostCodeValueGenerator();
+
+            var actual = target.Generate(typeof(string), "PostCode", executeStrategy) as string;
+
+            actual.Should().NotBeNullOrWhiteSpace();
+
+            var possibleMatches = TestData.Locations.Where(x => x.State == address.State);
+
+            possibleMatches.Select(x => x.PostCode).Should().Contain(actual);
+        }
+
+        [Fact]
         public void GenerateReturnsRandomPostCodeTest()
         {
             var address = new Address();
@@ -97,13 +222,13 @@
 
             var target = new PostCodeValueGenerator();
 
-            var first = (string) target.Generate(typeof(string), "Zip", executeStrategy);
+            var first = (string)target.Generate(typeof(string), "Zip", executeStrategy);
 
             var second = first;
 
             for (var index = 0; index < 1000; index++)
             {
-                second = (string) target.Generate(typeof(string), "Zip", executeStrategy);
+                second = (string)target.Generate(typeof(string), "Zip", executeStrategy);
 
                 if (string.Equals(first, second, StringComparison.OrdinalIgnoreCase) == false)
                 {
@@ -112,6 +237,27 @@
             }
 
             first.Should().NotBe(second);
+        }
+
+        [Fact]
+        public void GenerateReturnsRandomStateWhenNoMatchingStateTest()
+        {
+            var address = new Address
+            {
+                State = Guid.NewGuid().ToString()
+            };
+            var buildChain = new BuildHistory();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            buildChain.Push(address);
+
+            var target = new PostCodeValueGenerator();
+
+            var actual = target.Generate(typeof(string), "PostCode", executeStrategy) as string;
+
+            TestData.Locations.Select(x => x.PostCode).Should().Contain(actual);
         }
 
         [Fact]
@@ -154,7 +300,7 @@
 
             var target = new PostCodeValueGenerator();
 
-            var actual = (string) target.Generate(typeof(string), referenceName, executeStrategy);
+            var actual = (string)target.Generate(typeof(string), referenceName, executeStrategy);
 
             actual.Should().NotBeNullOrEmpty();
         }
@@ -187,7 +333,9 @@
 
             var target = new PostCodeValueGenerator();
 
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
             Action action = () => target.Generate(null, null, executeStrategy);
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -229,11 +377,29 @@
         }
 
         [Fact]
-        public void IsSupportedThrowsExceptionWithNullTypeTest()
+        public void IsSupportedThrowsExceptionWithNullBuildChainTest()
         {
+            var type = typeof(string);
+
             var target = new PostCodeValueGenerator();
 
-            Action action = () => target.IsSupported(null, null, null);
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
+            Action action = () => target.IsSupported(type, null, null);
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void IsSupportedThrowsExceptionWithNullTypeTest()
+        {
+            var buildChain = Substitute.For<IBuildChain>();
+
+            var target = new PostCodeValueGenerator();
+
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
+            Action action = () => target.IsSupported(null, null, buildChain);
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
             action.Should().Throw<ArgumentNullException>();
         }

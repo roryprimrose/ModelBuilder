@@ -125,9 +125,11 @@
         [Fact]
         public void IsSupportedThrowsExceptionWithNullTypeTest()
         {
+            var buildChain = Substitute.For<IBuildChain>();
+
             var target = new BooleanValueGenerator();
 
-            Action action = () => target.IsSupported(null, null, null);
+            Action action = () => target.IsSupported(null, null, buildChain);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -138,9 +140,11 @@
         [InlineData(typeof(string), false)]
         public void IsSupportedValidatesSupportedTypesTest(Type type, bool expected)
         {
+            var buildChain = Substitute.For<IBuildChain>();
+
             var target = new BooleanValueGenerator();
 
-            var actual = target.IsSupported(type, null, null);
+            var actual = target.IsSupported(type, null, buildChain);
 
             actual.Should().Be(expected);
         }

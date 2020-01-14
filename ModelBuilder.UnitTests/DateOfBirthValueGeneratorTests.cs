@@ -184,9 +184,11 @@
         [InlineData(typeof(DateTime), "dateofbirth", true)]
         public void IsSupportedTest(Type type, string referenceName, bool expected)
         {
+            var buildChain = Substitute.For<IBuildChain>();
+
             var target = new DateOfBirthValueGenerator();
 
-            var actual = target.IsSupported(type, referenceName, null);
+            var actual = target.IsSupported(type, referenceName, buildChain);
 
             actual.Should().Be(expected);
         }
@@ -194,9 +196,11 @@
         [Fact]
         public void IsSupportedThrowsExceptionWithNullTypeTest()
         {
+            var buildChain = Substitute.For<IBuildChain>();
+
             var target = new DateOfBirthValueGenerator();
 
-            Action action = () => target.IsSupported(null, null, null);
+            Action action = () => target.IsSupported(null, null, buildChain);
 
             action.Should().Throw<ArgumentNullException>();
         }

@@ -119,9 +119,11 @@
         [InlineData(typeof(string), false)]
         public void IsSupportedReturnsWhetherTypeIsSupportedTest(Type type, bool supportedType)
         {
+            var buildChain = Substitute.For<IBuildChain>();
+
             var target = new GuidValueGenerator();
 
-            var actual = target.IsSupported(type, null, null);
+            var actual = target.IsSupported(type, null, buildChain);
 
             actual.Should().Be(supportedType);
         }

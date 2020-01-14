@@ -1,7 +1,9 @@
 ﻿namespace ModelBuilder
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
+    using System.Text.RegularExpressions;
     using ModelBuilder.Data;
 
     /// <summary>
@@ -21,24 +23,56 @@
         protected override object GenerateValue(Type type, string referenceName, IExecuteStrategy executeStrategy)
         {
             var context = executeStrategy?.BuildChain?.Last;
-            var city = GetValue<string>(PropertyExpression.City, context);
-            Location location = null;
 
-            if (string.IsNullOrWhiteSpace(city) == false)
+            IEnumerable<Location> locations = TestData.Locations;
+
+            locations = FilterLocations(
+                locations,
+                PropertyExpression.Country,
+                (item, value) => item.Country.Equals(value, StringComparison.OrdinalIgnoreCase),
+                context);
+
+            locations = FilterLocations(
+                locations,
+                PropertyExpression.State,
+                (item, value) => item.State.Equals(value, StringComparison.OrdinalIgnoreCase),
+                context);
+
+            locations = FilterLocations(
+                locations,
+                PropertyExpression.City,
+                (item, value) => item.City.Equals(value, StringComparison.OrdinalIgnoreCase),
+                context);
+
+            var availableLocations = locations.ToList();
+
+            if (availableLocations.Count > 0)
             {
-                var locationMatches = TestData.Locations
-                    .Where(x => x.City.Equals(city, StringComparison.OrdinalIgnoreCase)).ToList();
+                var matchingLocation = availableLocations.Next();
 
-                location = locationMatches.Next();
+                return matchingLocation.PostCode;
             }
 
-            if (location == null)
-            {
-                // There was either no country or no match on the country
-                location = TestData.Locations.Next();
-            }
+            // There was either no country or no match on the country
+            var location = TestData.Locations.Next();
 
             return location.PostCode;
+        }
+
+        private IEnumerable<Location> FilterLocations(
+            IEnumerable<Location> locations,
+            Regex getExpression,
+            Func<Location, string, bool> evaluator,
+            object context)
+        {
+            var matchValue = GetValue<string>(getExpression, context);
+
+            if (string.IsNullOrWhiteSpace(matchValue))
+            {
+                return locations;
+            }
+
+            return locations.Where(x => evaluator(x, matchValue));
         }
 
         /// <inheritdoc />

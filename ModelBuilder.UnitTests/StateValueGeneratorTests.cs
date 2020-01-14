@@ -97,13 +97,13 @@
 
             var target = new StateValueGenerator();
 
-            var first = (string) target.Generate(typeof(string), "state", executeStrategy);
+            var first = (string)target.Generate(typeof(string), "state", executeStrategy);
 
             string second = null;
 
             for (var index = 0; index < 1000; index++)
             {
-                second = (string) target.Generate(typeof(string), "state", executeStrategy);
+                second = (string)target.Generate(typeof(string), "state", executeStrategy);
 
                 if (string.Equals(first, second, StringComparison.OrdinalIgnoreCase) == false)
                 {
@@ -150,7 +150,7 @@
 
             var target = new StateValueGenerator();
 
-            var actual = (string) target.Generate(type, referenceName, executeStrategy);
+            var actual = (string)target.Generate(type, referenceName, executeStrategy);
 
             actual.Should().NotBeNullOrEmpty();
         }
@@ -206,11 +206,29 @@
         }
 
         [Fact]
-        public void IsSupportedThrowsExceptionWithNullTypeTest()
+        public void IsSupportedThrowsExceptionWithNullBuildChainTest()
         {
+            var type = typeof(string);
+
             var target = new StateValueGenerator();
 
-            Action action = () => target.IsSupported(null, null, null);
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
+            Action action = () => target.IsSupported(type, null, null);
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void IsSupportedThrowsExceptionWithNullTypeTest()
+        {
+            var buildChain = Substitute.For<IBuildChain>();
+
+            var target = new StateValueGenerator();
+
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
+            Action action = () => target.IsSupported(null, null, buildChain);
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
             action.Should().Throw<ArgumentNullException>();
         }

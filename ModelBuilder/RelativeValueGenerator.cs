@@ -21,8 +21,8 @@
         /// </summary>
         /// <param name="targetNameExpression">The expression to match the target property or parameter.</param>
         /// <param name="types">The types the generator can match.</param>
-        /// <exception cref="ArgumentNullException">The <paramref name="targetNameExpression" /> parameter is null.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="types" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="targetNameExpression" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="types" /> parameter is <c>null</c>.</exception>
         protected RelativeValueGenerator(Regex targetNameExpression, params Type[] types) : this(
             targetNameExpression,
             null,
@@ -36,9 +36,8 @@
         /// <param name="targetNameExpression">The expression to match the target property or parameter.</param>
         /// <param name="sourceNameExpression">The expression to match the source property.</param>
         /// <param name="types">The types the generator can match.</param>
-        /// <exception cref="ArgumentNullException">The <paramref name="targetNameExpression" /> parameter is null.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="sourceNameExpression" /> parameter is null.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="types" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="targetNameExpression" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="types" /> parameter is <c>null</c>.</exception>
         protected RelativeValueGenerator(Regex targetNameExpression, Regex sourceNameExpression, params Type[] types)
             : base(types)
         {
@@ -62,13 +61,7 @@
                 return false;
             }
 
-            if (buildChain == null)
-            {
-                // This is either a top level item being generated or a constructor parameter
-                return false;
-            }
-
-            if (buildChain.Count == 0)
+            if (buildChain?.Last == null)
             {
                 // This is either a top level item being generated or a constructor parameter
                 return false;
@@ -106,7 +99,7 @@
         /// <param name="context">The context to use for reference information.</param>
         /// <returns>The string value of the source property.</returns>
         /// <exception cref="InvalidOperationException">The generator was not created with a source expression.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="context" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="context" /> parameter is <c>null</c>.</exception>
         protected virtual T GetSourceValue<T>(object context)
         {
             if (_sourceExpression == null)
@@ -129,8 +122,8 @@
         /// <param name="expression">The expression used to identify the property.</param>
         /// <param name="context">The context to use for reference information.</param>
         /// <returns>The string value of the source property.</returns>
-        /// <exception cref="ArgumentNullException">The <paramref name="expression" /> parameter is null.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="context" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="expression" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="context" /> parameter is <c>null</c>.</exception>
         protected virtual T GetValue<T>(Regex expression, object context)
         {
             if (expression == null)
@@ -165,7 +158,7 @@
                 expectedType = expectedType.GetGenericArguments()[0];
             }
 
-            return (T) Convert.ChangeType(value, expectedType, CultureInfo.CurrentCulture);
+            return (T)Convert.ChangeType(value, expectedType, CultureInfo.CurrentCulture);
         }
 
         /// <summary>
@@ -189,7 +182,7 @@
                 gender = GetValue<string>(PropertyExpression.Gender, context);
             }
 
-            if (string.IsNullOrWhiteSpace(gender))
+            if (gender == null)
             {
                 // Randomly assign a gender so that we can pick from a gender data set rather than limiting to a specific one
                 var nextValue = Generator.NextValue(0, 1);

@@ -64,9 +64,11 @@
         [InlineData(typeof(TimeZoneInfo), true)]
         public void IsSupportedTest(Type type, bool expected)
         {
+            var buildChain = Substitute.For<IBuildChain>();
+
             var target = new TimeZoneInfoValueGenerator();
 
-            var actual = target.IsSupported(type, null, null);
+            var actual = target.IsSupported(type, null, buildChain);
 
             actual.Should().Be(expected);
         }
@@ -74,9 +76,11 @@
         [Fact]
         public void IsSupportedThrowsExceptionWithNullTypeTest()
         {
+            var buildChain = Substitute.For<IBuildChain>();
+
             var target = new TimeZoneInfoValueGenerator();
 
-            Action action = () => target.IsSupported(null, null, null);
+            Action action = () => target.IsSupported(null, null, buildChain);
 
             action.Should().Throw<ArgumentNullException>();
         }

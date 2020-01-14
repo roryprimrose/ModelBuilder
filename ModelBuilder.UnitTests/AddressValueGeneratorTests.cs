@@ -227,9 +227,11 @@
         [InlineData(typeof(string), "Addressline2", true)]
         public void IsSupportedTest(Type type, string referenceName, bool expected)
         {
+            var buildChain = Substitute.For<IBuildChain>();
+
             var target = new AddressValueGenerator();
 
-            var actual = target.IsSupported(type, referenceName, null);
+            var actual = target.IsSupported(type, referenceName, buildChain);
 
             actual.Should().Be(expected);
         }
@@ -237,9 +239,11 @@
         [Fact]
         public void IsSupportedThrowsExceptionWithNullTypeTest()
         {
+            var buildChain = Substitute.For<IBuildChain>();
+
             var target = new AddressValueGenerator();
 
-            Action action = () => target.IsSupported(null, null, null);
+            Action action = () => target.IsSupported(null, null, buildChain);
 
             action.Should().Throw<ArgumentNullException>();
         }

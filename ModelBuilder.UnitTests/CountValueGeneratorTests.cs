@@ -179,9 +179,11 @@
         [InlineData("Count", true)]
         public void IsSupportedEvaluatesRequestedReferenceNameTest(string referenceName, bool isSupported)
         {
+            var buildChain = Substitute.For<IBuildChain>();
+
             var target = new CountValueGenerator();
 
-            var actual = target.IsSupported(typeof(int), referenceName, null);
+            var actual = target.IsSupported(typeof(int), referenceName, buildChain);
 
             actual.Should().Be(isSupported);
         }
@@ -190,9 +192,11 @@
         [ClassData(typeof(NumericTypeDataSource))]
         public void IsSupportedEvaluatesRequestedTypeTest(Type type, bool isSupported)
         {
+            var buildChain = Substitute.For<IBuildChain>();
+
             var target = new CountValueGenerator();
 
-            var actual = target.IsSupported(type, "Count", null);
+            var actual = target.IsSupported(type, "Count", buildChain);
 
             actual.Should().Be(isSupported);
         }
@@ -207,9 +211,11 @@
                 return;
             }
 
+            var buildChain = Substitute.For<IBuildChain>();
+
             var target = new CountValueGenerator();
 
-            var actual = target.IsSupported(type, null, null);
+            var actual = target.IsSupported(type, null, buildChain);
 
             actual.Should().BeFalse();
         }
@@ -224,9 +230,11 @@
                 return;
             }
 
+            var buildChain = Substitute.For<IBuildChain>();
+
             var target = new CountValueGenerator();
 
-            var actual = target.IsSupported(type, "Stuff", null);
+            var actual = target.IsSupported(type, "Stuff", buildChain);
 
             actual.Should().BeFalse();
         }
@@ -241,9 +249,11 @@
                 return;
             }
 
+            var buildChain = Substitute.For<IBuildChain>();
+
             var target = new CountValueGenerator();
 
-            var actual = target.IsSupported(type, "Count", null);
+            var actual = target.IsSupported(type, "Count", buildChain);
 
             actual.Should().BeTrue();
         }
@@ -251,9 +261,11 @@
         [Fact]
         public void IsSupportedThrowsExceptionWithNullTypeTest()
         {
+            var buildChain = Substitute.For<IBuildChain>();
+
             var target = new CountValueGenerator();
 
-            Action action = () => target.IsSupported(null, null, null);
+            Action action = () => target.IsSupported(null, null, buildChain);
 
             action.Should().Throw<ArgumentNullException>();
         }

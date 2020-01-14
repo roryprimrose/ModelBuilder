@@ -3,6 +3,7 @@
     using System;
     using System.Text.RegularExpressions;
     using FluentAssertions;
+    using NSubstitute;
     using Xunit;
 
     public class ValueGeneratorMatcherTests
@@ -24,9 +25,11 @@
         {
             var regex = new Regex(expression);
 
+            var buildChain = Substitute.For<IBuildChain>();
+
             var target = new WrapperGenerator(regex, typeof(bool), typeof(bool?));
 
-            var actual = target.IsSupported(type, referenceName, null);
+            var actual = target.IsSupported(type, referenceName, buildChain);
 
             actual.Should().Be(expected);
         }
@@ -39,9 +42,11 @@
         {
             var regex = new Regex(expression);
 
+            var buildChain = Substitute.For<IBuildChain>();
+
             var target = new WrapperGenerator(regex);
 
-            var actual = target.IsSupported(typeof(Guid), referenceName, null);
+            var actual = target.IsSupported(typeof(Guid), referenceName, buildChain);
 
             actual.Should().Be(expected);
         }
@@ -58,9 +63,11 @@
         [InlineData(typeof(bool?), "Match", true)]
         public void IsSupportedEvaluatesSpecifiedNameAndTypesTest(Type type, string referenceName, bool expected)
         {
+            var buildChain = Substitute.For<IBuildChain>();
+
             var target = new WrapperGenerator("Match", typeof(bool), typeof(bool?));
 
-            var actual = target.IsSupported(type, referenceName, null);
+            var actual = target.IsSupported(type, referenceName, buildChain);
 
             actual.Should().Be(expected);
         }
@@ -72,9 +79,11 @@
         [InlineData("match", true)]
         public void IsSupportedEvaluatesSpecifiedNamesTest(string referenceName, bool expected)
         {
+            var buildChain = Substitute.For<IBuildChain>();
+
             var target = new WrapperGenerator("Match");
 
-            var actual = target.IsSupported(typeof(Guid), referenceName, null);
+            var actual = target.IsSupported(typeof(Guid), referenceName, buildChain);
 
             actual.Should().Be(expected);
         }
@@ -85,11 +94,27 @@
         [InlineData(typeof(bool?), true)]
         public void IsSupportedEvaluatesSpecifiedTypesTest(Type type, bool expected)
         {
+            var buildChain = Substitute.For<IBuildChain>();
+
             var target = new WrapperGenerator(typeof(bool), typeof(bool?));
 
-            var actual = target.IsSupported(type, null, null);
+            var actual = target.IsSupported(type, null, buildChain);
 
             actual.Should().Be(expected);
+        }
+
+        [Fact]
+        public void IsSupportedThrowsExceptionWithNullBuildChainTest()
+        {
+            var type = typeof(string);
+
+            var target = new WrapperGenerator("Test");
+
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
+            Action action = () => target.IsSupported(type, "Test", null);
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
+
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -99,7 +124,9 @@
 
             var target = new WrapperGenerator("Test");
 
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
             Action action = () => target.IsSupported(null, "Test", buildChain);
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -108,7 +135,9 @@
         public void ThrowsExceptionWithNullExpressionTest()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Action action = () => new WrapperGenerator((Regex) null);
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
+            Action action = () => new WrapperGenerator((Regex)null);
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -117,7 +146,9 @@
         public void ThrowsExceptionWithNullReferenceNameTest()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Action action = () => new WrapperGenerator((string) null);
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
+            Action action = () => new WrapperGenerator((string)null);
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -126,7 +157,9 @@
         public void ThrowsExceptionWithNullTypesTest()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Action action = () => new WrapperGenerator((Type[]) null);
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
+            Action action = () => new WrapperGenerator((Type[])null);
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
             action.Should().Throw<ArgumentNullException>();
         }

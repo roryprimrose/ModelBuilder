@@ -1,4 +1,5 @@
-﻿namespace ModelBuilder.UnitTests
+﻿// ReSharper disable UnusedMethodReturnValue.Local
+namespace ModelBuilder.UnitTests
 {
     using System;
     using System.Collections.Generic;
@@ -118,7 +119,7 @@
         {
             var context = new Person();
 
-            var target = new GeneratorWrapper<string>(PropertyExpression.FirstName, (Regex) null, (Type) null);
+            var target = new GeneratorWrapper<string>(PropertyExpression.FirstName, (Regex)null, (Type)null);
 
             Action action = () => target.ReadSourceValue(context);
 
@@ -130,7 +131,9 @@
         {
             var target = new GeneratorWrapper<string>(PropertyExpression.FirstName, PropertyExpression.LastName);
 
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
             Action action = () => target.ReadSourceValue(null);
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -141,9 +144,11 @@
             var target = new GeneratorWrapper<string>(
                 PropertyExpression.FirstName,
                 PropertyExpression.FirstName,
-                (Type) null);
+                (Type)null);
 
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
             Action action = () => target.ReadValue(PropertyExpression.LastName, null);
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -156,9 +161,11 @@
             var target = new GeneratorWrapper<string>(
                 PropertyExpression.FirstName,
                 PropertyExpression.FirstName,
-                (Type) null);
+                (Type)null);
 
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
             Action action = () => target.ReadValue(null, context);
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -313,21 +320,6 @@
         }
 
         [Fact]
-        public void IsSupportedReturnsFalseWithNullBuildChainTest()
-        {
-            var context = new SlimModel();
-            var buildChain = new BuildHistory();
-
-            buildChain.Push(context);
-
-            var target = new GeneratorWrapper<string>(PropertyExpression.FirstName, typeof(string));
-
-            var actual = target.IsSupported(typeof(string), "FirstName", null);
-
-            actual.Should().BeFalse();
-        }
-
-        [Fact]
         public void IsSupportedReturnsTrueWhenSourceExpressionIsNullAndTargetExpressionMatchesReferenceNameTest()
         {
             var context = new SlimModel();
@@ -335,7 +327,9 @@
 
             buildChain.Push(context);
 
-            var target = new GeneratorWrapper<string>(PropertyExpression.FirstName, (Regex) null);
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
+            var target = new GeneratorWrapper<string>(PropertyExpression.FirstName, (Regex)null);
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
             var actual = target.IsSupported(typeof(string), "FirstName", buildChain);
 
@@ -358,10 +352,41 @@
         }
 
         [Fact]
+        public void IsSupportedThrowsExceptionWithNullBuildChainTest()
+        {
+            var target = new GeneratorWrapper<string>(PropertyExpression.FirstName, typeof(string));
+
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
+            Action action = () => target.IsSupported(typeof(string), "FirstName", null);
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void IsSupportedThrowsExceptionWithNullTypeTest()
+        {
+            var context = new SlimModel();
+            var buildChain = new BuildHistory();
+
+            buildChain.Push(context);
+
+            var target = new GeneratorWrapper<string>(PropertyExpression.FirstName, typeof(string));
+
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
+            Action action = () => target.IsSupported(null, "FirstName", buildChain);
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
         public void ThrowsExceptionWithNullTargetExpressionAndTypesTest()
         {
             // ReSharper disable once ObjectCreationAsStatement
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
             Action action = () => new GeneratorWrapper<string>(null, PropertyExpression.FirstName, typeof(string));
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
             action.Should().Throw<ArgumentException>();
         }
@@ -370,7 +395,9 @@
         public void ThrowsExceptionWithNullTargetExpressionTest()
         {
             // ReSharper disable once ObjectCreationAsStatement
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
             Action action = () => new GeneratorWrapper<string>(null, PropertyExpression.Gender);
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
             action.Should().Throw<ArgumentException>();
         }
