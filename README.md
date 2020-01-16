@@ -290,3 +290,13 @@ Post-build actions are much like the Set and SetEach extension methods. They pro
 ### Constructor resolver
 
 The constructor resolver is used to assist in resolving the constructor to execute when creating child instances of a model in the ```DefaultExecuteStrategy<T>```. This supports a scenario where a property type to create is a type that does not have a default constructor and no parameters are available to create with. The constructor resolver will guess which is the most appropriate constructor to use for which the execute strategy will then create the required parameters.
+
+## Upgrading to 6.0.0
+
+The package had some large design changes that introduce breaking changes to the API if you were customising the model creation process. The following changes have been made.
+
+- All ValueGenerator types have been moved into a ValueGenerators namespace.
+- All TypeCreator types have been moved into a TypeCreators namespace.
+- IBuildConfiguration is now mutable. A new IBuildConfiguration is created for each call to a static method on the `Model` class however that some configuration is used for the entire creation process. Any mutations to the build configuration will apply until the entire build tree has completed.
+- The combination of build strategy, compiler and configuration have been replaced with just `IBuildConfiguration`.
+- `ICompilerModule` has been renamed to `IConfigurationModule` and now configures `IBuildConfiguration`.
