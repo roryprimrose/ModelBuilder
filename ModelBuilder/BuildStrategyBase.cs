@@ -139,27 +139,27 @@
         public IConstructorResolver ConstructorResolver { get; }
 
         /// <inheritdoc />
-        public Collection<CreationRule> CreationRules { get; }
+        public ICollection<CreationRule> CreationRules { get; }
 
         /// <inheritdoc />
-        public Collection<ExecuteOrderRule> ExecuteOrderRules { get; }
+        public ICollection<ExecuteOrderRule> ExecuteOrderRules { get; }
 
         /// <inheritdoc />
-        public Collection<IgnoreRule> IgnoreRules { get; }
+        public ICollection<IgnoreRule> IgnoreRules { get; }
 
         /// <inheritdoc />
-        public Collection<IPostBuildAction> PostBuildActions { get; }
+        public ICollection<IPostBuildAction> PostBuildActions { get; }
 
         /// <inheritdoc />
         public IPropertyResolver PropertyResolver { get; }
 
         /// <inheritdoc />
-        public Collection<ITypeCreator> TypeCreators { get; }
+        public ICollection<ITypeCreator> TypeCreators { get; }
 
         /// <inheritdoc />
-        public Collection<TypeMappingRule> TypeMappingRules { get; }
+        public ICollection<TypeMappingRule> TypeMappingRules { get; }
 
         /// <inheritdoc />
-        public Collection<IValueGenerator> ValueGenerators { get; }
+        public ICollection<IValueGenerator> ValueGenerators { get; }
     }
 }

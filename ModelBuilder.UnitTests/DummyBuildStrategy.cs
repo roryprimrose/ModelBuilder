@@ -1,7 +1,7 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
-    using System.Collections.ObjectModel;
+    using System.Collections.Generic;
     using ModelBuilder.TypeCreators;
     using ModelBuilder.ValueGenerators;
 
@@ -19,20 +19,20 @@
 
         public IConstructorResolver ConstructorResolver { get; }
 
-        public Collection<CreationRule> CreationRules { get; }
+        public ICollection<CreationRule> CreationRules { get; }
 
-        public Collection<ExecuteOrderRule> ExecuteOrderRules { get; }
+        public ICollection<ExecuteOrderRule> ExecuteOrderRules { get; }
 
-        public Collection<IgnoreRule> IgnoreRules { get; }
+        public ICollection<IgnoreRule> IgnoreRules { get; }
 
-        public Collection<IPostBuildAction> PostBuildActions { get; }
+        public ICollection<IPostBuildAction> PostBuildActions { get; }
 
         public IPropertyResolver PropertyResolver { get; }
 
-        public Collection<ITypeCreator> TypeCreators { get; }
+        public ICollection<ITypeCreator> TypeCreators { get; }
 
-        public Collection<TypeMappingRule> TypeMappingRules { get; }
+        public ICollection<TypeMappingRule> TypeMappingRules { get; }
 
-        public Collection<IValueGenerator> ValueGenerators { get; }
+        public ICollection<IValueGenerator> ValueGenerators { get; }
     }
 }
