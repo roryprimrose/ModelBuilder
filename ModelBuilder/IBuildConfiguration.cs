@@ -19,22 +19,22 @@
         ///     Gets the creation rules used to quickly generate values without invoking <see cref="ITypeCreator" /> or
         ///     <see cref="IValueGenerator" /> instances.
         /// </summary>
-        ReadOnlyCollection<CreationRule> CreationRules { get; }
+        Collection<CreationRule> CreationRules { get; }
 
         /// <summary>
         ///     Gets the execute order rules used to determine the order that properties are populated.
         /// </summary>
-        ReadOnlyCollection<ExecuteOrderRule> ExecuteOrderRules { get; }
+        Collection<ExecuteOrderRule> ExecuteOrderRules { get; }
 
         /// <summary>
         ///     Gets the ignore rules used to skip over property population.
         /// </summary>
-        ReadOnlyCollection<IgnoreRule> IgnoreRules { get; }
+        Collection<IgnoreRule> IgnoreRules { get; }
 
         /// <summary>
         ///     Gets the post build actions used to modify instances after they have been created or populated.
         /// </summary>
-        ReadOnlyCollection<IPostBuildAction> PostBuildActions { get; }
+        Collection<IPostBuildAction> PostBuildActions { get; }
 
         /// <summary>
         ///     Gets the property resolver used to populate an instance of a type.
@@ -44,16 +44,16 @@
         /// <summary>
         ///     Gets the type creators used to create instances.
         /// </summary>
-        ReadOnlyCollection<ITypeCreator> TypeCreators { get; }
+        Collection<ITypeCreator> TypeCreators { get; }
 
         /// <summary>
         ///     Gets the rules used to map between types before attempting to create a value of the source type.
         /// </summary>
-        ReadOnlyCollection<TypeMappingRule> TypeMappingRules { get; }
+        Collection<TypeMappingRule> TypeMappingRules { get; }
 
         /// <summary>
         ///     Gets the value generators used to generate flat values.
         /// </summary>
-        ReadOnlyCollection<IValueGenerator> ValueGenerators { get; }
+        Collection<IValueGenerator> ValueGenerators { get; }
     }
 }

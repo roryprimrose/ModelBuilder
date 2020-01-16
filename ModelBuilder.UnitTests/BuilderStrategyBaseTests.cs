@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Collections.ObjectModel;
     using System.Linq;
     using FluentAssertions;
     using ModelBuilder.TypeCreators;
@@ -20,13 +21,13 @@
             var creationRules = Model.BuildStrategy.CreationRules.ToList();
             var typeCreators = Model.BuildStrategy.TypeCreators.ToList();
             var valueGenerators = Model.BuildStrategy.ValueGenerators.ToList();
-            var ignoreRules = new List<IgnoreRule>
+            var ignoreRules = new Collection<IgnoreRule>
             {
                 new IgnoreRule(typeof(Person), "FirstName")
             };
             var typeMappingRules = Model.BuildStrategy.TypeMappingRules;
             var executeOrderRules = Model.BuildStrategy.ExecuteOrderRules.ToList();
-            var postBuildActions = new List<IPostBuildAction>
+            var postBuildActions = new Collection<IPostBuildAction>
             {
                 Substitute.For<IPostBuildAction>()
             };

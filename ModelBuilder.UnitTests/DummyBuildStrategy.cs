@@ -19,20 +19,20 @@
 
         public IConstructorResolver ConstructorResolver { get; }
 
-        public ReadOnlyCollection<CreationRule> CreationRules { get; }
+        public Collection<CreationRule> CreationRules { get; }
 
-        public ReadOnlyCollection<ExecuteOrderRule> ExecuteOrderRules { get; }
+        public Collection<ExecuteOrderRule> ExecuteOrderRules { get; }
 
-        public ReadOnlyCollection<IgnoreRule> IgnoreRules { get; }
+        public Collection<IgnoreRule> IgnoreRules { get; }
 
-        public ReadOnlyCollection<IPostBuildAction> PostBuildActions { get; }
+        public Collection<IPostBuildAction> PostBuildActions { get; }
 
         public IPropertyResolver PropertyResolver { get; }
 
-        public ReadOnlyCollection<ITypeCreator> TypeCreators { get; }
+        public Collection<ITypeCreator> TypeCreators { get; }
 
-        public ReadOnlyCollection<TypeMappingRule> TypeMappingRules { get; }
+        public Collection<TypeMappingRule> TypeMappingRules { get; }
 
-        public ReadOnlyCollection<IValueGenerator> ValueGenerators { get; }
+        public Collection<IValueGenerator> ValueGenerators { get; }
     }
 }

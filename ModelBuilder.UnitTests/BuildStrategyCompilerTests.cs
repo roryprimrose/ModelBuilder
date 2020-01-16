@@ -1,7 +1,7 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
-    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
     using System.IO;
     using FluentAssertions;
     using ModelBuilder.TypeCreators;
@@ -17,31 +17,31 @@
         {
             var constructorResolver = Substitute.For<IConstructorResolver>();
             var propertyResolver = Substitute.For<IPropertyResolver>();
-            var creationRules = new List<CreationRule>
+            var creationRules = new Collection<CreationRule>
             {
                 new CreationRule(typeof(string), "Test", int.MaxValue, "Stuff")
             };
-            var typeCreators = new List<ITypeCreator>
+            var typeCreators = new Collection<ITypeCreator>
             {
                 new DefaultTypeCreator()
             };
-            var valueGenerators = new List<IValueGenerator>
+            var valueGenerators = new Collection<IValueGenerator>
             {
                 new AddressValueGenerator()
             };
-            var ignoreRules = new List<IgnoreRule>
+            var ignoreRules = new Collection<IgnoreRule>
             {
                 new IgnoreRule(typeof(Person), "FirstName")
             };
-            var typeMappingRules = new List<TypeMappingRule>
+            var typeMappingRules = new Collection<TypeMappingRule>
             {
                 new TypeMappingRule(typeof(Stream), typeof(MemoryStream))
             };
-            var executeOrderRules = new List<ExecuteOrderRule>
+            var executeOrderRules = new Collection<ExecuteOrderRule>
             {
                 new ExecuteOrderRule(typeof(Person), typeof(string), "LastName", int.MinValue)
             };
-            var postBuildActions = new List<IPostBuildAction>
+            var postBuildActions = new Collection<IPostBuildAction>
             {
                 Substitute.For<IPostBuildAction>()
             };

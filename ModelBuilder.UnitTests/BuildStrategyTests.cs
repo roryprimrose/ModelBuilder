@@ -3,7 +3,7 @@
 namespace ModelBuilder.UnitTests
 {
     using System;
-    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
     using System.IO;
     using FluentAssertions;
     using ModelBuilder.TypeCreators;
@@ -19,13 +19,13 @@ namespace ModelBuilder.UnitTests
         {
             var constructorResolver = Substitute.For<IConstructorResolver>();
             var propertyResolver = Substitute.For<IPropertyResolver>();
-            var creationRules = new List<CreationRule>();
-            var typeCreators = new List<ITypeCreator>();
-            var valueGenerators = new List<IValueGenerator>();
-            var ignoreRules = new List<IgnoreRule>();
-            var typeMappingRules = new List<TypeMappingRule>();
-            var executeOrderRules = new List<ExecuteOrderRule>();
-            var postBuildActions = new List<IPostBuildAction>();
+            var creationRules = new Collection<CreationRule>();
+            var typeCreators = new Collection<ITypeCreator>();
+            var valueGenerators = new Collection<IValueGenerator>();
+            var ignoreRules = new Collection<IgnoreRule>();
+            var typeMappingRules = new Collection<TypeMappingRule>();
+            var executeOrderRules = new Collection<ExecuteOrderRule>();
+            var postBuildActions = new Collection<IPostBuildAction>();
 
             var target = new BuildStrategy(
                 constructorResolver,
@@ -48,13 +48,13 @@ namespace ModelBuilder.UnitTests
         {
             var constructorResolver = Substitute.For<IConstructorResolver>();
             var propertyResolver = Substitute.For<IPropertyResolver>();
-            var creationRules = new List<CreationRule>();
-            var typeCreators = new List<ITypeCreator>();
-            var valueGenerators = new List<IValueGenerator>();
-            var ignoreRules = new List<IgnoreRule>();
-            var typeMappingRules = new List<TypeMappingRule>();
-            var executeOrderRules = new List<ExecuteOrderRule>();
-            var postBuildActions = new List<IPostBuildAction>();
+            var creationRules = new Collection<CreationRule>();
+            var typeCreators = new Collection<ITypeCreator>();
+            var valueGenerators = new Collection<IValueGenerator>();
+            var ignoreRules = new Collection<IgnoreRule>();
+            var typeMappingRules = new Collection<TypeMappingRule>();
+            var executeOrderRules = new Collection<ExecuteOrderRule>();
+            var postBuildActions = new Collection<IPostBuildAction>();
 
             var target = new BuildStrategy(
                 constructorResolver,
@@ -78,13 +78,13 @@ namespace ModelBuilder.UnitTests
         {
             var constructorResolver = Substitute.For<IConstructorResolver>();
             var propertyResolver = Substitute.For<IPropertyResolver>();
-            var creationRules = new List<CreationRule>();
-            var typeCreators = new List<ITypeCreator>();
-            var valueGenerators = new List<IValueGenerator>();
-            var ignoreRules = new List<IgnoreRule>();
-            var typeMappingRules = new List<TypeMappingRule>();
-            var executeOrderRules = new List<ExecuteOrderRule>();
-            var postBuildActions = new List<IPostBuildAction>();
+            var creationRules = new Collection<CreationRule>();
+            var typeCreators = new Collection<ITypeCreator>();
+            var valueGenerators = new Collection<IValueGenerator>();
+            var ignoreRules = new Collection<IgnoreRule>();
+            var typeMappingRules = new Collection<TypeMappingRule>();
+            var executeOrderRules = new Collection<ExecuteOrderRule>();
+            var postBuildActions = new Collection<IPostBuildAction>();
 
             var target = new BuildStrategy(
                 constructorResolver,
@@ -107,31 +107,31 @@ namespace ModelBuilder.UnitTests
         {
             var constructorResolver = Substitute.For<IConstructorResolver>();
             var propertyResolver = Substitute.For<IPropertyResolver>();
-            var creationRules = new List<CreationRule>
+            var creationRules = new Collection<CreationRule>
             {
                 new CreationRule(typeof(string), "Test", int.MaxValue, "Stuff")
             };
-            var typeCreators = new List<ITypeCreator>
+            var typeCreators = new Collection<ITypeCreator>
             {
                 new DefaultTypeCreator()
             };
-            var valueGenerators = new List<IValueGenerator>
+            var valueGenerators = new Collection<IValueGenerator>
             {
                 new AddressValueGenerator()
             };
-            var ignoreRules = new List<IgnoreRule>
+            var ignoreRules = new Collection<IgnoreRule>
             {
                 new IgnoreRule(typeof(Person), "FirstName")
             };
-            var typeMappingRules = new List<TypeMappingRule>
+            var typeMappingRules = new Collection<TypeMappingRule>
             {
                 new TypeMappingRule(typeof(Stream), typeof(MemoryStream))
             };
-            var executeOrderRules = new List<ExecuteOrderRule>
+            var executeOrderRules = new Collection<ExecuteOrderRule>
             {
                 new ExecuteOrderRule(typeof(Person), typeof(string), "LastName", int.MinValue)
             };
-            var postBuildActions = new List<IPostBuildAction>
+            var postBuildActions = new Collection<IPostBuildAction>
             {
                 Substitute.For<IPostBuildAction>()
             };
@@ -172,13 +172,13 @@ namespace ModelBuilder.UnitTests
         public void ThrowsExceptionWhenCreatedWithNullConstructorResolverTest()
         {
             var propertyResolver = Substitute.For<IPropertyResolver>();
-            var creationRules = new List<CreationRule>();
-            var typeCreators = new List<ITypeCreator>();
-            var valueGenerators = new List<IValueGenerator>();
-            var ignoreRules = new List<IgnoreRule>();
-            var typeMappingRules = new List<TypeMappingRule>();
-            var executeOrderRules = new List<ExecuteOrderRule>();
-            var postBuildActions = new List<IPostBuildAction>();
+            var creationRules = new Collection<CreationRule>();
+            var typeCreators = new Collection<ITypeCreator>();
+            var valueGenerators = new Collection<IValueGenerator>();
+            var ignoreRules = new Collection<IgnoreRule>();
+            var typeMappingRules = new Collection<TypeMappingRule>();
+            var executeOrderRules = new Collection<ExecuteOrderRule>();
+            var postBuildActions = new Collection<IPostBuildAction>();
 
             // ReSharper disable once ObjectCreationAsStatement
             Action action = () => new BuildStrategy(
@@ -200,12 +200,12 @@ namespace ModelBuilder.UnitTests
         {
             var constructorResolver = Substitute.For<IConstructorResolver>();
             var propertyResolver = Substitute.For<IPropertyResolver>();
-            var typeCreators = new List<ITypeCreator>();
-            var valueGenerators = new List<IValueGenerator>();
-            var ignoreRules = new List<IgnoreRule>();
-            var typeMappingRules = new List<TypeMappingRule>();
-            var executeOrderRules = new List<ExecuteOrderRule>();
-            var postBuildActions = new List<IPostBuildAction>();
+            var typeCreators = new Collection<ITypeCreator>();
+            var valueGenerators = new Collection<IValueGenerator>();
+            var ignoreRules = new Collection<IgnoreRule>();
+            var typeMappingRules = new Collection<TypeMappingRule>();
+            var executeOrderRules = new Collection<ExecuteOrderRule>();
+            var postBuildActions = new Collection<IPostBuildAction>();
 
             // ReSharper disable once ObjectCreationAsStatement
             Action action = () => new BuildStrategy(
@@ -227,12 +227,12 @@ namespace ModelBuilder.UnitTests
         {
             var constructorResolver = Substitute.For<IConstructorResolver>();
             var propertyResolver = Substitute.For<IPropertyResolver>();
-            var creationRules = new List<CreationRule>();
-            var typeCreators = new List<ITypeCreator>();
-            var valueGenerators = new List<IValueGenerator>();
-            var ignoreRules = new List<IgnoreRule>();
-            var typeMappingRules = new List<TypeMappingRule>();
-            var postBuildActions = new List<IPostBuildAction>();
+            var creationRules = new Collection<CreationRule>();
+            var typeCreators = new Collection<ITypeCreator>();
+            var valueGenerators = new Collection<IValueGenerator>();
+            var ignoreRules = new Collection<IgnoreRule>();
+            var typeMappingRules = new Collection<TypeMappingRule>();
+            var postBuildActions = new Collection<IPostBuildAction>();
 
             // ReSharper disable once ObjectCreationAsStatement
             Action action = () => new BuildStrategy(
@@ -254,12 +254,12 @@ namespace ModelBuilder.UnitTests
         {
             var constructorResolver = Substitute.For<IConstructorResolver>();
             var propertyResolver = Substitute.For<IPropertyResolver>();
-            var creationRules = new List<CreationRule>();
-            var typeCreators = new List<ITypeCreator>();
-            var valueGenerators = new List<IValueGenerator>();
-            var typeMappingRules = new List<TypeMappingRule>();
-            var executeOrderRules = new List<ExecuteOrderRule>();
-            var postBuildActions = new List<IPostBuildAction>();
+            var creationRules = new Collection<CreationRule>();
+            var typeCreators = new Collection<ITypeCreator>();
+            var valueGenerators = new Collection<IValueGenerator>();
+            var typeMappingRules = new Collection<TypeMappingRule>();
+            var executeOrderRules = new Collection<ExecuteOrderRule>();
+            var postBuildActions = new Collection<IPostBuildAction>();
 
             // ReSharper disable once ObjectCreationAsStatement
             Action action = () => new BuildStrategy(
@@ -281,12 +281,12 @@ namespace ModelBuilder.UnitTests
         {
             var constructorResolver = Substitute.For<IConstructorResolver>();
             var propertyResolver = Substitute.For<IPropertyResolver>();
-            var creationRules = new List<CreationRule>();
-            var typeCreators = new List<ITypeCreator>();
-            var valueGenerators = new List<IValueGenerator>();
-            var ignoreRules = new List<IgnoreRule>();
-            var typeMappingRules = new List<TypeMappingRule>();
-            var executeOrderRules = new List<ExecuteOrderRule>();
+            var creationRules = new Collection<CreationRule>();
+            var typeCreators = new Collection<ITypeCreator>();
+            var valueGenerators = new Collection<IValueGenerator>();
+            var ignoreRules = new Collection<IgnoreRule>();
+            var typeMappingRules = new Collection<TypeMappingRule>();
+            var executeOrderRules = new Collection<ExecuteOrderRule>();
 
             // ReSharper disable once ObjectCreationAsStatement
             Action action = () => new BuildStrategy(
@@ -307,13 +307,13 @@ namespace ModelBuilder.UnitTests
         public void ThrowsExceptionWhenCreatedWithNullPropertyResolverTest()
         {
             var constructorResolver = Substitute.For<IConstructorResolver>();
-            var creationRules = new List<CreationRule>();
-            var typeCreators = new List<ITypeCreator>();
-            var valueGenerators = new List<IValueGenerator>();
-            var ignoreRules = new List<IgnoreRule>();
-            var typeMappingRules = new List<TypeMappingRule>();
-            var executeOrderRules = new List<ExecuteOrderRule>();
-            var postBuildActions = new List<IPostBuildAction>();
+            var creationRules = new Collection<CreationRule>();
+            var typeCreators = new Collection<ITypeCreator>();
+            var valueGenerators = new Collection<IValueGenerator>();
+            var ignoreRules = new Collection<IgnoreRule>();
+            var typeMappingRules = new Collection<TypeMappingRule>();
+            var executeOrderRules = new Collection<ExecuteOrderRule>();
+            var postBuildActions = new Collection<IPostBuildAction>();
 
             // ReSharper disable once ObjectCreationAsStatement
             Action action = () => new BuildStrategy(
@@ -344,12 +344,12 @@ namespace ModelBuilder.UnitTests
         {
             var constructorResolver = Substitute.For<IConstructorResolver>();
             var propertyResolver = Substitute.For<IPropertyResolver>();
-            var creationRules = new List<CreationRule>();
-            var valueGenerators = new List<IValueGenerator>();
-            var ignoreRules = new List<IgnoreRule>();
-            var typeMappingRules = new List<TypeMappingRule>();
-            var executeOrderRules = new List<ExecuteOrderRule>();
-            var postBuildActions = new List<IPostBuildAction>();
+            var creationRules = new Collection<CreationRule>();
+            var valueGenerators = new Collection<IValueGenerator>();
+            var ignoreRules = new Collection<IgnoreRule>();
+            var typeMappingRules = new Collection<TypeMappingRule>();
+            var executeOrderRules = new Collection<ExecuteOrderRule>();
+            var postBuildActions = new Collection<IPostBuildAction>();
 
             // ReSharper disable once ObjectCreationAsStatement
             Action action = () => new BuildStrategy(
@@ -371,12 +371,12 @@ namespace ModelBuilder.UnitTests
         {
             var constructorResolver = Substitute.For<IConstructorResolver>();
             var propertyResolver = Substitute.For<IPropertyResolver>();
-            var creationRules = new List<CreationRule>();
-            var typeCreators = new List<ITypeCreator>();
-            var valueGenerators = new List<IValueGenerator>();
-            var ignoreRules = new List<IgnoreRule>();
-            var executeOrderRules = new List<ExecuteOrderRule>();
-            var postBuildActions = new List<IPostBuildAction>();
+            var creationRules = new Collection<CreationRule>();
+            var typeCreators = new Collection<ITypeCreator>();
+            var valueGenerators = new Collection<IValueGenerator>();
+            var ignoreRules = new Collection<IgnoreRule>();
+            var executeOrderRules = new Collection<ExecuteOrderRule>();
+            var postBuildActions = new Collection<IPostBuildAction>();
 
             // ReSharper disable once ObjectCreationAsStatement
             Action action = () => new BuildStrategy(
@@ -398,12 +398,12 @@ namespace ModelBuilder.UnitTests
         {
             var constructorResolver = Substitute.For<IConstructorResolver>();
             var propertyResolver = Substitute.For<IPropertyResolver>();
-            var creationRules = new List<CreationRule>();
-            var typeCreators = new List<ITypeCreator>();
-            var ignoreRules = new List<IgnoreRule>();
-            var typeMappingRules = new List<TypeMappingRule>();
-            var executeOrderRules = new List<ExecuteOrderRule>();
-            var postBuildActions = new List<IPostBuildAction>();
+            var creationRules = new Collection<CreationRule>();
+            var typeCreators = new Collection<ITypeCreator>();
+            var ignoreRules = new Collection<IgnoreRule>();
+            var typeMappingRules = new Collection<TypeMappingRule>();
+            var executeOrderRules = new Collection<ExecuteOrderRule>();
+            var postBuildActions = new Collection<IPostBuildAction>();
 
             // ReSharper disable once ObjectCreationAsStatement
             Action action = () => new BuildStrategy(

@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Collections.ObjectModel;
     using System.IO;
     using System.Reflection;
     using FluentAssertions;
@@ -16,14 +17,14 @@
         [Fact]
         public void CreateReturnsDefaultValueWhenInstanceFailsToBeCreatedTest()
         {
-            var typeCreators = new List<ITypeCreator>();
+            var typeCreators = new Collection<ITypeCreator>();
 
             var typeCreator = Substitute.For<ITypeCreator>();
             var buildStrategy = Substitute.For<IBuildStrategy>();
 
             typeCreators.Add(typeCreator);
 
-            buildStrategy.TypeCreators.Returns(typeCreators.AsReadOnly());
+            buildStrategy.TypeCreators.Returns(typeCreators);
             typeCreator.CanCreate(typeof(SlimModel), null, Arg.Any<IBuildChain>()).Returns(true);
             typeCreator.CanPopulate(typeof(SlimModel), null, Arg.Any<IBuildChain>()).Returns(true);
 
@@ -39,14 +40,14 @@
         [Fact]
         public void CreateReturnsDefaultValueWhenNoReferenceTypeCreatedTest()
         {
-            var typeCreators = new List<ITypeCreator>();
+            var typeCreators = new Collection<ITypeCreator>();
 
             var typeCreator = Substitute.For<ITypeCreator>();
             var buildStrategy = Substitute.For<IBuildStrategy>();
 
             typeCreators.Add(typeCreator);
 
-            buildStrategy.TypeCreators.Returns(typeCreators.AsReadOnly());
+            buildStrategy.TypeCreators.Returns(typeCreators);
             typeCreator.CanCreate(typeof(MemoryStream), null, Arg.Any<IBuildChain>()).Returns(true);
             typeCreator.CanPopulate(typeof(MemoryStream), null, Arg.Any<IBuildChain>()).Returns(true);
             typeCreator.Create(typeof(MemoryStream), null, Arg.Any<IExecuteStrategy>()).Returns(null);
@@ -63,14 +64,14 @@
         [Fact]
         public void CreateReturnsDefaultValueWhenNoValueTypeCreatedTest()
         {
-            var valueGenerators = new List<IValueGenerator>();
+            var valueGenerators = new Collection<IValueGenerator>();
 
             var valueGenerator = Substitute.For<IValueGenerator>();
             var buildStrategy = Substitute.For<IBuildStrategy>();
 
             valueGenerators.Add(valueGenerator);
 
-            buildStrategy.ValueGenerators.Returns(valueGenerators.AsReadOnly());
+            buildStrategy.ValueGenerators.Returns(valueGenerators);
             valueGenerator.IsSupported(typeof(int), null, Arg.Any<IBuildChain>()).Returns(true);
             valueGenerator.Generate(typeof(int), null, Arg.Any<IExecuteStrategy>()).Returns(null);
 
@@ -89,8 +90,8 @@
             var expected = new SlimModel();
             var value = Guid.NewGuid();
 
-            var typeCreators = new List<ITypeCreator>();
-            var valueGenerators = new List<IValueGenerator>();
+            var typeCreators = new Collection<ITypeCreator>();
+            var valueGenerators = new Collection<IValueGenerator>();
 
             var typeCreator = Substitute.For<ITypeCreator>();
             var generator = Substitute.For<IValueGenerator>();
@@ -100,8 +101,8 @@
             typeCreators.Add(typeCreator);
             valueGenerators.Add(generator);
 
-            buildStrategy.TypeCreators.Returns(typeCreators.AsReadOnly());
-            buildStrategy.ValueGenerators.Returns(valueGenerators.AsReadOnly());
+            buildStrategy.TypeCreators.Returns(typeCreators);
+            buildStrategy.ValueGenerators.Returns(valueGenerators);
 
             var target = new DefaultExecuteStrategy<SlimModel>();
 
@@ -142,14 +143,14 @@
                 Guid.NewGuid(),
                 Environment.TickCount
             };
-            var typeCreators = new List<ITypeCreator>();
+            var typeCreators = new Collection<ITypeCreator>();
 
             var typeCreator = Substitute.For<ITypeCreator>();
             var buildStrategy = Substitute.For<IBuildStrategy>();
 
             typeCreators.Add(typeCreator);
 
-            buildStrategy.TypeCreators.Returns(typeCreators.AsReadOnly());
+            buildStrategy.TypeCreators.Returns(typeCreators);
 
             var target = new DefaultExecuteStrategy<Person>();
 
@@ -173,8 +174,8 @@
             var name = Guid.NewGuid().ToString();
             var address = Guid.NewGuid().ToString();
             var expected = new Company();
-            var valueGenerators = new List<IValueGenerator>();
-            var typeCreators = new List<ITypeCreator>();
+            var valueGenerators = new Collection<IValueGenerator>();
+            var typeCreators = new Collection<ITypeCreator>();
 
             var buildStrategy = Substitute.For<IBuildStrategy>();
             var typeCreator = Substitute.For<ITypeCreator>();
@@ -193,8 +194,8 @@
                 Arg.Any<object>(),
                 Arg.Any<PropertyInfo>(),
                 Arg.Any<object[]>()).Returns(true);
-            buildStrategy.TypeCreators.Returns(typeCreators.AsReadOnly());
-            buildStrategy.ValueGenerators.Returns(valueGenerators.AsReadOnly());
+            buildStrategy.TypeCreators.Returns(typeCreators);
+            buildStrategy.ValueGenerators.Returns(valueGenerators);
 
             var target = new DefaultExecuteStrategy<Company>();
 

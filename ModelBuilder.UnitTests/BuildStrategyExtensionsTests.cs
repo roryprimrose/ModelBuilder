@@ -1,7 +1,6 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
-    using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.IO;
     using System.Linq;
@@ -20,10 +19,10 @@
             var value = Guid.NewGuid();
 
             var generator = Substitute.For<IValueGenerator>();
-            var generators = new List<IValueGenerator>
+            var generators = new Collection<IValueGenerator>
             {
                 generator
-            }.AsReadOnly();
+            };
             var target = Substitute.For<IBuildStrategy>();
 
             target.ValueGenerators.Returns(generators);
@@ -59,10 +58,10 @@
             var value = Guid.NewGuid();
 
             var generator = Substitute.For<IValueGenerator>();
-            var generators = new List<IValueGenerator>
+            var generators = new Collection<IValueGenerator>
             {
                 generator
-            }.AsReadOnly();
+            };
             var target = Substitute.For<IBuildStrategy>();
 
             target.ValueGenerators.Returns(generators);
@@ -168,15 +167,15 @@
 
             var target = Substitute.For<IBuildStrategy>();
             var creator = Substitute.For<ITypeCreator>();
-            var creators = new List<ITypeCreator>
+            var creators = new Collection<ITypeCreator>
             {
                 creator
-            }.AsReadOnly();
+            };
             var generator = Substitute.For<IValueGenerator>();
-            var generators = new List<IValueGenerator>
+            var generators = new Collection<IValueGenerator>
             {
                 generator
-            }.AsReadOnly();
+            };
 
             target.TypeCreators.Returns(creators);
             target.ValueGenerators.Returns(generators);
@@ -195,7 +194,7 @@
         public void UsingExecuteStrategyReturnsExecuteStrategyWithBuildStrategyConfigurationsTest()
         {
             var strategy = Model.BuildStrategy;
-            var ignoreRules = new List<IgnoreRule>
+            var ignoreRules = new Collection<IgnoreRule>
             {
                 new IgnoreRule(typeof(string), "Stuff")
             };
@@ -206,11 +205,10 @@
             target.GetBuildLog().Returns(buildLog);
 
             target.ConstructorResolver.Returns(strategy.ConstructorResolver);
-            target.ExecuteOrderRules.Returns(
-                new ReadOnlyCollection<ExecuteOrderRule>(strategy.ExecuteOrderRules.ToList()));
-            target.TypeCreators.Returns(new ReadOnlyCollection<ITypeCreator>(strategy.TypeCreators.ToList()));
-            target.ValueGenerators.Returns(new ReadOnlyCollection<IValueGenerator>(strategy.ValueGenerators.ToList()));
-            target.IgnoreRules.Returns(new ReadOnlyCollection<IgnoreRule>(ignoreRules));
+            target.ExecuteOrderRules.Returns(strategy.ExecuteOrderRules);
+            target.TypeCreators.Returns(strategy.TypeCreators);
+            target.ValueGenerators.Returns(strategy.ValueGenerators);
+            target.IgnoreRules.Returns(ignoreRules);
 
             var actual = target.UsingExecuteStrategy<DefaultExecuteStrategy<Person>>();
 

@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Collections.ObjectModel;
     using ModelBuilder.Properties;
     using ModelBuilder.TypeCreators;
     using ModelBuilder.ValueGenerators;
@@ -17,13 +18,13 @@
         /// </summary>
         public BuildStrategyCompiler()
         {
-            CreationRules = new List<CreationRule>();
-            ExecuteOrderRules = new List<ExecuteOrderRule>();
-            IgnoreRules = new List<IgnoreRule>();
-            PostBuildActions = new List<IPostBuildAction>();
-            TypeCreators = new List<ITypeCreator>();
-            ValueGenerators = new List<IValueGenerator>();
-            TypeMappingRules = new List<TypeMappingRule>();
+            CreationRules = new Collection<CreationRule>();
+            ExecuteOrderRules = new Collection<ExecuteOrderRule>();
+            IgnoreRules = new Collection<IgnoreRule>();
+            PostBuildActions = new Collection<IPostBuildAction>();
+            TypeCreators = new Collection<ITypeCreator>();
+            ValueGenerators = new Collection<IValueGenerator>();
+            TypeMappingRules = new Collection<TypeMappingRule>();
         }
 
         /// <inheritdoc />

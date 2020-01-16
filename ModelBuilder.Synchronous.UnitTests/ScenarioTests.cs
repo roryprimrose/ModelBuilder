@@ -1,7 +1,7 @@
 namespace ModelBuilder.Synchronous.UnitTests
 {
     using System;
-    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
     using System.Reflection;
     using FluentAssertions;
     using ModelBuilder.TypeCreators;
@@ -66,10 +66,10 @@ namespace ModelBuilder.Synchronous.UnitTests
 
             var build = Substitute.For<IBuildStrategy>();
             var generator = Substitute.For<IValueGenerator>();
-            var generators = new List<IValueGenerator>
+            var generators = new Collection<IValueGenerator>
             {
                 generator
-            }.AsReadOnly();
+            };
 
             build.ValueGenerators.Returns(generators);
             generator.IsSupported(typeof(Guid), null, Arg.Any<IBuildChain>()).Returns(true);
@@ -97,10 +97,10 @@ namespace ModelBuilder.Synchronous.UnitTests
 
             var build = Substitute.For<IBuildStrategy>();
             var creator = Substitute.For<ITypeCreator>();
-            var creators = new List<ITypeCreator>
+            var creators = new Collection<ITypeCreator>
             {
                 creator
-            }.AsReadOnly();
+            };
 
             build.TypeCreators.Returns(creators);
             creator.CanCreate(typeof(ReadOnlyModel), null, Arg.Any<IBuildChain>()).Returns(true);
@@ -129,10 +129,10 @@ namespace ModelBuilder.Synchronous.UnitTests
 
             var build = Substitute.For<IBuildStrategy>();
             var generator = Substitute.For<IValueGenerator>();
-            var generators = new List<IValueGenerator>
+            var generators = new Collection<IValueGenerator>
             {
                 generator
-            }.AsReadOnly();
+            };
 
             build.ValueGenerators.Returns(generators);
             generator.IsSupported(typeof(Guid), null, Arg.Any<IBuildChain>()).Returns(true);
@@ -160,10 +160,10 @@ namespace ModelBuilder.Synchronous.UnitTests
 
             var build = Substitute.For<IBuildStrategy>();
             var creator = Substitute.For<ITypeCreator>();
-            var creators = new List<ITypeCreator>
+            var creators = new Collection<ITypeCreator>
             {
                 creator
-            }.AsReadOnly();
+            };
 
             build.TypeCreators.Returns(creators);
             creator.CanCreate(typeof(ReadOnlyModel), null, Arg.Any<IBuildChain>()).Returns(true);
@@ -189,16 +189,16 @@ namespace ModelBuilder.Synchronous.UnitTests
         {
             var build = Substitute.For<IBuildStrategy>();
             var generator = Substitute.For<IValueGenerator>();
-            var generators = new List<IValueGenerator>
+            var generators = new Collection<IValueGenerator>
             {
                 generator
-            }.AsReadOnly();
+            };
             var creator = Substitute.For<ITypeCreator>();
-            var creators = new List<ITypeCreator>
+            var creators = new Collection<ITypeCreator>
             {
                 creator
-            }.AsReadOnly();
-            var ignoreRules = new List<IgnoreRule>().AsReadOnly();
+            };
+            var ignoreRules = new Collection<IgnoreRule>();
             var resolver = Substitute.For<IConstructorResolver>();
 
             build.ValueGenerators.Returns(generators);
@@ -230,15 +230,15 @@ namespace ModelBuilder.Synchronous.UnitTests
             var creator = Substitute.For<ITypeCreator>();
             var propertyResolver = Substitute.For<IPropertyResolver>();
 
-            var creators = new List<ITypeCreator>
+            var creators = new Collection<ITypeCreator>
             {
                 creator
-            }.AsReadOnly();
+            };
             var generator = Substitute.For<IValueGenerator>();
-            var generators = new List<IValueGenerator>
+            var generators = new Collection<IValueGenerator>
             {
                 generator
-            }.AsReadOnly();
+            };
 
             build.PropertyResolver.Returns(propertyResolver);
             build.TypeCreators.Returns(creators);

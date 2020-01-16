@@ -27,13 +27,13 @@
 
             ConstructorResolver = strategy.ConstructorResolver;
             PropertyResolver = strategy.PropertyResolver;
-            TypeCreators = AsReadOnly(strategy.TypeCreators);
-            ValueGenerators = AsReadOnly(strategy.ValueGenerators);
-            IgnoreRules = AsReadOnly(strategy.IgnoreRules);
-            TypeMappingRules = AsReadOnly(strategy.TypeMappingRules);
-            ExecuteOrderRules = AsReadOnly(strategy.ExecuteOrderRules);
-            PostBuildActions = AsReadOnly(strategy.PostBuildActions);
-            CreationRules = AsReadOnly(strategy.CreationRules);
+            TypeCreators = CopyItems(strategy.TypeCreators);
+            ValueGenerators = CopyItems(strategy.ValueGenerators);
+            IgnoreRules = CopyItems(strategy.IgnoreRules);
+            TypeMappingRules = CopyItems(strategy.TypeMappingRules);
+            ExecuteOrderRules = CopyItems(strategy.ExecuteOrderRules);
+            PostBuildActions = CopyItems(strategy.PostBuildActions);
+            CreationRules = CopyItems(strategy.CreationRules);
         }
 
         /// <summary>
@@ -115,13 +115,13 @@
 
             ConstructorResolver = constructorResolver;
             PropertyResolver = propertyResolver;
-            TypeCreators = new ReadOnlyCollection<ITypeCreator>(typeCreators.ToList());
-            ValueGenerators = new ReadOnlyCollection<IValueGenerator>(valueGenerators.ToList());
-            IgnoreRules = new ReadOnlyCollection<IgnoreRule>(ignoreRules.ToList());
-            ExecuteOrderRules = new ReadOnlyCollection<ExecuteOrderRule>(executeOrderRules.ToList());
-            PostBuildActions = new ReadOnlyCollection<IPostBuildAction>(postBuildActions.ToList());
-            CreationRules = new ReadOnlyCollection<CreationRule>(creationRules.ToList());
-            TypeMappingRules = new ReadOnlyCollection<TypeMappingRule>(typeMappingRules.ToList());
+            TypeCreators = CopyItems(typeCreators);
+            ValueGenerators = CopyItems(valueGenerators);
+            IgnoreRules = CopyItems(ignoreRules);
+            ExecuteOrderRules = CopyItems(executeOrderRules);
+            PostBuildActions = CopyItems(postBuildActions);
+            CreationRules = CopyItems(creationRules);
+            TypeMappingRules = CopyItems(typeMappingRules);
         }
 
         /// <inheritdoc />
@@ -130,36 +130,36 @@
         /// <inheritdoc />
         public abstract IExecuteStrategy<T> GetExecuteStrategy<T>();
 
-        private static ReadOnlyCollection<T> AsReadOnly<T>(IEnumerable<T> source)
+        private static Collection<T> CopyItems<T>(IEnumerable<T> source)
         {
-            return new ReadOnlyCollection<T>(source.ToList());
+            return new Collection<T>(source.ToList());
         }
 
         /// <inheritdoc />
         public IConstructorResolver ConstructorResolver { get; }
 
         /// <inheritdoc />
-        public ReadOnlyCollection<CreationRule> CreationRules { get; }
+        public Collection<CreationRule> CreationRules { get; }
 
         /// <inheritdoc />
-        public ReadOnlyCollection<ExecuteOrderRule> ExecuteOrderRules { get; }
+        public Collection<ExecuteOrderRule> ExecuteOrderRules { get; }
 
         /// <inheritdoc />
-        public ReadOnlyCollection<IgnoreRule> IgnoreRules { get; }
+        public Collection<IgnoreRule> IgnoreRules { get; }
 
         /// <inheritdoc />
-        public ReadOnlyCollection<IPostBuildAction> PostBuildActions { get; }
+        public Collection<IPostBuildAction> PostBuildActions { get; }
 
         /// <inheritdoc />
         public IPropertyResolver PropertyResolver { get; }
 
         /// <inheritdoc />
-        public ReadOnlyCollection<ITypeCreator> TypeCreators { get; }
+        public Collection<ITypeCreator> TypeCreators { get; }
 
         /// <inheritdoc />
-        public ReadOnlyCollection<TypeMappingRule> TypeMappingRules { get; }
+        public Collection<TypeMappingRule> TypeMappingRules { get; }
 
         /// <inheritdoc />
-        public ReadOnlyCollection<IValueGenerator> ValueGenerators { get; }
+        public Collection<IValueGenerator> ValueGenerators { get; }
     }
 }
