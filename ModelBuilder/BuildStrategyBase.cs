@@ -136,7 +136,7 @@
         }
 
         /// <inheritdoc />
-        public IConstructorResolver ConstructorResolver { get; }
+        public IConstructorResolver ConstructorResolver { get; set; }
 
         /// <inheritdoc />
         public ICollection<CreationRule> CreationRules { get; }
@@ -151,7 +151,7 @@
         public ICollection<IPostBuildAction> PostBuildActions { get; }
 
         /// <inheritdoc />
-        public IPropertyResolver PropertyResolver { get; }
+        public IPropertyResolver PropertyResolver { get; set; }
 
         /// <inheritdoc />
         public ICollection<ITypeCreator> TypeCreators { get; }

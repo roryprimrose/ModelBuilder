@@ -11,9 +11,9 @@
     public interface IBuildConfiguration
     {
         /// <summary>
-        ///     Gets the constructor resolver used to create an instance of a type.
+        ///     Gets or sets the constructor resolver used to create an instance of a type.
         /// </summary>
-        IConstructorResolver ConstructorResolver { get; }
+        IConstructorResolver ConstructorResolver { get; set; }
 
         /// <summary>
         ///     Gets the creation rules used to quickly generate values without invoking <see cref="ITypeCreator" /> or
@@ -37,9 +37,9 @@
         ICollection<IPostBuildAction> PostBuildActions { get; }
 
         /// <summary>
-        ///     Gets the property resolver used to populate an instance of a type.
+        ///     Gets or sets the property resolver used to populate an instance of a type.
         /// </summary>
-        IPropertyResolver PropertyResolver { get; }
+        IPropertyResolver PropertyResolver { get; set;  }
 
         /// <summary>
         ///     Gets the type creators used to create instances.

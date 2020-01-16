@@ -17,7 +17,7 @@
             throw new NotImplementedException();
         }
 
-        public IConstructorResolver ConstructorResolver { get; }
+        public IConstructorResolver ConstructorResolver { get; set; }
 
         public ICollection<CreationRule> CreationRules { get; }
 
@@ -27,7 +27,7 @@
 
         public ICollection<IPostBuildAction> PostBuildActions { get; }
 
-        public IPropertyResolver PropertyResolver { get; }
+        public IPropertyResolver PropertyResolver { get; set; }
 
         public ICollection<ITypeCreator> TypeCreators { get; }
 
