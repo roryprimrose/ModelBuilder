@@ -102,18 +102,18 @@
         }
 
         /// <summary>
-        ///     Returns a new build strategy using the specified <see cref="ICompilerModule" /> with
-        ///     <see cref="ModelBuilder.BuildStrategy" />.
+        ///     Returns a configuration using the specified <see cref="IConfigurationModule" />.
         /// </summary>
-        /// <typeparam name="T">The type of compiler module to create the build strategy with.</typeparam>
-        /// <returns>A new execute strategy.</returns>
-        public static IBuildStrategy UsingModule<T>() where T : ICompilerModule, new()
+        /// <typeparam name="T">The type of configuration module to use.</typeparam>
+        /// <returns>The build configuration.</returns>
+        public static IBuildConfiguration UsingModule<T>() where T : IConfigurationModule, new()
         {
-            var compiler = BuildStrategy.Clone();
+            var configuration = new BuildConfiguration();
+            var module = new T();
 
-            compiler.AddCompilerModule<T>();
+            module.Configure(configuration);
 
-            return compiler.Compile();
+            return configuration;
         }
 
         private static IBuildStrategy CreateDefaultBuildStrategy()

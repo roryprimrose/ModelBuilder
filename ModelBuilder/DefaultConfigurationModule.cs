@@ -4,6 +4,10 @@
     using ModelBuilder.TypeCreators;
     using ModelBuilder.ValueGenerators;
 
+    /// <summary>
+    /// The <see cref="DefaultConfigurationModule"/>
+    /// class is used to provide the default configuration for building values.
+    /// </summary>
     public class DefaultConfigurationModule : IConfigurationModule
     {
         /// <inheritdoc />

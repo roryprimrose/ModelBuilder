@@ -77,7 +77,7 @@
         [Fact]
         public void UsingModuleReturnsBuildStrategyWithModuleModificationsTest()
         {
-            var actual = Model.UsingModule<TestCompilerModule>();
+            var actual = Model.UsingModule<TestConfigurationModule>();
 
             actual.ValueGenerators.FirstOrDefault(x => x.GetType() == typeof(DummyValueGenerator)).Should().NotBeNull();
         }
