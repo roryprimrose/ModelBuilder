@@ -18,7 +18,7 @@
         /// </summary>
         /// <param name="evaluator">The function that determines whether the rule is a match.</param>
         /// <param name="priority">The priority of the rule.</param>
-        /// <exception cref="ArgumentNullException">The <paramref name="evaluator" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="evaluator" /> parameter is <c>null</c>.</exception>
         public ExecuteOrderRule(Func<Type, Type, string, bool> evaluator, int priority)
         {
             if (evaluator == null)

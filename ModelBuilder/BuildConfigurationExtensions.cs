@@ -13,7 +13,7 @@
         /// </summary>
         /// <param name="configuration">The build configuration to create the instance with.</param>
         /// <returns>The new build strategy compiler.</returns>
-        /// <exception cref="ArgumentNullException">The <paramref name="configuration" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="configuration" /> parameter is <c>null</c>.</exception>
         public static IBuildStrategyCompiler Clone(this IBuildConfiguration configuration)
         {
             if (configuration == null)

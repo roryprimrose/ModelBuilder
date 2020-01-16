@@ -14,7 +14,7 @@
         /// </summary>
         /// <param name="targetType">The target type that matches the rule.</param>
         /// <param name="propertyName">The property name that matches the rule.</param>
-        /// <exception cref="ArgumentNullException">The <paramref name="targetType" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="targetType" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentException">
         ///     The <paramref name="propertyName" /> parameter is null, only contains whitespace or
         ///     is empty.

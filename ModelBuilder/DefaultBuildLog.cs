@@ -29,7 +29,7 @@
         }
 
         /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
         public void CircularReferenceDetected(Type type)
         {
             if (type == null)
@@ -47,9 +47,9 @@
         }
 
         /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">The <paramref name="instanceType" /> parameter is null.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="parameterType" /> parameter is null.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="parameterName" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="instanceType" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="parameterType" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="parameterName" /> parameter is <c>null</c>.</exception>
         public void CreatedParameter(Type instanceType, Type parameterType, string parameterName, object context)
         {
             if (instanceType == null)
@@ -77,9 +77,9 @@
         }
 
         /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">The <paramref name="propertyType" /> parameter is null.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="propertyName" /> parameter is null.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="context" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="propertyType" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="propertyName" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="context" /> parameter is <c>null</c>.</exception>
         public void CreatedProperty(Type propertyType, string propertyName, object context)
         {
             if (propertyType == null)
@@ -107,7 +107,7 @@
         }
 
         /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
         public void CreatedType(Type type, object context)
         {
             if (type == null)
@@ -121,9 +121,9 @@
         }
 
         /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">The <paramref name="instanceType" /> parameter is null.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="parameterType" /> parameter is null.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="parameterName" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="instanceType" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="parameterType" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="parameterName" /> parameter is <c>null</c>.</exception>
         public void CreatingParameter(Type instanceType, Type parameterType, string parameterName, object context)
         {
             if (instanceType == null)
@@ -151,9 +151,9 @@
         }
 
         /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">The <paramref name="propertyType" /> parameter is null.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="propertyName" /> parameter is null.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="context" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="propertyType" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="propertyName" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="context" /> parameter is <c>null</c>.</exception>
         public void CreatingProperty(Type propertyType, string propertyName, object context)
         {
             if (propertyType == null)
@@ -181,8 +181,8 @@
         }
 
         /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is null.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="creatorType" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="creatorType" /> parameter is <c>null</c>.</exception>
         public void CreatingType(Type type, Type creatorType, object context)
         {
             if (type == null)
@@ -201,8 +201,8 @@
         }
 
         /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is null.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="generatorType" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="generatorType" /> parameter is <c>null</c>.</exception>
         public void CreatingValue(Type type, Type generatorType, object context)
         {
             if (type == null)
@@ -219,9 +219,9 @@
         }
 
         /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">The <paramref name="propertyType" /> parameter is null.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="propertyName" /> parameter is null.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="context" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="propertyType" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="propertyName" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="context" /> parameter is <c>null</c>.</exception>
         public void IgnoringProperty(Type propertyType, string propertyName, object context)
         {
             if (propertyType == null)
@@ -247,8 +247,8 @@
         }
 
         /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">The <paramref name="source" /> parameter is null.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="target" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="source" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="target" /> parameter is <c>null</c>.</exception>
         public void MappedType(Type source, Type target)
         {
             if (source == null)
@@ -265,7 +265,7 @@
         }
 
         /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">The <paramref name="instance" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="instance" /> parameter is <c>null</c>.</exception>
         public void PopulatedInstance(object instance)
         {
             if (instance == null)
@@ -279,7 +279,7 @@
         }
 
         /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">The <paramref name="instance" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="instance" /> parameter is <c>null</c>.</exception>
         public void PopulatingInstance(object instance)
         {
             if (instance == null)
@@ -293,8 +293,8 @@
         }
 
         /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is null.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="postBuildType" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="postBuildType" /> parameter is <c>null</c>.</exception>
         public void PostBuildAction(Type type, Type postBuildType, object context)
         {
             if (type == null)

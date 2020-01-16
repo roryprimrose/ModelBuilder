@@ -23,15 +23,15 @@
         /// <param name="typeMappingRules">The type mapping rules.</param>
         /// <param name="executeOrderRules">The execute order rules.</param>
         /// <param name="postBuildActions">The post-build actions.</param>
-        /// <exception cref="ArgumentNullException">The <paramref name="constructorResolver" /> parameter is null.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="propertyResolver" /> parameter is null.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="creationRules" /> parameter is null.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="typeCreators" /> parameter is null.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="valueGenerators" /> parameter is null.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="ignoreRules" /> parameter is null.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="typeMappingRules" /> parameter is null.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="executeOrderRules" /> parameter is null.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="postBuildActions" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="constructorResolver" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="propertyResolver" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="creationRules" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="typeCreators" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="valueGenerators" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="ignoreRules" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="typeMappingRules" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="executeOrderRules" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="postBuildActions" /> parameter is <c>null</c>.</exception>
         public BuildStrategy(
             IConstructorResolver constructorResolver,
             IPropertyResolver propertyResolver,
@@ -58,7 +58,7 @@
         ///     Initializes a new instance of the <see cref="BuildStrategy" /> class.
         /// </summary>
         /// <param name="strategy">The build strategy.</param>
-        /// <exception cref="ArgumentNullException">The <paramref name="strategy" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="strategy" /> parameter is <c>null</c>.</exception>
         public BuildStrategy(IBuildStrategy strategy) : base(strategy)
         {
         }

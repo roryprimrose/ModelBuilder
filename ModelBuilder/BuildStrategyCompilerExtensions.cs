@@ -277,7 +277,7 @@
         /// <param name="value">The static value returned by the rule.</param>
         /// <returns>The compiler.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="compiler" /> parameter is <c>null</c>.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="expression" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="expression" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentException">The <paramref name="expression" /> parameter does not represent a property.</exception>
         /// <exception cref="ArgumentException">
         ///     The <paramref name="expression" /> parameter does not match a property on the type
@@ -350,7 +350,7 @@
         /// <param name="priority">The priority of the rule.</param>
         /// <returns>The compiler.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="compiler" /> parameter is <c>null</c>.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="expression" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="expression" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentException">The <paramref name="expression" /> parameter does not represent a property.</exception>
         /// <exception cref="ArgumentException">
         ///     The <paramref name="expression" /> parameter does not match a property on the type
@@ -421,7 +421,7 @@
         /// <param name="expression">The expression that identifies a property on <typeparamref name="T" /></param>
         /// <returns>The compiler.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="compiler" /> parameter is <c>null</c>.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="expression" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="expression" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentException">The <paramref name="expression" /> parameter does not represent a property.</exception>
         /// <exception cref="ArgumentException">
         ///     The <paramref name="expression" /> parameter does not match a property on the type

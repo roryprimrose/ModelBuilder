@@ -9,7 +9,7 @@
     public class NumericValueGenerator : ValueGeneratorBase
     {
         /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
         public override bool IsSupported(Type type, string referenceName, IBuildChain buildChain)
         {
             if (type == null)

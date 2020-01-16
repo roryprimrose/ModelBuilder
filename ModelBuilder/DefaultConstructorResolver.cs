@@ -15,7 +15,7 @@
     public class DefaultConstructorResolver : IConstructorResolver
     {
         /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
         /// <exception cref="MissingMemberException">
         ///     The <paramref name="type" /> parameter does not have a public constructor and
         ///     no arguments are supplied.

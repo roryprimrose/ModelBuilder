@@ -145,7 +145,7 @@
         }
 
         /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
         public virtual bool IsSupported(Type type)
         {
             if (type == null)
@@ -220,8 +220,8 @@
         }
 
         /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">The <paramref name="min" /> parameter is null.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="max" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="min" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="max" /> parameter is <c>null</c>.</exception>
         public object NextValue(Type type, object min, object max)
         {
             ValidateRequestedType(type);
@@ -313,7 +313,7 @@
         }
 
         /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">The <paramref name="buffer" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="buffer" /> parameter is <c>null</c>.</exception>
         public void NextValue(byte[] buffer)
         {
             if (buffer == null)

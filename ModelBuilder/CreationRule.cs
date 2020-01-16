@@ -23,8 +23,8 @@
         /// <param name="evaluator">The function that determines whether the rule is a match.</param>
         /// <param name="priority">The priority of the rule.</param>
         /// <param name="creator">The function that creates the value for the rule.</param>
-        /// <exception cref="ArgumentNullException">The <paramref name="evaluator" /> parameter is null.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="creator" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="evaluator" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="creator" /> parameter is <c>null</c>.</exception>
         public CreationRule(
             Func<Type, string, bool> evaluator,
             int priority,
@@ -41,7 +41,7 @@
         /// <param name="evaluator">The function that determines whether the rule is a match.</param>
         /// <param name="priority">The priority of the rule.</param>
         /// <param name="value">The static value returned by the rule.</param>
-        /// <exception cref="ArgumentNullException">The <paramref name="evaluator" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="evaluator" /> parameter is <c>null</c>.</exception>
         public CreationRule(Func<Type, string, bool> evaluator, int priority, object value) : this(
             evaluator,
             priority,
@@ -60,7 +60,7 @@
         ///     The <paramref name="targetType" /> and <paramref name="propertyExpression" />
         ///     parameters are both null.
         /// </exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="creator" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="creator" /> parameter is <c>null</c>.</exception>
         public CreationRule(
             Type targetType,
             Regex propertyExpression,
@@ -124,7 +124,7 @@
         ///     The <paramref name="targetType" /> and <paramref name="propertyName" />
         ///     parameters are both null.
         /// </exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="creator" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="creator" /> parameter is <c>null</c>.</exception>
         public CreationRule(
             Type targetType,
             string propertyName,

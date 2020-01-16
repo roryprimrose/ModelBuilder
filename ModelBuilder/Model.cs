@@ -18,7 +18,7 @@
         /// <param name="instanceType">The type of instance to create.</param>
         /// <param name="args">The constructor arguments to create the type with.</param>
         /// <returns>The new instance.</returns>
-        /// <exception cref="ArgumentNullException">The <paramref name="instanceType" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="instanceType" /> parameter is <c>null</c>.</exception>
         public static object Create(Type instanceType, params object[] args)
         {
             if (instanceType == null)
@@ -48,7 +48,7 @@
         /// <typeparam name="T">The type of instance that matches the rule.</typeparam>
         /// <param name="expression">The expression that identifies a property on <typeparamref name="T" /></param>
         /// <returns>A new build strategy.</returns>
-        /// <exception cref="ArgumentNullException">The <paramref name="expression" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="expression" /> parameter is <c>null</c>.</exception>
         public static IBuildStrategy Ignoring<T>(Expression<Func<T, object>> expression)
         {
             if (expression == null)
@@ -136,7 +136,7 @@
         /// <summary>
         ///     Gets or sets the current build strategy to use in this application domain.
         /// </summary>
-        /// <exception cref="ArgumentNullException">The <paramref name="value" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="value" /> parameter is <c>null</c>.</exception>
         public static IBuildStrategy BuildStrategy
         {
             get

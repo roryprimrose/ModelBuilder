@@ -11,7 +11,7 @@
     public class ArrayTypeCreator : DefaultTypeCreator
     {
         /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
         public override bool CanCreate(Type type, string referenceName, IBuildChain buildChain)
         {
             // Creating using this creator has the same rules for populate as it does for create
@@ -19,7 +19,7 @@
         }
 
         /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
         public override bool CanPopulate(Type type, string referenceName, IBuildChain buildChain)
         {
             if (type == null)
@@ -36,7 +36,7 @@
         }
 
         /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
         [SuppressMessage(
             "Microsoft.Design",
             "CA1062:Validate arguments of public methods",
@@ -70,8 +70,8 @@
         }
 
         /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">The <paramref name="instance" /> parameter is null.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="instance" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is <c>null</c>.</exception>
         public override object Populate(object instance, IExecuteStrategy executeStrategy)
         {
             if (instance == null)
@@ -145,7 +145,7 @@
         /// <param name="executeStrategy">The execute strategy.</param>
         /// <param name="previousItem">The previous item generated, or <c>null</c>.</param>
         /// <returns>The new item generated.</returns>
-        /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is <c>null</c>.</exception>
         protected virtual object CreateChildItem(Type type, IExecuteStrategy executeStrategy, object previousItem)
         {
             if (executeStrategy == null)

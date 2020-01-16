@@ -53,8 +53,8 @@
         /// <param name="type">The type of value to generate.</param>
         /// <param name="referenceName">Identifies the possible parameter or property name this value is intended for.</param>
         /// <param name="executeStrategy">The execution strategy.</param>
-        /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is null.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is <c>null</c>.</exception>
         /// <exception cref="NotSupportedException">This generator does not support creating the requested value.</exception>
         protected virtual void VerifyGenerateRequest(Type type, string referenceName, IExecuteStrategy executeStrategy)
         {

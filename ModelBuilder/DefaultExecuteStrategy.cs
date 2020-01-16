@@ -20,7 +20,7 @@
         private readonly BuildHistory _buildHistory = new BuildHistory();
 
         /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
         /// <exception cref="NotSupportedException">
         ///     No <see cref="IValueGenerator" /> or <see cref="ITypeCreator" /> was found to
         ///     generate a requested type.
@@ -39,8 +39,8 @@
         }
 
         /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">The <paramref name="configuration" /> parameter is null.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="buildLog" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="configuration" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="buildLog" /> parameter is <c>null</c>.</exception>
         public void Initialize(IBuildConfiguration configuration, IBuildLog buildLog)
         {
             Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
@@ -48,7 +48,7 @@
         }
 
         /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">The <paramref name="instance" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="instance" /> parameter is <c>null</c>.</exception>
         /// <exception cref="NotSupportedException">
         ///     No <see cref="IValueGenerator" /> or <see cref="ITypeCreator" /> was found to
         ///     generate a requested type.
@@ -90,7 +90,7 @@
         /// <param name="instance">The instance to populate.</param>
         /// <param name="args">The constructor parameters for the instance.</param>
         /// <returns>The updated instance.</returns>
-        /// <exception cref="ArgumentNullException">The <paramref name="instance" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="instance" /> parameter is <c>null</c>.</exception>
         protected virtual object AutoPopulateInstance(object instance, object[] args)
         {
             if (instance == null)
@@ -130,7 +130,7 @@
         /// <param name="context">The possible context object this value is being created for.</param>
         /// <param name="args">The arguments to create the instance with.</param>
         /// <returns>A new instance.</returns>
-        /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
         /// <exception cref="NotSupportedException">The <paramref name="type" /> parameter can not be created using this strategy.</exception>
         [SuppressMessage(
             "Microsoft.Design",

@@ -13,7 +13,7 @@ namespace ModelBuilder
         /// </summary>
         /// <param name="generator">The generator.</param>
         /// <returns>A new random value.</returns>
-        /// <exception cref="ArgumentNullException">The <paramref name="generator" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="generator" /> parameter is <c>null</c>.</exception>
         public static T NextValue<T>(this IRandomGenerator generator) where T : struct
         {
             if (generator == null)
@@ -35,7 +35,7 @@ namespace ModelBuilder
         /// <param name="generator">The generator.</param>
         /// <param name="max">The maximum value.</param>
         /// <returns>A new random value.</returns>
-        /// <exception cref="ArgumentNullException">The <paramref name="generator" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="generator" /> parameter is <c>null</c>.</exception>
         public static T NextValue<T>(this IRandomGenerator generator, T max)
         {
             if (generator == null)
@@ -56,7 +56,7 @@ namespace ModelBuilder
         /// <param name="min">The minimum value.</param>
         /// <param name="max">The maximum value.</param>
         /// <returns>A new random value.</returns>
-        /// <exception cref="ArgumentNullException">The <paramref name="generator" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="generator" /> parameter is <c>null</c>.</exception>
         public static T NextValue<T>(this IRandomGenerator generator, T min, T max)
         {
             if (generator == null)
@@ -75,8 +75,8 @@ namespace ModelBuilder
         /// <param name="generator">The generator.</param>
         /// <param name="type">The type of number to generate.</param>
         /// <returns>A new random value.</returns>
-        /// <exception cref="ArgumentNullException">The <paramref name="generator" /> parameter is null.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="generator" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
         public static object NextValue(this IRandomGenerator generator, Type type)
         {
             if (generator == null)
@@ -102,8 +102,8 @@ namespace ModelBuilder
         /// <param name="max">The maximum value.</param>
         /// <param name="type">The type of number to generate.</param>
         /// <returns>A new random value.</returns>
-        /// <exception cref="ArgumentNullException">The <paramref name="generator" /> parameter is null.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="generator" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
         public static object NextValue(this IRandomGenerator generator, Type type, object max)
         {
             if (generator == null)

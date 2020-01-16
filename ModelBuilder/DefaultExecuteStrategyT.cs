@@ -32,7 +32,7 @@
         }
 
         /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">The <paramref name="instance" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="instance" /> parameter is <c>null</c>.</exception>
         /// <exception cref="NotSupportedException">
         ///     No <see cref="IValueGenerator" /> or <see cref="ITypeCreator" /> was found to
         ///     generate a requested type.

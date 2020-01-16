@@ -28,7 +28,7 @@
         };
 
         /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
         public override bool CanCreate(Type type, string referenceName, IBuildChain buildChain)
         {
             if (type == null)
@@ -81,7 +81,7 @@
         }
 
         /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
         public override bool CanPopulate(Type type, string referenceName, IBuildChain buildChain)
         {
             if (type == null)
@@ -126,7 +126,7 @@
         /// <param name="executeStrategy">The execute strategy.</param>
         /// <param name="previousItem">The previous item generated, or <c>null</c>.</param>
         /// <returns>The new item generated.</returns>
-        /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is <c>null</c>.</exception>
         protected virtual object CreateChildItem(Type type, IExecuteStrategy executeStrategy, object previousItem)
         {
             if (executeStrategy == null)
