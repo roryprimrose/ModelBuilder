@@ -82,16 +82,6 @@
         }
 
         /// <summary>
-        ///     Returns a new <see cref="IBuildStrategy" /> of the specified type.
-        /// </summary>
-        /// <typeparam name="T">The type of build strategy to create.</typeparam>
-        /// <returns>A new build strategy.</returns>
-        public static T UsingBuildStrategy<T>() where T : IBuildStrategy, new()
-        {
-            return new T();
-        }
-
-        /// <summary>
         ///     Returns a new execute strategy using <see cref="ModelBuilder.BuildStrategy" />.
         /// </summary>
         /// <typeparam name="T">The type of execute strategy to create.</typeparam>
@@ -109,11 +99,8 @@
         public static IBuildConfiguration UsingModule<T>() where T : IConfigurationModule, new()
         {
             var configuration = new BuildConfiguration();
-            var module = new T();
 
-            module.Configure(configuration);
-
-            return configuration;
+            return configuration.AddConfigurationModule<T>();
         }
 
         private static IBuildStrategy CreateDefaultBuildStrategy()

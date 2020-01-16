@@ -51,22 +51,6 @@
         }
 
         [Fact]
-        public void UsingBuildStrategyReturnsNewBuilderStrategyTest()
-        {
-            var actual = Model.UsingBuildStrategy<NullBuildStrategy>();
-
-            actual.Should().BeOfType<NullBuildStrategy>();
-        }
-
-        [Fact]
-        public void UsingBuildStrategyReturnsSpecifiedBuildStrategyTest()
-        {
-            var actual = Model.UsingBuildStrategy<DummyBuildStrategy>();
-
-            actual.Should().BeOfType(typeof(DummyBuildStrategy));
-        }
-
-        [Fact]
         public void UsingExecuteStrategyReturnsSpecifiedExecuteStrategyTest()
         {
             var actual = Model.UsingExecuteStrategy<DummyExecuteStrategy>();

@@ -1,6 +1,7 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
+    using System.Collections.ObjectModel;
     using System.IO;
     using System.Linq;
     using System.Linq.Expressions;
@@ -14,11 +15,11 @@
     public class BuildConfigurationExtensionsTests
     {
         [Fact]
-        public void AddCompilerModuleAddsRuleToCompilerTest()
+        public void AddConfigurationModuleAddsRuleToCompilerTest()
         {
             var target = new BuildConfiguration();
 
-            var config = target.AddCompilerModule<TestConfigurationModule>();
+            var config = target.AddConfigurationModule<TestConfigurationModule>();
 
             config.Should().BeSameAs(target);
 
@@ -28,9 +29,9 @@
         }
 
         [Fact]
-        public void AddCompilerModuleThrowsExceptionWithNullCompilerTest()
+        public void AddConfigurationModuleThrowsExceptionWithNullCompilerTest()
         {
-            Action action = () => BuildStrategyCompilerExtensions.AddCompilerModule<TestCompilerModule>(null);
+            Action action = () => BuildConfigurationExtensions.AddConfigurationModule<TestConfigurationModule>(null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -50,7 +51,7 @@
         [Fact]
         public void AddCreationRuleThrowsExceptionWithNullCompilerTest()
         {
-            Action action = () => BuildStrategyCompilerExtensions.AddCreationRule<DummyCreationRule>(null);
+            Action action = () => BuildConfigurationExtensions.AddCreationRule<DummyCreationRule>(null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -81,7 +82,7 @@
             var value = Guid.NewGuid().ToString();
 
             Action action = () =>
-                BuildStrategyCompilerExtensions.AddCreationRule<Person>(null, x => x.FirstName, priority, value);
+                BuildConfigurationExtensions.AddCreationRule<Person>(null, x => x.FirstName, priority, value);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -114,7 +115,7 @@
         [Fact]
         public void AddExecuteOrderRuleThrowsExceptionWithNullCompilerTest()
         {
-            Action action = () => BuildStrategyCompilerExtensions.AddExecuteOrderRule<DummyExecuteOrderRule>(null);
+            Action action = () => BuildConfigurationExtensions.AddExecuteOrderRule<DummyExecuteOrderRule>(null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -145,7 +146,7 @@
             var priority = Environment.TickCount;
 
             Action action = () =>
-                BuildStrategyCompilerExtensions.AddExecuteOrderRule<Person>(null, x => x.FirstName, priority);
+                BuildConfigurationExtensions.AddExecuteOrderRule<Person>(null, x => x.FirstName, priority);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -177,7 +178,7 @@
         [Fact]
         public void AddIgnoreRuleThrowsExceptionWithNullCompilerTest()
         {
-            Action action = () => BuildStrategyCompilerExtensions.AddIgnoreRule<DummyIgnoreRule>(null);
+            Action action = () => BuildConfigurationExtensions.AddIgnoreRule<DummyIgnoreRule>(null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -198,7 +199,7 @@
         [Fact]
         public void AddIgnoreRuleWithExpressionThrowsExceptionWithNullCompilerTest()
         {
-            Action action = () => BuildStrategyCompilerExtensions.AddIgnoreRule<Person>(null, x => x.FirstName);
+            Action action = () => BuildConfigurationExtensions.AddIgnoreRule<Person>(null, x => x.FirstName);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -228,7 +229,7 @@
         [Fact]
         public void AddPostBuildActionThrowsExceptionWithNullCompilerTest()
         {
-            Action action = () => BuildStrategyCompilerExtensions.AddPostBuildAction<DummyPostBuildAction>(null);
+            Action action = () => BuildConfigurationExtensions.AddPostBuildAction<DummyPostBuildAction>(null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -248,7 +249,7 @@
         [Fact]
         public void AddTypeCreatorThrowsExceptionWithNullCompilerTest()
         {
-            Action action = () => BuildStrategyCompilerExtensions.AddTypeCreator<DefaultTypeCreator>(null);
+            Action action = () => BuildConfigurationExtensions.AddTypeCreator<DefaultTypeCreator>(null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -268,7 +269,7 @@
         [Fact]
         public void AddTypeMappingRuleThrowsExceptionWithNullCompilerTest()
         {
-            Action action = () => BuildStrategyCompilerExtensions.AddTypeMappingRule<DummyTypeMappingRule>(null);
+            Action action = () => BuildConfigurationExtensions.AddTypeMappingRule<DummyTypeMappingRule>(null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -288,7 +289,7 @@
         [Fact]
         public void AddValueGeneratorThrowsExceptionWithNullCompilerTest()
         {
-            Action action = () => BuildStrategyCompilerExtensions.AddValueGenerator<StringValueGenerator>(null);
+            Action action = () => BuildConfigurationExtensions.AddValueGenerator<StringValueGenerator>(null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -296,9 +297,9 @@
         [Fact]
         public void AddWithCompilerModuleThrowsExceptionWithNullCompilerTest()
         {
-            var module = new TestCompilerModule();
+            var module = new TestConfigurationModule();
 
-            Action action = () => BuildStrategyCompilerExtensions.Add(null, module);
+            Action action = () => BuildConfigurationExtensions.Add(null, module);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -306,9 +307,9 @@
         [Fact]
         public void AddWithCompilerModuleThrowsExceptionWithNullRuleTest()
         {
-            var target = Substitute.For<IBuildStrategyCompiler>();
+            var target = Substitute.For<IBuildConfiguration>();
 
-            Action action = () => target.Add((ICompilerModule) null);
+            Action action = () => target.Add((IConfigurationModule) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -342,7 +343,7 @@
         {
             var rule = new CreationRule(typeof(Person), "FirstName", Environment.TickCount, (object) null);
 
-            Action action = () => BuildStrategyCompilerExtensions.Add(null, rule);
+            Action action = () => BuildConfigurationExtensions.Add(null, rule);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -350,7 +351,7 @@
         [Fact]
         public void AddWithCreationRuleThrowsExceptionWithNullRuleTest()
         {
-            var target = Substitute.For<IBuildStrategyCompiler>();
+            var target = Substitute.For<IBuildConfiguration>();
 
             Action action = () => target.Add((CreationRule) null);
 
@@ -374,7 +375,7 @@
         {
             var rule = new ExecuteOrderRule(typeof(Person), typeof(string), "FirstName", Environment.TickCount);
 
-            Action action = () => BuildStrategyCompilerExtensions.Add(null, rule);
+            Action action = () => BuildConfigurationExtensions.Add(null, rule);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -382,7 +383,7 @@
         [Fact]
         public void AddWithExecuteOrderRuleThrowsExceptionWithNullRuleTest()
         {
-            var target = Substitute.For<IBuildStrategyCompiler>();
+            var target = Substitute.For<IBuildConfiguration>();
 
             Action action = () => target.Add((ExecuteOrderRule) null);
 
@@ -406,7 +407,7 @@
         {
             var rule = new IgnoreRule(typeof(Person), "FirstName");
 
-            Action action = () => BuildStrategyCompilerExtensions.Add(null, rule);
+            Action action = () => BuildConfigurationExtensions.Add(null, rule);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -414,7 +415,7 @@
         [Fact]
         public void AddWithIgnoreRuleThrowsExceptionWithNullRuleTest()
         {
-            var target = Substitute.For<IBuildStrategyCompiler>();
+            var target = Substitute.For<IBuildConfiguration>();
 
             Action action = () => target.Add((IgnoreRule) null);
 
@@ -438,7 +439,7 @@
         {
             var postBuildAction = new DummyPostBuildAction();
 
-            Action action = () => BuildStrategyCompilerExtensions.Add(null, postBuildAction);
+            Action action = () => BuildConfigurationExtensions.Add(null, postBuildAction);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -446,7 +447,7 @@
         [Fact]
         public void AddWithPostBuildActionThrowsExceptionWithNullRuleTest()
         {
-            var target = Substitute.For<IBuildStrategyCompiler>();
+            var target = Substitute.For<IBuildConfiguration>();
 
             Action action = () => target.Add((IPostBuildAction) null);
 
@@ -470,7 +471,7 @@
         {
             var rule = new DefaultTypeCreator();
 
-            Action action = () => BuildStrategyCompilerExtensions.Add(null, rule);
+            Action action = () => BuildConfigurationExtensions.Add(null, rule);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -478,7 +479,7 @@
         [Fact]
         public void AddWithTypeCreatorThrowsExceptionWithNullRuleTest()
         {
-            var target = Substitute.For<IBuildStrategyCompiler>();
+            var target = Substitute.For<IBuildConfiguration>();
 
             Action action = () => target.Add((ITypeCreator) null);
 
@@ -502,7 +503,7 @@
         {
             var rule = new TypeMappingRule(typeof(Stream), typeof(MemoryStream));
 
-            Action action = () => BuildStrategyCompilerExtensions.Add(null, rule);
+            Action action = () => BuildConfigurationExtensions.Add(null, rule);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -510,7 +511,7 @@
         [Fact]
         public void AddWithTypeMappingRuleThrowsExceptionWithNullRuleTest()
         {
-            var target = Substitute.For<IBuildStrategyCompiler>();
+            var target = Substitute.For<IBuildConfiguration>();
 
             Action action = () => target.Add((TypeMappingRule) null);
 
@@ -534,7 +535,7 @@
         {
             var rule = new StringValueGenerator();
 
-            Action action = () => BuildStrategyCompilerExtensions.Add(null, rule);
+            Action action = () => BuildConfigurationExtensions.Add(null, rule);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -542,11 +543,195 @@
         [Fact]
         public void AddWithValueGeneratorThrowsExceptionWithNullRuleTest()
         {
-            var target = Substitute.For<IBuildStrategyCompiler>();
+            var target = Substitute.For<IBuildConfiguration>();
 
             Action action = () => target.Add((IValueGenerator) null);
 
             action.Should().Throw<ArgumentNullException>();
+        }
+
+
+        [Fact]
+        public void CreateReturnsInstanceCreatedByDefaultExecuteStrategyTest()
+        {
+            var value = Guid.NewGuid();
+
+            var generator = Substitute.For<IValueGenerator>();
+            var generators = new Collection<IValueGenerator>
+            {
+                generator
+            };
+            var target = Substitute.For<IBuildConfiguration>();
+
+            target.ValueGenerators.Returns(generators);
+            generator.IsSupported(typeof(Guid), null, Arg.Any<IBuildChain>()).Returns(true);
+            generator.Generate(typeof(Guid), null, Arg.Any<IExecuteStrategy>()).Returns(value);
+
+            var actual = target.Create(typeof(Guid));
+
+            actual.Should().Be(value);
+        }
+
+        [Fact]
+        public void CreateThrowsExceptionWithNullBuildConfigurationTest()
+        {
+            Action action = () => ((IBuildConfiguration) null).Create(typeof(Guid));
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void CreateThrowsExceptionWithNullInstanceTypeTest()
+        {
+            var target = Substitute.For<IBuildConfiguration>();
+
+            Action action = () => target.Create(null);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void CreateTReturnsInstanceCreatedByDefaultExecuteStrategyTest()
+        {
+            var value = Guid.NewGuid();
+
+            var generator = Substitute.For<IValueGenerator>();
+            var generators = new Collection<IValueGenerator>
+            {
+                generator
+            };
+            var target = Substitute.For<IBuildConfiguration>();
+
+            target.ValueGenerators.Returns(generators);
+            generator.IsSupported(typeof(Guid), null, Arg.Any<IBuildChain>()).Returns(true);
+            generator.Generate(typeof(Guid), null, Arg.Any<IExecuteStrategy>()).Returns(value);
+
+            var actual = target.Create<Guid>();
+
+            actual.Should().Be(value);
+        }
+
+        [Fact]
+        public void CreateTThrowsExceptionWithNullBuildConfigurationTest()
+        {
+            Action action = () => ((IBuildConfiguration) null).Create<Guid>();
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void IgnoringReturnsNewBuildConfigurationWithIgnoreRuleAppendedTest()
+        {
+            var ignoreRules = new Collection<IgnoreRule>();
+
+            var target = Substitute.For<IBuildConfiguration>();
+
+            target.IgnoreRules.Returns(ignoreRules);
+
+            var actual = target.Ignoring<Person>(x => x.Priority);
+
+            actual.IgnoreRules.Should().NotBeEmpty();
+
+            var matchingRule =
+                actual.IgnoreRules.FirstOrDefault(x => x.PropertyName == "Priority" && x.TargetType == typeof(Person));
+
+            matchingRule.Should().NotBeNull();
+        }
+
+        [Fact]
+        public void IgnoringThrowsExceptionWithNullBuildConfigurationTest()
+        {
+            Action action = () => ((IBuildConfiguration) null).Ignoring<Person>(x => x.Priority);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void IgnoringThrowsExceptionWithNullExpressionTest()
+        {
+            var target = Substitute.For<IBuildConfiguration>();
+
+            Action action = () => target.Ignoring<Person>(null);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void MappingReturnsNewBuildConfigurationWithTypeMappingRuleAppendedTest()
+        {
+            var typeMappings = new Collection<TypeMappingRule>();
+
+            var target = Substitute.For<IBuildConfiguration>();
+
+            target.TypeMappingRules.Returns(typeMappings);
+
+            var actual = target.Mapping<Stream, MemoryStream>();
+
+            actual.TypeMappingRules.Should().NotBeEmpty();
+
+            var matchingRule = actual.TypeMappingRules.FirstOrDefault(
+                x => x.SourceType == typeof(Stream) && x.TargetType == typeof(MemoryStream));
+
+            matchingRule.Should().NotBeNull();
+        }
+
+        [Fact]
+        public void MappingThrowsExceptionWithNullBuildConfigurationTest()
+        {
+            Action action = () => ((IBuildConfiguration) null).Mapping<Stream, MemoryStream>();
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void PopulateThrowsExceptionWithNullBuildConfigurationTest()
+        {
+            var model = new Person();
+
+            Action action = () => ((IBuildConfiguration) null).Populate(model);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void PopulateThrowsExceptionWithNullInstanceTest()
+        {
+            var target = Substitute.For<IBuildConfiguration>();
+
+            Action action = () => target.Populate<Person>(null);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void PopulateUsesDefaultExecuteStrategyToPopulateInstanceTest()
+        {
+            var value = Guid.NewGuid();
+            var expected = new SlimModel();
+
+            var target = Substitute.For<IBuildConfiguration>();
+            var creator = Substitute.For<ITypeCreator>();
+            var creators = new Collection<ITypeCreator>
+            {
+                creator
+            };
+            var generator = Substitute.For<IValueGenerator>();
+            var generators = new Collection<IValueGenerator>
+            {
+                generator
+            };
+
+            target.TypeCreators.Returns(creators);
+            target.ValueGenerators.Returns(generators);
+            creator.CanPopulate(typeof(SlimModel), null, Arg.Any<IBuildChain>()).Returns(true);
+            creator.Populate(expected, Arg.Any<IExecuteStrategy>()).Returns(expected);
+            generator.IsSupported(typeof(Guid), "Value", Arg.Is<IBuildChain>(x => x.Last == expected)).Returns(true);
+            generator.Generate(typeof(Guid), "Value", Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == expected))
+                .Returns(value);
+
+            var actual = target.Populate(expected);
+
+            actual.Should().Be(expected);
         }
 
         [Fact]
@@ -576,7 +761,7 @@
         [Fact]
         public void RemoveCreationRuleThrowsExceptionWithNullCompilerTest()
         {
-            Action action = () => BuildStrategyCompilerExtensions.RemoveCreationRule<DummyCreationRule>(null);
+            Action action = () => BuildConfigurationExtensions.RemoveCreationRule<DummyCreationRule>(null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -608,7 +793,7 @@
         [Fact]
         public void RemoveExecuteOrderRuleThrowsExceptionWithNullCompilerTest()
         {
-            Action action = () => BuildStrategyCompilerExtensions.RemoveExecuteOrderRule<DummyExecuteOrderRule>(null);
+            Action action = () => BuildConfigurationExtensions.RemoveExecuteOrderRule<DummyExecuteOrderRule>(null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -640,7 +825,7 @@
         [Fact]
         public void RemoveIgnoreRuleThrowsExceptionWithNullCompilerTest()
         {
-            Action action = () => BuildStrategyCompilerExtensions.RemoveIgnoreRule<DummyIgnoreRule>(null);
+            Action action = () => BuildConfigurationExtensions.RemoveIgnoreRule<DummyIgnoreRule>(null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -672,7 +857,7 @@
         [Fact]
         public void RemovePostBuildActionThrowsExceptionWithNullCompilerTest()
         {
-            Action action = () => BuildStrategyCompilerExtensions.RemovePostBuildAction<DummyPostBuildAction>(null);
+            Action action = () => BuildConfigurationExtensions.RemovePostBuildAction<DummyPostBuildAction>(null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -704,7 +889,7 @@
         [Fact]
         public void RemoveTypeCreatorThrowsExceptionWithNullCompilerTest()
         {
-            Action action = () => BuildStrategyCompilerExtensions.RemoveTypeCreator<DefaultTypeCreator>(null);
+            Action action = () => BuildConfigurationExtensions.RemoveTypeCreator<DefaultTypeCreator>(null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -736,7 +921,7 @@
         [Fact]
         public void RemoveTypeMappingRuleThrowsExceptionWithNullCompilerTest()
         {
-            Action action = () => BuildStrategyCompilerExtensions.RemoveTypeMappingRule<DummyTypeMappingRule>(null);
+            Action action = () => BuildConfigurationExtensions.RemoveTypeMappingRule<DummyTypeMappingRule>(null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -768,7 +953,26 @@
         [Fact]
         public void RemoveValueGeneratorThrowsExceptionWithNullCompilerTest()
         {
-            Action action = () => BuildStrategyCompilerExtensions.RemoveValueGenerator<StringValueGenerator>(null);
+            Action action = () => BuildConfigurationExtensions.RemoveValueGenerator<StringValueGenerator>(null);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void UsingExecuteStrategyReturnsExecuteStrategyWithBuildConfigurationTest()
+        {
+            var target = Substitute.For<IBuildConfiguration>();
+
+            var actual = target.UsingExecuteStrategy<DefaultExecuteStrategy<Person>>();
+
+            actual.Configuration.Should().BeSameAs(target);
+            actual.Log.Should().BeOfType<DefaultBuildLog>();
+        }
+
+        [Fact]
+        public void UsingExecuteStrategyThrowsExceptionWithNullConfigurationTest()
+        {
+            Action action = () => ((IBuildConfiguration) null).UsingExecuteStrategy<NullExecuteStrategy>();
 
             action.Should().Throw<ArgumentNullException>();
         }
