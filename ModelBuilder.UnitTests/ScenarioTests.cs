@@ -9,6 +9,7 @@
     using System.Threading.Tasks;
     using FluentAssertions;
     using ModelBuilder.Data;
+    using ModelBuilder.TypeCreators;
     using ModelBuilder.UnitTests.Models;
     using ModelBuilder.ValueGenerators;
     using NSubstitute;

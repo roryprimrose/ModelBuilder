@@ -4,6 +4,7 @@
     using System.Globalization;
     using System.Text.RegularExpressions;
     using ModelBuilder.Properties;
+    using ModelBuilder.TypeCreators;
     using ModelBuilder.ValueGenerators;
 
     /// <summary>

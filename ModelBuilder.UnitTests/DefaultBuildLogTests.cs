@@ -4,6 +4,7 @@
     using System.IO;
     using System.Linq;
     using FluentAssertions;
+    using ModelBuilder.TypeCreators;
     using ModelBuilder.UnitTests.Models;
     using ModelBuilder.ValueGenerators;
     using Xunit;

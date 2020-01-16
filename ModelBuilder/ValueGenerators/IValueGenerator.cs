@@ -1,6 +1,7 @@
 ﻿namespace ModelBuilder.ValueGenerators
 {
     using System;
+    using ModelBuilder.TypeCreators;
 
     /// <summary>
     ///     The <see cref="IValueGenerator" />

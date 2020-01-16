@@ -1,6 +1,7 @@
 ﻿namespace ModelBuilder
 {
     using System;
+    using ModelBuilder.TypeCreators;
     using ModelBuilder.ValueGenerators;
 
     /// <summary>

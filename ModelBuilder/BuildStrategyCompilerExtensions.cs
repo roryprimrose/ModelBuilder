@@ -4,6 +4,7 @@
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Linq.Expressions;
+    using ModelBuilder.TypeCreators;
     using ModelBuilder.ValueGenerators;
 
     /// <summary>

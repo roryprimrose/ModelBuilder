@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.ObjectModel;
+    using ModelBuilder.TypeCreators;
     using ModelBuilder.ValueGenerators;
 
     public class DummyBuildStrategy : IBuildStrategy

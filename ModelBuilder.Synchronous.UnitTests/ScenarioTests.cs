@@ -4,6 +4,7 @@ namespace ModelBuilder.Synchronous.UnitTests
     using System.Collections.Generic;
     using System.Reflection;
     using FluentAssertions;
+    using ModelBuilder.TypeCreators;
     using ModelBuilder.UnitTests;
     using ModelBuilder.UnitTests.Models;
     using ModelBuilder.ValueGenerators;

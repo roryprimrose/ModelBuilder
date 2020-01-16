@@ -2,6 +2,7 @@
 {
     using System;
     using System.Globalization;
+    using ModelBuilder.TypeCreators;
 
     public class IncrementingEnumerableTypeCreator : EnumerableTypeCreator
     {

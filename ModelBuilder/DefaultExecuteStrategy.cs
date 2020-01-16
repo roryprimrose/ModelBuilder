@@ -8,6 +8,7 @@
     using System.Linq;
     using System.Reflection;
     using ModelBuilder.Properties;
+    using ModelBuilder.TypeCreators;
     using ModelBuilder.ValueGenerators;
 
     /// <summary>

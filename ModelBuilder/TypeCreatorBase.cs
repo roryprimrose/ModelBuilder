@@ -3,6 +3,7 @@ namespace ModelBuilder
     using System;
     using System.Globalization;
     using ModelBuilder.Properties;
+    using ModelBuilder.TypeCreators;
 
     /// <summary>
     ///     The <see cref="TypeCreatorBase" />

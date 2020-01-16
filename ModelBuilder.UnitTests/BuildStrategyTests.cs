@@ -6,6 +6,7 @@ namespace ModelBuilder.UnitTests
     using System.Collections.Generic;
     using System.IO;
     using FluentAssertions;
+    using ModelBuilder.TypeCreators;
     using ModelBuilder.UnitTests.Models;
     using ModelBuilder.ValueGenerators;
     using NSubstitute;

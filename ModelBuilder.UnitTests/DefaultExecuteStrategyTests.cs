@@ -7,6 +7,7 @@
     using System.Linq;
     using System.Reflection;
     using FluentAssertions;
+    using ModelBuilder.TypeCreators;
     using ModelBuilder.UnitTests.Models;
     using ModelBuilder.ValueGenerators;
     using NSubstitute;

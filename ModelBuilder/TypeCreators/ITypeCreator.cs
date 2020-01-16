@@ -1,4 +1,4 @@
-﻿namespace ModelBuilder
+﻿namespace ModelBuilder.TypeCreators
 {
     using System;
 

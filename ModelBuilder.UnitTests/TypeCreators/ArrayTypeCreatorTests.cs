@@ -1,4 +1,4 @@
-﻿namespace ModelBuilder.UnitTests
+﻿namespace ModelBuilder.UnitTests.TypeCreators
 {
     using System;
     using System.Collections.Generic;
@@ -7,6 +7,7 @@
     using System.IO;
     using System.Linq;
     using FluentAssertions;
+    using ModelBuilder.TypeCreators;
     using ModelBuilder.UnitTests.Models;
     using NSubstitute;
     using Xunit;

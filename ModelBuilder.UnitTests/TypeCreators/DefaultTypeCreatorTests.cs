@@ -1,9 +1,10 @@
-﻿namespace ModelBuilder.UnitTests
+﻿namespace ModelBuilder.UnitTests.TypeCreators
 {
     using System;
     using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using FluentAssertions;
+    using ModelBuilder.TypeCreators;
     using ModelBuilder.UnitTests.Models;
     using NSubstitute;
     using Xunit;
