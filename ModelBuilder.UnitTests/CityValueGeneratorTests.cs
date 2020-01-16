@@ -6,6 +6,7 @@
     using FluentAssertions;
     using ModelBuilder.Data;
     using ModelBuilder.UnitTests.Models;
+    using ModelBuilder.ValueGenerators;
     using NSubstitute;
     using Xunit;
 

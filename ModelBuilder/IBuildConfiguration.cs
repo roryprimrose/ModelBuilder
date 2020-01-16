@@ -1,6 +1,7 @@
 ﻿namespace ModelBuilder
 {
     using System.Collections.ObjectModel;
+    using ModelBuilder.ValueGenerators;
 
     /// <summary>
     ///     The <see cref="IBuildConfiguration" />

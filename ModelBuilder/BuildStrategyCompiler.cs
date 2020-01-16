@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using ModelBuilder.Properties;
+    using ModelBuilder.ValueGenerators;
 
     /// <summary>
     ///     The <see cref="BuildStrategyCompiler" />

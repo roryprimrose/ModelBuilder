@@ -1,6 +1,7 @@
 ﻿namespace ModelBuilder
 {
     using System;
+    using ModelBuilder.ValueGenerators;
 
     /// <summary>
     ///     The <see cref="DefaultExecuteStrategy{T}" />

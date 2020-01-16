@@ -8,6 +8,7 @@
     using System.Reflection;
     using FluentAssertions;
     using ModelBuilder.UnitTests.Models;
+    using ModelBuilder.ValueGenerators;
     using NSubstitute;
     using NSubstitute.ExceptionExtensions;
     using Xunit;

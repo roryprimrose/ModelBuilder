@@ -1,6 +1,7 @@
 ﻿namespace ModelBuilder
 {
     using System.Collections.Generic;
+    using ModelBuilder.ValueGenerators;
 
     /// <summary>
     ///     The <see cref="DefaultBuildStrategyCompiler" />

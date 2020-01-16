@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.ObjectModel;
+    using ModelBuilder.ValueGenerators;
 
     public class NullBuildStrategy : IBuildStrategy
     {

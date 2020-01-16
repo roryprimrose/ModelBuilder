@@ -1,6 +1,7 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
+    using ModelBuilder.ValueGenerators;
 
     public class DummyValueGenerator : ValueGeneratorBase
     {

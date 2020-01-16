@@ -5,6 +5,7 @@
     using System.Reflection;
     using FluentAssertions;
     using ModelBuilder.UnitTests.Models;
+    using ModelBuilder.ValueGenerators;
     using Xunit;
 
     public class DefaultBuildStrategyCompilerTests

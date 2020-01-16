@@ -7,6 +7,7 @@ namespace ModelBuilder.UnitTests
     using System.IO;
     using FluentAssertions;
     using ModelBuilder.UnitTests.Models;
+    using ModelBuilder.ValueGenerators;
     using NSubstitute;
     using Xunit;
 

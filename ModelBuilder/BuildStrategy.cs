@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using ModelBuilder.ValueGenerators;
 
     /// <summary>
     ///     The <see cref="BuildStrategy" />

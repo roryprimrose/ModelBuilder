@@ -6,6 +6,7 @@ namespace ModelBuilder.Synchronous.UnitTests
     using FluentAssertions;
     using ModelBuilder.UnitTests;
     using ModelBuilder.UnitTests.Models;
+    using ModelBuilder.ValueGenerators;
     using NSubstitute;
     using Xunit;
 

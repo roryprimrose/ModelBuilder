@@ -4,6 +4,7 @@
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Linq.Expressions;
+    using ModelBuilder.ValueGenerators;
 
     /// <summary>
     ///     The <see cref="BuildStrategyCompilerExtensions" />

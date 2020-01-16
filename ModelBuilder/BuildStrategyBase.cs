@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Linq;
+    using ModelBuilder.ValueGenerators;
 
     /// <summary>
     ///     The <see cref="BuildStrategyBase" />
