@@ -20,8 +20,7 @@
         ///     Initializes the execute strategy with a build configuration.
         /// </summary>
         /// <param name="configuration">The build configuration.</param>
-        /// <param name="buildLog">The build log.</param>
-        void Initialize(IBuildConfiguration configuration, IBuildLog buildLog);
+        void Initialize(IBuildConfiguration configuration);
 
         /// <summary>
         ///     Populates values onto settable properties of the specified instance.

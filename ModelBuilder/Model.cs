@@ -9,8 +9,6 @@
     /// </summary>
     public static class Model
     {
-        private static IBuildStrategy _buildStrategy;
-
         /// <summary>
         ///     Creates an instance of a type using the default build and execute strategies and constructor any provided
         ///     arguments.
@@ -43,32 +41,33 @@
         }
 
         /// <summary>
-        ///     Returns a <see cref="IBuildStrategy" /> with a new <see cref="IgnoreRule" /> that matches the specified expression.
+        ///     Returns a <see cref="IBuildConfiguration" /> with a new <see cref="IgnoreRule" /> that matches the specified
+        ///     expression.
         /// </summary>
         /// <typeparam name="T">The type of instance that matches the rule.</typeparam>
         /// <param name="expression">The expression that identifies a property on <typeparamref name="T" /></param>
-        /// <returns>A new build strategy.</returns>
+        /// <returns>A new build configuration.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="expression" /> parameter is <c>null</c>.</exception>
-        public static IBuildStrategy Ignoring<T>(Expression<Func<T, object>> expression)
+        public static IBuildConfiguration Ignoring<T>(Expression<Func<T, object>> expression)
         {
             if (expression == null)
             {
                 throw new ArgumentNullException(nameof(expression));
             }
 
-            return BuildStrategy.Ignoring(expression);
+            return UsingDefaultConfiguration().Ignoring(expression);
         }
 
         /// <summary>
-        ///     Returns a <see cref="IBuildStrategy" /> with a new <see cref="TypeMappingRule" /> that matches the specified
+        ///     Returns a <see cref="IBuildConfiguration" /> with a new <see cref="TypeMappingRule" /> that matches the specified
         ///     expression.
         /// </summary>
         /// <typeparam name="TSource">The source type to use for type mapping.</typeparam>
         /// <typeparam name="TTarget">The target type to use for type mapping.</typeparam>
-        /// <returns>A new build strategy.</returns>
-        public static IBuildStrategy Mapping<TSource, TTarget>()
+        /// <returns>A new build configuration.</returns>
+        public static IBuildConfiguration Mapping<TSource, TTarget>()
         {
-            return BuildStrategy.Mapping<TSource, TTarget>();
+            return UsingDefaultConfiguration().Mapping<TSource, TTarget>();
         }
 
         /// <summary>
@@ -82,13 +81,23 @@
         }
 
         /// <summary>
-        ///     Returns a new execute strategy using <see cref="ModelBuilder.BuildStrategy" />.
+        ///     Returns a new <see cref="IBuildConfiguration" /> that is configured using <see cref="DefaultConfigurationModule" />
+        ///     .
+        /// </summary>
+        /// <returns>The new build configuration.</returns>
+        public static IBuildConfiguration UsingDefaultConfiguration()
+        {
+            return UsingModule<DefaultConfigurationModule>();
+        }
+
+        /// <summary>
+        ///     Returns a new execute strategy configured with <see cref="DefaultConfigurationModule" />.
         /// </summary>
         /// <typeparam name="T">The type of execute strategy to create.</typeparam>
         /// <returns>A new execute strategy.</returns>
         public static T UsingExecuteStrategy<T>() where T : IExecuteStrategy, new()
         {
-            return BuildStrategy.UsingExecuteStrategy<T>();
+            return UsingDefaultConfiguration().UsingExecuteStrategy<T>();
         }
 
         /// <summary>
@@ -100,14 +109,7 @@
         {
             var configuration = new BuildConfiguration();
 
-            return configuration.AddConfigurationModule<T>();
-        }
-
-        private static IBuildStrategy CreateDefaultBuildStrategy()
-        {
-            var compiler = new DefaultBuildStrategyCompiler();
-
-            return compiler.Compile();
+            return configuration.UsingModule<T>();
         }
 
         private static IExecuteStrategy ResolveDefault()
@@ -119,37 +121,5 @@
         {
             return UsingExecuteStrategy<DefaultExecuteStrategy<T>>();
         }
-
-        /// <summary>
-        ///     Gets or sets the current build strategy to use in this application domain.
-        /// </summary>
-        /// <exception cref="ArgumentNullException">The <paramref name="value" /> parameter is <c>null</c>.</exception>
-        public static IBuildStrategy BuildStrategy
-        {
-            get
-            {
-                // Handle the edge case where the _buildStrategy may have been assigned in the static before _defaultBuildStrategy
-                if (_buildStrategy == null)
-                {
-                    _buildStrategy = DefaultBuildStrategy;
-                }
-
-                return _buildStrategy;
-            }
-            set
-            {
-                if (value == null)
-                {
-                    throw new ArgumentNullException(nameof(value));
-                }
-
-                _buildStrategy = value;
-            }
-        }
-
-        /// <summary>
-        ///     Gets or sets the default build strategy.
-        /// </summary>
-        public static IBuildStrategy DefaultBuildStrategy { get; } = CreateDefaultBuildStrategy();
     }
 }

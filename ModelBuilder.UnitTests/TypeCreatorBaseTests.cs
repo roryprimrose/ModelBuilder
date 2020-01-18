@@ -12,8 +12,8 @@
     public class TypeCreatorBaseTests
     {
         [Theory]
-        [InlineData(typeof(BuildStrategyBase), false)]
-        [InlineData(typeof(IBuildStrategy), false)]
+        [InlineData(typeof(TypeCreatorBase), false)]
+        [InlineData(typeof(IBuildConfiguration), false)]
         [InlineData(typeof(Environment), false)]
         [InlineData(typeof(Stream), false)]
         [InlineData(typeof(MemoryStream), true)]

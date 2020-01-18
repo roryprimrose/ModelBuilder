@@ -54,12 +54,12 @@
         }
 
         [Fact]
-        public void CanCreateCustomBuildStrategyToCreateModelsTest()
+        public void CanCreateCustomBuildConfigurationToCreateModelsTest()
         {
-            var strategy = Model.DefaultBuildStrategy.Clone().Set(x => x.ValueGenerators.Clear())
+            var strategy = Model.UsingDefaultConfiguration().Set(x => x.ValueGenerators.Clear())
                 .AddValueGenerator<StringValueGenerator>().AddValueGenerator<NumericValueGenerator>()
                 .AddValueGenerator<BooleanValueGenerator>().AddValueGenerator<GuidValueGenerator>()
-                .AddValueGenerator<DateTimeValueGenerator>().AddValueGenerator<EnumValueGenerator>().Compile();
+                .AddValueGenerator<DateTimeValueGenerator>().AddValueGenerator<EnumValueGenerator>();
 
             var actual = strategy.Create<Person>();
 
@@ -205,12 +205,12 @@
         }
 
         [Fact]
-        public void CreateBuildsLogOfIgnoreRuleTest()
+        public void CreateBuildLogOfIgnoreRuleTest()
         {
-            var builder = Model.BuildStrategy.Clone().AddIgnoreRule<Company>(x => x.Address).Compile();
-            var strategy = builder.GetExecuteStrategy<Company>();
+            var strategy = Model.Ignoring<Company>(x => x.Address)
+                .UsingExecuteStrategy<DefaultExecuteStrategy<Company>>();
 
-            ExecuteStrategyExtensions.Create(strategy);
+            strategy.Create();
 
             var actual = strategy.Log.Output;
 
@@ -220,12 +220,11 @@
         }
 
         [Fact]
-        public void CreateBuildsLogOfPostActionsTest()
+        public void CreateBuildLogOfPostActionsTest()
         {
-            var strategy = Model.DefaultBuildStrategy.Clone().AddCompilerModule<TestCompilerModule>().Compile()
-                .GetExecuteStrategy<Company>();
+            var strategy = Model.UsingDefaultConfiguration().UsingModule<TestConfigurationModule>().UsingExecuteStrategy<DefaultExecuteStrategy<Company>>();
 
-            ExecuteStrategyExtensions.Create(strategy);
+            strategy.Create();
 
             var actual = strategy.Log.Output;
 
@@ -407,12 +406,11 @@
         [Fact]
         public void CreateSetsPropertyValuesWhenConstructorParametersHaveDefaultValuesTest()
         {
-            var buildLog = Substitute.For<IBuildLog>();
-            var configuration = Model.DefaultBuildStrategy;
+            var configuration = Model.UsingDefaultConfiguration();
 
             var target = new DefaultExecuteStrategy();
 
-            target.Initialize(configuration, buildLog);
+            target.Initialize(configuration);
 
             var args = new object[]
             {
@@ -430,12 +428,11 @@
         [Fact]
         public void CreateSetsPropertyValueWhenNoMatchOnConstructorParameterTest()
         {
-            var buildLog = Substitute.For<IBuildLog>();
-            var configuration = Model.DefaultBuildStrategy;
+            var configuration = Model.UsingDefaultConfiguration();
 
             var target = new DefaultExecuteStrategy();
 
-            target.Initialize(configuration, buildLog);
+            target.Initialize(configuration);
 
             var args = new object[]
             {
@@ -470,11 +467,11 @@
             typeCreator.Create(typeof(Address), "Address", Arg.Any<IExecuteStrategy>())
                 .Throws(new InvalidOperationException());
 
-            var buildStrategy = new DefaultBuildStrategyCompiler().Add(typeCreator).Compile();
+            var configuration = Model.UsingDefaultConfiguration().Add(typeCreator);
 
             var target = new DefaultExecuteStrategy<Company>();
 
-            target.Initialize(buildStrategy, buildStrategy.GetBuildLog());
+            target.Initialize(configuration);
 
             Action action = () => target.Create();
 
@@ -489,8 +486,8 @@
         {
             var expected = Guid.NewGuid();
 
-            var strategy = Model.DefaultBuildStrategy.Clone().AddCreationRule<Person>(x => x.Id, 100, expected)
-                .Compile();
+            var strategy = Model.UsingDefaultConfiguration().AddCreationRule<Person>(x => x.Id, 100, expected)
+                ;
 
             var actual = strategy.Create<List<Person>>();
 
@@ -526,10 +523,10 @@
         [Fact]
         public void MailinatorEmailGeneratorIsAssignedAgainstAllInstancesTest()
         {
-            var strategy = new DefaultBuildStrategyCompiler().RemoveValueGenerator<EmailValueGenerator>()
-                .AddValueGenerator<MailinatorEmailValueGenerator>().Compile();
+            var configuration = Model.UsingDefaultConfiguration().RemoveValueGenerator<EmailValueGenerator>()
+                .AddValueGenerator<MailinatorEmailValueGenerator>();
 
-            var actual = strategy.Create<List<Person>>();
+            var actual = configuration.Create<List<Person>>();
 
             actual.All(x => x.PersonalEmail.EndsWith("@mailinator.com", StringComparison.OrdinalIgnoreCase)).Should()
                 .BeTrue();
@@ -615,7 +612,7 @@
         [Fact]
         public void UsesBuildLogInstancePerExecutionPipelineTest()
         {
-            var buildStrategy = Model.BuildStrategy;
+            var configuration = Model.UsingDefaultConfiguration();
 
             const int MaxTasks = 100;
             var tasks = new List<Task<string>>(MaxTasks);
@@ -626,7 +623,7 @@
                 var task = Task<string>.Factory.StartNew(
                     () =>
                     {
-                        var strategy = buildStrategy.GetExecuteStrategy<Empty>();
+                        var strategy = configuration.UsingExecuteStrategy<DefaultExecuteStrategy<Empty>>();
 
                         strategy.Create();
 

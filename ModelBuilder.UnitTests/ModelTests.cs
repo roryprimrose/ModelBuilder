@@ -17,15 +17,6 @@
         }
 
         [Fact]
-        public void DefaultBuildStrategyReturnsSameInstanceTest()
-        {
-            var firstActual = Model.DefaultBuildStrategy;
-            var secondActual = Model.DefaultBuildStrategy;
-
-            firstActual.Should().BeSameAs(secondActual);
-        }
-
-        [Fact]
         public void IgnoringThrowsExceptionWithNullExpressionTest()
         {
             Action action = () => Model.Ignoring<Person>(null);
@@ -48,6 +39,15 @@
 
             actual.Should().BeOfType<TestItem>();
             actual.FirstName.Should().NotBeNullOrWhiteSpace();
+        }
+
+        [Fact]
+        public void UsingDefaultConfigurationReturnsNewInstanceTest()
+        {
+            var firstActual = Model.UsingDefaultConfiguration();
+            var secondActual = Model.UsingDefaultConfiguration();
+
+            firstActual.Should().NotBeSameAs(secondActual);
         }
 
         [Fact]

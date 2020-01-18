@@ -258,7 +258,7 @@
         public void PopulateCanAddItemsBasedOnPreviousItemTest()
         {
             var actual = new int[15];
-            var executeStrategy = Model.BuildStrategy.GetExecuteStrategy<List<Company>>();
+            var executeStrategy = Model.UsingDefaultConfiguration().UsingExecuteStrategy<DefaultExecuteStrategy<List<Company>>>();
 
             var target = new IncrementingArrayTypeCreator();
 
@@ -279,7 +279,7 @@
         public void PopulateInfersItemTypeByArrayTypeWhenFirstItemIsNullTest()
         {
             var actual = new Person[15];
-            var executeStrategy = Model.BuildStrategy.GetExecuteStrategy<List<Company>>();
+            var executeStrategy = Model.UsingDefaultConfiguration().UsingExecuteStrategy<DefaultExecuteStrategy<List<Company>>>();
 
             var target = new ArrayTypeCreator();
 

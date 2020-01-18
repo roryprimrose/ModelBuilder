@@ -283,14 +283,13 @@
         [InlineData(typeof(InheritedGenericCollection))]
         public void PopulateAddsItemsToInstancesTest(Type type)
         {
-            var configuration = Model.BuildStrategy;
-            var buildLog = configuration.GetBuildLog();
+            var configuration = Model.UsingDefaultConfiguration();
 
             var target = new EnumerableTypeCreator();
 
             var executeStrategy = new DefaultExecuteStrategy();
 
-            executeStrategy.Initialize(configuration, buildLog);
+            executeStrategy.Initialize(configuration);
 
             var actual = target.Create(type, null, executeStrategy);
 
@@ -331,7 +330,7 @@
         public void PopulateCanAddItemsBasedOnPreviousItemTest()
         {
             var actual = new List<int>();
-            var executeStrategy = Model.BuildStrategy.GetExecuteStrategy<List<int>>();
+            var executeStrategy = Model.UsingDefaultConfiguration().UsingExecuteStrategy<DefaultExecuteStrategy<List<int>>>();
 
             var target = new IncrementingEnumerableTypeCreator();
 

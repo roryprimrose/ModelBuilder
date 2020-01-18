@@ -20,17 +20,17 @@
             var typeCreators = new Collection<ITypeCreator>();
 
             var typeCreator = Substitute.For<ITypeCreator>();
-            var buildStrategy = Substitute.For<IBuildStrategy>();
+            var buildConfiguration = Substitute.For<IBuildConfiguration>();
 
             typeCreators.Add(typeCreator);
 
-            buildStrategy.TypeCreators.Returns(typeCreators);
+            buildConfiguration.TypeCreators.Returns(typeCreators);
             typeCreator.CanCreate(typeof(SlimModel), null, Arg.Any<IBuildChain>()).Returns(true);
             typeCreator.CanPopulate(typeof(SlimModel), null, Arg.Any<IBuildChain>()).Returns(true);
 
             var target = new DefaultExecuteStrategy<SlimModel>();
 
-            target.Initialize(buildStrategy, buildStrategy.GetBuildLog());
+            target.Initialize(buildConfiguration);
 
             var actual = target.Create();
 
@@ -43,18 +43,18 @@
             var typeCreators = new Collection<ITypeCreator>();
 
             var typeCreator = Substitute.For<ITypeCreator>();
-            var buildStrategy = Substitute.For<IBuildStrategy>();
+            var buildConfiguration = Substitute.For<IBuildConfiguration>();
 
             typeCreators.Add(typeCreator);
 
-            buildStrategy.TypeCreators.Returns(typeCreators);
+            buildConfiguration.TypeCreators.Returns(typeCreators);
             typeCreator.CanCreate(typeof(MemoryStream), null, Arg.Any<IBuildChain>()).Returns(true);
             typeCreator.CanPopulate(typeof(MemoryStream), null, Arg.Any<IBuildChain>()).Returns(true);
             typeCreator.Create(typeof(MemoryStream), null, Arg.Any<IExecuteStrategy>()).Returns(null);
 
             var target = new DefaultExecuteStrategy<MemoryStream>();
 
-            target.Initialize(buildStrategy, buildStrategy.GetBuildLog());
+            target.Initialize(buildConfiguration);
 
             var actual = target.Create();
 
@@ -67,17 +67,17 @@
             var valueGenerators = new Collection<IValueGenerator>();
 
             var valueGenerator = Substitute.For<IValueGenerator>();
-            var buildStrategy = Substitute.For<IBuildStrategy>();
+            var buildConfiguration = Substitute.For<IBuildConfiguration>();
 
             valueGenerators.Add(valueGenerator);
 
-            buildStrategy.ValueGenerators.Returns(valueGenerators);
+            buildConfiguration.ValueGenerators.Returns(valueGenerators);
             valueGenerator.IsSupported(typeof(int), null, Arg.Any<IBuildChain>()).Returns(true);
             valueGenerator.Generate(typeof(int), null, Arg.Any<IExecuteStrategy>()).Returns(null);
 
             var target = new DefaultExecuteStrategy<int>();
 
-            target.Initialize(buildStrategy, buildStrategy.GetBuildLog());
+            target.Initialize(buildConfiguration);
 
             var actual = target.Create();
 
@@ -95,20 +95,20 @@
 
             var typeCreator = Substitute.For<ITypeCreator>();
             var generator = Substitute.For<IValueGenerator>();
-            var buildStrategy = Substitute.For<IBuildStrategy>();
+            var buildConfiguration = Substitute.For<IBuildConfiguration>();
             var propertyResolver = Substitute.For<IPropertyResolver>();
 
             typeCreators.Add(typeCreator);
             valueGenerators.Add(generator);
 
-            buildStrategy.TypeCreators.Returns(typeCreators);
-            buildStrategy.ValueGenerators.Returns(valueGenerators);
+            buildConfiguration.TypeCreators.Returns(typeCreators);
+            buildConfiguration.ValueGenerators.Returns(valueGenerators);
 
             var target = new DefaultExecuteStrategy<SlimModel>();
 
-            target.Initialize(buildStrategy, buildStrategy.GetBuildLog());
+            target.Initialize(buildConfiguration);
 
-            buildStrategy.PropertyResolver.Returns(propertyResolver);
+            buildConfiguration.PropertyResolver.Returns(propertyResolver);
             propertyResolver.CanPopulate(Arg.Any<PropertyInfo>()).Returns(true);
             propertyResolver.ShouldPopulateProperty(
                 Arg.Any<IBuildConfiguration>(),
@@ -146,15 +146,15 @@
             var typeCreators = new Collection<ITypeCreator>();
 
             var typeCreator = Substitute.For<ITypeCreator>();
-            var buildStrategy = Substitute.For<IBuildStrategy>();
+            var buildConfiguration = Substitute.For<IBuildConfiguration>();
 
             typeCreators.Add(typeCreator);
 
-            buildStrategy.TypeCreators.Returns(typeCreators);
+            buildConfiguration.TypeCreators.Returns(typeCreators);
 
             var target = new DefaultExecuteStrategy<Person>();
 
-            target.Initialize(buildStrategy, buildStrategy.GetBuildLog());
+            target.Initialize(buildConfiguration);
 
             typeCreator.CanCreate(typeof(Person), null, Arg.Any<IBuildChain>()).Returns(true);
             typeCreator.CanPopulate(typeof(Person), null, Arg.Any<IBuildChain>()).Returns(true);
@@ -177,7 +177,7 @@
             var valueGenerators = new Collection<IValueGenerator>();
             var typeCreators = new Collection<ITypeCreator>();
 
-            var buildStrategy = Substitute.For<IBuildStrategy>();
+            var buildConfiguration = Substitute.For<IBuildConfiguration>();
             var typeCreator = Substitute.For<ITypeCreator>();
             var enumerableTypeCreator = Substitute.For<ITypeCreator>();
             var valueGenerator = Substitute.For<IValueGenerator>();
@@ -187,19 +187,19 @@
             typeCreators.Add(typeCreator);
             valueGenerators.Add(valueGenerator);
 
-            buildStrategy.PropertyResolver.Returns(propertyResolver);
+            buildConfiguration.PropertyResolver.Returns(propertyResolver);
             propertyResolver.CanPopulate(Arg.Any<PropertyInfo>()).Returns(true);
             propertyResolver.ShouldPopulateProperty(
                 Arg.Any<IBuildConfiguration>(),
                 Arg.Any<object>(),
                 Arg.Any<PropertyInfo>(),
                 Arg.Any<object[]>()).Returns(true);
-            buildStrategy.TypeCreators.Returns(typeCreators);
-            buildStrategy.ValueGenerators.Returns(valueGenerators);
+            buildConfiguration.TypeCreators.Returns(typeCreators);
+            buildConfiguration.ValueGenerators.Returns(valueGenerators);
 
             var target = new DefaultExecuteStrategy<Company>();
 
-            target.Initialize(buildStrategy, buildStrategy.GetBuildLog());
+            target.Initialize(buildConfiguration);
 
             typeCreator.CanPopulate(typeof(Company), null, Arg.Any<IBuildChain>()).Returns(true);
             typeCreator.Populate(expected, target).Returns(expected);

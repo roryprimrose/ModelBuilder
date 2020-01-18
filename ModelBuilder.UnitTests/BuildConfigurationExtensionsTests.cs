@@ -19,7 +19,7 @@
         {
             var target = new BuildConfiguration();
 
-            var config = target.AddConfigurationModule<TestConfigurationModule>();
+            var config = target.UsingModule<TestConfigurationModule>();
 
             config.Should().BeSameAs(target);
 
@@ -31,7 +31,7 @@
         [Fact]
         public void AddConfigurationModuleThrowsExceptionWithNullCompilerTest()
         {
-            Action action = () => BuildConfigurationExtensions.AddConfigurationModule<TestConfigurationModule>(null);
+            Action action = () => BuildConfigurationExtensions.UsingModule<TestConfigurationModule>(null);
 
             action.Should().Throw<ArgumentNullException>();
         }
