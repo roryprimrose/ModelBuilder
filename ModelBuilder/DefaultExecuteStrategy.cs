@@ -596,6 +596,8 @@
                 // Allow the type creator to do its own population of the instance
                 instance = typeCreator.Populate(instance, this);
 
+                // TODO: Protect against instance being null here
+
                 // Get the build chain once as it recalculates each time
                 var buildChain = BuildChain;
 

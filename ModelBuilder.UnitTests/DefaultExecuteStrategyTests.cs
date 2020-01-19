@@ -35,7 +35,7 @@
 
             target.BuildChain.Should().BeEmpty();
 
-            ExecuteStrategyExtensions.Create(target, typeof(Company));
+            target.Create(typeof(Company));
 
             target.BuildChain.Should().BeEmpty();
         }
@@ -193,7 +193,7 @@
 
             target.Initialize(buildConfiguration);
 
-            ExecuteStrategyExtensions.Create(target, typeof(Simple));
+            target.Create(typeof(Simple));
 
             firstAction.Received().Execute(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<IBuildChain>());
             secondAction.Received().Execute(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<IBuildChain>());
@@ -212,7 +212,7 @@
 
             target.Initialize(buildConfiguration);
 
-            ExecuteStrategyExtensions.Create(target, typeof(ReadOnlyParent));
+            target.Create(typeof(ReadOnlyParent));
 
             postBuildAction.Received().Execute(typeof(Company), nameof(ReadOnlyParent.Company), Arg.Any<IBuildChain>());
         }
@@ -231,7 +231,7 @@
 
             target.Initialize(buildConfiguration);
 
-            ExecuteStrategyExtensions.Create(target, typeof(Simple));
+            target.Create(typeof(Simple));
 
             firstAction.DidNotReceive().Execute(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<IBuildChain>());
             secondAction.Received().Execute(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<IBuildChain>());
@@ -1803,6 +1803,7 @@
                 });
             creator.CanCreate(typeof(SlimModel), null, Arg.Any<IBuildChain>()).Returns(true);
             creator.Create(typeof(SlimModel), null, Arg.Any<IExecuteStrategy>()).Returns(instance);
+            creator.Populate(instance, target).Returns(instance);
             creator.AutoPopulate.Returns(true);
             generator.When(
                 x => x.Generate(
@@ -1819,7 +1820,7 @@
             generator.IsSupported(typeof(Guid), nameof(SlimModel.Value), Arg.Is<IBuildChain>(x => x.Last == instance))
                 .Returns(true);
 
-            ExecuteStrategyExtensions.Create(target, typeof(SlimModel));
+            target.Create(typeof(SlimModel));
 
             testPassed.Should().BeTrue();
         }
@@ -1919,6 +1920,7 @@
             creator.Create(typeof(Address), "Address", Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == office))
                 .Returns(address);
             creator.AutoPopulate.Returns(true);
+            creator.Populate(Arg.Any<object>(), target).Returns(x => x[0]);
             generator.When(
                 x => x.Generate(
                     typeof(string),
@@ -1936,7 +1938,7 @@
             generator.Generate(typeof(string), Arg.Any<string>(), Arg.Any<IExecuteStrategy>())
                 .Returns(Guid.NewGuid().ToString());
 
-            ExecuteStrategyExtensions.Create(target, typeof(Office));
+            target.Create(typeof(Office));
 
             testPassed.Should().BeTrue();
         }

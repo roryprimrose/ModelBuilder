@@ -181,7 +181,7 @@
         {
             var strategy = Model.UsingExecuteStrategy<DefaultExecuteStrategy<Company>>();
 
-            ExecuteStrategyExtensions.Create(strategy);
+            strategy.Create();
 
             var actual = strategy.Log.Output;
 
@@ -195,7 +195,7 @@
         {
             var strategy = Model.UsingExecuteStrategy<DefaultExecuteStrategy<WithValueParameters>>();
 
-            ExecuteStrategyExtensions.Create(strategy);
+            strategy.Create();
 
             var actual = strategy.Log.Output;
 
