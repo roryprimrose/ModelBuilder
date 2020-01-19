@@ -31,8 +31,6 @@
 
         internal static string Companies => Read(nameof(Companies));
 
-        internal static string Cultures => Read(nameof(Cultures));
-
         internal static string Domains => Read(nameof(Domains));
 
         internal static string FemaleNames => Read(nameof(FemaleNames));

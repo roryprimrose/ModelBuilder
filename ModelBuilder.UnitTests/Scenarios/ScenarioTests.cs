@@ -1,4 +1,4 @@
-﻿namespace ModelBuilder.UnitTests
+﻿namespace ModelBuilder.UnitTests.Scenarios
 {
     using System;
     using System.Collections.Generic;

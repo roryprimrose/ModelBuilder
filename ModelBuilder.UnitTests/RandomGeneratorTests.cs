@@ -17,6 +17,19 @@
             _output = output;
         }
 
+        [Fact]
+        public void GetMaxDecimalTest()
+        {
+            var target = new RandomGenerator();
+
+            var actual = target.GetMax(typeof(decimal));
+
+            var converted = Convert.ToDecimal(actual, CultureInfo.InvariantCulture);
+
+            converted.Should().Be(decimal.MaxValue);
+            converted.Should().NotBe(decimal.MinValue);
+        }
+
         [Theory]
         [ClassData(typeof(NumericTypeRangeDataSource))]
         public void GetMaxEvaluatesRequestedTypeTest(Type type, bool typeSupported, double min, double max)
@@ -44,6 +57,19 @@
             Action action = () => target.GetMax(null);
 
             action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void GetMinDecimalTest()
+        {
+            var target = new RandomGenerator();
+
+            var actual = target.GetMin(typeof(decimal));
+
+            var converted = Convert.ToDecimal(actual, CultureInfo.InvariantCulture);
+
+            converted.Should().Be(decimal.MinValue);
+            converted.Should().NotBe(decimal.MaxValue);
         }
 
         [Theory]
@@ -87,6 +113,16 @@
             var target = new RandomGenerator();
 
             var actual = target.IsSupported(type);
+
+            actual.Should().BeTrue();
+        }
+
+        [Fact]
+        public void IsSupportedReturnsTrueForDecimalTest()
+        {
+            var target = new RandomGenerator();
+
+            var actual = target.IsSupported(typeof(decimal));
 
             actual.Should().BeTrue();
         }
@@ -152,6 +188,46 @@
             }
 
             tracker.Count.Should().BeGreaterThan(9000);
+        }
+
+        [Fact]
+        public void NextValueWithDecimalCanEvaluateManyTimesTest()
+        {
+            var target = new RandomGenerator();
+
+            for (var index = 0; index < 1000; index++)
+            {
+                var value = target.NextValue(typeof(decimal), decimal.MinValue, decimal.MaxValue);
+
+                value.Should().NotBeNull();
+                value.Should().BeOfType<decimal>();
+            }
+        }
+
+        [Fact]
+        public void NextValueWithDecimalReturnsDecimalMaxWhenGeneratedValueIsGreaterTest()
+        {
+            var target = new RandomGenerator();
+
+            for (var index = 0; index < 1000; index++)
+            {
+                var value = (decimal) target.NextValue(typeof(decimal), double.MaxValue, double.MaxValue);
+
+                value.Should().Be(decimal.MaxValue);
+            }
+        }
+
+        [Fact]
+        public void NextValueWithDecimalReturnsDecimalMinWhenGeneratedValueIsLowerTest()
+        {
+            var target = new RandomGenerator();
+
+            for (var index = 0; index < 1000; index++)
+            {
+                var value = (decimal) target.NextValue(typeof(decimal), double.MinValue, double.MinValue);
+
+                value.Should().Be(decimal.MinValue);
+            }
         }
 
         [Theory]

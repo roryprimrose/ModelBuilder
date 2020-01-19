@@ -1,7 +1,6 @@
 ﻿namespace ModelBuilder.UnitTests.TypeCreators
 {
     using System;
-    using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using FluentAssertions;
     using ModelBuilder.TypeCreators;
@@ -12,16 +11,10 @@
     public class DefaultTypeCreatorTests
     {
         [Fact]
-        [SuppressMessage(
-            "Microsoft.Design",
-            "CA1825",
-            Justification = "The Array.Empty<T> is not available on net452.")]
         public void CreateReturnsInstanceCreatedWithDefaultConstructorWhenArgumentsAreEmptyTest()
         {
             var buildChain = new BuildHistory();
-            var args = new object[]
-            {
-            };
+            var args = Array.Empty<object>();
 
             var strategy = Substitute.For<IExecuteStrategy>();
 
@@ -122,6 +115,23 @@
             Action action = () => target.Create(typeof(Stream), null, executeStrategy);
 
             action.Should().Throw<NotSupportedException>();
+        }
+
+        [Fact]
+        public void PopulateReturnsProvidedInstance()
+        {
+            var expected = Model.Create<Simple>();
+            var buildChain = new BuildHistory();
+
+            var strategy = Substitute.For<IExecuteStrategy>();
+
+            strategy.BuildChain.Returns(buildChain);
+
+            var target = new DefaultTypeCreator();
+
+            var actual = target.Populate(expected, strategy);
+
+            actual.Should().Be(expected);
         }
     }
 }

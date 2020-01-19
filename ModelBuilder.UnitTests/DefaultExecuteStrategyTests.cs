@@ -396,6 +396,52 @@
         }
 
         [Fact]
+        public void CreateReturnsReferenceTypeFromCreatorWhenExecuteOrderRulesIsNullTest()
+        {
+            var expected = new SlimModel();
+            var value = Guid.NewGuid();
+
+            var typeCreators = new Collection<ITypeCreator>();
+            var valueGenerators = new Collection<IValueGenerator>();
+
+            var typeCreator = Substitute.For<ITypeCreator>();
+            var generator = Substitute.For<IValueGenerator>();
+            var buildConfiguration = Substitute.For<IBuildConfiguration>();
+            var propertyResolver = Substitute.For<IPropertyResolver>();
+
+            typeCreators.Add(typeCreator);
+            valueGenerators.Add(generator);
+
+            buildConfiguration.PropertyResolver.Returns(propertyResolver);
+            buildConfiguration.TypeCreators.Returns(typeCreators);
+            buildConfiguration.ValueGenerators.Returns(valueGenerators);
+            buildConfiguration.ExecuteOrderRules.Returns((ICollection<ExecuteOrderRule>)null);
+
+            var target = new DefaultExecuteStrategy();
+
+            target.Initialize(buildConfiguration);
+
+            propertyResolver.CanPopulate(Arg.Any<PropertyInfo>()).Returns(true);
+            propertyResolver.ShouldPopulateProperty(
+                Arg.Any<IBuildConfiguration>(),
+                Arg.Any<object>(),
+                Arg.Any<PropertyInfo>(),
+                Arg.Any<object[]>()).Returns(true);
+            typeCreator.CanCreate(typeof(SlimModel), null, Arg.Any<IBuildChain>()).Returns(true);
+            typeCreator.Create(typeof(SlimModel), null, Arg.Any<IExecuteStrategy>()).Returns(expected);
+            typeCreator.Populate(expected, target).Returns(expected);
+            typeCreator.AutoPopulate.Returns(true);
+            generator.IsSupported(typeof(Guid), "Value", Arg.Is<IBuildChain>(x => x.Last == expected)).Returns(true);
+            generator.Generate(typeof(Guid), "Value", Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == expected))
+                .Returns(value);
+
+            var actual = (SlimModel)target.Create(typeof(SlimModel));
+
+            actual.Should().Be(expected);
+            actual.Value.Should().Be(value);
+        }
+
+        [Fact]
         public void CreateReturnsValueCreatedFromProvidedArgumentsTest()
         {
             var expected = new Person();

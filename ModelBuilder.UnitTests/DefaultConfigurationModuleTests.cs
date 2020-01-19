@@ -85,6 +85,16 @@
         }
 
         [Fact]
+        public void ConfigureThrowsExceptionWithNullConfiguration()
+        {
+            var target = new DefaultConfigurationModule();
+
+            Action action = () => target.Configure(null);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
         public void DefaultExecuteOrderRulesReturnsExecutableRulesTest()
         {
             var configuration = new BuildConfiguration();

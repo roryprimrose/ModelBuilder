@@ -88,12 +88,7 @@
 
             VerifyCreateRequest(instanceType, null, executeStrategy);
 
-            var target = instance as Array;
-
-            if (target == null)
-            {
-                return base.Populate(instance, executeStrategy);
-            }
+            var target = (Array)instance;
 
             if (target.Length == 0)
             {

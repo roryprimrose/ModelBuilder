@@ -168,7 +168,7 @@
         }
 
         [Fact]
-        public void PopulateAsObjectAssignsPropertyValuesToExistingInstanceTest()
+        public void PopulateAssignsPropertyValuesToExistingInstanceTest()
         {
             var staff = new List<Person>();
             var name = Guid.NewGuid().ToString();
@@ -227,7 +227,7 @@
                 "Address",
                 Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == expected)).Returns(address);
 
-            var actual = (Company) target.Populate((object) expected);
+            var actual = target.Populate(expected);
 
             actual.Should().BeSameAs(expected);
             actual.Name.Should().Be(name);

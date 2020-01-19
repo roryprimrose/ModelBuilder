@@ -87,7 +87,9 @@
         /// <returns>The new build configuration.</returns>
         public static IBuildConfiguration UsingDefaultConfiguration()
         {
-            return UsingModule<DefaultConfigurationModule>();
+			var configuration = new BuildConfiguration();
+			
+            return configuration.UsingModule<DefaultConfigurationModule>();
         }
 
         /// <summary>
@@ -107,9 +109,7 @@
         /// <returns>The build configuration.</returns>
         public static IBuildConfiguration UsingModule<T>() where T : IConfigurationModule, new()
         {
-            var configuration = new BuildConfiguration();
-
-            return configuration.UsingModule<T>();
+            return UsingDefaultConfiguration().UsingModule<T>();
         }
 
         private static IExecuteStrategy ResolveDefault()

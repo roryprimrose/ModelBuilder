@@ -9,11 +9,51 @@
     public class ModelTests
     {
         [Fact]
+        public void CreateReturnsInstanceTest()
+        {
+            var actual = Model.Create(typeof(SlimModel));
+
+            actual.Should().NotBeNull();
+            actual.As<SlimModel>().Value.Should().NotBeEmpty();
+        }
+
+        [Fact]
+        public void CreateReturnsInstanceUsingConstructorParametersTest()
+        {
+            var value = Guid.NewGuid();
+
+            var actual = Model.Create(typeof(ReadOnlyModel), value);
+
+            actual.Should().NotBeNull();
+            actual.As<ReadOnlyModel>().Value.Should().Be(value);
+        }
+
+        [Fact]
         public void CreateThrowsExceptionWithNullInstanceTypeTest()
         {
             Action action = () => Model.Create(null);
 
             action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void CreateTReturnsInstanceTest()
+        {
+            var actual = Model.Create<SlimModel>();
+
+            actual.Should().NotBeNull();
+            actual.Value.Should().NotBeEmpty();
+        }
+
+        [Fact]
+        public void CreateTReturnsInstanceUsingConstructorParametersTest()
+        {
+            var value = Guid.NewGuid();
+
+            var actual = Model.Create<ReadOnlyModel>(value);
+
+            actual.Should().NotBeNull();
+            actual.Value.Should().Be(value);
         }
 
         [Fact]
@@ -42,6 +82,18 @@
         }
 
         [Fact]
+        public void PopulateReturnsProvidedInstanceWithPopulatedPropertiesTest()
+        {
+            var expected = new Person();
+
+            var actual = Model.Populate(expected);
+
+            actual.Should().Be(expected);
+            actual.Address.Should().NotBeNull();
+            actual.FirstName.Should().NotBeNullOrWhiteSpace();
+        }
+
+        [Fact]
         public void UsingDefaultConfigurationReturnsNewInstanceTest()
         {
             var firstActual = Model.UsingDefaultConfiguration();
@@ -59,7 +111,63 @@
         }
 
         [Fact]
-        public void UsingModuleReturnsBuildStrategyWithModuleModificationsTest()
+        public void UsingExecuteStrategyReturnsStrategyWithDefaultConfigurationTest()
+        {
+            var defaultConfig = Model.UsingDefaultConfiguration();
+
+            var actual = Model.UsingExecuteStrategy<DefaultExecuteStrategy>();
+
+            actual.Configuration.Should().BeEquivalentTo(defaultConfig);
+        }
+
+        [Fact]
+        public void UsingModelAppliesDefaultConfigurationAsBaseConfiguration()
+        {
+            var defaultConfig = Model.UsingDefaultConfiguration();
+
+            var actual = Model.UsingModule<TestConfigurationModule>();
+
+            actual.ConstructorResolver.Should().BeOfType<DefaultConstructorResolver>();
+            actual.PropertyResolver.Should().BeOfType<DefaultPropertyResolver>();
+
+            foreach (var item in defaultConfig.ExecuteOrderRules)
+            {
+                actual.ExecuteOrderRules.Any(x => x.GetType() == item.GetType()).Should().BeTrue();
+            }
+
+            foreach (var item in defaultConfig.CreationRules)
+            {
+                actual.CreationRules.Any(x => x.GetType() == item.GetType()).Should().BeTrue();
+            }
+
+            foreach (var item in defaultConfig.IgnoreRules)
+            {
+                actual.IgnoreRules.Any(x => x.GetType() == item.GetType()).Should().BeTrue();
+            }
+
+            foreach (var item in defaultConfig.PostBuildActions)
+            {
+                actual.PostBuildActions.Any(x => x.GetType() == item.GetType()).Should().BeTrue();
+            }
+
+            foreach (var item in defaultConfig.TypeCreators)
+            {
+                actual.TypeCreators.Any(x => x.GetType() == item.GetType()).Should().BeTrue();
+            }
+
+            foreach (var item in defaultConfig.TypeMappingRules)
+            {
+                actual.TypeMappingRules.Any(x => x.GetType() == item.GetType()).Should().BeTrue();
+            }
+
+            foreach (var item in defaultConfig.ValueGenerators)
+            {
+                actual.ValueGenerators.Any(x => x.GetType() == item.GetType()).Should().BeTrue();
+            }
+        }
+
+        [Fact]
+        public void UsingModuleReturnsBuildConfigurationWithModuleModificationsAppliedTest()
         {
             var actual = Model.UsingModule<TestConfigurationModule>();
 
