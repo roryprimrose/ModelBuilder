@@ -2,6 +2,7 @@
 {
     using System;
     using System.Linq.Expressions;
+    using ModelBuilder.IgnoreRules;
 
     /// <summary>
     ///     The <see cref="Model" />
@@ -41,7 +42,7 @@
         }
 
         /// <summary>
-        ///     Returns a <see cref="IBuildConfiguration" /> with a new <see cref="IgnoreRule" /> that matches the specified
+        ///     Returns a <see cref="IBuildConfiguration" /> with a new <see cref="IIgnoreRule" /> that matches the specified
         ///     expression.
         /// </summary>
         /// <typeparam name="T">The type of instance that matches the rule.</typeparam>

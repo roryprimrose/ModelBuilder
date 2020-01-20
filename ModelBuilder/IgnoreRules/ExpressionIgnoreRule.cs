@@ -15,7 +15,7 @@
         private readonly Expression<Func<T, object>> _expression;
 
         /// <summary>
-        ///     Creates a new instance of the <see cref="ExpressionIgnoreRule{T}" class />
+        ///     Creates a new instance of the <see cref="ExpressionIgnoreRule{T}" /> class.
         /// </summary>
         /// <param name="expression">The expression used to identify a property on a type.</param>
         public ExpressionIgnoreRule(Expression<Func<T, object>> expression)
@@ -33,7 +33,17 @@
 
             var expressionProperty = _expression.GetProperty();
 
-            return expressionProperty == propertyInfo;
+            if (propertyInfo.Name != expressionProperty.Name)
+            {
+                return false;
+            }
+
+            if (propertyInfo.DeclaringType != expressionProperty.DeclaringType)
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }

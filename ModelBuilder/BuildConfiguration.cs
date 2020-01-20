@@ -1,6 +1,7 @@
 ﻿namespace ModelBuilder
 {
     using System.Collections.Generic;
+    using ModelBuilder.IgnoreRules;
     using ModelBuilder.TypeCreators;
     using ModelBuilder.ValueGenerators;
 
@@ -20,7 +21,7 @@
         public ICollection<ExecuteOrderRule> ExecuteOrderRules { get; } = new List<ExecuteOrderRule>();
 
         /// <inheritdoc />
-        public ICollection<IgnoreRule> IgnoreRules { get; } = new List<IgnoreRule>();
+        public ICollection<IIgnoreRule> IgnoreRules { get; } = new List<IIgnoreRule>();
 
         /// <inheritdoc />
         public ICollection<IPostBuildAction> PostBuildActions { get; } = new List<IPostBuildAction>();

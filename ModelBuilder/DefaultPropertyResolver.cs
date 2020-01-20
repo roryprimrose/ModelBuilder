@@ -94,7 +94,7 @@ namespace ModelBuilder
 
             // Check if there is a matching ignore rule
             var ignoreRule = configuration.IgnoreRules?.FirstOrDefault(
-                x => x.TargetType.IsAssignableFrom(type) && x.PropertyName == propertyInfo.Name);
+                x => x.IsMatch(propertyInfo));
 
             if (ignoreRule != null)
             {

@@ -6,6 +6,7 @@
     using System.Linq;
     using System.Linq.Expressions;
     using FluentAssertions;
+    using ModelBuilder.IgnoreRules;
     using ModelBuilder.TypeCreators;
     using ModelBuilder.UnitTests.Models;
     using ModelBuilder.ValueGenerators;
@@ -188,12 +189,13 @@
         {
             var target = new BuildConfiguration();
 
-            target.AddIgnoreRule<Person>(x => x.FirstName);
+            var actual = target.AddIgnoreRule<Person>(x => x.FirstName);
+
+            actual.Should().Be(target);
 
             var rule = target.IgnoreRules.Single();
-
-            rule.TargetType.Should().Be<Person>();
-            rule.PropertyName.Should().Be(nameof(Person.FirstName));
+            
+            rule.Should().BeOfType<ExpressionIgnoreRule<Person>>();
         }
 
         [Fact]
@@ -393,7 +395,7 @@
         [Fact]
         public void AddWithIgnoreRuleAddsRuleToCompilerTest()
         {
-            var rule = new IgnoreRule(typeof(Person), "FirstName");
+            var rule = new ExpressionIgnoreRule<Person>(x => x.FirstName);
 
             var target = new BuildConfiguration();
 
@@ -405,7 +407,7 @@
         [Fact]
         public void AddWithIgnoreRuleThrowsExceptionWithNullCompilerTest()
         {
-            var rule = new IgnoreRule(typeof(Person), "FirstName");
+            var rule = new ExpressionIgnoreRule<Person>(x => x.FirstName);
 
             Action action = () => BuildConfigurationExtensions.Add(null, rule);
 
@@ -417,7 +419,7 @@
         {
             var target = Substitute.For<IBuildConfiguration>();
 
-            Action action = () => target.Add((IgnoreRule) null);
+            Action action = () => target.Add((IIgnoreRule) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -622,7 +624,7 @@
         [Fact]
         public void IgnoringReturnsNewBuildConfigurationWithIgnoreRuleAppendedTest()
         {
-            var ignoreRules = new Collection<IgnoreRule>();
+            var ignoreRules = new Collection<IIgnoreRule>();
 
             var target = Substitute.For<IBuildConfiguration>();
 
@@ -631,11 +633,7 @@
             var actual = target.Ignoring<Person>(x => x.Priority);
 
             actual.IgnoreRules.Should().NotBeEmpty();
-
-            var matchingRule =
-                actual.IgnoreRules.FirstOrDefault(x => x.PropertyName == "Priority" && x.TargetType == typeof(Person));
-
-            matchingRule.Should().NotBeNull();
+            actual.IgnoreRules.Single().Should().BeOfType<ExpressionIgnoreRule<Person>>();
         }
 
         [Fact]

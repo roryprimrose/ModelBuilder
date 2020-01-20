@@ -4,6 +4,7 @@
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Linq.Expressions;
+    using ModelBuilder.IgnoreRules;
     using ModelBuilder.TypeCreators;
     using ModelBuilder.ValueGenerators;
 
@@ -71,7 +72,7 @@
         /// <returns>The configuration.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="configuration" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="rule" /> parameter is <c>null</c>.</exception>
-        public static IBuildConfiguration Add(this IBuildConfiguration configuration, IgnoreRule rule)
+        public static IBuildConfiguration Add(this IBuildConfiguration configuration, IIgnoreRule rule)
         {
             if (configuration == null)
             {
@@ -372,7 +373,7 @@
             Justification =
                 "This signature is designed for ease of use rather than requiring that T is either a parameter or return type.")]
         public static IBuildConfiguration AddIgnoreRule<T>(this IBuildConfiguration configuration)
-            where T : IgnoreRule, new()
+            where T : IIgnoreRule, new()
         {
             if (configuration == null)
             {
@@ -414,10 +415,7 @@
                 throw new ArgumentNullException(nameof(expression));
             }
 
-            var targetType = typeof(T);
-            var property = expression.GetProperty();
-
-            var rule = new IgnoreRule(targetType, property.Name);
+            var rule = new ExpressionIgnoreRule<T>(expression);
 
             configuration.IgnoreRules.Add(rule);
 
@@ -580,7 +578,7 @@
         }
 
         /// <summary>
-        ///     Appends a new <see cref="IgnoreRule" /> to the build configuration using the specified expression.
+        ///     Appends a new <see cref="IIgnoreRule" /> to the build configuration using the specified expression.
         /// </summary>
         /// <typeparam name="T">The type of instance that matches the rule.</typeparam>
         /// <param name="buildConfiguration">The build configuration to update.</param>
@@ -607,12 +605,9 @@
                 throw new ArgumentNullException(nameof(expression));
             }
 
-            var targetType = typeof(T);
-            var property = expression.GetProperty();
+            var rule = new ExpressionIgnoreRule<T>(expression);
 
-            var rule = new IgnoreRule(targetType, property.Name);
-
-            return buildConfiguration.Add(rule);
+            return Add(buildConfiguration, rule);
         }
 
         /// <summary>
@@ -731,7 +726,7 @@
             Justification =
                 "This signature is designed for ease of use rather than requiring that T is either a parameter or return type.")]
         public static IBuildConfiguration RemoveIgnoreRule<T>(this IBuildConfiguration configuration)
-            where T : IgnoreRule
+            where T : IIgnoreRule
         {
             if (configuration == null)
             {
@@ -885,8 +880,6 @@
             {
                 throw new ArgumentNullException(nameof(buildConfiguration));
             }
-
-            var buildLog = new DefaultBuildLog();
 
             var executeStrategy = new T();
 

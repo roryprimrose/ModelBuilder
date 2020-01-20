@@ -6,7 +6,9 @@
     using System.IO;
     using System.Linq;
     using System.Reflection;
+    using System.Text.RegularExpressions;
     using FluentAssertions;
+    using ModelBuilder.IgnoreRules;
     using ModelBuilder.TypeCreators;
     using ModelBuilder.UnitTests.Models;
     using ModelBuilder.ValueGenerators;
@@ -102,7 +104,7 @@
                 Arg.Any<object[]>()).Returns(false);
             buildConfiguration.TypeCreators.Returns(typeCreators);
             buildConfiguration.ValueGenerators.Returns(valueGenerators);
-            buildConfiguration.IgnoreRules.Returns(new Collection<IgnoreRule>());
+            buildConfiguration.IgnoreRules.Returns(new Collection<IIgnoreRule>());
             buildConfiguration.ConstructorResolver.Returns(new DefaultConstructorResolver());
 
             var target = new DefaultExecuteStrategy();
@@ -415,7 +417,7 @@
             buildConfiguration.PropertyResolver.Returns(propertyResolver);
             buildConfiguration.TypeCreators.Returns(typeCreators);
             buildConfiguration.ValueGenerators.Returns(valueGenerators);
-            buildConfiguration.ExecuteOrderRules.Returns((ICollection<ExecuteOrderRule>)null);
+            buildConfiguration.ExecuteOrderRules.Returns((ICollection<ExecuteOrderRule>) null);
 
             var target = new DefaultExecuteStrategy();
 
@@ -435,7 +437,7 @@
             generator.Generate(typeof(Guid), "Value", Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == expected))
                 .Returns(value);
 
-            var actual = (SlimModel)target.Create(typeof(SlimModel));
+            var actual = (SlimModel) target.Create(typeof(SlimModel));
 
             actual.Should().Be(expected);
             actual.Value.Should().Be(value);
@@ -764,7 +766,7 @@
         {
             var firstValue = Guid.NewGuid().ToString();
             var secondValue = Guid.NewGuid();
-            
+
             var buildConfiguration = Model.UsingDefaultConfiguration()
                 .Add(new CreationRule(typeof(Address), "Id", 100, firstValue))
                 .Add(new CreationRule(typeof(Person), "Id", 20, secondValue));
@@ -1473,164 +1475,16 @@
         }
 
         [Fact]
-        public void PopulateDoesNotApplyIgnoreRuleWhenPropertyNameHasDifferentCaseTest()
+        public void PopulateDoesNotApplyIgnoreRuleWhenRuleNotMatchedTest()
         {
             var staff = new List<Person>();
             var name = Guid.NewGuid().ToString();
             var address = Guid.NewGuid().ToString();
             var expected = new Company();
-            var ignoreRule = new IgnoreRule(typeof(Company), "name");
+            var ignoreRule = new RegexIgnoreRule(new Regex("ThisWillNotMatch"));
             var valueGenerators = new Collection<IValueGenerator>();
             var typeCreators = new Collection<ITypeCreator>();
-            var ignoreRules = new Collection<IgnoreRule>
-            {
-                ignoreRule
-            };
-
-            var buildConfiguration = Substitute.For<IBuildConfiguration>();
-            var typeCreator = Substitute.For<ITypeCreator>();
-            var enumerableTypeCreator = Substitute.For<ITypeCreator>();
-            var valueGenerator = Substitute.For<IValueGenerator>();
-            var propertyResolver = Substitute.For<IPropertyResolver>();
-
-            typeCreators.Add(typeCreator);
-            typeCreators.Add(enumerableTypeCreator);
-            valueGenerators.Add(valueGenerator);
-
-            buildConfiguration.PropertyResolver.Returns(propertyResolver);
-            propertyResolver.CanPopulate(Arg.Any<PropertyInfo>()).Returns(true);
-            propertyResolver.ShouldPopulateProperty(
-                Arg.Any<IBuildConfiguration>(),
-                Arg.Any<object>(),
-                Arg.Any<PropertyInfo>(),
-                Arg.Any<object[]>()).Returns(true);
-            buildConfiguration.TypeCreators.Returns(typeCreators);
-            buildConfiguration.ValueGenerators.Returns(valueGenerators);
-            buildConfiguration.IgnoreRules.Returns(ignoreRules);
-
-            var target = new DefaultExecuteStrategy();
-
-            target.Initialize(buildConfiguration);
-
-            typeCreator.CanPopulate(typeof(Company), null, Arg.Any<IBuildChain>()).Returns(true);
-            typeCreator.Populate(expected, target).Returns(expected);
-            typeCreator.AutoPopulate.Returns(true);
-            enumerableTypeCreator.AutoPopulate.Returns(false);
-            enumerableTypeCreator.CanCreate(
-                typeof(IEnumerable<Person>),
-                "Staff",
-                Arg.Is<IBuildChain>(x => x.Last == expected)).Returns(true);
-            enumerableTypeCreator.Create(
-                typeof(IEnumerable<Person>),
-                "Staff",
-                Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == expected)).Returns(staff);
-            enumerableTypeCreator.Populate(staff, target).Returns(staff);
-            valueGenerator.IsSupported(typeof(string), "Name", Arg.Is<IBuildChain>(x => x.Last == expected))
-                .Returns(true);
-            valueGenerator.Generate(
-                typeof(string),
-                "Name",
-                Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == expected)).Returns(name);
-            valueGenerator.IsSupported(typeof(string), "Address", Arg.Is<IBuildChain>(x => x.Last == expected))
-                .Returns(true);
-            valueGenerator.Generate(
-                typeof(string),
-                "Address",
-                Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == expected)).Returns(address);
-
-            var actual = (Company) target.Populate(expected);
-
-            actual.Should().BeSameAs(expected);
-            actual.Name.Should().Be(name);
-            actual.Address.Should().Be(address);
-            actual.Staff.Should().BeSameAs(staff);
-        }
-
-        [Fact]
-        public void PopulateDoesNotApplyIgnoreRuleWhenPropertyNameNotMatchedTest()
-        {
-            var staff = new List<Person>();
-            var name = Guid.NewGuid().ToString();
-            var address = Guid.NewGuid().ToString();
-            var expected = new Company();
-            var ignoreRule = new IgnoreRule(typeof(Company), "Names");
-            var valueGenerators = new Collection<IValueGenerator>();
-            var typeCreators = new Collection<ITypeCreator>();
-            var ignoreRules = new Collection<IgnoreRule>
-            {
-                ignoreRule
-            };
-
-            var buildConfiguration = Substitute.For<IBuildConfiguration>();
-            var typeCreator = Substitute.For<ITypeCreator>();
-            var enumerableTypeCreator = Substitute.For<ITypeCreator>();
-            var valueGenerator = Substitute.For<IValueGenerator>();
-            var propertyResolver = Substitute.For<IPropertyResolver>();
-
-            typeCreators.Add(typeCreator);
-            typeCreators.Add(enumerableTypeCreator);
-            valueGenerators.Add(valueGenerator);
-
-            buildConfiguration.PropertyResolver.Returns(propertyResolver);
-            propertyResolver.CanPopulate(Arg.Any<PropertyInfo>()).Returns(true);
-            propertyResolver.ShouldPopulateProperty(
-                Arg.Any<IBuildConfiguration>(),
-                Arg.Any<object>(),
-                Arg.Any<PropertyInfo>(),
-                Arg.Any<object[]>()).Returns(true);
-            buildConfiguration.TypeCreators.Returns(typeCreators);
-            buildConfiguration.ValueGenerators.Returns(valueGenerators);
-            buildConfiguration.IgnoreRules.Returns(ignoreRules);
-
-            var target = new DefaultExecuteStrategy();
-
-            target.Initialize(buildConfiguration);
-
-            typeCreator.CanPopulate(typeof(Company), null, Arg.Any<IBuildChain>()).Returns(true);
-            typeCreator.Populate(expected, target).Returns(expected);
-            typeCreator.AutoPopulate.Returns(true);
-            enumerableTypeCreator.AutoPopulate.Returns(false);
-            enumerableTypeCreator.CanCreate(
-                typeof(IEnumerable<Person>),
-                "Staff",
-                Arg.Is<IBuildChain>(x => x.Last == expected)).Returns(true);
-            enumerableTypeCreator.Create(
-                typeof(IEnumerable<Person>),
-                "Staff",
-                Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == expected)).Returns(staff);
-            enumerableTypeCreator.Populate(staff, target).Returns(staff);
-            valueGenerator.IsSupported(typeof(string), "Name", Arg.Is<IBuildChain>(x => x.Last == expected))
-                .Returns(true);
-            valueGenerator.Generate(
-                typeof(string),
-                "Name",
-                Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == expected)).Returns(name);
-            valueGenerator.IsSupported(typeof(string), "Address", Arg.Is<IBuildChain>(x => x.Last == expected))
-                .Returns(true);
-            valueGenerator.Generate(
-                typeof(string),
-                "Address",
-                Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == expected)).Returns(address);
-
-            var actual = (Company) target.Populate(expected);
-
-            actual.Should().BeSameAs(expected);
-            actual.Name.Should().Be(name);
-            actual.Address.Should().Be(address);
-            actual.Staff.Should().BeSameAs(staff);
-        }
-
-        [Fact]
-        public void PopulateDoesNotApplyIgnoreRuleWhenPropertyTypeNotMatchedTest()
-        {
-            var staff = new List<Person>();
-            var name = Guid.NewGuid().ToString();
-            var address = Guid.NewGuid().ToString();
-            var expected = new Company();
-            var ignoreRule = new IgnoreRule(typeof(Stream), "Name");
-            var valueGenerators = new Collection<IValueGenerator>();
-            var typeCreators = new Collection<ITypeCreator>();
-            var ignoreRules = new Collection<IgnoreRule>
+            var ignoreRules = new Collection<IIgnoreRule>
             {
                 ignoreRule
             };
@@ -1755,6 +1609,26 @@
 
             firstAction.DidNotReceive().Execute(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<IBuildChain>());
             secondAction.Received().Execute(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<IBuildChain>());
+        }
+
+        [Fact]
+        public void PopulateIgnoresPropertyWhenMatchingIgnoreRuleFound()
+        {
+            var expected = new Company();
+
+            var config = new BuildConfiguration().UsingModule<DefaultConfigurationModule>()
+                .Ignoring<Company>(x => x.Name);
+
+            var target = new DefaultExecuteStrategy();
+
+            target.Initialize(config);
+
+            var actual = (Company) target.Populate(expected);
+
+            actual.Should().BeSameAs(expected);
+            actual.Name.Should().BeNull();
+            actual.Address.Should().NotBeNullOrWhiteSpace();
+            actual.Staff.Should().NotBeEmpty();
         }
 
         [Fact]
@@ -2040,10 +1914,10 @@
             var name = Guid.NewGuid().ToString();
             var address = Guid.NewGuid().ToString();
             var expected = new Company();
-            var ignoreRule = new IgnoreRule(typeof(Company), "Name");
+            var ignoreRule = new ExpressionIgnoreRule<Company>(x => x.Name);
             var valueGenerators = new Collection<IValueGenerator>();
             var typeCreators = new Collection<ITypeCreator>();
-            var ignoreRules = new Collection<IgnoreRule>
+            var ignoreRules = new Collection<IIgnoreRule>
             {
                 ignoreRule
             };
@@ -2115,10 +1989,10 @@
             var name = Guid.NewGuid().ToString();
             var address = Guid.NewGuid().ToString();
             var expected = new Company();
-            var ignoreRule = new IgnoreRule(typeof(Company), "Name");
+            var ignoreRule = new ExpressionIgnoreRule<Company>(x => x.Name);
             var valueGenerators = new Collection<IValueGenerator>();
             var typeCreators = new Collection<ITypeCreator>();
-            var ignoreRules = new Collection<IgnoreRule>
+            var ignoreRules = new Collection<IIgnoreRule>
             {
                 ignoreRule
             };

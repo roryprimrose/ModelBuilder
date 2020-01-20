@@ -300,4 +300,4 @@ The package had some large design changes that introduce breaking changes to the
 - The combination of build strategy, compiler and configuration have been replaced with just `IBuildConfiguration`.
 - IBuildConfiguration is now mutable. A new IBuildConfiguration is created for each call to a static method on the `Model` class however that some configuration is used for the entire creation process. Any mutations to the build configuration will apply until the entire build tree has completed.
 - `ICompilerModule` has been renamed to `IConfigurationModule` and now configures `IBuildConfiguration`.
-- The `IgnoreRule` class has been replaced with the `IIgnoreRule` interface. The logic for processing rule matches moves from `IExecuteStrategy` to the rule itself.
+- The `IgnoreRule` class has been replaced with the `IIgnoreRule` interface. The logic for processing rule matches moves from `DefaultPropertyResolver` to the rule itself.

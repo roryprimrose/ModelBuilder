@@ -18,7 +18,6 @@
     public class DefaultExecuteStrategy : IExecuteStrategy
     {
         private readonly IBuildHistory _buildHistory;
-        private readonly IBuildLog _buildLog;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="DefaultExecuteStrategy" /> class.
@@ -35,7 +34,7 @@
         public DefaultExecuteStrategy(IBuildHistory buildHistory, IBuildLog buildLog)
         {
              _buildHistory = buildHistory ?? throw new ArgumentNullException(nameof(buildHistory));
-            _buildLog = buildLog ?? throw new ArgumentNullException(nameof(buildLog));
+            Log = buildLog ?? throw new ArgumentNullException(nameof(buildLog));
         }
 
         /// <inheritdoc />
@@ -132,7 +131,7 @@
                 }
                 else
                 {
-                    _buildLog.IgnoringProperty(propertyInfo.PropertyType, propertyInfo.Name, instance);
+                    Log.IgnoringProperty(propertyInfo.PropertyType, propertyInfo.Name, instance);
                 }
             }
 
@@ -168,7 +167,7 @@
             if (typeToBuild == null)
             {
                 throw new BuildException(Resources.DefaultBuildStrategy_UndeterminedTargetType, type, referenceName,
-                    context, _buildLog.Output);
+                    context, Log.Output);
             }
 
             var buildChain = BuildChain;
@@ -177,7 +176,7 @@
 
             if (circularReference != null)
             {
-                _buildLog.CircularReferenceDetected(typeToBuild);
+                Log.CircularReferenceDetected(typeToBuild);
 
                 return circularReference;
             }
@@ -218,7 +217,7 @@
 
             if (generator != null)
             {
-                _buildLog.CreatingValue(typeToBuild, generatorType, context);
+                Log.CreatingValue(typeToBuild, generatorType, context);
 
                 try
                 {
@@ -230,11 +229,11 @@
                 }
                 catch (Exception ex)
                 {
-                    _buildLog.BuildFailure(ex);
+                    Log.BuildFailure(ex);
 
                     const string messageFormat =
                         "Failed to create value for type {0} using value generator {1}, {2}: {3}{4}{4}At the time of the failure, the build log was:{4}{4}{5}";
-                    var buildLog = _buildLog.Output;
+                    var buildLog = Log.Output;
                     var message = string.Format(
                         CultureInfo.CurrentCulture,
                         messageFormat,
@@ -258,7 +257,7 @@
                 throw CreateBuildException(typeToBuild, referenceName, context);
             }
 
-            _buildLog.CreatingType(typeToBuild, typeCreator.GetType(), context);
+            Log.CreatingType(typeToBuild, typeCreator.GetType(), context);
 
             try
             {
@@ -273,11 +272,11 @@
             }
             catch (Exception ex)
             {
-                _buildLog.BuildFailure(ex);
+                Log.BuildFailure(ex);
 
                 const string messageFormat =
                     "Failed to create type {0} using type creator {1}, {2}: {3}{4}{4}At the time of the failure, the build log was:{4}{4}{5}";
-                var buildLog = _buildLog.Output;
+                var buildLog = Log.Output;
                 var message = string.Format(
                     CultureInfo.CurrentCulture,
                     messageFormat,
@@ -292,7 +291,7 @@
             }
             finally
             {
-                _buildLog.CreatedType(typeToBuild, context);
+                Log.CreatedType(typeToBuild, context);
             }
         }
 
@@ -318,13 +317,13 @@
             if (propertyInfo.GetSetMethod() != null)
             {
                 // We can assign to this property
-                _buildLog.CreatingProperty(propertyInfo.PropertyType, propertyInfo.Name, instance);
+                Log.CreatingProperty(propertyInfo.PropertyType, propertyInfo.Name, instance);
 
                 var parameterValue = Build(propertyInfo.PropertyType, propertyInfo.Name, instance);
 
                 propertyInfo.SetValue(instance, parameterValue, null);
 
-                _buildLog.CreatedProperty(propertyInfo.PropertyType, propertyInfo.Name, instance);
+                Log.CreatedProperty(propertyInfo.PropertyType, propertyInfo.Name, instance);
 
                 return;
             }
@@ -425,11 +424,11 @@
 
             var ex = new NotSupportedException(message);
 
-            _buildLog.BuildFailure(ex);
+            Log.BuildFailure(ex);
 
             const string messageFormat =
                 "Failed to create instance of type {0}, {1}: {2}{3}{3}At the time of the failure, the build log was:{3}{3}{4}";
-            var buildLog = _buildLog.Output;
+            var buildLog = Log.Output;
             var failureMessage = string.Format(
                 CultureInfo.CurrentCulture,
                 messageFormat,
@@ -480,14 +479,14 @@
                 {
                     var context = buildChain.Last;
 
-                    _buildLog.CreatingParameter(type, parameterInfo.ParameterType, parameterInfo.Name, context);
+                    Log.CreatingParameter(type, parameterInfo.ParameterType, parameterInfo.Name, context);
 
                     // Recurse to build this parameter value
                     var parameterValue = Build(parameterInfo.ParameterType, parameterInfo.Name, null);
 
                     parameters.Add(parameterValue);
 
-                    _buildLog.CreatedParameter(type, parameterInfo.ParameterType, parameterInfo.Name, context);
+                    Log.CreatedParameter(type, parameterInfo.ParameterType, parameterInfo.Name, context);
                 }
 
                 var arguments = parameters.ToArray();
@@ -509,7 +508,7 @@
 
             if (typeMappingRule != null)
             {
-                _buildLog.MappedType(type, typeMappingRule.TargetType);
+                Log.MappedType(type, typeMappingRule.TargetType);
 
                 return typeMappingRule.TargetType;
             }
@@ -531,7 +530,7 @@
                     return type;
                 }
 
-                _buildLog.MappedType(type, matchingType);
+                Log.MappedType(type, matchingType);
 
                 return matchingType;
             }
@@ -581,7 +580,7 @@
             ITypeCreator typeCreator,
             object instance)
         {
-            _buildLog.PopulatingInstance(instance);
+            Log.PopulatingInstance(instance);
 
             try
             {
@@ -608,7 +607,7 @@
                 {
                     foreach (var postBuildAction in postBuildActions)
                     {
-                        _buildLog.PostBuildAction(type, postBuildAction.GetType(), instance);
+                        Log.PostBuildAction(type, postBuildAction.GetType(), instance);
 
                         postBuildAction.Execute(type, referenceName, buildChain);
                     }
@@ -618,7 +617,7 @@
             }
             finally
             {
-                _buildLog.PopulatedInstance(instance);
+                Log.PopulatedInstance(instance);
             }
         }
 
@@ -629,6 +628,6 @@
         public IBuildConfiguration Configuration { get; private set; }
 
         /// <inheritdoc />
-        public IBuildLog Log => _buildLog;
+        public IBuildLog Log { get; }
     }
 }

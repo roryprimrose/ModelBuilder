@@ -1,6 +1,7 @@
 ﻿namespace ModelBuilder
 {
     using System.Collections.Generic;
+    using ModelBuilder.IgnoreRules;
     using ModelBuilder.TypeCreators;
     using ModelBuilder.ValueGenerators;
 
@@ -29,7 +30,7 @@
         /// <summary>
         ///     Gets the ignore rules used to skip over property population.
         /// </summary>
-        ICollection<IgnoreRule> IgnoreRules { get; }
+        ICollection<IIgnoreRule> IgnoreRules { get; }
 
         /// <summary>
         ///     Gets the post build actions used to modify instances after they have been created or populated.
