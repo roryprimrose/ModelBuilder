@@ -8,6 +8,7 @@
     using System.Reflection;
     using System.Text.RegularExpressions;
     using FluentAssertions;
+    using ModelBuilder.ExecuteOrderRules;
     using ModelBuilder.IgnoreRules;
     using ModelBuilder.TypeCreators;
     using ModelBuilder.UnitTests.Models;
@@ -417,7 +418,7 @@
             buildConfiguration.PropertyResolver.Returns(propertyResolver);
             buildConfiguration.TypeCreators.Returns(typeCreators);
             buildConfiguration.ValueGenerators.Returns(valueGenerators);
-            buildConfiguration.ExecuteOrderRules.Returns((ICollection<ExecuteOrderRule>) null);
+            buildConfiguration.ExecuteOrderRules.Returns((ICollection<IExecuteOrderRule>) null);
 
             var target = new DefaultExecuteStrategy();
 

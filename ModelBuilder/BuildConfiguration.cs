@@ -1,6 +1,7 @@
 ﻿namespace ModelBuilder
 {
     using System.Collections.Generic;
+    using ModelBuilder.ExecuteOrderRules;
     using ModelBuilder.IgnoreRules;
     using ModelBuilder.TypeCreators;
     using ModelBuilder.ValueGenerators;
@@ -18,7 +19,7 @@
         public ICollection<CreationRule> CreationRules { get; } = new List<CreationRule>();
 
         /// <inheritdoc />
-        public ICollection<ExecuteOrderRule> ExecuteOrderRules { get; } = new List<ExecuteOrderRule>();
+        public ICollection<IExecuteOrderRule> ExecuteOrderRules { get; } = new List<IExecuteOrderRule>();
 
         /// <inheritdoc />
         public ICollection<IIgnoreRule> IgnoreRules { get; } = new List<IIgnoreRule>();

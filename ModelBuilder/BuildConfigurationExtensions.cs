@@ -4,6 +4,7 @@
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Linq.Expressions;
+    using ModelBuilder.ExecuteOrderRules;
     using ModelBuilder.IgnoreRules;
     using ModelBuilder.TypeCreators;
     using ModelBuilder.ValueGenerators;
@@ -47,7 +48,7 @@
         /// <returns>The configuration.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="configuration" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="rule" /> parameter is <c>null</c>.</exception>
-        public static IBuildConfiguration Add(this IBuildConfiguration configuration, ExecuteOrderRule rule)
+        public static IBuildConfiguration Add(this IBuildConfiguration configuration, IExecuteOrderRule rule)
         {
             if (configuration == null)
             {
@@ -301,7 +302,7 @@
             Justification =
                 "This signature is designed for ease of use rather than requiring that T is either a parameter or return type.")]
         public static IBuildConfiguration AddExecuteOrderRule<T>(this IBuildConfiguration configuration)
-            where T : ExecuteOrderRule, new()
+            where T : IExecuteOrderRule, new()
         {
             if (configuration == null)
             {
@@ -695,7 +696,7 @@
             Justification =
                 "This signature is designed for ease of use rather than requiring that T is either a parameter or return type.")]
         public static IBuildConfiguration RemoveExecuteOrderRule<T>(this IBuildConfiguration configuration)
-            where T : ExecuteOrderRule
+            where T : IExecuteOrderRule
         {
             if (configuration == null)
             {

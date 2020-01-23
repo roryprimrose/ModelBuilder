@@ -3,13 +3,14 @@
     using System;
     using System.Reflection;
     using System.Text.RegularExpressions;
+    using ModelBuilder.ExecuteOrderRules;
     using ModelBuilder.Properties;
 
     /// <summary>
     ///     The <see cref="ExecuteOrderRule" />
     ///     class is used to define the order of property population.
     /// </summary>
-    public class ExecuteOrderRule
+    public class ExecuteOrderRule : IExecuteOrderRule
     {
         private readonly Func<Type, Type, string, bool> _func;
 
@@ -125,16 +126,16 @@
         /// <summary>
         ///     Gets whether the specified type and property name match this rule.
         /// </summary>
-        /// <param name="property">The property to evaluate against the rule.</param>
+        /// <param name="propertyInfo">The property to evaluate against the rule.</param>
         /// <returns><c>true</c> if the rule matches the specified type and property name; otherwise <c>false</c>.</returns>
-        public bool IsMatch(PropertyInfo property)
+        public bool IsMatch(PropertyInfo propertyInfo)
         {
-            if (property == null)
+            if (propertyInfo == null)
             {
-                throw new ArgumentNullException(nameof(property));
+                throw new ArgumentNullException(nameof(propertyInfo));
             }
 
-            return _func(property.DeclaringType, property.PropertyType, property.Name);
+            return _func(propertyInfo.DeclaringType, propertyInfo.PropertyType, propertyInfo.Name);
         }
 
         /// <summary>

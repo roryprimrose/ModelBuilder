@@ -5,7 +5,7 @@
 
     public class DummyIgnoreRule : IIgnoreRule
     {
-        public bool IsMatch(PropertyInfo propertyInfo)
+        public bool IsMatch(PropertyInfo property)
         {
             return false;
         }

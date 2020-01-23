@@ -1,6 +1,7 @@
 ﻿namespace ModelBuilder
 {
     using System.Collections.Generic;
+    using ModelBuilder.ExecuteOrderRules;
     using ModelBuilder.IgnoreRules;
     using ModelBuilder.TypeCreators;
     using ModelBuilder.ValueGenerators;
@@ -25,7 +26,7 @@
         /// <summary>
         ///     Gets the execute order rules used to determine the order that properties are populated.
         /// </summary>
-        ICollection<ExecuteOrderRule> ExecuteOrderRules { get; }
+        ICollection<IExecuteOrderRule> ExecuteOrderRules { get; }
 
         /// <summary>
         ///     Gets the ignore rules used to skip over property population.
