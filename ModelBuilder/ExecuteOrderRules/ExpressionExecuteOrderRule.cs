@@ -1,0 +1,54 @@
+﻿namespace ModelBuilder.ExecuteOrderRules
+{
+    using System;
+    using System.Linq.Expressions;
+    using System.Reflection;
+
+    /// <summary>
+    ///     The <see cref="ExpressionExecuteOrderRule{T}" />
+    ///     class is used to identify a property to determine the priority order in populating the property by
+    ///     <see cref="IExecuteStrategy" />.
+    /// </summary>
+    /// <typeparam name="T">The type being evaluated.</typeparam>
+    public class ExpressionExecuteOrderRule<T> : IExecuteOrderRule
+    {
+        private readonly Expression<Func<T, object>> _expression;
+
+        /// <summary>
+        ///     Creates a new instance of the <see cref="ExpressionExecuteOrderRule{T}" /> class.
+        /// </summary>
+        /// <param name="expression">The expression used to identify a property on a type.</param>
+        /// <param name="priority">The execution order priority to apply to the property.</param>
+        public ExpressionExecuteOrderRule(Expression<Func<T, object>> expression, int priority)
+        {
+            _expression = expression ?? throw new ArgumentNullException(nameof(expression));
+            Priority = priority;
+        }
+
+        /// <inheritdoc />
+        public bool IsMatch(PropertyInfo propertyInfo)
+        {
+            if (propertyInfo == null)
+            {
+                throw new ArgumentNullException(nameof(propertyInfo));
+            }
+
+            var expressionProperty = _expression.GetProperty();
+
+            if (propertyInfo.Name != expressionProperty.Name)
+            {
+                return false;
+            }
+
+            if (propertyInfo.DeclaringType != expressionProperty.DeclaringType)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <inheritdoc />
+        public int Priority { get; }
+    }
+}

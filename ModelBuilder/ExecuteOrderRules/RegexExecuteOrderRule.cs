@@ -1,29 +1,31 @@
-﻿namespace ModelBuilder.IgnoreRules
+﻿namespace ModelBuilder.ExecuteOrderRules
 {
     using System;
     using System.Reflection;
     using System.Text.RegularExpressions;
 
     /// <summary>
-    ///     The <see cref="RegexIgnoreRule" />
+    ///     The <see cref="RegexExecuteOrderRule" />
     ///     class is used to match a property on a type using a <see cref="Regex" />
-    ///     on the property name for whether the property should be ignored by <see cref="IExecuteStrategy" />
-    ///     and not be populated.
+    ///     on the property name to determine the priority order in populating the property by <see cref="IExecuteStrategy" />.
     /// </summary>
-    public class RegexIgnoreRule : IIgnoreRule
+    public class RegexExecuteOrderRule : IExecuteOrderRule
     {
         private readonly Regex _expression;
 
         /// <summary>
-        ///     Creates a new instance of the <see cref="RegexIgnoreRule" /> class.
+        ///     Creates a new instance of the <see cref="RegexExecuteOrderRule" /> class.
         /// </summary>
         /// <param name="expression">The expression used to match on property name.</param>
-        public RegexIgnoreRule(Regex expression)
+        /// <param name="priority">The execution order priority to apply to the property.</param>
+        public RegexExecuteOrderRule(Regex expression, int priority)
         {
             _expression = expression ?? throw new ArgumentNullException(nameof(expression));
+            Priority = priority;
         }
 
         /// <inheritdoc />
+        /// <exception cref="System.ArgumentNullException">The <paramref name="propertyInfo" /> is <c>null</c>.</exception>
         public bool IsMatch(PropertyInfo propertyInfo)
         {
             if (propertyInfo == null)
@@ -33,5 +35,8 @@
 
             return _expression.IsMatch(propertyInfo.Name);
         }
+
+        /// <inheritdoc />
+        public int Priority { get; }
     }
 }
