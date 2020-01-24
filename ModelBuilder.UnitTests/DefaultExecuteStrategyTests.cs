@@ -8,6 +8,7 @@
     using System.Reflection;
     using System.Text.RegularExpressions;
     using FluentAssertions;
+    using ModelBuilder.CreationRules;
     using ModelBuilder.ExecuteOrderRules;
     using ModelBuilder.IgnoreRules;
     using ModelBuilder.TypeCreators;
@@ -1711,7 +1712,7 @@
                 Arg.Any<object>(),
                 Arg.Any<PropertyInfo>(),
                 Arg.Any<object[]>()).Returns(true);
-            buildConfiguration.CreationRules.Returns(new Collection<CreationRule>());
+            buildConfiguration.CreationRules.Returns(new Collection<ICreationRule>());
             buildConfiguration.ValueGenerators.Returns(
                 new Collection<IValueGenerator>
                 {
@@ -1776,7 +1777,7 @@
                 Arg.Any<object>(),
                 Arg.Any<PropertyInfo>(),
                 Arg.Any<object[]>()).Returns(true);
-            buildConfiguration.CreationRules.Returns(new Collection<CreationRule>());
+            buildConfiguration.CreationRules.Returns(new Collection<ICreationRule>());
             buildConfiguration.ValueGenerators.Returns(
                 new Collection<IValueGenerator>
                 {
@@ -1825,7 +1826,7 @@
                 Arg.Any<object>(),
                 Arg.Any<PropertyInfo>(),
                 Arg.Any<object[]>()).Returns(true);
-            buildConfiguration.CreationRules.Returns(new Collection<CreationRule>());
+            buildConfiguration.CreationRules.Returns(new Collection<ICreationRule>());
             buildConfiguration.ValueGenerators.Returns(
                 new Collection<IValueGenerator>
                 {

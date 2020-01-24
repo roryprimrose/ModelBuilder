@@ -1,6 +1,7 @@
 ﻿namespace ModelBuilder
 {
     using System.Collections.Generic;
+    using ModelBuilder.CreationRules;
     using ModelBuilder.ExecuteOrderRules;
     using ModelBuilder.IgnoreRules;
     using ModelBuilder.TypeCreators;
@@ -21,7 +22,7 @@
         ///     Gets the creation rules used to quickly generate values without invoking <see cref="ITypeCreator" /> or
         ///     <see cref="IValueGenerator" /> instances.
         /// </summary>
-        ICollection<CreationRule> CreationRules { get; }
+        ICollection<ICreationRule> CreationRules { get; }
 
         /// <summary>
         ///     Gets the execute order rules used to determine the order that properties are populated.

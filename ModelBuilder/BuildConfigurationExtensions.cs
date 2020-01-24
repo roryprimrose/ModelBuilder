@@ -6,6 +6,7 @@
     using System.Linq.Expressions;
     using System.Reflection;
     using System.Text.RegularExpressions;
+    using ModelBuilder.CreationRules;
     using ModelBuilder.ExecuteOrderRules;
     using ModelBuilder.IgnoreRules;
     using ModelBuilder.TypeCreators;
@@ -125,7 +126,7 @@
         /// <returns>The configuration.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="configuration" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="rule" /> parameter is <c>null</c>.</exception>
-        public static IBuildConfiguration Add(this IBuildConfiguration configuration, CreationRule rule)
+        public static IBuildConfiguration Add(this IBuildConfiguration configuration, ICreationRule rule)
         {
             if (configuration == null)
             {
@@ -230,7 +231,7 @@
             Justification =
                 "This signature is designed for ease of use rather than requiring that T is either a parameter or return type.")]
         public static IBuildConfiguration AddCreationRule<T>(this IBuildConfiguration configuration)
-            where T : CreationRule, new()
+            where T : ICreationRule, new()
         {
             if (configuration == null)
             {

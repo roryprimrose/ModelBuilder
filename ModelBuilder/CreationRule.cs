@@ -3,6 +3,7 @@
     using System;
     using System.Globalization;
     using System.Text.RegularExpressions;
+    using ModelBuilder.CreationRules;
     using ModelBuilder.Properties;
     using ModelBuilder.TypeCreators;
     using ModelBuilder.ValueGenerators;
@@ -12,7 +13,7 @@
     ///     class is used to define simple value creation rules that bypass <see cref="ITypeCreator" /> and
     ///     <see cref="IValueGenerator" /> usages.
     /// </summary>
-    public class CreationRule
+    public class CreationRule : ICreationRule
     {
         private readonly Func<Type, string, IExecuteStrategy, object> _creator;
         private readonly Func<Type, string, bool> _evaluator;
@@ -177,15 +178,10 @@
         {
         }
 
-        /// <summary>
-        ///     Creates a value using the specified type, property name and context.
-        /// </summary>
-        /// <param name="type">The type to match.</param>
-        /// <param name="propertyName">The property name to match.</param>
-        /// <param name="executeStrategy">The execution strategy.</param>
-        public object Create(Type type, string propertyName, IExecuteStrategy executeStrategy)
+        /// <inheritdoc />
+        public object Create(Type type, string referenceName, IExecuteStrategy executeStrategy)
         {
-            if (IsMatch(type, propertyName) == false)
+            if (IsMatch(type, referenceName) == false)
             {
                 var typeName = "<null>";
 
@@ -199,28 +195,21 @@
                     Resources.Rule_InvalidMatch,
                     GetType().Name,
                     typeName,
-                    propertyName);
+                    referenceName);
 
                 throw new NotSupportedException(message);
             }
 
-            return _creator(type, propertyName, executeStrategy);
+            return _creator(type, referenceName, executeStrategy);
         }
 
-        /// <summary>
-        ///     Gets whether the specified type and property name match this rule.
-        /// </summary>
-        /// <param name="type">The type to match.</param>
-        /// <param name="propertyName">The property name to match.</param>
-        /// <returns><c>true</c> if the rule matches the specified type and property name; otherwise <c>false</c>.</returns>
-        public bool IsMatch(Type type, string propertyName)
+        /// <inheritdoc />
+        public bool IsMatch(Type type, string referenceName)
         {
-            return _evaluator(type, propertyName);
+            return _evaluator(type, referenceName);
         }
 
-        /// <summary>
-        ///     Gets the priority for this rule.
-        /// </summary>
+        /// <inheritdoc />
         public int Priority { get; }
     }
 }
