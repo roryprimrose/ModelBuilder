@@ -5,6 +5,8 @@
     using System.IO;
     using System.Linq;
     using System.Linq.Expressions;
+    using System.Reflection;
+    using System.Text.RegularExpressions;
     using FluentAssertions;
     using ModelBuilder.ExecuteOrderRules;
     using ModelBuilder.IgnoreRules;
@@ -166,6 +168,50 @@
         }
 
         [Fact]
+        public void AddExecuteOrderRuleWithPredicateAddsRuleToCompilerTest()
+        {
+            var priority = Environment.TickCount;
+
+            var target = new BuildConfiguration();
+
+            target.AddExecuteOrderRule(x => x.Name == nameof(Person.FirstName), priority);
+
+            var rule = target.ExecuteOrderRules.Single();
+
+            rule.Priority.Should().Be(priority);
+
+            var property = typeof(Person).GetProperty(nameof(Person.FirstName));
+
+            var actual = rule.IsMatch(property);
+
+            actual.Should().BeTrue();
+        }
+
+        [Fact]
+        public void AddExecuteOrderRuleWithPredicateThrowsExceptionWithNullCompilerTest()
+        {
+            var priority = Environment.TickCount;
+
+            Action action = () =>
+                BuildConfigurationExtensions.AddExecuteOrderRule(null, x => x.Name == nameof(Person.FirstName),
+                    priority);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void AddExecuteOrderRuleWithPredicateThrowsExceptionWithNullPredicateTest()
+        {
+            var priority = Environment.TickCount;
+
+            var target = new BuildConfiguration();
+
+            Action action = () => target.AddExecuteOrderRule((Predicate<PropertyInfo>) null, priority);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
         public void AddExecuteOrderRuleWithRegexAddsRuleToCompilerTest()
         {
             var priority = Environment.TickCount;
@@ -186,7 +232,8 @@
         {
             var priority = Environment.TickCount;
 
-            Action action = () => BuildConfigurationExtensions.AddExecuteOrderRule(null, PropertyExpression.LastName, priority);
+            Action action = () =>
+                BuildConfigurationExtensions.AddExecuteOrderRule(null, PropertyExpression.LastName, priority);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -198,7 +245,7 @@
 
             var target = new BuildConfiguration();
 
-            Action action = () => target.AddExecuteOrderRule(null, priority);
+            Action action = () => target.AddExecuteOrderRule((Regex)null, priority);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -256,6 +303,39 @@
         }
 
         [Fact]
+        public void AddIgnoreRuleWithPredicateAddsRuleToCompilerTest()
+        {
+            var target = new BuildConfiguration();
+
+            var actual = target.AddIgnoreRule(x => x.PropertyType == typeof(string));
+
+            actual.Should().Be(target);
+
+            var rule = target.IgnoreRules.Single();
+
+            rule.Should().BeOfType<PredicateIgnoreRule>();
+        }
+
+        [Fact]
+        public void AddIgnoreRuleWithPredicateThrowsExceptionWithNullCompilerTest()
+        {
+            Action action = () =>
+                BuildConfigurationExtensions.AddIgnoreRule(null, info => info.PropertyType == typeof(string));
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void AddIgnoreRuleWithPredicateThrowsExceptionWithNullExpressionTest()
+        {
+            var target = new BuildConfiguration();
+
+            Action action = () => target.AddIgnoreRule((Predicate<PropertyInfo>) null);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
         public void AddIgnoreRuleWithRegexAddsRuleToCompilerTest()
         {
             var target = new BuildConfiguration();
@@ -282,7 +362,7 @@
         {
             var target = new BuildConfiguration();
 
-            Action action = () => target.AddIgnoreRule(null);
+            Action action = () => target.AddIgnoreRule((Regex) null);
 
             action.Should().Throw<ArgumentNullException>();
         }

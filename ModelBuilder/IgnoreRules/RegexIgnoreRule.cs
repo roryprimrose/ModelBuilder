@@ -18,12 +18,14 @@
         ///     Creates a new instance of the <see cref="RegexIgnoreRule" /> class.
         /// </summary>
         /// <param name="expression">The expression used to match on property name.</param>
+        /// <exception cref="ArgumentNullException">The <paramref name="expression" /> parameter is <c>null</c>.</exception>
         public RegexIgnoreRule(Regex expression)
         {
             _expression = expression ?? throw new ArgumentNullException(nameof(expression));
         }
 
         /// <inheritdoc />
+        /// <exception cref="ArgumentNullException">The <paramref name="propertyInfo" /> parameter is <c>null</c>.</exception>
         public bool IsMatch(PropertyInfo propertyInfo)
         {
             if (propertyInfo == null)

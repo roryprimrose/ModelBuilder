@@ -18,12 +18,14 @@
         ///     Creates a new instance of the <see cref="ExpressionIgnoreRule{T}" /> class.
         /// </summary>
         /// <param name="expression">The expression used to identify a property on a type.</param>
+        /// <exception cref="ArgumentNullException">The <paramref name="expression" /> parameter is <c>null</c>.</exception>
         public ExpressionIgnoreRule(Expression<Func<T, object>> expression)
         {
             _expression = expression ?? throw new ArgumentNullException(nameof(expression));
         }
 
         /// <inheritdoc />
+        /// <exception cref="ArgumentNullException">The <paramref name="propertyInfo" /> parameter is <c>null</c>.</exception>
         public bool IsMatch(PropertyInfo propertyInfo)
         {
             if (propertyInfo == null)

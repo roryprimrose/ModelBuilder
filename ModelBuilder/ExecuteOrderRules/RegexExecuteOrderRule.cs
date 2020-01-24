@@ -18,6 +18,7 @@
         /// </summary>
         /// <param name="expression">The expression used to match on property name.</param>
         /// <param name="priority">The execution order priority to apply to the property.</param>
+        /// <exception cref="ArgumentNullException">The <paramref name="expression" /> parameter is <c>null</c>.</exception>
         public RegexExecuteOrderRule(Regex expression, int priority)
         {
             _expression = expression ?? throw new ArgumentNullException(nameof(expression));

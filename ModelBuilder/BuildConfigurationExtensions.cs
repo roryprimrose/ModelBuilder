@@ -4,6 +4,7 @@
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Linq.Expressions;
+    using System.Reflection;
     using System.Text.RegularExpressions;
     using ModelBuilder.ExecuteOrderRules;
     using ModelBuilder.IgnoreRules;
@@ -399,6 +400,37 @@
         }
 
         /// <summary>
+        ///     Adds a new <see cref="PredicateExecuteOrderRule" /> to the configuration.
+        /// </summary>
+        /// <param name="configuration">The configuration.</param>
+        /// <param name="predicate">The predicate that matches on a property.</param>
+        /// <param name="priority">The priority of the rule.</param>
+        /// <returns>The configuration.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="configuration" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="predicate" /> parameter is <c>null</c>.</exception>
+        public static IBuildConfiguration AddExecuteOrderRule(
+            this IBuildConfiguration configuration,
+            Predicate<PropertyInfo> predicate,
+            int priority)
+        {
+            if (configuration == null)
+            {
+                throw new ArgumentNullException(nameof(configuration));
+            }
+
+            if (predicate == null)
+            {
+                throw new ArgumentNullException(nameof(predicate));
+            }
+
+            var rule = new PredicateExecuteOrderRule(predicate, priority);
+
+            configuration.ExecuteOrderRules.Add(rule);
+
+            return configuration;
+        }
+
+        /// <summary>
         ///     Adds a new ignore rule to the configuration.
         /// </summary>
         /// <typeparam name="T">The type of rule to add.</typeparam>
@@ -454,6 +486,35 @@
             }
 
             var rule = new ExpressionIgnoreRule<T>(expression);
+
+            configuration.IgnoreRules.Add(rule);
+
+            return configuration;
+        }
+
+        /// <summary>
+        ///     Adds a new <see cref="PredicateIgnoreRule" /> to the configuration.
+        /// </summary>
+        /// <param name="configuration">The configuration.</param>
+        /// <param name="predicate">The predicate that matches on a property.</param>
+        /// <returns>The configuration.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="configuration" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="predicate" /> parameter is <c>null</c>.</exception>
+        public static IBuildConfiguration AddIgnoreRule(
+            this IBuildConfiguration configuration,
+            Predicate<PropertyInfo> predicate)
+        {
+            if (configuration == null)
+            {
+                throw new ArgumentNullException(nameof(configuration));
+            }
+
+            if (predicate == null)
+            {
+                throw new ArgumentNullException(nameof(predicate));
+            }
+
+            var rule = new PredicateIgnoreRule(predicate);
 
             configuration.IgnoreRules.Add(rule);
 

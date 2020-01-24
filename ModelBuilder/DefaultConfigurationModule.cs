@@ -28,10 +28,8 @@
 
         private void AddExecuteOrderRules(IBuildConfiguration configuration)
         {
-            configuration.ExecuteOrderRules.Add(
-                new ExecuteOrderRule((declaringType, propertyType, name) => propertyType.IsEnum, 4000));
-            configuration.ExecuteOrderRules.Add(
-                new ExecuteOrderRule((declaringType, propertyType, name) => propertyType.IsValueType, 3000));
+            configuration.AddExecuteOrderRule(x => x.PropertyType.IsEnum, 4000);
+            configuration.AddExecuteOrderRule(x => x.PropertyType.IsValueType, 3000);
 
             // Populate personal properties in a specific order for scenarios where a value generator may use the values in order to set other values
             configuration.AddExecuteOrderRule(PropertyExpression.Gender, 2600);
@@ -46,9 +44,8 @@
             configuration.AddExecuteOrderRule(PropertyExpression.TimeZone, 2360);
 
             // Populate strings before other reference types
-            configuration.ExecuteOrderRules.Add(new ExecuteOrderRule(null, typeof(string), (string) null, 2000));
-            configuration.ExecuteOrderRules.Add(
-                new ExecuteOrderRule((declaringType, propertyType, name) => propertyType.IsClass, 1000));
+            configuration.AddExecuteOrderRule(x => x.PropertyType == typeof(string), 2000);
+            configuration.AddExecuteOrderRule(x => x.PropertyType.IsClass, 1000);
         }
 
         private void AddTypeCreators(IBuildConfiguration configuration)

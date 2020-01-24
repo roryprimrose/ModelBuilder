@@ -19,6 +19,7 @@
         /// </summary>
         /// <param name="expression">The expression used to identify a property on a type.</param>
         /// <param name="priority">The execution order priority to apply to the property.</param>
+        /// <exception cref="ArgumentNullException">The <paramref name="expression" /> parameter is <c>null</c>.</exception>
         public ExpressionExecuteOrderRule(Expression<Func<T, object>> expression, int priority)
         {
             _expression = expression ?? throw new ArgumentNullException(nameof(expression));
@@ -26,6 +27,7 @@
         }
 
         /// <inheritdoc />
+        /// <exception cref="ArgumentNullException">The <paramref name="propertyInfo" /> parameter is <c>null</c>.</exception>
         public bool IsMatch(PropertyInfo propertyInfo)
         {
             if (propertyInfo == null)
