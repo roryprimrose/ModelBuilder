@@ -353,10 +353,7 @@
                 throw new ArgumentNullException(nameof(expression));
             }
 
-            var targetType = typeof(T);
-            var property = expression.GetProperty();
-
-            var rule = new ExecuteOrderRule(targetType, property.PropertyType, property.Name, priority);
+            var rule = new ExpressionExecuteOrderRule<T>(expression, priority);
 
             configuration.ExecuteOrderRules.Add(rule);
 
