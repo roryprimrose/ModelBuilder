@@ -3,7 +3,6 @@
     using System;
     using FluentAssertions;
     using ModelBuilder.IgnoreRules;
-    using ModelBuilder.IgnoreRules;
     using ModelBuilder.UnitTests.Models;
     using Xunit;
 

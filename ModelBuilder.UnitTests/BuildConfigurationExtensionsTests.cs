@@ -514,7 +514,7 @@
         [Fact]
         public void AddWithExecuteOrderRuleAddsRuleToCompilerTest()
         {
-            var rule = new ExecuteOrderRule(typeof(Person), typeof(string), "FirstName", Environment.TickCount);
+            var rule = new PredicateExecuteOrderRule(x => x.Name == "FirstName", Environment.TickCount);
 
             var target = new BuildConfiguration();
 
@@ -526,7 +526,7 @@
         [Fact]
         public void AddWithExecuteOrderRuleThrowsExceptionWithNullCompilerTest()
         {
-            var rule = new ExecuteOrderRule(typeof(Person), typeof(string), "FirstName", Environment.TickCount);
+            var rule = new PredicateExecuteOrderRule(x => x.Name == "FirstName", Environment.TickCount);
 
             Action action = () => BuildConfigurationExtensions.Add(null, rule);
 
@@ -538,7 +538,7 @@
         {
             var target = Substitute.For<IBuildConfiguration>();
 
-            Action action = () => target.Add((ExecuteOrderRule) null);
+            Action action = () => target.Add((PredicateExecuteOrderRule) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
