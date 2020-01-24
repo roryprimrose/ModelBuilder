@@ -4,6 +4,7 @@
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Linq.Expressions;
+    using System.Text.RegularExpressions;
     using ModelBuilder.ExecuteOrderRules;
     using ModelBuilder.IgnoreRules;
     using ModelBuilder.TypeCreators;
@@ -362,6 +363,42 @@
         }
 
         /// <summary>
+        ///     Adds a new <see cref="RegexExecuteOrderRule" /> to the configuration.
+        /// </summary>
+        /// <param name="configuration">The configuration.</param>
+        /// <param name="expression">The expression that matches a property name.</param>
+        /// <param name="priority">The priority of the rule.</param>
+        /// <returns>The configuration.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="configuration" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="expression" /> parameter is <c>null</c>.</exception>
+        [SuppressMessage(
+            "Microsoft.Design",
+            "CA1004:GenericMethodsShouldProvideTypeParameter",
+            Justification =
+                "This signature is designed for ease of use rather than requiring that T is either a parameter or return type.")]
+        public static IBuildConfiguration AddExecuteOrderRule(
+            this IBuildConfiguration configuration,
+            Regex expression,
+            int priority)
+        {
+            if (configuration == null)
+            {
+                throw new ArgumentNullException(nameof(configuration));
+            }
+
+            if (expression == null)
+            {
+                throw new ArgumentNullException(nameof(expression));
+            }
+
+            var rule = new RegexExecuteOrderRule(expression, priority);
+
+            configuration.ExecuteOrderRules.Add(rule);
+
+            return configuration;
+        }
+
+        /// <summary>
         ///     Adds a new ignore rule to the configuration.
         /// </summary>
         /// <typeparam name="T">The type of rule to add.</typeparam>
@@ -417,6 +454,35 @@
             }
 
             var rule = new ExpressionIgnoreRule<T>(expression);
+
+            configuration.IgnoreRules.Add(rule);
+
+            return configuration;
+        }
+
+        /// <summary>
+        ///     Adds a new <see cref="RegexIgnoreRule" /> to the configuration.
+        /// </summary>
+        /// <param name="configuration">The configuration.</param>
+        /// <param name="expression">The expression that matches a property name.</param>
+        /// <returns>The configuration.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="configuration" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="expression" /> parameter is <c>null</c>.</exception>
+        public static IBuildConfiguration AddIgnoreRule(
+            this IBuildConfiguration configuration,
+            Regex expression)
+        {
+            if (configuration == null)
+            {
+                throw new ArgumentNullException(nameof(configuration));
+            }
+
+            if (expression == null)
+            {
+                throw new ArgumentNullException(nameof(expression));
+            }
+
+            var rule = new RegexIgnoreRule(expression);
 
             configuration.IgnoreRules.Add(rule);
 
@@ -530,7 +596,6 @@
 
             return configuration;
         }
-
 
         /// <summary>
         ///     Creates an instance of <typeparamref name="T" /> using the specified build configuration and any provided

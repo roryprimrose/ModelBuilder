@@ -34,17 +34,16 @@
                 new ExecuteOrderRule((declaringType, propertyType, name) => propertyType.IsValueType, 3000));
 
             // Populate personal properties in a specific order for scenarios where a value generator may use the values in order to set other values
-            configuration.ExecuteOrderRules.Add(new ExecuteOrderRule(null, null, PropertyExpression.Gender, 2600));
-            configuration.ExecuteOrderRules.Add(new ExecuteOrderRule(null, null, PropertyExpression.FirstName, 2580));
-            configuration.ExecuteOrderRules.Add(new ExecuteOrderRule(null, null, PropertyExpression.LastName, 2560));
-            configuration.ExecuteOrderRules.Add(new ExecuteOrderRule(null, null, PropertyExpression.Domain, 2550));
-            configuration.ExecuteOrderRules.Add(new ExecuteOrderRule(null, null, PropertyExpression.Email, 2540));
-
-            configuration.ExecuteOrderRules.Add(new ExecuteOrderRule(null, null, PropertyExpression.Country, 2400));
-            configuration.ExecuteOrderRules.Add(new ExecuteOrderRule(null, null, PropertyExpression.State, 2390));
-            configuration.ExecuteOrderRules.Add(new ExecuteOrderRule(null, null, PropertyExpression.City, 2380));
-            configuration.ExecuteOrderRules.Add(new ExecuteOrderRule(null, null, PropertyExpression.PostCode, 2370));
-            configuration.ExecuteOrderRules.Add(new ExecuteOrderRule(null, null, PropertyExpression.TimeZone, 2360));
+            configuration.AddExecuteOrderRule(PropertyExpression.Gender, 2600);
+            configuration.AddExecuteOrderRule(PropertyExpression.FirstName, 2580);
+            configuration.AddExecuteOrderRule(PropertyExpression.LastName, 2560);
+            configuration.AddExecuteOrderRule(PropertyExpression.Domain, 2550);
+            configuration.AddExecuteOrderRule(PropertyExpression.Email, 2540);
+            configuration.AddExecuteOrderRule(PropertyExpression.Country, 2400);
+            configuration.AddExecuteOrderRule(PropertyExpression.State, 2390);
+            configuration.AddExecuteOrderRule(PropertyExpression.City, 2380);
+            configuration.AddExecuteOrderRule(PropertyExpression.PostCode, 2370);
+            configuration.AddExecuteOrderRule(PropertyExpression.TimeZone, 2360);
 
             // Populate strings before other reference types
             configuration.ExecuteOrderRules.Add(new ExecuteOrderRule(null, typeof(string), (string) null, 2000));

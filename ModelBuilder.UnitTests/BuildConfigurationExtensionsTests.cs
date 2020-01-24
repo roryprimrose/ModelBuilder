@@ -6,6 +6,7 @@
     using System.Linq;
     using System.Linq.Expressions;
     using FluentAssertions;
+    using ModelBuilder.ExecuteOrderRules;
     using ModelBuilder.IgnoreRules;
     using ModelBuilder.TypeCreators;
     using ModelBuilder.UnitTests.Models;
@@ -165,6 +166,44 @@
         }
 
         [Fact]
+        public void AddExecuteOrderRuleWithRegexAddsRuleToCompilerTest()
+        {
+            var priority = Environment.TickCount;
+
+            var target = new BuildConfiguration();
+
+            var actual = target.AddExecuteOrderRule(PropertyExpression.FirstName, priority);
+
+            actual.Should().Be(target);
+
+            var rule = target.ExecuteOrderRules.Single();
+
+            rule.Should().BeOfType<RegexExecuteOrderRule>();
+        }
+
+        [Fact]
+        public void AddExecuteOrderRuleWithRegexThrowsExceptionWithNullCompilerTest()
+        {
+            var priority = Environment.TickCount;
+
+            Action action = () => BuildConfigurationExtensions.AddExecuteOrderRule(null, PropertyExpression.LastName, priority);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void AddExecuteOrderRuleWithRegexThrowsExceptionWithNullExpressionTest()
+        {
+            var priority = Environment.TickCount;
+
+            var target = new BuildConfiguration();
+
+            Action action = () => target.AddExecuteOrderRule(null, priority);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
         public void AddIgnoreRuleAddsRuleToCompilerTest()
         {
             var target = new BuildConfiguration();
@@ -194,7 +233,7 @@
             actual.Should().Be(target);
 
             var rule = target.IgnoreRules.Single();
-            
+
             rule.Should().BeOfType<ExpressionIgnoreRule<Person>>();
         }
 
@@ -212,6 +251,38 @@
             var target = new BuildConfiguration();
 
             Action action = () => target.AddIgnoreRule((Expression<Func<Person, object>>) null);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void AddIgnoreRuleWithRegexAddsRuleToCompilerTest()
+        {
+            var target = new BuildConfiguration();
+
+            var actual = target.AddIgnoreRule(PropertyExpression.FirstName);
+
+            actual.Should().Be(target);
+
+            var rule = target.IgnoreRules.Single();
+
+            rule.Should().BeOfType<RegexIgnoreRule>();
+        }
+
+        [Fact]
+        public void AddIgnoreRuleWithRegexThrowsExceptionWithNullCompilerTest()
+        {
+            Action action = () => BuildConfigurationExtensions.AddIgnoreRule(null, PropertyExpression.LastName);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void AddIgnoreRuleWithRegexThrowsExceptionWithNullExpressionTest()
+        {
+            var target = new BuildConfiguration();
+
+            Action action = () => target.AddIgnoreRule(null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -551,7 +622,6 @@
 
             action.Should().Throw<ArgumentNullException>();
         }
-
 
         [Fact]
         public void CreateReturnsInstanceCreatedByDefaultExecuteStrategyTest()
