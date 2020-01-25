@@ -33,6 +33,54 @@
         /// <returns><c>true</c> if the type is supported; otherwise <c>false</c>.</returns>
         bool IsSupported(Type type, string referenceName, IBuildChain buildChain);
 
+        ///// <summary>
+        /////     Generates a new value of the specified type.
+        ///// </summary>
+        ///// <param name="type">The type of value to generate.</param>
+        ///// <param name="executeStrategy">The execution strategy.</param>
+        ///// <returns>A new value of the type.</returns>
+        //object Generate(Type type, IExecuteStrategy executeStrategy);
+
+        ///// <summary>
+        /////     Generates a new value of the specified type.
+        ///// </summary>
+        ///// <param name="propertyInfo">The property to generate the value for.</param>
+        ///// <param name="executeStrategy">The execution strategy.</param>
+        ///// <returns>A new value of the type.</returns>
+        //object Generate(PropertyInfo propertyInfo, IExecuteStrategy executeStrategy);
+
+        ///// <summary>
+        /////     Generates a new value of the specified type.
+        ///// </summary>
+        ///// <param name="parameterInfo">The parameter to generate the value for.</param>
+        ///// <param name="executeStrategy">The execution strategy.</param>
+        ///// <returns>A new value of the type.</returns>
+        //object Generate(ParameterInfo parameterInfo, IExecuteStrategy executeStrategy);
+
+        ///// <summary>
+        /////     Returns whether the specified type is supported by this generator.
+        ///// </summary>
+        ///// <param name="type">The type to evaluate.</param>
+        ///// <param name="buildChain">The chain of instances built up to this point.</param>
+        ///// <returns><c>true</c> if the type is supported; otherwise <c>false</c>.</returns>
+        //bool IsSupported(Type type, IBuildChain buildChain);
+
+        ///// <summary>
+        /////     Returns whether the specified type is supported by this generator.
+        ///// </summary>
+        ///// <param name="propertyInfo">The property to generate the value for.</param>
+        ///// <param name="buildChain">The chain of instances built up to this point.</param>
+        ///// <returns><c>true</c> if the type is supported; otherwise <c>false</c>.</returns>
+        //bool IsSupported(PropertyInfo propertyInfo, IBuildChain buildChain);
+
+        ///// <summary>
+        /////     Returns whether the specified type is supported by this generator.
+        ///// </summary>
+        ///// <param name="parameterInfo">The parameter to generate the value for.</param>
+        ///// <param name="buildChain">The chain of instances built up to this point.</param>
+        ///// <returns><c>true</c> if the type is supported; otherwise <c>false</c>.</returns>
+        //bool IsSupported(ParameterInfo parameterInfo, IBuildChain buildChain);
+
         /// <summary>
         ///     Gets the priority for this generator.
         /// </summary>
