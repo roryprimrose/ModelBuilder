@@ -1,7 +1,6 @@
 ﻿namespace ModelBuilder.UnitTests.ValueGenerators
 {
     using System;
-    using System.IO;
     using System.Linq;
     using FluentAssertions;
     using ModelBuilder.Data;
@@ -170,25 +169,6 @@
             }
         }
 
-        [Theory]
-        [InlineData(typeof(Stream), "address")]
-        [InlineData(typeof(string), null)]
-        [InlineData(typeof(string), "EmailAddress")]
-        [InlineData(typeof(string), "Stuff")]
-        public void GenerateThrowsExceptionWithInvalidParametersTest(Type type, string referenceName)
-        {
-            var buildChain = new BuildHistory();
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            executeStrategy.BuildChain.Returns(buildChain);
-
-            var target = new AddressValueGenerator();
-
-            Action action = () => target.Generate(type, referenceName, executeStrategy);
-
-            action.Should().Throw<NotSupportedException>();
-        }
-
         [Fact]
         public void HasHigherPriorityThanStringValueGeneratorTest()
         {
@@ -208,45 +188,61 @@
         }
 
         [Theory]
-        [InlineData(typeof(Stream), "address", false)]
-        [InlineData(typeof(string), null, false)]
-        [InlineData(typeof(string), "", false)]
-        [InlineData(typeof(string), "Stuff", false)]
-        [InlineData(typeof(string), "address", true)]
-        [InlineData(typeof(string), "Address", true)]
-        [InlineData(typeof(string), "address1", true)]
-        [InlineData(typeof(string), "Address1", true)]
-        [InlineData(typeof(string), "addressline1", true)]
-        [InlineData(typeof(string), "addressLine1", true)]
-        [InlineData(typeof(string), "AddressLine1", true)]
-        [InlineData(typeof(string), "Addressline1", true)]
-        [InlineData(typeof(string), "address2", true)]
-        [InlineData(typeof(string), "Address2", true)]
-        [InlineData(typeof(string), "addressline2", true)]
-        [InlineData(typeof(string), "addressLine2", true)]
-        [InlineData(typeof(string), "AddressLine2", true)]
-        [InlineData(typeof(string), "Addressline2", true)]
-        public void IsSupportedTest(Type type, string referenceName, bool expected)
+        [InlineData("Address3", false)] // Wrong type
+        [InlineData("WrongName", false)]
+        [InlineData("EmailAddress", false)]
+        [InlineData("emailAddress", false)]
+        [InlineData("InternetAddress", false)]
+        [InlineData("internetAddress", false)]
+        [InlineData("address", true)]
+        [InlineData("Address", true)]
+        [InlineData("address1", true)]
+        [InlineData("Address1", true)]
+        [InlineData("addressline1", true)]
+        [InlineData("addressLine1", true)]
+        [InlineData("AddressLine1", true)]
+        [InlineData("Addressline1", true)]
+        [InlineData("address2", true)]
+        [InlineData("Address2", true)]
+        [InlineData("addressline2", true)]
+        [InlineData("addressLine2", true)]
+        [InlineData("AddressLine2", true)]
+        [InlineData("Addressline2", true)]
+        public void IsSupportedForPropertyTest(string referenceName, bool expected)
         {
+            var propertyInfo = typeof(PropertyTest).GetProperty(referenceName);
+
             var buildChain = Substitute.For<IBuildChain>();
 
             var target = new AddressValueGenerator();
 
-            var actual = target.IsSupported(type, referenceName, buildChain);
+            var actual = target.IsSupported(propertyInfo, buildChain);
 
             actual.Should().Be(expected);
         }
 
-        [Fact]
-        public void IsSupportedThrowsExceptionWithNullTypeTest()
+        private class PropertyTest
         {
-            var buildChain = Substitute.For<IBuildChain>();
-
-            var target = new AddressValueGenerator();
-
-            Action action = () => target.IsSupported(null, null, buildChain);
-
-            action.Should().Throw<ArgumentNullException>();
+            public string address { get; set; }
+            public string Address { get; set; }
+            public string EmailAddress { get; set; }
+            public string emailAddress { get; set; }
+            public string InternetAddress { get; set; }
+            public string internetAddress { get; set; }
+            public string address1 { get; set; }
+            public string Address1 { get; set; }
+            public string address2 { get; set; }
+            public string Address2 { get; set; }
+            public int Address3 { get; set; } // Wrong type
+            public string addressline1 { get; set; }
+            public string addressLine1 { get; set; }
+            public string Addressline1 { get; set; }
+            public string AddressLine1 { get; set; }
+            public string addressline2 { get; set; }
+            public string addressLine2 { get; set; }
+            public string Addressline2 { get; set; }
+            public string AddressLine2 { get; set; }
+            public string WrongName { get; set; }
         }
     }
 }

@@ -15,6 +15,7 @@
     /// </remarks>
     public interface IValueGenerator
     {
+        // TODO: Remove this once all old usages have been removed
         /// <summary>
         ///     Generates a new value of the specified type.
         /// </summary>
@@ -24,6 +25,7 @@
         /// <returns>A new value of the type.</returns>
         object Generate(Type type, string referenceName, IExecuteStrategy executeStrategy);
 
+        // TODO: Remove this once all old usages have been removed
         /// <summary>
         ///     Returns whether the specified type is supported by this generator.
         /// </summary>
@@ -33,6 +35,7 @@
         /// <returns><c>true</c> if the type is supported; otherwise <c>false</c>.</returns>
         bool IsSupported(Type type, string referenceName, IBuildChain buildChain);
 
+        // TODO: Uncomment this once all old usages have been removed
         ///// <summary>
         /////     Generates a new value of the specified type.
         ///// </summary>

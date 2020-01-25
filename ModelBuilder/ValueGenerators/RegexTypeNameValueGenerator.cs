@@ -1,6 +1,7 @@
 ﻿namespace ModelBuilder.ValueGenerators
 {
     using System;
+    using System.Net.NetworkInformation;
     using System.Reflection;
     using System.Text.RegularExpressions;
 
@@ -10,6 +11,8 @@
     /// </summary>
     public abstract class RegexTypeNameValueGenerator : IValueGenerator
     {
+        private static readonly IRandomGenerator _random = new RandomGenerator();
+
         private readonly Regex _nameExpression;
         private readonly Type _type;
 
@@ -25,14 +28,14 @@
         }
 
         /// <inheritdoc />
-        public object Generate(Type type, IExecuteStrategy executeStrategy)
+        public virtual object Generate(Type type, IExecuteStrategy executeStrategy)
         {
             // These value generators to not support constructors
             throw new NotSupportedException();
         }
 
         /// <inheritdoc />
-        public object Generate(PropertyInfo propertyInfo, IExecuteStrategy executeStrategy)
+        public virtual object Generate(PropertyInfo propertyInfo, IExecuteStrategy executeStrategy)
         {
             if (propertyInfo == null)
             {
@@ -42,11 +45,11 @@
             var type = propertyInfo.PropertyType;
             var name = propertyInfo.Name;
 
-            return GenerateValue(type, name, executeStrategy);
+            return Generate(type, name, executeStrategy);
         }
 
         /// <inheritdoc />
-        public object Generate(ParameterInfo parameterInfo, IExecuteStrategy executeStrategy)
+        public virtual object Generate(ParameterInfo parameterInfo, IExecuteStrategy executeStrategy)
         {
             if (parameterInfo == null)
             {
@@ -56,54 +59,10 @@
             var type = parameterInfo.ParameterType;
             var name = parameterInfo.Name;
 
-            return GenerateValue(type, name, executeStrategy);
+            return Generate(type, name, executeStrategy);
         }
 
-        /// <inheritdoc />
-        public bool IsSupported(Type type, IBuildChain buildChain)
-        {
-            // These value generators to not support constructors
-            return false;
-        }
-
-        /// <inheritdoc />
-        public bool IsSupported(PropertyInfo propertyInfo, IBuildChain buildChain)
-        {
-            if (propertyInfo == null)
-            {
-                throw new ArgumentNullException(nameof(propertyInfo));
-            }
-
-            if (buildChain == null)
-            {
-                throw new ArgumentNullException(nameof(buildChain));
-            }
-
-            var type = propertyInfo.PropertyType;
-            var name = propertyInfo.Name;
-
-            return IsSupported(type, name);
-        }
-
-        /// <inheritdoc />
-        public bool IsSupported(ParameterInfo parameterInfo, IBuildChain buildChain)
-        {
-            if (parameterInfo == null)
-            {
-                throw new ArgumentNullException(nameof(parameterInfo));
-            }
-
-            if (buildChain == null)
-            {
-                throw new ArgumentNullException(nameof(buildChain));
-            }
-
-            var type = parameterInfo.ParameterType;
-            var name = parameterInfo.Name;
-
-            return IsSupported(type, name);
-        }
-
+        // TODO: Make this protected abstract once all old usages have been removed
         /// <summary>
         ///     Generates a value for the specified type and reference name.
         /// </summary>
@@ -111,7 +70,58 @@
         /// <param name="referenceName">The name of the property or parameter to generate the value for.</param>
         /// <param name="executeStrategy">The execution strategy.</param>
         /// <returns></returns>
-        protected abstract object GenerateValue(Type type, string referenceName, IExecuteStrategy executeStrategy);
+        public abstract object Generate(Type type, string referenceName, IExecuteStrategy executeStrategy);
+
+        /// <inheritdoc />
+        public virtual bool IsSupported(Type type, IBuildChain buildChain)
+        {
+            // These value generators to not support constructors
+            return false;
+        }
+
+        /// <inheritdoc />
+        public virtual bool IsSupported(PropertyInfo propertyInfo, IBuildChain buildChain)
+        {
+            if (propertyInfo == null)
+            {
+                throw new ArgumentNullException(nameof(propertyInfo));
+            }
+
+            if (buildChain == null)
+            {
+                throw new ArgumentNullException(nameof(buildChain));
+            }
+
+            var type = propertyInfo.PropertyType;
+            var name = propertyInfo.Name;
+
+            return IsSupported(type, name);
+        }
+
+        /// <inheritdoc />
+        public virtual bool IsSupported(ParameterInfo parameterInfo, IBuildChain buildChain)
+        {
+            if (parameterInfo == null)
+            {
+                throw new ArgumentNullException(nameof(parameterInfo));
+            }
+
+            if (buildChain == null)
+            {
+                throw new ArgumentNullException(nameof(buildChain));
+            }
+
+            var type = parameterInfo.ParameterType;
+            var name = parameterInfo.Name;
+
+            return IsSupported(type, name);
+        }
+
+        /// <inheritdoc />
+        public bool IsSupported(Type type, string referenceName, IBuildChain buildChain)
+        {
+            throw new NotImplementedException();
+        }
 
         private bool IsSupported(Type type, string name)
         {
@@ -129,18 +139,11 @@
         }
 
         /// <inheritdoc />
-        public object Generate(Type type, string referenceName, IExecuteStrategy executeStrategy)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <inheritdoc />
-        public bool IsSupported(Type type, string referenceName, IBuildChain buildChain)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <inheritdoc />
         public abstract int Priority { get; }
+
+        /// <summary>
+        ///     Gets the random generator for this instance.
+        /// </summary>
+        protected virtual IRandomGenerator Generator { get; } = _random;
     }
 }

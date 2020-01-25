@@ -9,7 +9,7 @@
     ///     The <see cref="AddressValueGenerator" />
     ///     class is used to generate postal addressing values.
     /// </summary>
-    public class AddressValueGenerator : ValueGeneratorMatcher
+    public class AddressValueGenerator : RegexTypeNameValueGenerator
     {
         private static readonly Regex _matchNameExpression = new Regex("(?<!email.*)address", RegexOptions.IgnoreCase);
 
@@ -25,7 +25,7 @@
         }
 
         /// <inheritdoc />
-        protected override object GenerateValue(Type type, string referenceName, IExecuteStrategy executeStrategy)
+        public override object Generate(Type type, string referenceName, IExecuteStrategy executeStrategy)
         {
             var multipleMatch = _multipleAddressExpression.Match(referenceName);
 
