@@ -95,7 +95,7 @@
             var type = propertyInfo.PropertyType;
             var name = propertyInfo.Name;
 
-            return IsSupported(type, name);
+            return IsSupported(type, name, buildChain);
         }
 
         /// <inheritdoc />
@@ -114,23 +114,18 @@
             var type = parameterInfo.ParameterType;
             var name = parameterInfo.Name;
 
-            return IsSupported(type, name);
+            return IsSupported(type, name, buildChain);
         }
 
         /// <inheritdoc />
         public bool IsSupported(Type type, string referenceName, IBuildChain buildChain)
-        {
-            throw new NotImplementedException();
-        }
-
-        private bool IsSupported(Type type, string name)
         {
             if (_type.IsAssignableFrom(type) == false)
             {
                 return false;
             }
 
-            if (_nameExpression.IsMatch(name))
+            if (_nameExpression.IsMatch(referenceName))
             {
                 return true;
             }

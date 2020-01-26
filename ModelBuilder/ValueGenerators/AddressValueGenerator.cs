@@ -11,7 +11,7 @@
     /// </summary>
     public class AddressValueGenerator : RegexTypeNameValueGenerator
     {
-        private static readonly Regex _matchNameExpression = new Regex("(?<!email.*)address", RegexOptions.IgnoreCase);
+        private static readonly Regex _matchNameExpression = new Regex("(?<!(email|internet).*)address", RegexOptions.IgnoreCase);
 
         private static readonly Regex _multipleAddressExpression = new Regex(
             "Address(Line)?(?<Number>\\d+)",
