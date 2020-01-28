@@ -11,7 +11,7 @@
     {
         [Theory]
         [ClassData(typeof(NumericTypeRangeDataSource))]
-        public void GenerateCanEvaluateManyTimesTest(Type type, bool typeSupported, double min, double max)
+        public void GenerateForTypeCanEvaluateManyTimesTest(Type type, bool typeSupported, double min, double max)
         {
             if (typeSupported == false)
             {
@@ -54,7 +54,7 @@
         }
 
         [Fact]
-        public void GenerateCanReturnNonMaxValuesTest()
+        public void GenerateForTypeCanReturnNonMaxValuesTest()
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -83,7 +83,7 @@
         }
 
         [Fact]
-        public void GenerateCanReturnNonMinValuesTest()
+        public void GenerateForTypeCanReturnNonMinValuesTest()
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -112,7 +112,7 @@
         }
 
         [Fact]
-        public void GenerateCanReturnNullAndNonNullValuesTest()
+        public void GenerateForTypeCanReturnNullAndNonNullValuesTest()
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -148,7 +148,7 @@
         }
 
         [Fact]
-        public void GenerateDoesNotReturnInfinityForDoubleTest()
+        public void GenerateForTypeDoesNotReturnInfinityForDoubleTest()
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -167,7 +167,7 @@
         [Theory]
         [InlineData(typeof(float))]
         [InlineData(typeof(double))]
-        public void GenerateReturnsDecimalValuesTest(Type type)
+        public void GenerateForTypeReturnsDecimalValuesTest(Type type)
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -197,7 +197,7 @@
 
         [Theory]
         [ClassData(typeof(NumericTypeRangeDataSource))]
-        public void GenerateReturnsNewValueTest(Type type, bool typeSupported, double min, double max)
+        public void GenerateForTypeReturnsNewValueTest(Type type, bool typeSupported, double min, double max)
         {
             if (typeSupported == false)
             {
@@ -238,7 +238,7 @@
 
         [Theory]
         [ClassData(typeof(NumericTypeDataSource))]
-        public void GenerateValidatesRequestedTypeTest(Type type, bool typeSupported)
+        public void GenerateForTypeValidatesRequestedTypeTest(Type type, bool typeSupported)
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -261,21 +261,25 @@
 
         [Theory]
         [ClassData(typeof(NumericTypeDataSource))]
-        public void IsSupportedEvaluatesRequestedTypeTest(Type type, bool typeSupported)
+        public void IsSupportedForTypeEvaluatesRequestedTypeTest(Type type, bool typeSupported)
         {
+            var buildChain = Substitute.For<IBuildChain>();
+
             var target = new NumericValueGenerator();
 
-            var actual = target.IsSupported(type, null, null);
+            var actual = target.IsSupported(type, null, buildChain);
 
             actual.Should().Be(typeSupported);
         }
 
         [Fact]
-        public void IsSupportedThrowsExceptionWithNullTypeTest()
+        public void IsSupportedForTypeThrowsExceptionWithNullTypeTest()
         {
+            var buildChain = Substitute.For<IBuildChain>();
+
             var target = new NumericValueGenerator();
 
-            Action action = () => target.IsSupported(null, null, null);
+            Action action = () => target.IsSupported(null, null, buildChain);
 
             action.Should().Throw<ArgumentNullException>();
         }

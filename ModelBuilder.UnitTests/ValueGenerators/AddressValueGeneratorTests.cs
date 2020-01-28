@@ -1,7 +1,9 @@
 ﻿namespace ModelBuilder.UnitTests.ValueGenerators
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
+    using System.Reflection;
     using FluentAssertions;
     using ModelBuilder.Data;
     using ModelBuilder.TypeCreators;
@@ -46,12 +48,9 @@
         public void CanPopulateProperties()
         {
             var config = BuildConfigurationFactory.CreateEmpty().AddTypeCreator<DefaultTypeCreator>()
-                .AddValueGenerator<AddressValueGenerator>().Ignoring<PropertyTest>(x => x.Address4)
-                .Ignoring<PropertyTest>(x => x.WrongName).Ignoring<PropertyTest>(x => x.EmailAddress)
-                .Ignoring<PropertyTest>(x => x.emailAddress).Ignoring<PropertyTest>(x => x.InternetAddress)
-                .Ignoring<PropertyTest>(x => x.internetAddress);
+                .AddValueGenerator<AddressValueGenerator>();
 
-            var actual = config.Create<PropertyTest>();
+            var actual = config.Create<SupportedPropertyTest>();
 
             actual.address.Should().NotBeNullOrWhiteSpace();
             actual.Address.Should().NotBeNullOrWhiteSpace();
@@ -118,29 +117,29 @@
         }
 
         [Theory]
-        [InlineData(nameof(PropertyTest.address), true)]
-        [InlineData(nameof(PropertyTest.Address), true)]
-        [InlineData(nameof(PropertyTest.address1), true)]
-        [InlineData(nameof(PropertyTest.Address1), true)]
-        [InlineData(nameof(PropertyTest.address2), true)]
-        [InlineData(nameof(PropertyTest.Address2), true)]
-        [InlineData(nameof(PropertyTest.address3), false)]
-        [InlineData(nameof(PropertyTest.Address3), false)]
-        [InlineData(nameof(PropertyTest.addressline1), true)]
-        [InlineData(nameof(PropertyTest.addressLine1), true)]
-        [InlineData(nameof(PropertyTest.AddressLine1), true)]
-        [InlineData(nameof(PropertyTest.Addressline1), true)]
-        [InlineData(nameof(PropertyTest.addressline2), true)]
-        [InlineData(nameof(PropertyTest.addressLine2), true)]
-        [InlineData(nameof(PropertyTest.AddressLine2), true)]
-        [InlineData(nameof(PropertyTest.Addressline2), true)]
-        [InlineData(nameof(PropertyTest.addressline3), false)]
-        [InlineData(nameof(PropertyTest.addressLine3), false)]
-        [InlineData(nameof(PropertyTest.AddressLine3), false)]
-        [InlineData(nameof(PropertyTest.Addressline3), false)]
+        [InlineData(nameof(SupportedPropertyTest.address), true)]
+        [InlineData(nameof(SupportedPropertyTest.Address), true)]
+        [InlineData(nameof(SupportedPropertyTest.address1), true)]
+        [InlineData(nameof(SupportedPropertyTest.Address1), true)]
+        [InlineData(nameof(SupportedPropertyTest.address2), true)]
+        [InlineData(nameof(SupportedPropertyTest.Address2), true)]
+        [InlineData(nameof(SupportedPropertyTest.address3), false)]
+        [InlineData(nameof(SupportedPropertyTest.Address3), false)]
+        [InlineData(nameof(SupportedPropertyTest.addressline1), true)]
+        [InlineData(nameof(SupportedPropertyTest.addressLine1), true)]
+        [InlineData(nameof(SupportedPropertyTest.AddressLine1), true)]
+        [InlineData(nameof(SupportedPropertyTest.Addressline1), true)]
+        [InlineData(nameof(SupportedPropertyTest.addressline2), true)]
+        [InlineData(nameof(SupportedPropertyTest.addressLine2), true)]
+        [InlineData(nameof(SupportedPropertyTest.AddressLine2), true)]
+        [InlineData(nameof(SupportedPropertyTest.Addressline2), true)]
+        [InlineData(nameof(SupportedPropertyTest.addressline3), false)]
+        [InlineData(nameof(SupportedPropertyTest.addressLine3), false)]
+        [InlineData(nameof(SupportedPropertyTest.AddressLine3), false)]
+        [InlineData(nameof(SupportedPropertyTest.Addressline3), false)]
         public void GenerateCorrectlyEvaluatesProperty(string referenceName, bool valueExpected)
         {
-            var propertyInfo = typeof(PropertyTest).GetProperty(referenceName);
+            var propertyInfo = typeof(SupportedPropertyTest).GetProperty(referenceName);
 
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
@@ -161,7 +160,7 @@
         [Fact]
         public void GenerateReturnsNullForAddressLinesBeyondSecondTest()
         {
-            var propertyInfo = typeof(PropertyTest).GetProperty(nameof(Address.AddressLine3));
+            var propertyInfo = typeof(SupportedPropertyTest).GetProperty(nameof(Address.AddressLine3));
 
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -178,7 +177,7 @@
         [Fact]
         public void GenerateReturnsRandomValueTest()
         {
-            var propertyInfo = typeof(PropertyTest).GetProperty(nameof(PropertyTest.Address));
+            var propertyInfo = typeof(SupportedPropertyTest).GetProperty(nameof(SupportedPropertyTest.Address));
 
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -205,17 +204,17 @@
         }
 
         [Theory]
-        [InlineData(nameof(PropertyTest.address))]
-        [InlineData(nameof(PropertyTest.Address))]
-        [InlineData(nameof(PropertyTest.address2))]
-        [InlineData(nameof(PropertyTest.Address2))]
-        [InlineData(nameof(PropertyTest.addressline2))]
-        [InlineData(nameof(PropertyTest.addressLine2))]
-        [InlineData(nameof(PropertyTest.AddressLine2))]
-        [InlineData(nameof(PropertyTest.Addressline2))]
+        [InlineData(nameof(SupportedPropertyTest.address))]
+        [InlineData(nameof(SupportedPropertyTest.Address))]
+        [InlineData(nameof(SupportedPropertyTest.address2))]
+        [InlineData(nameof(SupportedPropertyTest.Address2))]
+        [InlineData(nameof(SupportedPropertyTest.addressline2))]
+        [InlineData(nameof(SupportedPropertyTest.addressLine2))]
+        [InlineData(nameof(SupportedPropertyTest.AddressLine2))]
+        [InlineData(nameof(SupportedPropertyTest.Addressline2))]
         public void GenerateReturnsStreetAddressTest(string propertyName)
         {
-            var propertyInfo = typeof(PropertyTest).GetProperty(propertyName);
+            var propertyInfo = typeof(SupportedPropertyTest).GetProperty(propertyName);
 
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -239,7 +238,7 @@
         [Fact]
         public void GenerateReturnsStringValueTest()
         {
-            var propertyInfo = typeof(PropertyTest).GetProperty(nameof(PropertyTest.address));
+            var propertyInfo = typeof(SupportedPropertyTest).GetProperty(nameof(SupportedPropertyTest.address));
 
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -255,15 +254,15 @@
         }
 
         [Theory]
-        [InlineData(nameof(PropertyTest.address1))]
-        [InlineData(nameof(PropertyTest.Address1))]
-        [InlineData(nameof(PropertyTest.addressline1))]
-        [InlineData(nameof(PropertyTest.addressLine1))]
-        [InlineData(nameof(PropertyTest.AddressLine1))]
-        [InlineData(nameof(PropertyTest.Addressline1))]
+        [InlineData(nameof(SupportedPropertyTest.address1))]
+        [InlineData(nameof(SupportedPropertyTest.Address1))]
+        [InlineData(nameof(SupportedPropertyTest.addressline1))]
+        [InlineData(nameof(SupportedPropertyTest.addressLine1))]
+        [InlineData(nameof(SupportedPropertyTest.AddressLine1))]
+        [InlineData(nameof(SupportedPropertyTest.Addressline1))]
         public void GenerateReturnsUnitFloorLocationForSecondLineTest(string propertyName)
         {
-            var propertyInfo = typeof(PropertyTest).GetProperty(propertyName);
+            var propertyInfo = typeof(SupportedPropertyTest).GetProperty(propertyName);
 
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -280,28 +279,28 @@
         }
 
         [Theory]
-        [InlineData(nameof(PropertyTest.address), true)]
-        [InlineData(nameof(PropertyTest.Address), true)]
-        [InlineData(nameof(PropertyTest.address1), true)]
-        [InlineData(nameof(PropertyTest.Address1), true)]
-        [InlineData(nameof(PropertyTest.addressline1), true)]
-        [InlineData(nameof(PropertyTest.addressLine1), true)]
-        [InlineData(nameof(PropertyTest.AddressLine1), true)]
-        [InlineData(nameof(PropertyTest.Addressline1), true)]
-        [InlineData(nameof(PropertyTest.address2), true)]
-        [InlineData(nameof(PropertyTest.Address2), true)]
-        [InlineData(nameof(PropertyTest.addressline2), true)]
-        [InlineData(nameof(PropertyTest.addressLine2), true)]
-        [InlineData(nameof(PropertyTest.AddressLine2), true)]
-        [InlineData(nameof(PropertyTest.Addressline2), true)]
-        [InlineData(nameof(PropertyTest.address3), false)]
-        [InlineData(nameof(PropertyTest.addressline3), false)]
-        [InlineData(nameof(PropertyTest.addressLine3), false)]
-        [InlineData(nameof(PropertyTest.AddressLine3), false)]
-        [InlineData(nameof(PropertyTest.Addressline3), false)]
+        [InlineData(nameof(SupportedPropertyTest.address), true)]
+        [InlineData(nameof(SupportedPropertyTest.Address), true)]
+        [InlineData(nameof(SupportedPropertyTest.address1), true)]
+        [InlineData(nameof(SupportedPropertyTest.Address1), true)]
+        [InlineData(nameof(SupportedPropertyTest.addressline1), true)]
+        [InlineData(nameof(SupportedPropertyTest.addressLine1), true)]
+        [InlineData(nameof(SupportedPropertyTest.AddressLine1), true)]
+        [InlineData(nameof(SupportedPropertyTest.Addressline1), true)]
+        [InlineData(nameof(SupportedPropertyTest.address2), true)]
+        [InlineData(nameof(SupportedPropertyTest.Address2), true)]
+        [InlineData(nameof(SupportedPropertyTest.addressline2), true)]
+        [InlineData(nameof(SupportedPropertyTest.addressLine2), true)]
+        [InlineData(nameof(SupportedPropertyTest.AddressLine2), true)]
+        [InlineData(nameof(SupportedPropertyTest.Addressline2), true)]
+        [InlineData(nameof(SupportedPropertyTest.address3), false)]
+        [InlineData(nameof(SupportedPropertyTest.addressline3), false)]
+        [InlineData(nameof(SupportedPropertyTest.addressLine3), false)]
+        [InlineData(nameof(SupportedPropertyTest.AddressLine3), false)]
+        [InlineData(nameof(SupportedPropertyTest.Addressline3), false)]
         public void GenerateReturnsValuesForSeveralNameFormatsTest(string referenceName, bool valueExpected)
         {
-            var propertyInfo = typeof(PropertyTest).GetProperty(referenceName);
+            var propertyInfo = typeof(SupportedPropertyTest).GetProperty(referenceName);
 
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -341,31 +340,9 @@
         }
 
         [Theory]
-        [InlineData("address")]
-        [InlineData("Address")]
-        [InlineData("address1")]
-        [InlineData("Address1")]
-        [InlineData("address2")]
-        [InlineData("Address2")]
-        [InlineData("address3")]
-        [InlineData("Address3")]
-        [InlineData("addressline1")]
-        [InlineData("addressLine1")]
-        [InlineData("AddressLine1")]
-        [InlineData("Addressline1")]
-        [InlineData("addressline2")]
-        [InlineData("addressLine2")]
-        [InlineData("AddressLine2")]
-        [InlineData("Addressline2")]
-        [InlineData("addressline3")]
-        [InlineData("addressLine3")]
-        [InlineData("AddressLine3")]
-        [InlineData("Addressline3")]
-        public void IsSupportedForParameterTest(string referenceName)
+        [MemberData(nameof(GetParameters), typeof(ParameterTest))]
+        public void IsSupportedForParameterTest(ParameterInfo parameterInfo)
         {
-            var parameterInfo = typeof(ParameterTest).GetConstructors().Single().GetParameters()
-                .Single(x => x.Name == referenceName);
-
             var buildChain = Substitute.For<IBuildChain>();
 
             var target = new AddressValueGenerator();
@@ -376,43 +353,49 @@
         }
 
         [Theory]
-        [InlineData(nameof(PropertyTest.address), true)]
-        [InlineData(nameof(PropertyTest.Address), true)]
-        [InlineData(nameof(PropertyTest.address1), true)]
-        [InlineData(nameof(PropertyTest.Address1), true)]
-        [InlineData(nameof(PropertyTest.address2), true)]
-        [InlineData(nameof(PropertyTest.Address2), true)]
-        [InlineData(nameof(PropertyTest.address3), true)]
-        [InlineData(nameof(PropertyTest.Address3), true)]
-        [InlineData(nameof(PropertyTest.Address4), false)] // Wrong type
-        [InlineData(nameof(PropertyTest.addressline1), true)]
-        [InlineData(nameof(PropertyTest.addressLine1), true)]
-        [InlineData(nameof(PropertyTest.AddressLine1), true)]
-        [InlineData(nameof(PropertyTest.Addressline1), true)]
-        [InlineData(nameof(PropertyTest.addressline2), true)]
-        [InlineData(nameof(PropertyTest.addressLine2), true)]
-        [InlineData(nameof(PropertyTest.AddressLine2), true)]
-        [InlineData(nameof(PropertyTest.Addressline2), true)]
-        [InlineData(nameof(PropertyTest.addressline3), true)]
-        [InlineData(nameof(PropertyTest.addressLine3), true)]
-        [InlineData(nameof(PropertyTest.AddressLine3), true)]
-        [InlineData(nameof(PropertyTest.Addressline3), true)]
-        [InlineData(nameof(PropertyTest.EmailAddress), false)]
-        [InlineData(nameof(PropertyTest.emailAddress), false)]
-        [InlineData(nameof(PropertyTest.InternetAddress), false)]
-        [InlineData(nameof(PropertyTest.internetAddress), false)]
-        [InlineData(nameof(PropertyTest.WrongName), false)]
-        public void IsSupportedForPropertyTest(string referenceName, bool expected)
+        [MemberData(nameof(GetProperties), typeof(SupportedPropertyTest))]
+        public void IsSupportedReturnsTrueForSupportedPropertiesTest(PropertyInfo propertyInfo)
         {
-            var propertyInfo = typeof(PropertyTest).GetProperty(referenceName);
-
             var buildChain = Substitute.For<IBuildChain>();
 
             var target = new AddressValueGenerator();
 
             var actual = target.IsSupported(propertyInfo, buildChain);
 
-            actual.Should().Be(expected);
+            actual.Should().BeTrue();
+        }
+
+        [Theory]
+        [MemberData(nameof(GetProperties), typeof(UnspportedPropertyTest))]
+        public void IsSupportedReturnsFalseForUnsupportedPropertiesTest(PropertyInfo propertyInfo)
+        {
+            var buildChain = Substitute.For<IBuildChain>();
+
+            var target = new AddressValueGenerator();
+
+            var actual = target.IsSupported(propertyInfo, buildChain);
+
+            actual.Should().BeFalse();
+        }
+
+        public static IEnumerable<object[]> GetParameters(Type type)
+        {
+            var items = type.GetConstructors().Single().GetParameters();
+
+            foreach (var item in items)
+            {
+                yield return new object[] { item };
+            }
+        }
+
+        public static IEnumerable<object[]> GetProperties(Type type)
+        {
+            var items = type.GetProperties();
+
+            foreach (var item in items)
+            {
+                yield return new object[] { item };
+            }
         }
 
         private class ParameterTest
@@ -483,7 +466,17 @@
             public string PropAddressLine3 { get; }
         }
 
-        private class PropertyTest
+        private class UnspportedPropertyTest
+        {
+            public int Address4 { get; set; } // Wrong type
+            public string emailAddress { get; set; }
+            public string EmailAddress { get; set; }
+            public string internetAddress { get; set; }
+            public string InternetAddress { get; set; }
+            public string WrongName { get; set; }
+        }
+
+        private class SupportedPropertyTest
         {
             public string address { get; set; }
             public string Address { get; set; }
@@ -493,7 +486,6 @@
             public string Address2 { get; set; }
             public string address3 { get; set; }
             public string Address3 { get; set; }
-            public int Address4 { get; set; } // Wrong type
             public string addressline1 { get; set; }
             public string addressLine1 { get; set; }
             public string Addressline1 { get; set; }
@@ -506,11 +498,6 @@
             public string addressLine3 { get; set; }
             public string Addressline3 { get; set; }
             public string AddressLine3 { get; set; }
-            public string emailAddress { get; set; }
-            public string EmailAddress { get; set; }
-            public string internetAddress { get; set; }
-            public string InternetAddress { get; set; }
-            public string WrongName { get; set; }
         }
     }
 }

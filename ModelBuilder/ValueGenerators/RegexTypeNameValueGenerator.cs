@@ -1,7 +1,6 @@
 ﻿namespace ModelBuilder.ValueGenerators
 {
     using System;
-    using System.Net.NetworkInformation;
     using System.Reflection;
     using System.Text.RegularExpressions;
 

@@ -1,35 +1,46 @@
 ﻿namespace ModelBuilder.ValueGenerators
 {
     using System;
+    using System.Reflection;
 
     /// <summary>
     ///     The <see cref="NumericValueGenerator" />
     ///     class is used to generate random numeric values.
     /// </summary>
-    public class NumericValueGenerator : ValueGeneratorBase
+    public class NumericValueGenerator : IValueGenerator
     {
+        private static readonly IRandomGenerator _random = new RandomGenerator();
+
         /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
-        public override bool IsSupported(Type type, string referenceName, IBuildChain buildChain)
+        public virtual object Generate(PropertyInfo propertyInfo, IExecuteStrategy executeStrategy)
         {
-            if (type == null)
+            if (propertyInfo == null)
             {
-                throw new ArgumentNullException(nameof(type));
+                throw new ArgumentNullException(nameof(propertyInfo));
             }
 
-            if (type.IsNullable())
-            {
-                // Get the internal type
-                var internalType = type.GetGenericArguments()[0];
+            var type = propertyInfo.PropertyType;
+            var name = propertyInfo.Name;
 
-                return Generator.IsSupported(internalType);
-            }
-
-            return Generator.IsSupported(type);
+            return Generate(type, name, executeStrategy);
         }
 
         /// <inheritdoc />
-        protected override object GenerateValue(Type type, string referenceName, IExecuteStrategy executeStrategy)
+        public virtual object Generate(ParameterInfo parameterInfo, IExecuteStrategy executeStrategy)
+        {
+            if (parameterInfo == null)
+            {
+                throw new ArgumentNullException(nameof(parameterInfo));
+            }
+
+            var type = parameterInfo.ParameterType;
+            var name = parameterInfo.Name;
+
+            return Generate(type, name, executeStrategy);
+        }
+
+        /// <inheritdoc />
+        public virtual object Generate(Type type, string referenceName, IExecuteStrategy executeStrategy)
         {
             var generateType = type;
 
@@ -52,6 +63,56 @@
             var max = GetMaximum(generateType, referenceName, context);
 
             return Generator.NextValue(generateType, min, max);
+        }
+
+        /// <inheritdoc />
+        /// <exception cref="ArgumentNullException">The <paramref name="propertyInfo" /> parameter is <c>null</c>.</exception>
+        public virtual bool IsSupported(PropertyInfo propertyInfo, IBuildChain buildChain)
+        {
+            if (propertyInfo == null)
+            {
+                throw new ArgumentNullException(nameof(propertyInfo));
+            }
+
+            return IsSupported(propertyInfo.PropertyType, propertyInfo.Name, buildChain);
+        }
+
+        /// <inheritdoc />
+        /// <exception cref="ArgumentNullException">The <paramref name="parameterInfo" /> parameter is <c>null</c>.</exception>
+        public virtual bool IsSupported(ParameterInfo parameterInfo, IBuildChain buildChain)
+        {
+            if (parameterInfo == null)
+            {
+                throw new ArgumentNullException(nameof(parameterInfo));
+            }
+
+            return IsSupported(parameterInfo.ParameterType, parameterInfo.Name, buildChain);
+        }
+
+        /// <inheritdoc />
+        /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="buildChain" /> parameter is <c>null</c>.</exception>
+        public virtual bool IsSupported(Type type, string referenceName, IBuildChain buildChain)
+        {
+            if (type == null)
+            {
+                throw new ArgumentNullException(nameof(type));
+            }
+
+            if (buildChain == null)
+            {
+                throw new ArgumentNullException(nameof(buildChain));
+            }
+
+            if (type.IsNullable())
+            {
+                // Get the internal type
+                var internalType = type.GetGenericArguments()[0];
+
+                return Generator.IsSupported(internalType);
+            }
+
+            return Generator.IsSupported(type);
         }
 
         /// <summary>
@@ -77,5 +138,13 @@
         {
             return Generator.GetMin(type);
         }
+
+        /// <inheritdoc />
+        public virtual int Priority { get; } = int.MinValue;
+
+        /// <summary>
+        ///     Gets the random generator for this instance.
+        /// </summary>
+        protected virtual IRandomGenerator Generator { get; } = _random;
     }
 }
