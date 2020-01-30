@@ -42,6 +42,16 @@
         /// <inheritdoc />
         public virtual object Generate(Type type, string referenceName, IExecuteStrategy executeStrategy)
         {
+            if (type == null)
+            {
+                throw new ArgumentNullException(nameof(type));
+            }
+
+            if (executeStrategy == null)
+            {
+                throw new ArgumentNullException(nameof(executeStrategy));
+            }
+
             var generateType = type;
 
             if (generateType.IsNullable())
