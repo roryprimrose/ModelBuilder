@@ -340,7 +340,7 @@
         }
 
         [Theory]
-        [MemberData(nameof(GetParameters), typeof(ParameterTest))]
+        [MemberData(nameof(DataSet.GetParameters), typeof(ParameterTest), MemberType = typeof(DataSet))]
         public void IsSupportedForParameterTest(ParameterInfo parameterInfo)
         {
             var buildChain = Substitute.For<IBuildChain>();
@@ -353,7 +353,7 @@
         }
 
         [Theory]
-        [MemberData(nameof(GetProperties), typeof(SupportedPropertyTest))]
+        [MemberData(nameof(DataSet.GetProperties), typeof(SupportedPropertyTest), MemberType = typeof(DataSet))]
         public void IsSupportedReturnsTrueForSupportedPropertiesTest(PropertyInfo propertyInfo)
         {
             var buildChain = Substitute.For<IBuildChain>();
@@ -366,7 +366,7 @@
         }
 
         [Theory]
-        [MemberData(nameof(GetProperties), typeof(UnspportedPropertyTest))]
+        [MemberData(nameof(DataSet.GetProperties), typeof(UnspportedPropertyTest), MemberType = typeof(DataSet))]
         public void IsSupportedReturnsFalseForUnsupportedPropertiesTest(PropertyInfo propertyInfo)
         {
             var buildChain = Substitute.For<IBuildChain>();
@@ -376,26 +376,6 @@
             var actual = target.IsSupported(propertyInfo, buildChain);
 
             actual.Should().BeFalse();
-        }
-
-        public static IEnumerable<object[]> GetParameters(Type type)
-        {
-            var items = type.GetConstructors().Single().GetParameters();
-
-            foreach (var item in items)
-            {
-                yield return new object[] { item };
-            }
-        }
-
-        public static IEnumerable<object[]> GetProperties(Type type)
-        {
-            var items = type.GetProperties();
-
-            foreach (var item in items)
-            {
-                yield return new object[] { item };
-            }
         }
 
         private class ParameterTest

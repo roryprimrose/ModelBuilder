@@ -5,6 +5,7 @@
     using System.Reflection;
     using FluentAssertions;
     using ModelBuilder.TypeCreators;
+    using ModelBuilder.UnitTests.Models;
     using ModelBuilder.ValueGenerators;
     using NSubstitute;
     using Xunit;
@@ -31,54 +32,6 @@
             var actual = config.Create<PropertyTest>();
 
             actual.Should().NotBeNull();
-        }
-
-        [Theory]
-        [InlineData("param_sbyte")]
-        [InlineData("param_byte")]
-        [InlineData("param_short")]
-        [InlineData("param_ushort")]
-        [InlineData("param_int")]
-        [InlineData("param_uint")]
-        [InlineData("param_long")]
-        [InlineData("param_ulong")]
-        [InlineData("param_double")]
-        [InlineData("param_float")]
-        [InlineData("param_decimal")]
-        [InlineData("paramNullable_sbyte")]
-        [InlineData("paramNullable_byte")]
-        [InlineData("paramNullable_short")]
-        [InlineData("paramNullable_ushort")]
-        [InlineData("paramNullable_int")]
-        [InlineData("paramNullable_uint")]
-        [InlineData("paramNullable_long")]
-        [InlineData("paramNullable_ulong")]
-        [InlineData("paramNullable_double")]
-        [InlineData("paramNullable_float")]
-        [InlineData("paramNullable_decimal")]
-        public void GenerateForParameterInfoCreatesRandomValues(string parameterName)
-        {
-            var parameterInfo = typeof(ParameterTest).GetConstructors().Single().GetParameters()
-                .Single(x => x.Name == parameterName);
-
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            var target = new NumericValueGenerator();
-
-            var randomValueFound = false;
-            var firstValue = target.Generate(parameterInfo, executeStrategy);
-
-            for (var index = 0; index < 1000; index++)
-            {
-                var nextValue = target.Generate(parameterInfo, executeStrategy);
-
-                if (firstValue != nextValue)
-                {
-                    randomValueFound = true;
-                }
-            }
-
-            randomValueFound.Should().BeTrue();
         }
 
         [Theory]
@@ -125,6 +78,54 @@
 
             nullFound.Should().BeTrue();
             valueFound.Should().BeTrue();
+        }
+
+        [Theory]
+        [InlineData("param_sbyte")]
+        [InlineData("param_byte")]
+        [InlineData("param_short")]
+        [InlineData("param_ushort")]
+        [InlineData("param_int")]
+        [InlineData("param_uint")]
+        [InlineData("param_long")]
+        [InlineData("param_ulong")]
+        [InlineData("param_double")]
+        [InlineData("param_float")]
+        [InlineData("param_decimal")]
+        [InlineData("paramNullable_sbyte")]
+        [InlineData("paramNullable_byte")]
+        [InlineData("paramNullable_short")]
+        [InlineData("paramNullable_ushort")]
+        [InlineData("paramNullable_int")]
+        [InlineData("paramNullable_uint")]
+        [InlineData("paramNullable_long")]
+        [InlineData("paramNullable_ulong")]
+        [InlineData("paramNullable_double")]
+        [InlineData("paramNullable_float")]
+        [InlineData("paramNullable_decimal")]
+        public void GenerateForParameterInfoReturnsRandomValues(string parameterName)
+        {
+            var parameterInfo = typeof(ParameterTest).GetConstructors().Single().GetParameters()
+                .Single(x => x.Name == parameterName);
+
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            var target = new NumericValueGenerator();
+
+            var randomValueFound = false;
+            var firstValue = target.Generate(parameterInfo, executeStrategy);
+
+            for (var index = 0; index < 1000; index++)
+            {
+                var nextValue = target.Generate(parameterInfo, executeStrategy);
+
+                if (firstValue != nextValue)
+                {
+                    randomValueFound = true;
+                }
+            }
+
+            randomValueFound.Should().BeTrue();
         }
 
         [Fact]
@@ -248,7 +249,7 @@
 
         [Theory]
         [ClassData(typeof(NumericTypeRangeDataSource))]
-        public void GenerateForTypeCanPopulateNullAndNonNullValues(Type type, bool typeSupported, double min,
+        public void GenerateForTypeReturnsNullAndNonNullValues(Type type, bool typeSupported, double min,
             double max)
         {
             if (typeSupported == false)
@@ -295,7 +296,7 @@
 
         [Theory]
         [ClassData(typeof(NumericTypeRangeDataSource))]
-        public void GenerateForTypeCanPopulateRandomValues(Type type, bool typeSupported, double min, double max)
+        public void GenerateForTypeReturnsRandomValues(Type type, bool typeSupported, double min, double max)
         {
             if (typeSupported == false)
             {
@@ -369,6 +370,60 @@
             action.Should().Throw<ArgumentNullException>();
         }
 
+        [Fact]
+        public void IsSupportedForParameterInfoReturnsFalseForUnsupportedType()
+        {
+            var parameterInfo = typeof(Copy).GetConstructors().Single().GetParameters().Single();
+
+            var buildChain = Substitute.For<IBuildChain>();
+
+            var target = new NumericValueGenerator();
+
+            var actual = target.IsSupported(parameterInfo, buildChain);
+
+            actual.Should().BeFalse();
+        }
+
+        [Theory]
+        [MemberData(nameof(DataSet.GetParameters), typeof(ParameterTest), MemberType = typeof(DataSet))]
+        public void IsSupportedForParameterInfoReturnsTrue(ParameterInfo parameterInfo)
+        {
+            var buildChain = Substitute.For<IBuildChain>();
+
+            var target = new NumericValueGenerator();
+
+            var actual = target.IsSupported(parameterInfo, buildChain);
+
+            actual.Should().BeTrue();
+        }
+
+        [Fact]
+        public void IsSupportedForPropertyInfoReturnsFalseForUnsupportedType()
+        {
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+
+            var buildChain = Substitute.For<IBuildChain>();
+
+            var target = new NumericValueGenerator();
+
+            var actual = target.IsSupported(propertyInfo, buildChain);
+
+            actual.Should().BeFalse();
+        }
+
+        [Theory]
+        [MemberData(nameof(DataSet.GetProperties), typeof(PropertyTest), MemberType = typeof(DataSet))]
+        public void IsSupportedForPropertyInfoReturnsTrue(PropertyInfo propertyInfo)
+        {
+            var buildChain = Substitute.For<IBuildChain>();
+
+            var target = new NumericValueGenerator();
+
+            var actual = target.IsSupported(propertyInfo, buildChain);
+
+            actual.Should().BeTrue();
+        }
+
         [Theory]
         [ClassData(typeof(NumericTypeDataSource))]
         public void IsSupportedForTypeEvaluatesRequestedTypeTest(Type type, bool typeSupported)
@@ -404,6 +459,38 @@
             Action action = () => target.IsSupported(null, null, buildChain);
 
             action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void IsSupportedThrowsExceptionWithNullParameterInfo()
+        {
+            var buildChain = Substitute.For<IBuildChain>();
+
+            var sut = new NumericValueGenerator();
+
+            Action action = () => sut.IsSupported((ParameterInfo) null, buildChain);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void IsSupportedThrowsExceptionWithNullPropertyInfo()
+        {
+            var buildChain = Substitute.For<IBuildChain>();
+
+            var sut = new NumericValueGenerator();
+
+            Action action = () => sut.IsSupported((PropertyInfo) null, buildChain);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void PriorityReturnsMinimumValue()
+        {
+            var sut = new NumericValueGenerator();
+
+            sut.Priority.Should().Be(int.MinValue);
         }
 
         private class ParameterTest
