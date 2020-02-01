@@ -3,12 +3,39 @@
     using System;
     using System.Globalization;
     using FluentAssertions;
+    using ModelBuilder.TypeCreators;
     using ModelBuilder.ValueGenerators;
     using NSubstitute;
     using Xunit;
 
     public class AgeValueGeneratorTests
     {
+        [Fact]
+        public void CanCreateParameters()
+        {
+            var config = BuildConfigurationFactory.CreateEmpty().AddTypeCreator<DefaultTypeCreator>()
+                .AddValueGenerator<AgeValueGenerator>();
+
+            var actual = config.Create<ParameterTest>();
+
+            actual.Age.Should().NotBe(0);
+            actual.MyAge.Should().NotBe(0);
+            actual.AgeOfRelic.Should().NotBe(0);
+        }
+
+        [Fact]
+        public void CanPopulateProperties()
+        {
+            var config = BuildConfigurationFactory.CreateEmpty().AddTypeCreator<DefaultTypeCreator>()
+                .AddValueGenerator<AgeValueGenerator>();
+
+            var actual = config.Create<PropertyTest>();
+
+            actual.Age.Should().NotBe(0);
+            actual.MyAge.Should().NotBe(0);
+            actual.AgeOfRelic.Should().NotBe(0);
+        }
+
         [Theory]
         [ClassData(typeof(NumericTypeRangeDataSource))]
         public void GenerateCanEvaluateManyTimesTest(Type type, bool typeSupported, double min, double max)
@@ -205,15 +232,6 @@
             }
         }
 
-        [Fact]
-        public void HasHigherPriorityThanNumericValueGeneratorTest()
-        {
-            var target = new AgeValueGenerator();
-            var other = new NumericValueGenerator();
-
-            target.Priority.Should().BeGreaterThan(other.Priority);
-        }
-
         [Theory]
         [ClassData(typeof(NumericTypeDataSource))]
         public void IsSupportedEvaluatesRequestedTypeTest(Type type, bool typeSupported)
@@ -308,6 +326,40 @@
             var target = new AgeValueGenerator();
 
             target.MinAge.Should().Be(1);
+        }
+
+        [Fact]
+        public void PriorityReturnsValueHigherThanNumericValueGeneratorTest()
+        {
+            var target = new AgeValueGenerator();
+            var other = new NumericValueGenerator();
+
+            target.Priority.Should().BeGreaterThan(other.Priority);
+        }
+
+        private class ParameterTest
+        {
+            public ParameterTest(int age, byte myAge, long ageOfRelic)
+            {
+                Age = age;
+                MyAge = myAge;
+                AgeOfRelic = ageOfRelic;
+            }
+
+            public int Age { get; }
+
+            public long AgeOfRelic { get; }
+
+            public byte MyAge { get; }
+        }
+
+        private class PropertyTest
+        {
+            public int Age { get; set; }
+
+            public long AgeOfRelic { get; set; }
+
+            public byte MyAge { get; set; }
         }
     }
 }
