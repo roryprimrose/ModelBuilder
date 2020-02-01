@@ -8,9 +8,17 @@
     using ModelBuilder.UnitTests.Models;
     using ModelBuilder.ValueGenerators;
     using Xunit;
+    using Xunit.Abstractions;
 
     public class DefaultConfigurationModuleTests
     {
+        private readonly ITestOutputHelper _output;
+
+        public DefaultConfigurationModuleTests(ITestOutputHelper output)
+        {
+            _output = output;
+        }
+
         [Fact]
         public void ConfigureAssignsDefaultConfiguration()
         {
@@ -114,6 +122,63 @@
                 Action action = () => rule.IsMatch(property);
 
                 action.Should().NotThrow();
+            }
+        }
+
+        [Fact]
+        public void OrderOfTypeCreators()
+        {
+            var configuration = new BuildConfiguration();
+
+            var target = new DefaultConfigurationModule();
+
+            target.Configure(configuration);
+
+            var items = configuration.TypeCreators.OrderByDescending(x => x.Priority);
+
+            _output.WriteLine("TypeCreators are evaluated in the following order");
+
+            foreach (var item in items)
+            {
+                _output.WriteLine("{0} - {1}", item.Priority, item.GetType().Name);
+            }
+        }
+
+        [Fact]
+        public void OrderOfExecuteOrderRules()
+        {
+            var configuration = new BuildConfiguration();
+
+            var target = new DefaultConfigurationModule();
+
+            target.Configure(configuration);
+
+            var items = configuration.ExecuteOrderRules.OrderByDescending(x => x.Priority);
+
+            _output.WriteLine("ExecuteOrderRules are evaluated in the following order");
+
+            foreach (var item in items)
+            {
+                _output.WriteLine("{0} - {1}", item.Priority, item);
+            }
+        }
+
+        [Fact]
+        public void OrderOfValueGenerators()
+        {
+            var configuration = new BuildConfiguration();
+
+            var target = new DefaultConfigurationModule();
+
+            target.Configure(configuration);
+
+            var items = configuration.ValueGenerators.OrderByDescending(x => x.Priority);
+
+            _output.WriteLine("ValueGenerators are evaluated in the following order");
+
+            foreach (var item in items)
+            {
+                _output.WriteLine("{0} - {1}", item.Priority, item.GetType().Name);
             }
         }
     }

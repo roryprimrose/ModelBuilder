@@ -133,19 +133,52 @@
             convertedValue.Should().BeGreaterOrEqualTo(1);
         }
 
-        [Fact]
-        public void GenerateThrowsExceptionWhenReferenceNotAgeTest()
+        [Theory]
+        [ClassData(typeof(NumericTypeRangeDataSource))]
+        public void GenerateReturnsValuesBetweenMinAndMaxTest(Type type, bool typeSupported, double min, double max)
         {
-            var buildChain = new BuildHistory();
+            if (typeSupported == false)
+            {
+                // Ignore this test
+                return;
+            }
+
             var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            var buildChain = new BuildHistory();
 
             executeStrategy.BuildChain.Returns(buildChain);
 
             var target = new AgeValueGenerator();
 
-            Action action = () => target.Generate(typeof(int), "Stuff", executeStrategy);
+            target.MinAge = 15;
+            target.MaxAge = 30;
 
-            action.Should().Throw<NotSupportedException>();
+            for (var index = 0; index < 1000; index++)
+            {
+                var value = target.Generate(type, "Age", executeStrategy);
+
+                if (type.IsNullable()
+                    && value == null)
+                {
+                    // Nullable values could be returned so nothing more to assert
+                    return;
+                }
+
+                var evaluateType = type;
+
+                if (type.IsNullable())
+                {
+                    evaluateType = type.GenericTypeArguments[0];
+                }
+
+                value.Should().BeOfType(evaluateType);
+
+                var convertedValue = Convert.ToDouble(value, CultureInfo.InvariantCulture);
+
+                convertedValue.Should().BeGreaterOrEqualTo(target.MinAge);
+                convertedValue.Should().BeLessOrEqualTo(target.MaxAge);
+            }
         }
 
         [Theory]
@@ -185,9 +218,11 @@
         [ClassData(typeof(NumericTypeDataSource))]
         public void IsSupportedEvaluatesRequestedTypeTest(Type type, bool typeSupported)
         {
+            var buildChain = Substitute.For<IBuildChain>();
+
             var target = new AgeValueGenerator();
 
-            var actual = target.IsSupported(type, "Age", null);
+            var actual = target.IsSupported(type, "Age", buildChain);
 
             actual.Should().Be(typeSupported);
         }
@@ -202,9 +237,11 @@
                 return;
             }
 
+            var buildChain = Substitute.For<IBuildChain>();
+
             var target = new AgeValueGenerator();
 
-            var actual = target.IsSupported(type, null, null);
+            var actual = target.IsSupported(type, null, buildChain);
 
             actual.Should().BeFalse();
         }
@@ -219,9 +256,11 @@
                 return;
             }
 
+            var buildChain = Substitute.For<IBuildChain>();
+
             var target = new AgeValueGenerator();
 
-            var actual = target.IsSupported(type, "Stuff", null);
+            var actual = target.IsSupported(type, "Stuff", buildChain);
 
             actual.Should().BeFalse();
         }
@@ -236,9 +275,11 @@
                 return;
             }
 
+            var buildChain = Substitute.For<IBuildChain>();
+
             var target = new AgeValueGenerator();
 
-            var actual = target.IsSupported(type, "SomeAgeValue", null);
+            var actual = target.IsSupported(type, "SomeAgeValue", buildChain);
 
             actual.Should().BeTrue();
         }
@@ -254,36 +295,19 @@
         }
 
         [Fact]
-        public void SettingDefaultMaxAgeOnlyAffectsNewInstancesTest()
+        public void MaxAgeDefaultsTo100()
         {
-            var expected = AgeValueGenerator.DefaultMaxAge;
+            var target = new AgeValueGenerator();
 
-            try
-            {
-                var first = new AgeValueGenerator();
-
-                AgeValueGenerator.DefaultMaxAge = 11;
-
-                var second = new AgeValueGenerator();
-
-                first.MaxAge.Should().Be(expected);
-                second.MaxAge.Should().Be(11);
-            }
-            finally
-            {
-                AgeValueGenerator.DefaultMaxAge = expected;
-            }
+            target.MaxAge.Should().Be(100);
         }
 
         [Fact]
-        public void SettingMaxAgeShouldNotChangeDefaultMaxAgeTest()
+        public void MinAgeDefaultsTo1()
         {
-            var target = new AgeValueGenerator
-            {
-                MaxAge = Environment.TickCount
-            };
+            var target = new AgeValueGenerator();
 
-            AgeValueGenerator.DefaultMaxAge.Should().NotBe(target.MaxAge);
+            target.MinAge.Should().Be(1);
         }
     }
 }

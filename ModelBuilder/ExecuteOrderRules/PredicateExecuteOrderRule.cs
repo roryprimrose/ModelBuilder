@@ -20,6 +20,7 @@
         public PredicateExecuteOrderRule(Predicate<PropertyInfo> predicate, int priority)
         {
             _predicate = predicate ?? throw new ArgumentNullException(nameof(predicate));
+
             Priority = priority;
         }
 
@@ -33,6 +34,12 @@
             }
 
             return _predicate(propertyInfo);
+        }
+
+        /// <inheritdoc />
+        public override string ToString()
+        {
+            return _predicate.ToString();
         }
 
         /// <inheritdoc />

@@ -38,6 +38,12 @@
         }
 
         /// <inheritdoc />
+        public override string ToString()
+        {
+            return _expression.ToString();
+        }
+
+        /// <inheritdoc />
         public int Priority { get; }
     }
 }
