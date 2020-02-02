@@ -119,7 +119,7 @@
 
             var sut = new Wrapper(nameRegex, typeof(string), value);
 
-            var actual = sut.IsSupported(typeof(string), referenceName, buildChain);
+            var actual = sut.RunIsSupported(typeof(string), referenceName, buildChain);
 
             actual.Should().BeFalse();
         }
@@ -153,7 +153,12 @@
                 _value = value;
             }
 
-            public override object Generate(Type type, string referenceName, IExecuteStrategy executeStrategy)
+            public bool RunIsSupported(Type type, string referenceName, IBuildChain buildChain)
+            {
+                return IsSupported(type, referenceName, buildChain);
+            }
+
+            protected override object Generate(Type type, string referenceName, IExecuteStrategy executeStrategy)
             {
                 return _value;
             }

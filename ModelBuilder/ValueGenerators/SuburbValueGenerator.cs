@@ -20,7 +20,7 @@
         }
 
         /// <inheritdoc />
-        public override object Generate(Type type, string referenceName, IExecuteStrategy executeStrategy)
+        protected override object Generate(Type type, string referenceName, IExecuteStrategy executeStrategy)
         {
             // Some suburbs are named after people so we will just take a random last name
             return TestData.LastNames.Next();

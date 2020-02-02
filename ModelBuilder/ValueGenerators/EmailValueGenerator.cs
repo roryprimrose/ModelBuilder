@@ -22,7 +22,7 @@
             "Microsoft.Globalization",
             "CA1308:NormalizeStringsToUppercase",
             Justification = "Email addresses are lower case by convention.")]
-        public override object Generate(Type type, string referenceName, IExecuteStrategy executeStrategy)
+        protected override object Generate(Type type, string referenceName, IExecuteStrategy executeStrategy)
         {
             var context = executeStrategy?.BuildChain?.Last;
             var firstName = GetValue<string>(PropertyExpression.FirstName, context);

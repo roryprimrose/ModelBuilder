@@ -11,7 +11,7 @@
     {
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
-        public override bool IsSupported(Type type, string referenceName, IBuildChain buildChain)
+        protected override bool IsSupported(Type type, string referenceName, IBuildChain buildChain)
         {
             if (type == null)
             {
@@ -47,7 +47,7 @@
         }
 
         /// <inheritdoc />
-        public override object Generate(Type type, string referenceName, IExecuteStrategy executeStrategy)
+        protected override object Generate(Type type, string referenceName, IExecuteStrategy executeStrategy)
         {
             var domain = TestData.Domains.Next();
             var value = "https://www." + domain;

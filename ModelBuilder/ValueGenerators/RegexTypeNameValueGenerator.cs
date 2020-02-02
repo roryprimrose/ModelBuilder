@@ -24,21 +24,21 @@
         }
 
         /// <inheritdoc />
-        public virtual object Generate(Type type, IExecuteStrategy executeStrategy)
+        public override object Generate(Type type, IExecuteStrategy executeStrategy)
         {
             // These value generators to not support constructors
             throw new NotSupportedException();
         }
 
         /// <inheritdoc />
-        public virtual bool IsSupported(Type type, IBuildChain buildChain)
+        public override bool IsSupported(Type type, IBuildChain buildChain)
         {
             // These value generators to not support constructors
             return false;
         }
 
         /// <inheritdoc />
-        public override bool IsSupported(Type type, string referenceName, IBuildChain buildChain)
+        protected override bool IsSupported(Type type, string referenceName, IBuildChain buildChain)
         {
             if (_type.IsAssignableFrom(type) == false)
             {

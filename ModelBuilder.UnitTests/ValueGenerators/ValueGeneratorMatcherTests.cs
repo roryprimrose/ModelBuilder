@@ -30,7 +30,7 @@
 
             var target = new WrapperGenerator(regex, typeof(bool), typeof(bool?));
 
-            var actual = target.IsSupported(type, referenceName, buildChain);
+            var actual = target.RunIsSupported(type, referenceName, buildChain);
 
             actual.Should().Be(expected);
         }
@@ -47,7 +47,7 @@
 
             var target = new WrapperGenerator(regex);
 
-            var actual = target.IsSupported(typeof(Guid), referenceName, buildChain);
+            var actual = target.RunIsSupported(typeof(Guid), referenceName, buildChain);
 
             actual.Should().Be(expected);
         }
@@ -68,7 +68,7 @@
 
             var target = new WrapperGenerator("Match", typeof(bool), typeof(bool?));
 
-            var actual = target.IsSupported(type, referenceName, buildChain);
+            var actual = target.RunIsSupported(type, referenceName, buildChain);
 
             actual.Should().Be(expected);
         }
@@ -84,7 +84,7 @@
 
             var target = new WrapperGenerator("Match");
 
-            var actual = target.IsSupported(typeof(Guid), referenceName, buildChain);
+            var actual = target.RunIsSupported(typeof(Guid), referenceName, buildChain);
 
             actual.Should().Be(expected);
         }
@@ -99,7 +99,7 @@
 
             var target = new WrapperGenerator(typeof(bool), typeof(bool?));
 
-            var actual = target.IsSupported(type, null, buildChain);
+            var actual = target.RunIsSupported(type, null, buildChain);
 
             actual.Should().Be(expected);
         }
@@ -112,7 +112,7 @@
             var target = new WrapperGenerator("Test");
 
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-            Action action = () => target.IsSupported(type, "Test", null);
+            Action action = () => target.RunIsSupported(type, "Test", null);
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
             action.Should().Throw<ArgumentNullException>();
@@ -126,7 +126,7 @@
             var target = new WrapperGenerator("Test");
 
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-            Action action = () => target.IsSupported(null, "Test", buildChain);
+            Action action = () => target.RunIsSupported(null, "Test", buildChain);
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
             action.Should().Throw<ArgumentNullException>();
@@ -137,7 +137,7 @@
         {
             // ReSharper disable once ObjectCreationAsStatement
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-            Action action = () => new WrapperGenerator((Regex)null);
+            Action action = () => new WrapperGenerator((Regex) null);
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
             action.Should().Throw<ArgumentNullException>();
@@ -148,7 +148,7 @@
         {
             // ReSharper disable once ObjectCreationAsStatement
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-            Action action = () => new WrapperGenerator((string)null);
+            Action action = () => new WrapperGenerator((string) null);
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
             action.Should().Throw<ArgumentNullException>();
@@ -159,7 +159,7 @@
         {
             // ReSharper disable once ObjectCreationAsStatement
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-            Action action = () => new WrapperGenerator((Type[])null);
+            Action action = () => new WrapperGenerator((Type[]) null);
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
             action.Should().Throw<ArgumentNullException>();
@@ -179,7 +179,12 @@
             {
             }
 
-            public override object Generate(Type type, string referenceName, IExecuteStrategy executeStrategy)
+            public bool RunIsSupported(Type type, string referenceName, IBuildChain buildChain)
+            {
+                return IsSupported(type, referenceName, buildChain);
+            }
+
+            protected override object Generate(Type type, string referenceName, IExecuteStrategy executeStrategy)
             {
                 throw new NotImplementedException();
             }

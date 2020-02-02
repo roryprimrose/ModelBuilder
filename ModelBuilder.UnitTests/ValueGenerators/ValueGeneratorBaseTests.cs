@@ -195,7 +195,7 @@
                 _value = value;
             }
 
-            public override object Generate(Type type, string referenceName, IExecuteStrategy executeStrategy)
+            protected override object Generate(Type type, string referenceName, IExecuteStrategy executeStrategy)
             {
                 TypeUsed = type;
                 ReferenceNameUsed = referenceName;
@@ -203,7 +203,7 @@
                 return _value;
             }
 
-            public override bool IsSupported(Type type, string referenceName, IBuildChain buildChain)
+            protected override bool IsSupported(Type type, string referenceName, IBuildChain buildChain)
             {
                 TypeUsed = type;
                 ReferenceNameUsed = referenceName;

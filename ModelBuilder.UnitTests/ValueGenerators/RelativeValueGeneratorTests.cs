@@ -1,4 +1,5 @@
 ﻿// ReSharper disable UnusedMethodReturnValue.Local
+
 namespace ModelBuilder.UnitTests.ValueGenerators
 {
     using System;
@@ -120,7 +121,7 @@ namespace ModelBuilder.UnitTests.ValueGenerators
         {
             var context = new Person();
 
-            var target = new GeneratorWrapper<string>(PropertyExpression.FirstName, (Regex)null, (Type)null);
+            var target = new GeneratorWrapper<string>(PropertyExpression.FirstName, (Regex) null, (Type) null);
 
             Action action = () => target.ReadSourceValue(context);
 
@@ -145,7 +146,7 @@ namespace ModelBuilder.UnitTests.ValueGenerators
             var target = new GeneratorWrapper<string>(
                 PropertyExpression.FirstName,
                 PropertyExpression.FirstName,
-                (Type)null);
+                (Type) null);
 
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
             Action action = () => target.ReadValue(PropertyExpression.LastName, null);
@@ -162,7 +163,7 @@ namespace ModelBuilder.UnitTests.ValueGenerators
             var target = new GeneratorWrapper<string>(
                 PropertyExpression.FirstName,
                 PropertyExpression.FirstName,
-                (Type)null);
+                (Type) null);
 
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
             Action action = () => target.ReadValue(null, context);
@@ -315,7 +316,7 @@ namespace ModelBuilder.UnitTests.ValueGenerators
 
             var target = new GeneratorWrapper<string>(PropertyExpression.FirstName, PropertyExpression.Gender);
 
-            var actual = target.IsSupported(type, referenceName, buildChain);
+            var actual = target.RunIsSupported(type, referenceName, buildChain);
 
             actual.Should().Be(expected);
         }
@@ -329,10 +330,10 @@ namespace ModelBuilder.UnitTests.ValueGenerators
             buildChain.Push(context);
 
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-            var target = new GeneratorWrapper<string>(PropertyExpression.FirstName, (Regex)null);
+            var target = new GeneratorWrapper<string>(PropertyExpression.FirstName, (Regex) null);
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
-            var actual = target.IsSupported(typeof(string), "FirstName", buildChain);
+            var actual = target.RunIsSupported(typeof(string), "FirstName", buildChain);
 
             actual.Should().BeTrue();
         }
@@ -347,7 +348,7 @@ namespace ModelBuilder.UnitTests.ValueGenerators
 
             var target = new GeneratorWrapper<string>(PropertyExpression.FirstName, typeof(string));
 
-            var actual = target.IsSupported(typeof(string), "FirstName", buildChain);
+            var actual = target.RunIsSupported(typeof(string), "FirstName", buildChain);
 
             actual.Should().BeTrue();
         }
@@ -358,7 +359,7 @@ namespace ModelBuilder.UnitTests.ValueGenerators
             var target = new GeneratorWrapper<string>(PropertyExpression.FirstName, typeof(string));
 
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-            Action action = () => target.IsSupported(typeof(string), "FirstName", null);
+            Action action = () => target.RunIsSupported(typeof(string), "FirstName", null);
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
             action.Should().Throw<ArgumentNullException>();
@@ -375,7 +376,7 @@ namespace ModelBuilder.UnitTests.ValueGenerators
             var target = new GeneratorWrapper<string>(PropertyExpression.FirstName, typeof(string));
 
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-            Action action = () => target.IsSupported(null, "FirstName", buildChain);
+            Action action = () => target.RunIsSupported(null, "FirstName", buildChain);
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
             action.Should().Throw<ArgumentNullException>();
@@ -438,7 +439,12 @@ namespace ModelBuilder.UnitTests.ValueGenerators
                 return GetValue<T>(expression, context);
             }
 
-            public override object Generate(Type type, string referenceName, IExecuteStrategy executeStrategy)
+            public bool RunIsSupported(Type type, string referenceName, IBuildChain buildChain)
+            {
+                return IsSupported(type, referenceName, buildChain);
+            }
+
+            protected override object Generate(Type type, string referenceName, IExecuteStrategy executeStrategy)
             {
                 throw new NotImplementedException();
             }
