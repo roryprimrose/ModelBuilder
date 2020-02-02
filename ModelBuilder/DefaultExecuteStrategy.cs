@@ -162,7 +162,7 @@
 
             EnsureInitialized();
 
-            var typeToBuild = DetermineTypeToBuild(type);
+            var typeToBuild = Configuration.GetBuildType(type, Log);
 
             if (typeToBuild == null)
             {
@@ -500,42 +500,6 @@
             instance = typeCreator.Create(type, referenceName, this);
 
             return new Tuple<object, object[]>(instance, args);
-        }
-
-        private Type DetermineTypeToBuild(Type type)
-        {
-            var typeMappingRule = Configuration.TypeMappingRules?.Where(x => x.SourceType == type).FirstOrDefault();
-
-            if (typeMappingRule != null)
-            {
-                Log.MappedType(type, typeMappingRule.TargetType);
-
-                return typeMappingRule.TargetType;
-            }
-
-            // There is no type mapping for this type
-            if (type.IsInterface
-                || type.IsAbstract)
-            {
-                // Automatically resolve a derived type within the same assembly
-                var assemblyTypes = type.GetTypeInfo().Assembly.GetTypes();
-                var possibleTypes = from x in assemblyTypes
-                    where x.IsPublic && x.IsInterface == false && x.IsAbstract == false && type.IsAssignableFrom(x)
-                    select x;
-
-                var matchingType = possibleTypes.FirstOrDefault(type.IsAssignableFrom);
-
-                if (matchingType == null)
-                {
-                    return type;
-                }
-
-                Log.MappedType(type, matchingType);
-
-                return matchingType;
-            }
-
-            return type;
         }
 
         private void EnsureInitialized()

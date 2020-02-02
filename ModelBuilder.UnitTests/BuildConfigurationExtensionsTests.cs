@@ -777,7 +777,7 @@
             var source = typeof(string);
 
             var buildLog = Substitute.For<IBuildLog>();
-            var sut = new BuildConfiguration().Mapping<DateTime, DateTimeOffset>();
+            var sut = new BuildConfiguration().Mapping<Stream, MemoryStream>();
 
             var actual = sut.GetBuildType(source, buildLog);
 
@@ -839,14 +839,14 @@
         [Fact]
         public void GetBuildTypeReturnsTargetTypeWhenTypeMappingFound()
         {
-            var source = typeof(string);
+            var source = typeof(Stream);
 
             var buildLog = Substitute.For<IBuildLog>();
-            var sut = new BuildConfiguration().Mapping<string, DateTimeOffset>();
+            var sut = new BuildConfiguration().Mapping<Stream, MemoryStream>();
 
             var actual = sut.GetBuildType(source, buildLog);
 
-            actual.Should().Be<DateTimeOffset>();
+            actual.Should().Be<MemoryStream>();
         }
 
         [Fact]
