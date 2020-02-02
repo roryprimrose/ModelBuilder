@@ -245,7 +245,7 @@
 
             var target = new BuildConfiguration();
 
-            Action action = () => target.AddExecuteOrderRule((Regex)null, priority);
+            Action action = () => target.AddExecuteOrderRule((Regex) null, priority);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -767,6 +767,122 @@
         public void CreateTThrowsExceptionWithNullBuildConfigurationTest()
         {
             Action action = () => ((IBuildConfiguration) null).Create<Guid>();
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void GetBuildTypeReturnsSourceWhenNoTypeMappingIsFound()
+        {
+            var source = typeof(string);
+
+            var buildLog = Substitute.For<IBuildLog>();
+            var sut = new BuildConfiguration().Mapping<Stream, MemoryStream>();
+
+            var actual = sut.GetBuildType(source, buildLog);
+
+            actual.Should().Be<string>();
+        }
+
+        [Fact]
+        public void GetBuildTypeReturnsSourceWhenTypeMappingIsEmpty()
+        {
+            var source = typeof(string);
+
+            var buildLog = Substitute.For<IBuildLog>();
+            var sut = new BuildConfiguration();
+
+            var actual = sut.GetBuildType(source, buildLog);
+
+            actual.Should().Be<string>();
+        }
+
+        [Fact]
+        public void GetBuildTypeReturnsSourceWhenTypeMappingIsNull()
+        {
+            var source = typeof(string);
+
+            var buildLog = Substitute.For<IBuildLog>();
+            var sut = Substitute.For<IBuildConfiguration>();
+
+            var actual = sut.GetBuildType(source, buildLog);
+
+            actual.Should().Be<string>();
+        }
+
+        [Fact]
+        public void GetBuildTypeReturnsTargetTypeWhenSourceIsAbstractClass()
+        {
+            var source = typeof(Entity);
+
+            var buildLog = Substitute.For<IBuildLog>();
+            var sut = new BuildConfiguration();
+
+            var actual = sut.GetBuildType(source, buildLog);
+
+            actual.Should().Be<Person>();
+        }
+
+        [Fact]
+        public void GetBuildTypeReturnsTargetTypeWhenSourceIsInterface()
+        {
+            var source = typeof(ITestItem);
+
+            var buildLog = Substitute.For<IBuildLog>();
+            var sut = new BuildConfiguration();
+
+            var actual = sut.GetBuildType(source, buildLog);
+
+            actual.Should().Be<TestItem>();
+        }
+
+        [Fact]
+        public void GetBuildTypeReturnsTargetTypeWhenTypeMappingFound()
+        {
+            var source = typeof(Stream);
+
+            var buildLog = Substitute.For<IBuildLog>();
+            var sut = new BuildConfiguration().Mapping<Stream, MemoryStream>();
+
+            var actual = sut.GetBuildType(source, buildLog);
+
+            actual.Should().Be<MemoryStream>();
+        }
+
+        [Fact]
+        public void GetBuildTypeThrowsExceptionWithNullBuildLog()
+        {
+            var source = typeof(string);
+
+            var sut = Substitute.For<IBuildConfiguration>();
+
+            Action action = () => sut.GetBuildType(source, null);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void GetBuildTypeThrowsExceptionWithNullConfiguration()
+        {
+            var source = typeof(string);
+
+            var buildLog = Substitute.For<IBuildLog>();
+
+            IBuildConfiguration config = null;
+
+            Action action = () => config.GetBuildType(source, buildLog);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void GetBuildTypeThrowsExceptionWithNullSourceType()
+        {
+            var buildLog = Substitute.For<IBuildLog>();
+
+            var sut = Substitute.For<IBuildConfiguration>();
+
+            Action action = () => sut.GetBuildType(null, buildLog);
 
             action.Should().Throw<ArgumentNullException>();
         }
