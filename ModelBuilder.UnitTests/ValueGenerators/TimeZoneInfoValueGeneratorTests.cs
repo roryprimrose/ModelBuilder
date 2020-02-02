@@ -35,24 +35,7 @@
 
             first.Should().NotBe(second);
         }
-
-        [Theory]
-        [InlineData(typeof(Stream))]
-        [InlineData(typeof(string))]
-        public void GenerateThrowsExceptionWithInvalidParametersTest(Type type)
-        {
-            var buildChain = new BuildHistory();
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            executeStrategy.BuildChain.Returns(buildChain);
-
-            var target = new TimeZoneInfoValueGenerator();
-
-            Action action = () => target.Generate(type, null, executeStrategy);
-
-            action.Should().Throw<NotSupportedException>();
-        }
-
+        
         [Theory]
         [InlineData(typeof(string), false)]
         [InlineData(typeof(Stream), false)]

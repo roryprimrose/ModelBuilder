@@ -136,27 +136,6 @@
             first.Should().NotBe(second);
         }
 
-        [Theory]
-        [InlineData(typeof(TimeSpan), "dob")]
-        [InlineData(typeof(TimeZoneInfo), "dob")]
-        [InlineData(typeof(string), "dob")]
-        [InlineData(typeof(DateTime), null)]
-        [InlineData(typeof(DateTime), "")]
-        [InlineData(typeof(DateTime), "Stuff")]
-        public void GenerateThrowsExceptionWithInvalidParametersTest(Type type, string referenceName)
-        {
-            var buildChain = new BuildHistory();
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            executeStrategy.BuildChain.Returns(buildChain);
-
-            var target = new DateOfBirthValueGenerator();
-
-            Action action = () => target.Generate(type, referenceName, executeStrategy);
-
-            action.Should().Throw<NotSupportedException>();
-        }
-
         [Fact]
         public void HasHigherPriorityThanDateTimeValueGeneratorTest()
         {

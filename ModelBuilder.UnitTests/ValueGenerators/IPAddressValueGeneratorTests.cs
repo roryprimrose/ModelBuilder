@@ -43,37 +43,6 @@
         }
 
         [Theory]
-        [InlineData(typeof(string), null, false)]
-        [InlineData(typeof(string), "", false)]
-        [InlineData(typeof(string), "Stuff", false)]
-        [InlineData(typeof(bool), "IPAddress", false)]
-        [InlineData(typeof(string), "IPAddress", true)]
-        [InlineData(typeof(string), "IpAddress", true)]
-        [InlineData(typeof(string), "ipaddress", true)]
-        [InlineData(typeof(string), "IPADDRESS", true)]
-        [InlineData(typeof(IPAddress), null, true)]
-        public void GenerateValidatesUnsupportedScenariosTest(Type type, string referenceName, bool supported)
-        {
-            var buildChain = new BuildHistory();
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            executeStrategy.BuildChain.Returns(buildChain);
-
-            var target = new IPAddressValueGenerator();
-
-            Action action = () => target.Generate(type, referenceName, executeStrategy);
-
-            if (supported)
-            {
-                action.Should().NotThrow();
-            }
-            else
-            {
-                action.Should().Throw<NotSupportedException>();
-            }
-        }
-
-        [Theory]
         [InlineData(typeof(string), (string) null, false)]
         [InlineData(typeof(string), "", false)]
         [InlineData(typeof(string), "Stuff", false)]

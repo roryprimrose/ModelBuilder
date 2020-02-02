@@ -80,24 +80,6 @@
         }
 
         [Theory]
-        [InlineData(typeof(Stream), "gender")]
-        [InlineData(typeof(string), null)]
-        [InlineData(typeof(string), "Stuff")]
-        public void GenerateThrowsExceptionWithInvalidParametersTest(Type type, string referenceName)
-        {
-            var buildChain = new BuildHistory();
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            executeStrategy.BuildChain.Returns(buildChain);
-
-            var target = new GenderValueGenerator();
-
-            Action action = () => target.Generate(type, referenceName, executeStrategy);
-
-            action.Should().Throw<NotSupportedException>();
-        }
-
-        [Theory]
         [InlineData(typeof(Stream), "gender", false)]
         [InlineData(typeof(string), null, false)]
         [InlineData(typeof(string), "", false)]

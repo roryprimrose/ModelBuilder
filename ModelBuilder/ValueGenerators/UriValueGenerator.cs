@@ -47,7 +47,7 @@
         }
 
         /// <inheritdoc />
-        protected override object GenerateValue(Type type, string referenceName, IExecuteStrategy executeStrategy)
+        public override object Generate(Type type, string referenceName, IExecuteStrategy executeStrategy)
         {
             var domain = TestData.Domains.Next();
             var value = "https://www." + domain;

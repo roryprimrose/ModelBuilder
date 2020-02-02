@@ -229,29 +229,6 @@
             actual.Should().NotBeNullOrEmpty();
         }
 
-        [Theory]
-        [InlineData(typeof(Stream), "timezone")]
-        [InlineData(typeof(string), null)]
-        [InlineData(typeof(string), "Stuff")]
-        public void GenerateThrowsExceptionWithInvalidParametersTest(Type type, string referenceName)
-        {
-            var buildChain = new BuildHistory();
-            var resolver = new DefaultPropertyResolver();
-
-            var configuration = Substitute.For<IBuildConfiguration>();
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            configuration.PropertyResolver.Returns(resolver);
-            executeStrategy.Configuration.Returns(configuration);
-            executeStrategy.BuildChain.Returns(buildChain);
-
-            var target = new TimeZoneValueGenerator();
-
-            Action action = () => target.Generate(type, referenceName, executeStrategy);
-
-            action.Should().Throw<NotSupportedException>();
-        }
-
         [Fact]
         public void HasHigherPriorityThanStringValueGeneratorTest()
         {

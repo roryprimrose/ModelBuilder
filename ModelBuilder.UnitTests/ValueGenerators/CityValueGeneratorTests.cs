@@ -227,27 +227,6 @@
             actual.Should().NotBeNullOrEmpty();
         }
 
-        [Theory]
-        [InlineData(typeof(Stream), "city")]
-        [InlineData(typeof(string), null)]
-        [InlineData(typeof(string), "Stuff")]
-        public void GenerateThrowsExceptionWithInvalidParametersTest(Type type, string referenceName)
-        {
-            var address = new Address();
-            var buildChain = new BuildHistory();
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            executeStrategy.BuildChain.Returns(buildChain);
-
-            buildChain.Push(address);
-
-            var target = new CityValueGenerator();
-
-            Action action = () => target.Generate(type, referenceName, executeStrategy);
-
-            action.Should().Throw<NotSupportedException>();
-        }
-
         [Fact]
         public void HasHigherPriorityThanStringValueGeneratorTest()
         {

@@ -35,21 +35,9 @@
         }
 
         [Theory]
-        [InlineData(nameof(ParameterTest.ParamNullable_sbyte))]
-        [InlineData(nameof(ParameterTest.ParamNullable_byte))]
-        [InlineData(nameof(ParameterTest.ParamNullable_short))]
-        [InlineData(nameof(ParameterTest.ParamNullable_ushort))]
-        [InlineData(nameof(ParameterTest.ParamNullable_int))]
-        [InlineData(nameof(ParameterTest.ParamNullable_uint))]
-        [InlineData(nameof(ParameterTest.ParamNullable_long))]
-        [InlineData(nameof(ParameterTest.ParamNullable_ulong))]
-        [InlineData(nameof(ParameterTest.ParamNullable_double))]
-        [InlineData(nameof(ParameterTest.ParamNullable_float))]
-        [InlineData(nameof(ParameterTest.ParamNullable_decimal))]
-        public void GenerateForParameterInfoReturnsNullAndNonNullValues(string propertyName)
+        [MemberData(nameof(DataSet.GetNullableParameters), typeof(ParameterTest), MemberType = typeof(DataSet))]
+        public void GenerateForParameterInfoReturnsNullAndNonNullValues(ParameterInfo parameterInfo)
         {
-            var propertyInfo = typeof(ParameterTest).GetProperty(propertyName);
-
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             var target = new NumericValueGenerator();
@@ -59,7 +47,7 @@
 
             for (var index = 0; index < 1000; index++)
             {
-                var nextValue = target.Generate(propertyInfo, executeStrategy);
+                var nextValue = target.Generate(parameterInfo, executeStrategy);
 
                 if (nextValue == null)
                 {
@@ -81,33 +69,9 @@
         }
 
         [Theory]
-        [InlineData("param_sbyte")]
-        [InlineData("param_byte")]
-        [InlineData("param_short")]
-        [InlineData("param_ushort")]
-        [InlineData("param_int")]
-        [InlineData("param_uint")]
-        [InlineData("param_long")]
-        [InlineData("param_ulong")]
-        [InlineData("param_double")]
-        [InlineData("param_float")]
-        [InlineData("param_decimal")]
-        [InlineData("paramNullable_sbyte")]
-        [InlineData("paramNullable_byte")]
-        [InlineData("paramNullable_short")]
-        [InlineData("paramNullable_ushort")]
-        [InlineData("paramNullable_int")]
-        [InlineData("paramNullable_uint")]
-        [InlineData("paramNullable_long")]
-        [InlineData("paramNullable_ulong")]
-        [InlineData("paramNullable_double")]
-        [InlineData("paramNullable_float")]
-        [InlineData("paramNullable_decimal")]
-        public void GenerateForParameterInfoReturnsRandomValues(string parameterName)
+        [MemberData(nameof(DataSet.GetParameters), typeof(ParameterTest), MemberType = typeof(DataSet))]
+        public void GenerateForParameterInfoReturnsRandomValues(ParameterInfo parameterInfo)
         {
-            var parameterInfo = typeof(ParameterTest).GetConstructors().Single().GetParameters()
-                .Single(x => x.Name == parameterName);
-
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             var target = new NumericValueGenerator();
@@ -142,21 +106,9 @@
         }
 
         [Theory]
-        [InlineData(nameof(PropertyTest.PropNullable_sbyte))]
-        [InlineData(nameof(PropertyTest.PropNullable_byte))]
-        [InlineData(nameof(PropertyTest.PropNullable_short))]
-        [InlineData(nameof(PropertyTest.PropNullable_ushort))]
-        [InlineData(nameof(PropertyTest.PropNullable_int))]
-        [InlineData(nameof(PropertyTest.PropNullable_uint))]
-        [InlineData(nameof(PropertyTest.PropNullable_long))]
-        [InlineData(nameof(PropertyTest.PropNullable_ulong))]
-        [InlineData(nameof(PropertyTest.PropNullable_double))]
-        [InlineData(nameof(PropertyTest.PropNullable_float))]
-        [InlineData(nameof(PropertyTest.PropNullable_decimal))]
-        public void GenerateForPropertyInfoReturnsNullAndNonNullValues(string propertyName)
+        [MemberData(nameof(DataSet.GetNullableProperties), typeof(ParameterTest), MemberType = typeof(DataSet))]
+        public void GenerateForPropertyInfoReturnsNullAndNonNullValues(PropertyInfo propertyInfo)
         {
-            var propertyInfo = typeof(PropertyTest).GetProperty(propertyName);
-
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             var target = new NumericValueGenerator();
@@ -188,32 +140,9 @@
         }
 
         [Theory]
-        [InlineData(nameof(PropertyTest.Prop_sbyte))]
-        [InlineData(nameof(PropertyTest.Prop_byte))]
-        [InlineData(nameof(PropertyTest.Prop_short))]
-        [InlineData(nameof(PropertyTest.Prop_ushort))]
-        [InlineData(nameof(PropertyTest.Prop_int))]
-        [InlineData(nameof(PropertyTest.Prop_uint))]
-        [InlineData(nameof(PropertyTest.Prop_long))]
-        [InlineData(nameof(PropertyTest.Prop_ulong))]
-        [InlineData(nameof(PropertyTest.Prop_double))]
-        [InlineData(nameof(PropertyTest.Prop_float))]
-        [InlineData(nameof(PropertyTest.Prop_decimal))]
-        [InlineData(nameof(PropertyTest.PropNullable_sbyte))]
-        [InlineData(nameof(PropertyTest.PropNullable_byte))]
-        [InlineData(nameof(PropertyTest.PropNullable_short))]
-        [InlineData(nameof(PropertyTest.PropNullable_ushort))]
-        [InlineData(nameof(PropertyTest.PropNullable_int))]
-        [InlineData(nameof(PropertyTest.PropNullable_uint))]
-        [InlineData(nameof(PropertyTest.PropNullable_long))]
-        [InlineData(nameof(PropertyTest.PropNullable_ulong))]
-        [InlineData(nameof(PropertyTest.PropNullable_double))]
-        [InlineData(nameof(PropertyTest.PropNullable_float))]
-        [InlineData(nameof(PropertyTest.PropNullable_decimal))]
-        public void GenerateForPropertyInfoReturnsRandomValues(string propertyName)
+        [MemberData(nameof(DataSet.GetProperties), typeof(ParameterTest), MemberType = typeof(DataSet))]
+        public void GenerateForPropertyInfoReturnsRandomValues(PropertyInfo propertyInfo)
         {
-            var propertyInfo = typeof(PropertyTest).GetProperty(propertyName);
-
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             var target = new NumericValueGenerator();
@@ -483,14 +412,6 @@
             Action action = () => sut.IsSupported((PropertyInfo) null, buildChain);
 
             action.Should().Throw<ArgumentNullException>();
-        }
-
-        [Fact]
-        public void PriorityReturnsMinimumValue()
-        {
-            var sut = new NumericValueGenerator();
-
-            sut.Priority.Should().Be(int.MinValue);
         }
 
         private class ParameterTest

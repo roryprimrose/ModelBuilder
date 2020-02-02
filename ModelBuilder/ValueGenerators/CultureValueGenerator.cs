@@ -20,7 +20,7 @@ namespace ModelBuilder.ValueGenerators
         }
 
         /// <inheritdoc />
-        protected override object GenerateValue(Type type, string referenceName, IExecuteStrategy executeStrategy)
+        public override object Generate(Type type, string referenceName, IExecuteStrategy executeStrategy)
         {
             var cultures = CultureInfo.GetCultures(CultureTypes.AllCultures);
             var index = Generator.NextValue(0, cultures.Length - 1);

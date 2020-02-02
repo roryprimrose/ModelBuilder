@@ -44,31 +44,6 @@
             valueFound.Should().BeTrue();
         }
 
-        [Theory]
-        [InlineData(typeof(Guid), true)]
-        [InlineData(typeof(Guid?), true)]
-        [InlineData(typeof(string), false)]
-        public void GenerateEvaluatesWhetherTypeIsSupportedTest(Type type, bool supportedType)
-        {
-            var buildChain = new BuildHistory();
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            executeStrategy.BuildChain.Returns(buildChain);
-
-            var target = new GuidValueGenerator();
-
-            Action action = () => target.Generate(type, null, executeStrategy);
-
-            if (supportedType)
-            {
-                action.Should().NotThrow();
-            }
-            else
-            {
-                action.Should().Throw<NotSupportedException>();
-            }
-        }
-
         [Fact]
         public void GenerateReturnsGuidValueTest()
         {

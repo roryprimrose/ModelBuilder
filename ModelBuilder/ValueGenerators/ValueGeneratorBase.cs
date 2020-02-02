@@ -1,8 +1,7 @@
 ﻿namespace ModelBuilder.ValueGenerators
 {
     using System;
-    using System.Globalization;
-    using ModelBuilder.Properties;
+    using System.Reflection;
 
     /// <summary>
     ///     The <see cref="ValueGeneratorBase" />
@@ -13,81 +12,72 @@
         private static readonly IRandomGenerator _random = new RandomGenerator();
 
         /// <inheritdoc />
-        public virtual object Generate(Type type, string referenceName, IExecuteStrategy executeStrategy)
+        public virtual object Generate(PropertyInfo propertyInfo, IExecuteStrategy executeStrategy)
         {
-            if (type == null)
+            if (propertyInfo == null)
             {
-                throw new ArgumentNullException(nameof(type));
+                throw new ArgumentNullException(nameof(propertyInfo));
             }
 
-            if (executeStrategy == null)
+            var type = propertyInfo.PropertyType;
+            var name = propertyInfo.Name;
+
+            return Generate(type, name, executeStrategy);
+        }
+
+        /// <inheritdoc />
+        public virtual object Generate(ParameterInfo parameterInfo, IExecuteStrategy executeStrategy)
+        {
+            if (parameterInfo == null)
             {
-                throw new ArgumentNullException(nameof(executeStrategy));
+                throw new ArgumentNullException(nameof(parameterInfo));
             }
 
-            if (executeStrategy.BuildChain == null)
+            var type = parameterInfo.ParameterType;
+            var name = parameterInfo.Name;
+
+            return Generate(type, name, executeStrategy);
+        }
+
+        /// <inheritdoc />
+        public abstract object Generate(Type type, string referenceName, IExecuteStrategy executeStrategy);
+
+        /// <inheritdoc />
+        /// <exception cref="ArgumentNullException">The <paramref name="propertyInfo" /> parameter is <c>null</c>.</exception>
+        public virtual bool IsSupported(PropertyInfo propertyInfo, IBuildChain buildChain)
+        {
+            if (propertyInfo == null)
             {
-                throw new InvalidOperationException(Resources.ExecuteStrategy_NoBuildChain);
+                throw new ArgumentNullException(nameof(propertyInfo));
             }
 
-            VerifyGenerateRequest(type, referenceName, executeStrategy);
+            if (buildChain == null)
+            {
+                throw new ArgumentNullException(nameof(buildChain));
+            }
 
-            return GenerateValue(type, referenceName, executeStrategy);
+            return IsSupported(propertyInfo.PropertyType, propertyInfo.Name, buildChain);
+        }
+
+        /// <inheritdoc />
+        /// <exception cref="ArgumentNullException">The <paramref name="parameterInfo" /> parameter is <c>null</c>.</exception>
+        public virtual bool IsSupported(ParameterInfo parameterInfo, IBuildChain buildChain)
+        {
+            if (parameterInfo == null)
+            {
+                throw new ArgumentNullException(nameof(parameterInfo));
+            }
+
+            if (buildChain == null)
+            {
+                throw new ArgumentNullException(nameof(buildChain));
+            }
+
+            return IsSupported(parameterInfo.ParameterType, parameterInfo.Name, buildChain);
         }
 
         /// <inheritdoc />
         public abstract bool IsSupported(Type type, string referenceName, IBuildChain buildChain);
-
-        /// <summary>
-        ///     Generates a new value with the provided context.
-        /// </summary>
-        /// <param name="type">The type of value to generate.</param>
-        /// <param name="referenceName">Identifies the possible parameter or property name the value is intended for.</param>
-        /// <param name="executeStrategy">The execution strategy.</param>
-        /// <returns>A new value of the type.</returns>
-        protected abstract object GenerateValue(Type type, string referenceName, IExecuteStrategy executeStrategy);
-
-        /// <summary>
-        ///     Verifies that the minimum required information has been provided in order to generate a value.
-        /// </summary>
-        /// <param name="type">The type of value to generate.</param>
-        /// <param name="referenceName">Identifies the possible parameter or property name this value is intended for.</param>
-        /// <param name="executeStrategy">The execution strategy.</param>
-        /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is <c>null</c>.</exception>
-        /// <exception cref="NotSupportedException">This generator does not support creating the requested value.</exception>
-        protected virtual void VerifyGenerateRequest(Type type, string referenceName, IExecuteStrategy executeStrategy)
-        {
-            if (type == null)
-            {
-                throw new ArgumentNullException(nameof(type));
-            }
-
-            if (executeStrategy == null)
-            {
-                throw new ArgumentNullException(nameof(executeStrategy));
-            }
-
-            // Calculate the build chain just once
-            var buildChain = executeStrategy.BuildChain;
-
-            if (buildChain == null)
-            {
-                throw new InvalidOperationException(Resources.ExecuteStrategy_NoBuildChain);
-            }
-
-            if (IsSupported(type, referenceName, buildChain) == false)
-            {
-                var message = string.Format(
-                    CultureInfo.CurrentCulture,
-                    Resources.Error_GenerationNotSupportedFormat,
-                    GetType().FullName,
-                    type.FullName,
-                    referenceName ?? "<null>");
-
-                throw new NotSupportedException(message);
-            }
-        }
 
         /// <inheritdoc />
         public virtual int Priority { get; } = int.MinValue;

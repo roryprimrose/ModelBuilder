@@ -1,96 +1,172 @@
 ﻿namespace ModelBuilder.UnitTests.ValueGenerators
 {
     using System;
+    using System.Linq;
+    using System.Reflection;
     using FluentAssertions;
+    using ModelBuilder.UnitTests.Models;
     using ModelBuilder.ValueGenerators;
     using NSubstitute;
     using Xunit;
 
     public class ValueGeneratorBaseTests
     {
-        [Fact]
-        public void GenerateReturnsGeneratedValueWhenIsSupportedReturnsTrueTest()
+        [Theory]
+        [MemberData(nameof(DataSet.GetParameters), typeof(WithConstructorParameters), MemberType = typeof(DataSet))]
+        public void GenerateRequestsValueForParameterTest(ParameterInfo parameterInfo)
         {
-            var type = typeof(string);
-            var expected = Guid.NewGuid();
-            var buildStrategy = new BuildHistory();
+            var value = Guid.NewGuid().ToString();
+
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
-            executeStrategy.BuildChain.Returns(buildStrategy);
+            var target = new GenerateWrapper(true, value);
 
-            var target = new GenerateWrapper(true, expected);
+            target.Generate(parameterInfo, executeStrategy);
 
-            var actual = target.Generate(type, null, executeStrategy);
+            target.TypeUsed.Should().Be(parameterInfo.ParameterType);
+            target.ReferenceNameUsed.Should().Be(parameterInfo.Name);
+        }
 
-            actual.Should().Be(expected);
+        [Theory]
+        [MemberData(nameof(DataSet.GetProperties), typeof(Person), MemberType = typeof(DataSet))]
+        public void GenerateRequestsValueForPropertyInfo(PropertyInfo propertyInfo)
+        {
+            var value = Guid.NewGuid().ToString();
+
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            var target = new GenerateWrapper(true, value);
+
+            target.Generate(propertyInfo, executeStrategy);
+
+            target.TypeUsed.Should().Be(propertyInfo.PropertyType);
+            target.ReferenceNameUsed.Should().Be(propertyInfo.Name);
         }
 
         [Fact]
-        public void GenerateThrowsExceptionWhenIsSupportedReturnsFalseTest()
+        public void GenerateThrowsExceptionWithNullParameterInfo()
         {
-            var type = typeof(string);
-            var expected = Guid.NewGuid();
-            var buildStrategy = new BuildHistory();
+            var value = Guid.NewGuid().ToString();
+
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
-            executeStrategy.BuildChain.Returns(buildStrategy);
+            var target = new GenerateWrapper(true, value);
 
-            var target = new GenerateWrapper(false, expected);
-
-            Action action = () => target.Generate(type, null, executeStrategy);
-
-            action.Should().Throw<NotSupportedException>();
-        }
-
-        [Fact]
-        public void GenerateThrowsExceptionWithNullExecuteStrategyBuildChainTest()
-        {
-            var type = typeof(string);
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            executeStrategy.BuildChain.Returns((IBuildChain) null);
-
-            var target = Substitute.ForPartsOf<ValueGeneratorBase>();
-
-            Action action = () => target.Generate(type, null, executeStrategy);
-
-            action.Should().Throw<InvalidOperationException>();
-        }
-
-        [Fact]
-        public void GenerateThrowsExceptionWithNullExecuteStrategyTest()
-        {
-            var type = typeof(string);
-
-            var target = Substitute.ForPartsOf<ValueGeneratorBase>();
-
-            Action action = () => target.Generate(type, null, null);
+            Action action = () => target.Generate((ParameterInfo) null, executeStrategy);
 
             action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
-        public void GenerateThrowsExceptionWithNullTypeTest()
+        public void GenerateThrowsExceptionWithNullPropertyInfo()
         {
+            var value = Guid.NewGuid().ToString();
+
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
-            var target = Substitute.ForPartsOf<ValueGeneratorBase>();
+            var target = new GenerateWrapper(true, value);
 
-            Action action = () => target.Generate(null, null, executeStrategy);
+            Action action = () => target.Generate((PropertyInfo) null, executeStrategy);
 
             action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
-        public void GeneratorReturnsCachedInstanceAcrossMultipleGeneratorsTest()
+        public void GeneratorReturnsCachedInstance()
         {
-            var first = new Wrapper();
-            var second = new Wrapper();
+            var target = new GenerateWrapper(true, null);
 
-            var firstActual = first.GetGenerator();
-            var secondActual = second.GetGenerator();
+            var first = target.RandomGenerator;
+            var second = target.RandomGenerator;
 
-            firstActual.Should().BeSameAs(secondActual);
+            first.Should().BeSameAs(second);
+        }
+
+        [Fact]
+        public void IsSupportedForParameterThrowsExceptionWithNullBuildChain()
+        {
+            var value = Guid.NewGuid().ToString();
+            var parameterInfo = typeof(Person).GetConstructors()
+                .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
+
+            var target = new GenerateWrapper(true, value);
+
+            Action action = () => target.IsSupported(parameterInfo, null);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void IsSupportedForPropertyThrowsExceptionWithNullBuildChain()
+        {
+            var value = Guid.NewGuid().ToString();
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+
+            var target = new GenerateWrapper(true, value);
+
+            Action action = () => target.IsSupported(propertyInfo, null);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Theory]
+        [MemberData(nameof(DataSet.GetParameters), typeof(WithConstructorParameters), MemberType = typeof(DataSet))]
+        public void IsSupportedRequestsValueForParameterTest(ParameterInfo parameterInfo)
+        {
+            var value = Guid.NewGuid().ToString();
+
+            var buildChain = Substitute.For<IBuildChain>();
+
+            var target = new GenerateWrapper(true, value);
+
+            target.IsSupported(parameterInfo, buildChain);
+
+            target.TypeUsed.Should().Be(parameterInfo.ParameterType);
+            target.ReferenceNameUsed.Should().Be(parameterInfo.Name);
+        }
+
+        [Theory]
+        [MemberData(nameof(DataSet.GetProperties), typeof(Person), MemberType = typeof(DataSet))]
+        public void IsSupportedRequestsValueForPropertyTest(PropertyInfo parameterInfo)
+        {
+            var value = Guid.NewGuid().ToString();
+
+            var buildChain = Substitute.For<IBuildChain>();
+
+            var target = new GenerateWrapper(true, value);
+
+            target.IsSupported(parameterInfo, buildChain);
+
+            target.TypeUsed.Should().Be(parameterInfo.PropertyType);
+            target.ReferenceNameUsed.Should().Be(parameterInfo.Name);
+        }
+
+        [Fact]
+        public void IsSupportedThrowsExceptionWithNullParameterInfo()
+        {
+            var value = Guid.NewGuid().ToString();
+
+            var buildChain = Substitute.For<IBuildChain>();
+
+            var target = new GenerateWrapper(true, value);
+
+            Action action = () => target.IsSupported((ParameterInfo) null, buildChain);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void IsSupportedThrowsExceptionWithNullPropertyInfo()
+        {
+            var value = Guid.NewGuid().ToString();
+
+            var buildChain = Substitute.For<IBuildChain>();
+
+            var target = new GenerateWrapper(true, value);
+
+            Action action = () => target.IsSupported((PropertyInfo) null, buildChain);
+
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -108,45 +184,6 @@
             actual.Should().Be(int.MinValue);
         }
 
-        [Fact]
-        public void VerifyGenerateRequestThrowsExceptionWithNullExecuteStrategyBuildChainTest()
-        {
-            var type = typeof(string);
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            executeStrategy.BuildChain.Returns((IBuildChain) null);
-
-            var target = new Wrapper();
-
-            Action action = () => target.RunVerifyGenerateRequest(type, null, executeStrategy);
-
-            action.Should().Throw<InvalidOperationException>();
-        }
-
-        [Fact]
-        public void VerifyGenerateRequestThrowsExceptionWithNullExecuteStrategyTest()
-        {
-            var type = typeof(string);
-
-            var target = new Wrapper();
-
-            Action action = () => target.RunVerifyGenerateRequest(type, null, null);
-
-            action.Should().Throw<ArgumentNullException>();
-        }
-
-        [Fact]
-        public void VerifyGenerateRequestThrowsExceptionWithNullTypeTest()
-        {
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            var target = new Wrapper();
-
-            Action action = () => target.RunVerifyGenerateRequest(null, null, executeStrategy);
-
-            action.Should().Throw<ArgumentNullException>();
-        }
-
         private class GenerateWrapper : ValueGeneratorBase
         {
             private readonly bool _isSupported;
@@ -158,38 +195,27 @@
                 _value = value;
             }
 
+            public override object Generate(Type type, string referenceName, IExecuteStrategy executeStrategy)
+            {
+                TypeUsed = type;
+                ReferenceNameUsed = referenceName;
+
+                return _value;
+            }
+
             public override bool IsSupported(Type type, string referenceName, IBuildChain buildChain)
             {
+                TypeUsed = type;
+                ReferenceNameUsed = referenceName;
+
                 return _isSupported;
             }
 
-            protected override object GenerateValue(Type type, string referenceName, IExecuteStrategy executeStrategy)
-            {
-                return _value;
-            }
-        }
+            public IRandomGenerator RandomGenerator => Generator;
 
-        private class Wrapper : ValueGeneratorBase
-        {
-            public IRandomGenerator GetGenerator()
-            {
-                return Generator;
-            }
+            public string ReferenceNameUsed { get; private set; }
 
-            public override bool IsSupported(Type type, string referenceName, IBuildChain buildChain)
-            {
-                throw new NotImplementedException();
-            }
-
-            public void RunVerifyGenerateRequest(Type type, string referenceName, IExecuteStrategy executeStrategy)
-            {
-                VerifyGenerateRequest(type, referenceName, executeStrategy);
-            }
-
-            protected override object GenerateValue(Type type, string referenceName, IExecuteStrategy executeStrategy)
-            {
-                throw new NotImplementedException();
-            }
+            public Type TypeUsed { get; private set; }
         }
     }
 }

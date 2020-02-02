@@ -10,7 +10,7 @@
             return false;
         }
 
-        protected override object GenerateValue(Type type, string referenceName, IExecuteStrategy executeStrategy)
+        public override object Generate(Type type, string referenceName, IExecuteStrategy executeStrategy)
         {
             throw new NotImplementedException();
         }

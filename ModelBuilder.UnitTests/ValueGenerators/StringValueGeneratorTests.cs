@@ -56,30 +56,6 @@
         [Theory]
         [InlineData(typeof(bool), false)]
         [InlineData(typeof(string), true)]
-        public void GenerateReturnsValidatesTypeSupportTest(Type type, bool supported)
-        {
-            var buildChain = new BuildHistory();
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            executeStrategy.BuildChain.Returns(buildChain);
-
-            var target = new StringValueGenerator();
-
-            Action action = () => target.Generate(type, null, executeStrategy);
-
-            if (supported)
-            {
-                action.Should().NotThrow();
-            }
-            else
-            {
-                action.Should().Throw<NotSupportedException>();
-            }
-        }
-
-        [Theory]
-        [InlineData(typeof(bool), false)]
-        [InlineData(typeof(string), true)]
         public void IsSupportedReturnsWhetherTypeIsSupportedTest(Type type, bool supported)
         {
             var buildChain = Substitute.For<IBuildChain>();

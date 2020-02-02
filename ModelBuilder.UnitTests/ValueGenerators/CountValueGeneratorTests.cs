@@ -130,21 +130,6 @@
             convertedValue.Should().BeGreaterOrEqualTo(1);
         }
 
-        [Fact]
-        public void GenerateThrowsExceptionWhenReferenceNotCountTest()
-        {
-            var buildChain = new BuildHistory();
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            executeStrategy.BuildChain.Returns(buildChain);
-
-            var target = new CountValueGenerator();
-
-            Action action = () => target.Generate(typeof(int), "Stuff", executeStrategy);
-
-            action.Should().Throw<NotSupportedException>();
-        }
-
         [Theory]
         [ClassData(typeof(NumericTypeDataSource))]
         public void GenerateValidatesRequestedTypeTest(Type type, bool isSupported)

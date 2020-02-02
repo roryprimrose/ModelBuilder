@@ -156,24 +156,6 @@
             actual.Should().NotBeNullOrEmpty();
         }
 
-        [Theory]
-        [InlineData(typeof(Stream), "state")]
-        [InlineData(typeof(string), null)]
-        [InlineData(typeof(string), "Stuff")]
-        public void GenerateThrowsExceptionWithInvalidParametersTest(Type type, string referenceName)
-        {
-            var buildChain = new BuildHistory();
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            executeStrategy.BuildChain.Returns(buildChain);
-
-            var target = new StateValueGenerator();
-
-            Action action = () => target.Generate(type, referenceName, executeStrategy);
-
-            action.Should().Throw<NotSupportedException>();
-        }
-
         [Fact]
         public void HasHigherPriorityThanStringValueGeneratorTest()
         {

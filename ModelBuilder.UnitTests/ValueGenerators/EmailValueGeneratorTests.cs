@@ -330,25 +330,6 @@
             actual.Should().NotBeNullOrWhiteSpace();
         }
 
-        [Theory]
-        [InlineData(typeof(Stream), "email")]
-        [InlineData(typeof(string), null)]
-        [InlineData(typeof(string), "")]
-        [InlineData(typeof(string), "Stuff")]
-        public void GenerateThrowsExceptionWithInvalidParametersTest(Type type, string referenceName)
-        {
-            var buildChain = new BuildHistory();
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            executeStrategy.BuildChain.Returns(buildChain);
-
-            var target = new EmailValueGenerator();
-
-            Action action = () => target.Generate(type, referenceName, executeStrategy);
-
-            action.Should().Throw<NotSupportedException>();
-        }
-
         [Fact]
         public void HasHigherPriorityThanStringValueGeneratorTest()
         {

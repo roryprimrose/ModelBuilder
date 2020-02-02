@@ -1,7 +1,6 @@
 ﻿namespace ModelBuilder.UnitTests.ValueGenerators
 {
     using System;
-    using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
     using FluentAssertions;
@@ -169,7 +168,7 @@
 
             var target = new AddressValueGenerator();
 
-            var actual = (string)target.Generate(propertyInfo, executeStrategy);
+            var actual = (string) target.Generate(propertyInfo, executeStrategy);
 
             actual.Should().BeNullOrEmpty();
         }
@@ -186,13 +185,13 @@
 
             var target = new AddressValueGenerator();
 
-            var first = (string)target.Generate(propertyInfo, executeStrategy);
+            var first = (string) target.Generate(propertyInfo, executeStrategy);
 
             string second = null;
 
             for (var index = 0; index < 1000; index++)
             {
-                second = (string)target.Generate(propertyInfo, executeStrategy);
+                second = (string) target.Generate(propertyInfo, executeStrategy);
 
                 if (string.Equals(first, second, StringComparison.OrdinalIgnoreCase) == false)
                 {
@@ -309,7 +308,7 @@
 
             var target = new AddressValueGenerator();
 
-            var actual = (string)target.Generate(propertyInfo, executeStrategy);
+            var actual = (string) target.Generate(propertyInfo, executeStrategy);
 
             if (valueExpected)
             {
@@ -319,24 +318,6 @@
             {
                 actual.Should().BeNull();
             }
-        }
-
-        [Fact]
-        public void HasHigherPriorityThanStringValueGeneratorTest()
-        {
-            var target = new AddressValueGenerator();
-            var other = new StringValueGenerator();
-
-            target.Priority.Should().BeGreaterThan(other.Priority);
-        }
-
-        [Fact]
-        public void HasLowerPriorityThanEmailValueGeneratorTest()
-        {
-            var target = new AddressValueGenerator();
-            var other = new EmailValueGenerator();
-
-            target.Priority.Should().BeLessThan(other.Priority);
         }
 
         [Theory]
@@ -353,6 +334,19 @@
         }
 
         [Theory]
+        [MemberData(nameof(DataSet.GetProperties), typeof(UnspportedPropertyTest), MemberType = typeof(DataSet))]
+        public void IsSupportedReturnsFalseForUnsupportedPropertiesTest(PropertyInfo propertyInfo)
+        {
+            var buildChain = Substitute.For<IBuildChain>();
+
+            var target = new AddressValueGenerator();
+
+            var actual = target.IsSupported(propertyInfo, buildChain);
+
+            actual.Should().BeFalse();
+        }
+
+        [Theory]
         [MemberData(nameof(DataSet.GetProperties), typeof(SupportedPropertyTest), MemberType = typeof(DataSet))]
         public void IsSupportedReturnsTrueForSupportedPropertiesTest(PropertyInfo propertyInfo)
         {
@@ -365,17 +359,22 @@
             actual.Should().BeTrue();
         }
 
-        [Theory]
-        [MemberData(nameof(DataSet.GetProperties), typeof(UnspportedPropertyTest), MemberType = typeof(DataSet))]
-        public void IsSupportedReturnsFalseForUnsupportedPropertiesTest(PropertyInfo propertyInfo)
+        [Fact]
+        public void PriorityReturnsValueHigherThanStringValueGeneratorTest()
         {
-            var buildChain = Substitute.For<IBuildChain>();
-
             var target = new AddressValueGenerator();
+            var other = new StringValueGenerator();
 
-            var actual = target.IsSupported(propertyInfo, buildChain);
+            target.Priority.Should().BeGreaterThan(other.Priority);
+        }
 
-            actual.Should().BeFalse();
+        [Fact]
+        public void PriorityReturnsValueLowerThanEmailValueGeneratorTest()
+        {
+            var target = new AddressValueGenerator();
+            var other = new EmailValueGenerator();
+
+            target.Priority.Should().BeLessThan(other.Priority);
         }
 
         private class ParameterTest
@@ -446,16 +445,6 @@
             public string PropAddressLine3 { get; }
         }
 
-        private class UnspportedPropertyTest
-        {
-            public int Address4 { get; set; } // Wrong type
-            public string emailAddress { get; set; }
-            public string EmailAddress { get; set; }
-            public string internetAddress { get; set; }
-            public string InternetAddress { get; set; }
-            public string WrongName { get; set; }
-        }
-
         private class SupportedPropertyTest
         {
             public string address { get; set; }
@@ -478,6 +467,16 @@
             public string addressLine3 { get; set; }
             public string Addressline3 { get; set; }
             public string AddressLine3 { get; set; }
+        }
+
+        private class UnspportedPropertyTest
+        {
+            public int Address4 { get; set; } // Wrong type
+            public string emailAddress { get; set; }
+            public string EmailAddress { get; set; }
+            public string internetAddress { get; set; }
+            public string InternetAddress { get; set; }
+            public string WrongName { get; set; }
         }
     }
 }

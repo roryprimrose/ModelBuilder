@@ -1,46 +1,15 @@
 ﻿namespace ModelBuilder.ValueGenerators
 {
     using System;
-    using System.Reflection;
 
     /// <summary>
     ///     The <see cref="NumericValueGenerator" />
     ///     class is used to generate random numeric values.
     /// </summary>
-    public class NumericValueGenerator : IValueGenerator
+    public class NumericValueGenerator : ValueGeneratorBase
     {
-        private static readonly IRandomGenerator _random = new RandomGenerator();
-
         /// <inheritdoc />
-        public virtual object Generate(PropertyInfo propertyInfo, IExecuteStrategy executeStrategy)
-        {
-            if (propertyInfo == null)
-            {
-                throw new ArgumentNullException(nameof(propertyInfo));
-            }
-
-            var type = propertyInfo.PropertyType;
-            var name = propertyInfo.Name;
-
-            return Generate(type, name, executeStrategy);
-        }
-
-        /// <inheritdoc />
-        public virtual object Generate(ParameterInfo parameterInfo, IExecuteStrategy executeStrategy)
-        {
-            if (parameterInfo == null)
-            {
-                throw new ArgumentNullException(nameof(parameterInfo));
-            }
-
-            var type = parameterInfo.ParameterType;
-            var name = parameterInfo.Name;
-
-            return Generate(type, name, executeStrategy);
-        }
-
-        /// <inheritdoc />
-        public virtual object Generate(Type type, string referenceName, IExecuteStrategy executeStrategy)
+        public override object Generate(Type type, string referenceName, IExecuteStrategy executeStrategy)
         {
             if (type == null)
             {
@@ -76,33 +45,9 @@
         }
 
         /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">The <paramref name="propertyInfo" /> parameter is <c>null</c>.</exception>
-        public virtual bool IsSupported(PropertyInfo propertyInfo, IBuildChain buildChain)
-        {
-            if (propertyInfo == null)
-            {
-                throw new ArgumentNullException(nameof(propertyInfo));
-            }
-
-            return IsSupported(propertyInfo.PropertyType, propertyInfo.Name, buildChain);
-        }
-
-        /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">The <paramref name="parameterInfo" /> parameter is <c>null</c>.</exception>
-        public virtual bool IsSupported(ParameterInfo parameterInfo, IBuildChain buildChain)
-        {
-            if (parameterInfo == null)
-            {
-                throw new ArgumentNullException(nameof(parameterInfo));
-            }
-
-            return IsSupported(parameterInfo.ParameterType, parameterInfo.Name, buildChain);
-        }
-
-        /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="buildChain" /> parameter is <c>null</c>.</exception>
-        public virtual bool IsSupported(Type type, string referenceName, IBuildChain buildChain)
+        public override bool IsSupported(Type type, string referenceName, IBuildChain buildChain)
         {
             if (type == null)
             {
@@ -148,13 +93,5 @@
         {
             return Generator.GetMin(type);
         }
-
-        /// <inheritdoc />
-        public virtual int Priority { get; } = int.MinValue;
-
-        /// <summary>
-        ///     Gets the random generator for this instance.
-        /// </summary>
-        protected virtual IRandomGenerator Generator { get; } = _random;
     }
 }

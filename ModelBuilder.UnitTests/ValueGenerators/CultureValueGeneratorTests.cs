@@ -130,29 +130,6 @@
             }
         }
 
-        [Theory]
-        [InlineData(typeof(Stream), "culture")]
-        [InlineData(typeof(Stream), "Culture")]
-        [InlineData(typeof(Stream), "culturename")]
-        [InlineData(typeof(Stream), "Culturename")]
-        [InlineData(typeof(Stream), "cultureName")]
-        [InlineData(typeof(Stream), "CultureName")]
-        [InlineData(typeof(string), null)]
-        [InlineData(typeof(string), "Stuff")]
-        public void GenerateThrowsExceptionWithInvalidParametersTest(Type type, string referenceName)
-        {
-            var buildChain = new BuildHistory();
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            executeStrategy.BuildChain.Returns(buildChain);
-
-            var target = new CultureValueGenerator();
-
-            Action action = () => target.Generate(type, referenceName, executeStrategy);
-
-            action.Should().Throw<NotSupportedException>();
-        }
-
         [Fact]
         public void HasHigherPriorityThanStringValueGeneratorTest()
         {

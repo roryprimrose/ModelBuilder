@@ -20,6 +20,7 @@
 
             if (string.IsNullOrEmpty(referenceName))
             {
+                // This is neither a property nor a parameter
                 return false;
             }
 

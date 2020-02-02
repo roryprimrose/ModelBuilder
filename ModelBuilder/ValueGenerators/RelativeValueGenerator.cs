@@ -57,7 +57,7 @@
 
             if (referenceName == null)
             {
-                // This is probably a constructor parameter
+                // This not a constructor parameter nor a property
                 return false;
             }
 
