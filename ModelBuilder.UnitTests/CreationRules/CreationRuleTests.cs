@@ -1,8 +1,9 @@
-﻿namespace ModelBuilder.UnitTests
+﻿namespace ModelBuilder.UnitTests.CreationRules
 {
     using System;
     using System.Text.RegularExpressions;
     using FluentAssertions;
+    using ModelBuilder.CreationRules;
     using Xunit;
 
     public class CreationRuleTests

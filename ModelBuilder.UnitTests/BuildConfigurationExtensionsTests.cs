@@ -8,6 +8,7 @@
     using System.Reflection;
     using System.Text.RegularExpressions;
     using FluentAssertions;
+    using ModelBuilder.CreationRules;
     using ModelBuilder.ExecuteOrderRules;
     using ModelBuilder.IgnoreRules;
     using ModelBuilder.TypeCreators;

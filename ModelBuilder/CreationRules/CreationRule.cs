@@ -1,9 +1,8 @@
-﻿namespace ModelBuilder
+﻿namespace ModelBuilder.CreationRules
 {
     using System;
     using System.Globalization;
     using System.Text.RegularExpressions;
-    using ModelBuilder.CreationRules;
     using ModelBuilder.Properties;
     using ModelBuilder.TypeCreators;
     using ModelBuilder.ValueGenerators;
