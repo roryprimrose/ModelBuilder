@@ -14,6 +14,7 @@
         [Fact]
         public void BuildForParameterReturnsNullWhenNoMatchingTypeFound()
         {
+            var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
             var parameterInfo = typeof(Person).GetConstructors()
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
@@ -35,6 +36,7 @@
         [Fact]
         public void BuildForParameterReturnsValueMatchingType()
         {
+            var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
             var parameterInfo = typeof(Person).GetConstructors()
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
@@ -83,6 +85,7 @@
         [Fact]
         public void BuildForPropertyReturnsNullWhenNoMatchingTypeFound()
         {
+            var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
 
@@ -103,6 +106,7 @@
         [Fact]
         public void BuildForPropertyReturnsValueMatchingType()
         {
+            var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
             var expected = Guid.NewGuid().ToString();
@@ -149,6 +153,7 @@
         [Fact]
         public void BuildForTypeReturnsNullWhenNoMatchingTypeFound()
         {
+            var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
             var type = typeof(string);
 
@@ -169,6 +174,7 @@
         [Fact]
         public void BuildForTypeReturnsValueMatchingType()
         {
+            var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
             var type = typeof(string);
             var expected = Guid.NewGuid().ToString();
@@ -215,6 +221,7 @@
         [Fact]
         public void IsMatchForParameterReturnsFalseWhenBuildChainDoesNotContainMatchingType()
         {
+            var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
             var parameterInfo = typeof(Person).GetConstructors()
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
@@ -223,7 +230,7 @@
 
             var sut = new CircularReferenceBuildStep();
 
-            var actual = sut.IsMatch(parameterInfo, buildChain);
+            var actual = sut.IsMatch(parameterInfo, buildConfiguration, buildChain);
 
             actual.Should().BeFalse();
         }
@@ -231,13 +238,14 @@
         [Fact]
         public void IsMatchForParameterReturnsFalseWhenBuildChainIsEmpty()
         {
+            var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
             var parameterInfo = typeof(Person).GetConstructors()
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
 
             var sut = new CircularReferenceBuildStep();
 
-            var actual = sut.IsMatch(parameterInfo, buildChain);
+            var actual = sut.IsMatch(parameterInfo, buildConfiguration, buildChain);
 
             actual.Should().BeFalse();
         }
@@ -245,9 +253,10 @@
         [Fact]
         public void IsMatchForParameterReturnsTrueWhenBuildChainContainsMatchingType()
         {
-            var buildChain = new BuildHistory();
             var parameterInfo = typeof(Person).GetConstructors()
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
+            var buildConfiguration = new BuildConfiguration();
+            var buildChain = new BuildHistory();
 
             buildChain.Push(Guid.NewGuid());
             buildChain.Push(Guid.NewGuid().ToString());
@@ -255,7 +264,7 @@
 
             var sut = new CircularReferenceBuildStep();
 
-            var actual = sut.IsMatch(parameterInfo, buildChain);
+            var actual = sut.IsMatch(parameterInfo, buildConfiguration, buildChain);
 
             actual.Should().BeTrue();
         }
@@ -265,10 +274,11 @@
         {
             var parameterInfo = typeof(Person).GetConstructors()
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
+            var buildConfiguration = new BuildConfiguration();
 
             var sut = new CircularReferenceBuildStep();
 
-            Action action = () => sut.IsMatch(parameterInfo, null);
+            Action action = () => sut.IsMatch(parameterInfo, buildConfiguration, null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -276,11 +286,12 @@
         [Fact]
         public void IsMatchForParameterThrowsExceptionWithNullType()
         {
+            var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
 
             var sut = new CircularReferenceBuildStep();
 
-            Action action = () => sut.IsMatch((ParameterInfo) null, buildChain);
+            Action action = () => sut.IsMatch((ParameterInfo) null, buildConfiguration, buildChain);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -288,6 +299,7 @@
         [Fact]
         public void IsMatchForPropertyReturnsFalseWhenBuildChainDoesNotContainMatchingType()
         {
+            var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
 
@@ -295,7 +307,7 @@
 
             var sut = new CircularReferenceBuildStep();
 
-            var actual = sut.IsMatch(propertyInfo, buildChain);
+            var actual = sut.IsMatch(propertyInfo, buildConfiguration, buildChain);
 
             actual.Should().BeFalse();
         }
@@ -303,12 +315,13 @@
         [Fact]
         public void IsMatchForPropertyReturnsFalseWhenBuildChainIsEmpty()
         {
+            var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
 
             var sut = new CircularReferenceBuildStep();
 
-            var actual = sut.IsMatch(propertyInfo, buildChain);
+            var actual = sut.IsMatch(propertyInfo, buildConfiguration, buildChain);
 
             actual.Should().BeFalse();
         }
@@ -316,6 +329,7 @@
         [Fact]
         public void IsMatchForPropertyReturnsTrueWhenBuildChainContainsMatchingType()
         {
+            var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
 
@@ -325,7 +339,7 @@
 
             var sut = new CircularReferenceBuildStep();
 
-            var actual = sut.IsMatch(propertyInfo, buildChain);
+            var actual = sut.IsMatch(propertyInfo, buildConfiguration, buildChain);
 
             actual.Should().BeTrue();
         }
@@ -334,10 +348,11 @@
         public void IsMatchForPropertyThrowsExceptionWithNullBuildChain()
         {
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var buildConfiguration = new BuildConfiguration();
 
             var sut = new CircularReferenceBuildStep();
 
-            Action action = () => sut.IsMatch(propertyInfo, null);
+            Action action = () => sut.IsMatch(propertyInfo, buildConfiguration, null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -345,11 +360,12 @@
         [Fact]
         public void IsMatchForPropertyThrowsExceptionWithNullType()
         {
+            var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
 
             var sut = new CircularReferenceBuildStep();
 
-            Action action = () => sut.IsMatch((PropertyInfo) null, buildChain);
+            Action action = () => sut.IsMatch((PropertyInfo) null, buildConfiguration, buildChain);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -357,6 +373,7 @@
         [Fact]
         public void IsMatchForTypeReturnsFalseWhenBuildChainDoesNotContainMatchingType()
         {
+            var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
             var type = typeof(string);
 
@@ -364,7 +381,7 @@
 
             var sut = new CircularReferenceBuildStep();
 
-            var actual = sut.IsMatch(type, buildChain);
+            var actual = sut.IsMatch(type, buildConfiguration, buildChain);
 
             actual.Should().BeFalse();
         }
@@ -372,12 +389,13 @@
         [Fact]
         public void IsMatchForTypeReturnsFalseWhenBuildChainIsEmpty()
         {
+            var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
             var type = typeof(string);
 
             var sut = new CircularReferenceBuildStep();
 
-            var actual = sut.IsMatch(type, buildChain);
+            var actual = sut.IsMatch(type, buildConfiguration, buildChain);
 
             actual.Should().BeFalse();
         }
@@ -385,6 +403,7 @@
         [Fact]
         public void IsMatchForTypeReturnsTrueWhenBuildChainContainsMatchingType()
         {
+            var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
             var type = typeof(string);
 
@@ -394,7 +413,7 @@
 
             var sut = new CircularReferenceBuildStep();
 
-            var actual = sut.IsMatch(type, buildChain);
+            var actual = sut.IsMatch(type, buildConfiguration, buildChain);
 
             actual.Should().BeTrue();
         }
@@ -403,10 +422,11 @@
         public void IsMatchForTypeThrowsExceptionWithNullBuildChain()
         {
             var type = typeof(string);
+            var buildConfiguration = new BuildConfiguration();
 
             var sut = new CircularReferenceBuildStep();
 
-            Action action = () => sut.IsMatch(type, null);
+            Action action = () => sut.IsMatch(type, buildConfiguration, null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -414,11 +434,12 @@
         [Fact]
         public void IsMatchForTypeThrowsExceptionWithNullType()
         {
+            var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
 
             var sut = new CircularReferenceBuildStep();
 
-            Action action = () => sut.IsMatch((Type) null, buildChain);
+            Action action = () => sut.IsMatch((Type) null, buildConfiguration, buildChain);
 
             action.Should().Throw<ArgumentNullException>();
         }

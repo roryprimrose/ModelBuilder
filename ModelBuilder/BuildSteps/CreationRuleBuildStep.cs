@@ -3,12 +3,13 @@
     using System;
     using System.Linq;
     using System.Reflection;
+    using ModelBuilder.CreationRules;
 
     /// <summary>
-    ///     The <see cref="CircularReferenceBuildStep" />
-    ///     class is used to return a value from the <see cref="IBuildChain" /> that has previously been created.
+    ///     The <see cref="CreationRuleBuildStep" />
+    ///     class is used to build a value from a matching <see cref="ICreationRule" />.
     /// </summary>
-    public class CircularReferenceBuildStep : IBuildStep
+    public class CreationRuleBuildStep : IBuildStep
     {
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
@@ -25,7 +26,9 @@
                 throw new ArgumentNullException(nameof(executeStrategy));
             }
 
-            return GetCircularReference(executeStrategy, type);
+            var rule = GetMatchingRule(type, null, executeStrategy.Configuration);
+
+            return rule?.Create(type, null, executeStrategy);
         }
 
         /// <inheritdoc />
@@ -43,7 +46,9 @@
                 throw new ArgumentNullException(nameof(executeStrategy));
             }
 
-            return GetCircularReference(executeStrategy, parameterInfo.ParameterType);
+            var rule = GetMatchingRule(parameterInfo.ParameterType, parameterInfo.Name, executeStrategy.Configuration);
+
+            return rule?.Create(parameterInfo.ParameterType, parameterInfo.Name, executeStrategy);
         }
 
         /// <inheritdoc />
@@ -61,7 +66,9 @@
                 throw new ArgumentNullException(nameof(executeStrategy));
             }
 
-            return GetCircularReference(executeStrategy, propertyInfo.PropertyType);
+            var rule = GetMatchingRule(propertyInfo.PropertyType, propertyInfo.Name, executeStrategy.Configuration);
+
+            return rule?.Create(propertyInfo.PropertyType, propertyInfo.Name, executeStrategy);
         }
 
         /// <inheritdoc />
@@ -74,12 +81,24 @@
                 throw new ArgumentNullException(nameof(type));
             }
 
+            if (buildConfiguration == null)
+            {
+                throw new ArgumentNullException(nameof(buildConfiguration));
+            }
+
             if (buildChain == null)
             {
                 throw new ArgumentNullException(nameof(buildChain));
             }
 
-            return HasCircularReference(buildChain, type);
+            var rule = GetMatchingRule(type, null, buildConfiguration);
+
+            if (rule == null)
+            {
+                return false;
+            }
+
+            return rule.IsMatch(type, null);
         }
 
         /// <inheritdoc />
@@ -92,12 +111,24 @@
                 throw new ArgumentNullException(nameof(parameterInfo));
             }
 
+            if (buildConfiguration == null)
+            {
+                throw new ArgumentNullException(nameof(buildConfiguration));
+            }
+
             if (buildChain == null)
             {
                 throw new ArgumentNullException(nameof(buildChain));
             }
 
-            return HasCircularReference(buildChain, parameterInfo.ParameterType);
+            var rule = GetMatchingRule(parameterInfo.ParameterType, parameterInfo.Name, buildConfiguration);
+
+            if (rule == null)
+            {
+                return false;
+            }
+
+            return rule.IsMatch(parameterInfo.ParameterType, parameterInfo.Name);
         }
 
         /// <inheritdoc />
@@ -110,46 +141,33 @@
                 throw new ArgumentNullException(nameof(propertyInfo));
             }
 
+            if (buildConfiguration == null)
+            {
+                throw new ArgumentNullException(nameof(buildConfiguration));
+            }
+
             if (buildChain == null)
             {
                 throw new ArgumentNullException(nameof(buildChain));
             }
 
-            return HasCircularReference(buildChain, propertyInfo.PropertyType);
-        }
+            var rule = GetMatchingRule(propertyInfo.PropertyType, propertyInfo.Name, buildConfiguration);
 
-        private static object FindItemByType(IBuildChain buildChain, Type type)
-        {
-            return buildChain.FirstOrDefault(x => x.GetType() == type);
-        }
-
-        private static object GetCircularReference(IExecuteStrategy executeStrategy, Type type)
-        {
-            var item = FindItemByType(executeStrategy.BuildChain, type);
-
-            if (item == null)
-            {
-                return null;
-            }
-
-            executeStrategy.Log.CircularReferenceDetected(type);
-
-            return item;
-        }
-
-        private static bool HasCircularReference(IBuildChain buildChain, Type type)
-        {
-            var circularReference = FindItemByType(buildChain, type);
-
-            if (circularReference == null)
+            if (rule == null)
             {
                 return false;
             }
 
-            return true;
+            return rule.IsMatch(propertyInfo.PropertyType, propertyInfo.Name);
+        }
+
+        private ICreationRule GetMatchingRule(Type type, string referenceName, IBuildConfiguration buildConfiguration)
+        {
+            return buildConfiguration.CreationRules?.Where(x => x.IsMatch(type, referenceName))
+                .OrderByDescending(x => x.Priority).FirstOrDefault();
         }
 
         /// <inheritdoc />
-        public int Priority => int.MaxValue;
+        public int Priority => 5000;
     }
 }

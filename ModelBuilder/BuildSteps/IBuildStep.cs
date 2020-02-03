@@ -37,25 +37,28 @@
         ///     Gets whether the specified type matches this build step.
         /// </summary>
         /// <param name="type">The type to evaluate.</param>
+        /// <param name="buildConfiguration">The build configuration.</param>
         /// <param name="buildChain">The build chain.</param>
         /// <returns><c>true</c> if the build step matches the specified type; otherwise <c>false</c>.</returns>
-        bool IsMatch(Type type, IBuildChain buildChain);
+        bool IsMatch(Type type, IBuildConfiguration buildConfiguration, IBuildChain buildChain);
 
         /// <summary>
         ///     Gets whether the specified parameter matches this build step.
         /// </summary>
         /// <param name="parameterInfo">The parameter to evaluate.</param>
+        /// <param name="buildConfiguration">The build configuration.</param>
         /// <param name="buildChain">The build chain.</param>
         /// <returns><c>true</c> if the build step matches the specified type; otherwise <c>false</c>.</returns>
-        bool IsMatch(ParameterInfo parameterInfo, IBuildChain buildChain);
+        bool IsMatch(ParameterInfo parameterInfo, IBuildConfiguration buildConfiguration, IBuildChain buildChain);
 
         /// <summary>
         ///     Gets whether the specified property matches this build step.
         /// </summary>
         /// <param name="propertyInfo">The property to evaluate.</param>
+        /// <param name="buildConfiguration">The build configuration.</param>
         /// <param name="buildChain">The build chain.</param>
         /// <returns><c>true</c> if the build step matches the specified type; otherwise <c>false</c>.</returns>
-        bool IsMatch(PropertyInfo propertyInfo, IBuildChain buildChain);
+        bool IsMatch(PropertyInfo propertyInfo, IBuildConfiguration buildConfiguration, IBuildChain buildChain);
 
         /// <summary>
         ///     Gets the priority for this build step.
