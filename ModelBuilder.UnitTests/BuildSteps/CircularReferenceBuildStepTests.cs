@@ -12,6 +12,27 @@
     public class CircularReferenceBuildStepTests
     {
         [Fact]
+        public void BuildForParameterReturnsNullWhenNoMatchingTypeFound()
+        {
+            var buildChain = new BuildHistory();
+            var parameterInfo = typeof(Person).GetConstructors()
+                .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
+
+            buildChain.Push(Guid.NewGuid());
+            buildChain.Push(DateTimeOffset.UtcNow);
+
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            var sut = new CircularReferenceBuildStep();
+
+            var actual = sut.Build(parameterInfo, executeStrategy);
+
+            actual.Should().BeNull();
+        }
+
+        [Fact]
         public void BuildForParameterReturnsValueMatchingType()
         {
             var buildChain = new BuildHistory();
@@ -60,6 +81,26 @@
         }
 
         [Fact]
+        public void BuildForPropertyReturnsNullWhenNoMatchingTypeFound()
+        {
+            var buildChain = new BuildHistory();
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+
+            buildChain.Push(Guid.NewGuid());
+            buildChain.Push(DateTimeOffset.UtcNow);
+
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            var sut = new CircularReferenceBuildStep();
+
+            var actual = sut.Build(propertyInfo, executeStrategy);
+
+            actual.Should().BeNull();
+        }
+
+        [Fact]
         public void BuildForPropertyReturnsValueMatchingType()
         {
             var buildChain = new BuildHistory();
@@ -103,6 +144,26 @@
             Action action = () => sut.Build((PropertyInfo) null, executeStrategy);
 
             action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void BuildForTypeReturnsNullWhenNoMatchingTypeFound()
+        {
+            var buildChain = new BuildHistory();
+            var type = typeof(string);
+
+            buildChain.Push(Guid.NewGuid());
+            buildChain.Push(DateTimeOffset.UtcNow);
+
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            var sut = new CircularReferenceBuildStep();
+
+            var actual = sut.Build(type, executeStrategy);
+
+            actual.Should().BeNull();
         }
 
         [Fact]

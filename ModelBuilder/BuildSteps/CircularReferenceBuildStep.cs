@@ -25,7 +25,7 @@
                 throw new ArgumentNullException(nameof(executeStrategy));
             }
 
-            return GetCircularReference(executeStrategy.BuildChain, type);
+            return GetCircularReference(executeStrategy, type);
         }
 
         /// <inheritdoc />
@@ -43,7 +43,7 @@
                 throw new ArgumentNullException(nameof(executeStrategy));
             }
 
-            return GetCircularReference(executeStrategy.BuildChain, parameterInfo.ParameterType);
+            return GetCircularReference(executeStrategy, parameterInfo.ParameterType);
         }
 
         /// <inheritdoc />
@@ -61,7 +61,7 @@
                 throw new ArgumentNullException(nameof(executeStrategy));
             }
 
-            return GetCircularReference(executeStrategy.BuildChain, propertyInfo.PropertyType);
+            return GetCircularReference(executeStrategy, propertyInfo.PropertyType);
         }
 
         /// <inheritdoc />
@@ -118,14 +118,28 @@
             return HasCircularReference(buildChain, propertyInfo.PropertyType);
         }
 
-        private static object GetCircularReference(IBuildChain buildChain, Type type)
+        private static object FindItemByType(IBuildChain buildChain, Type type)
         {
             return buildChain.FirstOrDefault(x => x.GetType() == type);
         }
 
+        private static object GetCircularReference(IExecuteStrategy executeStrategy, Type type)
+        {
+            var item = FindItemByType(executeStrategy.BuildChain, type);
+
+            if (item == null)
+            {
+                return null;
+            }
+
+            executeStrategy.Log.CircularReferenceDetected(type);
+
+            return item;
+        }
+
         private static bool HasCircularReference(IBuildChain buildChain, Type type)
         {
-            var circularReference = GetCircularReference(buildChain, type);
+            var circularReference = FindItemByType(buildChain, type);
 
             if (circularReference == null)
             {
