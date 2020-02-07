@@ -565,7 +565,7 @@
                 var buildChain = BuildChain;
 
                 var postBuildActions = Configuration.PostBuildActions
-                    ?.Where(x => x.IsSupported(type, referenceName, buildChain)).OrderByDescending(x => x.Priority);
+                    ?.Where(x => x.IsMatch(type, referenceName, buildChain)).OrderByDescending(x => x.Priority);
 
                 if (postBuildActions != null)
                 {

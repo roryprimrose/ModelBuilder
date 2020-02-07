@@ -9,7 +9,7 @@ namespace ModelBuilder.UnitTests
         {
         }
 
-        public bool IsSupported(Type type, string referenceName, IBuildChain buildChain)
+        public bool IsMatch(Type type, string referenceName, IBuildChain buildChain)
         {
             if (type == typeof(Company))
             {

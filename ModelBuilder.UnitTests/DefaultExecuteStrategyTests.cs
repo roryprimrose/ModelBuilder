@@ -176,8 +176,8 @@
             var buildConfiguration = Model.UsingDefaultConfiguration().Add(firstAction).Add(secondAction);
             var executeCount = 0;
 
-            firstAction.IsSupported(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<IBuildChain>()).Returns(true);
-            secondAction.IsSupported(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<IBuildChain>()).Returns(true);
+            firstAction.IsMatch(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<IBuildChain>()).Returns(true);
+            secondAction.IsMatch(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<IBuildChain>()).Returns(true);
             firstAction.WhenForAnyArgs(x => x.Execute(null, null, null)).Do(
                 x =>
                 {
@@ -209,7 +209,7 @@
             var postBuildAction = Substitute.For<IPostBuildAction>();
             var buildConfiguration = Model.UsingDefaultConfiguration().Add(postBuildAction);
 
-            postBuildAction.IsSupported(typeof(Company), nameof(ReadOnlyParent.Company), Arg.Any<IBuildChain>())
+            postBuildAction.IsMatch(typeof(Company), nameof(ReadOnlyParent.Company), Arg.Any<IBuildChain>())
                 .Returns(true);
 
             var target = new DefaultExecuteStrategy();
@@ -228,8 +228,8 @@
             var secondAction = Substitute.For<IPostBuildAction>();
             var buildConfiguration = Model.UsingDefaultConfiguration().Add(firstAction).Add(secondAction);
 
-            firstAction.IsSupported(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<IBuildChain>()).Returns(false);
-            secondAction.IsSupported(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<IBuildChain>()).Returns(true);
+            firstAction.IsMatch(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<IBuildChain>()).Returns(false);
+            secondAction.IsMatch(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<IBuildChain>()).Returns(true);
 
             var target = new DefaultExecuteStrategy();
 
@@ -1562,8 +1562,8 @@
 
             typeCreator.CanPopulate(typeof(Simple), null, Arg.Any<IBuildChain>()).Returns(true);
             typeCreator.Populate(expected, Arg.Any<IExecuteStrategy>()).Returns(expected);
-            firstAction.IsSupported(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<IBuildChain>()).Returns(true);
-            secondAction.IsSupported(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<IBuildChain>()).Returns(true);
+            firstAction.IsMatch(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<IBuildChain>()).Returns(true);
+            secondAction.IsMatch(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<IBuildChain>()).Returns(true);
             firstAction.WhenForAnyArgs(x => x.Execute(null, null, null)).Do(
                 x =>
                 {
@@ -1600,8 +1600,8 @@
 
             typeCreator.CanPopulate(typeof(Simple), null, Arg.Any<IBuildChain>()).Returns(true);
             typeCreator.Populate(expected, Arg.Any<IExecuteStrategy>()).Returns(expected);
-            firstAction.IsSupported(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<IBuildChain>()).Returns(false);
-            secondAction.IsSupported(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<IBuildChain>()).Returns(true);
+            firstAction.IsMatch(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<IBuildChain>()).Returns(false);
+            secondAction.IsMatch(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<IBuildChain>()).Returns(true);
 
             var target = new DefaultExecuteStrategy();
 
