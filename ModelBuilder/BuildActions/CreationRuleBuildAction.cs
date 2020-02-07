@@ -1,15 +1,15 @@
-﻿namespace ModelBuilder.BuildSteps
+﻿namespace ModelBuilder.BuildActions
 {
     using System;
     using System.Linq;
     using System.Reflection;
-    using ModelBuilder.ValueGenerators;
+    using ModelBuilder.CreationRules;
 
     /// <summary>
-    ///     The <see cref="ValueGeneratorBuildStep" />
-    ///     class is used to build a value from a matching <see cref="IValueGenerator" />.
+    ///     The <see cref="CreationRuleBuildAction" />
+    ///     class is used to build a value from a matching <see cref="ICreationRule" />.
     /// </summary>
-    public class ValueGeneratorBuildStep : IBuildStep
+    public class CreationRuleBuildAction : IBuildAction
     {
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
@@ -26,9 +26,9 @@
                 throw new ArgumentNullException(nameof(executeStrategy));
             }
 
-            var generator = GetMatchingGenerator(type, null, executeStrategy.Configuration, executeStrategy.BuildChain);
+            var rule = GetMatchingRule(type, null, executeStrategy.Configuration);
 
-            return generator?.Generate(type, null, executeStrategy);
+            return rule?.Create(type, null, executeStrategy);
         }
 
         /// <inheritdoc />
@@ -46,10 +46,9 @@
                 throw new ArgumentNullException(nameof(executeStrategy));
             }
 
-            var generator = GetMatchingGenerator(parameterInfo.ParameterType, parameterInfo.Name, executeStrategy.Configuration,
-                executeStrategy.BuildChain);
+            var rule = GetMatchingRule(parameterInfo.ParameterType, parameterInfo.Name, executeStrategy.Configuration);
 
-            return generator?.Generate(parameterInfo.ParameterType, parameterInfo.Name, executeStrategy);
+            return rule?.Create(parameterInfo.ParameterType, parameterInfo.Name, executeStrategy);
         }
 
         /// <inheritdoc />
@@ -67,10 +66,9 @@
                 throw new ArgumentNullException(nameof(executeStrategy));
             }
 
-            var generator = GetMatchingGenerator(propertyInfo.PropertyType, propertyInfo.Name, executeStrategy.Configuration,
-                executeStrategy.BuildChain);
+            var rule = GetMatchingRule(propertyInfo.PropertyType, propertyInfo.Name, executeStrategy.Configuration);
 
-            return generator?.Generate(propertyInfo.PropertyType, propertyInfo.Name, executeStrategy);
+            return rule?.Create(propertyInfo.PropertyType, propertyInfo.Name, executeStrategy);
         }
 
         /// <inheritdoc />
@@ -93,14 +91,14 @@
                 throw new ArgumentNullException(nameof(buildChain));
             }
 
-            var generator = GetMatchingGenerator(type, null, buildConfiguration, buildChain);
+            var rule = GetMatchingRule(type, null, buildConfiguration);
 
-            if (generator == null)
+            if (rule == null)
             {
                 return false;
             }
 
-            return generator.IsMatch(type, null, buildChain);
+            return rule.IsMatch(type, null);
         }
 
         /// <inheritdoc />
@@ -123,14 +121,14 @@
                 throw new ArgumentNullException(nameof(buildChain));
             }
 
-            var generator = GetMatchingGenerator(parameterInfo.ParameterType, parameterInfo.Name, buildConfiguration, buildChain);
+            var rule = GetMatchingRule(parameterInfo.ParameterType, parameterInfo.Name, buildConfiguration);
 
-            if (generator == null)
+            if (rule == null)
             {
                 return false;
             }
 
-            return generator.IsMatch(parameterInfo.ParameterType, parameterInfo.Name, buildChain);
+            return rule.IsMatch(parameterInfo.ParameterType, parameterInfo.Name);
         }
 
         /// <inheritdoc />
@@ -153,24 +151,23 @@
                 throw new ArgumentNullException(nameof(buildChain));
             }
 
-            var generator = GetMatchingGenerator(propertyInfo.PropertyType, propertyInfo.Name, buildConfiguration, buildChain);
+            var rule = GetMatchingRule(propertyInfo.PropertyType, propertyInfo.Name, buildConfiguration);
 
-            if (generator == null)
+            if (rule == null)
             {
                 return false;
             }
 
-            return generator.IsMatch(propertyInfo.PropertyType, propertyInfo.Name, buildChain);
+            return rule.IsMatch(propertyInfo.PropertyType, propertyInfo.Name);
         }
 
-        private IValueGenerator GetMatchingGenerator(Type type, string referenceName, IBuildConfiguration buildConfiguration,
-            IBuildChain buildChain)
+        private ICreationRule GetMatchingRule(Type type, string referenceName, IBuildConfiguration buildConfiguration)
         {
-            return buildConfiguration.ValueGenerators?.Where(x => x.IsMatch(type, referenceName, buildChain))
+            return buildConfiguration.CreationRules?.Where(x => x.IsMatch(type, referenceName))
                 .OrderByDescending(x => x.Priority).FirstOrDefault();
         }
 
         /// <inheritdoc />
-        public int Priority => 3000;
+        public int Priority => 5000;
     }
 }

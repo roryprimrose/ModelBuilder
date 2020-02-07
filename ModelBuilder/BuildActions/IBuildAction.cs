@@ -1,13 +1,13 @@
-﻿namespace ModelBuilder.BuildSteps
+﻿namespace ModelBuilder.BuildActions
 {
     using System;
     using System.Reflection;
 
     /// <summary>
-    ///     The <see cref="IBuildStep" />
-    ///     interface defines the members for evaluating whether the build step should be used and for building values.
+    ///     The <see cref="IBuildAction" />
+    ///     interface defines the members for evaluating whether the build action should be used and for building values.
     /// </summary>
-    public interface IBuildStep
+    public interface IBuildAction
     {
         /// <summary>
         ///     Builds a value using the specified type and execute strategy.

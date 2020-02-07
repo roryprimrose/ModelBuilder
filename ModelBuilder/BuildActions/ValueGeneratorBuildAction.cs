@@ -1,14 +1,15 @@
-﻿namespace ModelBuilder.BuildSteps
+﻿namespace ModelBuilder.BuildActions
 {
     using System;
     using System.Linq;
     using System.Reflection;
+    using ModelBuilder.ValueGenerators;
 
     /// <summary>
-    ///     The <see cref="CircularReferenceBuildStep" />
-    ///     class is used to return a value from the <see cref="IBuildChain" /> that has previously been created.
+    ///     The <see cref="ValueGeneratorBuildAction" />
+    ///     class is used to build a value from a matching <see cref="IValueGenerator" />.
     /// </summary>
-    public class CircularReferenceBuildStep : IBuildStep
+    public class ValueGeneratorBuildAction : IBuildAction
     {
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
@@ -25,7 +26,9 @@
                 throw new ArgumentNullException(nameof(executeStrategy));
             }
 
-            return GetCircularReference(executeStrategy, type);
+            var generator = GetMatchingGenerator(type, null, executeStrategy.Configuration, executeStrategy.BuildChain);
+
+            return generator?.Generate(type, null, executeStrategy);
         }
 
         /// <inheritdoc />
@@ -43,7 +46,10 @@
                 throw new ArgumentNullException(nameof(executeStrategy));
             }
 
-            return GetCircularReference(executeStrategy, parameterInfo.ParameterType);
+            var generator = GetMatchingGenerator(parameterInfo.ParameterType, parameterInfo.Name, executeStrategy.Configuration,
+                executeStrategy.BuildChain);
+
+            return generator?.Generate(parameterInfo.ParameterType, parameterInfo.Name, executeStrategy);
         }
 
         /// <inheritdoc />
@@ -61,7 +67,10 @@
                 throw new ArgumentNullException(nameof(executeStrategy));
             }
 
-            return GetCircularReference(executeStrategy, propertyInfo.PropertyType);
+            var generator = GetMatchingGenerator(propertyInfo.PropertyType, propertyInfo.Name, executeStrategy.Configuration,
+                executeStrategy.BuildChain);
+
+            return generator?.Generate(propertyInfo.PropertyType, propertyInfo.Name, executeStrategy);
         }
 
         /// <inheritdoc />
@@ -74,12 +83,24 @@
                 throw new ArgumentNullException(nameof(type));
             }
 
+            if (buildConfiguration == null)
+            {
+                throw new ArgumentNullException(nameof(buildConfiguration));
+            }
+
             if (buildChain == null)
             {
                 throw new ArgumentNullException(nameof(buildChain));
             }
 
-            return HasCircularReference(buildChain, type);
+            var generator = GetMatchingGenerator(type, null, buildConfiguration, buildChain);
+
+            if (generator == null)
+            {
+                return false;
+            }
+
+            return generator.IsMatch(type, null, buildChain);
         }
 
         /// <inheritdoc />
@@ -92,12 +113,24 @@
                 throw new ArgumentNullException(nameof(parameterInfo));
             }
 
+            if (buildConfiguration == null)
+            {
+                throw new ArgumentNullException(nameof(buildConfiguration));
+            }
+
             if (buildChain == null)
             {
                 throw new ArgumentNullException(nameof(buildChain));
             }
 
-            return HasCircularReference(buildChain, parameterInfo.ParameterType);
+            var generator = GetMatchingGenerator(parameterInfo.ParameterType, parameterInfo.Name, buildConfiguration, buildChain);
+
+            if (generator == null)
+            {
+                return false;
+            }
+
+            return generator.IsMatch(parameterInfo.ParameterType, parameterInfo.Name, buildChain);
         }
 
         /// <inheritdoc />
@@ -110,46 +143,34 @@
                 throw new ArgumentNullException(nameof(propertyInfo));
             }
 
+            if (buildConfiguration == null)
+            {
+                throw new ArgumentNullException(nameof(buildConfiguration));
+            }
+
             if (buildChain == null)
             {
                 throw new ArgumentNullException(nameof(buildChain));
             }
 
-            return HasCircularReference(buildChain, propertyInfo.PropertyType);
-        }
+            var generator = GetMatchingGenerator(propertyInfo.PropertyType, propertyInfo.Name, buildConfiguration, buildChain);
 
-        private static object FindItemByType(IBuildChain buildChain, Type type)
-        {
-            return buildChain.FirstOrDefault(x => x.GetType() == type);
-        }
-
-        private static object GetCircularReference(IExecuteStrategy executeStrategy, Type type)
-        {
-            var item = FindItemByType(executeStrategy.BuildChain, type);
-
-            if (item == null)
-            {
-                return null;
-            }
-
-            executeStrategy.Log.CircularReferenceDetected(type);
-
-            return item;
-        }
-
-        private static bool HasCircularReference(IBuildChain buildChain, Type type)
-        {
-            var circularReference = FindItemByType(buildChain, type);
-
-            if (circularReference == null)
+            if (generator == null)
             {
                 return false;
             }
 
-            return true;
+            return generator.IsMatch(propertyInfo.PropertyType, propertyInfo.Name, buildChain);
+        }
+
+        private IValueGenerator GetMatchingGenerator(Type type, string referenceName, IBuildConfiguration buildConfiguration,
+            IBuildChain buildChain)
+        {
+            return buildConfiguration.ValueGenerators?.Where(x => x.IsMatch(type, referenceName, buildChain))
+                .OrderByDescending(x => x.Priority).FirstOrDefault();
         }
 
         /// <inheritdoc />
-        public int Priority => int.MaxValue;
+        public int Priority => 3000;
     }
 }

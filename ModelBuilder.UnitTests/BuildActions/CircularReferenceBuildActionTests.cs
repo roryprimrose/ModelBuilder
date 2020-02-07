@@ -1,20 +1,19 @@
-﻿namespace ModelBuilder.UnitTests.BuildSteps
+﻿namespace ModelBuilder.UnitTests.BuildActions
 {
     using System;
     using System.Linq;
     using System.Reflection;
     using FluentAssertions;
-    using ModelBuilder.BuildSteps;
+    using ModelBuilder.BuildActions;
     using ModelBuilder.UnitTests.Models;
     using NSubstitute;
     using Xunit;
 
-    public class CircularReferenceBuildStepTests
+    public class CircularReferenceBuildActionTests
     {
         [Fact]
         public void BuildForParameterReturnsNullWhenNoMatchingTypeFound()
         {
-            var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
             var parameterInfo = typeof(Person).GetConstructors()
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
@@ -26,7 +25,7 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var sut = new CircularReferenceBuildStep();
+            var sut = new CircularReferenceBuildAction();
 
             var actual = sut.Build(parameterInfo, executeStrategy);
 
@@ -36,7 +35,6 @@
         [Fact]
         public void BuildForParameterReturnsValueMatchingType()
         {
-            var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
             var parameterInfo = typeof(Person).GetConstructors()
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
@@ -50,7 +48,7 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var sut = new CircularReferenceBuildStep();
+            var sut = new CircularReferenceBuildAction();
 
             var actual = sut.Build(parameterInfo, executeStrategy);
 
@@ -63,7 +61,7 @@
             var parameterInfo = typeof(Person).GetConstructors()
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
 
-            var sut = new CircularReferenceBuildStep();
+            var sut = new CircularReferenceBuildAction();
 
             Action action = () => sut.Build(parameterInfo, null);
 
@@ -75,7 +73,7 @@
         {
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
-            var sut = new CircularReferenceBuildStep();
+            var sut = new CircularReferenceBuildAction();
 
             Action action = () => sut.Build((ParameterInfo) null, executeStrategy);
 
@@ -85,7 +83,6 @@
         [Fact]
         public void BuildForPropertyReturnsNullWhenNoMatchingTypeFound()
         {
-            var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
 
@@ -96,7 +93,7 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var sut = new CircularReferenceBuildStep();
+            var sut = new CircularReferenceBuildAction();
 
             var actual = sut.Build(propertyInfo, executeStrategy);
 
@@ -106,7 +103,6 @@
         [Fact]
         public void BuildForPropertyReturnsValueMatchingType()
         {
-            var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
             var expected = Guid.NewGuid().ToString();
@@ -119,7 +115,7 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var sut = new CircularReferenceBuildStep();
+            var sut = new CircularReferenceBuildAction();
 
             var actual = sut.Build(propertyInfo, executeStrategy);
 
@@ -131,7 +127,7 @@
         {
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
 
-            var sut = new CircularReferenceBuildStep();
+            var sut = new CircularReferenceBuildAction();
 
             Action action = () => sut.Build(propertyInfo, null);
 
@@ -143,7 +139,7 @@
         {
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
-            var sut = new CircularReferenceBuildStep();
+            var sut = new CircularReferenceBuildAction();
 
             Action action = () => sut.Build((PropertyInfo) null, executeStrategy);
 
@@ -153,7 +149,6 @@
         [Fact]
         public void BuildForTypeReturnsNullWhenNoMatchingTypeFound()
         {
-            var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
             var type = typeof(string);
 
@@ -164,7 +159,7 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var sut = new CircularReferenceBuildStep();
+            var sut = new CircularReferenceBuildAction();
 
             var actual = sut.Build(type, executeStrategy);
 
@@ -174,7 +169,6 @@
         [Fact]
         public void BuildForTypeReturnsValueMatchingType()
         {
-            var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
             var type = typeof(string);
             var expected = Guid.NewGuid().ToString();
@@ -187,7 +181,7 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var sut = new CircularReferenceBuildStep();
+            var sut = new CircularReferenceBuildAction();
 
             var actual = sut.Build(type, executeStrategy);
 
@@ -199,7 +193,7 @@
         {
             var type = typeof(string);
 
-            var sut = new CircularReferenceBuildStep();
+            var sut = new CircularReferenceBuildAction();
 
             Action action = () => sut.Build(type, null);
 
@@ -211,7 +205,7 @@
         {
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
-            var sut = new CircularReferenceBuildStep();
+            var sut = new CircularReferenceBuildAction();
 
             Action action = () => sut.Build((Type) null, executeStrategy);
 
@@ -228,7 +222,7 @@
 
             buildChain.Push(Guid.NewGuid());
 
-            var sut = new CircularReferenceBuildStep();
+            var sut = new CircularReferenceBuildAction();
 
             var actual = sut.IsMatch(parameterInfo, buildConfiguration, buildChain);
 
@@ -243,7 +237,7 @@
             var parameterInfo = typeof(Person).GetConstructors()
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
 
-            var sut = new CircularReferenceBuildStep();
+            var sut = new CircularReferenceBuildAction();
 
             var actual = sut.IsMatch(parameterInfo, buildConfiguration, buildChain);
 
@@ -262,7 +256,7 @@
             buildChain.Push(Guid.NewGuid().ToString());
             buildChain.Push(DateTimeOffset.UtcNow);
 
-            var sut = new CircularReferenceBuildStep();
+            var sut = new CircularReferenceBuildAction();
 
             var actual = sut.IsMatch(parameterInfo, buildConfiguration, buildChain);
 
@@ -276,7 +270,7 @@
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
             var buildConfiguration = new BuildConfiguration();
 
-            var sut = new CircularReferenceBuildStep();
+            var sut = new CircularReferenceBuildAction();
 
             Action action = () => sut.IsMatch(parameterInfo, buildConfiguration, null);
 
@@ -289,7 +283,7 @@
             var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
 
-            var sut = new CircularReferenceBuildStep();
+            var sut = new CircularReferenceBuildAction();
 
             Action action = () => sut.IsMatch((ParameterInfo) null, buildConfiguration, buildChain);
 
@@ -305,7 +299,7 @@
 
             buildChain.Push(Guid.NewGuid());
 
-            var sut = new CircularReferenceBuildStep();
+            var sut = new CircularReferenceBuildAction();
 
             var actual = sut.IsMatch(propertyInfo, buildConfiguration, buildChain);
 
@@ -319,7 +313,7 @@
             var buildChain = new BuildHistory();
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
 
-            var sut = new CircularReferenceBuildStep();
+            var sut = new CircularReferenceBuildAction();
 
             var actual = sut.IsMatch(propertyInfo, buildConfiguration, buildChain);
 
@@ -337,7 +331,7 @@
             buildChain.Push(Guid.NewGuid().ToString());
             buildChain.Push(DateTimeOffset.UtcNow);
 
-            var sut = new CircularReferenceBuildStep();
+            var sut = new CircularReferenceBuildAction();
 
             var actual = sut.IsMatch(propertyInfo, buildConfiguration, buildChain);
 
@@ -350,7 +344,7 @@
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
             var buildConfiguration = new BuildConfiguration();
 
-            var sut = new CircularReferenceBuildStep();
+            var sut = new CircularReferenceBuildAction();
 
             Action action = () => sut.IsMatch(propertyInfo, buildConfiguration, null);
 
@@ -363,7 +357,7 @@
             var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
 
-            var sut = new CircularReferenceBuildStep();
+            var sut = new CircularReferenceBuildAction();
 
             Action action = () => sut.IsMatch((PropertyInfo) null, buildConfiguration, buildChain);
 
@@ -379,7 +373,7 @@
 
             buildChain.Push(Guid.NewGuid());
 
-            var sut = new CircularReferenceBuildStep();
+            var sut = new CircularReferenceBuildAction();
 
             var actual = sut.IsMatch(type, buildConfiguration, buildChain);
 
@@ -393,7 +387,7 @@
             var buildChain = new BuildHistory();
             var type = typeof(string);
 
-            var sut = new CircularReferenceBuildStep();
+            var sut = new CircularReferenceBuildAction();
 
             var actual = sut.IsMatch(type, buildConfiguration, buildChain);
 
@@ -411,7 +405,7 @@
             buildChain.Push(Guid.NewGuid().ToString());
             buildChain.Push(DateTimeOffset.UtcNow);
 
-            var sut = new CircularReferenceBuildStep();
+            var sut = new CircularReferenceBuildAction();
 
             var actual = sut.IsMatch(type, buildConfiguration, buildChain);
 
@@ -424,7 +418,7 @@
             var type = typeof(string);
             var buildConfiguration = new BuildConfiguration();
 
-            var sut = new CircularReferenceBuildStep();
+            var sut = new CircularReferenceBuildAction();
 
             Action action = () => sut.IsMatch(type, buildConfiguration, null);
 
@@ -437,7 +431,7 @@
             var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
 
-            var sut = new CircularReferenceBuildStep();
+            var sut = new CircularReferenceBuildAction();
 
             Action action = () => sut.IsMatch((Type) null, buildConfiguration, buildChain);
 
@@ -447,7 +441,7 @@
         [Fact]
         public void PriorityReturnsMaximumValue()
         {
-            var sut = new CircularReferenceBuildStep();
+            var sut = new CircularReferenceBuildAction();
 
             sut.Priority.Should().Be(int.MaxValue);
         }
