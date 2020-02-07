@@ -345,7 +345,7 @@
         [InlineData(typeof(string), "", false)]
         [InlineData(typeof(string), "Stuff", false)]
         [InlineData(typeof(string), "email", true)]
-        public void IsSupportedTest(Type type, string referenceName, bool expected)
+        public void IsMatchTest(Type type, string referenceName, bool expected)
         {
             var person = new Person();
             var buildChain = new BuildHistory();
@@ -354,25 +354,25 @@
 
             var target = new EmailValueGenerator();
 
-            var actual = target.IsSupported(type, referenceName, buildChain);
+            var actual = target.IsMatch(type, referenceName, buildChain);
 
             actual.Should().Be(expected);
         }
 
         [Fact]
-        public void IsSupportedThrowsExceptionWithNullContextTest()
+        public void IsMatchThrowsExceptionWithNullContextTest()
         {
             var buildChain = Substitute.For<IBuildChain>();
 
             var target = new EmailValueGenerator();
 
-            var actual = target.IsSupported(typeof(string), "email", buildChain);
+            var actual = target.IsMatch(typeof(string), "email", buildChain);
 
             actual.Should().BeFalse();
         }
 
         [Fact]
-        public void IsSupportedThrowsExceptionWithNullTypeTest()
+        public void IsMatchThrowsExceptionWithNullTypeTest()
         {
             var person = new Person();
             var buildChain = new BuildHistory();
@@ -381,7 +381,7 @@
 
             var target = new EmailValueGenerator();
 
-            Action action = () => target.IsSupported(null, null, buildChain);
+            Action action = () => target.IsMatch(null, null, buildChain);
 
             action.Should().Throw<ArgumentNullException>();
         }

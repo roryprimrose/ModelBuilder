@@ -202,7 +202,7 @@
             {
                 // Next check if this is a type supported by a value generator
                 var valueGenerator = Configuration.ValueGenerators
-                    ?.Where(x => x.IsSupported(typeToBuild, referenceName, buildChain))
+                    ?.Where(x => x.IsMatch(typeToBuild, referenceName, buildChain))
                     .OrderByDescending(x => x.Priority).FirstOrDefault();
 
                 if (valueGenerator != null)

@@ -163,33 +163,33 @@
         [InlineData("Length", true)]
         [InlineData("count", true)]
         [InlineData("Count", true)]
-        public void IsSupportedEvaluatesRequestedReferenceNameTest(string referenceName, bool isSupported)
+        public void IsMatchEvaluatesRequestedReferenceNameTest(string referenceName, bool isSupported)
         {
             var buildChain = Substitute.For<IBuildChain>();
 
             var target = new CountValueGenerator();
 
-            var actual = target.IsSupported(typeof(int), referenceName, buildChain);
+            var actual = target.IsMatch(typeof(int), referenceName, buildChain);
 
             actual.Should().Be(isSupported);
         }
 
         [Theory]
         [ClassData(typeof(NumericTypeDataSource))]
-        public void IsSupportedEvaluatesRequestedTypeTest(Type type, bool isSupported)
+        public void IsMatchEvaluatesRequestedTypeTest(Type type, bool isSupported)
         {
             var buildChain = Substitute.For<IBuildChain>();
 
             var target = new CountValueGenerator();
 
-            var actual = target.IsSupported(type, "Count", buildChain);
+            var actual = target.IsMatch(type, "Count", buildChain);
 
             actual.Should().Be(isSupported);
         }
 
         [Theory]
         [ClassData(typeof(NumericTypeDataSource))]
-        public void IsSupportedReturnsFalseWhenReferenceNameIsNullTest(Type type, bool isSupported)
+        public void IsMatchReturnsFalseWhenReferenceNameIsNullTest(Type type, bool isSupported)
         {
             if (isSupported == false)
             {
@@ -201,14 +201,14 @@
 
             var target = new CountValueGenerator();
 
-            var actual = target.IsSupported(type, null, buildChain);
+            var actual = target.IsMatch(type, null, buildChain);
 
             actual.Should().BeFalse();
         }
 
         [Theory]
         [ClassData(typeof(NumericTypeDataSource))]
-        public void IsSupportedReturnsFalseWhenReferenceNameNotCountTest(Type type, bool isSupported)
+        public void IsMatchReturnsFalseWhenReferenceNameNotCountTest(Type type, bool isSupported)
         {
             if (isSupported == false)
             {
@@ -220,14 +220,14 @@
 
             var target = new CountValueGenerator();
 
-            var actual = target.IsSupported(type, "Stuff", buildChain);
+            var actual = target.IsMatch(type, "Stuff", buildChain);
 
             actual.Should().BeFalse();
         }
 
         [Theory]
         [ClassData(typeof(NumericTypeDataSource))]
-        public void IsSupportedReturnsTrueWhenReferenceNameIsCountTest(Type type, bool isSupported)
+        public void IsMatchReturnsTrueWhenReferenceNameIsCountTest(Type type, bool isSupported)
         {
             if (isSupported == false)
             {
@@ -239,19 +239,19 @@
 
             var target = new CountValueGenerator();
 
-            var actual = target.IsSupported(type, "Count", buildChain);
+            var actual = target.IsMatch(type, "Count", buildChain);
 
             actual.Should().BeTrue();
         }
 
         [Fact]
-        public void IsSupportedThrowsExceptionWithNullTypeTest()
+        public void IsMatchThrowsExceptionWithNullTypeTest()
         {
             var buildChain = Substitute.For<IBuildChain>();
 
             var target = new CountValueGenerator();
 
-            Action action = () => target.IsSupported(null, null, buildChain);
+            Action action = () => target.IsMatch(null, null, buildChain);
 
             action.Should().Throw<ArgumentNullException>();
         }

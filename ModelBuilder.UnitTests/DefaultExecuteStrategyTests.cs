@@ -126,7 +126,7 @@
                 Arg.Any<IExecuteStrategy>(),
                 Arg.Any<object[]>()).Returns(x => new ReadOnlyModelWrapper((ReadOnlyModel) ((object[]) x[3])[0]));
             typeCreator.Populate(Arg.Any<object>(), Arg.Any<IExecuteStrategy>()).Returns(x => x[0]);
-            valueGenerator.IsSupported(typeof(Guid), "value", Arg.Any<IBuildChain>()).Returns(true);
+            valueGenerator.IsMatch(typeof(Guid), "value", Arg.Any<IBuildChain>()).Returns(true);
             valueGenerator.Generate(typeof(Guid), "value", Arg.Any<IExecuteStrategy>()).Returns(value);
 
             var actual = target.Create(typeof(AdditionalWrapper), number);
@@ -276,7 +276,7 @@
             typeCreator.Create(typeof(SelfReferrer), null, Arg.Any<IExecuteStrategy>()).Returns(expected);
             typeCreator.Populate(expected, target).Returns(expected);
             typeCreator.AutoPopulate.Returns(true);
-            generator.IsSupported(typeof(Guid), "Id", Arg.Is<IBuildChain>(x => x.Last == expected)).Returns(true);
+            generator.IsMatch(typeof(Guid), "Id", Arg.Is<IBuildChain>(x => x.Last == expected)).Returns(true);
             generator.Generate(typeof(Guid), "Id", Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == expected))
                 .Returns(id);
 
@@ -342,7 +342,7 @@
             valueGenerators.Add(valueGenerator);
 
             buildConfiguration.ValueGenerators.Returns(valueGenerators);
-            valueGenerator.IsSupported(typeof(int), null, Arg.Any<IBuildChain>()).Returns(true);
+            valueGenerator.IsMatch(typeof(int), null, Arg.Any<IBuildChain>()).Returns(true);
             valueGenerator.Generate(typeof(int), null, Arg.Any<IExecuteStrategy>()).Returns(null);
 
             var target = new DefaultExecuteStrategy();
@@ -389,7 +389,7 @@
             typeCreator.Create(typeof(SlimModel), null, Arg.Any<IExecuteStrategy>()).Returns(expected);
             typeCreator.Populate(expected, target).Returns(expected);
             typeCreator.AutoPopulate.Returns(true);
-            generator.IsSupported(typeof(Guid), "Value", Arg.Is<IBuildChain>(x => x.Last == expected)).Returns(true);
+            generator.IsMatch(typeof(Guid), "Value", Arg.Is<IBuildChain>(x => x.Last == expected)).Returns(true);
             generator.Generate(typeof(Guid), "Value", Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == expected))
                 .Returns(value);
 
@@ -435,7 +435,7 @@
             typeCreator.Create(typeof(SlimModel), null, Arg.Any<IExecuteStrategy>()).Returns(expected);
             typeCreator.Populate(expected, target).Returns(expected);
             typeCreator.AutoPopulate.Returns(true);
-            generator.IsSupported(typeof(Guid), "Value", Arg.Is<IBuildChain>(x => x.Last == expected)).Returns(true);
+            generator.IsMatch(typeof(Guid), "Value", Arg.Is<IBuildChain>(x => x.Last == expected)).Returns(true);
             generator.Generate(typeof(Guid), "Value", Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == expected))
                 .Returns(value);
 
@@ -518,7 +518,7 @@
             creator.Priority.Returns(1);
             creator.AutoPopulate.Returns(true);
             creator.Populate(model, target).Returns(model);
-            generator.IsSupported(typeof(string), "FirstName", Arg.Is<IBuildChain>(x => x.Last == model)).Returns(true);
+            generator.IsMatch(typeof(string), "FirstName", Arg.Is<IBuildChain>(x => x.Last == model)).Returns(true);
             generator.Generate(typeof(string), "FirstName", Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == model))
                 .Returns(value);
 
@@ -571,7 +571,7 @@
             secondCreator.Priority.Returns(2);
             secondCreator.AutoPopulate.Returns(true);
             secondCreator.Populate(secondModel, target).Returns(secondModel);
-            generator.IsSupported(typeof(Guid), "Value", Arg.Is<IBuildChain>(x => x.Last == secondModel)).Returns(true);
+            generator.IsMatch(typeof(Guid), "Value", Arg.Is<IBuildChain>(x => x.Last == secondModel)).Returns(true);
             generator.Generate(typeof(Guid), "Value", Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == secondModel))
                 .Returns(value);
 
@@ -682,7 +682,7 @@
             creator.Priority.Returns(1);
             creator.AutoPopulate.Returns(true);
             creator.Populate(model, target).Returns(model);
-            generator.IsSupported(typeof(string), "FirstName", Arg.Is<IBuildChain>(x => x.Last == model)).Returns(true);
+            generator.IsMatch(typeof(string), "FirstName", Arg.Is<IBuildChain>(x => x.Last == model)).Returns(true);
             generator.Generate(typeof(string), "FirstName", Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == model))
                 .Returns(value);
 
@@ -707,10 +707,10 @@
             valueGenerators.Add(secondGenerator);
 
             buildConfiguration.ValueGenerators.Returns(valueGenerators);
-            firstGenerator.IsSupported(typeof(Guid), null, Arg.Any<IBuildChain>()).Returns(true);
+            firstGenerator.IsMatch(typeof(Guid), null, Arg.Any<IBuildChain>()).Returns(true);
             firstGenerator.Generate(typeof(Guid), null, Arg.Any<IExecuteStrategy>()).Returns(firstValue);
             firstGenerator.Priority.Returns(1);
-            secondGenerator.IsSupported(typeof(Guid), null, Arg.Any<IBuildChain>()).Returns(true);
+            secondGenerator.IsMatch(typeof(Guid), null, Arg.Any<IBuildChain>()).Returns(true);
             secondGenerator.Generate(typeof(Guid), null, Arg.Any<IExecuteStrategy>()).Returns(secondValue);
             secondGenerator.Priority.Returns(2);
 
@@ -754,7 +754,7 @@
             typeCreator.Populate(expected, target).Returns(expected);
             typeCreator.AutoPopulate.Returns(true);
             typeCreator.AutoDetectConstructor.Returns(true);
-            generator.IsSupported(typeof(Guid), "value", Arg.Any<IBuildChain>()).Returns(true);
+            generator.IsMatch(typeof(Guid), "value", Arg.Any<IBuildChain>()).Returns(true);
             generator.Generate(typeof(Guid), "value", Arg.Any<IExecuteStrategy>()).Returns(value);
 
             var actual = (ReadOnlyModel) target.Create(typeof(ReadOnlyModel));
@@ -844,7 +844,7 @@
             secondCreator.Priority.Returns(2);
             secondCreator.AutoPopulate.Returns(true);
             secondCreator.Populate(secondModel, target).Returns(secondModel);
-            generator.IsSupported(typeof(Guid), "Value", Arg.Is<IBuildChain>(x => x.Last == secondModel)).Returns(true);
+            generator.IsMatch(typeof(Guid), "Value", Arg.Is<IBuildChain>(x => x.Last == secondModel)).Returns(true);
             generator.Generate(typeof(Guid), "Value", Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == secondModel))
                 .Returns(value);
 
@@ -869,10 +869,10 @@
             valueGenerators.Add(secondGenerator);
 
             buildConfiguration.ValueGenerators.Returns(valueGenerators);
-            firstGenerator.IsSupported(typeof(Guid), null, Arg.Any<IBuildChain>()).Returns(false);
+            firstGenerator.IsMatch(typeof(Guid), null, Arg.Any<IBuildChain>()).Returns(false);
             firstGenerator.Generate(typeof(Guid), null, Arg.Any<IExecuteStrategy>()).Returns(firstValue);
             firstGenerator.Priority.Returns(10);
-            secondGenerator.IsSupported(typeof(Guid), null, Arg.Any<IBuildChain>()).Returns(true);
+            secondGenerator.IsMatch(typeof(Guid), null, Arg.Any<IBuildChain>()).Returns(true);
             secondGenerator.Generate(typeof(Guid), null, Arg.Any<IExecuteStrategy>()).Returns(secondValue);
             secondGenerator.Priority.Returns(2);
 
@@ -897,7 +897,7 @@
             valueGenerators.Add(valueGenerator);
 
             buildConfiguration.ValueGenerators.Returns(valueGenerators);
-            valueGenerator.IsSupported(typeof(string), null, Arg.Any<IBuildChain>()).Returns(true);
+            valueGenerator.IsMatch(typeof(string), null, Arg.Any<IBuildChain>()).Returns(true);
             valueGenerator.Generate(typeof(string), null, Arg.Any<IExecuteStrategy>()).Returns(expected);
 
             var target = new DefaultExecuteStrategy();
@@ -1004,7 +1004,7 @@
 
             typeCreator.CanCreate(typeof(Person), null, Arg.Any<IBuildChain>()).Returns(true);
             typeCreator.Create(typeof(Person), null, null, null).Returns(person);
-            valueGenerator.IsSupported(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<IBuildChain>()).Returns(true);
+            valueGenerator.IsMatch(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<IBuildChain>()).Returns(true);
             valueGenerator.Generate(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<IExecuteStrategy>())
                 .Throws(new InvalidOperationException());
             buildConfiguration.TypeCreators.Returns(creators);
@@ -1039,7 +1039,7 @@
             typeCreator.CanCreate(typeof(Person), null, Arg.Any<IBuildChain>()).Returns(true);
             typeCreator.Create(typeof(Person), null, Arg.Any<IExecuteStrategy>()).Returns(person);
             typeCreator.AutoPopulate.Returns(true);
-            valueGenerator.IsSupported(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<IBuildChain>()).Returns(true);
+            valueGenerator.IsMatch(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<IBuildChain>()).Returns(true);
             valueGenerator.Generate(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<IExecuteStrategy>())
                 .Throws(new BuildException());
             buildConfiguration.TypeCreators.Returns(creators);
@@ -1079,7 +1079,7 @@
             typeCreator.CanCreate(typeof(SimpleReadOnlyParent), null, Arg.Any<IBuildChain>()).Returns(true);
             typeCreator.Create(typeof(SimpleReadOnlyParent), null, Arg.Any<IExecuteStrategy>()).Returns(expected);
             typeCreator.AutoPopulate.Returns(true);
-            valueGenerator.IsSupported(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<IBuildChain>()).Returns(false);
+            valueGenerator.IsMatch(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<IBuildChain>()).Returns(false);
             buildConfiguration.TypeCreators.Returns(creators);
             buildConfiguration.ValueGenerators.Returns(generators);
 
@@ -1117,7 +1117,7 @@
             typeCreator.CanCreate(typeof(Person), null, Arg.Any<IBuildChain>()).Returns(true);
             typeCreator.Create(typeof(Person), null, Arg.Any<IExecuteStrategy>()).Returns(person);
             typeCreator.AutoPopulate.Returns(true);
-            valueGenerator.IsSupported(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<IBuildChain>()).Returns(false);
+            valueGenerator.IsMatch(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<IBuildChain>()).Returns(false);
             buildConfiguration.TypeCreators.Returns(creators);
             buildConfiguration.ValueGenerators.Returns(generators);
 
@@ -1147,7 +1147,7 @@
             typeCreator.CanCreate(typeof(KeyValuePair<string, Person>), null, Arg.Any<IBuildChain>()).Returns(true);
             typeCreator.AutoDetectConstructor.Returns(true);
             typeCreator.AutoPopulate.Returns(true);
-            valueGenerator.IsSupported(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<IBuildChain>()).Returns(false);
+            valueGenerator.IsMatch(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<IBuildChain>()).Returns(false);
             buildConfiguration.TypeCreators.Returns(creators);
             buildConfiguration.ValueGenerators.Returns(generators);
             buildConfiguration.ConstructorResolver.Returns(constructorResolver);
@@ -1318,13 +1318,13 @@
                 "Staff",
                 Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == expected)).Returns(staff);
             enumerableTypeCreator.Populate(staff, target).Returns(staff);
-            valueGenerator.IsSupported(typeof(string), "Name", Arg.Is<IBuildChain>(x => x.Last == expected))
+            valueGenerator.IsMatch(typeof(string), "Name", Arg.Is<IBuildChain>(x => x.Last == expected))
                 .Returns(true);
             valueGenerator.Generate(
                 typeof(string),
                 "Name",
                 Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == expected)).Returns(name);
-            valueGenerator.IsSupported(typeof(string), "Address", Arg.Is<IBuildChain>(x => x.Last == expected))
+            valueGenerator.IsMatch(typeof(string), "Address", Arg.Is<IBuildChain>(x => x.Last == expected))
                 .Returns(true);
             valueGenerator.Generate(
                 typeof(string),
@@ -1386,13 +1386,13 @@
                 "Staff",
                 Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == expected)).Returns(staff);
             enumerableTypeCreator.Populate(staff, target).Returns(staff);
-            valueGenerator.IsSupported(typeof(string), "Name", Arg.Is<IBuildChain>(x => x.Last == expected))
+            valueGenerator.IsMatch(typeof(string), "Name", Arg.Is<IBuildChain>(x => x.Last == expected))
                 .Returns(true);
             valueGenerator.Generate(
                 typeof(string),
                 "Name",
                 Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == expected)).Returns(name);
-            valueGenerator.IsSupported(typeof(string), "Address", Arg.Is<IBuildChain>(x => x.Last == expected))
+            valueGenerator.IsMatch(typeof(string), "Address", Arg.Is<IBuildChain>(x => x.Last == expected))
                 .Returns(true);
             valueGenerator.Generate(
                 typeof(string),
@@ -1448,16 +1448,16 @@
                 Arg.Any<object>(),
                 Arg.Any<PropertyInfo>(),
                 Arg.Any<object[]>()).Returns(true);
-            valueGenerator.IsSupported(typeof(SimpleEnum), "Z", Arg.Is<IBuildChain>(x => x.Last == expected))
+            valueGenerator.IsMatch(typeof(SimpleEnum), "Z", Arg.Is<IBuildChain>(x => x.Last == expected))
                 .Returns(true);
             valueGenerator.Generate(
                 typeof(SimpleEnum),
                 "Z",
                 Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == expected)).Returns(first);
-            valueGenerator.IsSupported(typeof(int), "Y", Arg.Is<IBuildChain>(x => x.Last == expected)).Returns(true);
+            valueGenerator.IsMatch(typeof(int), "Y", Arg.Is<IBuildChain>(x => x.Last == expected)).Returns(true);
             valueGenerator.Generate(typeof(int), "Y", Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == expected))
                 .Returns(second);
-            valueGenerator.IsSupported(typeof(string), "X", Arg.Is<IBuildChain>(x => x.Last == expected)).Returns(true);
+            valueGenerator.IsMatch(typeof(string), "X", Arg.Is<IBuildChain>(x => x.Last == expected)).Returns(true);
             valueGenerator.Generate(typeof(string), "X", Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == expected))
                 .Returns(third);
             personTypeCreator.CanCreate(typeof(Person), "W", Arg.Is<IBuildChain>(x => x.Last == expected))
@@ -1529,13 +1529,13 @@
                 "Staff",
                 Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == expected)).Returns(staff);
             enumerableTypeCreator.Populate(staff, target).Returns(staff);
-            valueGenerator.IsSupported(typeof(string), "Name", Arg.Is<IBuildChain>(x => x.Last == expected))
+            valueGenerator.IsMatch(typeof(string), "Name", Arg.Is<IBuildChain>(x => x.Last == expected))
                 .Returns(true);
             valueGenerator.Generate(
                 typeof(string),
                 "Name",
                 Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == expected)).Returns(name);
-            valueGenerator.IsSupported(typeof(string), "Address", Arg.Is<IBuildChain>(x => x.Last == expected))
+            valueGenerator.IsMatch(typeof(string), "Address", Arg.Is<IBuildChain>(x => x.Last == expected))
                 .Returns(true);
             valueGenerator.Generate(
                 typeof(string),
@@ -1739,7 +1739,7 @@
                     testPassed = true;
                 });
 
-            generator.IsSupported(typeof(Guid), nameof(SlimModel.Value), Arg.Is<IBuildChain>(x => x.Last == instance))
+            generator.IsMatch(typeof(Guid), nameof(SlimModel.Value), Arg.Is<IBuildChain>(x => x.Last == instance))
                 .Returns(true);
 
             target.Create(typeof(SlimModel));
@@ -1795,7 +1795,7 @@
                     testPassed = true;
                 });
 
-            generator.IsSupported(typeof(Guid), nameof(SlimModel.Value), Arg.Is<IBuildChain>(x => x.Last == expected))
+            generator.IsMatch(typeof(Guid), nameof(SlimModel.Value), Arg.Is<IBuildChain>(x => x.Last == expected))
                 .Returns(true);
 
             target.Populate(expected);
@@ -1856,7 +1856,7 @@
                     testPassed = true;
                 });
 
-            generator.IsSupported(typeof(string), Arg.Any<string>(), Arg.Any<IBuildChain>()).Returns(true);
+            generator.IsMatch(typeof(string), Arg.Any<string>(), Arg.Any<IBuildChain>()).Returns(true);
             generator.Generate(typeof(string), Arg.Any<string>(), Arg.Any<IExecuteStrategy>())
                 .Returns(Guid.NewGuid().ToString());
 
@@ -1899,7 +1899,7 @@
             typeCreator.CanPopulate(typeof(SelfReferrer), null, Arg.Any<IBuildChain>()).Returns(true);
             typeCreator.Populate(expected, target).Returns(expected);
             typeCreator.AutoPopulate.Returns(true);
-            generator.IsSupported(typeof(Guid), "Id", Arg.Is<IBuildChain>(x => x.Last == expected)).Returns(true);
+            generator.IsMatch(typeof(Guid), "Id", Arg.Is<IBuildChain>(x => x.Last == expected)).Returns(true);
             generator.Generate(typeof(Guid), "Id", Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == expected))
                 .Returns(id);
 
@@ -1963,13 +1963,13 @@
                 "Staff",
                 Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == expected)).Returns(staff);
             enumerableTypeCreator.Populate(staff, target).Returns(staff);
-            valueGenerator.IsSupported(typeof(string), "Name", Arg.Is<IBuildChain>(x => x.Last == expected))
+            valueGenerator.IsMatch(typeof(string), "Name", Arg.Is<IBuildChain>(x => x.Last == expected))
                 .Returns(true);
             valueGenerator.Generate(
                 typeof(string),
                 "Name",
                 Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == expected)).Returns(name);
-            valueGenerator.IsSupported(typeof(string), "Address", Arg.Is<IBuildChain>(x => x.Last == expected))
+            valueGenerator.IsMatch(typeof(string), "Address", Arg.Is<IBuildChain>(x => x.Last == expected))
                 .Returns(true);
             valueGenerator.Generate(
                 typeof(string),
@@ -2042,13 +2042,13 @@
                 "Staff",
                 Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == expected)).Returns(staff);
             enumerableTypeCreator.Populate(staff, target).Returns(staff);
-            valueGenerator.IsSupported(typeof(string), "Name", Arg.Is<IBuildChain>(x => x.Last == expected))
+            valueGenerator.IsMatch(typeof(string), "Name", Arg.Is<IBuildChain>(x => x.Last == expected))
                 .Returns(true);
             valueGenerator.Generate(
                 typeof(string),
                 "Name",
                 Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == expected)).Returns(name);
-            valueGenerator.IsSupported(typeof(string), "Address", Arg.Is<IBuildChain>(x => x.Last == expected))
+            valueGenerator.IsMatch(typeof(string), "Address", Arg.Is<IBuildChain>(x => x.Last == expected))
                 .Returns(true);
             valueGenerator.Generate(
                 typeof(string),
@@ -2167,7 +2167,7 @@
             typeCreator.Priority.Returns(100);
             otherTypeCreator.CanPopulate(typeof(SlimModel), null, Arg.Any<IBuildChain>()).Returns(true);
             otherTypeCreator.Priority.Returns(50);
-            valueGenerator.IsSupported(typeof(Guid), "Value", Arg.Is<IBuildChain>(x => x.Last == expected))
+            valueGenerator.IsMatch(typeof(Guid), "Value", Arg.Is<IBuildChain>(x => x.Last == expected))
                 .Returns(true);
             valueGenerator.Generate(typeof(Guid), "Value", Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == expected))
                 .Returns(value);

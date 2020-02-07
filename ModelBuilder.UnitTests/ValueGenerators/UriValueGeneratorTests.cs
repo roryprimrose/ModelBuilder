@@ -68,17 +68,17 @@
         [InlineData(typeof(string), "URL", true)]
         [InlineData(typeof(string), "url", true)]
         [InlineData(typeof(Uri), (string) null, true)]
-        public void IsSupportedReturnsWhetherScenarioIsValidTest(Type type, string referenceName, bool supported)
+        public void IsMatchReturnsWhetherScenarioIsValidTest(Type type, string referenceName, bool supported)
         {
             var target = new UriValueGenerator();
 
-            var actual = target.IsSupported(type, referenceName, null);
+            var actual = target.IsMatch(type, referenceName, null);
 
             actual.Should().Be(supported);
         }
 
         [Fact]
-        public void IsSupportedThrowsExceptionWithNullTypeTest()
+        public void IsMatchThrowsExceptionWithNullTypeTest()
         {
             var buildChain = new BuildHistory();
 
@@ -86,7 +86,7 @@
 
             var target = new UriValueGenerator();
 
-            Action action = () => target.IsSupported(null, Guid.NewGuid().ToString(), buildChain);
+            Action action = () => target.IsMatch(null, Guid.NewGuid().ToString(), buildChain);
 
             action.Should().Throw<ArgumentNullException>();
         }

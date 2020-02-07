@@ -93,19 +93,19 @@
         [InlineData(typeof(Guid), true)]
         [InlineData(typeof(Guid?), true)]
         [InlineData(typeof(string), false)]
-        public void IsSupportedReturnsWhetherTypeIsSupportedTest(Type type, bool supportedType)
+        public void IsMatchReturnsWhetherTypeIsSupportedTest(Type type, bool supportedType)
         {
             var buildChain = Substitute.For<IBuildChain>();
 
             var target = new GuidValueGenerator();
 
-            var actual = target.IsSupported(type, null, buildChain);
+            var actual = target.IsMatch(type, null, buildChain);
 
             actual.Should().Be(supportedType);
         }
 
         [Fact]
-        public void IsSupportedThrowsExceptionWithNullTypeTest()
+        public void IsMatchThrowsExceptionWithNullTypeTest()
         {
             var buildChain = new BuildHistory();
 
@@ -113,7 +113,7 @@
 
             var target = new GuidValueGenerator();
 
-            Action action = () => target.IsSupported(null, Guid.NewGuid().ToString(), buildChain);
+            Action action = () => target.IsMatch(null, Guid.NewGuid().ToString(), buildChain);
 
             action.Should().Throw<ArgumentNullException>();
         }

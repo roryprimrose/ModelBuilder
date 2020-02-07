@@ -223,21 +223,21 @@
         [InlineData(typeof(BigEnum?), true)]
         [InlineData(typeof(BigValues), true)]
         [InlineData(typeof(BigValues?), true)]
-        public void IsSupportedTest(Type type, bool expected)
+        public void IsMatchTest(Type type, bool expected)
         {
             var target = new EnumValueGenerator();
 
-            var actual = target.IsSupported(type, null, null);
+            var actual = target.IsMatch(type, null, null);
 
             actual.Should().Be(expected);
         }
 
         [Fact]
-        public void IsSupportedThrowsExceptionWithNullTypeTest()
+        public void IsMatchThrowsExceptionWithNullTypeTest()
         {
             var target = new EnumValueGenerator();
 
-            Action action = () => target.IsSupported(null, null, null);
+            Action action = () => target.IsMatch(null, null, null);
 
             action.Should().Throw<ArgumentNullException>();
         }

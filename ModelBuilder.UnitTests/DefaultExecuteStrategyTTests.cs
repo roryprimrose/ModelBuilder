@@ -72,7 +72,7 @@
             valueGenerators.Add(valueGenerator);
 
             buildConfiguration.ValueGenerators.Returns(valueGenerators);
-            valueGenerator.IsSupported(typeof(int), null, Arg.Any<IBuildChain>()).Returns(true);
+            valueGenerator.IsMatch(typeof(int), null, Arg.Any<IBuildChain>()).Returns(true);
             valueGenerator.Generate(typeof(int), null, Arg.Any<IExecuteStrategy>()).Returns(null);
 
             var target = new DefaultExecuteStrategy<int>();
@@ -120,7 +120,7 @@
             typeCreator.Create(typeof(SlimModel), null, Arg.Any<IExecuteStrategy>()).Returns(expected);
             typeCreator.Populate(expected, target).Returns(expected);
             typeCreator.AutoPopulate.Returns(true);
-            generator.IsSupported(typeof(Guid), "Value", Arg.Is<IBuildChain>(x => x.Last == expected)).Returns(true);
+            generator.IsMatch(typeof(Guid), "Value", Arg.Is<IBuildChain>(x => x.Last == expected)).Returns(true);
             generator.Generate(typeof(Guid), "Value", Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == expected))
                 .Returns(value);
 
@@ -214,13 +214,13 @@
                 "Staff",
                 Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == expected)).Returns(staff);
             enumerableTypeCreator.Populate(staff, target).Returns(staff);
-            valueGenerator.IsSupported(typeof(string), "Name", Arg.Is<IBuildChain>(x => x.Last == expected))
+            valueGenerator.IsMatch(typeof(string), "Name", Arg.Is<IBuildChain>(x => x.Last == expected))
                 .Returns(true);
             valueGenerator.Generate(
                 typeof(string),
                 "Name",
                 Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == expected)).Returns(name);
-            valueGenerator.IsSupported(typeof(string), "Address", Arg.Is<IBuildChain>(x => x.Last == expected))
+            valueGenerator.IsMatch(typeof(string), "Address", Arg.Is<IBuildChain>(x => x.Last == expected))
                 .Returns(true);
             valueGenerator.Generate(
                 typeof(string),

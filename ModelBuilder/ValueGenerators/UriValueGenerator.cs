@@ -11,7 +11,7 @@
     {
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
-        public override bool IsSupported(Type type, string referenceName, IBuildChain buildChain)
+        public override bool IsMatch(Type type, string referenceName, IBuildChain buildChain)
         {
             if (type == null)
             {

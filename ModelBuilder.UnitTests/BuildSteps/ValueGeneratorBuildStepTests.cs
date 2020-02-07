@@ -71,7 +71,7 @@
             executeStrategy.BuildChain.Returns(buildChain);
 
             executeStrategy.Configuration.Returns(buildConfiguration);
-            generator.IsSupported(parameterInfo.ParameterType, parameterInfo.Name, buildChain).Returns(true);
+            generator.IsMatch(parameterInfo.ParameterType, parameterInfo.Name, buildChain).Returns(true);
             generator.Generate(parameterInfo.ParameterType, parameterInfo.Name, executeStrategy).Returns(expected);
 
             var sut = new ValueGeneratorBuildStep();
@@ -100,9 +100,9 @@
             executeStrategy.Configuration.Returns(buildConfiguration);
             executeStrategy.BuildChain.Returns(buildChain);
             firstGenerator.Priority.Returns(10);
-            firstGenerator.IsSupported(parameterInfo.ParameterType, parameterInfo.Name, buildChain).Returns(true);
+            firstGenerator.IsMatch(parameterInfo.ParameterType, parameterInfo.Name, buildChain).Returns(true);
             secondGenerator.Priority.Returns(20);
-            secondGenerator.IsSupported(parameterInfo.ParameterType, parameterInfo.Name, buildChain).Returns(true);
+            secondGenerator.IsMatch(parameterInfo.ParameterType, parameterInfo.Name, buildChain).Returns(true);
             secondGenerator.Generate(parameterInfo.ParameterType, parameterInfo.Name, executeStrategy)
                 .Returns(expected);
 
@@ -194,7 +194,7 @@
 
             executeStrategy.Configuration.Returns(buildConfiguration);
             executeStrategy.BuildChain.Returns(buildChain);
-            generator.IsSupported(propertyInfo.PropertyType, propertyInfo.Name, buildChain).Returns(true);
+            generator.IsMatch(propertyInfo.PropertyType, propertyInfo.Name, buildChain).Returns(true);
             generator.Generate(propertyInfo.PropertyType, propertyInfo.Name, executeStrategy).Returns(expected);
 
             var sut = new ValueGeneratorBuildStep();
@@ -222,9 +222,9 @@
             executeStrategy.Configuration.Returns(buildConfiguration);
             executeStrategy.BuildChain.Returns(buildChain);
             firstGenerator.Priority.Returns(10);
-            firstGenerator.IsSupported(propertyInfo.PropertyType, propertyInfo.Name, buildChain).Returns(true);
+            firstGenerator.IsMatch(propertyInfo.PropertyType, propertyInfo.Name, buildChain).Returns(true);
             secondGenerator.Priority.Returns(20);
-            secondGenerator.IsSupported(propertyInfo.PropertyType, propertyInfo.Name, buildChain).Returns(true);
+            secondGenerator.IsMatch(propertyInfo.PropertyType, propertyInfo.Name, buildChain).Returns(true);
             secondGenerator.Generate(propertyInfo.PropertyType, propertyInfo.Name, executeStrategy).Returns(expected);
 
             var sut = new ValueGeneratorBuildStep();
@@ -310,7 +310,7 @@
 
             executeStrategy.Configuration.Returns(buildConfiguration);
             executeStrategy.BuildChain.Returns(buildChain);
-            generator.IsSupported(type, null, buildChain).Returns(true);
+            generator.IsMatch(type, null, buildChain).Returns(true);
             generator.Generate(type, null, executeStrategy).Returns(expected);
 
             var sut = new ValueGeneratorBuildStep();
@@ -338,9 +338,9 @@
             executeStrategy.Configuration.Returns(buildConfiguration);
             executeStrategy.BuildChain.Returns(buildChain);
             firstGenerator.Priority.Returns(10);
-            firstGenerator.IsSupported(type, null, buildChain).Returns(true);
+            firstGenerator.IsMatch(type, null, buildChain).Returns(true);
             secondGenerator.Priority.Returns(20);
-            secondGenerator.IsSupported(type, null, buildChain).Returns(true);
+            secondGenerator.IsMatch(type, null, buildChain).Returns(true);
             secondGenerator.Generate(type, null, executeStrategy).Returns(expected);
 
             var sut = new ValueGeneratorBuildStep();
@@ -433,7 +433,7 @@
 
             executeStrategy.Configuration.Returns(buildConfiguration);
             executeStrategy.BuildChain.Returns(buildChain);
-            generator.IsSupported(parameterInfo.ParameterType, parameterInfo.Name, buildChain).Returns(true);
+            generator.IsMatch(parameterInfo.ParameterType, parameterInfo.Name, buildChain).Returns(true);
             generator.Generate(parameterInfo.ParameterType, parameterInfo.Name, executeStrategy).Returns(expected);
 
             var sut = new ValueGeneratorBuildStep();
@@ -540,7 +540,7 @@
 
             executeStrategy.Configuration.Returns(buildConfiguration);
             executeStrategy.BuildChain.Returns(buildChain);
-            generator.IsSupported(propertyInfo.PropertyType, propertyInfo.Name, buildChain).Returns(true);
+            generator.IsMatch(propertyInfo.PropertyType, propertyInfo.Name, buildChain).Returns(true);
             generator.Generate(propertyInfo.PropertyType, propertyInfo.Name, executeStrategy).Returns(expected);
 
             var sut = new ValueGeneratorBuildStep();
@@ -645,7 +645,7 @@
 
             executeStrategy.Configuration.Returns(buildConfiguration);
             executeStrategy.BuildChain.Returns(buildChain);
-            generator.IsSupported(type, null, buildChain).Returns(true);
+            generator.IsMatch(type, null, buildChain).Returns(true);
             generator.Generate(type, null, executeStrategy).Returns(expected);
 
             var sut = new ValueGeneratorBuildStep();

@@ -56,25 +56,25 @@
         [Theory]
         [InlineData(typeof(bool), false)]
         [InlineData(typeof(string), true)]
-        public void IsSupportedReturnsWhetherTypeIsSupportedTest(Type type, bool supported)
+        public void IsMatchReturnsWhetherTypeIsSupportedTest(Type type, bool supported)
         {
             var buildChain = Substitute.For<IBuildChain>();
 
             var target = new StringValueGenerator();
 
-            var actual = target.IsSupported(type, null, buildChain);
+            var actual = target.IsMatch(type, null, buildChain);
 
             actual.Should().Be(supported);
         }
 
         [Fact]
-        public void IsSupportedThrowsExceptionWithNullTypeTest()
+        public void IsMatchThrowsExceptionWithNullTypeTest()
         {
             var buildChain = Substitute.For<IBuildChain>();
 
             var target = new StringValueGenerator();
 
-            Action action = () => target.IsSupported(null, null, buildChain);
+            Action action = () => target.IsMatch(null, null, buildChain);
 
             action.Should().Throw<ArgumentNullException>();
         }

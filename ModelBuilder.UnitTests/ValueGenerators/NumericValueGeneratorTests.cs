@@ -300,7 +300,7 @@
         }
 
         [Fact]
-        public void IsSupportedForParameterInfoReturnsFalseForUnsupportedType()
+        public void IsMatchForParameterInfoReturnsFalseForUnsupportedType()
         {
             var parameterInfo = typeof(Copy).GetConstructors().Single().GetParameters().Single();
 
@@ -308,26 +308,26 @@
 
             var target = new NumericValueGenerator();
 
-            var actual = target.IsSupported(parameterInfo, buildChain);
+            var actual = target.IsMatch(parameterInfo, buildChain);
 
             actual.Should().BeFalse();
         }
 
         [Theory]
         [MemberData(nameof(DataSet.GetParameters), typeof(ParameterTest), MemberType = typeof(DataSet))]
-        public void IsSupportedForParameterInfoReturnsTrue(ParameterInfo parameterInfo)
+        public void IsMatchForParameterInfoReturnsTrue(ParameterInfo parameterInfo)
         {
             var buildChain = Substitute.For<IBuildChain>();
 
             var target = new NumericValueGenerator();
 
-            var actual = target.IsSupported(parameterInfo, buildChain);
+            var actual = target.IsMatch(parameterInfo, buildChain);
 
             actual.Should().BeTrue();
         }
 
         [Fact]
-        public void IsSupportedForPropertyInfoReturnsFalseForUnsupportedType()
+        public void IsMatchForPropertyInfoReturnsFalseForUnsupportedType()
         {
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
 
@@ -335,81 +335,81 @@
 
             var target = new NumericValueGenerator();
 
-            var actual = target.IsSupported(propertyInfo, buildChain);
+            var actual = target.IsMatch(propertyInfo, buildChain);
 
             actual.Should().BeFalse();
         }
 
         [Theory]
         [MemberData(nameof(DataSet.GetProperties), typeof(PropertyTest), MemberType = typeof(DataSet))]
-        public void IsSupportedForPropertyInfoReturnsTrue(PropertyInfo propertyInfo)
+        public void IsMatchForPropertyInfoReturnsTrue(PropertyInfo propertyInfo)
         {
             var buildChain = Substitute.For<IBuildChain>();
 
             var target = new NumericValueGenerator();
 
-            var actual = target.IsSupported(propertyInfo, buildChain);
+            var actual = target.IsMatch(propertyInfo, buildChain);
 
             actual.Should().BeTrue();
         }
 
         [Theory]
         [ClassData(typeof(NumericTypeDataSource))]
-        public void IsSupportedForTypeEvaluatesRequestedTypeTest(Type type, bool typeSupported)
+        public void IsMatchForTypeEvaluatesRequestedTypeTest(Type type, bool typeSupported)
         {
             var buildChain = Substitute.For<IBuildChain>();
 
             var target = new NumericValueGenerator();
 
-            var actual = target.IsSupported(type, null, buildChain);
+            var actual = target.IsMatch(type, null, buildChain);
 
             actual.Should().Be(typeSupported);
         }
 
         [Fact]
-        public void IsSupportedForTypeThrowsExceptionWithNullBuildChangeTest()
+        public void IsMatchForTypeThrowsExceptionWithNullBuildChangeTest()
         {
             var type = typeof(decimal);
 
             var target = new NumericValueGenerator();
 
-            Action action = () => target.IsSupported(type, null, null);
+            Action action = () => target.IsMatch(type, null, null);
 
             action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
-        public void IsSupportedForTypeThrowsExceptionWithNullTypeTest()
+        public void IsMatchForTypeThrowsExceptionWithNullTypeTest()
         {
             var buildChain = Substitute.For<IBuildChain>();
 
             var target = new NumericValueGenerator();
 
-            Action action = () => target.IsSupported(null, null, buildChain);
+            Action action = () => target.IsMatch(null, null, buildChain);
 
             action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
-        public void IsSupportedThrowsExceptionWithNullParameterInfo()
+        public void IsMatchThrowsExceptionWithNullParameterInfo()
         {
             var buildChain = Substitute.For<IBuildChain>();
 
             var sut = new NumericValueGenerator();
 
-            Action action = () => sut.IsSupported((ParameterInfo) null, buildChain);
+            Action action = () => sut.IsMatch((ParameterInfo) null, buildChain);
 
             action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
-        public void IsSupportedThrowsExceptionWithNullPropertyInfo()
+        public void IsMatchThrowsExceptionWithNullPropertyInfo()
         {
             var buildChain = Substitute.For<IBuildChain>();
 
             var sut = new NumericValueGenerator();
 
-            Action action = () => sut.IsSupported((PropertyInfo) null, buildChain);
+            Action action = () => sut.IsMatch((PropertyInfo) null, buildChain);
 
             action.Should().Throw<ArgumentNullException>();
         }

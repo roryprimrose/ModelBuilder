@@ -124,13 +124,13 @@
         }
 
         [Fact]
-        public void IsSupportedThrowsExceptionWithNullTypeTest()
+        public void IsMatchThrowsExceptionWithNullTypeTest()
         {
             var buildChain = Substitute.For<IBuildChain>();
 
             var target = new BooleanValueGenerator();
 
-            Action action = () => target.IsSupported(null, null, buildChain);
+            Action action = () => target.IsMatch(null, null, buildChain);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -139,13 +139,13 @@
         [InlineData(typeof(bool), true)]
         [InlineData(typeof(bool?), true)]
         [InlineData(typeof(string), false)]
-        public void IsSupportedValidatesSupportedTypesTest(Type type, bool expected)
+        public void IsMatchValidatesSupportedTypesTest(Type type, bool expected)
         {
             var buildChain = Substitute.For<IBuildChain>();
 
             var target = new BooleanValueGenerator();
 
-            var actual = target.IsSupported(type, null, buildChain);
+            var actual = target.IsMatch(type, null, buildChain);
 
             actual.Should().Be(expected);
         }

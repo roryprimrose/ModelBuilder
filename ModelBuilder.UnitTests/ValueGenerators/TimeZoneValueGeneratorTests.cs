@@ -246,7 +246,7 @@
         [InlineData(typeof(string), "timezone", true)]
         [InlineData(typeof(string), "TimeZone", true)]
         [InlineData(typeof(string), "timeZone", true)]
-        public void IsSupportedTest(Type type, string referenceName, bool expected)
+        public void IsMatchTest(Type type, string referenceName, bool expected)
         {
             var address = new Address();
             var buildChain = new BuildHistory();
@@ -255,17 +255,17 @@
 
             var target = new TimeZoneValueGenerator();
 
-            var actual = target.IsSupported(type, referenceName, buildChain);
+            var actual = target.IsMatch(type, referenceName, buildChain);
 
             actual.Should().Be(expected);
         }
 
         [Fact]
-        public void IsSupportedThrowsExceptionWithNullTypeTest()
+        public void IsMatchThrowsExceptionWithNullTypeTest()
         {
             var target = new TimeZoneValueGenerator();
 
-            Action action = () => target.IsSupported(null, null, null);
+            Action action = () => target.IsMatch(null, null, null);
 
             action.Should().Throw<ArgumentNullException>();
         }

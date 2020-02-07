@@ -18,7 +18,7 @@
         [InlineData(typeof(bool), "Value|Other", "Other", true)]
         [InlineData(typeof(bool?), "Value|Other", "Value", true)]
         [InlineData(typeof(bool?), "Value|Other", "Other", true)]
-        public void IsSupportedEvaluatesSpecifiedExpressionAndTypesTest(
+        public void IsMatchEvaluatesSpecifiedExpressionAndTypesTest(
             Type type,
             string expression,
             string referenceName,
@@ -30,7 +30,7 @@
 
             var target = new WrapperGenerator(regex, typeof(bool), typeof(bool?));
 
-            var actual = target.IsSupported(type, referenceName, buildChain);
+            var actual = target.IsMatch(type, referenceName, buildChain);
 
             actual.Should().Be(expected);
         }
@@ -39,7 +39,7 @@
         [InlineData("Value|Other", "stuff", false)]
         [InlineData("Value|Other", "Value", true)]
         [InlineData("Value|Other", "Other", true)]
-        public void IsSupportedEvaluatesSpecifiedExpressionTest(string expression, string referenceName, bool expected)
+        public void IsMatchEvaluatesSpecifiedExpressionTest(string expression, string referenceName, bool expected)
         {
             var regex = new Regex(expression);
 
@@ -47,7 +47,7 @@
 
             var target = new WrapperGenerator(regex);
 
-            var actual = target.IsSupported(typeof(Guid), referenceName, buildChain);
+            var actual = target.IsMatch(typeof(Guid), referenceName, buildChain);
 
             actual.Should().Be(expected);
         }
@@ -62,13 +62,13 @@
         [InlineData(typeof(bool), "Match", true)]
         [InlineData(typeof(bool?), "match", true)]
         [InlineData(typeof(bool?), "Match", true)]
-        public void IsSupportedEvaluatesSpecifiedNameAndTypesTest(Type type, string referenceName, bool expected)
+        public void IsMatchEvaluatesSpecifiedNameAndTypesTest(Type type, string referenceName, bool expected)
         {
             var buildChain = Substitute.For<IBuildChain>();
 
             var target = new WrapperGenerator("Match", typeof(bool), typeof(bool?));
 
-            var actual = target.IsSupported(type, referenceName, buildChain);
+            var actual = target.IsMatch(type, referenceName, buildChain);
 
             actual.Should().Be(expected);
         }
@@ -78,13 +78,13 @@
         [InlineData(null, false)]
         [InlineData("Match", true)]
         [InlineData("match", true)]
-        public void IsSupportedEvaluatesSpecifiedNamesTest(string referenceName, bool expected)
+        public void IsMatchEvaluatesSpecifiedNamesTest(string referenceName, bool expected)
         {
             var buildChain = Substitute.For<IBuildChain>();
 
             var target = new WrapperGenerator("Match");
 
-            var actual = target.IsSupported(typeof(Guid), referenceName, buildChain);
+            var actual = target.IsMatch(typeof(Guid), referenceName, buildChain);
 
             actual.Should().Be(expected);
         }
@@ -93,40 +93,40 @@
         [InlineData(typeof(string), false)]
         [InlineData(typeof(bool), true)]
         [InlineData(typeof(bool?), true)]
-        public void IsSupportedEvaluatesSpecifiedTypesTest(Type type, bool expected)
+        public void IsMatchEvaluatesSpecifiedTypesTest(Type type, bool expected)
         {
             var buildChain = Substitute.For<IBuildChain>();
 
             var target = new WrapperGenerator(typeof(bool), typeof(bool?));
 
-            var actual = target.IsSupported(type, null, buildChain);
+            var actual = target.IsMatch(type, null, buildChain);
 
             actual.Should().Be(expected);
         }
 
         [Fact]
-        public void IsSupportedThrowsExceptionWithNullBuildChainTest()
+        public void IsMatchThrowsExceptionWithNullBuildChainTest()
         {
             var type = typeof(string);
 
             var target = new WrapperGenerator("Test");
 
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-            Action action = () => target.IsSupported(type, "Test", null);
+            Action action = () => target.IsMatch(type, "Test", null);
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
             action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
-        public void IsSupportedThrowsExceptionWithNullTypeTest()
+        public void IsMatchThrowsExceptionWithNullTypeTest()
         {
             var buildChain = new BuildHistory();
 
             var target = new WrapperGenerator("Test");
 
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-            Action action = () => target.IsSupported(null, "Test", buildChain);
+            Action action = () => target.IsMatch(null, "Test", buildChain);
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
             action.Should().Throw<ArgumentNullException>();

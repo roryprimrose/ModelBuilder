@@ -46,9 +46,9 @@
         }
 
         /// <inheritdoc />
-        public override bool IsSupported(Type type, string referenceName, IBuildChain buildChain)
+        public override bool IsMatch(Type type, string referenceName, IBuildChain buildChain)
         {
-            var baseSupported = base.IsSupported(type, referenceName, buildChain);
+            var baseSupported = base.IsMatch(type, referenceName, buildChain);
 
             if (baseSupported == false)
             {

@@ -38,7 +38,7 @@
         }
 
         /// <inheritdoc />
-        public override bool IsSupported(Type type, string referenceName, IBuildChain buildChain)
+        public override bool IsMatch(Type type, string referenceName, IBuildChain buildChain)
         {
             if (_type.IsAssignableFrom(type) == false)
             {

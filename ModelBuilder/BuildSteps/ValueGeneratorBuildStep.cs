@@ -100,7 +100,7 @@
                 return false;
             }
 
-            return generator.IsSupported(type, null, buildChain);
+            return generator.IsMatch(type, null, buildChain);
         }
 
         /// <inheritdoc />
@@ -130,7 +130,7 @@
                 return false;
             }
 
-            return generator.IsSupported(parameterInfo.ParameterType, parameterInfo.Name, buildChain);
+            return generator.IsMatch(parameterInfo.ParameterType, parameterInfo.Name, buildChain);
         }
 
         /// <inheritdoc />
@@ -160,13 +160,13 @@
                 return false;
             }
 
-            return generator.IsSupported(propertyInfo.PropertyType, propertyInfo.Name, buildChain);
+            return generator.IsMatch(propertyInfo.PropertyType, propertyInfo.Name, buildChain);
         }
 
         private IValueGenerator GetMatchingGenerator(Type type, string referenceName, IBuildConfiguration buildConfiguration,
             IBuildChain buildChain)
         {
-            return buildConfiguration.ValueGenerators?.Where(x => x.IsSupported(type, referenceName, buildChain))
+            return buildConfiguration.ValueGenerators?.Where(x => x.IsMatch(type, referenceName, buildChain))
                 .OrderByDescending(x => x.Priority).FirstOrDefault();
         }
 

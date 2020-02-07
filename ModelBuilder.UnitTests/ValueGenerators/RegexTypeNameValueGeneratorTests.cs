@@ -59,7 +59,7 @@
         [Theory]
         [InlineData(typeof(string), "FirstName", true)]
         [InlineData(typeof(string), "LastName", false)]
-        public void IsSupportedForReturnsWhetherNameMatchesExpression(Type type, string expression, bool expected)
+        public void IsMatchForReturnsWhetherNameMatchesExpression(Type type, string expression, bool expected)
         {
             var nameRegex = new Regex(expression);
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
@@ -69,7 +69,7 @@
 
             var sut = new Wrapper(nameRegex, type, value);
 
-            var actual = sut.IsSupported(propertyInfo, buildChain);
+            var actual = sut.IsMatch(propertyInfo, buildChain);
 
             actual.Should().Be(expected);
         }
@@ -77,7 +77,7 @@
         [Theory]
         [InlineData(typeof(string), "FirstName", true)]
         [InlineData(typeof(int), "FirstName", false)]
-        public void IsSupportedForReturnsWhetherTypeMatches(Type type, string expression, bool expected)
+        public void IsMatchForReturnsWhetherTypeMatches(Type type, string expression, bool expected)
         {
             var nameRegex = new Regex(expression);
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
@@ -87,13 +87,13 @@
 
             var sut = new Wrapper(nameRegex, type, value);
 
-            var actual = sut.IsSupported(propertyInfo, buildChain);
+            var actual = sut.IsMatch(propertyInfo, buildChain);
 
             actual.Should().Be(expected);
         }
 
         [Fact]
-        public void IsSupportedForTargetTypeReturnsFalse()
+        public void IsMatchForTargetTypeReturnsFalse()
         {
             var value = Guid.NewGuid().ToString();
 
@@ -110,7 +110,7 @@
         [InlineData(null)]
         [InlineData("")]
         [InlineData("  ")]
-        public void IsSupportedReturnsFalseForUnsupportedReferenceName(string referenceName)
+        public void IsMatchReturnsFalseForUnsupportedReferenceName(string referenceName)
         {
             var nameRegex = PropertyExpression.FirstName;
             var value = Guid.NewGuid().ToString();
@@ -119,7 +119,7 @@
 
             var sut = new Wrapper(nameRegex, typeof(string), value);
 
-            var actual = sut.IsSupported(typeof(string), referenceName, buildChain);
+            var actual = sut.IsMatch(typeof(string), referenceName, buildChain);
 
             actual.Should().BeFalse();
         }

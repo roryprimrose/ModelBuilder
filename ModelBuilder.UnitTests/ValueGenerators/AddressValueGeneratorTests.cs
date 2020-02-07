@@ -322,39 +322,39 @@
 
         [Theory]
         [MemberData(nameof(DataSet.GetParameters), typeof(ParameterTest), MemberType = typeof(DataSet))]
-        public void IsSupportedForParameterTest(ParameterInfo parameterInfo)
+        public void IsMatchForParameterTest(ParameterInfo parameterInfo)
         {
             var buildChain = Substitute.For<IBuildChain>();
 
             var target = new AddressValueGenerator();
 
-            var actual = target.IsSupported(parameterInfo, buildChain);
+            var actual = target.IsMatch(parameterInfo, buildChain);
 
             actual.Should().BeTrue();
         }
 
         [Theory]
         [MemberData(nameof(DataSet.GetProperties), typeof(UnspportedPropertyTest), MemberType = typeof(DataSet))]
-        public void IsSupportedReturnsFalseForUnsupportedPropertiesTest(PropertyInfo propertyInfo)
+        public void IsMatchReturnsFalseForUnsupportedPropertiesTest(PropertyInfo propertyInfo)
         {
             var buildChain = Substitute.For<IBuildChain>();
 
             var target = new AddressValueGenerator();
 
-            var actual = target.IsSupported(propertyInfo, buildChain);
+            var actual = target.IsMatch(propertyInfo, buildChain);
 
             actual.Should().BeFalse();
         }
 
         [Theory]
         [MemberData(nameof(DataSet.GetProperties), typeof(SupportedPropertyTest), MemberType = typeof(DataSet))]
-        public void IsSupportedReturnsTrueForSupportedPropertiesTest(PropertyInfo propertyInfo)
+        public void IsMatchReturnsTrueForSupportedPropertiesTest(PropertyInfo propertyInfo)
         {
             var buildChain = Substitute.For<IBuildChain>();
 
             var target = new AddressValueGenerator();
 
-            var actual = target.IsSupported(propertyInfo, buildChain);
+            var actual = target.IsMatch(propertyInfo, buildChain);
 
             actual.Should().BeTrue();
         }

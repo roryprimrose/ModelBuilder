@@ -44,7 +44,7 @@
 
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="propertyInfo" /> parameter is <c>null</c>.</exception>
-        public virtual bool IsSupported(PropertyInfo propertyInfo, IBuildChain buildChain)
+        public virtual bool IsMatch(PropertyInfo propertyInfo, IBuildChain buildChain)
         {
             if (propertyInfo == null)
             {
@@ -56,12 +56,12 @@
                 throw new ArgumentNullException(nameof(buildChain));
             }
 
-            return IsSupported(propertyInfo.PropertyType, propertyInfo.Name, buildChain);
+            return IsMatch(propertyInfo.PropertyType, propertyInfo.Name, buildChain);
         }
 
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="parameterInfo" /> parameter is <c>null</c>.</exception>
-        public virtual bool IsSupported(ParameterInfo parameterInfo, IBuildChain buildChain)
+        public virtual bool IsMatch(ParameterInfo parameterInfo, IBuildChain buildChain)
         {
             if (parameterInfo == null)
             {
@@ -73,11 +73,11 @@
                 throw new ArgumentNullException(nameof(buildChain));
             }
 
-            return IsSupported(parameterInfo.ParameterType, parameterInfo.Name, buildChain);
+            return IsMatch(parameterInfo.ParameterType, parameterInfo.Name, buildChain);
         }
 
         /// <inheritdoc />
-        public abstract bool IsSupported(Type type, string referenceName, IBuildChain buildChain);
+        public abstract bool IsMatch(Type type, string referenceName, IBuildChain buildChain);
 
         /// <inheritdoc />
         public virtual int Priority { get; } = int.MinValue;

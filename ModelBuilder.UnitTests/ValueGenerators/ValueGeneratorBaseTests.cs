@@ -83,7 +83,7 @@
         }
 
         [Fact]
-        public void IsSupportedForParameterThrowsExceptionWithNullBuildChain()
+        public void IsMatchForParameterThrowsExceptionWithNullBuildChain()
         {
             var value = Guid.NewGuid().ToString();
             var parameterInfo = typeof(Person).GetConstructors()
@@ -91,27 +91,27 @@
 
             var target = new GenerateWrapper(true, value);
 
-            Action action = () => target.IsSupported(parameterInfo, null);
+            Action action = () => target.IsMatch(parameterInfo, null);
 
             action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
-        public void IsSupportedForPropertyThrowsExceptionWithNullBuildChain()
+        public void IsMatchForPropertyThrowsExceptionWithNullBuildChain()
         {
             var value = Guid.NewGuid().ToString();
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
 
             var target = new GenerateWrapper(true, value);
 
-            Action action = () => target.IsSupported(propertyInfo, null);
+            Action action = () => target.IsMatch(propertyInfo, null);
 
             action.Should().Throw<ArgumentNullException>();
         }
 
         [Theory]
         [MemberData(nameof(DataSet.GetParameters), typeof(WithConstructorParameters), MemberType = typeof(DataSet))]
-        public void IsSupportedRequestsValueForParameterTest(ParameterInfo parameterInfo)
+        public void IsMatchRequestsValueForParameterTest(ParameterInfo parameterInfo)
         {
             var value = Guid.NewGuid().ToString();
 
@@ -119,7 +119,7 @@
 
             var target = new GenerateWrapper(true, value);
 
-            target.IsSupported(parameterInfo, buildChain);
+            target.IsMatch(parameterInfo, buildChain);
 
             target.TypeUsed.Should().Be(parameterInfo.ParameterType);
             target.ReferenceNameUsed.Should().Be(parameterInfo.Name);
@@ -127,7 +127,7 @@
 
         [Theory]
         [MemberData(nameof(DataSet.GetProperties), typeof(Person), MemberType = typeof(DataSet))]
-        public void IsSupportedRequestsValueForPropertyTest(PropertyInfo parameterInfo)
+        public void IsMatchRequestsValueForPropertyTest(PropertyInfo parameterInfo)
         {
             var value = Guid.NewGuid().ToString();
 
@@ -135,14 +135,14 @@
 
             var target = new GenerateWrapper(true, value);
 
-            target.IsSupported(parameterInfo, buildChain);
+            target.IsMatch(parameterInfo, buildChain);
 
             target.TypeUsed.Should().Be(parameterInfo.PropertyType);
             target.ReferenceNameUsed.Should().Be(parameterInfo.Name);
         }
 
         [Fact]
-        public void IsSupportedThrowsExceptionWithNullParameterInfo()
+        public void IsMatchThrowsExceptionWithNullParameterInfo()
         {
             var value = Guid.NewGuid().ToString();
 
@@ -150,13 +150,13 @@
 
             var target = new GenerateWrapper(true, value);
 
-            Action action = () => target.IsSupported((ParameterInfo) null, buildChain);
+            Action action = () => target.IsMatch((ParameterInfo) null, buildChain);
 
             action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
-        public void IsSupportedThrowsExceptionWithNullPropertyInfo()
+        public void IsMatchThrowsExceptionWithNullPropertyInfo()
         {
             var value = Guid.NewGuid().ToString();
 
@@ -164,7 +164,7 @@
 
             var target = new GenerateWrapper(true, value);
 
-            Action action = () => target.IsSupported((PropertyInfo) null, buildChain);
+            Action action = () => target.IsMatch((PropertyInfo) null, buildChain);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -203,7 +203,7 @@
                 return _value;
             }
 
-            public override bool IsSupported(Type type, string referenceName, IBuildChain buildChain)
+            public override bool IsMatch(Type type, string referenceName, IBuildChain buildChain)
             {
                 TypeUsed = type;
                 ReferenceNameUsed = referenceName;

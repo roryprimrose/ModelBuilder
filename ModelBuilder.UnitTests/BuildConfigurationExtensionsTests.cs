@@ -717,7 +717,7 @@
             var target = Substitute.For<IBuildConfiguration>();
 
             target.ValueGenerators.Returns(generators);
-            generator.IsSupported(typeof(Guid), null, Arg.Any<IBuildChain>()).Returns(true);
+            generator.IsMatch(typeof(Guid), null, Arg.Any<IBuildChain>()).Returns(true);
             generator.Generate(typeof(Guid), null, Arg.Any<IExecuteStrategy>()).Returns(value);
 
             var actual = target.Create(typeof(Guid));
@@ -756,7 +756,7 @@
             var target = Substitute.For<IBuildConfiguration>();
 
             target.ValueGenerators.Returns(generators);
-            generator.IsSupported(typeof(Guid), null, Arg.Any<IBuildChain>()).Returns(true);
+            generator.IsMatch(typeof(Guid), null, Arg.Any<IBuildChain>()).Returns(true);
             generator.Generate(typeof(Guid), null, Arg.Any<IExecuteStrategy>()).Returns(value);
 
             var actual = target.Create<Guid>();
@@ -990,7 +990,7 @@
             target.ValueGenerators.Returns(generators);
             creator.CanPopulate(typeof(SlimModel), null, Arg.Any<IBuildChain>()).Returns(true);
             creator.Populate(expected, Arg.Any<IExecuteStrategy>()).Returns(expected);
-            generator.IsSupported(typeof(Guid), "Value", Arg.Is<IBuildChain>(x => x.Last == expected)).Returns(true);
+            generator.IsMatch(typeof(Guid), "Value", Arg.Is<IBuildChain>(x => x.Last == expected)).Returns(true);
             generator.Generate(typeof(Guid), "Value", Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == expected))
                 .Returns(value);
 

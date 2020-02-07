@@ -298,7 +298,7 @@ namespace ModelBuilder.UnitTests.ValueGenerators
         [InlineData(typeof(string), "FirstName", typeof(List<string>), false)]
         [InlineData(typeof(string), "stuff", typeof(Person), false)]
         [InlineData(typeof(string), "FirstName", typeof(Person), true)]
-        public void IsSupportedReturnsFalseForUnsupportedScenariosTest(
+        public void IsMatchReturnsFalseForUnsupportedScenariosTest(
             Type type,
             string referenceName,
             Type contextType,
@@ -315,13 +315,13 @@ namespace ModelBuilder.UnitTests.ValueGenerators
 
             var target = new GeneratorWrapper<string>(PropertyExpression.FirstName, PropertyExpression.Gender);
 
-            var actual = target.IsSupported(type, referenceName, buildChain);
+            var actual = target.IsMatch(type, referenceName, buildChain);
 
             actual.Should().Be(expected);
         }
 
         [Fact]
-        public void IsSupportedReturnsTrueWhenSourceExpressionIsNullAndTargetExpressionMatchesReferenceNameTest()
+        public void IsMatchReturnsTrueWhenSourceExpressionIsNullAndTargetExpressionMatchesReferenceNameTest()
         {
             var context = new SlimModel();
             var buildChain = new BuildHistory();
@@ -332,13 +332,13 @@ namespace ModelBuilder.UnitTests.ValueGenerators
             var target = new GeneratorWrapper<string>(PropertyExpression.FirstName, (Regex)null);
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
-            var actual = target.IsSupported(typeof(string), "FirstName", buildChain);
+            var actual = target.IsMatch(typeof(string), "FirstName", buildChain);
 
             actual.Should().BeTrue();
         }
 
         [Fact]
-        public void IsSupportedReturnsTrueWhenTargetExpressionMatchesReferenceNameTest()
+        public void IsMatchReturnsTrueWhenTargetExpressionMatchesReferenceNameTest()
         {
             var context = new SlimModel();
             var buildChain = new BuildHistory();
@@ -347,25 +347,25 @@ namespace ModelBuilder.UnitTests.ValueGenerators
 
             var target = new GeneratorWrapper<string>(PropertyExpression.FirstName, typeof(string));
 
-            var actual = target.IsSupported(typeof(string), "FirstName", buildChain);
+            var actual = target.IsMatch(typeof(string), "FirstName", buildChain);
 
             actual.Should().BeTrue();
         }
 
         [Fact]
-        public void IsSupportedThrowsExceptionWithNullBuildChainTest()
+        public void IsMatchThrowsExceptionWithNullBuildChainTest()
         {
             var target = new GeneratorWrapper<string>(PropertyExpression.FirstName, typeof(string));
 
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-            Action action = () => target.IsSupported(typeof(string), "FirstName", null);
+            Action action = () => target.IsMatch(typeof(string), "FirstName", null);
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
             action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
-        public void IsSupportedThrowsExceptionWithNullTypeTest()
+        public void IsMatchThrowsExceptionWithNullTypeTest()
         {
             var context = new SlimModel();
             var buildChain = new BuildHistory();
@@ -375,7 +375,7 @@ namespace ModelBuilder.UnitTests.ValueGenerators
             var target = new GeneratorWrapper<string>(PropertyExpression.FirstName, typeof(string));
 
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-            Action action = () => target.IsSupported(null, "FirstName", buildChain);
+            Action action = () => target.IsMatch(null, "FirstName", buildChain);
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
             action.Should().Throw<ArgumentNullException>();

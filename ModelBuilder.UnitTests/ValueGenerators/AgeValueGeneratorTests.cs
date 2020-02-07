@@ -234,20 +234,20 @@
 
         [Theory]
         [ClassData(typeof(NumericTypeDataSource))]
-        public void IsSupportedEvaluatesRequestedTypeTest(Type type, bool typeSupported)
+        public void IsMatchEvaluatesRequestedTypeTest(Type type, bool typeSupported)
         {
             var buildChain = Substitute.For<IBuildChain>();
 
             var target = new AgeValueGenerator();
 
-            var actual = target.IsSupported(type, "Age", buildChain);
+            var actual = target.IsMatch(type, "Age", buildChain);
 
             actual.Should().Be(typeSupported);
         }
 
         [Theory]
         [ClassData(typeof(NumericTypeDataSource))]
-        public void IsSupportedReturnsFalseWhenReferenceNameIsNullTest(Type type, bool typeSupported)
+        public void IsMatchReturnsFalseWhenReferenceNameIsNullTest(Type type, bool typeSupported)
         {
             if (typeSupported == false)
             {
@@ -259,14 +259,14 @@
 
             var target = new AgeValueGenerator();
 
-            var actual = target.IsSupported(type, null, buildChain);
+            var actual = target.IsMatch(type, null, buildChain);
 
             actual.Should().BeFalse();
         }
 
         [Theory]
         [ClassData(typeof(NumericTypeDataSource))]
-        public void IsSupportedReturnsFalseWhenReferenceNameNotAgeTest(Type type, bool typeSupported)
+        public void IsMatchReturnsFalseWhenReferenceNameNotAgeTest(Type type, bool typeSupported)
         {
             if (typeSupported == false)
             {
@@ -278,14 +278,14 @@
 
             var target = new AgeValueGenerator();
 
-            var actual = target.IsSupported(type, "Stuff", buildChain);
+            var actual = target.IsMatch(type, "Stuff", buildChain);
 
             actual.Should().BeFalse();
         }
 
         [Theory]
         [ClassData(typeof(NumericTypeDataSource))]
-        public void IsSupportedReturnsTrueWhenReferenceNameIncludesAgeTest(Type type, bool typeSupported)
+        public void IsMatchReturnsTrueWhenReferenceNameIncludesAgeTest(Type type, bool typeSupported)
         {
             if (typeSupported == false)
             {
@@ -297,17 +297,17 @@
 
             var target = new AgeValueGenerator();
 
-            var actual = target.IsSupported(type, "SomeAgeValue", buildChain);
+            var actual = target.IsMatch(type, "SomeAgeValue", buildChain);
 
             actual.Should().BeTrue();
         }
 
         [Fact]
-        public void IsSupportedThrowsExceptionWithNullTypeTest()
+        public void IsMatchThrowsExceptionWithNullTypeTest()
         {
             var target = new AgeValueGenerator();
 
-            Action action = () => target.IsSupported(null, null, null);
+            Action action = () => target.IsMatch(null, null, null);
 
             action.Should().Throw<ArgumentNullException>();
         }
