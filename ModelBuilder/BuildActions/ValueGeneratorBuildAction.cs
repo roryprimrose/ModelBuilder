@@ -1,6 +1,7 @@
 ﻿namespace ModelBuilder.BuildActions
 {
     using System;
+    using System.Globalization;
     using System.Linq;
     using System.Reflection;
     using ModelBuilder.ValueGenerators;
@@ -28,7 +29,9 @@
 
             var generator = GetMatchingGenerator(type, null, executeStrategy.Configuration, executeStrategy.BuildChain);
 
-            return generator?.Generate(type, null, executeStrategy);
+            return Build(generator, type, null, executeStrategy.BuildChain,
+                () => generator?.Generate(type, null, executeStrategy),
+                executeStrategy.Log);
         }
 
         /// <inheritdoc />
@@ -46,10 +49,13 @@
                 throw new ArgumentNullException(nameof(executeStrategy));
             }
 
-            var generator = GetMatchingGenerator(parameterInfo.ParameterType, parameterInfo.Name, executeStrategy.Configuration,
+            var generator = GetMatchingGenerator(parameterInfo.ParameterType, parameterInfo.Name,
+                executeStrategy.Configuration,
                 executeStrategy.BuildChain);
 
-            return generator?.Generate(parameterInfo.ParameterType, parameterInfo.Name, executeStrategy);
+            return Build(generator, parameterInfo.ParameterType, parameterInfo.Name, executeStrategy.BuildChain,
+                () => generator?.Generate(parameterInfo.ParameterType, parameterInfo.Name, executeStrategy),
+                executeStrategy.Log);
         }
 
         /// <inheritdoc />
@@ -67,10 +73,13 @@
                 throw new ArgumentNullException(nameof(executeStrategy));
             }
 
-            var generator = GetMatchingGenerator(propertyInfo.PropertyType, propertyInfo.Name, executeStrategy.Configuration,
+            var generator = GetMatchingGenerator(propertyInfo.PropertyType, propertyInfo.Name,
+                executeStrategy.Configuration,
                 executeStrategy.BuildChain);
 
-            return generator?.Generate(propertyInfo.PropertyType, propertyInfo.Name, executeStrategy);
+            return Build(generator, propertyInfo.PropertyType, propertyInfo.Name, executeStrategy.BuildChain,
+                () => generator?.Generate(propertyInfo.PropertyType, propertyInfo.Name, executeStrategy),
+                executeStrategy.Log);
         }
 
         /// <inheritdoc />
@@ -123,7 +132,8 @@
                 throw new ArgumentNullException(nameof(buildChain));
             }
 
-            var generator = GetMatchingGenerator(parameterInfo.ParameterType, parameterInfo.Name, buildConfiguration, buildChain);
+            var generator = GetMatchingGenerator(parameterInfo.ParameterType, parameterInfo.Name, buildConfiguration,
+                buildChain);
 
             if (generator == null)
             {
@@ -153,7 +163,8 @@
                 throw new ArgumentNullException(nameof(buildChain));
             }
 
-            var generator = GetMatchingGenerator(propertyInfo.PropertyType, propertyInfo.Name, buildConfiguration, buildChain);
+            var generator = GetMatchingGenerator(propertyInfo.PropertyType, propertyInfo.Name, buildConfiguration,
+                buildChain);
 
             if (generator == null)
             {
@@ -163,7 +174,50 @@
             return generator.IsMatch(propertyInfo.PropertyType, propertyInfo.Name, buildChain);
         }
 
-        private IValueGenerator GetMatchingGenerator(Type type, string referenceName, IBuildConfiguration buildConfiguration,
+        private object Build(IValueGenerator generator, Type typeToBuild, string referenceName, IBuildChain buildChain,
+            Func<object> createAction, IBuildLog buildLog)
+        {
+            if (generator == null)
+            {
+                return null;
+            }
+
+            var context = buildChain.Last;
+            var ruleType = generator.GetType();
+
+            buildLog.CreatingValue(typeToBuild, ruleType, context);
+
+            try
+            {
+                return createAction();
+            }
+            catch (BuildException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                buildLog.BuildFailure(ex);
+
+                const string messageFormat =
+                    "Failed to create value for type {0} using value generator {1}, {2}: {3}{4}{4}At the time of the failure, the build log was:{4}{4}{5}";
+                var output = buildLog.Output;
+                var message = string.Format(
+                    CultureInfo.CurrentCulture,
+                    messageFormat,
+                    typeToBuild.FullName,
+                    ruleType.FullName,
+                    ex.GetType().Name,
+                    ex.Message,
+                    Environment.NewLine,
+                    output);
+
+                throw new BuildException(message, typeToBuild, referenceName, context, output, ex);
+            }
+        }
+
+        private IValueGenerator GetMatchingGenerator(Type type, string referenceName,
+            IBuildConfiguration buildConfiguration,
             IBuildChain buildChain)
         {
             return buildConfiguration.ValueGenerators?.Where(x => x.IsMatch(type, referenceName, buildChain))

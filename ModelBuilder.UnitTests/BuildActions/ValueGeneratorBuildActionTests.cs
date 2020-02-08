@@ -8,55 +8,23 @@
     using ModelBuilder.UnitTests.Models;
     using ModelBuilder.ValueGenerators;
     using NSubstitute;
+    using NSubstitute.ExceptionExtensions;
     using Xunit;
+    using Xunit.Abstractions;
 
     public class ValueGeneratorBuildActionTests
     {
-        [Fact]
-        public void BuildForParameterInfoReturnsNullWhenNoMatchingRuleFound()
+        private readonly OutputBuildLog _buildLog;
+        private readonly ITestOutputHelper _output;
+
+        public ValueGeneratorBuildActionTests(ITestOutputHelper output)
         {
-            var parameterInfo = typeof(Person).GetConstructors()
-                .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
-            var buildConfiguration = new BuildConfiguration();
-            var buildChain = new BuildHistory();
-
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-            var generator = Substitute.For<IValueGenerator>();
-
-            buildConfiguration.ValueGenerators.Add(generator);
-
-            executeStrategy.Configuration.Returns(buildConfiguration);
-            executeStrategy.BuildChain.Returns(buildChain);
-
-            var sut = new ValueGeneratorBuildAction();
-
-            var actual = sut.Build(parameterInfo, executeStrategy);
-
-            actual.Should().BeNull();
+            _output = output;
+            _buildLog = new OutputBuildLog(output);
         }
 
         [Fact]
-        public void BuildForParameterInfoReturnsNullWhenNoRulesExist()
-        {
-            var parameterInfo = typeof(Person).GetConstructors()
-                .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
-            var buildConfiguration = new BuildConfiguration();
-            var buildChain = new BuildHistory();
-
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            executeStrategy.Configuration.Returns(buildConfiguration);
-            executeStrategy.BuildChain.Returns(buildChain);
-
-            var sut = new ValueGeneratorBuildAction();
-
-            var actual = sut.Build(parameterInfo, executeStrategy);
-
-            actual.Should().BeNull();
-        }
-
-        [Fact]
-        public void BuildForParameterInfoReturnsRuleValueWhenMatchingRuleFound()
+        public void BuildForParameterInfoReturnsGeneratorValueWhenMatchingGeneratorFound()
         {
             var parameterInfo = typeof(Person).GetConstructors()
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
@@ -69,6 +37,7 @@
 
             buildConfiguration.ValueGenerators.Add(generator);
             executeStrategy.BuildChain.Returns(buildChain);
+            executeStrategy.Log.Returns(_buildLog);
 
             executeStrategy.Configuration.Returns(buildConfiguration);
             generator.IsMatch(parameterInfo.ParameterType, parameterInfo.Name, buildChain).Returns(true);
@@ -82,7 +51,52 @@
         }
 
         [Fact]
-        public void BuildForParameterInfoReturnsValueFromRuleWithHighestPriority()
+        public void BuildForParameterInfoReturnsNullWhenNoGeneratorsExist()
+        {
+            var parameterInfo = typeof(Person).GetConstructors()
+                .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
+            var buildConfiguration = new BuildConfiguration();
+            var buildChain = new BuildHistory();
+
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.Configuration.Returns(buildConfiguration);
+            executeStrategy.BuildChain.Returns(buildChain);
+            executeStrategy.Log.Returns(_buildLog);
+
+            var sut = new ValueGeneratorBuildAction();
+
+            var actual = sut.Build(parameterInfo, executeStrategy);
+
+            actual.Should().BeNull();
+        }
+
+        [Fact]
+        public void BuildForParameterInfoReturnsNullWhenNoMatchingGeneratorFound()
+        {
+            var parameterInfo = typeof(Person).GetConstructors()
+                .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
+            var buildConfiguration = new BuildConfiguration();
+            var buildChain = new BuildHistory();
+
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+            var generator = Substitute.For<IValueGenerator>();
+
+            buildConfiguration.ValueGenerators.Add(generator);
+
+            executeStrategy.Configuration.Returns(buildConfiguration);
+            executeStrategy.BuildChain.Returns(buildChain);
+            executeStrategy.Log.Returns(_buildLog);
+
+            var sut = new ValueGeneratorBuildAction();
+
+            var actual = sut.Build(parameterInfo, executeStrategy);
+
+            actual.Should().BeNull();
+        }
+
+        [Fact]
+        public void BuildForParameterInfoReturnsValueFromGeneratorWithHighestPriority()
         {
             var parameterInfo = typeof(Person).GetConstructors()
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
@@ -99,6 +113,7 @@
 
             executeStrategy.Configuration.Returns(buildConfiguration);
             executeStrategy.BuildChain.Returns(buildChain);
+            executeStrategy.Log.Returns(_buildLog);
             firstGenerator.Priority.Returns(10);
             firstGenerator.IsMatch(parameterInfo.ParameterType, parameterInfo.Name, buildChain).Returns(true);
             secondGenerator.Priority.Returns(20);
@@ -139,48 +154,7 @@
         }
 
         [Fact]
-        public void BuildForPropertyInfoReturnsNullWhenNoMatchingRuleFound()
-        {
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
-            var buildConfiguration = new BuildConfiguration();
-            var buildChain = new BuildHistory();
-
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-            var generator = Substitute.For<IValueGenerator>();
-
-            buildConfiguration.ValueGenerators.Add(generator);
-
-            executeStrategy.Configuration.Returns(buildConfiguration);
-            executeStrategy.BuildChain.Returns(buildChain);
-
-            var sut = new ValueGeneratorBuildAction();
-
-            var actual = sut.Build(propertyInfo, executeStrategy);
-
-            actual.Should().BeNull();
-        }
-
-        [Fact]
-        public void BuildForPropertyInfoReturnsNullWhenNoRulesExist()
-        {
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
-            var buildConfiguration = new BuildConfiguration();
-            var buildChain = new BuildHistory();
-
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            executeStrategy.Configuration.Returns(buildConfiguration);
-            executeStrategy.BuildChain.Returns(buildChain);
-
-            var sut = new ValueGeneratorBuildAction();
-
-            var actual = sut.Build(propertyInfo, executeStrategy);
-
-            actual.Should().BeNull();
-        }
-
-        [Fact]
-        public void BuildForPropertyInfoReturnsRuleValueWhenMatchingRuleFound()
+        public void BuildForPropertyInfoReturnsGeneratorValueWhenMatchingGeneratorFound()
         {
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
             var buildConfiguration = new BuildConfiguration();
@@ -194,6 +168,7 @@
 
             executeStrategy.Configuration.Returns(buildConfiguration);
             executeStrategy.BuildChain.Returns(buildChain);
+            executeStrategy.Log.Returns(_buildLog);
             generator.IsMatch(propertyInfo.PropertyType, propertyInfo.Name, buildChain).Returns(true);
             generator.Generate(propertyInfo.PropertyType, propertyInfo.Name, executeStrategy).Returns(expected);
 
@@ -205,7 +180,50 @@
         }
 
         [Fact]
-        public void BuildForPropertyInfoReturnsValueFromRuleWithHighestPriority()
+        public void BuildForPropertyInfoReturnsNullWhenNoGeneratorsExist()
+        {
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var buildConfiguration = new BuildConfiguration();
+            var buildChain = new BuildHistory();
+
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.Configuration.Returns(buildConfiguration);
+            executeStrategy.BuildChain.Returns(buildChain);
+            executeStrategy.Log.Returns(_buildLog);
+
+            var sut = new ValueGeneratorBuildAction();
+
+            var actual = sut.Build(propertyInfo, executeStrategy);
+
+            actual.Should().BeNull();
+        }
+
+        [Fact]
+        public void BuildForPropertyInfoReturnsNullWhenNoMatchingGeneratorFound()
+        {
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var buildConfiguration = new BuildConfiguration();
+            var buildChain = new BuildHistory();
+
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+            var generator = Substitute.For<IValueGenerator>();
+
+            buildConfiguration.ValueGenerators.Add(generator);
+
+            executeStrategy.Configuration.Returns(buildConfiguration);
+            executeStrategy.BuildChain.Returns(buildChain);
+            executeStrategy.Log.Returns(_buildLog);
+
+            var sut = new ValueGeneratorBuildAction();
+
+            var actual = sut.Build(propertyInfo, executeStrategy);
+
+            actual.Should().BeNull();
+        }
+
+        [Fact]
+        public void BuildForPropertyInfoReturnsValueFromGeneratorWithHighestPriority()
         {
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
             var buildConfiguration = new BuildConfiguration();
@@ -221,6 +239,7 @@
 
             executeStrategy.Configuration.Returns(buildConfiguration);
             executeStrategy.BuildChain.Returns(buildChain);
+            executeStrategy.Log.Returns(_buildLog);
             firstGenerator.Priority.Returns(10);
             firstGenerator.IsMatch(propertyInfo.PropertyType, propertyInfo.Name, buildChain).Returns(true);
             secondGenerator.Priority.Returns(20);
@@ -259,44 +278,7 @@
         }
 
         [Fact]
-        public void BuildForTypeReturnsNullWhenNoMatchingRuleFound()
-        {
-            var type = typeof(Person);
-            var buildConfiguration = new BuildConfiguration();
-
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-            var generator = Substitute.For<IValueGenerator>();
-
-            buildConfiguration.ValueGenerators.Add(generator);
-
-            executeStrategy.Configuration.Returns(buildConfiguration);
-
-            var sut = new ValueGeneratorBuildAction();
-
-            var actual = sut.Build(type, executeStrategy);
-
-            actual.Should().BeNull();
-        }
-
-        [Fact]
-        public void BuildForTypeReturnsNullWhenNoRulesExist()
-        {
-            var type = typeof(Person);
-            var buildConfiguration = new BuildConfiguration();
-
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            executeStrategy.Configuration.Returns(buildConfiguration);
-
-            var sut = new ValueGeneratorBuildAction();
-
-            var actual = sut.Build(type, executeStrategy);
-
-            actual.Should().BeNull();
-        }
-
-        [Fact]
-        public void BuildForTypeReturnsRuleValueWhenMatchingRuleFound()
+        public void BuildForTypeReturnsGeneratorValueWhenMatchingGeneratorFound()
         {
             var type = typeof(Person);
             var buildConfiguration = new BuildConfiguration();
@@ -310,6 +292,7 @@
 
             executeStrategy.Configuration.Returns(buildConfiguration);
             executeStrategy.BuildChain.Returns(buildChain);
+            executeStrategy.Log.Returns(_buildLog);
             generator.IsMatch(type, null, buildChain).Returns(true);
             generator.Generate(type, null, executeStrategy).Returns(expected);
 
@@ -321,7 +304,45 @@
         }
 
         [Fact]
-        public void BuildForTypeReturnsValueFromRuleWithHighestPriority()
+        public void BuildForTypeReturnsNullWhenNoGeneratorsExist()
+        {
+            var type = typeof(Person);
+            var buildConfiguration = new BuildConfiguration();
+
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.Configuration.Returns(buildConfiguration);
+
+            var sut = new ValueGeneratorBuildAction();
+
+            var actual = sut.Build(type, executeStrategy);
+
+            actual.Should().BeNull();
+        }
+
+        [Fact]
+        public void BuildForTypeReturnsNullWhenNoMatchingGeneratorFound()
+        {
+            var type = typeof(Person);
+            var buildConfiguration = new BuildConfiguration();
+
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+            var generator = Substitute.For<IValueGenerator>();
+
+            buildConfiguration.ValueGenerators.Add(generator);
+
+            executeStrategy.Configuration.Returns(buildConfiguration);
+            executeStrategy.Log.Returns(_buildLog);
+
+            var sut = new ValueGeneratorBuildAction();
+
+            var actual = sut.Build(type, executeStrategy);
+
+            actual.Should().BeNull();
+        }
+
+        [Fact]
+        public void BuildForTypeReturnsValueFromGeneratorWithHighestPriority()
         {
             var type = typeof(Person);
             var buildConfiguration = new BuildConfiguration();
@@ -337,6 +358,7 @@
 
             executeStrategy.Configuration.Returns(buildConfiguration);
             executeStrategy.BuildChain.Returns(buildChain);
+            executeStrategy.Log.Returns(_buildLog);
             firstGenerator.Priority.Returns(10);
             firstGenerator.IsMatch(type, null, buildChain).Returns(true);
             secondGenerator.Priority.Returns(20);
@@ -375,13 +397,14 @@
         }
 
         [Fact]
-        public void IsMatchForParameterInfoReturnsNullWhenNoMatchingRuleFound()
+        public void BuildLogsValueCreation()
         {
-            var parameterInfo = typeof(Person).GetConstructors()
-                .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
+            var type = typeof(string);
             var buildConfiguration = new BuildConfiguration();
-            var buildChain = new BuildHistory();
+            var expected = Guid.NewGuid().ToString();
 
+            var buildLog = Substitute.For<IBuildLog>();
+            var buildChain = Substitute.For<IBuildChain>();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
             var generator = Substitute.For<IValueGenerator>();
 
@@ -389,36 +412,78 @@
 
             executeStrategy.Configuration.Returns(buildConfiguration);
             executeStrategy.BuildChain.Returns(buildChain);
+            executeStrategy.Log.Returns(buildLog);
+            generator.IsMatch(type, null, buildChain).Returns(true);
+            generator.Generate(type, null, executeStrategy).Returns(expected);
 
             var sut = new ValueGeneratorBuildAction();
 
-            var actual = sut.IsMatch(parameterInfo, buildConfiguration, buildChain);
+            sut.Build(type, executeStrategy);
 
-            actual.Should().BeFalse();
+            buildLog.Received().CreatingValue(type, generator.GetType(), null);
         }
 
         [Fact]
-        public void IsMatchForParameterInfoReturnsNullWhenNoRulesExist()
+        public void BuildRethrowsBuildException()
         {
             var parameterInfo = typeof(Person).GetConstructors()
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
             var buildConfiguration = new BuildConfiguration();
-            var buildChain = new BuildHistory();
 
+            var buildChain = Substitute.For<IBuildChain>();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
+            var generator = Substitute.For<IValueGenerator>();
+
+            buildConfiguration.ValueGenerators.Add(generator);
 
             executeStrategy.Configuration.Returns(buildConfiguration);
             executeStrategy.BuildChain.Returns(buildChain);
+            executeStrategy.Log.Returns(_buildLog);
+            generator.IsMatch(parameterInfo.ParameterType, parameterInfo.Name, buildChain).Returns(true);
+            generator.Generate(parameterInfo.ParameterType, parameterInfo.Name, executeStrategy)
+                .Throws<BuildException>();
 
             var sut = new ValueGeneratorBuildAction();
 
-            var actual = sut.IsMatch(parameterInfo, buildConfiguration, buildChain);
+            Action action = () => sut.Build(parameterInfo, executeStrategy);
 
-            actual.Should().BeFalse();
+            var exception = action.Should().Throw<BuildException>().Which;
+
+            _output.WriteLine(exception.Message);
         }
 
         [Fact]
-        public void IsMatchForParameterInfoReturnsRuleValueWhenMatchingRuleFound()
+        public void BuildThrowsExceptionWhenGeneratorFails()
+        {
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var buildConfiguration = new BuildConfiguration();
+
+            var buildChain = Substitute.For<IBuildChain>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+            var generator = Substitute.For<IValueGenerator>();
+
+            buildConfiguration.ValueGenerators.Add(generator);
+
+            executeStrategy.Configuration.Returns(buildConfiguration);
+            executeStrategy.BuildChain.Returns(buildChain);
+            executeStrategy.Log.Returns(_buildLog);
+            generator.IsMatch(propertyInfo.PropertyType, propertyInfo.Name, buildChain).Returns(true);
+            generator.Generate(propertyInfo.PropertyType, propertyInfo.Name, executeStrategy)
+                .Throws<TimeoutException>();
+
+            var sut = new ValueGeneratorBuildAction();
+
+            Action action = () => sut.Build(propertyInfo, executeStrategy);
+
+            var exception = action.Should().Throw<BuildException>().Which;
+
+            exception.InnerException.Should().BeOfType<TimeoutException>();
+
+            _output.WriteLine(exception.Message);
+        }
+
+        [Fact]
+        public void IsMatchForParameterInfoReturnsGeneratorValueWhenMatchingGeneratorFound()
         {
             var parameterInfo = typeof(Person).GetConstructors()
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
@@ -433,6 +498,7 @@
 
             executeStrategy.Configuration.Returns(buildConfiguration);
             executeStrategy.BuildChain.Returns(buildChain);
+            executeStrategy.Log.Returns(_buildLog);
             generator.IsMatch(parameterInfo.ParameterType, parameterInfo.Name, buildChain).Returns(true);
             generator.Generate(parameterInfo.ParameterType, parameterInfo.Name, executeStrategy).Returns(expected);
 
@@ -441,6 +507,51 @@
             var actual = sut.IsMatch(parameterInfo, buildConfiguration, buildChain);
 
             actual.Should().BeTrue();
+        }
+
+        [Fact]
+        public void IsMatchForParameterInfoReturnsNullWhenNoGeneratorsExist()
+        {
+            var parameterInfo = typeof(Person).GetConstructors()
+                .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
+            var buildConfiguration = new BuildConfiguration();
+            var buildChain = new BuildHistory();
+
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.Configuration.Returns(buildConfiguration);
+            executeStrategy.BuildChain.Returns(buildChain);
+            executeStrategy.Log.Returns(_buildLog);
+
+            var sut = new ValueGeneratorBuildAction();
+
+            var actual = sut.IsMatch(parameterInfo, buildConfiguration, buildChain);
+
+            actual.Should().BeFalse();
+        }
+
+        [Fact]
+        public void IsMatchForParameterInfoReturnsNullWhenNoMatchingGeneratorFound()
+        {
+            var parameterInfo = typeof(Person).GetConstructors()
+                .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
+            var buildConfiguration = new BuildConfiguration();
+            var buildChain = new BuildHistory();
+
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+            var generator = Substitute.For<IValueGenerator>();
+
+            buildConfiguration.ValueGenerators.Add(generator);
+
+            executeStrategy.Configuration.Returns(buildConfiguration);
+            executeStrategy.BuildChain.Returns(buildChain);
+            executeStrategy.Log.Returns(_buildLog);
+
+            var sut = new ValueGeneratorBuildAction();
+
+            var actual = sut.IsMatch(parameterInfo, buildConfiguration, buildChain);
+
+            actual.Should().BeFalse();
         }
 
         [Fact]
@@ -485,48 +596,7 @@
         }
 
         [Fact]
-        public void IsMatchForPropertyInfoReturnsNullWhenNoMatchingRuleFound()
-        {
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
-            var buildConfiguration = new BuildConfiguration();
-            var buildChain = new BuildHistory();
-
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-            var generator = Substitute.For<IValueGenerator>();
-
-            buildConfiguration.ValueGenerators.Add(generator);
-
-            executeStrategy.Configuration.Returns(buildConfiguration);
-            executeStrategy.BuildChain.Returns(buildChain);
-
-            var sut = new ValueGeneratorBuildAction();
-
-            var actual = sut.IsMatch(propertyInfo, buildConfiguration, buildChain);
-
-            actual.Should().BeFalse();
-        }
-
-        [Fact]
-        public void IsMatchForPropertyInfoReturnsNullWhenNoRulesExist()
-        {
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
-            var buildConfiguration = new BuildConfiguration();
-            var buildChain = new BuildHistory();
-
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            executeStrategy.Configuration.Returns(buildConfiguration);
-            executeStrategy.BuildChain.Returns(buildChain);
-
-            var sut = new ValueGeneratorBuildAction();
-
-            var actual = sut.IsMatch(propertyInfo, buildConfiguration, buildChain);
-
-            actual.Should().BeFalse();
-        }
-
-        [Fact]
-        public void IsMatchForPropertyInfoReturnsRuleValueWhenMatchingRuleFound()
+        public void IsMatchForPropertyInfoReturnsGeneratorValueWhenMatchingGeneratorFound()
         {
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
             var buildConfiguration = new BuildConfiguration();
@@ -540,6 +610,7 @@
 
             executeStrategy.Configuration.Returns(buildConfiguration);
             executeStrategy.BuildChain.Returns(buildChain);
+            executeStrategy.Log.Returns(_buildLog);
             generator.IsMatch(propertyInfo.PropertyType, propertyInfo.Name, buildChain).Returns(true);
             generator.Generate(propertyInfo.PropertyType, propertyInfo.Name, executeStrategy).Returns(expected);
 
@@ -548,6 +619,49 @@
             var actual = sut.IsMatch(propertyInfo, buildConfiguration, buildChain);
 
             actual.Should().BeTrue();
+        }
+
+        [Fact]
+        public void IsMatchForPropertyInfoReturnsNullWhenNoGeneratorsExist()
+        {
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var buildConfiguration = new BuildConfiguration();
+            var buildChain = new BuildHistory();
+
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.Configuration.Returns(buildConfiguration);
+            executeStrategy.BuildChain.Returns(buildChain);
+            executeStrategy.Log.Returns(_buildLog);
+
+            var sut = new ValueGeneratorBuildAction();
+
+            var actual = sut.IsMatch(propertyInfo, buildConfiguration, buildChain);
+
+            actual.Should().BeFalse();
+        }
+
+        [Fact]
+        public void IsMatchForPropertyInfoReturnsNullWhenNoMatchingGeneratorFound()
+        {
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var buildConfiguration = new BuildConfiguration();
+            var buildChain = new BuildHistory();
+
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+            var generator = Substitute.For<IValueGenerator>();
+
+            buildConfiguration.ValueGenerators.Add(generator);
+
+            executeStrategy.Configuration.Returns(buildConfiguration);
+            executeStrategy.BuildChain.Returns(buildChain);
+            executeStrategy.Log.Returns(_buildLog);
+
+            var sut = new ValueGeneratorBuildAction();
+
+            var actual = sut.IsMatch(propertyInfo, buildConfiguration, buildChain);
+
+            actual.Should().BeFalse();
         }
 
         [Fact]
@@ -590,48 +704,7 @@
         }
 
         [Fact]
-        public void IsMatchForTypeReturnsNullWhenNoMatchingRuleFound()
-        {
-            var type = typeof(Person);
-            var buildConfiguration = new BuildConfiguration();
-            var buildChain = new BuildHistory();
-
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-            var generator = Substitute.For<IValueGenerator>();
-
-            buildConfiguration.ValueGenerators.Add(generator);
-
-            executeStrategy.Configuration.Returns(buildConfiguration);
-            executeStrategy.BuildChain.Returns(buildChain);
-
-            var sut = new ValueGeneratorBuildAction();
-
-            var actual = sut.IsMatch(type, buildConfiguration, buildChain);
-
-            actual.Should().BeFalse();
-        }
-
-        [Fact]
-        public void IsMatchForTypeReturnsNullWhenNoRulesExist()
-        {
-            var type = typeof(Person);
-            var buildConfiguration = new BuildConfiguration();
-            var buildChain = new BuildHistory();
-
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            executeStrategy.Configuration.Returns(buildConfiguration);
-            executeStrategy.BuildChain.Returns(buildChain);
-
-            var sut = new ValueGeneratorBuildAction();
-
-            var actual = sut.IsMatch(type, buildConfiguration, buildChain);
-
-            actual.Should().BeFalse();
-        }
-
-        [Fact]
-        public void IsMatchForTypeReturnsRuleValueWhenMatchingRuleFound()
+        public void IsMatchForTypeReturnsGeneratorValueWhenMatchingGeneratorFound()
         {
             var type = typeof(Person);
             var buildConfiguration = new BuildConfiguration();
@@ -645,6 +718,7 @@
 
             executeStrategy.Configuration.Returns(buildConfiguration);
             executeStrategy.BuildChain.Returns(buildChain);
+            executeStrategy.Log.Returns(_buildLog);
             generator.IsMatch(type, null, buildChain).Returns(true);
             generator.Generate(type, null, executeStrategy).Returns(expected);
 
@@ -653,6 +727,48 @@
             var actual = sut.IsMatch(type, buildConfiguration, buildChain);
 
             actual.Should().BeTrue();
+        }
+
+        [Fact]
+        public void IsMatchForTypeReturnsNullWhenNoGeneratorsExist()
+        {
+            var type = typeof(Person);
+            var buildConfiguration = new BuildConfiguration();
+            var buildChain = new BuildHistory();
+
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.Configuration.Returns(buildConfiguration);
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            var sut = new ValueGeneratorBuildAction();
+
+            var actual = sut.IsMatch(type, buildConfiguration, buildChain);
+
+            actual.Should().BeFalse();
+        }
+
+        [Fact]
+        public void IsMatchForTypeReturnsNullWhenNoMatchingGeneratorFound()
+        {
+            var type = typeof(Person);
+            var buildConfiguration = new BuildConfiguration();
+            var buildChain = new BuildHistory();
+
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+            var generator = Substitute.For<IValueGenerator>();
+
+            buildConfiguration.ValueGenerators.Add(generator);
+
+            executeStrategy.Configuration.Returns(buildConfiguration);
+            executeStrategy.BuildChain.Returns(buildChain);
+            executeStrategy.Log.Returns(_buildLog);
+
+            var sut = new ValueGeneratorBuildAction();
+
+            var actual = sut.IsMatch(type, buildConfiguration, buildChain);
+
+            actual.Should().BeFalse();
         }
 
         [Fact]
@@ -695,7 +811,7 @@
         }
 
         [Fact]
-        public void PriorityReturnsLowerThanCreationRulePriority()
+        public void PriorityReturnsLowerThanCreationRuleBuildActionPriority()
         {
             var otherStep = new CreationRuleBuildAction();
 
