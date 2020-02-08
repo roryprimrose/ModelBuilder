@@ -18,11 +18,12 @@
     public class DefaultExecuteStrategy : IExecuteStrategy
     {
         private readonly IBuildHistory _buildHistory;
+        private readonly IBuildProcessor _buildProcessor;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="DefaultExecuteStrategy" /> class.
         /// </summary>
-        public DefaultExecuteStrategy() : this(new BuildHistory(), new DefaultBuildLog())
+        public DefaultExecuteStrategy() : this(new BuildHistory(), new DefaultBuildLog(), new BuildProcessor())
         {
         }
 
@@ -30,11 +31,13 @@
         ///     Initializes a new instance of the <see cref="DefaultExecuteStrategy" /> class.
         /// </summary>
         /// <param name="buildHistory">The build history tracker.</param>
-        /// <param name="buildLog">The build _buildLog.</param>
-        public DefaultExecuteStrategy(IBuildHistory buildHistory, IBuildLog buildLog)
+        /// <param name="buildLog">The build log.</param>
+        /// <param name="buildProcessor">The build processor.</param>
+        public DefaultExecuteStrategy(IBuildHistory buildHistory, IBuildLog buildLog, IBuildProcessor buildProcessor)
         {
-             _buildHistory = buildHistory ?? throw new ArgumentNullException(nameof(buildHistory));
+            _buildHistory = buildHistory ?? throw new ArgumentNullException(nameof(buildHistory));
             Log = buildLog ?? throw new ArgumentNullException(nameof(buildLog));
+            _buildProcessor = buildProcessor ?? throw new ArgumentNullException(nameof(buildProcessor));
         }
 
         /// <inheritdoc />

@@ -1,6 +1,7 @@
 ﻿namespace ModelBuilder.BuildActions
 {
     using System;
+    using System.Globalization;
     using System.Linq;
     using System.Reflection;
     using ModelBuilder.CreationRules;
@@ -28,7 +29,9 @@
 
             var rule = GetMatchingRule(type, null, executeStrategy.Configuration);
 
-            return rule?.Create(type, null, executeStrategy);
+            return Build(rule, type, null, executeStrategy.BuildChain,
+                () => rule?.Create(type, null, executeStrategy),
+                executeStrategy.Log);
         }
 
         /// <inheritdoc />
@@ -48,7 +51,9 @@
 
             var rule = GetMatchingRule(parameterInfo.ParameterType, parameterInfo.Name, executeStrategy.Configuration);
 
-            return rule?.Create(parameterInfo.ParameterType, parameterInfo.Name, executeStrategy);
+            return Build(rule, parameterInfo.ParameterType, parameterInfo.Name, executeStrategy.BuildChain,
+                () => rule?.Create(parameterInfo.ParameterType, parameterInfo.Name, executeStrategy),
+                executeStrategy.Log);
         }
 
         /// <inheritdoc />
@@ -68,7 +73,9 @@
 
             var rule = GetMatchingRule(propertyInfo.PropertyType, propertyInfo.Name, executeStrategy.Configuration);
 
-            return rule?.Create(propertyInfo.PropertyType, propertyInfo.Name, executeStrategy);
+            return Build(rule, propertyInfo.PropertyType, propertyInfo.Name, executeStrategy.BuildChain,
+                () => rule?.Create(propertyInfo.PropertyType, propertyInfo.Name, executeStrategy),
+                executeStrategy.Log);
         }
 
         /// <inheritdoc />
@@ -159,6 +166,48 @@
             }
 
             return rule.IsMatch(propertyInfo.PropertyType, propertyInfo.Name);
+        }
+
+        private object Build(ICreationRule rule, Type typeToBuild, string referenceName, IBuildChain buildChain,
+            Func<object> createAction, IBuildLog buildLog)
+        {
+            if (rule == null)
+            {
+                return null;
+            }
+
+            var context = buildChain.Last;
+            var ruleType = rule.GetType();
+
+            buildLog.CreatingValue(typeToBuild, ruleType, context);
+
+            try
+            {
+                return createAction();
+            }
+            catch (BuildException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                buildLog.BuildFailure(ex);
+
+                const string messageFormat =
+                    "Failed to create value for type {0} using creation rule {1}, {2}: {3}{4}{4}At the time of the failure, the build log was:{4}{4}{5}";
+                var output = buildLog.Output;
+                var message = string.Format(
+                    CultureInfo.CurrentCulture,
+                    messageFormat,
+                    typeToBuild.FullName,
+                    ruleType.FullName,
+                    ex.GetType().Name,
+                    ex.Message,
+                    Environment.NewLine,
+                    output);
+
+                throw new BuildException(message, typeToBuild, referenceName, context, output, ex);
+            }
         }
 
         private ICreationRule GetMatchingRule(Type type, string referenceName, IBuildConfiguration buildConfiguration)

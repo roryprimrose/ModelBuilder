@@ -8,10 +8,21 @@
     using ModelBuilder.CreationRules;
     using ModelBuilder.UnitTests.Models;
     using NSubstitute;
+    using NSubstitute.ExceptionExtensions;
     using Xunit;
+    using Xunit.Abstractions;
 
     public class CreationRuleBuildActionTests
     {
+        private readonly OutputBuildLog _buildLog;
+        private readonly ITestOutputHelper _output;
+
+        public CreationRuleBuildActionTests(ITestOutputHelper output)
+        {
+            _output = output;
+            _buildLog = new OutputBuildLog(output);
+        }
+
         [Fact]
         public void BuildForParameterInfoReturnsNullWhenNoMatchingRuleFound()
         {
@@ -25,6 +36,7 @@
             buildConfiguration.CreationRules.Add(rule);
 
             executeStrategy.Configuration.Returns(buildConfiguration);
+            executeStrategy.Log.Returns(_buildLog);
 
             var sut = new CreationRuleBuildAction();
 
@@ -43,6 +55,7 @@
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.Configuration.Returns(buildConfiguration);
+            executeStrategy.Log.Returns(_buildLog);
 
             var sut = new CreationRuleBuildAction();
 
@@ -65,6 +78,7 @@
             buildConfiguration.CreationRules.Add(rule);
 
             executeStrategy.Configuration.Returns(buildConfiguration);
+            executeStrategy.Log.Returns(_buildLog);
             rule.IsMatch(parameterInfo.ParameterType, parameterInfo.Name).Returns(true);
             rule.Create(parameterInfo.ParameterType, parameterInfo.Name, executeStrategy).Returns(expected);
 
@@ -91,6 +105,7 @@
             buildConfiguration.CreationRules.Add(secondRule);
 
             executeStrategy.Configuration.Returns(buildConfiguration);
+            executeStrategy.Log.Returns(_buildLog);
             firstRule.Priority.Returns(10);
             firstRule.IsMatch(parameterInfo.ParameterType, parameterInfo.Name).Returns(true);
             secondRule.Priority.Returns(20);
@@ -130,6 +145,31 @@
         }
 
         [Fact]
+        public void BuildForPropertyInfoRethrowsBuildException()
+        {
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var buildConfiguration = new BuildConfiguration();
+
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+            var rule = Substitute.For<ICreationRule>();
+
+            buildConfiguration.CreationRules.Add(rule);
+
+            executeStrategy.Configuration.Returns(buildConfiguration);
+            executeStrategy.Log.Returns(_buildLog);
+            rule.IsMatch(propertyInfo.PropertyType, propertyInfo.Name).Returns(true);
+            rule.Create(propertyInfo.PropertyType, propertyInfo.Name, executeStrategy).Throws<BuildException>();
+
+            var sut = new CreationRuleBuildAction();
+
+            Action action = () => sut.Build(propertyInfo, executeStrategy);
+
+            var exception = action.Should().Throw<BuildException>().Which;
+
+            _output.WriteLine(exception.Message);
+        }
+
+        [Fact]
         public void BuildForPropertyInfoReturnsNullWhenNoMatchingRuleFound()
         {
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
@@ -141,6 +181,7 @@
             buildConfiguration.CreationRules.Add(rule);
 
             executeStrategy.Configuration.Returns(buildConfiguration);
+            executeStrategy.Log.Returns(_buildLog);
 
             var sut = new CreationRuleBuildAction();
 
@@ -158,6 +199,7 @@
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.Configuration.Returns(buildConfiguration);
+            executeStrategy.Log.Returns(_buildLog);
 
             var sut = new CreationRuleBuildAction();
 
@@ -179,6 +221,7 @@
             buildConfiguration.CreationRules.Add(rule);
 
             executeStrategy.Configuration.Returns(buildConfiguration);
+            executeStrategy.Log.Returns(_buildLog);
             rule.IsMatch(propertyInfo.PropertyType, propertyInfo.Name).Returns(true);
             rule.Create(propertyInfo.PropertyType, propertyInfo.Name, executeStrategy).Returns(expected);
 
@@ -204,6 +247,7 @@
             buildConfiguration.CreationRules.Add(secondRule);
 
             executeStrategy.Configuration.Returns(buildConfiguration);
+            executeStrategy.Log.Returns(_buildLog);
             firstRule.Priority.Returns(10);
             firstRule.IsMatch(propertyInfo.PropertyType, propertyInfo.Name).Returns(true);
             secondRule.Priority.Returns(20);
@@ -253,6 +297,7 @@
             buildConfiguration.CreationRules.Add(rule);
 
             executeStrategy.Configuration.Returns(buildConfiguration);
+            executeStrategy.Log.Returns(_buildLog);
 
             var sut = new CreationRuleBuildAction();
 
@@ -270,6 +315,7 @@
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.Configuration.Returns(buildConfiguration);
+            executeStrategy.Log.Returns(_buildLog);
 
             var sut = new CreationRuleBuildAction();
 
@@ -291,6 +337,7 @@
             buildConfiguration.CreationRules.Add(rule);
 
             executeStrategy.Configuration.Returns(buildConfiguration);
+            executeStrategy.Log.Returns(_buildLog);
             rule.IsMatch(type, null).Returns(true);
             rule.Create(type, null, executeStrategy).Returns(expected);
 
@@ -316,6 +363,7 @@
             buildConfiguration.CreationRules.Add(secondRule);
 
             executeStrategy.Configuration.Returns(buildConfiguration);
+            executeStrategy.Log.Returns(_buildLog);
             firstRule.Priority.Returns(10);
             firstRule.IsMatch(type, null).Returns(true);
             secondRule.Priority.Returns(20);
@@ -354,6 +402,84 @@
         }
 
         [Fact]
+        public void BuildLogsValueCreation()
+        {
+            var type = typeof(Person);
+            var buildConfiguration = new BuildConfiguration();
+            var expected = new Person();
+
+            var buildLog = Substitute.For<IBuildLog>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+            var rule = Substitute.For<ICreationRule>();
+
+            buildConfiguration.CreationRules.Add(rule);
+
+            executeStrategy.Configuration.Returns(buildConfiguration);
+            executeStrategy.Log.Returns(buildLog);
+            rule.IsMatch(type, null).Returns(true);
+            rule.Create(type, null, executeStrategy).Returns(expected);
+
+            var sut = new CreationRuleBuildAction();
+
+            sut.Build(type, executeStrategy);
+
+            buildLog.Received().CreatingValue(type, rule.GetType(), null);
+        }
+
+        [Fact]
+        public void BuildRethrowsBuildException()
+        {
+            var parameterInfo = typeof(Person).GetConstructors()
+                .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
+            var buildConfiguration = new BuildConfiguration();
+
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+            var rule = Substitute.For<ICreationRule>();
+
+            buildConfiguration.CreationRules.Add(rule);
+
+            executeStrategy.Configuration.Returns(buildConfiguration);
+            executeStrategy.Log.Returns(_buildLog);
+            rule.IsMatch(parameterInfo.ParameterType, parameterInfo.Name).Returns(true);
+            rule.Create(parameterInfo.ParameterType, parameterInfo.Name, executeStrategy).Throws<BuildException>();
+
+            var sut = new CreationRuleBuildAction();
+
+            Action action = () => sut.Build(parameterInfo, executeStrategy);
+
+            var exception = action.Should().Throw<BuildException>().Which;
+
+            _output.WriteLine(exception.Message);
+        }
+
+        [Fact]
+        public void BuildThrowsExceptionWhenRuleFails()
+        {
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var buildConfiguration = new BuildConfiguration();
+
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+            var rule = Substitute.For<ICreationRule>();
+
+            buildConfiguration.CreationRules.Add(rule);
+
+            executeStrategy.Configuration.Returns(buildConfiguration);
+            executeStrategy.Log.Returns(_buildLog);
+            rule.IsMatch(propertyInfo.PropertyType, propertyInfo.Name).Returns(true);
+            rule.Create(propertyInfo.PropertyType, propertyInfo.Name, executeStrategy).Throws<TimeoutException>();
+
+            var sut = new CreationRuleBuildAction();
+
+            Action action = () => sut.Build(propertyInfo, executeStrategy);
+
+            var exception = action.Should().Throw<BuildException>().Which;
+
+            exception.InnerException.Should().BeOfType<TimeoutException>();
+
+            _output.WriteLine(exception.Message);
+        }
+
+        [Fact]
         public void IsMatchForParameterInfoReturnsNullWhenNoMatchingRuleFound()
         {
             var parameterInfo = typeof(Person).GetConstructors()
@@ -367,6 +493,7 @@
             buildConfiguration.CreationRules.Add(rule);
 
             executeStrategy.Configuration.Returns(buildConfiguration);
+            executeStrategy.Log.Returns(_buildLog);
 
             var sut = new CreationRuleBuildAction();
 
@@ -386,6 +513,7 @@
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.Configuration.Returns(buildConfiguration);
+            executeStrategy.Log.Returns(_buildLog);
 
             var sut = new CreationRuleBuildAction();
 
@@ -409,6 +537,7 @@
             buildConfiguration.CreationRules.Add(rule);
 
             executeStrategy.Configuration.Returns(buildConfiguration);
+            executeStrategy.Log.Returns(_buildLog);
             rule.IsMatch(parameterInfo.ParameterType, parameterInfo.Name).Returns(true);
             rule.Create(parameterInfo.ParameterType, parameterInfo.Name, executeStrategy).Returns(expected);
 
@@ -473,6 +602,7 @@
             buildConfiguration.CreationRules.Add(rule);
 
             executeStrategy.Configuration.Returns(buildConfiguration);
+            executeStrategy.Log.Returns(_buildLog);
 
             var sut = new CreationRuleBuildAction();
 
@@ -491,6 +621,7 @@
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.Configuration.Returns(buildConfiguration);
+            executeStrategy.Log.Returns(_buildLog);
 
             var sut = new CreationRuleBuildAction();
 
@@ -513,6 +644,7 @@
             buildConfiguration.CreationRules.Add(rule);
 
             executeStrategy.Configuration.Returns(buildConfiguration);
+            executeStrategy.Log.Returns(_buildLog);
             rule.IsMatch(propertyInfo.PropertyType, propertyInfo.Name).Returns(true);
             rule.Create(propertyInfo.PropertyType, propertyInfo.Name, executeStrategy).Returns(expected);
 
@@ -575,6 +707,7 @@
             buildConfiguration.CreationRules.Add(rule);
 
             executeStrategy.Configuration.Returns(buildConfiguration);
+            executeStrategy.Log.Returns(_buildLog);
 
             var sut = new CreationRuleBuildAction();
 
@@ -593,6 +726,7 @@
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.Configuration.Returns(buildConfiguration);
+            executeStrategy.Log.Returns(_buildLog);
 
             var sut = new CreationRuleBuildAction();
 
@@ -615,6 +749,7 @@
             buildConfiguration.CreationRules.Add(rule);
 
             executeStrategy.Configuration.Returns(buildConfiguration);
+            executeStrategy.Log.Returns(_buildLog);
             rule.IsMatch(type, null).Returns(true);
             rule.Create(type, null, executeStrategy).Returns(expected);
 
@@ -667,7 +802,7 @@
         [Fact]
         public void PriorityReturnsLowerThanCircularReferencePriority()
         {
-            var circularReferenceStep = new CreationRuleBuildAction();
+            var circularReferenceStep = new CircularReferenceBuildAction();
 
             var sut = new CreationRuleBuildAction();
 

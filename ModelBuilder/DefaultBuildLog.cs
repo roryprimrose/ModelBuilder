@@ -310,6 +310,16 @@
             WriteMessage(Resources.DefaultBuildLog_PostBuild, type.FullName, postBuildType.FullName);
         }
 
+        /// <summary>
+        ///     Writes the specified message to the log.
+        /// </summary>
+        /// <param name="message">The message to write.</param>
+        protected virtual void WriteMessage(string message)
+        {
+            _builder.Append(message);
+            _builder.AppendLine();
+        }
+
         private void WriteMessage(string message, params object[] args)
         {
             Debug.Assert(message != null, "No message has been provided");
@@ -337,8 +347,7 @@
                 messageToWrite = string.Join(Environment.NewLine, indentedLines);
             }
 
-            _builder.Append(messageToWrite);
-            _builder.AppendLine();
+            WriteMessage(messageToWrite);
         }
 
         /// <inheritdoc />
