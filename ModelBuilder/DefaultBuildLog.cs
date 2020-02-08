@@ -25,7 +25,7 @@
                 throw new ArgumentNullException(nameof(ex));
             }
 
-            WriteMessage(ex.ToString());
+            FormatAndWriteMessage(ex.ToString());
         }
 
         /// <inheritdoc />
@@ -37,7 +37,7 @@
                 throw new ArgumentNullException(nameof(type));
             }
 
-            WriteMessage(Resources.DefaultBuildLog_CircularReferenceDetected, type.FullName);
+            FormatAndWriteMessage(Resources.DefaultBuildLog_CircularReferenceDetected, type.FullName);
         }
 
         /// <inheritdoc />
@@ -69,7 +69,7 @@
 
             _indent--;
 
-            WriteMessage(
+            FormatAndWriteMessage(
                 Resources.DefaultBuildLog_CreatedParameter,
                 parameterName,
                 parameterType.FullName,
@@ -99,7 +99,7 @@
 
             _indent--;
 
-            WriteMessage(
+            FormatAndWriteMessage(
                 Resources.DefaultBuildLog_CreatedProperty,
                 propertyName,
                 propertyType.FullName,
@@ -117,7 +117,7 @@
 
             _indent--;
 
-            WriteMessage(Resources.DefaultBuildLog_CreatedType, type.FullName);
+            FormatAndWriteMessage(Resources.DefaultBuildLog_CreatedType, type.FullName);
         }
 
         /// <inheritdoc />
@@ -141,7 +141,7 @@
                 throw new ArgumentNullException(nameof(parameterName));
             }
 
-            WriteMessage(
+            FormatAndWriteMessage(
                 Resources.DefaultBuildLog_CreatingParameter,
                 parameterName,
                 parameterType.FullName,
@@ -171,7 +171,7 @@
                 throw new ArgumentNullException(nameof(context));
             }
 
-            WriteMessage(
+            FormatAndWriteMessage(
                 Resources.DefaultBuildLog_CreatingProperty,
                 propertyName,
                 propertyType.FullName,
@@ -195,7 +195,7 @@
                 throw new ArgumentNullException(nameof(creatorType));
             }
 
-            WriteMessage(Resources.DefaultBuildLog_CreatingType, type.FullName, creatorType.FullName);
+            FormatAndWriteMessage(Resources.DefaultBuildLog_CreatingType, type.FullName, creatorType.FullName);
 
             _indent++;
         }
@@ -215,7 +215,7 @@
                 throw new ArgumentNullException(nameof(generatorType));
             }
 
-            WriteMessage(Resources.DefaultBuildLog_CreatingValue, type.FullName, generatorType.FullName);
+            FormatAndWriteMessage(Resources.DefaultBuildLog_CreatingValue, type.FullName, generatorType.FullName);
         }
 
         /// <inheritdoc />
@@ -239,7 +239,7 @@
                 throw new ArgumentNullException(nameof(context));
             }
 
-            WriteMessage(
+            FormatAndWriteMessage(
                 Resources.DefaultBuildLog_IgnoringProperty,
                 propertyName,
                 propertyType.FullName,
@@ -261,7 +261,7 @@
                 throw new ArgumentNullException(nameof(target));
             }
 
-            WriteMessage(Resources.DefaultBuildLog_MappingType, source.FullName, target.FullName);
+            FormatAndWriteMessage(Resources.DefaultBuildLog_MappingType, source.FullName, target.FullName);
         }
 
         /// <inheritdoc />
@@ -275,7 +275,7 @@
 
             _indent--;
 
-            WriteMessage(Resources.DefaultBuildLog_PopulatedInstance, instance.GetType().FullName);
+            FormatAndWriteMessage(Resources.DefaultBuildLog_PopulatedInstance, instance.GetType().FullName);
         }
 
         /// <inheritdoc />
@@ -287,7 +287,7 @@
                 throw new ArgumentNullException(nameof(instance));
             }
 
-            WriteMessage(Resources.DefaultBuildLog_PopulatingInstance, instance.GetType().FullName);
+            FormatAndWriteMessage(Resources.DefaultBuildLog_PopulatingInstance, instance.GetType().FullName);
 
             _indent++;
         }
@@ -307,7 +307,7 @@
                 throw new ArgumentNullException(nameof(postBuildType));
             }
 
-            WriteMessage(Resources.DefaultBuildLog_PostBuild, type.FullName, postBuildType.FullName);
+            FormatAndWriteMessage(Resources.DefaultBuildLog_PostBuild, type.FullName, postBuildType.FullName);
         }
 
         /// <summary>
@@ -320,7 +320,7 @@
             _builder.AppendLine();
         }
 
-        private void WriteMessage(string message, params object[] args)
+        private void FormatAndWriteMessage(string message, params object[] args)
         {
             Debug.Assert(message != null, "No message has been provided");
 
