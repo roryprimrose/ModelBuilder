@@ -126,14 +126,14 @@
   <data name="Error_TypeNotSupportedFormat" xml:space="preserve">
     <value>{0} does not support the {1} type</value>
   </data>
-  <data name="NoMatchingCreatorOrGeneratorFound" xml:space="preserve">
-    <value>No supporting ITypeCreator or IValueGenerator was found to build the type '{0}'</value>
+  <data name="NoMatchingBuildActionFound" xml:space="preserve">
+    <value>No supporting ICreationRule, ITypeCreator or IValueGenerator was found to build the type '{0}'</value>
   </data>
-  <data name="NoMatchingCreatorOrGeneratorFoundWithName" xml:space="preserve">
-    <value>No supporting ITypeCreator or IValueGenerator was found to build the type '{0}' for '{1}'</value>
+  <data name="NoMatchingBuildActionFoundWithName" xml:space="preserve">
+    <value>No supporting ICreationRule, ITypeCreator or IValueGenerator was found to build the type '{0}' for '{1}'</value>
   </data>
-  <data name="NoMatchingCreatorOrGeneratorFoundWithNameAndContext" xml:space="preserve">
-    <value>No supporting ITypeCreator or IValueGenerator was found to build the type '{0}' for '{1}' on type '{2}'</value>
+  <data name="NoMatchingBuildActionFoundWithNameAndContext" xml:space="preserve">
+    <value>No supporting ICreationRule, ITypeCreator or IValueGenerator was found to build the type '{0}' for '{1}' on type '{2}'</value>
   </data>
   <data name="NoTargetTypeOrPropertyName" xml:space="preserve">
     <value>Either targetType or propertyName must be supplied</value>

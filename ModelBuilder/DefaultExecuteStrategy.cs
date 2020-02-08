@@ -403,7 +403,7 @@
                 {
                     message = string.Format(
                         CultureInfo.CurrentCulture,
-                        Resources.NoMatchingCreatorOrGeneratorFoundWithNameAndContext,
+                        Resources.NoMatchingBuildActionFoundWithNameAndContext,
                         type.FullName,
                         referenceName,
                         context.GetType().FullName);
@@ -412,7 +412,7 @@
                 {
                     message = string.Format(
                         CultureInfo.CurrentCulture,
-                        Resources.NoMatchingCreatorOrGeneratorFoundWithName,
+                        Resources.NoMatchingBuildActionFoundWithName,
                         type.FullName,
                         referenceName);
                 }
@@ -421,7 +421,7 @@
             {
                 message = string.Format(
                     CultureInfo.CurrentCulture,
-                    Resources.NoMatchingCreatorOrGeneratorFound,
+                    Resources.NoMatchingBuildActionFound,
                     type.FullName);
             }
 

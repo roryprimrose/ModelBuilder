@@ -250,10 +250,16 @@
         [Fact]
         public void BuildForPropertyThrowsExceptionWhenNoBuildActionFound()
         {
+            var context = new Person();
             var actions = Array.Empty<IBuildAction>();
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var buildChain = new BuildHistory();
+
+            buildChain.Push(context);
 
             var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
 
             var sut = new BuildProcessor(actions);
 
