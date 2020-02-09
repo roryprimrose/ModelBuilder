@@ -40,8 +40,8 @@
         /// <param name="buildConfiguration">The build configuration.</param>
         /// <param name="buildChain">The build chain.</param>
         /// <param name="type">The type to evaluate.</param>
-        /// <returns><c>true</c> if the build step matches the specified type; otherwise <c>false</c>.</returns>
-        bool IsMatch(IBuildConfiguration buildConfiguration, IBuildChain buildChain, Type type);
+        /// <returns>A <see cref="MatchResult" /> indicating instance creation support via a <see cref="IBuildAction" />.</returns>
+        MatchResult IsMatch(IBuildConfiguration buildConfiguration, IBuildChain buildChain, Type type);
 
         /// <summary>
         ///     Gets whether the specified parameter matches this build step.
@@ -49,8 +49,9 @@
         /// <param name="buildConfiguration">The build configuration.</param>
         /// <param name="buildChain">The build chain.</param>
         /// <param name="parameterInfo">The parameter to evaluate.</param>
-        /// <returns><c>true</c> if the build step matches the specified type; otherwise <c>false</c>.</returns>
-        bool IsMatch(IBuildConfiguration buildConfiguration, IBuildChain buildChain, ParameterInfo parameterInfo);
+        /// <returns>A <see cref="MatchResult" /> indicating instance creation support via a <see cref="IBuildAction" />.</returns>
+        MatchResult IsMatch(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
+            ParameterInfo parameterInfo);
 
         /// <summary>
         ///     Gets whether the specified property matches this build step.
@@ -58,8 +59,8 @@
         /// <param name="buildConfiguration">The build configuration.</param>
         /// <param name="buildChain">The build chain.</param>
         /// <param name="propertyInfo">The property to evaluate.</param>
-        /// <returns><c>true</c> if the build step matches the specified type; otherwise <c>false</c>.</returns>
-        bool IsMatch(IBuildConfiguration buildConfiguration, IBuildChain buildChain, PropertyInfo propertyInfo);
+        /// <returns>A <see cref="MatchResult" /> indicating instance creation support via a <see cref="IBuildAction" />.</returns>
+        MatchResult IsMatch(IBuildConfiguration buildConfiguration, IBuildChain buildChain, PropertyInfo propertyInfo);
 
         /// <summary>
         ///     Gets the priority for this build step.

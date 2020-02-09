@@ -40,7 +40,7 @@
         }
 
         /// <inheritdoc />
-        public object Build(IExecuteStrategy executeStrategy, Type type)
+        public object Build(IExecuteStrategy executeStrategy, Type type, params object[] arguments)
         {
             if (type == null)
             {
@@ -52,7 +52,7 @@
                 throw new ArgumentNullException(nameof(executeStrategy));
             }
 
-            var action = _actions.Where(x => x.IsMatch(executeStrategy.Configuration, executeStrategy.BuildChain, type))
+            var action = _actions.Where(x => x.IsMatch(executeStrategy.Configuration, executeStrategy.BuildChain, type).IsMatch)
                 .OrderByDescending(x => x.Priority).FirstOrDefault();
 
             if (action == null)
@@ -77,7 +77,7 @@
             }
 
             var action = _actions.Where(x =>
-                    x.IsMatch(executeStrategy.Configuration, executeStrategy.BuildChain, parameterInfo))
+                    x.IsMatch(executeStrategy.Configuration, executeStrategy.BuildChain, parameterInfo).IsMatch)
                 .OrderByDescending(x => x.Priority).FirstOrDefault();
 
             if (action == null)
@@ -103,7 +103,7 @@
             }
 
             var action = _actions.Where(x =>
-                    x.IsMatch(executeStrategy.Configuration, executeStrategy.BuildChain, propertyInfo))
+                    x.IsMatch(executeStrategy.Configuration, executeStrategy.BuildChain, propertyInfo).IsMatch)
                 .OrderByDescending(x => x.Priority).FirstOrDefault();
 
             if (action == null)

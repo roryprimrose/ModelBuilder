@@ -85,7 +85,7 @@
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="buildChain" /> parameter is <c>null</c>.</exception>
-        public bool IsMatch(IBuildConfiguration buildConfiguration, IBuildChain buildChain, Type type)
+        public MatchResult IsMatch(IBuildConfiguration buildConfiguration, IBuildChain buildChain, Type type)
         {
             if (type == null)
             {
@@ -106,16 +106,21 @@
 
             if (generator == null)
             {
-                return false;
+                return MatchResult.NoMatch;
             }
 
-            return generator.IsMatch(type, null, buildChain);
+            var isMatch = generator.IsMatch(type, null, buildChain);
+
+            return new MatchResult
+            {
+                IsMatch = isMatch
+            };
         }
 
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="parameterInfo" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="buildChain" /> parameter is <c>null</c>.</exception>
-        public bool IsMatch(IBuildConfiguration buildConfiguration, IBuildChain buildChain, ParameterInfo parameterInfo)
+        public MatchResult IsMatch(IBuildConfiguration buildConfiguration, IBuildChain buildChain, ParameterInfo parameterInfo)
         {
             if (parameterInfo == null)
             {
@@ -137,16 +142,21 @@
 
             if (generator == null)
             {
-                return false;
+                return MatchResult.NoMatch;
             }
 
-            return generator.IsMatch(parameterInfo.ParameterType, parameterInfo.Name, buildChain);
+            var isMatch = generator.IsMatch(parameterInfo.ParameterType, parameterInfo.Name, buildChain);
+
+            return new MatchResult
+            {
+                IsMatch = isMatch
+            };
         }
 
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="propertyInfo" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="buildChain" /> parameter is <c>null</c>.</exception>
-        public bool IsMatch(IBuildConfiguration buildConfiguration, IBuildChain buildChain, PropertyInfo propertyInfo)
+        public MatchResult IsMatch(IBuildConfiguration buildConfiguration, IBuildChain buildChain, PropertyInfo propertyInfo)
         {
             if (propertyInfo == null)
             {
@@ -168,10 +178,15 @@
 
             if (generator == null)
             {
-                return false;
+                return MatchResult.NoMatch;
             }
 
-            return generator.IsMatch(propertyInfo.PropertyType, propertyInfo.Name, buildChain);
+            var isMatch = generator.IsMatch(propertyInfo.PropertyType, propertyInfo.Name, buildChain);
+
+            return new MatchResult
+            {
+                IsMatch = isMatch
+            };
         }
 
         private object Build(IValueGenerator generator, Type typeToBuild, string referenceName, IBuildChain buildChain,

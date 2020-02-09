@@ -67,7 +67,7 @@
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="buildChain" /> parameter is <c>null</c>.</exception>
-        public bool IsMatch(IBuildConfiguration buildConfiguration, IBuildChain buildChain, Type type)
+        public MatchResult IsMatch(IBuildConfiguration buildConfiguration, IBuildChain buildChain, Type type)
         {
             if (type == null)
             {
@@ -79,13 +79,13 @@
                 throw new ArgumentNullException(nameof(buildChain));
             }
 
-            return HasCircularReference(buildChain, type);
+            return GetMatchResult(buildChain, type);
         }
 
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="parameterInfo" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="buildChain" /> parameter is <c>null</c>.</exception>
-        public bool IsMatch(IBuildConfiguration buildConfiguration, IBuildChain buildChain, ParameterInfo parameterInfo)
+        public MatchResult IsMatch(IBuildConfiguration buildConfiguration, IBuildChain buildChain, ParameterInfo parameterInfo)
         {
             if (parameterInfo == null)
             {
@@ -97,13 +97,13 @@
                 throw new ArgumentNullException(nameof(buildChain));
             }
 
-            return HasCircularReference(buildChain, parameterInfo.ParameterType);
+            return GetMatchResult(buildChain, parameterInfo.ParameterType);
         }
 
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="propertyInfo" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="buildChain" /> parameter is <c>null</c>.</exception>
-        public bool IsMatch(IBuildConfiguration buildConfiguration, IBuildChain buildChain, PropertyInfo propertyInfo)
+        public MatchResult IsMatch(IBuildConfiguration buildConfiguration, IBuildChain buildChain, PropertyInfo propertyInfo)
         {
             if (propertyInfo == null)
             {
@@ -115,7 +115,7 @@
                 throw new ArgumentNullException(nameof(buildChain));
             }
 
-            return HasCircularReference(buildChain, propertyInfo.PropertyType);
+            return GetMatchResult(buildChain, propertyInfo.PropertyType);
         }
 
         private static object FindItemByType(IBuildChain buildChain, Type type)
@@ -137,16 +137,16 @@
             return item;
         }
 
-        private static bool HasCircularReference(IBuildChain buildChain, Type type)
+        private static MatchResult GetMatchResult(IBuildChain buildChain, Type type)
         {
             var circularReference = FindItemByType(buildChain, type);
 
             if (circularReference == null)
             {
-                return false;
+                return MatchResult.NoMatch;
             }
 
-            return true;
+            return new MatchResult {IsMatch = true};
         }
 
         /// <inheritdoc />

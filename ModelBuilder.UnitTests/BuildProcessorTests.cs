@@ -18,6 +18,7 @@
             var parameterInfo = typeof(Person).GetConstructors()
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
             var expected = new Person();
+            var match = new MatchResult {IsMatch = true};
 
             var action = Substitute.For<IBuildAction>();
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
@@ -26,7 +27,7 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Configuration.Returns(buildConfiguration);
-            action.IsMatch(buildConfiguration, buildChain, parameterInfo).Returns(true);
+            action.IsMatch(buildConfiguration, buildChain, parameterInfo).Returns(match);
             action.Build(executeStrategy, parameterInfo).Returns(expected);
 
             var actions = new List<IBuildAction>
@@ -47,6 +48,7 @@
             var parameterInfo = typeof(Person).GetConstructors()
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
             var expected = new Person();
+            var match = new MatchResult { IsMatch = true };
 
             var firstAction = Substitute.For<IBuildAction>();
             var secondAction = Substitute.For<IBuildAction>();
@@ -57,9 +59,9 @@
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Configuration.Returns(buildConfiguration);
             firstAction.Priority.Returns(int.MinValue);
-            firstAction.IsMatch(buildConfiguration, buildChain, parameterInfo).Returns(true);
+            firstAction.IsMatch(buildConfiguration, buildChain, parameterInfo).Returns(match);
             secondAction.Priority.Returns(int.MaxValue);
-            secondAction.IsMatch(buildConfiguration, buildChain, parameterInfo).Returns(true);
+            secondAction.IsMatch(buildConfiguration, buildChain, parameterInfo).Returns(match);
             secondAction.Build(executeStrategy, parameterInfo).Returns(expected);
 
             var actions = new List<IBuildAction>
@@ -81,6 +83,7 @@
             var parameterInfo = typeof(Person).GetConstructors()
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
             var expected = new Person();
+            var match = new MatchResult { IsMatch = true };
 
             var firstAction = Substitute.For<IBuildAction>();
             var secondAction = Substitute.For<IBuildAction>();
@@ -91,9 +94,9 @@
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Configuration.Returns(buildConfiguration);
             firstAction.Priority.Returns(int.MaxValue);
-            firstAction.IsMatch(buildConfiguration, buildChain, parameterInfo).Returns(false);
+            firstAction.IsMatch(buildConfiguration, buildChain, parameterInfo).Returns(MatchResult.NoMatch);
             secondAction.Priority.Returns(int.MinValue);
-            secondAction.IsMatch(buildConfiguration, buildChain, parameterInfo).Returns(true);
+            secondAction.IsMatch(buildConfiguration, buildChain, parameterInfo).Returns(match);
             secondAction.Build(executeStrategy, parameterInfo).Returns(expected);
 
             var actions = new List<IBuildAction>
@@ -158,6 +161,7 @@
         {
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
             var expected = new Person();
+            var match = new MatchResult { IsMatch = true };
 
             var action = Substitute.For<IBuildAction>();
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
@@ -166,7 +170,7 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Configuration.Returns(buildConfiguration);
-            action.IsMatch(buildConfiguration, buildChain, propertyInfo).Returns(true);
+            action.IsMatch(buildConfiguration, buildChain, propertyInfo).Returns(match);
             action.Build(executeStrategy, propertyInfo).Returns(expected);
 
             var actions = new List<IBuildAction>
@@ -186,6 +190,7 @@
         {
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
             var expected = new Person();
+            var match = new MatchResult { IsMatch = true };
 
             var firstAction = Substitute.For<IBuildAction>();
             var secondAction = Substitute.For<IBuildAction>();
@@ -196,9 +201,9 @@
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Configuration.Returns(buildConfiguration);
             firstAction.Priority.Returns(int.MinValue);
-            firstAction.IsMatch(buildConfiguration, buildChain, propertyInfo).Returns(true);
+            firstAction.IsMatch(buildConfiguration, buildChain, propertyInfo).Returns(match);
             secondAction.Priority.Returns(int.MaxValue);
-            secondAction.IsMatch(buildConfiguration, buildChain, propertyInfo).Returns(true);
+            secondAction.IsMatch(buildConfiguration, buildChain, propertyInfo).Returns(match);
             secondAction.Build(executeStrategy, propertyInfo).Returns(expected);
 
             var actions = new List<IBuildAction>
@@ -219,6 +224,7 @@
         {
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
             var expected = new Person();
+            var match = new MatchResult { IsMatch = true };
 
             var firstAction = Substitute.For<IBuildAction>();
             var secondAction = Substitute.For<IBuildAction>();
@@ -229,9 +235,9 @@
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Configuration.Returns(buildConfiguration);
             firstAction.Priority.Returns(int.MaxValue);
-            firstAction.IsMatch(buildConfiguration, buildChain, propertyInfo).Returns(false);
+            firstAction.IsMatch(buildConfiguration, buildChain, propertyInfo).Returns(MatchResult.NoMatch);
             secondAction.Priority.Returns(int.MinValue);
-            secondAction.IsMatch(buildConfiguration, buildChain, propertyInfo).Returns(true);
+            secondAction.IsMatch(buildConfiguration, buildChain, propertyInfo).Returns(match);
             secondAction.Build(executeStrategy, propertyInfo).Returns(expected);
 
             var actions = new List<IBuildAction>
@@ -300,6 +306,7 @@
         {
             var type = typeof(Person);
             var expected = new Person();
+            var match = new MatchResult { IsMatch = true };
 
             var action = Substitute.For<IBuildAction>();
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
@@ -308,7 +315,7 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Configuration.Returns(buildConfiguration);
-            action.IsMatch(buildConfiguration, buildChain, type).Returns(true);
+            action.IsMatch(buildConfiguration, buildChain, type).Returns(match);
             action.Build(executeStrategy, type).Returns(expected);
 
             var actions = new List<IBuildAction>
@@ -328,6 +335,7 @@
         {
             var type = typeof(Person);
             var expected = new Person();
+            var match = new MatchResult { IsMatch = true };
 
             var firstAction = Substitute.For<IBuildAction>();
             var secondAction = Substitute.For<IBuildAction>();
@@ -338,9 +346,9 @@
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Configuration.Returns(buildConfiguration);
             firstAction.Priority.Returns(int.MinValue);
-            firstAction.IsMatch(buildConfiguration, buildChain, type).Returns(true);
+            firstAction.IsMatch(buildConfiguration, buildChain, type).Returns(match);
             secondAction.Priority.Returns(int.MaxValue);
-            secondAction.IsMatch(buildConfiguration, buildChain, type).Returns(true);
+            secondAction.IsMatch(buildConfiguration, buildChain, type).Returns(match);
             secondAction.Build(executeStrategy, type).Returns(expected);
 
             var actions = new List<IBuildAction>
@@ -361,6 +369,7 @@
         {
             var type = typeof(Person);
             var expected = new Person();
+            var match = new MatchResult { IsMatch = true };
 
             var firstAction = Substitute.For<IBuildAction>();
             var secondAction = Substitute.For<IBuildAction>();
@@ -371,9 +380,9 @@
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Configuration.Returns(buildConfiguration);
             firstAction.Priority.Returns(int.MaxValue);
-            firstAction.IsMatch(buildConfiguration, buildChain, type).Returns(false);
+            firstAction.IsMatch(buildConfiguration, buildChain, type).Returns(MatchResult.NoMatch);
             secondAction.Priority.Returns(int.MinValue);
-            secondAction.IsMatch(buildConfiguration, buildChain, type).Returns(true);
+            secondAction.IsMatch(buildConfiguration, buildChain, type).Returns(match);
             secondAction.Build(executeStrategy, type).Returns(expected);
 
             var actions = new List<IBuildAction>

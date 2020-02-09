@@ -506,7 +506,7 @@
 
             var actual = sut.IsMatch(buildConfiguration, buildChain, parameterInfo);
 
-            actual.Should().BeTrue();
+            actual.IsMatch.Should().BeTrue();
         }
 
         [Fact]
@@ -527,7 +527,7 @@
 
             var actual = sut.IsMatch(buildConfiguration, buildChain, parameterInfo);
 
-            actual.Should().BeFalse();
+            actual.IsMatch.Should().BeFalse();
         }
 
         [Fact]
@@ -551,7 +551,7 @@
 
             var actual = sut.IsMatch(buildConfiguration, buildChain, parameterInfo);
 
-            actual.Should().BeFalse();
+            actual.IsMatch.Should().BeFalse();
         }
 
         [Fact]
@@ -618,7 +618,7 @@
 
             var actual = sut.IsMatch(buildConfiguration, buildChain, propertyInfo);
 
-            actual.Should().BeTrue();
+            actual.IsMatch.Should().BeTrue();
         }
 
         [Fact]
@@ -638,7 +638,7 @@
 
             var actual = sut.IsMatch(buildConfiguration, buildChain, propertyInfo);
 
-            actual.Should().BeFalse();
+            actual.IsMatch.Should().BeFalse();
         }
 
         [Fact]
@@ -661,7 +661,7 @@
 
             var actual = sut.IsMatch(buildConfiguration, buildChain, propertyInfo);
 
-            actual.Should().BeFalse();
+            actual.IsMatch.Should().BeFalse();
         }
 
         [Fact]
@@ -726,7 +726,7 @@
 
             var actual = sut.IsMatch(buildConfiguration, buildChain, type);
 
-            actual.Should().BeTrue();
+            actual.IsMatch.Should().BeTrue();
         }
 
         [Fact]
@@ -745,7 +745,7 @@
 
             var actual = sut.IsMatch(buildConfiguration, buildChain, type);
 
-            actual.Should().BeFalse();
+            actual.IsMatch.Should().BeFalse();
         }
 
         [Fact]
@@ -768,7 +768,7 @@
 
             var actual = sut.IsMatch(buildConfiguration, buildChain, type);
 
-            actual.Should().BeFalse();
+            actual.IsMatch.Should().BeFalse();
         }
 
         [Fact]
