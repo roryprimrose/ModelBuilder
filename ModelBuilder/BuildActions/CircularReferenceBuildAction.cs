@@ -13,7 +13,7 @@
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is <c>null</c>.</exception>
-        public object Build(Type type, IExecuteStrategy executeStrategy)
+        public object Build(IExecuteStrategy executeStrategy, Type type, params object[] arguments)
         {
             if (type == null)
             {
@@ -31,7 +31,7 @@
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="parameterInfo" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is <c>null</c>.</exception>
-        public object Build(ParameterInfo parameterInfo, IExecuteStrategy executeStrategy)
+        public object Build(IExecuteStrategy executeStrategy, ParameterInfo parameterInfo)
         {
             if (parameterInfo == null)
             {
@@ -49,7 +49,7 @@
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="propertyInfo" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is <c>null</c>.</exception>
-        public object Build(PropertyInfo propertyInfo, IExecuteStrategy executeStrategy)
+        public object Build(IExecuteStrategy executeStrategy, PropertyInfo propertyInfo)
         {
             if (propertyInfo == null)
             {
@@ -67,7 +67,7 @@
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="buildChain" /> parameter is <c>null</c>.</exception>
-        public bool IsMatch(Type type, IBuildConfiguration buildConfiguration, IBuildChain buildChain)
+        public bool IsMatch(IBuildConfiguration buildConfiguration, IBuildChain buildChain, Type type)
         {
             if (type == null)
             {
@@ -85,7 +85,7 @@
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="parameterInfo" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="buildChain" /> parameter is <c>null</c>.</exception>
-        public bool IsMatch(ParameterInfo parameterInfo, IBuildConfiguration buildConfiguration, IBuildChain buildChain)
+        public bool IsMatch(IBuildConfiguration buildConfiguration, IBuildChain buildChain, ParameterInfo parameterInfo)
         {
             if (parameterInfo == null)
             {
@@ -103,7 +103,7 @@
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="propertyInfo" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="buildChain" /> parameter is <c>null</c>.</exception>
-        public bool IsMatch(PropertyInfo propertyInfo, IBuildConfiguration buildConfiguration, IBuildChain buildChain)
+        public bool IsMatch(IBuildConfiguration buildConfiguration, IBuildChain buildChain, PropertyInfo propertyInfo)
         {
             if (propertyInfo == null)
             {

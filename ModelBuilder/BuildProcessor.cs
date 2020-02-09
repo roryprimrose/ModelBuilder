@@ -52,7 +52,7 @@
                 throw new ArgumentNullException(nameof(executeStrategy));
             }
 
-            var action = _actions.Where(x => x.IsMatch(type, executeStrategy.Configuration, executeStrategy.BuildChain))
+            var action = _actions.Where(x => x.IsMatch(executeStrategy.Configuration, executeStrategy.BuildChain, type))
                 .OrderByDescending(x => x.Priority).FirstOrDefault();
 
             if (action == null)
@@ -60,7 +60,7 @@
                 throw CreateBuildException(type, null, executeStrategy.BuildChain, executeStrategy.Log);
             }
 
-            return action.Build(type, executeStrategy);
+            return action.Build(executeStrategy, type);
         }
 
         /// <inheritdoc />
@@ -77,7 +77,7 @@
             }
 
             var action = _actions.Where(x =>
-                    x.IsMatch(parameterInfo, executeStrategy.Configuration, executeStrategy.BuildChain))
+                    x.IsMatch(executeStrategy.Configuration, executeStrategy.BuildChain, parameterInfo))
                 .OrderByDescending(x => x.Priority).FirstOrDefault();
 
             if (action == null)
@@ -86,7 +86,7 @@
                     executeStrategy.Log);
             }
 
-            return action.Build(parameterInfo, executeStrategy);
+            return action.Build(executeStrategy, parameterInfo);
         }
 
         /// <inheritdoc />
@@ -103,7 +103,7 @@
             }
 
             var action = _actions.Where(x =>
-                    x.IsMatch(propertyInfo, executeStrategy.Configuration, executeStrategy.BuildChain))
+                    x.IsMatch(executeStrategy.Configuration, executeStrategy.BuildChain, propertyInfo))
                 .OrderByDescending(x => x.Priority).FirstOrDefault();
 
             if (action == null)
@@ -112,7 +112,7 @@
                     executeStrategy.Log);
             }
 
-            return action.Build(propertyInfo, executeStrategy);
+            return action.Build(executeStrategy, propertyInfo);
         }
 
         private Exception CreateBuildException(Type type, string referenceName, IBuildChain buildChain,

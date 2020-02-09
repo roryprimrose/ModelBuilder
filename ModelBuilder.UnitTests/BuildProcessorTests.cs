@@ -26,8 +26,8 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Configuration.Returns(buildConfiguration);
-            action.IsMatch(parameterInfo, buildConfiguration, buildChain).Returns(true);
-            action.Build(parameterInfo, executeStrategy).Returns(expected);
+            action.IsMatch(buildConfiguration, buildChain, parameterInfo).Returns(true);
+            action.Build(executeStrategy, parameterInfo).Returns(expected);
 
             var actions = new List<IBuildAction>
             {
@@ -57,10 +57,10 @@
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Configuration.Returns(buildConfiguration);
             firstAction.Priority.Returns(int.MinValue);
-            firstAction.IsMatch(parameterInfo, buildConfiguration, buildChain).Returns(true);
+            firstAction.IsMatch(buildConfiguration, buildChain, parameterInfo).Returns(true);
             secondAction.Priority.Returns(int.MaxValue);
-            secondAction.IsMatch(parameterInfo, buildConfiguration, buildChain).Returns(true);
-            secondAction.Build(parameterInfo, executeStrategy).Returns(expected);
+            secondAction.IsMatch(buildConfiguration, buildChain, parameterInfo).Returns(true);
+            secondAction.Build(executeStrategy, parameterInfo).Returns(expected);
 
             var actions = new List<IBuildAction>
             {
@@ -91,10 +91,10 @@
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Configuration.Returns(buildConfiguration);
             firstAction.Priority.Returns(int.MaxValue);
-            firstAction.IsMatch(parameterInfo, buildConfiguration, buildChain).Returns(false);
+            firstAction.IsMatch(buildConfiguration, buildChain, parameterInfo).Returns(false);
             secondAction.Priority.Returns(int.MinValue);
-            secondAction.IsMatch(parameterInfo, buildConfiguration, buildChain).Returns(true);
-            secondAction.Build(parameterInfo, executeStrategy).Returns(expected);
+            secondAction.IsMatch(buildConfiguration, buildChain, parameterInfo).Returns(true);
+            secondAction.Build(executeStrategy, parameterInfo).Returns(expected);
 
             var actions = new List<IBuildAction>
             {
@@ -166,8 +166,8 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Configuration.Returns(buildConfiguration);
-            action.IsMatch(propertyInfo, buildConfiguration, buildChain).Returns(true);
-            action.Build(propertyInfo, executeStrategy).Returns(expected);
+            action.IsMatch(buildConfiguration, buildChain, propertyInfo).Returns(true);
+            action.Build(executeStrategy, propertyInfo).Returns(expected);
 
             var actions = new List<IBuildAction>
             {
@@ -196,10 +196,10 @@
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Configuration.Returns(buildConfiguration);
             firstAction.Priority.Returns(int.MinValue);
-            firstAction.IsMatch(propertyInfo, buildConfiguration, buildChain).Returns(true);
+            firstAction.IsMatch(buildConfiguration, buildChain, propertyInfo).Returns(true);
             secondAction.Priority.Returns(int.MaxValue);
-            secondAction.IsMatch(propertyInfo, buildConfiguration, buildChain).Returns(true);
-            secondAction.Build(propertyInfo, executeStrategy).Returns(expected);
+            secondAction.IsMatch(buildConfiguration, buildChain, propertyInfo).Returns(true);
+            secondAction.Build(executeStrategy, propertyInfo).Returns(expected);
 
             var actions = new List<IBuildAction>
             {
@@ -229,10 +229,10 @@
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Configuration.Returns(buildConfiguration);
             firstAction.Priority.Returns(int.MaxValue);
-            firstAction.IsMatch(propertyInfo, buildConfiguration, buildChain).Returns(false);
+            firstAction.IsMatch(buildConfiguration, buildChain, propertyInfo).Returns(false);
             secondAction.Priority.Returns(int.MinValue);
-            secondAction.IsMatch(propertyInfo, buildConfiguration, buildChain).Returns(true);
-            secondAction.Build(propertyInfo, executeStrategy).Returns(expected);
+            secondAction.IsMatch(buildConfiguration, buildChain, propertyInfo).Returns(true);
+            secondAction.Build(executeStrategy, propertyInfo).Returns(expected);
 
             var actions = new List<IBuildAction>
             {
@@ -308,8 +308,8 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Configuration.Returns(buildConfiguration);
-            action.IsMatch(type, buildConfiguration, buildChain).Returns(true);
-            action.Build(type, executeStrategy).Returns(expected);
+            action.IsMatch(buildConfiguration, buildChain, type).Returns(true);
+            action.Build(executeStrategy, type).Returns(expected);
 
             var actions = new List<IBuildAction>
             {
@@ -338,10 +338,10 @@
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Configuration.Returns(buildConfiguration);
             firstAction.Priority.Returns(int.MinValue);
-            firstAction.IsMatch(type, buildConfiguration, buildChain).Returns(true);
+            firstAction.IsMatch(buildConfiguration, buildChain, type).Returns(true);
             secondAction.Priority.Returns(int.MaxValue);
-            secondAction.IsMatch(type, buildConfiguration, buildChain).Returns(true);
-            secondAction.Build(type, executeStrategy).Returns(expected);
+            secondAction.IsMatch(buildConfiguration, buildChain, type).Returns(true);
+            secondAction.Build(executeStrategy, type).Returns(expected);
 
             var actions = new List<IBuildAction>
             {
@@ -371,10 +371,10 @@
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Configuration.Returns(buildConfiguration);
             firstAction.Priority.Returns(int.MaxValue);
-            firstAction.IsMatch(type, buildConfiguration, buildChain).Returns(false);
+            firstAction.IsMatch(buildConfiguration, buildChain, type).Returns(false);
             secondAction.Priority.Returns(int.MinValue);
-            secondAction.IsMatch(type, buildConfiguration, buildChain).Returns(true);
-            secondAction.Build(type, executeStrategy).Returns(expected);
+            secondAction.IsMatch(buildConfiguration, buildChain, type).Returns(true);
+            secondAction.Build(executeStrategy, type).Returns(expected);
 
             var actions = new List<IBuildAction>
             {

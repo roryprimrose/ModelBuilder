@@ -45,7 +45,7 @@
 
             var sut = new ValueGeneratorBuildAction();
 
-            var actual = sut.Build(parameterInfo, executeStrategy);
+            var actual = sut.Build(executeStrategy, parameterInfo);
 
             actual.Should().Be(expected);
         }
@@ -66,7 +66,7 @@
 
             var sut = new ValueGeneratorBuildAction();
 
-            var actual = sut.Build(parameterInfo, executeStrategy);
+            var actual = sut.Build(executeStrategy, parameterInfo);
 
             actual.Should().BeNull();
         }
@@ -90,7 +90,7 @@
 
             var sut = new ValueGeneratorBuildAction();
 
-            var actual = sut.Build(parameterInfo, executeStrategy);
+            var actual = sut.Build(executeStrategy, parameterInfo);
 
             actual.Should().BeNull();
         }
@@ -123,7 +123,7 @@
 
             var sut = new ValueGeneratorBuildAction();
 
-            var actual = sut.Build(parameterInfo, executeStrategy);
+            var actual = sut.Build(executeStrategy, parameterInfo);
 
             actual.Should().Be(expected);
         }
@@ -136,7 +136,7 @@
 
             var sut = new ValueGeneratorBuildAction();
 
-            Action action = () => sut.Build(parameterInfo, null);
+            Action action = () => sut.Build(null, parameterInfo);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -148,7 +148,7 @@
 
             var sut = new ValueGeneratorBuildAction();
 
-            Action action = () => sut.Build((ParameterInfo) null, executeStrategy);
+            Action action = () => sut.Build(executeStrategy, (ParameterInfo) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -174,7 +174,7 @@
 
             var sut = new ValueGeneratorBuildAction();
 
-            var actual = sut.Build(propertyInfo, executeStrategy);
+            var actual = sut.Build(executeStrategy, propertyInfo);
 
             actual.Should().Be(expected);
         }
@@ -194,7 +194,7 @@
 
             var sut = new ValueGeneratorBuildAction();
 
-            var actual = sut.Build(propertyInfo, executeStrategy);
+            var actual = sut.Build(executeStrategy, propertyInfo);
 
             actual.Should().BeNull();
         }
@@ -217,7 +217,7 @@
 
             var sut = new ValueGeneratorBuildAction();
 
-            var actual = sut.Build(propertyInfo, executeStrategy);
+            var actual = sut.Build(executeStrategy, propertyInfo);
 
             actual.Should().BeNull();
         }
@@ -248,7 +248,7 @@
 
             var sut = new ValueGeneratorBuildAction();
 
-            var actual = sut.Build(propertyInfo, executeStrategy);
+            var actual = sut.Build(executeStrategy, propertyInfo);
 
             actual.Should().Be(expected);
         }
@@ -260,7 +260,7 @@
 
             var sut = new ValueGeneratorBuildAction();
 
-            Action action = () => sut.Build(propertyInfo, null);
+            Action action = () => sut.Build(null, propertyInfo);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -272,7 +272,7 @@
 
             var sut = new ValueGeneratorBuildAction();
 
-            Action action = () => sut.Build((PropertyInfo) null, executeStrategy);
+            Action action = () => sut.Build(executeStrategy, (PropertyInfo) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -298,7 +298,7 @@
 
             var sut = new ValueGeneratorBuildAction();
 
-            var actual = sut.Build(type, executeStrategy);
+            var actual = sut.Build(executeStrategy, type);
 
             actual.Should().Be(expected);
         }
@@ -315,7 +315,7 @@
 
             var sut = new ValueGeneratorBuildAction();
 
-            var actual = sut.Build(type, executeStrategy);
+            var actual = sut.Build(executeStrategy, type);
 
             actual.Should().BeNull();
         }
@@ -336,7 +336,7 @@
 
             var sut = new ValueGeneratorBuildAction();
 
-            var actual = sut.Build(type, executeStrategy);
+            var actual = sut.Build(executeStrategy, type);
 
             actual.Should().BeNull();
         }
@@ -367,7 +367,7 @@
 
             var sut = new ValueGeneratorBuildAction();
 
-            var actual = sut.Build(type, executeStrategy);
+            var actual = sut.Build(executeStrategy, type);
 
             actual.Should().Be(expected);
         }
@@ -379,7 +379,7 @@
 
             var sut = new ValueGeneratorBuildAction();
 
-            Action action = () => sut.Build(type, null);
+            Action action = () => sut.Build(null, type);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -391,7 +391,7 @@
 
             var sut = new ValueGeneratorBuildAction();
 
-            Action action = () => sut.Build((Type) null, executeStrategy);
+            Action action = () => sut.Build(executeStrategy, (Type) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -418,7 +418,7 @@
 
             var sut = new ValueGeneratorBuildAction();
 
-            sut.Build(type, executeStrategy);
+            sut.Build(executeStrategy, type);
 
             buildLog.Received().CreatingValue(type, generator.GetType(), null);
         }
@@ -445,7 +445,7 @@
 
             var sut = new ValueGeneratorBuildAction();
 
-            Action action = () => sut.Build(parameterInfo, executeStrategy);
+            Action action = () => sut.Build(executeStrategy, parameterInfo);
 
             var exception = action.Should().Throw<BuildException>().Which;
 
@@ -473,7 +473,7 @@
 
             var sut = new ValueGeneratorBuildAction();
 
-            Action action = () => sut.Build(propertyInfo, executeStrategy);
+            Action action = () => sut.Build(executeStrategy, propertyInfo);
 
             var exception = action.Should().Throw<BuildException>().Which;
 
@@ -504,7 +504,7 @@
 
             var sut = new ValueGeneratorBuildAction();
 
-            var actual = sut.IsMatch(parameterInfo, buildConfiguration, buildChain);
+            var actual = sut.IsMatch(buildConfiguration, buildChain, parameterInfo);
 
             actual.Should().BeTrue();
         }
@@ -525,7 +525,7 @@
 
             var sut = new ValueGeneratorBuildAction();
 
-            var actual = sut.IsMatch(parameterInfo, buildConfiguration, buildChain);
+            var actual = sut.IsMatch(buildConfiguration, buildChain, parameterInfo);
 
             actual.Should().BeFalse();
         }
@@ -549,7 +549,7 @@
 
             var sut = new ValueGeneratorBuildAction();
 
-            var actual = sut.IsMatch(parameterInfo, buildConfiguration, buildChain);
+            var actual = sut.IsMatch(buildConfiguration, buildChain, parameterInfo);
 
             actual.Should().BeFalse();
         }
@@ -563,7 +563,7 @@
 
             var sut = new ValueGeneratorBuildAction();
 
-            Action action = () => sut.IsMatch(parameterInfo, buildConfiguration, null);
+            Action action = () => sut.IsMatch(buildConfiguration, null, parameterInfo);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -577,7 +577,7 @@
 
             var sut = new ValueGeneratorBuildAction();
 
-            Action action = () => sut.IsMatch(parameterInfo, null, buildChain);
+            Action action = () => sut.IsMatch(null, buildChain, parameterInfo);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -590,7 +590,7 @@
 
             var sut = new ValueGeneratorBuildAction();
 
-            Action action = () => sut.IsMatch((ParameterInfo) null, buildConfiguration, buildChain);
+            Action action = () => sut.IsMatch(buildConfiguration, buildChain, (ParameterInfo) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -616,7 +616,7 @@
 
             var sut = new ValueGeneratorBuildAction();
 
-            var actual = sut.IsMatch(propertyInfo, buildConfiguration, buildChain);
+            var actual = sut.IsMatch(buildConfiguration, buildChain, propertyInfo);
 
             actual.Should().BeTrue();
         }
@@ -636,7 +636,7 @@
 
             var sut = new ValueGeneratorBuildAction();
 
-            var actual = sut.IsMatch(propertyInfo, buildConfiguration, buildChain);
+            var actual = sut.IsMatch(buildConfiguration, buildChain, propertyInfo);
 
             actual.Should().BeFalse();
         }
@@ -659,7 +659,7 @@
 
             var sut = new ValueGeneratorBuildAction();
 
-            var actual = sut.IsMatch(propertyInfo, buildConfiguration, buildChain);
+            var actual = sut.IsMatch(buildConfiguration, buildChain, propertyInfo);
 
             actual.Should().BeFalse();
         }
@@ -672,7 +672,7 @@
 
             var sut = new ValueGeneratorBuildAction();
 
-            Action action = () => sut.IsMatch(propertyInfo, buildConfiguration, null);
+            Action action = () => sut.IsMatch(buildConfiguration, null, propertyInfo);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -685,7 +685,7 @@
 
             var sut = new ValueGeneratorBuildAction();
 
-            Action action = () => sut.IsMatch(propertyInfo, null, buildChain);
+            Action action = () => sut.IsMatch(null, buildChain, propertyInfo);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -698,7 +698,7 @@
 
             var sut = new ValueGeneratorBuildAction();
 
-            Action action = () => sut.IsMatch((PropertyInfo) null, buildConfiguration, buildChain);
+            Action action = () => sut.IsMatch(buildConfiguration, buildChain, (PropertyInfo) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -724,7 +724,7 @@
 
             var sut = new ValueGeneratorBuildAction();
 
-            var actual = sut.IsMatch(type, buildConfiguration, buildChain);
+            var actual = sut.IsMatch(buildConfiguration, buildChain, type);
 
             actual.Should().BeTrue();
         }
@@ -743,7 +743,7 @@
 
             var sut = new ValueGeneratorBuildAction();
 
-            var actual = sut.IsMatch(type, buildConfiguration, buildChain);
+            var actual = sut.IsMatch(buildConfiguration, buildChain, type);
 
             actual.Should().BeFalse();
         }
@@ -766,7 +766,7 @@
 
             var sut = new ValueGeneratorBuildAction();
 
-            var actual = sut.IsMatch(type, buildConfiguration, buildChain);
+            var actual = sut.IsMatch(buildConfiguration, buildChain, type);
 
             actual.Should().BeFalse();
         }
@@ -779,7 +779,7 @@
 
             var sut = new ValueGeneratorBuildAction();
 
-            Action action = () => sut.IsMatch(type, buildConfiguration, null);
+            Action action = () => sut.IsMatch(buildConfiguration, null, type);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -792,7 +792,7 @@
 
             var sut = new ValueGeneratorBuildAction();
 
-            Action action = () => sut.IsMatch(type, null, buildChain);
+            Action action = () => sut.IsMatch(null, buildChain, type);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -805,7 +805,7 @@
 
             var sut = new ValueGeneratorBuildAction();
 
-            Action action = () => sut.IsMatch((Type) null, buildConfiguration, buildChain);
+            Action action = () => sut.IsMatch(buildConfiguration, buildChain, (Type) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
