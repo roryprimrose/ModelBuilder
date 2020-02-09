@@ -2,11 +2,9 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Globalization;
     using System.Linq;
     using System.Reflection;
     using ModelBuilder.BuildActions;
-    using ModelBuilder.Properties;
 
     /// <summary>
     ///     The <see cref="IBuildProcessor" />
@@ -58,7 +56,7 @@
 
             if (action == null)
             {
-                throw CreateBuildException(type, null, executeStrategy.BuildChain, executeStrategy.Log);
+                throw new NotSupportedException();
             }
 
             return action.Build(executeStrategy, type);
@@ -83,8 +81,7 @@
 
             if (action == null)
             {
-                throw CreateBuildException(parameterInfo.ParameterType, parameterInfo.Name, executeStrategy.BuildChain,
-                    executeStrategy.Log);
+                throw new NotSupportedException();
             }
 
             return action.Build(executeStrategy, parameterInfo);
@@ -109,8 +106,7 @@
 
             if (action == null)
             {
-                throw CreateBuildException(propertyInfo.PropertyType, propertyInfo.Name, executeStrategy.BuildChain,
-                    executeStrategy.Log);
+                throw new NotSupportedException();
             }
 
             return action.Build(executeStrategy, propertyInfo);
@@ -203,59 +199,6 @@
                 select x;
 
             return matchingActions.FirstOrDefault();
-        }
-
-        private Exception CreateBuildException(Type type, string referenceName, IBuildChain buildChain,
-            IBuildLog buildLog)
-        {
-            string message;
-            var context = buildChain.Last;
-
-            if (string.IsNullOrWhiteSpace(referenceName) == false)
-            {
-                if (context != null)
-                {
-                    message = string.Format(
-                        CultureInfo.CurrentCulture,
-                        Resources.NoMatchingBuildActionFoundWithNameAndContext,
-                        type.FullName,
-                        referenceName,
-                        context.GetType().FullName);
-                }
-                else
-                {
-                    message = string.Format(
-                        CultureInfo.CurrentCulture,
-                        Resources.NoMatchingBuildActionFoundWithName,
-                        type.FullName,
-                        referenceName);
-                }
-            }
-            else
-            {
-                message = string.Format(
-                    CultureInfo.CurrentCulture,
-                    Resources.NoMatchingBuildActionFound,
-                    type.FullName);
-            }
-
-            var ex = new NotSupportedException(message);
-
-            buildLog.BuildFailure(ex);
-
-            const string messageFormat =
-                "Failed to create instance of type {0}, {1}: {2}{3}{3}At the time of the failure, the build log was:{3}{3}{4}";
-            var logOutput = buildLog.Output;
-            var failureMessage = string.Format(
-                CultureInfo.CurrentCulture,
-                messageFormat,
-                type.FullName,
-                ex.GetType().Name,
-                ex.Message,
-                Environment.NewLine,
-                logOutput);
-
-            return new BuildException(failureMessage, type, referenceName, context, logOutput, ex);
         }
     }
 }

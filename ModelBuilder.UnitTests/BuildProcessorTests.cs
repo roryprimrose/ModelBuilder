@@ -125,7 +125,7 @@
 
             Action action = () => sut.Build(executeStrategy, parameterInfo);
 
-            action.Should().Throw<BuildException>();
+            action.Should().Throw<NotSupportedException>();
         }
 
         [Fact]
@@ -271,7 +271,7 @@
 
             Action action = () => sut.Build(executeStrategy, propertyInfo);
 
-            action.Should().Throw<BuildException>();
+            action.Should().Throw<NotSupportedException>();
         }
 
         [Fact]
@@ -410,7 +410,7 @@
 
             Action action = () => sut.Build(executeStrategy, type);
 
-            action.Should().Throw<BuildException>();
+            action.Should().Throw<NotSupportedException>();
         }
 
         [Fact]
