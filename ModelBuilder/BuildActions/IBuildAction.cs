@@ -65,10 +65,10 @@
         /// <summary>
         ///     Populates the specified instance using an execution strategy.
         /// </summary>
-        /// <param name="instance">The instance to populate.</param>
         /// <param name="executeStrategy">The execution strategy.</param>
+        /// <param name="instance">The instance to populate.</param>
         /// <returns>The populated instance.</returns>
-        object Populate(object instance, IExecuteStrategy executeStrategy);
+        object Populate(IExecuteStrategy executeStrategy, object instance);
 
         /// <summary>
         ///     Gets the priority for this build step.

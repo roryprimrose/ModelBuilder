@@ -63,5 +63,13 @@
         /// <returns>A <see cref="MatchResult" /> indicating instance creation support via a <see cref="IBuildAction" />.</returns>
         BuildPlan GetBuildPlan(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
             PropertyInfo propertyInfo);
+
+        /// <summary>
+        ///     Populates the specified instance using an execution strategy.
+        /// </summary>
+        /// <param name="executeStrategy">The execution strategy.</param>
+        /// <param name="instance">The instance to populate.</param>
+        /// <returns>The populated instance.</returns>
+        object Populate(IExecuteStrategy executeStrategy, object instance);
     }
 }

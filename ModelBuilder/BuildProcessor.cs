@@ -38,6 +38,8 @@
         }
 
         /// <inheritdoc />
+        /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
         public object Build(IExecuteStrategy executeStrategy, Type type, params object[] arguments)
         {
             if (executeStrategy == null)
@@ -63,6 +65,8 @@
         }
 
         /// <inheritdoc />
+        /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="parameterInfo" /> parameter is <c>null</c>.</exception>
         public object Build(IExecuteStrategy executeStrategy, ParameterInfo parameterInfo)
         {
             if (executeStrategy == null)
@@ -88,6 +92,8 @@
         }
 
         /// <inheritdoc />
+        /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="propertyInfo" /> parameter is <c>null</c>.</exception>
         public object Build(IExecuteStrategy executeStrategy, PropertyInfo propertyInfo)
         {
             if (executeStrategy == null)
@@ -113,6 +119,9 @@
         }
 
         /// <inheritdoc />
+        /// <exception cref="ArgumentNullException">The <paramref name="buildConfiguration" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="buildChain" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
         public BuildPlan GetBuildPlan(IBuildConfiguration buildConfiguration, IBuildChain buildChain, Type type)
         {
             if (buildConfiguration == null)
@@ -142,6 +151,9 @@
         }
 
         /// <inheritdoc />
+        /// <exception cref="ArgumentNullException">The <paramref name="buildConfiguration" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="buildChain" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="parameterInfo" /> parameter is <c>null</c>.</exception>
         public BuildPlan GetBuildPlan(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
             ParameterInfo parameterInfo)
         {
@@ -172,6 +184,9 @@
         }
 
         /// <inheritdoc />
+        /// <exception cref="ArgumentNullException">The <paramref name="buildConfiguration" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="buildChain" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="propertyInfo" /> parameter is <c>null</c>.</exception>
         public BuildPlan GetBuildPlan(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
             PropertyInfo propertyInfo)
         {
@@ -199,6 +214,33 @@
                 select x;
 
             return matchingActions.FirstOrDefault();
+        }
+
+        /// <inheritdoc />
+        /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="instance" /> parameter is <c>null</c>.</exception>
+        public object Populate(IExecuteStrategy executeStrategy, object instance)
+        {
+            if (executeStrategy == null)
+            {
+                throw new ArgumentNullException(nameof(executeStrategy));
+            }
+
+            if (instance == null)
+            {
+                throw new ArgumentNullException(nameof(instance));
+            }
+
+            var action = _actions.Where(x =>
+                    x.IsMatch(executeStrategy.Configuration, executeStrategy.BuildChain, instance.GetType()).IsMatch)
+                .OrderByDescending(x => x.Priority).FirstOrDefault();
+
+            if (action == null)
+            {
+                throw new NotSupportedException();
+            }
+
+            return action.Populate(executeStrategy, instance);
         }
     }
 }

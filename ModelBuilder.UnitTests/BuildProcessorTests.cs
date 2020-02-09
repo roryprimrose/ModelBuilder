@@ -865,6 +865,142 @@
         }
 
         [Fact]
+        public void PopulateReturnsActionValue()
+        {
+            var expected = new Person();
+            var match = new MatchResult {IsMatch = true};
+
+            var action = Substitute.For<IBuildAction>();
+            var buildConfiguration = Substitute.For<IBuildConfiguration>();
+            var buildChain = Substitute.For<IBuildChain>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+            executeStrategy.Configuration.Returns(buildConfiguration);
+            action.IsMatch(buildConfiguration, buildChain, expected.GetType()).Returns(match);
+            action.Populate(executeStrategy, expected).Returns(expected);
+
+            var actions = new List<IBuildAction>
+            {
+                action
+            };
+
+            var sut = new BuildProcessor(actions);
+
+            var actual = sut.Populate(executeStrategy, expected);
+
+            actual.Should().Be(expected);
+        }
+
+        [Fact]
+        public void PopulateReturnsValueFromActionWithHighestPriority()
+        {
+            var expected = new Person();
+            var match = new MatchResult {IsMatch = true};
+
+            var firstAction = Substitute.For<IBuildAction>();
+            var secondAction = Substitute.For<IBuildAction>();
+            var buildConfiguration = Substitute.For<IBuildConfiguration>();
+            var buildChain = Substitute.For<IBuildChain>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+            executeStrategy.Configuration.Returns(buildConfiguration);
+            firstAction.Priority.Returns(int.MinValue);
+            firstAction.IsMatch(buildConfiguration, buildChain, expected.GetType()).Returns(match);
+            secondAction.Priority.Returns(int.MaxValue);
+            secondAction.IsMatch(buildConfiguration, buildChain, expected.GetType()).Returns(match);
+            secondAction.Populate(executeStrategy, expected).Returns(expected);
+
+            var actions = new List<IBuildAction>
+            {
+                firstAction,
+                secondAction
+            };
+
+            var sut = new BuildProcessor(actions);
+
+            var actual = sut.Populate(executeStrategy, expected);
+
+            actual.Should().Be(expected);
+        }
+
+        [Fact]
+        public void PopulateReturnsValueFromMatchingAction()
+        {
+            var expected = new Person();
+            var match = new MatchResult {IsMatch = true};
+
+            var firstAction = Substitute.For<IBuildAction>();
+            var secondAction = Substitute.For<IBuildAction>();
+            var buildConfiguration = Substitute.For<IBuildConfiguration>();
+            var buildChain = Substitute.For<IBuildChain>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+            executeStrategy.Configuration.Returns(buildConfiguration);
+            firstAction.Priority.Returns(int.MaxValue);
+            firstAction.IsMatch(buildConfiguration, buildChain, expected.GetType()).Returns(MatchResult.NoMatch);
+            secondAction.Priority.Returns(int.MinValue);
+            secondAction.IsMatch(buildConfiguration, buildChain, expected.GetType()).Returns(match);
+            secondAction.Populate(executeStrategy, expected).Returns(expected);
+
+            var actions = new List<IBuildAction>
+            {
+                firstAction,
+                secondAction
+            };
+
+            var sut = new BuildProcessor(actions);
+
+            var actual = sut.Populate(executeStrategy, expected);
+
+            actual.Should().Be(expected);
+        }
+
+        [Fact]
+        public void PopulateThrowsExceptionWhenNoBuildActionFound()
+        {
+            var actions = Array.Empty<IBuildAction>();
+            var instance = new Person();
+
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            var sut = new BuildProcessor(actions);
+
+            Action action = () => sut.Populate(executeStrategy, instance);
+
+            action.Should().Throw<NotSupportedException>();
+        }
+
+        [Fact]
+        public void PopulateThrowsExceptionWithNullExecuteStrategy()
+        {
+            var actions = Array.Empty<IBuildAction>();
+            var instance = new Person();
+
+            var sut = new BuildProcessor(actions);
+
+            Action action = () => sut.Populate(null, instance);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void PopulateThrowsExceptionWithNullInstance()
+        {
+            var actions = Array.Empty<IBuildAction>();
+
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            var sut = new BuildProcessor(actions);
+
+            Action action = () => sut.Populate(executeStrategy, null);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
         public void ThrowsExceptionWithNullActions()
         {
             Action action = () => new BuildProcessor(null);

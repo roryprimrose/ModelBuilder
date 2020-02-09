@@ -13,18 +13,18 @@
     public class ValueGeneratorBuildAction : IBuildAction
     {
         /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
         public object Build(IExecuteStrategy executeStrategy, Type type, params object[] arguments)
         {
-            if (type == null)
-            {
-                throw new ArgumentNullException(nameof(type));
-            }
-
             if (executeStrategy == null)
             {
                 throw new ArgumentNullException(nameof(executeStrategy));
+            }
+
+            if (type == null)
+            {
+                throw new ArgumentNullException(nameof(type));
             }
 
             var generator = GetMatchingGenerator(type, null, executeStrategy.Configuration, executeStrategy.BuildChain);
@@ -35,18 +35,18 @@
         }
 
         /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">The <paramref name="parameterInfo" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="parameterInfo" /> parameter is <c>null</c>.</exception>
         public object Build(IExecuteStrategy executeStrategy, ParameterInfo parameterInfo)
         {
-            if (parameterInfo == null)
-            {
-                throw new ArgumentNullException(nameof(parameterInfo));
-            }
-
             if (executeStrategy == null)
             {
                 throw new ArgumentNullException(nameof(executeStrategy));
+            }
+
+            if (parameterInfo == null)
+            {
+                throw new ArgumentNullException(nameof(parameterInfo));
             }
 
             var generator = GetMatchingGenerator(parameterInfo.ParameterType, parameterInfo.Name,
@@ -59,18 +59,18 @@
         }
 
         /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">The <paramref name="propertyInfo" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="propertyInfo" /> parameter is <c>null</c>.</exception>
         public object Build(IExecuteStrategy executeStrategy, PropertyInfo propertyInfo)
         {
-            if (propertyInfo == null)
-            {
-                throw new ArgumentNullException(nameof(propertyInfo));
-            }
-
             if (executeStrategy == null)
             {
                 throw new ArgumentNullException(nameof(executeStrategy));
+            }
+
+            if (propertyInfo == null)
+            {
+                throw new ArgumentNullException(nameof(propertyInfo));
             }
 
             var generator = GetMatchingGenerator(propertyInfo.PropertyType, propertyInfo.Name,
@@ -83,15 +83,11 @@
         }
 
         /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="buildChain" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="buildConfiguration" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
         public MatchResult IsMatch(IBuildConfiguration buildConfiguration, IBuildChain buildChain, Type type)
         {
-            if (type == null)
-            {
-                throw new ArgumentNullException(nameof(type));
-            }
-
             if (buildConfiguration == null)
             {
                 throw new ArgumentNullException(nameof(buildConfiguration));
@@ -100,6 +96,11 @@
             if (buildChain == null)
             {
                 throw new ArgumentNullException(nameof(buildChain));
+            }
+
+            if (type == null)
+            {
+                throw new ArgumentNullException(nameof(type));
             }
 
             var generator = GetMatchingGenerator(type, null, buildConfiguration, buildChain);
@@ -118,15 +119,12 @@
         }
 
         /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">The <paramref name="parameterInfo" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="buildChain" /> parameter is <c>null</c>.</exception>
-        public MatchResult IsMatch(IBuildConfiguration buildConfiguration, IBuildChain buildChain, ParameterInfo parameterInfo)
+        /// <exception cref="ArgumentNullException">The <paramref name="buildConfiguration" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="parameterInfo" /> parameter is <c>null</c>.</exception>
+        public MatchResult IsMatch(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
+            ParameterInfo parameterInfo)
         {
-            if (parameterInfo == null)
-            {
-                throw new ArgumentNullException(nameof(parameterInfo));
-            }
-
             if (buildConfiguration == null)
             {
                 throw new ArgumentNullException(nameof(buildConfiguration));
@@ -135,6 +133,11 @@
             if (buildChain == null)
             {
                 throw new ArgumentNullException(nameof(buildChain));
+            }
+
+            if (parameterInfo == null)
+            {
+                throw new ArgumentNullException(nameof(parameterInfo));
             }
 
             var generator = GetMatchingGenerator(parameterInfo.ParameterType, parameterInfo.Name, buildConfiguration,
@@ -154,15 +157,12 @@
         }
 
         /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">The <paramref name="propertyInfo" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="buildChain" /> parameter is <c>null</c>.</exception>
-        public MatchResult IsMatch(IBuildConfiguration buildConfiguration, IBuildChain buildChain, PropertyInfo propertyInfo)
+        /// <exception cref="ArgumentNullException">The <paramref name="buildConfiguration" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="propertyInfo" /> parameter is <c>null</c>.</exception>
+        public MatchResult IsMatch(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
+            PropertyInfo propertyInfo)
         {
-            if (propertyInfo == null)
-            {
-                throw new ArgumentNullException(nameof(propertyInfo));
-            }
-
             if (buildConfiguration == null)
             {
                 throw new ArgumentNullException(nameof(buildConfiguration));
@@ -171,6 +171,11 @@
             if (buildChain == null)
             {
                 throw new ArgumentNullException(nameof(buildChain));
+            }
+
+            if (propertyInfo == null)
+            {
+                throw new ArgumentNullException(nameof(propertyInfo));
             }
 
             var generator = GetMatchingGenerator(propertyInfo.PropertyType, propertyInfo.Name, buildConfiguration,
@@ -190,12 +195,14 @@
         }
 
         /// <inheritdoc />
-        public object Populate(object instance, IExecuteStrategy executeStrategy)
+        /// <exception cref="NotSupportedException">Populate is not supported by this build action.</exception>
+        public object Populate(IExecuteStrategy executeStrategy, object instance)
         {
             throw new NotSupportedException();
         }
 
-        private object Build(IValueGenerator generator, Type typeToBuild, string referenceName, IBuildChain buildChain,
+        private static object Build(IValueGenerator generator, Type typeToBuild, string referenceName,
+            IBuildChain buildChain,
             Func<object> createAction, IBuildLog buildLog)
         {
             if (generator == null)
@@ -237,7 +244,7 @@
             }
         }
 
-        private IValueGenerator GetMatchingGenerator(Type type, string referenceName,
+        private static IValueGenerator GetMatchingGenerator(Type type, string referenceName,
             IBuildConfiguration buildConfiguration,
             IBuildChain buildChain)
         {
