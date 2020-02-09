@@ -12,25 +12,26 @@
         /// <summary>
         ///     Builds a value of the specified type.
         /// </summary>
+        /// <param name="executeStrategy">The execute strategy.</param>
         /// <param name="type">The type of value to build.</param>
-        /// <param name="executeStrategy">The execute strategy.</param>
+        /// <param name="arguments">The constructor parameters to create the instance with.</param>
         /// <returns>The new value.</returns>
-        object Build(Type type, IExecuteStrategy executeStrategy);
+        object Build(IExecuteStrategy executeStrategy, Type type, params object[] arguments);
 
         /// <summary>
         ///     Builds a value of the specified type.
         /// </summary>
+        /// <param name="executeStrategy">The execute strategy.</param>
         /// <param name="parameterInfo">The parameter of value to build.</param>
-        /// <param name="executeStrategy">The execute strategy.</param>
         /// <returns>The new value.</returns>
-        object Build(ParameterInfo parameterInfo, IExecuteStrategy executeStrategy);
+        object Build(IExecuteStrategy executeStrategy, ParameterInfo parameterInfo);
 
         /// <summary>
         ///     Builds a value of the specified type.
         /// </summary>
-        /// <param name="propertyInfo">The property of value to build.</param>
         /// <param name="executeStrategy">The execute strategy.</param>
+        /// <param name="propertyInfo">The property of value to build.</param>
         /// <returns>The new value.</returns>
-        object Build(PropertyInfo propertyInfo, IExecuteStrategy executeStrategy);
+        object Build(IExecuteStrategy executeStrategy, PropertyInfo propertyInfo);
     }
 }

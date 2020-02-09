@@ -40,7 +40,7 @@
         }
 
         /// <inheritdoc />
-        public object Build(Type type, IExecuteStrategy executeStrategy)
+        public object Build(IExecuteStrategy executeStrategy, Type type)
         {
             if (type == null)
             {
@@ -64,7 +64,7 @@
         }
 
         /// <inheritdoc />
-        public object Build(ParameterInfo parameterInfo, IExecuteStrategy executeStrategy)
+        public object Build(IExecuteStrategy executeStrategy, ParameterInfo parameterInfo)
         {
             if (parameterInfo == null)
             {
@@ -90,7 +90,7 @@
         }
 
         /// <inheritdoc />
-        public object Build(PropertyInfo propertyInfo, IExecuteStrategy executeStrategy)
+        public object Build(IExecuteStrategy executeStrategy, PropertyInfo propertyInfo)
         {
             if (propertyInfo == null)
             {

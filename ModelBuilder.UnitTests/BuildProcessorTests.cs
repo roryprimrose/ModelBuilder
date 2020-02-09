@@ -36,7 +36,7 @@
 
             var sut = new BuildProcessor(actions);
 
-            var actual = sut.Build(parameterInfo, executeStrategy);
+            var actual = sut.Build(executeStrategy, parameterInfo);
 
             actual.Should().Be(expected);
         }
@@ -70,7 +70,7 @@
 
             var sut = new BuildProcessor(actions);
 
-            var actual = sut.Build(parameterInfo, executeStrategy);
+            var actual = sut.Build(executeStrategy, parameterInfo);
 
             actual.Should().Be(expected);
         }
@@ -104,7 +104,7 @@
 
             var sut = new BuildProcessor(actions);
 
-            var actual = sut.Build(parameterInfo, executeStrategy);
+            var actual = sut.Build(executeStrategy, parameterInfo);
 
             actual.Should().Be(expected);
         }
@@ -120,7 +120,7 @@
 
             var sut = new BuildProcessor(actions);
 
-            Action action = () => sut.Build(parameterInfo, executeStrategy);
+            Action action = () => sut.Build(executeStrategy, parameterInfo);
 
             action.Should().Throw<BuildException>();
         }
@@ -134,7 +134,7 @@
 
             var sut = new BuildProcessor(actions);
 
-            Action action = () => sut.Build(parameterInfo, null);
+            Action action = () => sut.Build(null, parameterInfo);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -148,7 +148,7 @@
 
             var sut = new BuildProcessor(actions);
 
-            Action action = () => sut.Build((ParameterInfo) null, executeStrategy);
+            Action action = () => sut.Build(executeStrategy, (ParameterInfo) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -176,7 +176,7 @@
 
             var sut = new BuildProcessor(actions);
 
-            var actual = sut.Build(propertyInfo, executeStrategy);
+            var actual = sut.Build(executeStrategy, propertyInfo);
 
             actual.Should().Be(expected);
         }
@@ -209,7 +209,7 @@
 
             var sut = new BuildProcessor(actions);
 
-            var actual = sut.Build(propertyInfo, executeStrategy);
+            var actual = sut.Build(executeStrategy, propertyInfo);
 
             actual.Should().Be(expected);
         }
@@ -242,7 +242,7 @@
 
             var sut = new BuildProcessor(actions);
 
-            var actual = sut.Build(propertyInfo, executeStrategy);
+            var actual = sut.Build(executeStrategy, propertyInfo);
 
             actual.Should().Be(expected);
         }
@@ -263,7 +263,7 @@
 
             var sut = new BuildProcessor(actions);
 
-            Action action = () => sut.Build(propertyInfo, executeStrategy);
+            Action action = () => sut.Build(executeStrategy, propertyInfo);
 
             action.Should().Throw<BuildException>();
         }
@@ -276,7 +276,7 @@
 
             var sut = new BuildProcessor(actions);
 
-            Action action = () => sut.Build(propertyInfo, null);
+            Action action = () => sut.Build(null, propertyInfo);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -290,7 +290,7 @@
 
             var sut = new BuildProcessor(actions);
 
-            Action action = () => sut.Build((PropertyInfo) null, executeStrategy);
+            Action action = () => sut.Build(executeStrategy, (PropertyInfo) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -318,7 +318,7 @@
 
             var sut = new BuildProcessor(actions);
 
-            var actual = sut.Build(type, executeStrategy);
+            var actual = sut.Build(executeStrategy, type);
 
             actual.Should().Be(expected);
         }
@@ -351,7 +351,7 @@
 
             var sut = new BuildProcessor(actions);
 
-            var actual = sut.Build(type, executeStrategy);
+            var actual = sut.Build(executeStrategy, type);
 
             actual.Should().Be(expected);
         }
@@ -384,7 +384,7 @@
 
             var sut = new BuildProcessor(actions);
 
-            var actual = sut.Build(type, executeStrategy);
+            var actual = sut.Build(executeStrategy, type);
 
             actual.Should().Be(expected);
         }
@@ -399,7 +399,7 @@
 
             var sut = new BuildProcessor(actions);
 
-            Action action = () => sut.Build(type, executeStrategy);
+            Action action = () => sut.Build(executeStrategy, type);
 
             action.Should().Throw<BuildException>();
         }
@@ -412,7 +412,7 @@
 
             var sut = new BuildProcessor(actions);
 
-            Action action = () => sut.Build(type, null);
+            Action action = () => sut.Build(null, type);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -426,7 +426,7 @@
 
             var sut = new BuildProcessor(actions);
 
-            Action action = () => sut.Build((Type) null, executeStrategy);
+            Action action = () => sut.Build(executeStrategy, (Type) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
