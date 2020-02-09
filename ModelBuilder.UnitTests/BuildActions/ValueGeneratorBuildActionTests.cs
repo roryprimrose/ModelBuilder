@@ -811,6 +811,16 @@
         }
 
         [Fact]
+        public void PopulateThrowsException()
+        {
+            var sut = new ValueGeneratorBuildAction();
+
+            Action action = () => sut.Populate(null, null);
+
+            action.Should().Throw<NotSupportedException>();
+        }
+
+        [Fact]
         public void PriorityReturnsLowerThanCreationRuleBuildActionPriority()
         {
             var otherStep = new CreationRuleBuildAction();

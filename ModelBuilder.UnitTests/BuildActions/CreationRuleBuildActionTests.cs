@@ -800,6 +800,16 @@
         }
 
         [Fact]
+        public void PopulateThrowsException()
+        {
+            var sut = new CreationRuleBuildAction();
+
+            Action action = () => sut.Populate(null, null);
+
+            action.Should().Throw<NotSupportedException>();
+        }
+
+        [Fact]
         public void PriorityReturnsLowerThanCircularReferencePriority()
         {
             var circularReferenceStep = new CircularReferenceBuildAction();

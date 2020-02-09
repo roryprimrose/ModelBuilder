@@ -189,6 +189,12 @@
             };
         }
 
+        /// <inheritdoc />
+        public object Populate(object instance, IExecuteStrategy executeStrategy)
+        {
+            throw new NotSupportedException();
+        }
+
         private object Build(IValueGenerator generator, Type typeToBuild, string referenceName, IBuildChain buildChain,
             Func<object> createAction, IBuildLog buildLog)
         {

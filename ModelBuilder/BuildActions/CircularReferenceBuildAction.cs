@@ -85,7 +85,8 @@
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="parameterInfo" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="buildChain" /> parameter is <c>null</c>.</exception>
-        public MatchResult IsMatch(IBuildConfiguration buildConfiguration, IBuildChain buildChain, ParameterInfo parameterInfo)
+        public MatchResult IsMatch(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
+            ParameterInfo parameterInfo)
         {
             if (parameterInfo == null)
             {
@@ -103,7 +104,8 @@
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="propertyInfo" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="buildChain" /> parameter is <c>null</c>.</exception>
-        public MatchResult IsMatch(IBuildConfiguration buildConfiguration, IBuildChain buildChain, PropertyInfo propertyInfo)
+        public MatchResult IsMatch(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
+            PropertyInfo propertyInfo)
         {
             if (propertyInfo == null)
             {
@@ -116,6 +118,12 @@
             }
 
             return GetMatchResult(buildChain, propertyInfo.PropertyType);
+        }
+
+        /// <inheritdoc />
+        public object Populate(object instance, IExecuteStrategy executeStrategy)
+        {
+            throw new NotSupportedException();
         }
 
         private static object FindItemByType(IBuildChain buildChain, Type type)

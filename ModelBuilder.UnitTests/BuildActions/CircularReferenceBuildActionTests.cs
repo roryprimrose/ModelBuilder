@@ -439,6 +439,16 @@
         }
 
         [Fact]
+        public void PopulateThrowsException()
+        {
+            var sut = new CircularReferenceBuildAction();
+
+            Action action = () => sut.Populate(null, null);
+
+            action.Should().Throw<NotSupportedException>();
+        }
+
+        [Fact]
         public void PriorityReturnsMaximumValue()
         {
             var sut = new CircularReferenceBuildAction();

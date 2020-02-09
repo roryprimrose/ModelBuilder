@@ -63,6 +63,14 @@
         MatchResult IsMatch(IBuildConfiguration buildConfiguration, IBuildChain buildChain, PropertyInfo propertyInfo);
 
         /// <summary>
+        ///     Populates the specified instance using an execution strategy.
+        /// </summary>
+        /// <param name="instance">The instance to populate.</param>
+        /// <param name="executeStrategy">The execution strategy.</param>
+        /// <returns>The populated instance.</returns>
+        object Populate(object instance, IExecuteStrategy executeStrategy);
+
+        /// <summary>
         ///     Gets the priority for this build step.
         /// </summary>
         int Priority { get; }

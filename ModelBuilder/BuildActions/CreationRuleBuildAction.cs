@@ -176,6 +176,12 @@
             return new MatchResult {IsMatch = isMatch};
         }
 
+        /// <inheritdoc />
+        public object Populate(object instance, IExecuteStrategy executeStrategy)
+        {
+            throw new NotSupportedException();
+        }
+
         private object Build(ICreationRule rule, Type typeToBuild, string referenceName, IBuildChain buildChain,
             Func<object> createAction, IBuildLog buildLog)
         {
