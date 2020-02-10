@@ -155,7 +155,7 @@
                 return MatchResult.NoMatch;
             }
 
-            return new MatchResult {IsMatch = true};
+            return new MatchResult {SupportsCreate = true};
         }
 
         /// <inheritdoc />

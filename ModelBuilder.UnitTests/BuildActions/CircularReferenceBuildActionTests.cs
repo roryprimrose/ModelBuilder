@@ -226,7 +226,7 @@
 
             var actual = sut.IsMatch(buildConfiguration, buildChain, parameterInfo);
 
-            actual.IsMatch.Should().BeFalse();
+            actual.SupportsCreate.Should().BeFalse();
         }
 
         [Fact]
@@ -241,7 +241,7 @@
 
             var actual = sut.IsMatch(buildConfiguration, buildChain, parameterInfo);
 
-            actual.IsMatch.Should().BeFalse();
+            actual.SupportsCreate.Should().BeFalse();
         }
 
         [Fact]
@@ -260,7 +260,7 @@
 
             var actual = sut.IsMatch(buildConfiguration, buildChain, parameterInfo);
 
-            actual.IsMatch.Should().BeTrue();
+            actual.SupportsCreate.Should().BeTrue();
         }
 
         [Fact]
@@ -303,7 +303,7 @@
 
             var actual = sut.IsMatch(buildConfiguration, buildChain, propertyInfo);
 
-            actual.IsMatch.Should().BeFalse();
+            actual.SupportsCreate.Should().BeFalse();
         }
 
         [Fact]
@@ -317,7 +317,7 @@
 
             var actual = sut.IsMatch(buildConfiguration, buildChain, propertyInfo);
 
-            actual.IsMatch.Should().BeFalse();
+            actual.SupportsCreate.Should().BeFalse();
         }
 
         [Fact]
@@ -335,7 +335,7 @@
 
             var actual = sut.IsMatch(buildConfiguration, buildChain, propertyInfo);
 
-            actual.IsMatch.Should().BeTrue();
+            actual.SupportsCreate.Should().BeTrue();
         }
 
         [Fact]
@@ -377,7 +377,7 @@
 
             var actual = sut.IsMatch(buildConfiguration, buildChain, type);
 
-            actual.IsMatch.Should().BeFalse();
+            actual.SupportsCreate.Should().BeFalse();
         }
 
         [Fact]
@@ -391,7 +391,7 @@
 
             var actual = sut.IsMatch(buildConfiguration, buildChain, type);
 
-            actual.IsMatch.Should().BeFalse();
+            actual.SupportsCreate.Should().BeFalse();
         }
 
         [Fact]
@@ -409,7 +409,7 @@
 
             var actual = sut.IsMatch(buildConfiguration, buildChain, type);
 
-            actual.IsMatch.Should().BeTrue();
+            actual.SupportsCreate.Should().BeTrue();
         }
 
         [Fact]

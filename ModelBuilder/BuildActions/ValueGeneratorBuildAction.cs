@@ -114,7 +114,7 @@
 
             return new MatchResult
             {
-                IsMatch = isMatch
+                SupportsCreate = isMatch
             };
         }
 
@@ -152,7 +152,7 @@
 
             return new MatchResult
             {
-                IsMatch = isMatch
+                SupportsCreate = isMatch
             };
         }
 
@@ -190,7 +190,7 @@
 
             return new MatchResult
             {
-                IsMatch = isMatch
+                SupportsCreate = isMatch
             };
         }
 

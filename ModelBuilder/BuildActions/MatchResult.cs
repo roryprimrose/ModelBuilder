@@ -15,6 +15,6 @@
         /// <summary>
         ///     Gets or sets whether there the <see cref="IBuildAction" /> supports the requested scenario.
         /// </summary>
-        public bool IsMatch { get; set; }
+        public bool SupportsCreate { get; set; }
     }
 }

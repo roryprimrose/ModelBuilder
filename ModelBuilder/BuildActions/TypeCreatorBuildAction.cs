@@ -4,13 +4,13 @@
     using System.Globalization;
     using System.Linq;
     using System.Reflection;
-    using ModelBuilder.CreationRules;
+    using ModelBuilder.TypeCreators;
 
     /// <summary>
-    ///     The <see cref="CreationRuleBuildAction" />
-    ///     class is used to build a value from a matching <see cref="ICreationRule" />.
+    /// The <see cref="TypeCreatorBuildAction"/>
+    /// class is used to provide a build action that uses a matching <see cref="ITypeCreator"/> to create and/or populate values.
     /// </summary>
-    public class CreationRuleBuildAction : IBuildAction
+    public class TypeCreatorBuildAction : IBuildAction
     {
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is <c>null</c>.</exception>
@@ -27,10 +27,11 @@
                 throw new ArgumentNullException(nameof(type));
             }
 
-            var rule = GetMatchingRule(type, null, executeStrategy.Configuration);
+            var typeCreator =
+                GetMatchingTypeCreator(type, null, executeStrategy.Configuration, executeStrategy.BuildChain);
 
-            return Build(rule, type, null, executeStrategy.BuildChain,
-                () => rule?.Create(type, null, executeStrategy),
+            return Build(typeCreator, type, null, executeStrategy.BuildChain,
+                () => typeCreator?.Create(type, null, executeStrategy, arguments),
                 executeStrategy.Log);
         }
 
@@ -49,10 +50,12 @@
                 throw new ArgumentNullException(nameof(parameterInfo));
             }
 
-            var rule = GetMatchingRule(parameterInfo.ParameterType, parameterInfo.Name, executeStrategy.Configuration);
+            var typeCreator = GetMatchingTypeCreator(parameterInfo.ParameterType, parameterInfo.Name,
+                executeStrategy.Configuration,
+                executeStrategy.BuildChain);
 
-            return Build(rule, parameterInfo.ParameterType, parameterInfo.Name, executeStrategy.BuildChain,
-                () => rule?.Create(parameterInfo.ParameterType, parameterInfo.Name, executeStrategy),
+            return Build(typeCreator, parameterInfo.ParameterType, parameterInfo.Name, executeStrategy.BuildChain,
+                () => typeCreator?.Create(parameterInfo.ParameterType, parameterInfo.Name, executeStrategy),
                 executeStrategy.Log);
         }
 
@@ -71,16 +74,18 @@
                 throw new ArgumentNullException(nameof(propertyInfo));
             }
 
-            var rule = GetMatchingRule(propertyInfo.PropertyType, propertyInfo.Name, executeStrategy.Configuration);
+            var typeCreator = GetMatchingTypeCreator(propertyInfo.PropertyType, propertyInfo.Name,
+                executeStrategy.Configuration,
+                executeStrategy.BuildChain);
 
-            return Build(rule, propertyInfo.PropertyType, propertyInfo.Name, executeStrategy.BuildChain,
-                () => rule?.Create(propertyInfo.PropertyType, propertyInfo.Name, executeStrategy),
+            return Build(typeCreator, propertyInfo.PropertyType, propertyInfo.Name, executeStrategy.BuildChain,
+                () => typeCreator?.Create(propertyInfo.PropertyType, propertyInfo.Name, executeStrategy),
                 executeStrategy.Log);
         }
 
         /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">The <paramref name="buildConfiguration" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="buildChain" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="buildConfiguration" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
         public MatchResult IsMatch(IBuildConfiguration buildConfiguration, IBuildChain buildChain, Type type)
         {
@@ -99,21 +104,14 @@
                 throw new ArgumentNullException(nameof(type));
             }
 
-            var rule = GetMatchingRule(type, null, buildConfiguration);
+            var typeCreator = GetMatchingTypeCreator(type, null, buildConfiguration, buildChain);
 
-            if (rule == null)
-            {
-                return MatchResult.NoMatch;
-            }
-
-            var isMatch = rule.IsMatch(type, null);
-
-            return new MatchResult {SupportsCreate = isMatch};
+            return GetMatchResult(typeCreator, type, null, buildChain);
         }
 
         /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">The <paramref name="buildConfiguration" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="buildChain" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="buildConfiguration" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="parameterInfo" /> parameter is <c>null</c>.</exception>
         public MatchResult IsMatch(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
             ParameterInfo parameterInfo)
@@ -133,21 +131,16 @@
                 throw new ArgumentNullException(nameof(parameterInfo));
             }
 
-            var rule = GetMatchingRule(parameterInfo.ParameterType, parameterInfo.Name, buildConfiguration);
+            var typeCreator = GetMatchingTypeCreator(parameterInfo.ParameterType, parameterInfo.Name,
+                buildConfiguration,
+                buildChain);
 
-            if (rule == null)
-            {
-                return MatchResult.NoMatch;
-            }
-
-            var isMatch = rule.IsMatch(parameterInfo.ParameterType, parameterInfo.Name);
-
-            return new MatchResult {SupportsCreate = isMatch};
+            return GetMatchResult(typeCreator, parameterInfo.ParameterType, parameterInfo.Name, buildChain);
         }
 
         /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">The <paramref name="buildConfiguration" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="buildChain" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="buildConfiguration" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="propertyInfo" /> parameter is <c>null</c>.</exception>
         public MatchResult IsMatch(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
             PropertyInfo propertyInfo)
@@ -167,16 +160,10 @@
                 throw new ArgumentNullException(nameof(propertyInfo));
             }
 
-            var rule = GetMatchingRule(propertyInfo.PropertyType, propertyInfo.Name, buildConfiguration);
+            var typeCreator = GetMatchingTypeCreator(propertyInfo.PropertyType, propertyInfo.Name, buildConfiguration,
+                buildChain);
 
-            if (rule == null)
-            {
-                return MatchResult.NoMatch;
-            }
-
-            var isMatch = rule.IsMatch(propertyInfo.PropertyType, propertyInfo.Name);
-
-            return new MatchResult {SupportsCreate = isMatch};
+            return GetMatchResult(typeCreator, propertyInfo.PropertyType, propertyInfo.Name, buildChain);
         }
 
         /// <inheritdoc />
@@ -186,18 +173,17 @@
             throw new NotSupportedException();
         }
 
-        private object Build(ICreationRule rule, Type typeToBuild, string referenceName, IBuildChain buildChain,
+        private static object Build(ITypeCreator typeCreator, Type typeToBuild, string referenceName,
+            IBuildChain buildChain,
             Func<object> createAction, IBuildLog buildLog)
         {
-            if (rule == null)
+            if (typeCreator == null)
             {
                 return null;
             }
 
             var context = buildChain.Last;
-            var ruleType = rule.GetType();
-
-            buildLog.CreatingValue(typeToBuild, ruleType, context);
+            var creatorType = typeCreator.GetType();
 
             try
             {
@@ -212,13 +198,13 @@
                 buildLog.BuildFailure(ex);
 
                 const string messageFormat =
-                    "Failed to create value for type {0} using creation rule {1}, {2}: {3}{4}{4}At the time of the failure, the build log was:{4}{4}{5}";
+                    "Failed to create value for type {0} using type creator {1}, {2}: {3}{4}{4}At the time of the failure, the build log was:{4}{4}{5}";
                 var output = buildLog.Output;
                 var message = string.Format(
                     CultureInfo.CurrentCulture,
                     messageFormat,
                     typeToBuild.FullName,
-                    ruleType.FullName,
+                    creatorType.FullName,
                     ex.GetType().Name,
                     ex.Message,
                     Environment.NewLine,
@@ -228,13 +214,34 @@
             }
         }
 
-        private ICreationRule GetMatchingRule(Type type, string referenceName, IBuildConfiguration buildConfiguration)
+        private static ITypeCreator GetMatchingTypeCreator(Type type, string referenceName,
+            IBuildConfiguration buildConfiguration,
+            IBuildChain buildChain)
         {
-            return buildConfiguration.CreationRules?.Where(x => x.IsMatch(type, referenceName))
+            return buildConfiguration.TypeCreators?.Where(x => x.CanCreate(type, referenceName, buildChain))
                 .OrderByDescending(x => x.Priority).FirstOrDefault();
         }
 
+        private static MatchResult GetMatchResult(ITypeCreator typeCreator, Type type, string referenceName, IBuildChain buildChain)
+        {
+            if (typeCreator == null)
+            {
+                return MatchResult.NoMatch;
+            }
+
+            var canCreate = typeCreator.CanCreate(type, referenceName, buildChain);
+            var canPopulate = typeCreator.CanPopulate(type, referenceName, buildChain);
+
+            return new MatchResult
+            {
+                SupportsCreate = canCreate,
+                SupportsPopulate = canPopulate,
+                AutoPopulate = typeCreator.AutoPopulate,
+                AutoDetectConstructor = typeCreator.AutoDetectConstructor
+            };
+        }
+
         /// <inheritdoc />
-        public int Priority => 5000;
+        public int Priority => 1000;
     }
 }

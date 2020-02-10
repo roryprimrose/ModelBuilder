@@ -11,9 +11,9 @@
         {
             var sut = new MatchResult();
 
-            sut.IsMatch.Should().BeFalse();
+            sut.SupportsCreate.Should().BeFalse();
             sut.AutoPopulate.Should().BeFalse();
-            sut.RequiresActivator.Should().BeFalse();
+            sut.AutoDetectConstructor.Should().BeFalse();
             sut.SupportsPopulate.Should().BeFalse();
         }
 
@@ -22,7 +22,7 @@
         {
             var sut = MatchResult.NoMatch;
 
-            sut.IsMatch.Should().BeFalse();
+            sut.SupportsCreate.Should().BeFalse();
         }
 
         [Fact]

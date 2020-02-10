@@ -53,7 +53,7 @@
             }
 
             var action = _actions.Where(x =>
-                    x.IsMatch(executeStrategy.Configuration, executeStrategy.BuildChain, type).IsMatch)
+                    x.IsMatch(executeStrategy.Configuration, executeStrategy.BuildChain, type).SupportsCreate)
                 .OrderByDescending(x => x.Priority).FirstOrDefault();
 
             if (action == null)
@@ -80,7 +80,7 @@
             }
 
             var action = _actions.Where(x =>
-                    x.IsMatch(executeStrategy.Configuration, executeStrategy.BuildChain, parameterInfo).IsMatch)
+                    x.IsMatch(executeStrategy.Configuration, executeStrategy.BuildChain, parameterInfo).SupportsCreate)
                 .OrderByDescending(x => x.Priority).FirstOrDefault();
 
             if (action == null)
@@ -107,7 +107,7 @@
             }
 
             var action = _actions.Where(x =>
-                    x.IsMatch(executeStrategy.Configuration, executeStrategy.BuildChain, propertyInfo).IsMatch)
+                    x.IsMatch(executeStrategy.Configuration, executeStrategy.BuildChain, propertyInfo).SupportsCreate)
                 .OrderByDescending(x => x.Priority).FirstOrDefault();
 
             if (action == null)
@@ -144,7 +144,7 @@
                 select x.IsMatch(buildConfiguration, buildChain, type);
 
             var matchingActions = from x in results
-                where x.IsMatch
+                where x.SupportsCreate
                 select x;
 
             return matchingActions.FirstOrDefault();
@@ -177,7 +177,7 @@
                 select x.IsMatch(buildConfiguration, buildChain, parameterInfo);
 
             var matchingActions = from x in results
-                where x.IsMatch
+                where x.SupportsCreate
                 select x;
 
             return matchingActions.FirstOrDefault();
@@ -210,7 +210,7 @@
                 select x.IsMatch(buildConfiguration, buildChain, propertyInfo);
 
             var matchingActions = from x in results
-                where x.IsMatch
+                where x.SupportsCreate
                 select x;
 
             return matchingActions.FirstOrDefault();
@@ -232,7 +232,7 @@
             }
 
             var action = _actions.Where(x =>
-                    x.IsMatch(executeStrategy.Configuration, executeStrategy.BuildChain, instance.GetType()).IsMatch)
+                    x.IsMatch(executeStrategy.Configuration, executeStrategy.BuildChain, instance.GetType()).SupportsCreate)
                 .OrderByDescending(x => x.Priority).FirstOrDefault();
 
             if (action == null)

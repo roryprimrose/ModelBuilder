@@ -5,19 +5,19 @@
     using System.Reflection;
     using FluentAssertions;
     using ModelBuilder.BuildActions;
+    using ModelBuilder.TypeCreators;
     using ModelBuilder.UnitTests.Models;
-    using ModelBuilder.ValueGenerators;
     using NSubstitute;
     using NSubstitute.ExceptionExtensions;
     using Xunit;
     using Xunit.Abstractions;
 
-    public class ValueGeneratorBuildActionTests
+    public class TypeCreatorBuildActionTests
     {
         private readonly OutputBuildLog _buildLog;
         private readonly ITestOutputHelper _output;
 
-        public ValueGeneratorBuildActionTests(ITestOutputHelper output)
+        public TypeCreatorBuildActionTests(ITestOutputHelper output)
         {
             _output = output;
             _buildLog = new OutputBuildLog(output);
@@ -33,17 +33,17 @@
             var expected = new Person();
 
             var executeStrategy = Substitute.For<IExecuteStrategy>();
-            var generator = Substitute.For<IValueGenerator>();
+            var creator = Substitute.For<ITypeCreator>();
 
-            buildConfiguration.ValueGenerators.Add(generator);
+            buildConfiguration.TypeCreators.Add(creator);
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Log.Returns(_buildLog);
 
             executeStrategy.Configuration.Returns(buildConfiguration);
-            generator.IsMatch(parameterInfo.ParameterType, parameterInfo.Name, buildChain).Returns(true);
-            generator.Generate(parameterInfo.ParameterType, parameterInfo.Name, executeStrategy).Returns(expected);
+            creator.CanCreate(parameterInfo.ParameterType, parameterInfo.Name, buildChain).Returns(true);
+            creator.Create(parameterInfo.ParameterType, parameterInfo.Name, executeStrategy).Returns(expected);
 
-            var sut = new ValueGeneratorBuildAction();
+            var sut = new TypeCreatorBuildAction();
 
             var actual = sut.Build(executeStrategy, parameterInfo);
 
@@ -64,7 +64,7 @@
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Log.Returns(_buildLog);
 
-            var sut = new ValueGeneratorBuildAction();
+            var sut = new TypeCreatorBuildAction();
 
             var actual = sut.Build(executeStrategy, parameterInfo);
 
@@ -80,15 +80,15 @@
             var buildChain = new BuildHistory();
 
             var executeStrategy = Substitute.For<IExecuteStrategy>();
-            var generator = Substitute.For<IValueGenerator>();
+            var creator = Substitute.For<ITypeCreator>();
 
-            buildConfiguration.ValueGenerators.Add(generator);
+            buildConfiguration.TypeCreators.Add(creator);
 
             executeStrategy.Configuration.Returns(buildConfiguration);
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Log.Returns(_buildLog);
 
-            var sut = new ValueGeneratorBuildAction();
+            var sut = new TypeCreatorBuildAction();
 
             var actual = sut.Build(executeStrategy, parameterInfo);
 
@@ -105,23 +105,23 @@
             var expected = new Person();
 
             var executeStrategy = Substitute.For<IExecuteStrategy>();
-            var firstGenerator = Substitute.For<IValueGenerator>();
-            var secondGenerator = Substitute.For<IValueGenerator>();
+            var firstGenerator = Substitute.For<ITypeCreator>();
+            var secondGenerator = Substitute.For<ITypeCreator>();
 
-            buildConfiguration.ValueGenerators.Add(firstGenerator);
-            buildConfiguration.ValueGenerators.Add(secondGenerator);
+            buildConfiguration.TypeCreators.Add(firstGenerator);
+            buildConfiguration.TypeCreators.Add(secondGenerator);
 
             executeStrategy.Configuration.Returns(buildConfiguration);
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Log.Returns(_buildLog);
             firstGenerator.Priority.Returns(10);
-            firstGenerator.IsMatch(parameterInfo.ParameterType, parameterInfo.Name, buildChain).Returns(true);
+            firstGenerator.CanCreate(parameterInfo.ParameterType, parameterInfo.Name, buildChain).Returns(true);
             secondGenerator.Priority.Returns(20);
-            secondGenerator.IsMatch(parameterInfo.ParameterType, parameterInfo.Name, buildChain).Returns(true);
-            secondGenerator.Generate(parameterInfo.ParameterType, parameterInfo.Name, executeStrategy)
+            secondGenerator.CanCreate(parameterInfo.ParameterType, parameterInfo.Name, buildChain).Returns(true);
+            secondGenerator.Create(parameterInfo.ParameterType, parameterInfo.Name, executeStrategy)
                 .Returns(expected);
 
-            var sut = new ValueGeneratorBuildAction();
+            var sut = new TypeCreatorBuildAction();
 
             var actual = sut.Build(executeStrategy, parameterInfo);
 
@@ -134,7 +134,7 @@
             var parameterInfo = typeof(Person).GetConstructors()
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
 
-            var sut = new ValueGeneratorBuildAction();
+            var sut = new TypeCreatorBuildAction();
 
             Action action = () => sut.Build(null, parameterInfo);
 
@@ -146,7 +146,7 @@
         {
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
-            var sut = new ValueGeneratorBuildAction();
+            var sut = new TypeCreatorBuildAction();
 
             Action action = () => sut.Build(executeStrategy, (ParameterInfo) null);
 
@@ -162,17 +162,17 @@
             var expected = new Person();
 
             var executeStrategy = Substitute.For<IExecuteStrategy>();
-            var generator = Substitute.For<IValueGenerator>();
+            var creator = Substitute.For<ITypeCreator>();
 
-            buildConfiguration.ValueGenerators.Add(generator);
+            buildConfiguration.TypeCreators.Add(creator);
 
             executeStrategy.Configuration.Returns(buildConfiguration);
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Log.Returns(_buildLog);
-            generator.IsMatch(propertyInfo.PropertyType, propertyInfo.Name, buildChain).Returns(true);
-            generator.Generate(propertyInfo.PropertyType, propertyInfo.Name, executeStrategy).Returns(expected);
+            creator.CanCreate(propertyInfo.PropertyType, propertyInfo.Name, buildChain).Returns(true);
+            creator.Create(propertyInfo.PropertyType, propertyInfo.Name, executeStrategy).Returns(expected);
 
-            var sut = new ValueGeneratorBuildAction();
+            var sut = new TypeCreatorBuildAction();
 
             var actual = sut.Build(executeStrategy, propertyInfo);
 
@@ -192,7 +192,7 @@
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Log.Returns(_buildLog);
 
-            var sut = new ValueGeneratorBuildAction();
+            var sut = new TypeCreatorBuildAction();
 
             var actual = sut.Build(executeStrategy, propertyInfo);
 
@@ -207,15 +207,15 @@
             var buildChain = new BuildHistory();
 
             var executeStrategy = Substitute.For<IExecuteStrategy>();
-            var generator = Substitute.For<IValueGenerator>();
+            var creator = Substitute.For<ITypeCreator>();
 
-            buildConfiguration.ValueGenerators.Add(generator);
+            buildConfiguration.TypeCreators.Add(creator);
 
             executeStrategy.Configuration.Returns(buildConfiguration);
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Log.Returns(_buildLog);
 
-            var sut = new ValueGeneratorBuildAction();
+            var sut = new TypeCreatorBuildAction();
 
             var actual = sut.Build(executeStrategy, propertyInfo);
 
@@ -231,22 +231,22 @@
             var expected = new Person();
 
             var executeStrategy = Substitute.For<IExecuteStrategy>();
-            var firstGenerator = Substitute.For<IValueGenerator>();
-            var secondGenerator = Substitute.For<IValueGenerator>();
+            var firstGenerator = Substitute.For<ITypeCreator>();
+            var secondGenerator = Substitute.For<ITypeCreator>();
 
-            buildConfiguration.ValueGenerators.Add(firstGenerator);
-            buildConfiguration.ValueGenerators.Add(secondGenerator);
+            buildConfiguration.TypeCreators.Add(firstGenerator);
+            buildConfiguration.TypeCreators.Add(secondGenerator);
 
             executeStrategy.Configuration.Returns(buildConfiguration);
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Log.Returns(_buildLog);
             firstGenerator.Priority.Returns(10);
-            firstGenerator.IsMatch(propertyInfo.PropertyType, propertyInfo.Name, buildChain).Returns(true);
+            firstGenerator.CanCreate(propertyInfo.PropertyType, propertyInfo.Name, buildChain).Returns(true);
             secondGenerator.Priority.Returns(20);
-            secondGenerator.IsMatch(propertyInfo.PropertyType, propertyInfo.Name, buildChain).Returns(true);
-            secondGenerator.Generate(propertyInfo.PropertyType, propertyInfo.Name, executeStrategy).Returns(expected);
+            secondGenerator.CanCreate(propertyInfo.PropertyType, propertyInfo.Name, buildChain).Returns(true);
+            secondGenerator.Create(propertyInfo.PropertyType, propertyInfo.Name, executeStrategy).Returns(expected);
 
-            var sut = new ValueGeneratorBuildAction();
+            var sut = new TypeCreatorBuildAction();
 
             var actual = sut.Build(executeStrategy, propertyInfo);
 
@@ -258,7 +258,7 @@
         {
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
 
-            var sut = new ValueGeneratorBuildAction();
+            var sut = new TypeCreatorBuildAction();
 
             Action action = () => sut.Build(null, propertyInfo);
 
@@ -270,7 +270,7 @@
         {
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
-            var sut = new ValueGeneratorBuildAction();
+            var sut = new TypeCreatorBuildAction();
 
             Action action = () => sut.Build(executeStrategy, (PropertyInfo) null);
 
@@ -286,17 +286,17 @@
             var expected = new Person();
 
             var executeStrategy = Substitute.For<IExecuteStrategy>();
-            var generator = Substitute.For<IValueGenerator>();
+            var creator = Substitute.For<ITypeCreator>();
 
-            buildConfiguration.ValueGenerators.Add(generator);
+            buildConfiguration.TypeCreators.Add(creator);
 
             executeStrategy.Configuration.Returns(buildConfiguration);
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Log.Returns(_buildLog);
-            generator.IsMatch(type, null, buildChain).Returns(true);
-            generator.Generate(type, null, executeStrategy).Returns(expected);
+            creator.CanCreate(type, null, buildChain).Returns(true);
+            creator.Create(type, null, executeStrategy).Returns(expected);
 
-            var sut = new ValueGeneratorBuildAction();
+            var sut = new TypeCreatorBuildAction();
 
             var actual = sut.Build(executeStrategy, type);
 
@@ -313,7 +313,7 @@
 
             executeStrategy.Configuration.Returns(buildConfiguration);
 
-            var sut = new ValueGeneratorBuildAction();
+            var sut = new TypeCreatorBuildAction();
 
             var actual = sut.Build(executeStrategy, type);
 
@@ -327,14 +327,14 @@
             var buildConfiguration = new BuildConfiguration();
 
             var executeStrategy = Substitute.For<IExecuteStrategy>();
-            var generator = Substitute.For<IValueGenerator>();
+            var creator = Substitute.For<ITypeCreator>();
 
-            buildConfiguration.ValueGenerators.Add(generator);
+            buildConfiguration.TypeCreators.Add(creator);
 
             executeStrategy.Configuration.Returns(buildConfiguration);
             executeStrategy.Log.Returns(_buildLog);
 
-            var sut = new ValueGeneratorBuildAction();
+            var sut = new TypeCreatorBuildAction();
 
             var actual = sut.Build(executeStrategy, type);
 
@@ -350,22 +350,22 @@
             var expected = new Person();
 
             var executeStrategy = Substitute.For<IExecuteStrategy>();
-            var firstGenerator = Substitute.For<IValueGenerator>();
-            var secondGenerator = Substitute.For<IValueGenerator>();
+            var firstGenerator = Substitute.For<ITypeCreator>();
+            var secondGenerator = Substitute.For<ITypeCreator>();
 
-            buildConfiguration.ValueGenerators.Add(firstGenerator);
-            buildConfiguration.ValueGenerators.Add(secondGenerator);
+            buildConfiguration.TypeCreators.Add(firstGenerator);
+            buildConfiguration.TypeCreators.Add(secondGenerator);
 
             executeStrategy.Configuration.Returns(buildConfiguration);
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Log.Returns(_buildLog);
             firstGenerator.Priority.Returns(10);
-            firstGenerator.IsMatch(type, null, buildChain).Returns(true);
+            firstGenerator.CanCreate(type, null, buildChain).Returns(true);
             secondGenerator.Priority.Returns(20);
-            secondGenerator.IsMatch(type, null, buildChain).Returns(true);
-            secondGenerator.Generate(type, null, executeStrategy).Returns(expected);
+            secondGenerator.CanCreate(type, null, buildChain).Returns(true);
+            secondGenerator.Create(type, null, executeStrategy).Returns(expected);
 
-            var sut = new ValueGeneratorBuildAction();
+            var sut = new TypeCreatorBuildAction();
 
             var actual = sut.Build(executeStrategy, type);
 
@@ -377,7 +377,7 @@
         {
             var type = typeof(Person);
 
-            var sut = new ValueGeneratorBuildAction();
+            var sut = new TypeCreatorBuildAction();
 
             Action action = () => sut.Build(null, type);
 
@@ -389,38 +389,11 @@
         {
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
-            var sut = new ValueGeneratorBuildAction();
+            var sut = new TypeCreatorBuildAction();
 
             Action action = () => sut.Build(executeStrategy, (Type) null);
 
             action.Should().Throw<ArgumentNullException>();
-        }
-
-        [Fact]
-        public void BuildLogsValueCreation()
-        {
-            var type = typeof(string);
-            var buildConfiguration = new BuildConfiguration();
-            var expected = Guid.NewGuid().ToString();
-
-            var buildLog = Substitute.For<IBuildLog>();
-            var buildChain = Substitute.For<IBuildChain>();
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-            var generator = Substitute.For<IValueGenerator>();
-
-            buildConfiguration.ValueGenerators.Add(generator);
-
-            executeStrategy.Configuration.Returns(buildConfiguration);
-            executeStrategy.BuildChain.Returns(buildChain);
-            executeStrategy.Log.Returns(buildLog);
-            generator.IsMatch(type, null, buildChain).Returns(true);
-            generator.Generate(type, null, executeStrategy).Returns(expected);
-
-            var sut = new ValueGeneratorBuildAction();
-
-            sut.Build(executeStrategy, type);
-
-            buildLog.Received().CreatingValue(type, generator.GetType(), null);
         }
 
         [Fact]
@@ -432,18 +405,18 @@
 
             var buildChain = Substitute.For<IBuildChain>();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
-            var generator = Substitute.For<IValueGenerator>();
+            var creator = Substitute.For<ITypeCreator>();
 
-            buildConfiguration.ValueGenerators.Add(generator);
+            buildConfiguration.TypeCreators.Add(creator);
 
             executeStrategy.Configuration.Returns(buildConfiguration);
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Log.Returns(_buildLog);
-            generator.IsMatch(parameterInfo.ParameterType, parameterInfo.Name, buildChain).Returns(true);
-            generator.Generate(parameterInfo.ParameterType, parameterInfo.Name, executeStrategy)
+            creator.CanCreate(parameterInfo.ParameterType, parameterInfo.Name, buildChain).Returns(true);
+            creator.Create(parameterInfo.ParameterType, parameterInfo.Name, executeStrategy)
                 .Throws<BuildException>();
 
-            var sut = new ValueGeneratorBuildAction();
+            var sut = new TypeCreatorBuildAction();
 
             Action action = () => sut.Build(executeStrategy, parameterInfo);
 
@@ -460,18 +433,18 @@
 
             var buildChain = Substitute.For<IBuildChain>();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
-            var generator = Substitute.For<IValueGenerator>();
+            var creator = Substitute.For<ITypeCreator>();
 
-            buildConfiguration.ValueGenerators.Add(generator);
+            buildConfiguration.TypeCreators.Add(creator);
 
             executeStrategy.Configuration.Returns(buildConfiguration);
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Log.Returns(_buildLog);
-            generator.IsMatch(propertyInfo.PropertyType, propertyInfo.Name, buildChain).Returns(true);
-            generator.Generate(propertyInfo.PropertyType, propertyInfo.Name, executeStrategy)
+            creator.CanCreate(propertyInfo.PropertyType, propertyInfo.Name, buildChain).Returns(true);
+            creator.Create(propertyInfo.PropertyType, propertyInfo.Name, executeStrategy)
                 .Throws<TimeoutException>();
 
-            var sut = new ValueGeneratorBuildAction();
+            var sut = new TypeCreatorBuildAction();
 
             Action action = () => sut.Build(executeStrategy, propertyInfo);
 
@@ -492,21 +465,27 @@
             var expected = new Person();
 
             var executeStrategy = Substitute.For<IExecuteStrategy>();
-            var generator = Substitute.For<IValueGenerator>();
+            var creator = Substitute.For<ITypeCreator>();
 
-            buildConfiguration.ValueGenerators.Add(generator);
+            buildConfiguration.TypeCreators.Add(creator);
 
             executeStrategy.Configuration.Returns(buildConfiguration);
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Log.Returns(_buildLog);
-            generator.IsMatch(parameterInfo.ParameterType, parameterInfo.Name, buildChain).Returns(true);
-            generator.Generate(parameterInfo.ParameterType, parameterInfo.Name, executeStrategy).Returns(expected);
+            creator.CanCreate(parameterInfo.ParameterType, parameterInfo.Name, buildChain).Returns(true);
+            creator.CanPopulate(parameterInfo.ParameterType, parameterInfo.Name, buildChain).Returns(true);
+            creator.Create(parameterInfo.ParameterType, parameterInfo.Name, executeStrategy).Returns(expected);
+            creator.AutoDetectConstructor.Returns(true);
+            creator.AutoPopulate.Returns(true);
 
-            var sut = new ValueGeneratorBuildAction();
+            var sut = new TypeCreatorBuildAction();
 
             var actual = sut.IsMatch(buildConfiguration, buildChain, parameterInfo);
 
             actual.SupportsCreate.Should().BeTrue();
+            actual.SupportsPopulate.Should().BeTrue();
+            actual.AutoDetectConstructor.Should().BeTrue();
+            actual.AutoPopulate.Should().BeTrue();
         }
 
         [Fact]
@@ -523,7 +502,7 @@
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Log.Returns(_buildLog);
 
-            var sut = new ValueGeneratorBuildAction();
+            var sut = new TypeCreatorBuildAction();
 
             var actual = sut.IsMatch(buildConfiguration, buildChain, parameterInfo);
 
@@ -539,15 +518,15 @@
             var buildChain = new BuildHistory();
 
             var executeStrategy = Substitute.For<IExecuteStrategy>();
-            var generator = Substitute.For<IValueGenerator>();
+            var creator = Substitute.For<ITypeCreator>();
 
-            buildConfiguration.ValueGenerators.Add(generator);
+            buildConfiguration.TypeCreators.Add(creator);
 
             executeStrategy.Configuration.Returns(buildConfiguration);
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Log.Returns(_buildLog);
 
-            var sut = new ValueGeneratorBuildAction();
+            var sut = new TypeCreatorBuildAction();
 
             var actual = sut.IsMatch(buildConfiguration, buildChain, parameterInfo);
 
@@ -561,7 +540,7 @@
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
             var buildConfiguration = new BuildConfiguration();
 
-            var sut = new ValueGeneratorBuildAction();
+            var sut = new TypeCreatorBuildAction();
 
             Action action = () => sut.IsMatch(buildConfiguration, null, parameterInfo);
 
@@ -575,7 +554,7 @@
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
             var buildChain = new BuildHistory();
 
-            var sut = new ValueGeneratorBuildAction();
+            var sut = new TypeCreatorBuildAction();
 
             Action action = () => sut.IsMatch(null, buildChain, parameterInfo);
 
@@ -588,11 +567,53 @@
             var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
 
-            var sut = new ValueGeneratorBuildAction();
+            var sut = new TypeCreatorBuildAction();
 
             Action action = () => sut.IsMatch(buildConfiguration, buildChain, (ParameterInfo) null);
 
             action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Theory]
+        [InlineData(false, false, false)]
+        [InlineData(true, false, false)]
+        [InlineData(false, true, false)]
+        [InlineData(false, false, true)]
+        [InlineData(true, true, false)]
+        [InlineData(true, false, true)]
+        [InlineData(false, true, true)]
+        [InlineData(true, true, true)]
+        public void IsMatchForParameterReturnsMatchResultFromTypeCreator(bool canPopulate, bool autoDetectConstructor,
+            bool autoPopulate)
+        {
+            var parameterInfo = typeof(Person).GetConstructors()
+                .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
+            var buildConfiguration = new BuildConfiguration();
+            var buildChain = new BuildHistory();
+            var expected = new Person();
+
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+            var creator = Substitute.For<ITypeCreator>();
+
+            buildConfiguration.TypeCreators.Add(creator);
+
+            executeStrategy.Configuration.Returns(buildConfiguration);
+            executeStrategy.BuildChain.Returns(buildChain);
+            executeStrategy.Log.Returns(_buildLog);
+            creator.CanCreate(parameterInfo.ParameterType, parameterInfo.Name, buildChain).Returns(true);
+            creator.CanPopulate(parameterInfo.ParameterType, parameterInfo.Name, buildChain).Returns(canPopulate);
+            creator.Create(parameterInfo.ParameterType, parameterInfo.Name, executeStrategy).Returns(expected);
+            creator.AutoDetectConstructor.Returns(autoDetectConstructor);
+            creator.AutoPopulate.Returns(autoPopulate);
+
+            var sut = new TypeCreatorBuildAction();
+
+            var actual = sut.IsMatch(buildConfiguration, buildChain, parameterInfo);
+
+            actual.SupportsCreate.Should().BeTrue();
+            actual.SupportsPopulate.Should().Be(canPopulate);
+            actual.AutoDetectConstructor.Should().Be(autoDetectConstructor);
+            actual.AutoPopulate.Should().Be(autoPopulate);
         }
 
         [Fact]
@@ -604,21 +625,26 @@
             var expected = new Person();
 
             var executeStrategy = Substitute.For<IExecuteStrategy>();
-            var generator = Substitute.For<IValueGenerator>();
+            var creator = Substitute.For<ITypeCreator>();
 
-            buildConfiguration.ValueGenerators.Add(generator);
+            buildConfiguration.TypeCreators.Add(creator);
 
             executeStrategy.Configuration.Returns(buildConfiguration);
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Log.Returns(_buildLog);
-            generator.IsMatch(propertyInfo.PropertyType, propertyInfo.Name, buildChain).Returns(true);
-            generator.Generate(propertyInfo.PropertyType, propertyInfo.Name, executeStrategy).Returns(expected);
+            creator.CanCreate(propertyInfo.PropertyType, propertyInfo.Name, buildChain).Returns(true);
+            creator.Create(propertyInfo.PropertyType, propertyInfo.Name, executeStrategy).Returns(expected);
+            creator.AutoDetectConstructor.Returns(true);
+            creator.AutoPopulate.Returns(true);
 
-            var sut = new ValueGeneratorBuildAction();
+            var sut = new TypeCreatorBuildAction();
 
             var actual = sut.IsMatch(buildConfiguration, buildChain, propertyInfo);
 
             actual.SupportsCreate.Should().BeTrue();
+            actual.SupportsPopulate.Should().BeTrue();
+            actual.AutoDetectConstructor.Should().BeTrue();
+            actual.AutoPopulate.Should().BeTrue();
         }
 
         [Fact]
@@ -634,7 +660,7 @@
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Log.Returns(_buildLog);
 
-            var sut = new ValueGeneratorBuildAction();
+            var sut = new TypeCreatorBuildAction();
 
             var actual = sut.IsMatch(buildConfiguration, buildChain, propertyInfo);
 
@@ -649,15 +675,15 @@
             var buildChain = new BuildHistory();
 
             var executeStrategy = Substitute.For<IExecuteStrategy>();
-            var generator = Substitute.For<IValueGenerator>();
+            var creator = Substitute.For<ITypeCreator>();
 
-            buildConfiguration.ValueGenerators.Add(generator);
+            buildConfiguration.TypeCreators.Add(creator);
 
             executeStrategy.Configuration.Returns(buildConfiguration);
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Log.Returns(_buildLog);
 
-            var sut = new ValueGeneratorBuildAction();
+            var sut = new TypeCreatorBuildAction();
 
             var actual = sut.IsMatch(buildConfiguration, buildChain, propertyInfo);
 
@@ -670,7 +696,7 @@
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
             var buildConfiguration = new BuildConfiguration();
 
-            var sut = new ValueGeneratorBuildAction();
+            var sut = new TypeCreatorBuildAction();
 
             Action action = () => sut.IsMatch(buildConfiguration, null, propertyInfo);
 
@@ -683,7 +709,7 @@
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
             var buildChain = new BuildHistory();
 
-            var sut = new ValueGeneratorBuildAction();
+            var sut = new TypeCreatorBuildAction();
 
             Action action = () => sut.IsMatch(null, buildChain, propertyInfo);
 
@@ -696,15 +722,65 @@
             var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
 
-            var sut = new ValueGeneratorBuildAction();
+            var sut = new TypeCreatorBuildAction();
 
             Action action = () => sut.IsMatch(buildConfiguration, buildChain, (PropertyInfo) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
 
-        [Fact]
-        public void IsMatchForTypeReturnsGeneratorValueWhenMatchingGeneratorFound()
+        [Theory]
+        [InlineData(false, false, false)]
+        [InlineData(true, false, false)]
+        [InlineData(false, true, false)]
+        [InlineData(false, false, true)]
+        [InlineData(true, true, false)]
+        [InlineData(true, false, true)]
+        [InlineData(false, true, true)]
+        [InlineData(true, true, true)]
+        public void IsMatchForPropertyReturnsMatchResultFromTypeCreator(bool canPopulate, bool autoDetectConstructor,
+            bool autoPopulate)
+        {
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var buildConfiguration = new BuildConfiguration();
+            var buildChain = new BuildHistory();
+            var expected = new Person();
+
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+            var creator = Substitute.For<ITypeCreator>();
+
+            buildConfiguration.TypeCreators.Add(creator);
+
+            executeStrategy.Configuration.Returns(buildConfiguration);
+            executeStrategy.BuildChain.Returns(buildChain);
+            executeStrategy.Log.Returns(_buildLog);
+            creator.CanCreate(propertyInfo.PropertyType, propertyInfo.Name, buildChain).Returns(true);
+            creator.CanPopulate(propertyInfo.PropertyType, propertyInfo.Name, buildChain).Returns(canPopulate);
+            creator.Create(propertyInfo.PropertyType, propertyInfo.Name, executeStrategy).Returns(expected);
+            creator.AutoDetectConstructor.Returns(autoDetectConstructor);
+            creator.AutoPopulate.Returns(autoPopulate);
+
+            var sut = new TypeCreatorBuildAction();
+
+            var actual = sut.IsMatch(buildConfiguration, buildChain, propertyInfo);
+
+            actual.SupportsCreate.Should().BeTrue();
+            actual.SupportsPopulate.Should().Be(canPopulate);
+            actual.AutoDetectConstructor.Should().Be(autoDetectConstructor);
+            actual.AutoPopulate.Should().Be(autoPopulate);
+        }
+
+        [Theory]
+        [InlineData(false, false, false)]
+        [InlineData(true, false, false)]
+        [InlineData(false, true, false)]
+        [InlineData(false, false, true)]
+        [InlineData(true, true, false)]
+        [InlineData(true, false, true)]
+        [InlineData(false, true, true)]
+        [InlineData(true, true, true)]
+        public void IsMatchForTypeReturnsMatchResultFromTypeCreator(bool canPopulate, bool autoDetectConstructor,
+            bool autoPopulate)
         {
             var type = typeof(Person);
             var buildConfiguration = new BuildConfiguration();
@@ -712,21 +788,27 @@
             var expected = new Person();
 
             var executeStrategy = Substitute.For<IExecuteStrategy>();
-            var generator = Substitute.For<IValueGenerator>();
+            var creator = Substitute.For<ITypeCreator>();
 
-            buildConfiguration.ValueGenerators.Add(generator);
+            buildConfiguration.TypeCreators.Add(creator);
 
             executeStrategy.Configuration.Returns(buildConfiguration);
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Log.Returns(_buildLog);
-            generator.IsMatch(type, null, buildChain).Returns(true);
-            generator.Generate(type, null, executeStrategy).Returns(expected);
+            creator.CanCreate(type, null, buildChain).Returns(true);
+            creator.CanPopulate(type, null, buildChain).Returns(canPopulate);
+            creator.Create(type, null, executeStrategy).Returns(expected);
+            creator.AutoDetectConstructor.Returns(autoDetectConstructor);
+            creator.AutoPopulate.Returns(autoPopulate);
 
-            var sut = new ValueGeneratorBuildAction();
+            var sut = new TypeCreatorBuildAction();
 
             var actual = sut.IsMatch(buildConfiguration, buildChain, type);
 
             actual.SupportsCreate.Should().BeTrue();
+            actual.SupportsPopulate.Should().Be(canPopulate);
+            actual.AutoDetectConstructor.Should().Be(autoDetectConstructor);
+            actual.AutoPopulate.Should().Be(autoPopulate);
         }
 
         [Fact]
@@ -741,7 +823,7 @@
             executeStrategy.Configuration.Returns(buildConfiguration);
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var sut = new ValueGeneratorBuildAction();
+            var sut = new TypeCreatorBuildAction();
 
             var actual = sut.IsMatch(buildConfiguration, buildChain, type);
 
@@ -756,15 +838,15 @@
             var buildChain = new BuildHistory();
 
             var executeStrategy = Substitute.For<IExecuteStrategy>();
-            var generator = Substitute.For<IValueGenerator>();
+            var creator = Substitute.For<ITypeCreator>();
 
-            buildConfiguration.ValueGenerators.Add(generator);
+            buildConfiguration.TypeCreators.Add(creator);
 
             executeStrategy.Configuration.Returns(buildConfiguration);
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Log.Returns(_buildLog);
 
-            var sut = new ValueGeneratorBuildAction();
+            var sut = new TypeCreatorBuildAction();
 
             var actual = sut.IsMatch(buildConfiguration, buildChain, type);
 
@@ -777,7 +859,7 @@
             var type = typeof(Person);
             var buildConfiguration = new BuildConfiguration();
 
-            var sut = new ValueGeneratorBuildAction();
+            var sut = new TypeCreatorBuildAction();
 
             Action action = () => sut.IsMatch(buildConfiguration, null, type);
 
@@ -790,7 +872,7 @@
             var type = typeof(Person);
             var buildChain = new BuildHistory();
 
-            var sut = new ValueGeneratorBuildAction();
+            var sut = new TypeCreatorBuildAction();
 
             Action action = () => sut.IsMatch(null, buildChain, type);
 
@@ -803,7 +885,7 @@
             var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
 
-            var sut = new ValueGeneratorBuildAction();
+            var sut = new TypeCreatorBuildAction();
 
             Action action = () => sut.IsMatch(buildConfiguration, buildChain, (Type) null);
 
@@ -813,7 +895,7 @@
         [Fact]
         public void PopulateThrowsException()
         {
-            var sut = new ValueGeneratorBuildAction();
+            var sut = new TypeCreatorBuildAction();
 
             Action action = () => sut.Populate(null, null);
 
@@ -825,7 +907,7 @@
         {
             var otherStep = new CreationRuleBuildAction();
 
-            var sut = new ValueGeneratorBuildAction();
+            var sut = new TypeCreatorBuildAction();
 
             sut.Priority.Should().BeLessThan(otherStep.Priority);
         }

@@ -18,7 +18,7 @@
             var parameterInfo = typeof(Person).GetConstructors()
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
             var expected = new Person();
-            var match = new MatchResult {IsMatch = true};
+            var match = new MatchResult {SupportsCreate = true};
 
             var action = Substitute.For<IBuildAction>();
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
@@ -48,7 +48,7 @@
             var parameterInfo = typeof(Person).GetConstructors()
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
             var expected = new Person();
-            var match = new MatchResult {IsMatch = true};
+            var match = new MatchResult {SupportsCreate = true};
 
             var firstAction = Substitute.For<IBuildAction>();
             var secondAction = Substitute.For<IBuildAction>();
@@ -83,7 +83,7 @@
             var parameterInfo = typeof(Person).GetConstructors()
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
             var expected = new Person();
-            var match = new MatchResult {IsMatch = true};
+            var match = new MatchResult {SupportsCreate = true};
 
             var firstAction = Substitute.For<IBuildAction>();
             var secondAction = Substitute.For<IBuildAction>();
@@ -161,7 +161,7 @@
         {
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
             var expected = new Person();
-            var match = new MatchResult {IsMatch = true};
+            var match = new MatchResult {SupportsCreate = true};
 
             var action = Substitute.For<IBuildAction>();
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
@@ -190,7 +190,7 @@
         {
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
             var expected = new Person();
-            var match = new MatchResult {IsMatch = true};
+            var match = new MatchResult {SupportsCreate = true};
 
             var firstAction = Substitute.For<IBuildAction>();
             var secondAction = Substitute.For<IBuildAction>();
@@ -224,7 +224,7 @@
         {
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
             var expected = new Person();
-            var match = new MatchResult {IsMatch = true};
+            var match = new MatchResult {SupportsCreate = true};
 
             var firstAction = Substitute.For<IBuildAction>();
             var secondAction = Substitute.For<IBuildAction>();
@@ -306,7 +306,7 @@
         {
             var type = typeof(Person);
             var expected = new Person();
-            var match = new MatchResult {IsMatch = true};
+            var match = new MatchResult {SupportsCreate = true};
 
             var action = Substitute.For<IBuildAction>();
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
@@ -335,7 +335,7 @@
         {
             var type = typeof(Person);
             var expected = new Person();
-            var match = new MatchResult {IsMatch = true};
+            var match = new MatchResult {SupportsCreate = true};
 
             var firstAction = Substitute.For<IBuildAction>();
             var secondAction = Substitute.For<IBuildAction>();
@@ -369,7 +369,7 @@
         {
             var type = typeof(Person);
             var expected = new Person();
-            var match = new MatchResult {IsMatch = true};
+            var match = new MatchResult {SupportsCreate = true};
 
             var firstAction = Substitute.For<IBuildAction>();
             var secondAction = Substitute.For<IBuildAction>();
@@ -453,7 +453,7 @@
         {
             var parameterInfo = typeof(Person).GetConstructors()
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
-            var match = new MatchResult {IsMatch = true};
+            var match = new MatchResult {SupportsCreate = true};
 
             var action = Substitute.For<IBuildAction>();
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
@@ -478,9 +478,9 @@
         {
             var parameterInfo = typeof(Person).GetConstructors()
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
-            var firstMatch = new MatchResult {IsMatch = true};
+            var firstMatch = new MatchResult {SupportsCreate = true};
             var secondMatch = new MatchResult
-                {IsMatch = true, SupportsPopulate = true, AutoPopulate = true, RequiresActivator = true};
+                {SupportsCreate = true, SupportsPopulate = true, AutoPopulate = true, AutoDetectConstructor = true};
 
             var firstAction = Substitute.For<IBuildAction>();
             var secondAction = Substitute.For<IBuildAction>();
@@ -513,9 +513,9 @@
         {
             var parameterInfo = typeof(Person).GetConstructors()
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
-            var firstMatch = new MatchResult {IsMatch = false};
+            var firstMatch = new MatchResult {SupportsCreate = false};
             var secondMatch = new MatchResult
-                {IsMatch = true, SupportsPopulate = true, AutoPopulate = true, RequiresActivator = true};
+                {SupportsCreate = true, SupportsPopulate = true, AutoPopulate = true, AutoDetectConstructor = true};
 
             var firstAction = Substitute.For<IBuildAction>();
             var secondAction = Substitute.For<IBuildAction>();
@@ -594,7 +594,7 @@
         public void GetBuildPlanForPropertyReturnsBuildPlan()
         {
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
-            var match = new MatchResult {IsMatch = true};
+            var match = new MatchResult {SupportsCreate = true};
 
             var action = Substitute.For<IBuildAction>();
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
@@ -618,9 +618,9 @@
         public void GetBuildPlanForPropertyReturnsPlanFromActionWithHighestPriority()
         {
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
-            var firstMatch = new MatchResult {IsMatch = true};
+            var firstMatch = new MatchResult {SupportsCreate = true};
             var secondMatch = new MatchResult
-                {IsMatch = true, SupportsPopulate = true, AutoPopulate = true, RequiresActivator = true};
+                {SupportsCreate = true, SupportsPopulate = true, AutoPopulate = true, AutoDetectConstructor = true};
 
             var firstAction = Substitute.For<IBuildAction>();
             var secondAction = Substitute.For<IBuildAction>();
@@ -652,9 +652,9 @@
         public void GetBuildPlanForPropertyReturnsValueFromMatchingAction()
         {
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
-            var firstMatch = new MatchResult {IsMatch = false};
+            var firstMatch = new MatchResult {SupportsCreate = false};
             var secondMatch = new MatchResult
-                {IsMatch = true, SupportsPopulate = true, AutoPopulate = true, RequiresActivator = true};
+                {SupportsCreate = true, SupportsPopulate = true, AutoPopulate = true, AutoDetectConstructor = true};
 
             var firstAction = Substitute.For<IBuildAction>();
             var secondAction = Substitute.For<IBuildAction>();
@@ -731,7 +731,7 @@
         public void GetBuildPlanForTypeReturnsBuildPlan()
         {
             var type = typeof(Person);
-            var match = new MatchResult {IsMatch = true};
+            var match = new MatchResult {SupportsCreate = true};
 
             var action = Substitute.For<IBuildAction>();
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
@@ -755,9 +755,9 @@
         public void GetBuildPlanForTypeReturnsPlanFromActionWithHighestPriority()
         {
             var type = typeof(Person);
-            var firstMatch = new MatchResult {IsMatch = true};
+            var firstMatch = new MatchResult {SupportsCreate = true};
             var secondMatch = new MatchResult
-                {IsMatch = true, SupportsPopulate = true, AutoPopulate = true, RequiresActivator = true};
+                {SupportsCreate = true, SupportsPopulate = true, AutoPopulate = true, AutoDetectConstructor = true};
 
             var firstAction = Substitute.For<IBuildAction>();
             var secondAction = Substitute.For<IBuildAction>();
@@ -789,9 +789,9 @@
         public void GetBuildPlanForTypeReturnsValueFromMatchingAction()
         {
             var type = typeof(Person);
-            var firstMatch = new MatchResult {IsMatch = false};
+            var firstMatch = new MatchResult {SupportsCreate = false};
             var secondMatch = new MatchResult
-                {IsMatch = true, SupportsPopulate = true, AutoPopulate = true, RequiresActivator = true};
+                {SupportsCreate = true, SupportsPopulate = true, AutoPopulate = true, AutoDetectConstructor = true};
 
             var firstAction = Substitute.For<IBuildAction>();
             var secondAction = Substitute.For<IBuildAction>();
@@ -868,7 +868,7 @@
         public void PopulateReturnsActionValue()
         {
             var expected = new Person();
-            var match = new MatchResult {IsMatch = true};
+            var match = new MatchResult {SupportsCreate = true};
 
             var action = Substitute.For<IBuildAction>();
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
@@ -896,7 +896,7 @@
         public void PopulateReturnsValueFromActionWithHighestPriority()
         {
             var expected = new Person();
-            var match = new MatchResult {IsMatch = true};
+            var match = new MatchResult {SupportsCreate = true};
 
             var firstAction = Substitute.For<IBuildAction>();
             var secondAction = Substitute.For<IBuildAction>();
@@ -929,7 +929,7 @@
         public void PopulateReturnsValueFromMatchingAction()
         {
             var expected = new Person();
-            var match = new MatchResult {IsMatch = true};
+            var match = new MatchResult {SupportsCreate = true};
 
             var firstAction = Substitute.For<IBuildAction>();
             var secondAction = Substitute.For<IBuildAction>();
