@@ -170,7 +170,28 @@
         /// <exception cref="NotSupportedException">Populate is not supported by this build action.</exception>
         public object Populate(IExecuteStrategy executeStrategy, object instance)
         {
-            throw new NotSupportedException();
+            if (executeStrategy == null)
+            {
+                throw new ArgumentNullException(nameof(executeStrategy));
+            }
+
+            if (instance == null)
+            {
+                throw new ArgumentNullException(nameof(instance));
+            }
+
+            var typeCreator = GetMatchingTypeCreator(instance.GetType(), null,
+                executeStrategy.Configuration,
+                executeStrategy.BuildChain);
+
+            if (typeCreator == null)
+            {
+                return instance;
+            }
+
+            typeCreator.Populate(instance, executeStrategy);
+
+            return instance;
         }
 
         private static object Build(ITypeCreator typeCreator, Type typeToBuild, string referenceName,

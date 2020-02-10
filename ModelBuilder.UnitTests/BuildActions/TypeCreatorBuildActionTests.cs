@@ -24,7 +24,7 @@
         }
 
         [Fact]
-        public void BuildForParameterInfoReturnsGeneratorValueWhenMatchingGeneratorFound()
+        public void BuildForParameterInfoReturnsCreatorValueWhenMatchingCreatorFound()
         {
             var parameterInfo = typeof(Person).GetConstructors()
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
@@ -51,7 +51,7 @@
         }
 
         [Fact]
-        public void BuildForParameterInfoReturnsNullWhenNoGeneratorsExist()
+        public void BuildForParameterInfoReturnsNullWhenNoCreatorsExist()
         {
             var parameterInfo = typeof(Person).GetConstructors()
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
@@ -72,7 +72,7 @@
         }
 
         [Fact]
-        public void BuildForParameterInfoReturnsNullWhenNoMatchingGeneratorFound()
+        public void BuildForParameterInfoReturnsNullWhenNoMatchingCreatorFound()
         {
             var parameterInfo = typeof(Person).GetConstructors()
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
@@ -96,7 +96,7 @@
         }
 
         [Fact]
-        public void BuildForParameterInfoReturnsValueFromGeneratorWithHighestPriority()
+        public void BuildForParameterInfoReturnsValueFromCreatorWithHighestPriority()
         {
             var parameterInfo = typeof(Person).GetConstructors()
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
@@ -105,20 +105,20 @@
             var expected = new Person();
 
             var executeStrategy = Substitute.For<IExecuteStrategy>();
-            var firstGenerator = Substitute.For<ITypeCreator>();
-            var secondGenerator = Substitute.For<ITypeCreator>();
+            var firstCreator = Substitute.For<ITypeCreator>();
+            var secondCreator = Substitute.For<ITypeCreator>();
 
-            buildConfiguration.TypeCreators.Add(firstGenerator);
-            buildConfiguration.TypeCreators.Add(secondGenerator);
+            buildConfiguration.TypeCreators.Add(firstCreator);
+            buildConfiguration.TypeCreators.Add(secondCreator);
 
             executeStrategy.Configuration.Returns(buildConfiguration);
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Log.Returns(_buildLog);
-            firstGenerator.Priority.Returns(10);
-            firstGenerator.CanCreate(parameterInfo.ParameterType, parameterInfo.Name, buildChain).Returns(true);
-            secondGenerator.Priority.Returns(20);
-            secondGenerator.CanCreate(parameterInfo.ParameterType, parameterInfo.Name, buildChain).Returns(true);
-            secondGenerator.Create(parameterInfo.ParameterType, parameterInfo.Name, executeStrategy)
+            firstCreator.Priority.Returns(10);
+            firstCreator.CanCreate(parameterInfo.ParameterType, parameterInfo.Name, buildChain).Returns(true);
+            secondCreator.Priority.Returns(20);
+            secondCreator.CanCreate(parameterInfo.ParameterType, parameterInfo.Name, buildChain).Returns(true);
+            secondCreator.Create(parameterInfo.ParameterType, parameterInfo.Name, executeStrategy)
                 .Returns(expected);
 
             var sut = new TypeCreatorBuildAction();
@@ -154,7 +154,7 @@
         }
 
         [Fact]
-        public void BuildForPropertyInfoReturnsGeneratorValueWhenMatchingGeneratorFound()
+        public void BuildForPropertyInfoReturnsCreatorValueWhenMatchingCreatorFound()
         {
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
             var buildConfiguration = new BuildConfiguration();
@@ -180,7 +180,7 @@
         }
 
         [Fact]
-        public void BuildForPropertyInfoReturnsNullWhenNoGeneratorsExist()
+        public void BuildForPropertyInfoReturnsNullWhenNoCreatorsExist()
         {
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
             var buildConfiguration = new BuildConfiguration();
@@ -200,7 +200,7 @@
         }
 
         [Fact]
-        public void BuildForPropertyInfoReturnsNullWhenNoMatchingGeneratorFound()
+        public void BuildForPropertyInfoReturnsNullWhenNoMatchingCreatorFound()
         {
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
             var buildConfiguration = new BuildConfiguration();
@@ -223,7 +223,7 @@
         }
 
         [Fact]
-        public void BuildForPropertyInfoReturnsValueFromGeneratorWithHighestPriority()
+        public void BuildForPropertyInfoReturnsValueFromCreatorWithHighestPriority()
         {
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
             var buildConfiguration = new BuildConfiguration();
@@ -231,20 +231,20 @@
             var expected = new Person();
 
             var executeStrategy = Substitute.For<IExecuteStrategy>();
-            var firstGenerator = Substitute.For<ITypeCreator>();
-            var secondGenerator = Substitute.For<ITypeCreator>();
+            var firstCreator = Substitute.For<ITypeCreator>();
+            var secondCreator = Substitute.For<ITypeCreator>();
 
-            buildConfiguration.TypeCreators.Add(firstGenerator);
-            buildConfiguration.TypeCreators.Add(secondGenerator);
+            buildConfiguration.TypeCreators.Add(firstCreator);
+            buildConfiguration.TypeCreators.Add(secondCreator);
 
             executeStrategy.Configuration.Returns(buildConfiguration);
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Log.Returns(_buildLog);
-            firstGenerator.Priority.Returns(10);
-            firstGenerator.CanCreate(propertyInfo.PropertyType, propertyInfo.Name, buildChain).Returns(true);
-            secondGenerator.Priority.Returns(20);
-            secondGenerator.CanCreate(propertyInfo.PropertyType, propertyInfo.Name, buildChain).Returns(true);
-            secondGenerator.Create(propertyInfo.PropertyType, propertyInfo.Name, executeStrategy).Returns(expected);
+            firstCreator.Priority.Returns(10);
+            firstCreator.CanCreate(propertyInfo.PropertyType, propertyInfo.Name, buildChain).Returns(true);
+            secondCreator.Priority.Returns(20);
+            secondCreator.CanCreate(propertyInfo.PropertyType, propertyInfo.Name, buildChain).Returns(true);
+            secondCreator.Create(propertyInfo.PropertyType, propertyInfo.Name, executeStrategy).Returns(expected);
 
             var sut = new TypeCreatorBuildAction();
 
@@ -278,7 +278,7 @@
         }
 
         [Fact]
-        public void BuildForTypeReturnsGeneratorValueWhenMatchingGeneratorFound()
+        public void BuildForTypeReturnsCreatorValueWhenMatchingCreatorFound()
         {
             var type = typeof(Person);
             var buildConfiguration = new BuildConfiguration();
@@ -304,7 +304,7 @@
         }
 
         [Fact]
-        public void BuildForTypeReturnsNullWhenNoGeneratorsExist()
+        public void BuildForTypeReturnsNullWhenNoCreatorsExist()
         {
             var type = typeof(Person);
             var buildConfiguration = new BuildConfiguration();
@@ -321,7 +321,7 @@
         }
 
         [Fact]
-        public void BuildForTypeReturnsNullWhenNoMatchingGeneratorFound()
+        public void BuildForTypeReturnsNullWhenNoMatchingCreatorFound()
         {
             var type = typeof(Person);
             var buildConfiguration = new BuildConfiguration();
@@ -342,7 +342,7 @@
         }
 
         [Fact]
-        public void BuildForTypeReturnsValueFromGeneratorWithHighestPriority()
+        public void BuildForTypeReturnsValueFromCreatorWithHighestPriority()
         {
             var type = typeof(Person);
             var buildConfiguration = new BuildConfiguration();
@@ -350,20 +350,20 @@
             var expected = new Person();
 
             var executeStrategy = Substitute.For<IExecuteStrategy>();
-            var firstGenerator = Substitute.For<ITypeCreator>();
-            var secondGenerator = Substitute.For<ITypeCreator>();
+            var firstCreator = Substitute.For<ITypeCreator>();
+            var secondCreator = Substitute.For<ITypeCreator>();
 
-            buildConfiguration.TypeCreators.Add(firstGenerator);
-            buildConfiguration.TypeCreators.Add(secondGenerator);
+            buildConfiguration.TypeCreators.Add(firstCreator);
+            buildConfiguration.TypeCreators.Add(secondCreator);
 
             executeStrategy.Configuration.Returns(buildConfiguration);
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Log.Returns(_buildLog);
-            firstGenerator.Priority.Returns(10);
-            firstGenerator.CanCreate(type, null, buildChain).Returns(true);
-            secondGenerator.Priority.Returns(20);
-            secondGenerator.CanCreate(type, null, buildChain).Returns(true);
-            secondGenerator.Create(type, null, executeStrategy).Returns(expected);
+            firstCreator.Priority.Returns(10);
+            firstCreator.CanCreate(type, null, buildChain).Returns(true);
+            secondCreator.Priority.Returns(20);
+            secondCreator.CanCreate(type, null, buildChain).Returns(true);
+            secondCreator.Create(type, null, executeStrategy).Returns(expected);
 
             var sut = new TypeCreatorBuildAction();
 
@@ -426,7 +426,7 @@
         }
 
         [Fact]
-        public void BuildThrowsExceptionWhenGeneratorFails()
+        public void BuildThrowsExceptionWhenCreatorFails()
         {
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
             var buildConfiguration = new BuildConfiguration();
@@ -456,40 +456,7 @@
         }
 
         [Fact]
-        public void IsMatchForParameterInfoReturnsGeneratorValueWhenMatchingGeneratorFound()
-        {
-            var parameterInfo = typeof(Person).GetConstructors()
-                .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
-            var buildConfiguration = new BuildConfiguration();
-            var buildChain = new BuildHistory();
-            var expected = new Person();
-
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-            var creator = Substitute.For<ITypeCreator>();
-
-            buildConfiguration.TypeCreators.Add(creator);
-
-            executeStrategy.Configuration.Returns(buildConfiguration);
-            executeStrategy.BuildChain.Returns(buildChain);
-            executeStrategy.Log.Returns(_buildLog);
-            creator.CanCreate(parameterInfo.ParameterType, parameterInfo.Name, buildChain).Returns(true);
-            creator.CanPopulate(parameterInfo.ParameterType, parameterInfo.Name, buildChain).Returns(true);
-            creator.Create(parameterInfo.ParameterType, parameterInfo.Name, executeStrategy).Returns(expected);
-            creator.AutoDetectConstructor.Returns(true);
-            creator.AutoPopulate.Returns(true);
-
-            var sut = new TypeCreatorBuildAction();
-
-            var actual = sut.IsMatch(buildConfiguration, buildChain, parameterInfo);
-
-            actual.SupportsCreate.Should().BeTrue();
-            actual.SupportsPopulate.Should().BeTrue();
-            actual.AutoDetectConstructor.Should().BeTrue();
-            actual.AutoPopulate.Should().BeTrue();
-        }
-
-        [Fact]
-        public void IsMatchForParameterInfoReturnsNullWhenNoGeneratorsExist()
+        public void IsMatchForParameterInfoReturnsNullWhenNoCreatorsExist()
         {
             var parameterInfo = typeof(Person).GetConstructors()
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
@@ -510,7 +477,7 @@
         }
 
         [Fact]
-        public void IsMatchForParameterInfoReturnsNullWhenNoMatchingGeneratorFound()
+        public void IsMatchForParameterInfoReturnsNullWhenNoMatchingCreatorFound()
         {
             var parameterInfo = typeof(Person).GetConstructors()
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
@@ -617,38 +584,7 @@
         }
 
         [Fact]
-        public void IsMatchForPropertyInfoReturnsGeneratorValueWhenMatchingGeneratorFound()
-        {
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
-            var buildConfiguration = new BuildConfiguration();
-            var buildChain = new BuildHistory();
-            var expected = new Person();
-
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-            var creator = Substitute.For<ITypeCreator>();
-
-            buildConfiguration.TypeCreators.Add(creator);
-
-            executeStrategy.Configuration.Returns(buildConfiguration);
-            executeStrategy.BuildChain.Returns(buildChain);
-            executeStrategy.Log.Returns(_buildLog);
-            creator.CanCreate(propertyInfo.PropertyType, propertyInfo.Name, buildChain).Returns(true);
-            creator.Create(propertyInfo.PropertyType, propertyInfo.Name, executeStrategy).Returns(expected);
-            creator.AutoDetectConstructor.Returns(true);
-            creator.AutoPopulate.Returns(true);
-
-            var sut = new TypeCreatorBuildAction();
-
-            var actual = sut.IsMatch(buildConfiguration, buildChain, propertyInfo);
-
-            actual.SupportsCreate.Should().BeTrue();
-            actual.SupportsPopulate.Should().BeTrue();
-            actual.AutoDetectConstructor.Should().BeTrue();
-            actual.AutoPopulate.Should().BeTrue();
-        }
-
-        [Fact]
-        public void IsMatchForPropertyInfoReturnsNullWhenNoGeneratorsExist()
+        public void IsMatchForPropertyInfoReturnsNullWhenNoCreatorsExist()
         {
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
             var buildConfiguration = new BuildConfiguration();
@@ -668,7 +604,7 @@
         }
 
         [Fact]
-        public void IsMatchForPropertyInfoReturnsNullWhenNoMatchingGeneratorFound()
+        public void IsMatchForPropertyInfoReturnsNullWhenNoMatchingCreatorFound()
         {
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
             var buildConfiguration = new BuildConfiguration();
@@ -812,7 +748,7 @@
         }
 
         [Fact]
-        public void IsMatchForTypeReturnsNullWhenNoGeneratorsExist()
+        public void IsMatchForTypeReturnsNullWhenNoCreatorsExist()
         {
             var type = typeof(Person);
             var buildConfiguration = new BuildConfiguration();
@@ -831,7 +767,7 @@
         }
 
         [Fact]
-        public void IsMatchForTypeReturnsNullWhenNoMatchingGeneratorFound()
+        public void IsMatchForTypeReturnsNullWhenNoMatchingCreatorFound()
         {
             var type = typeof(Person);
             var buildConfiguration = new BuildConfiguration();
@@ -893,13 +829,104 @@
         }
 
         [Fact]
-        public void PopulateThrowsException()
+        public void PopulateReturnsCreatorValueWhenMatchingCreatorFound()
         {
+            var instance = new Person();
+            var buildConfiguration = new BuildConfiguration();
+            var buildChain = new BuildHistory();
+
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+            var creator = Substitute.For<ITypeCreator>();
+
+            buildConfiguration.TypeCreators.Add(creator);
+
+            executeStrategy.Configuration.Returns(buildConfiguration);
+            executeStrategy.BuildChain.Returns(buildChain);
+            executeStrategy.Log.Returns(_buildLog);
+            creator.CanCreate(instance.GetType(), null, buildChain).Returns(true);
+
             var sut = new TypeCreatorBuildAction();
 
-            Action action = () => sut.Populate(null, null);
+            var actual = sut.Populate(executeStrategy, instance);
 
-            action.Should().Throw<NotSupportedException>();
+            actual.Should().Be(instance);
+
+            creator.Received().Populate(instance, executeStrategy);
+        }
+
+        [Fact]
+        public void PopulateReturnsNullWhenNoCreatorsExist()
+        {
+            var instance = new Person();
+            var buildConfiguration = new BuildConfiguration();
+            var buildChain = new BuildHistory();
+
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.Configuration.Returns(buildConfiguration);
+            executeStrategy.BuildChain.Returns(buildChain);
+            executeStrategy.Log.Returns(_buildLog);
+
+            var sut = new TypeCreatorBuildAction();
+
+            var actual = sut.Populate(executeStrategy, instance);
+
+            actual.Should().Be(instance);
+        }
+
+        [Fact]
+        public void PopulateReturnsValueFromCreatorWithHighestPriority()
+        {
+            var instance = new Person();
+            var buildConfiguration = new BuildConfiguration();
+            var buildChain = new BuildHistory();
+
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+            var firstCreator = Substitute.For<ITypeCreator>();
+            var secondCreator = Substitute.For<ITypeCreator>();
+
+            buildConfiguration.TypeCreators.Add(firstCreator);
+            buildConfiguration.TypeCreators.Add(secondCreator);
+
+            executeStrategy.Configuration.Returns(buildConfiguration);
+            executeStrategy.BuildChain.Returns(buildChain);
+            executeStrategy.Log.Returns(_buildLog);
+            firstCreator.Priority.Returns(10);
+            firstCreator.CanCreate(instance.GetType(), null, buildChain).Returns(true);
+            secondCreator.Priority.Returns(20);
+            secondCreator.CanCreate(instance.GetType(), null, buildChain).Returns(true);
+
+            var sut = new TypeCreatorBuildAction();
+
+            var actual = sut.Populate(executeStrategy, instance);
+
+            actual.Should().Be(instance);
+
+            secondCreator.Received().Populate(instance, executeStrategy);
+        }
+
+        [Fact]
+        public void PopulateThrowsExceptionWithNullExecuteStrategy()
+        {
+            var instance = new Person();
+
+            var sut = new TypeCreatorBuildAction();
+
+            Action action = () => sut.Populate(null, instance);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void PopulateThrowsExceptionWithNullInstance()
+        {
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            var sut = new TypeCreatorBuildAction();
+
+            Action action = () => sut.Populate(executeStrategy, null);
+
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
