@@ -67,7 +67,8 @@
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="buildChain" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
-        public MatchResult IsMatch(IBuildConfiguration buildConfiguration, IBuildChain buildChain, Type type)
+        public BuildCapability GetBuildCapability(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
+            Type type)
         {
             if (buildChain == null)
             {
@@ -79,13 +80,13 @@
                 throw new ArgumentNullException(nameof(type));
             }
 
-            return GetMatchResult(buildChain, type);
+            return GetCapability(buildChain, type);
         }
 
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="buildChain" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="parameterInfo" /> parameter is <c>null</c>.</exception>
-        public MatchResult IsMatch(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
+        public BuildCapability GetBuildCapability(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
             ParameterInfo parameterInfo)
         {
             if (buildChain == null)
@@ -98,13 +99,13 @@
                 throw new ArgumentNullException(nameof(parameterInfo));
             }
 
-            return GetMatchResult(buildChain, parameterInfo.ParameterType);
+            return GetCapability(buildChain, parameterInfo.ParameterType);
         }
 
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="buildChain" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="propertyInfo" /> parameter is <c>null</c>.</exception>
-        public MatchResult IsMatch(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
+        public BuildCapability GetBuildCapability(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
             PropertyInfo propertyInfo)
         {
             if (buildChain == null)
@@ -117,7 +118,7 @@
                 throw new ArgumentNullException(nameof(propertyInfo));
             }
 
-            return GetMatchResult(buildChain, propertyInfo.PropertyType);
+            return GetCapability(buildChain, propertyInfo.PropertyType);
         }
 
         /// <inheritdoc />
@@ -132,6 +133,18 @@
             return buildChain.FirstOrDefault(x => x.GetType() == type);
         }
 
+        private static BuildCapability GetCapability(IBuildChain buildChain, Type type)
+        {
+            var circularReference = FindItemByType(buildChain, type);
+
+            if (circularReference == null)
+            {
+                return null;
+            }
+
+            return new BuildCapability {SupportsCreate = true};
+        }
+
         private static object GetCircularReference(IExecuteStrategy executeStrategy, Type type)
         {
             var item = FindItemByType(executeStrategy.BuildChain, type);
@@ -144,18 +157,6 @@
             executeStrategy.Log.CircularReferenceDetected(type);
 
             return item;
-        }
-
-        private static MatchResult GetMatchResult(IBuildChain buildChain, Type type)
-        {
-            var circularReference = FindItemByType(buildChain, type);
-
-            if (circularReference == null)
-            {
-                return MatchResult.NoMatch;
-            }
-
-            return new MatchResult {SupportsCreate = true};
         }
 
         /// <inheritdoc />

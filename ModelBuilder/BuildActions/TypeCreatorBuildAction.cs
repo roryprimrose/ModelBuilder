@@ -87,7 +87,7 @@
         /// <exception cref="ArgumentNullException">The <paramref name="buildChain" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="buildConfiguration" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
-        public MatchResult IsMatch(IBuildConfiguration buildConfiguration, IBuildChain buildChain, Type type)
+        public BuildCapability GetBuildCapability(IBuildConfiguration buildConfiguration, IBuildChain buildChain, Type type)
         {
             if (buildConfiguration == null)
             {
@@ -113,7 +113,7 @@
         /// <exception cref="ArgumentNullException">The <paramref name="buildChain" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="buildConfiguration" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="parameterInfo" /> parameter is <c>null</c>.</exception>
-        public MatchResult IsMatch(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
+        public BuildCapability GetBuildCapability(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
             ParameterInfo parameterInfo)
         {
             if (buildConfiguration == null)
@@ -142,7 +142,7 @@
         /// <exception cref="ArgumentNullException">The <paramref name="buildChain" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="buildConfiguration" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="propertyInfo" /> parameter is <c>null</c>.</exception>
-        public MatchResult IsMatch(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
+        public BuildCapability GetBuildCapability(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
             PropertyInfo propertyInfo)
         {
             if (buildConfiguration == null)
@@ -243,17 +243,17 @@
                 .OrderByDescending(x => x.Priority).FirstOrDefault();
         }
 
-        private static MatchResult GetMatchResult(ITypeCreator typeCreator, Type type, string referenceName, IBuildChain buildChain)
+        private static BuildCapability GetMatchResult(ITypeCreator typeCreator, Type type, string referenceName, IBuildChain buildChain)
         {
             if (typeCreator == null)
             {
-                return MatchResult.NoMatch;
+                return null;
             }
 
             var canCreate = typeCreator.CanCreate(type, referenceName, buildChain);
             var canPopulate = typeCreator.CanPopulate(type, referenceName, buildChain);
 
-            return new MatchResult
+            return new BuildCapability
             {
                 SupportsCreate = canCreate,
                 SupportsPopulate = canPopulate,

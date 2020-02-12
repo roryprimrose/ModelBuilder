@@ -52,16 +52,16 @@
                 throw new ArgumentNullException(nameof(type));
             }
 
-            var action = _actions.Where(x =>
-                    x.IsMatch(executeStrategy.Configuration, executeStrategy.BuildChain, type).SupportsCreate)
-                .OrderByDescending(x => x.Priority).FirstOrDefault();
+            var match = GetMatch(BuildRequirement.Create, x => x.GetBuildCapability(executeStrategy.Configuration,
+                executeStrategy.BuildChain,
+                type));
 
-            if (action == null)
+            if (match == null)
             {
                 throw new NotSupportedException();
             }
 
-            return action.Build(executeStrategy, type);
+            return match.Action.Build(executeStrategy, type);
         }
 
         /// <inheritdoc />
@@ -79,16 +79,15 @@
                 throw new ArgumentNullException(nameof(parameterInfo));
             }
 
-            var action = _actions.Where(x =>
-                    x.IsMatch(executeStrategy.Configuration, executeStrategy.BuildChain, parameterInfo).SupportsCreate)
-                .OrderByDescending(x => x.Priority).FirstOrDefault();
+            var match = GetMatch(BuildRequirement.Create, x => x.GetBuildCapability(executeStrategy.Configuration,
+                executeStrategy.BuildChain, parameterInfo.ParameterType));
 
-            if (action == null)
+            if (match == null)
             {
                 throw new NotSupportedException();
             }
 
-            return action.Build(executeStrategy, parameterInfo);
+            return match.Action.Build(executeStrategy, parameterInfo);
         }
 
         /// <inheritdoc />
@@ -106,23 +105,23 @@
                 throw new ArgumentNullException(nameof(propertyInfo));
             }
 
-            var action = _actions.Where(x =>
-                    x.IsMatch(executeStrategy.Configuration, executeStrategy.BuildChain, propertyInfo).SupportsCreate)
-                .OrderByDescending(x => x.Priority).FirstOrDefault();
+            var match = GetMatch(BuildRequirement.Create, x => x.GetBuildCapability(executeStrategy.Configuration,
+                executeStrategy.BuildChain, propertyInfo.PropertyType));
 
-            if (action == null)
+            if (match == null)
             {
                 throw new NotSupportedException();
             }
 
-            return action.Build(executeStrategy, propertyInfo);
+            return match.Action.Build(executeStrategy, propertyInfo);
         }
 
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="buildConfiguration" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="buildChain" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
-        public BuildPlan GetBuildPlan(IBuildConfiguration buildConfiguration, IBuildChain buildChain, Type type)
+        public BuildCapability GetBuildCapability(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
+            BuildRequirement buildRequirement, Type type)
         {
             if (buildConfiguration == null)
             {
@@ -139,22 +138,24 @@
                 throw new ArgumentNullException(nameof(type));
             }
 
-            var results = from x in _actions
-                orderby x.Priority descending
-                select x.IsMatch(buildConfiguration, buildChain, type);
+            var match = GetMatch(BuildRequirement.Create, x => x.GetBuildCapability(buildConfiguration,
+                buildChain,
+                type));
 
-            var matchingActions = from x in results
-                where x.SupportsCreate
-                select x;
+            if (match == null)
+            {
+                return null;
+            }
 
-            return matchingActions.FirstOrDefault();
+            return match.Capability;
         }
 
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="buildConfiguration" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="buildChain" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="parameterInfo" /> parameter is <c>null</c>.</exception>
-        public BuildPlan GetBuildPlan(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
+        public BuildCapability GetBuildCapability(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
+            BuildRequirement buildRequirement,
             ParameterInfo parameterInfo)
         {
             if (buildConfiguration == null)
@@ -172,22 +173,24 @@
                 throw new ArgumentNullException(nameof(parameterInfo));
             }
 
-            var results = from x in _actions
-                orderby x.Priority descending
-                select x.IsMatch(buildConfiguration, buildChain, parameterInfo);
+            var match = GetMatch(BuildRequirement.Create, x => x.GetBuildCapability(buildConfiguration,
+                buildChain,
+                parameterInfo.ParameterType));
 
-            var matchingActions = from x in results
-                where x.SupportsCreate
-                select x;
+            if (match == null)
+            {
+                return null;
+            }
 
-            return matchingActions.FirstOrDefault();
+            return match.Capability;
         }
 
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="buildConfiguration" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="buildChain" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="propertyInfo" /> parameter is <c>null</c>.</exception>
-        public BuildPlan GetBuildPlan(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
+        public BuildCapability GetBuildCapability(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
+            BuildRequirement buildRequirement,
             PropertyInfo propertyInfo)
         {
             if (buildConfiguration == null)
@@ -205,15 +208,16 @@
                 throw new ArgumentNullException(nameof(propertyInfo));
             }
 
-            var results = from x in _actions
-                orderby x.Priority descending
-                select x.IsMatch(buildConfiguration, buildChain, propertyInfo);
+            var match = GetMatch(BuildRequirement.Create, x => x.GetBuildCapability(buildConfiguration,
+                buildChain,
+                propertyInfo.PropertyType));
 
-            var matchingActions = from x in results
-                where x.SupportsCreate
-                select x;
+            if (match == null)
+            {
+                return null;
+            }
 
-            return matchingActions.FirstOrDefault();
+            return match.Capability;
         }
 
         /// <inheritdoc />
@@ -231,16 +235,40 @@
                 throw new ArgumentNullException(nameof(instance));
             }
 
-            var action = _actions.Where(x =>
-                    x.IsMatch(executeStrategy.Configuration, executeStrategy.BuildChain, instance.GetType()).SupportsCreate)
-                .OrderByDescending(x => x.Priority).FirstOrDefault();
+            var match = GetMatch(BuildRequirement.Populate, x => x.GetBuildCapability(executeStrategy.Configuration,
+                executeStrategy.BuildChain, instance.GetType()));
 
-            if (action == null)
+            if (match == null)
             {
                 throw new NotSupportedException();
             }
 
-            return action.Populate(executeStrategy, instance);
+            return match.Action.Populate(executeStrategy, instance);
+        }
+
+        private Match GetMatch(BuildRequirement buildRequirement, Func<IBuildAction, BuildCapability> evaluator)
+        {
+            var capabilities = from x in _actions
+                orderby x.Priority descending
+                select new Match
+                {
+                    Action = x,
+                    Capability = evaluator(x)
+                };
+
+            var matches = from x in capabilities
+                where x.Capability != null
+                      && (x.Capability.SupportsCreate && buildRequirement == BuildRequirement.Create
+                          || x.Capability.SupportsPopulate && buildRequirement == BuildRequirement.Populate)
+                select x;
+
+            return matches.FirstOrDefault();
+        }
+
+        private class Match
+        {
+            public IBuildAction Action { get; set; }
+            public BuildCapability Capability { get; set; }
         }
     }
 }

@@ -36,32 +36,38 @@
         object Build(IExecuteStrategy executeStrategy, PropertyInfo propertyInfo);
 
         /// <summary>
-        ///     Gets the build plan for the specified type.
+        ///     Gets the build capability for the specified type.
         /// </summary>
         /// <param name="buildConfiguration">The build configuration.</param>
         /// <param name="buildChain">The build chain.</param>
+        /// <param name="buildRequirement">The build capability.</param>
         /// <param name="type">The type to evaluate.</param>
-        /// <returns>A <see cref="MatchResult" /> indicating instance creation support via a <see cref="IBuildAction" />.</returns>
-        BuildPlan GetBuildPlan(IBuildConfiguration buildConfiguration, IBuildChain buildChain, Type type);
+        /// <returns>A <see cref="BuildCapability" /> indicating instance creation support via a <see cref="IBuildAction" />.</returns>
+        BuildCapability GetBuildCapability(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
+            BuildRequirement buildRequirement, Type type);
 
         /// <summary>
-        ///     Gets the build plan for the specified parameter.
+        ///     Gets the build capability for the specified parameter.
         /// </summary>
         /// <param name="buildConfiguration">The build configuration.</param>
         /// <param name="buildChain">The build chain.</param>
+        /// <param name="buildRequirement">The build capability.</param>
         /// <param name="parameterInfo">The parameter to evaluate.</param>
-        /// <returns>A <see cref="MatchResult" /> indicating instance creation support via a <see cref="IBuildAction" />.</returns>
-        BuildPlan GetBuildPlan(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
+        /// <returns>A <see cref="BuildCapability" /> indicating instance creation support via a <see cref="IBuildAction" />.</returns>
+        BuildCapability GetBuildCapability(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
+            BuildRequirement buildRequirement,
             ParameterInfo parameterInfo);
 
         /// <summary>
-        ///     Gets the build plan for the specified property.
+        ///     Gets the build capability for the specified property.
         /// </summary>
         /// <param name="buildConfiguration">The build configuration.</param>
         /// <param name="buildChain">The build chain.</param>
+        /// <param name="buildRequirement">The build capability.</param>
         /// <param name="propertyInfo">The property to evaluate.</param>
-        /// <returns>A <see cref="MatchResult" /> indicating instance creation support via a <see cref="IBuildAction" />.</returns>
-        BuildPlan GetBuildPlan(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
+        /// <returns>A <see cref="BuildCapability" /> indicating instance creation support via a <see cref="IBuildAction" />.</returns>
+        BuildCapability GetBuildCapability(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
+            BuildRequirement buildRequirement,
             PropertyInfo propertyInfo);
 
         /// <summary>

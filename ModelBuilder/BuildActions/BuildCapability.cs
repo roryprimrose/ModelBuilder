@@ -1,11 +1,11 @@
-﻿namespace ModelBuilder
+﻿namespace ModelBuilder.BuildActions
 {
     /// <summary>
-    ///     The <see cref="BuildPlan" />
+    ///     The <see cref="BuildCapability" />
     ///     class is used to identify how <see cref="IExecuteStrategy" /> should operate when using
     ///     <see cref="IBuildProcessor" />.
     /// </summary>
-    public class BuildPlan
+    public class BuildCapability
     {
         /// <summary>
         ///     Gets or sets whether attempts to create the instance requires a constructor to be automatically resolved.
@@ -20,6 +20,11 @@
         ///     Gets or sets whether properties on the created value should be automatically populated.
         /// </summary>
         public bool AutoPopulate { get; set; }
+
+        /// <summary>
+        ///     Gets or sets whether there the <see cref="IBuildAction" /> supports the requested scenario.
+        /// </summary>
+        public bool SupportsCreate { get; set; }
 
         /// <summary>
         ///     Gets or sets whether a build action supports populating the created value with its own logic.

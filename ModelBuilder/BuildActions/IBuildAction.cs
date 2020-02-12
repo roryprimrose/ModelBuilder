@@ -35,32 +35,33 @@
         object Build(IExecuteStrategy executeStrategy, PropertyInfo propertyInfo);
 
         /// <summary>
-        ///     Gets whether the specified type matches this build step.
+        ///     Gets the build capabilities of the build step for the specified type.
         /// </summary>
         /// <param name="buildConfiguration">The build configuration.</param>
         /// <param name="buildChain">The build chain.</param>
         /// <param name="type">The type to evaluate.</param>
-        /// <returns>A <see cref="MatchResult" /> indicating instance creation support via a <see cref="IBuildAction" />.</returns>
-        MatchResult IsMatch(IBuildConfiguration buildConfiguration, IBuildChain buildChain, Type type);
+        /// <returns>A <see cref="BuildCapability" /> indicating instance creation support via a <see cref="IBuildAction" />.</returns>
+        BuildCapability GetBuildCapability(IBuildConfiguration buildConfiguration, IBuildChain buildChain, Type type);
 
         /// <summary>
-        ///     Gets whether the specified parameter matches this build step.
+        ///     Gets the build capabilities of the build step for the specified parameter.
         /// </summary>
         /// <param name="buildConfiguration">The build configuration.</param>
         /// <param name="buildChain">The build chain.</param>
         /// <param name="parameterInfo">The parameter to evaluate.</param>
-        /// <returns>A <see cref="MatchResult" /> indicating instance creation support via a <see cref="IBuildAction" />.</returns>
-        MatchResult IsMatch(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
+        /// <returns>A <see cref="BuildCapability" /> indicating instance creation support via a <see cref="IBuildAction" />.</returns>
+        BuildCapability GetBuildCapability(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
             ParameterInfo parameterInfo);
 
         /// <summary>
-        ///     Gets whether the specified property matches this build step.
+        ///     Gets the build capabilities of the build step for the specified property.
         /// </summary>
         /// <param name="buildConfiguration">The build configuration.</param>
         /// <param name="buildChain">The build chain.</param>
         /// <param name="propertyInfo">The property to evaluate.</param>
-        /// <returns>A <see cref="MatchResult" /> indicating instance creation support via a <see cref="IBuildAction" />.</returns>
-        MatchResult IsMatch(IBuildConfiguration buildConfiguration, IBuildChain buildChain, PropertyInfo propertyInfo);
+        /// <returns>A <see cref="BuildCapability" /> indicating instance creation support via a <see cref="IBuildAction" />.</returns>
+        BuildCapability GetBuildCapability(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
+            PropertyInfo propertyInfo);
 
         /// <summary>
         ///     Populates the specified instance using an execution strategy.

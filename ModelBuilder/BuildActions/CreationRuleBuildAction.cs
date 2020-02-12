@@ -82,7 +82,7 @@
         /// <exception cref="ArgumentNullException">The <paramref name="buildConfiguration" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="buildChain" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
-        public MatchResult IsMatch(IBuildConfiguration buildConfiguration, IBuildChain buildChain, Type type)
+        public BuildCapability GetBuildCapability(IBuildConfiguration buildConfiguration, IBuildChain buildChain, Type type)
         {
             if (buildConfiguration == null)
             {
@@ -103,19 +103,19 @@
 
             if (rule == null)
             {
-                return MatchResult.NoMatch;
+                return null;
             }
 
             var isMatch = rule.IsMatch(type, null);
 
-            return new MatchResult {SupportsCreate = isMatch};
+            return new BuildCapability {SupportsCreate = isMatch};
         }
 
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="buildConfiguration" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="buildChain" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="parameterInfo" /> parameter is <c>null</c>.</exception>
-        public MatchResult IsMatch(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
+        public BuildCapability GetBuildCapability(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
             ParameterInfo parameterInfo)
         {
             if (buildConfiguration == null)
@@ -137,19 +137,19 @@
 
             if (rule == null)
             {
-                return MatchResult.NoMatch;
+                return null;
             }
 
             var isMatch = rule.IsMatch(parameterInfo.ParameterType, parameterInfo.Name);
 
-            return new MatchResult {SupportsCreate = isMatch};
+            return new BuildCapability {SupportsCreate = isMatch};
         }
 
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="buildConfiguration" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="buildChain" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="propertyInfo" /> parameter is <c>null</c>.</exception>
-        public MatchResult IsMatch(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
+        public BuildCapability GetBuildCapability(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
             PropertyInfo propertyInfo)
         {
             if (buildConfiguration == null)
@@ -171,12 +171,12 @@
 
             if (rule == null)
             {
-                return MatchResult.NoMatch;
+                return null;
             }
 
             var isMatch = rule.IsMatch(propertyInfo.PropertyType, propertyInfo.Name);
 
-            return new MatchResult {SupportsCreate = isMatch};
+            return new BuildCapability {SupportsCreate = isMatch};
         }
 
         /// <inheritdoc />
@@ -186,7 +186,7 @@
             throw new NotSupportedException();
         }
 
-        private object Build(ICreationRule rule, Type typeToBuild, string referenceName, IBuildChain buildChain,
+        private static object Build(ICreationRule rule, Type typeToBuild, string referenceName, IBuildChain buildChain,
             Func<object> createAction, IBuildLog buildLog)
         {
             if (rule == null)

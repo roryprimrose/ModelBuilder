@@ -213,7 +213,7 @@
         }
 
         [Fact]
-        public void IsMatchForParameterReturnsFalseWhenBuildChainDoesNotContainMatchingType()
+        public void GetBuildCapabilityForParameterReturnsNullWhenBuildChainDoesNotContainMatchingType()
         {
             var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
@@ -224,13 +224,13 @@
 
             var sut = new CircularReferenceBuildAction();
 
-            var actual = sut.IsMatch(buildConfiguration, buildChain, parameterInfo);
+            var actual = sut.GetBuildCapability(buildConfiguration, buildChain, parameterInfo);
 
-            actual.SupportsCreate.Should().BeFalse();
+            actual.Should().BeNull();
         }
 
         [Fact]
-        public void IsMatchForParameterReturnsFalseWhenBuildChainIsEmpty()
+        public void GetBuildCapabilityForParameterReturnsNullWhenBuildChainIsEmpty()
         {
             var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
@@ -239,13 +239,13 @@
 
             var sut = new CircularReferenceBuildAction();
 
-            var actual = sut.IsMatch(buildConfiguration, buildChain, parameterInfo);
+            var actual = sut.GetBuildCapability(buildConfiguration, buildChain, parameterInfo);
 
-            actual.SupportsCreate.Should().BeFalse();
+            actual.Should().BeNull();
         }
 
         [Fact]
-        public void IsMatchForParameterReturnsTrueWhenBuildChainContainsMatchingType()
+        public void GetBuildCapabilityForParameterReturnsCapabilityWhenBuildChainContainsMatchingType()
         {
             var parameterInfo = typeof(Person).GetConstructors()
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
@@ -258,13 +258,16 @@
 
             var sut = new CircularReferenceBuildAction();
 
-            var actual = sut.IsMatch(buildConfiguration, buildChain, parameterInfo);
+            var actual = sut.GetBuildCapability(buildConfiguration, buildChain, parameterInfo);
 
             actual.SupportsCreate.Should().BeTrue();
+            actual.SupportsPopulate.Should().BeFalse();
+            actual.AutoDetectConstructor.Should().BeFalse();
+            actual.AutoPopulate.Should().BeFalse();
         }
 
         [Fact]
-        public void IsMatchForParameterThrowsExceptionWithNullBuildChain()
+        public void GetBuildCapabilityForParameterThrowsExceptionWithNullBuildChain()
         {
             var parameterInfo = typeof(Person).GetConstructors()
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
@@ -272,26 +275,26 @@
 
             var sut = new CircularReferenceBuildAction();
 
-            Action action = () => sut.IsMatch(buildConfiguration, null, parameterInfo);
+            Action action = () => sut.GetBuildCapability(buildConfiguration, null, parameterInfo);
 
             action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
-        public void IsMatchForParameterThrowsExceptionWithNullType()
+        public void GetBuildCapabilityForParameterThrowsExceptionWithNullType()
         {
             var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
 
             var sut = new CircularReferenceBuildAction();
 
-            Action action = () => sut.IsMatch(buildConfiguration, buildChain, (ParameterInfo) null);
+            Action action = () => sut.GetBuildCapability(buildConfiguration, buildChain, (ParameterInfo) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
-        public void IsMatchForPropertyReturnsFalseWhenBuildChainDoesNotContainMatchingType()
+        public void GetBuildCapabilityForPropertyReturnsNullWhenBuildChainDoesNotContainMatchingType()
         {
             var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
@@ -301,13 +304,13 @@
 
             var sut = new CircularReferenceBuildAction();
 
-            var actual = sut.IsMatch(buildConfiguration, buildChain, propertyInfo);
+            var actual = sut.GetBuildCapability(buildConfiguration, buildChain, propertyInfo);
 
-            actual.SupportsCreate.Should().BeFalse();
+            actual.Should().BeNull();
         }
 
         [Fact]
-        public void IsMatchForPropertyReturnsFalseWhenBuildChainIsEmpty()
+        public void GetBuildCapabilityForPropertyReturnsNullWhenBuildChainIsEmpty()
         {
             var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
@@ -315,13 +318,13 @@
 
             var sut = new CircularReferenceBuildAction();
 
-            var actual = sut.IsMatch(buildConfiguration, buildChain, propertyInfo);
+            var actual = sut.GetBuildCapability(buildConfiguration, buildChain, propertyInfo);
 
-            actual.SupportsCreate.Should().BeFalse();
+            actual.Should().BeNull();
         }
 
         [Fact]
-        public void IsMatchForPropertyReturnsTrueWhenBuildChainContainsMatchingType()
+        public void GetBuildCapabilityForPropertyReturnsCapabilityWhenBuildChainContainsMatchingType()
         {
             var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
@@ -333,39 +336,42 @@
 
             var sut = new CircularReferenceBuildAction();
 
-            var actual = sut.IsMatch(buildConfiguration, buildChain, propertyInfo);
+            var actual = sut.GetBuildCapability(buildConfiguration, buildChain, propertyInfo);
 
             actual.SupportsCreate.Should().BeTrue();
+            actual.SupportsPopulate.Should().BeFalse();
+            actual.AutoDetectConstructor.Should().BeFalse();
+            actual.AutoPopulate.Should().BeFalse();
         }
 
         [Fact]
-        public void IsMatchForPropertyThrowsExceptionWithNullBuildChain()
+        public void GetBuildCapabilityForPropertyThrowsExceptionWithNullBuildChain()
         {
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
             var buildConfiguration = new BuildConfiguration();
 
             var sut = new CircularReferenceBuildAction();
 
-            Action action = () => sut.IsMatch(buildConfiguration, null, propertyInfo);
+            Action action = () => sut.GetBuildCapability(buildConfiguration, null, propertyInfo);
 
             action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
-        public void IsMatchForPropertyThrowsExceptionWithNullType()
+        public void GetBuildCapabilityForPropertyThrowsExceptionWithNullType()
         {
             var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
 
             var sut = new CircularReferenceBuildAction();
 
-            Action action = () => sut.IsMatch(buildConfiguration, buildChain, (PropertyInfo) null);
+            Action action = () => sut.GetBuildCapability(buildConfiguration, buildChain, (PropertyInfo) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
-        public void IsMatchForTypeReturnsFalseWhenBuildChainDoesNotContainMatchingType()
+        public void GetBuildCapabilityForTypeReturnsNullWhenBuildChainDoesNotContainMatchingType()
         {
             var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
@@ -375,13 +381,13 @@
 
             var sut = new CircularReferenceBuildAction();
 
-            var actual = sut.IsMatch(buildConfiguration, buildChain, type);
+            var actual = sut.GetBuildCapability(buildConfiguration, buildChain, type);
 
-            actual.SupportsCreate.Should().BeFalse();
+            actual.Should().BeNull();
         }
 
         [Fact]
-        public void IsMatchForTypeReturnsFalseWhenBuildChainIsEmpty()
+        public void GetBuildCapabilityForTypeReturnsNullWhenBuildChainIsEmpty()
         {
             var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
@@ -389,13 +395,13 @@
 
             var sut = new CircularReferenceBuildAction();
 
-            var actual = sut.IsMatch(buildConfiguration, buildChain, type);
+            var actual = sut.GetBuildCapability(buildConfiguration, buildChain, type);
 
-            actual.SupportsCreate.Should().BeFalse();
+            actual.Should().BeNull();
         }
 
         [Fact]
-        public void IsMatchForTypeReturnsTrueWhenBuildChainContainsMatchingType()
+        public void GetBuildCapabilityForTypeReturnsCapabilityWhenBuildChainContainsMatchingType()
         {
             var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
@@ -407,33 +413,36 @@
 
             var sut = new CircularReferenceBuildAction();
 
-            var actual = sut.IsMatch(buildConfiguration, buildChain, type);
+            var actual = sut.GetBuildCapability(buildConfiguration, buildChain, type);
 
             actual.SupportsCreate.Should().BeTrue();
+            actual.SupportsPopulate.Should().BeFalse();
+            actual.AutoDetectConstructor.Should().BeFalse();
+            actual.AutoPopulate.Should().BeFalse();
         }
 
         [Fact]
-        public void IsMatchForTypeThrowsExceptionWithNullBuildChain()
+        public void GetBuildCapabilityForTypeThrowsExceptionWithNullBuildChain()
         {
             var type = typeof(string);
             var buildConfiguration = new BuildConfiguration();
 
             var sut = new CircularReferenceBuildAction();
 
-            Action action = () => sut.IsMatch(buildConfiguration, null, type);
+            Action action = () => sut.GetBuildCapability(buildConfiguration, null, type);
 
             action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
-        public void IsMatchForTypeThrowsExceptionWithNullType()
+        public void GetBuildCapabilityForTypeThrowsExceptionWithNullType()
         {
             var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
 
             var sut = new CircularReferenceBuildAction();
 
-            Action action = () => sut.IsMatch(buildConfiguration, buildChain, (Type) null);
+            Action action = () => sut.GetBuildCapability(buildConfiguration, buildChain, (Type) null);
 
             action.Should().Throw<ArgumentNullException>();
         }

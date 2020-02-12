@@ -66,7 +66,7 @@
         ///// <param name="type">The type to evaluate.</param>
         ///// <param name="buildChain">The chain of instances built up to this point.</param>
         ///// <returns><c>true</c> if the type matches this generator; otherwise <c>false</c>.</returns>
-        //bool IsMatch(Type type, IBuildChain buildChain);
+        //bool GetBuildCapability(Type type, IBuildChain buildChain);
 
         ///// <summary>
         /////     Returns whether the specified property matches this generator.
@@ -74,7 +74,7 @@
         ///// <param name="propertyInfo">The property to generate the value for.</param>
         ///// <param name="buildChain">The chain of instances built up to this point.</param>
         ///// <returns><c>true</c> if the property matches this generator; otherwise <c>false</c>.</returns>
-        //bool IsMatch(PropertyInfo propertyInfo, IBuildChain buildChain);
+        //bool GetBuildCapability(PropertyInfo propertyInfo, IBuildChain buildChain);
 
         ///// <summary>
         /////     Returns whether the specified parameter matches this generator.
@@ -82,7 +82,7 @@
         ///// <param name="parameterInfo">The parameter to generate the value for.</param>
         ///// <param name="buildChain">The chain of instances built up to this point.</param>
         ///// <returns><c>true</c> if the parameter matches this generator; otherwise <c>false</c>.</returns>
-        //bool IsMatch(ParameterInfo parameterInfo, IBuildChain buildChain);
+        //bool GetBuildCapability(ParameterInfo parameterInfo, IBuildChain buildChain);
 
         /// <summary>
         ///     Gets the priority for this generator.

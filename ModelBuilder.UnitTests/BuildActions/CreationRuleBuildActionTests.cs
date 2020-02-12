@@ -480,7 +480,7 @@
         }
 
         [Fact]
-        public void IsMatchForParameterInfoReturnsNullWhenNoMatchingRuleFound()
+        public void GetBuildCapabilityForParameterInfoReturnsNullWhenNoMatchingRuleFound()
         {
             var parameterInfo = typeof(Person).GetConstructors()
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
@@ -497,13 +497,13 @@
 
             var sut = new CreationRuleBuildAction();
 
-            var actual = sut.IsMatch(buildConfiguration, buildChain, parameterInfo);
+            var actual = sut.GetBuildCapability(buildConfiguration, buildChain, parameterInfo);
 
-            actual.SupportsCreate.Should().BeFalse();
+            actual.Should().BeNull();
         }
 
         [Fact]
-        public void IsMatchForParameterInfoReturnsNullWhenNoRulesExist()
+        public void GetBuildCapabilityForParameterInfoReturnsNullWhenNoRulesExist()
         {
             var parameterInfo = typeof(Person).GetConstructors()
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
@@ -517,13 +517,13 @@
 
             var sut = new CreationRuleBuildAction();
 
-            var actual = sut.IsMatch(buildConfiguration, buildChain, parameterInfo);
+            var actual = sut.GetBuildCapability(buildConfiguration, buildChain, parameterInfo);
 
-            actual.SupportsCreate.Should().BeFalse();
+            actual.Should().BeNull();
         }
 
         [Fact]
-        public void IsMatchForParameterInfoReturnsRuleValueWhenMatchingRuleFound()
+        public void GetBuildCapabilityForParameterInfoReturnsCapabilityWhenMatchingRuleFound()
         {
             var parameterInfo = typeof(Person).GetConstructors()
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
@@ -543,13 +543,16 @@
 
             var sut = new CreationRuleBuildAction();
 
-            var actual = sut.IsMatch(buildConfiguration, buildChain, parameterInfo);
+            var actual = sut.GetBuildCapability(buildConfiguration, buildChain, parameterInfo);
 
             actual.SupportsCreate.Should().BeTrue();
+            actual.SupportsPopulate.Should().BeFalse();
+            actual.AutoDetectConstructor.Should().BeFalse();
+            actual.AutoPopulate.Should().BeFalse();
         }
 
         [Fact]
-        public void IsMatchForParameterInfoThrowsExceptionWithNullBuildChain()
+        public void GetBuildCapabilityForParameterInfoThrowsExceptionWithNullBuildChain()
         {
             var parameterInfo = typeof(Person).GetConstructors()
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
@@ -557,13 +560,13 @@
 
             var sut = new CreationRuleBuildAction();
 
-            Action action = () => sut.IsMatch(buildConfiguration, null, parameterInfo);
+            Action action = () => sut.GetBuildCapability(buildConfiguration, null, parameterInfo);
 
             action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
-        public void IsMatchForParameterInfoThrowsExceptionWithNullBuildConfiguration()
+        public void GetBuildCapabilityForParameterInfoThrowsExceptionWithNullBuildConfiguration()
         {
             var parameterInfo = typeof(Person).GetConstructors()
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
@@ -571,26 +574,26 @@
 
             var sut = new CreationRuleBuildAction();
 
-            Action action = () => sut.IsMatch(null, buildChain, parameterInfo);
+            Action action = () => sut.GetBuildCapability(null, buildChain, parameterInfo);
 
             action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
-        public void IsMatchForParameterInfoThrowsExceptionWithNullParameterInfo()
+        public void GetBuildCapabilityForParameterInfoThrowsExceptionWithNullParameterInfo()
         {
             var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
 
             var sut = new CreationRuleBuildAction();
 
-            Action action = () => sut.IsMatch(buildConfiguration, buildChain, (ParameterInfo) null);
+            Action action = () => sut.GetBuildCapability(buildConfiguration, buildChain, (ParameterInfo) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
-        public void IsMatchForPropertyInfoReturnsNullWhenNoMatchingRuleFound()
+        public void GetBuildCapabilityForPropertyInfoReturnsNullWhenNoMatchingRuleFound()
         {
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
             var buildConfiguration = new BuildConfiguration();
@@ -606,13 +609,13 @@
 
             var sut = new CreationRuleBuildAction();
 
-            var actual = sut.IsMatch(buildConfiguration, buildChain, propertyInfo);
+            var actual = sut.GetBuildCapability(buildConfiguration, buildChain, propertyInfo);
 
-            actual.SupportsCreate.Should().BeFalse();
+            actual.Should().BeNull();
         }
 
         [Fact]
-        public void IsMatchForPropertyInfoReturnsNullWhenNoRulesExist()
+        public void GetBuildCapabilityForPropertyInfoReturnsNullWhenNoRulesExist()
         {
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
             var buildConfiguration = new BuildConfiguration();
@@ -625,13 +628,13 @@
 
             var sut = new CreationRuleBuildAction();
 
-            var actual = sut.IsMatch(buildConfiguration, buildChain, propertyInfo);
+            var actual = sut.GetBuildCapability(buildConfiguration, buildChain, propertyInfo);
 
-            actual.SupportsCreate.Should().BeFalse();
+            actual.Should().BeNull();
         }
 
         [Fact]
-        public void IsMatchForPropertyInfoReturnsRuleValueWhenMatchingRuleFound()
+        public void GetBuildCapabilityForPropertyInfoReturnsCapabilityWhenMatchingRuleFound()
         {
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
             var buildConfiguration = new BuildConfiguration();
@@ -650,52 +653,55 @@
 
             var sut = new CreationRuleBuildAction();
 
-            var actual = sut.IsMatch(buildConfiguration, buildChain, propertyInfo);
+            var actual = sut.GetBuildCapability(buildConfiguration, buildChain, propertyInfo);
 
             actual.SupportsCreate.Should().BeTrue();
+            actual.SupportsPopulate.Should().BeFalse();
+            actual.AutoDetectConstructor.Should().BeFalse();
+            actual.AutoPopulate.Should().BeFalse();
         }
 
         [Fact]
-        public void IsMatchForPropertyInfoThrowsExceptionWithNullBuildChain()
+        public void GetBuildCapabilityForPropertyInfoThrowsExceptionWithNullBuildChain()
         {
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
             var buildConfiguration = new BuildConfiguration();
 
             var sut = new CreationRuleBuildAction();
 
-            Action action = () => sut.IsMatch(buildConfiguration, null, propertyInfo);
+            Action action = () => sut.GetBuildCapability(buildConfiguration, null, propertyInfo);
 
             action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
-        public void IsMatchForPropertyInfoThrowsExceptionWithNullBuildConfiguration()
+        public void GetBuildCapabilityForPropertyInfoThrowsExceptionWithNullBuildConfiguration()
         {
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
             var buildChain = new BuildHistory();
 
             var sut = new CreationRuleBuildAction();
 
-            Action action = () => sut.IsMatch(null, buildChain, propertyInfo);
+            Action action = () => sut.GetBuildCapability(null, buildChain, propertyInfo);
 
             action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
-        public void IsMatchForPropertyInfoThrowsExceptionWithNullPropertyInfo()
+        public void GetBuildCapabilityForPropertyInfoThrowsExceptionWithNullPropertyInfo()
         {
             var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
 
             var sut = new CreationRuleBuildAction();
 
-            Action action = () => sut.IsMatch(buildConfiguration, buildChain, (PropertyInfo) null);
+            Action action = () => sut.GetBuildCapability(buildConfiguration, buildChain, (PropertyInfo) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
-        public void IsMatchForTypeReturnsNullWhenNoMatchingRuleFound()
+        public void GetBuildCapabilityForTypeReturnsNullWhenNoMatchingRuleFound()
         {
             var type = typeof(Person);
             var buildConfiguration = new BuildConfiguration();
@@ -711,13 +717,13 @@
 
             var sut = new CreationRuleBuildAction();
 
-            var actual = sut.IsMatch(buildConfiguration, buildChain, type);
+            var actual = sut.GetBuildCapability(buildConfiguration, buildChain, type);
 
-            actual.SupportsCreate.Should().BeFalse();
+            actual.Should().BeNull();
         }
 
         [Fact]
-        public void IsMatchForTypeReturnsNullWhenNoRulesExist()
+        public void GetBuildCapabilityForTypeReturnsNullWhenNoRulesExist()
         {
             var type = typeof(Person);
             var buildConfiguration = new BuildConfiguration();
@@ -730,13 +736,13 @@
 
             var sut = new CreationRuleBuildAction();
 
-            var actual = sut.IsMatch(buildConfiguration, buildChain, type);
+            var actual = sut.GetBuildCapability(buildConfiguration, buildChain, type);
 
-            actual.SupportsCreate.Should().BeFalse();
+            actual.Should().BeNull();
         }
 
         [Fact]
-        public void IsMatchForTypeReturnsRuleValueWhenMatchingRuleFound()
+        public void GetBuildCapabilityForTypeReturnsCapabilityWhenMatchingRuleFound()
         {
             var type = typeof(Person);
             var buildConfiguration = new BuildConfiguration();
@@ -755,46 +761,49 @@
 
             var sut = new CreationRuleBuildAction();
 
-            var actual = sut.IsMatch(buildConfiguration, buildChain, type);
+            var actual = sut.GetBuildCapability(buildConfiguration, buildChain, type);
 
             actual.SupportsCreate.Should().BeTrue();
+            actual.SupportsPopulate.Should().BeFalse();
+            actual.AutoDetectConstructor.Should().BeFalse();
+            actual.AutoPopulate.Should().BeFalse();
         }
 
         [Fact]
-        public void IsMatchForTypeThrowsExceptionWithNullBuildChain()
+        public void GetBuildCapabilityForTypeThrowsExceptionWithNullBuildChain()
         {
             var type = typeof(Person);
             var buildConfiguration = new BuildConfiguration();
 
             var sut = new CreationRuleBuildAction();
 
-            Action action = () => sut.IsMatch(buildConfiguration, null, type);
+            Action action = () => sut.GetBuildCapability(buildConfiguration, null, type);
 
             action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
-        public void IsMatchForTypeThrowsExceptionWithNullBuildConfiguration()
+        public void GetBuildCapabilityForTypeThrowsExceptionWithNullBuildConfiguration()
         {
             var type = typeof(Person);
             var buildChain = new BuildHistory();
 
             var sut = new CreationRuleBuildAction();
 
-            Action action = () => sut.IsMatch(null, buildChain, type);
+            Action action = () => sut.GetBuildCapability(null, buildChain, type);
 
             action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
-        public void IsMatchForTypeThrowsExceptionWithNullType()
+        public void GetBuildCapabilityForTypeThrowsExceptionWithNullType()
         {
             var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
 
             var sut = new CreationRuleBuildAction();
 
-            Action action = () => sut.IsMatch(buildConfiguration, buildChain, (Type) null);
+            Action action = () => sut.GetBuildCapability(buildConfiguration, buildChain, (Type) null);
 
             action.Should().Throw<ArgumentNullException>();
         }

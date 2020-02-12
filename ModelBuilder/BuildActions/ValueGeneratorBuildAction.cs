@@ -86,7 +86,7 @@
         /// <exception cref="ArgumentNullException">The <paramref name="buildChain" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="buildConfiguration" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
-        public MatchResult IsMatch(IBuildConfiguration buildConfiguration, IBuildChain buildChain, Type type)
+        public BuildCapability GetBuildCapability(IBuildConfiguration buildConfiguration, IBuildChain buildChain, Type type)
         {
             if (buildConfiguration == null)
             {
@@ -107,12 +107,12 @@
 
             if (generator == null)
             {
-                return MatchResult.NoMatch;
+                return null;
             }
 
             var isMatch = generator.IsMatch(type, null, buildChain);
 
-            return new MatchResult
+            return new BuildCapability
             {
                 SupportsCreate = isMatch
             };
@@ -122,7 +122,7 @@
         /// <exception cref="ArgumentNullException">The <paramref name="buildChain" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="buildConfiguration" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="parameterInfo" /> parameter is <c>null</c>.</exception>
-        public MatchResult IsMatch(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
+        public BuildCapability GetBuildCapability(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
             ParameterInfo parameterInfo)
         {
             if (buildConfiguration == null)
@@ -145,12 +145,12 @@
 
             if (generator == null)
             {
-                return MatchResult.NoMatch;
+                return null;
             }
 
             var isMatch = generator.IsMatch(parameterInfo.ParameterType, parameterInfo.Name, buildChain);
 
-            return new MatchResult
+            return new BuildCapability
             {
                 SupportsCreate = isMatch
             };
@@ -160,7 +160,7 @@
         /// <exception cref="ArgumentNullException">The <paramref name="buildChain" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="buildConfiguration" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="propertyInfo" /> parameter is <c>null</c>.</exception>
-        public MatchResult IsMatch(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
+        public BuildCapability GetBuildCapability(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
             PropertyInfo propertyInfo)
         {
             if (buildConfiguration == null)
@@ -183,12 +183,12 @@
 
             if (generator == null)
             {
-                return MatchResult.NoMatch;
+                return null;
             }
 
             var isMatch = generator.IsMatch(propertyInfo.PropertyType, propertyInfo.Name, buildChain);
 
-            return new MatchResult
+            return new BuildCapability
             {
                 SupportsCreate = isMatch
             };
@@ -211,9 +211,9 @@
             }
 
             var context = buildChain.Last;
-            var ruleType = generator.GetType();
+            var generatorType = generator.GetType();
 
-            buildLog.CreatingValue(typeToBuild, ruleType, context);
+            buildLog.CreatingValue(typeToBuild, generatorType, context);
 
             try
             {
@@ -234,7 +234,7 @@
                     CultureInfo.CurrentCulture,
                     messageFormat,
                     typeToBuild.FullName,
-                    ruleType.FullName,
+                    generatorType.FullName,
                     ex.GetType().Name,
                     ex.Message,
                     Environment.NewLine,
