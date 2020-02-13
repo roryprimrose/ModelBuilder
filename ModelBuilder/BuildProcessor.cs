@@ -80,7 +80,7 @@
             }
 
             var match = GetMatch(BuildRequirement.Create, x => x.GetBuildCapability(executeStrategy.Configuration,
-                executeStrategy.BuildChain, parameterInfo.ParameterType));
+                executeStrategy.BuildChain, parameterInfo));
 
             if (match == null)
             {
@@ -106,7 +106,7 @@
             }
 
             var match = GetMatch(BuildRequirement.Create, x => x.GetBuildCapability(executeStrategy.Configuration,
-                executeStrategy.BuildChain, propertyInfo.PropertyType));
+                executeStrategy.BuildChain, propertyInfo));
 
             if (match == null)
             {
@@ -138,7 +138,7 @@
                 throw new ArgumentNullException(nameof(type));
             }
 
-            var match = GetMatch(BuildRequirement.Create, x => x.GetBuildCapability(buildConfiguration,
+            var match = GetMatch(buildRequirement, x => x.GetBuildCapability(buildConfiguration,
                 buildChain,
                 type));
 
@@ -173,9 +173,9 @@
                 throw new ArgumentNullException(nameof(parameterInfo));
             }
 
-            var match = GetMatch(BuildRequirement.Create, x => x.GetBuildCapability(buildConfiguration,
+            var match = GetMatch(buildRequirement, x => x.GetBuildCapability(buildConfiguration,
                 buildChain,
-                parameterInfo.ParameterType));
+                parameterInfo));
 
             if (match == null)
             {
@@ -208,9 +208,9 @@
                 throw new ArgumentNullException(nameof(propertyInfo));
             }
 
-            var match = GetMatch(BuildRequirement.Create, x => x.GetBuildCapability(buildConfiguration,
+            var match = GetMatch(buildRequirement, x => x.GetBuildCapability(buildConfiguration,
                 buildChain,
-                propertyInfo.PropertyType));
+                propertyInfo));
 
             if (match == null)
             {

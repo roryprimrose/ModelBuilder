@@ -918,7 +918,7 @@
         public void PopulateReturnsActionValue()
         {
             var expected = new Person();
-            var match = new BuildCapability {SupportsCreate = true};
+            var match = new BuildCapability {SupportsPopulate = true};
 
             var action = Substitute.For<IBuildAction>();
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
@@ -946,7 +946,7 @@
         public void PopulateReturnsValueFromActionWithHighestPriority()
         {
             var expected = new Person();
-            var match = new BuildCapability {SupportsCreate = true};
+            var match = new BuildCapability { SupportsPopulate = true};
 
             var firstAction = Substitute.For<IBuildAction>();
             var secondAction = Substitute.For<IBuildAction>();
@@ -979,7 +979,7 @@
         public void PopulateReturnsValueFromMatchingAction()
         {
             var expected = new Person();
-            var match = new BuildCapability {SupportsCreate = true};
+            var match = new BuildCapability { SupportsPopulate = true};
 
             var firstAction = Substitute.For<IBuildAction>();
             var secondAction = Substitute.For<IBuildAction>();
