@@ -133,18 +133,6 @@
             return buildChain.FirstOrDefault(x => x.GetType() == type);
         }
 
-        private static BuildCapability GetCapability(IBuildChain buildChain, Type type)
-        {
-            var circularReference = FindItemByType(buildChain, type);
-
-            if (circularReference == null)
-            {
-                return null;
-            }
-
-            return new BuildCapability {SupportsCreate = true};
-        }
-
         private static object GetCircularReference(IExecuteStrategy executeStrategy, Type type)
         {
             var item = FindItemByType(executeStrategy.BuildChain, type);
@@ -157,6 +145,18 @@
             executeStrategy.Log.CircularReferenceDetected(type);
 
             return item;
+        }
+
+        private BuildCapability GetCapability(IBuildChain buildChain, Type type)
+        {
+            var circularReference = FindItemByType(buildChain, type);
+
+            if (circularReference == null)
+            {
+                return null;
+            }
+
+            return new BuildCapability {SupportsCreate = true, ImplementedByType = GetType()};
         }
 
         /// <inheritdoc />

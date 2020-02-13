@@ -582,6 +582,7 @@
             actual.SupportsPopulate.Should().Be(canPopulate);
             actual.AutoDetectConstructor.Should().Be(autoDetectConstructor);
             actual.AutoPopulate.Should().Be(autoPopulate);
+            actual.ImplementedByType.Should().Be(creator.GetType());
         }
 
         [Fact]
@@ -706,6 +707,7 @@
             actual.SupportsPopulate.Should().Be(canPopulate);
             actual.AutoDetectConstructor.Should().Be(autoDetectConstructor);
             actual.AutoPopulate.Should().Be(autoPopulate);
+            actual.ImplementedByType.Should().Be(creator.GetType());
         }
 
         [Theory]
@@ -748,6 +750,7 @@
             actual.SupportsPopulate.Should().Be(canPopulate);
             actual.AutoDetectConstructor.Should().Be(autoDetectConstructor);
             actual.AutoPopulate.Should().Be(autoPopulate);
+            actual.ImplementedByType.Should().Be(creator.GetType());
         }
 
         [Fact]

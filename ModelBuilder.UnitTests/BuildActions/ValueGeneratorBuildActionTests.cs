@@ -507,6 +507,10 @@
             var actual = sut.GetBuildCapability(buildConfiguration, buildChain, parameterInfo);
 
             actual.SupportsCreate.Should().BeTrue();
+            actual.SupportsPopulate.Should().BeFalse();
+            actual.AutoDetectConstructor.Should().BeFalse();
+            actual.AutoPopulate.Should().BeFalse();
+            actual.ImplementedByType.Should().Be(generator.GetType());
         }
 
         [Fact]
@@ -622,6 +626,7 @@
             actual.SupportsPopulate.Should().BeFalse();
             actual.AutoDetectConstructor.Should().BeFalse();
             actual.AutoPopulate.Should().BeFalse();
+            actual.ImplementedByType.Should().Be(generator.GetType());
         }
 
         [Fact]
@@ -733,6 +738,7 @@
             actual.SupportsPopulate.Should().BeFalse();
             actual.AutoDetectConstructor.Should().BeFalse();
             actual.AutoPopulate.Should().BeFalse();
+            actual.ImplementedByType.Should().Be(generator.GetType());
         }
 
         [Fact]

@@ -82,7 +82,8 @@
         /// <exception cref="ArgumentNullException">The <paramref name="buildConfiguration" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="buildChain" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
-        public BuildCapability GetBuildCapability(IBuildConfiguration buildConfiguration, IBuildChain buildChain, Type type)
+        public BuildCapability GetBuildCapability(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
+            Type type)
         {
             if (buildConfiguration == null)
             {
@@ -99,16 +100,7 @@
                 throw new ArgumentNullException(nameof(type));
             }
 
-            var rule = GetMatchingRule(type, null, buildConfiguration);
-
-            if (rule == null)
-            {
-                return null;
-            }
-
-            var isMatch = rule.IsMatch(type, null);
-
-            return new BuildCapability {SupportsCreate = isMatch};
+            return GetBuildCapability(type, null, buildConfiguration);
         }
 
         /// <inheritdoc />
@@ -133,16 +125,7 @@
                 throw new ArgumentNullException(nameof(parameterInfo));
             }
 
-            var rule = GetMatchingRule(parameterInfo.ParameterType, parameterInfo.Name, buildConfiguration);
-
-            if (rule == null)
-            {
-                return null;
-            }
-
-            var isMatch = rule.IsMatch(parameterInfo.ParameterType, parameterInfo.Name);
-
-            return new BuildCapability {SupportsCreate = isMatch};
+            return GetBuildCapability(parameterInfo.ParameterType, parameterInfo.Name, buildConfiguration);
         }
 
         /// <inheritdoc />
@@ -167,16 +150,7 @@
                 throw new ArgumentNullException(nameof(propertyInfo));
             }
 
-            var rule = GetMatchingRule(propertyInfo.PropertyType, propertyInfo.Name, buildConfiguration);
-
-            if (rule == null)
-            {
-                return null;
-            }
-
-            var isMatch = rule.IsMatch(propertyInfo.PropertyType, propertyInfo.Name);
-
-            return new BuildCapability {SupportsCreate = isMatch};
+            return GetBuildCapability(propertyInfo.PropertyType, propertyInfo.Name, buildConfiguration);
         }
 
         /// <inheritdoc />
@@ -228,7 +202,32 @@
             }
         }
 
-        private ICreationRule GetMatchingRule(Type type, string referenceName, IBuildConfiguration buildConfiguration)
+        private static BuildCapability GetBuildCapability(Type type, string referenceName,
+            IBuildConfiguration buildConfiguration)
+        {
+            var rule = GetMatchingRule(type, referenceName, buildConfiguration);
+
+            if (rule == null)
+            {
+                return null;
+            }
+
+            var isMatch = rule.IsMatch(type, referenceName);
+
+            if (isMatch == false)
+            {
+                return null;
+            }
+
+            return new BuildCapability
+            {
+                SupportsCreate = true,
+                ImplementedByType = rule.GetType()
+            };
+        }
+
+        private static ICreationRule GetMatchingRule(Type type, string referenceName,
+            IBuildConfiguration buildConfiguration)
         {
             return buildConfiguration.CreationRules?.Where(x => x.IsMatch(type, referenceName))
                 .OrderByDescending(x => x.Priority).FirstOrDefault();

@@ -258,7 +258,8 @@
                 SupportsCreate = canCreate,
                 SupportsPopulate = canPopulate,
                 AutoPopulate = typeCreator.AutoPopulate,
-                AutoDetectConstructor = typeCreator.AutoDetectConstructor
+                AutoDetectConstructor = typeCreator.AutoDetectConstructor,
+                ImplementedByType = typeCreator.GetType()
             };
         }
 

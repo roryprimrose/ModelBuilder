@@ -1,5 +1,7 @@
 ﻿namespace ModelBuilder.BuildActions
 {
+    using System;
+
     /// <summary>
     ///     The <see cref="BuildCapability" />
     ///     class is used to identify how <see cref="IExecuteStrategy" /> should operate when using
@@ -20,6 +22,11 @@
         ///     Gets or sets whether properties on the created value should be automatically populated.
         /// </summary>
         public bool AutoPopulate { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the type that will be used to run a create or populate process.
+        /// </summary>
+        public Type ImplementedByType { get; set; }
 
         /// <summary>
         ///     Gets or sets whether there the <see cref="IBuildAction" /> supports the requested scenario.

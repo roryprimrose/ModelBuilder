@@ -549,6 +549,7 @@
             actual.SupportsPopulate.Should().BeFalse();
             actual.AutoDetectConstructor.Should().BeFalse();
             actual.AutoPopulate.Should().BeFalse();
+            actual.ImplementedByType.Should().Be(rule.GetType());
         }
 
         [Fact]
@@ -659,6 +660,7 @@
             actual.SupportsPopulate.Should().BeFalse();
             actual.AutoDetectConstructor.Should().BeFalse();
             actual.AutoPopulate.Should().BeFalse();
+            actual.ImplementedByType.Should().Be(rule.GetType());
         }
 
         [Fact]
@@ -767,6 +769,7 @@
             actual.SupportsPopulate.Should().BeFalse();
             actual.AutoDetectConstructor.Should().BeFalse();
             actual.AutoPopulate.Should().BeFalse();
+            actual.ImplementedByType.Should().Be(rule.GetType());
         }
 
         [Fact]

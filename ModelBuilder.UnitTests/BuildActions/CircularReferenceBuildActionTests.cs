@@ -264,6 +264,7 @@
             actual.SupportsPopulate.Should().BeFalse();
             actual.AutoDetectConstructor.Should().BeFalse();
             actual.AutoPopulate.Should().BeFalse();
+            actual.ImplementedByType.Should().Be<CircularReferenceBuildAction>();
         }
 
         [Fact]
@@ -342,6 +343,7 @@
             actual.SupportsPopulate.Should().BeFalse();
             actual.AutoDetectConstructor.Should().BeFalse();
             actual.AutoPopulate.Should().BeFalse();
+            actual.ImplementedByType.Should().Be<CircularReferenceBuildAction>();
         }
 
         [Fact]
@@ -419,6 +421,7 @@
             actual.SupportsPopulate.Should().BeFalse();
             actual.AutoDetectConstructor.Should().BeFalse();
             actual.AutoPopulate.Should().BeFalse();
+            actual.ImplementedByType.Should().Be<CircularReferenceBuildAction>();
         }
 
         [Fact]

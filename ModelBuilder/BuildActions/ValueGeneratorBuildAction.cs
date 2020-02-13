@@ -86,7 +86,8 @@
         /// <exception cref="ArgumentNullException">The <paramref name="buildChain" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="buildConfiguration" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
-        public BuildCapability GetBuildCapability(IBuildConfiguration buildConfiguration, IBuildChain buildChain, Type type)
+        public BuildCapability GetBuildCapability(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
+            Type type)
         {
             if (buildConfiguration == null)
             {
@@ -103,19 +104,7 @@
                 throw new ArgumentNullException(nameof(type));
             }
 
-            var generator = GetMatchingGenerator(type, null, buildConfiguration, buildChain);
-
-            if (generator == null)
-            {
-                return null;
-            }
-
-            var isMatch = generator.IsMatch(type, null, buildChain);
-
-            return new BuildCapability
-            {
-                SupportsCreate = isMatch
-            };
+            return GetBuildCapability(type, null, buildConfiguration, buildChain);
         }
 
         /// <inheritdoc />
@@ -140,20 +129,7 @@
                 throw new ArgumentNullException(nameof(parameterInfo));
             }
 
-            var generator = GetMatchingGenerator(parameterInfo.ParameterType, parameterInfo.Name, buildConfiguration,
-                buildChain);
-
-            if (generator == null)
-            {
-                return null;
-            }
-
-            var isMatch = generator.IsMatch(parameterInfo.ParameterType, parameterInfo.Name, buildChain);
-
-            return new BuildCapability
-            {
-                SupportsCreate = isMatch
-            };
+            return GetBuildCapability(parameterInfo.ParameterType, parameterInfo.Name, buildConfiguration, buildChain);
         }
 
         /// <inheritdoc />
@@ -178,20 +154,7 @@
                 throw new ArgumentNullException(nameof(propertyInfo));
             }
 
-            var generator = GetMatchingGenerator(propertyInfo.PropertyType, propertyInfo.Name, buildConfiguration,
-                buildChain);
-
-            if (generator == null)
-            {
-                return null;
-            }
-
-            var isMatch = generator.IsMatch(propertyInfo.PropertyType, propertyInfo.Name, buildChain);
-
-            return new BuildCapability
-            {
-                SupportsCreate = isMatch
-            };
+            return GetBuildCapability(propertyInfo.PropertyType, propertyInfo.Name, buildConfiguration, buildChain);
         }
 
         /// <inheritdoc />
@@ -242,6 +205,30 @@
 
                 throw new BuildException(message, typeToBuild, referenceName, context, output, ex);
             }
+        }
+
+        private static BuildCapability GetBuildCapability(Type type, string referenceName,
+            IBuildConfiguration buildConfiguration, IBuildChain buildChain)
+        {
+            var generator = GetMatchingGenerator(type, referenceName, buildConfiguration, buildChain);
+
+            if (generator == null)
+            {
+                return null;
+            }
+
+            var isMatch = generator.IsMatch(type, referenceName, buildChain);
+
+            if (isMatch == false)
+            {
+                return null;
+            }
+
+            return new BuildCapability
+            {
+                SupportsCreate = true,
+                ImplementedByType = generator.GetType()
+            };
         }
 
         private static IValueGenerator GetMatchingGenerator(Type type, string referenceName,
