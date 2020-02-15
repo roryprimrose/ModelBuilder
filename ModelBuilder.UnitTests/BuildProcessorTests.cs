@@ -17,6 +17,7 @@
         {
             var parameterInfo = typeof(Person).GetConstructors()
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
+            var arguments = new object[] {Guid.NewGuid().ToString()};
             var expected = new Person();
             var match = new BuildCapability {SupportsCreate = true};
 
@@ -28,7 +29,7 @@
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Configuration.Returns(buildConfiguration);
             action.GetBuildCapability(buildConfiguration, buildChain, parameterInfo).Returns(match);
-            action.Build(executeStrategy, parameterInfo).Returns(expected);
+            action.Build(executeStrategy, parameterInfo, arguments).Returns(expected);
 
             var actions = new List<IBuildAction>
             {
@@ -37,7 +38,7 @@
 
             var sut = new BuildProcessor(actions);
 
-            var actual = sut.Build(executeStrategy, parameterInfo);
+            var actual = sut.Build(executeStrategy, parameterInfo, arguments);
 
             actual.Should().Be(expected);
         }
@@ -47,6 +48,7 @@
         {
             var parameterInfo = typeof(Person).GetConstructors()
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
+            var arguments = new object[] {Guid.NewGuid().ToString()};
             var expected = new Person();
             var match = new BuildCapability {SupportsCreate = true};
 
@@ -62,7 +64,7 @@
             firstAction.GetBuildCapability(buildConfiguration, buildChain, parameterInfo).Returns(match);
             secondAction.Priority.Returns(int.MaxValue);
             secondAction.GetBuildCapability(buildConfiguration, buildChain, parameterInfo).Returns(match);
-            secondAction.Build(executeStrategy, parameterInfo).Returns(expected);
+            secondAction.Build(executeStrategy, parameterInfo, arguments).Returns(expected);
 
             var actions = new List<IBuildAction>
             {
@@ -72,7 +74,7 @@
 
             var sut = new BuildProcessor(actions);
 
-            var actual = sut.Build(executeStrategy, parameterInfo);
+            var actual = sut.Build(executeStrategy, parameterInfo, arguments);
 
             actual.Should().Be(expected);
         }
@@ -82,6 +84,7 @@
         {
             var parameterInfo = typeof(Person).GetConstructors()
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
+            var arguments = new object[] {Guid.NewGuid().ToString()};
             var expected = new Person();
             var match = new BuildCapability {SupportsCreate = true};
 
@@ -96,7 +99,7 @@
             firstAction.Priority.Returns(int.MaxValue);
             secondAction.Priority.Returns(int.MinValue);
             secondAction.GetBuildCapability(buildConfiguration, buildChain, parameterInfo).Returns(match);
-            secondAction.Build(executeStrategy, parameterInfo).Returns(expected);
+            secondAction.Build(executeStrategy, parameterInfo, arguments).Returns(expected);
 
             var actions = new List<IBuildAction>
             {
@@ -106,7 +109,7 @@
 
             var sut = new BuildProcessor(actions);
 
-            var actual = sut.Build(executeStrategy, parameterInfo);
+            var actual = sut.Build(executeStrategy, parameterInfo, arguments);
 
             actual.Should().Be(expected);
         }
@@ -159,6 +162,7 @@
         public void BuildForPropertyReturnsActionValue()
         {
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var arguments = new object[] {Guid.NewGuid().ToString()};
             var expected = new Person();
             var match = new BuildCapability {SupportsCreate = true};
 
@@ -170,7 +174,7 @@
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Configuration.Returns(buildConfiguration);
             action.GetBuildCapability(buildConfiguration, buildChain, propertyInfo).Returns(match);
-            action.Build(executeStrategy, propertyInfo).Returns(expected);
+            action.Build(executeStrategy, propertyInfo, arguments).Returns(expected);
 
             var actions = new List<IBuildAction>
             {
@@ -179,7 +183,7 @@
 
             var sut = new BuildProcessor(actions);
 
-            var actual = sut.Build(executeStrategy, propertyInfo);
+            var actual = sut.Build(executeStrategy, propertyInfo, arguments);
 
             actual.Should().Be(expected);
         }
@@ -188,6 +192,7 @@
         public void BuildForPropertyReturnsValueFromActionWithHighestPriority()
         {
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var arguments = new object[] {Guid.NewGuid().ToString()};
             var expected = new Person();
             var match = new BuildCapability {SupportsCreate = true};
 
@@ -203,7 +208,7 @@
             firstAction.GetBuildCapability(buildConfiguration, buildChain, propertyInfo).Returns(match);
             secondAction.Priority.Returns(int.MaxValue);
             secondAction.GetBuildCapability(buildConfiguration, buildChain, propertyInfo).Returns(match);
-            secondAction.Build(executeStrategy, propertyInfo).Returns(expected);
+            secondAction.Build(executeStrategy, propertyInfo, arguments).Returns(expected);
 
             var actions = new List<IBuildAction>
             {
@@ -213,7 +218,7 @@
 
             var sut = new BuildProcessor(actions);
 
-            var actual = sut.Build(executeStrategy, propertyInfo);
+            var actual = sut.Build(executeStrategy, propertyInfo, arguments);
 
             actual.Should().Be(expected);
         }
@@ -222,6 +227,7 @@
         public void BuildForPropertyReturnsValueFromMatchingAction()
         {
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var arguments = new object[] {Guid.NewGuid().ToString()};
             var expected = new Person();
             var match = new BuildCapability {SupportsCreate = true};
 
@@ -236,7 +242,7 @@
             firstAction.Priority.Returns(int.MaxValue);
             secondAction.Priority.Returns(int.MinValue);
             secondAction.GetBuildCapability(buildConfiguration, buildChain, propertyInfo).Returns(match);
-            secondAction.Build(executeStrategy, propertyInfo).Returns(expected);
+            secondAction.Build(executeStrategy, propertyInfo, arguments).Returns(expected);
 
             var actions = new List<IBuildAction>
             {
@@ -246,7 +252,7 @@
 
             var sut = new BuildProcessor(actions);
 
-            var actual = sut.Build(executeStrategy, propertyInfo);
+            var actual = sut.Build(executeStrategy, propertyInfo, arguments);
 
             actual.Should().Be(expected);
         }
@@ -303,6 +309,7 @@
         public void BuildForTypeReturnsActionValue()
         {
             var type = typeof(Person);
+            var arguments = new object[] {Guid.NewGuid().ToString()};
             var expected = new Person();
             var match = new BuildCapability {SupportsCreate = true};
 
@@ -332,6 +339,7 @@
         public void BuildForTypeReturnsValueFromActionWithHighestPriority()
         {
             var type = typeof(Person);
+            var arguments = new object[] {Guid.NewGuid().ToString()};
             var expected = new Person();
             var match = new BuildCapability {SupportsCreate = true};
 
@@ -366,6 +374,7 @@
         public void BuildForTypeReturnsValueFromMatchingAction()
         {
             var type = typeof(Person);
+            var arguments = new object[] {Guid.NewGuid().ToString()};
             var expected = new Person();
             var match = new BuildCapability {SupportsCreate = true};
 
@@ -917,6 +926,7 @@
         [Fact]
         public void PopulateReturnsActionValue()
         {
+            var arguments = new object[] {Guid.NewGuid().ToString()};
             var expected = new Person();
             var match = new BuildCapability {SupportsPopulate = true};
 
@@ -945,8 +955,9 @@
         [Fact]
         public void PopulateReturnsValueFromActionWithHighestPriority()
         {
+            var arguments = new object[] {Guid.NewGuid().ToString()};
             var expected = new Person();
-            var match = new BuildCapability { SupportsPopulate = true};
+            var match = new BuildCapability {SupportsPopulate = true};
 
             var firstAction = Substitute.For<IBuildAction>();
             var secondAction = Substitute.For<IBuildAction>();
@@ -978,8 +989,9 @@
         [Fact]
         public void PopulateReturnsValueFromMatchingAction()
         {
+            var arguments = new object[] {Guid.NewGuid().ToString()};
             var expected = new Person();
-            var match = new BuildCapability { SupportsPopulate = true};
+            var match = new BuildCapability {SupportsPopulate = true};
 
             var firstAction = Substitute.For<IBuildAction>();
             var secondAction = Substitute.For<IBuildAction>();

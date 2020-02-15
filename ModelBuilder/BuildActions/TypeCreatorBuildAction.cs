@@ -38,7 +38,7 @@
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="parameterInfo" /> parameter is <c>null</c>.</exception>
-        public object Build(IExecuteStrategy executeStrategy, ParameterInfo parameterInfo)
+        public object Build(IExecuteStrategy executeStrategy, ParameterInfo parameterInfo, params object[] arguments)
         {
             if (executeStrategy == null)
             {
@@ -55,14 +55,14 @@
                 executeStrategy.BuildChain);
 
             return Build(typeCreator, parameterInfo.ParameterType, parameterInfo.Name, executeStrategy.BuildChain,
-                () => typeCreator?.Create(parameterInfo.ParameterType, parameterInfo.Name, executeStrategy),
+                () => typeCreator?.Create(parameterInfo.ParameterType, parameterInfo.Name, executeStrategy, arguments),
                 executeStrategy.Log);
         }
 
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="propertyInfo" /> parameter is <c>null</c>.</exception>
-        public object Build(IExecuteStrategy executeStrategy, PropertyInfo propertyInfo)
+        public object Build(IExecuteStrategy executeStrategy, PropertyInfo propertyInfo, params object[] arguments)
         {
             if (executeStrategy == null)
             {
@@ -79,7 +79,7 @@
                 executeStrategy.BuildChain);
 
             return Build(typeCreator, propertyInfo.PropertyType, propertyInfo.Name, executeStrategy.BuildChain,
-                () => typeCreator?.Create(propertyInfo.PropertyType, propertyInfo.Name, executeStrategy),
+                () => typeCreator?.Create(propertyInfo.PropertyType, propertyInfo.Name, executeStrategy, arguments),
                 executeStrategy.Log);
         }
 
