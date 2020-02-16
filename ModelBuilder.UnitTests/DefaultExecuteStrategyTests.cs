@@ -8,6 +8,7 @@
     using System.Reflection;
     using System.Text.RegularExpressions;
     using FluentAssertions;
+    using ModelBuilder.BuildActions;
     using ModelBuilder.CreationRules;
     using ModelBuilder.ExecuteOrderRules;
     using ModelBuilder.IgnoreRules;
@@ -21,25 +22,44 @@
 
     public class DefaultExecuteStrategyTests
     {
+        private readonly IBuildLog _buildLog;
         private readonly ITestOutputHelper _output;
 
         public DefaultExecuteStrategyTests(ITestOutputHelper output)
         {
             _output = output;
+            _buildLog = new OutputBuildLog(output);
         }
 
         [Fact]
         public void BuildChainShouldBeEmptyAfterCreateCompletedTest()
         {
-            var configuration = Model.UsingDefaultConfiguration();
+            var buildHistory = new BuildHistory();
+            var expected = new SlimModel();
+            var typeCapability = new BuildCapability
+            {
+                SupportsPopulate = false,
+                ImplementedByType = GetType(),
+                AutoDetectConstructor = false,
+                AutoPopulate = true,
+                SupportsCreate = true
+            };
 
-            var target = new DefaultExecuteStrategy();
+            var processor = Substitute.For<IBuildProcessor>();
+            var buildConfiguration = Substitute.For<IBuildConfiguration>();
 
-            target.Initialize(configuration);
+            var target = new DefaultExecuteStrategy(buildHistory, _buildLog, processor);
+
+            processor.GetBuildCapability(buildConfiguration, buildHistory, Arg.Any<BuildRequirement>(),
+                    typeof(SlimModel))
+                .Returns(typeCapability);
+            processor.Build(target, typeof(SlimModel), Arg.Any<object[]>()).Returns(expected);
+
+            target.Initialize(buildConfiguration);
 
             target.BuildChain.Should().BeEmpty();
 
-            target.Create(typeof(Company));
+            target.Create(typeof(SlimModel));
 
             target.BuildChain.Should().BeEmpty();
         }
@@ -69,103 +89,103 @@
         [Fact]
         public void CreateDeterminesPropertiesToCreateByProvidingConstructorArgsForNestedTypeTest()
         {
-            var number = Environment.TickCount;
-            var value = Guid.NewGuid();
-            var valueGenerators = new Collection<IValueGenerator>();
-            var typeCreators = new Collection<ITypeCreator>();
+            var buildHistory = new BuildHistory();
+            var model = new SlimModel();
+            var expected = new SimpleConstructor(model);
+            var age = Environment.TickCount;
+            var typeCapability = new BuildCapability
+            {
+                SupportsPopulate = true,
+                ImplementedByType = GetType(),
+                AutoDetectConstructor = false,
+                AutoPopulate = true,
+                SupportsCreate = true
+            };
+            var propertyCapability = new BuildCapability
+            {
+                SupportsPopulate = false,
+                ImplementedByType = GetType(),
+                AutoDetectConstructor = false,
+                AutoPopulate = false,
+                SupportsCreate = true
+            };
 
+            var processor = Substitute.For<IBuildProcessor>();
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
-            var typeCreator = Substitute.For<ITypeCreator>();
-            var valueGenerator = Substitute.For<IValueGenerator>();
             var propertyResolver = Substitute.For<IPropertyResolver>();
 
-            typeCreators.Add(typeCreator);
-            valueGenerators.Add(valueGenerator);
+            var target = new DefaultExecuteStrategy(buildHistory, _buildLog, processor);
 
+            processor.GetBuildCapability(buildConfiguration, buildHistory, Arg.Any<BuildRequirement>(),
+                    typeof(SimpleConstructor))
+                .Returns(typeCapability);
+            processor.GetBuildCapability(buildConfiguration, buildHistory, Arg.Any<BuildRequirement>(),
+                    Arg.Any<PropertyInfo>())
+                .Returns(propertyCapability);
+            processor.Build(target, typeof(SimpleConstructor), Arg.Any<object[]>()).Returns(expected);
+            processor.Build(target, Arg.Is<PropertyInfo>(x => x.Name == nameof(SimpleConstructor.Model)),
+                Arg.Any<object[]>()).Returns(model);
+            processor.Build(target, Arg.Is<PropertyInfo>(x => x.Name == nameof(SimpleConstructor.Age)),
+                Arg.Any<object[]>()).Returns(age);
+            processor.Populate(target, expected).Returns(expected);
             buildConfiguration.PropertyResolver.Returns(propertyResolver);
-            propertyResolver.CanPopulate(Arg.Any<PropertyInfo>()).Returns(true);
+            propertyResolver.CanPopulate(Arg.Is<PropertyInfo>(x => x.Name == nameof(SimpleConstructor.Model)))
+                .Returns(false);
+            propertyResolver.CanPopulate(Arg.Is<PropertyInfo>(x => x.Name == nameof(SimpleConstructor.Age)))
+                .Returns(true);
             propertyResolver.ShouldPopulateProperty(
                 Arg.Any<IBuildConfiguration>(),
-                Arg.Any<object>(),
-                Arg.Any<PropertyInfo>(),
+                expected,
+                Arg.Is<PropertyInfo>(x => x.Name == nameof(SimpleConstructor.Age)),
                 Arg.Any<object[]>()).Returns(true);
-            propertyResolver.ShouldPopulateProperty(
-                Arg.Any<IBuildConfiguration>(),
-                Arg.Any<object>(),
-                Arg.Is<PropertyInfo>(x => x.Name == nameof(AdditionalWrapper.Number)),
-                Arg.Any<object[]>()).Returns(false);
-            propertyResolver.ShouldPopulateProperty(
-                Arg.Any<IBuildConfiguration>(),
-                Arg.Any<object>(),
-                Arg.Is<PropertyInfo>(x => x.Name == nameof(ReadOnlyModel.Value)),
-                Arg.Any<object[]>()).Returns(false);
-            propertyResolver.ShouldPopulateProperty(
-                Arg.Any<IBuildConfiguration>(),
-                Arg.Is<object>(x => x.GetType() == typeof(ReadOnlyModelWrapper)),
-                Arg.Any<PropertyInfo>(),
-                Arg.Any<object[]>()).Returns(false);
-            buildConfiguration.TypeCreators.Returns(typeCreators);
-            buildConfiguration.ValueGenerators.Returns(valueGenerators);
-            buildConfiguration.IgnoreRules.Returns(new Collection<IIgnoreRule>());
-            buildConfiguration.ConstructorResolver.Returns(new DefaultConstructorResolver());
-
-            var target = new DefaultExecuteStrategy();
 
             target.Initialize(buildConfiguration);
 
-            typeCreator.AutoPopulate.Returns(true);
-            typeCreator.AutoDetectConstructor.Returns(true);
-            typeCreator.CanCreate(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<IBuildChain>()).Returns(true);
-            typeCreator.Create(typeof(AdditionalWrapper), null, Arg.Any<IExecuteStrategy>(), Arg.Any<object[]>())
-                .Returns(x => new AdditionalWrapper((int) ((object[]) x[3])[0]));
-            typeCreator.Create(typeof(ReadOnlyModel), "model", Arg.Any<IExecuteStrategy>(), value)
-                .Returns(x => new ReadOnlyModel((Guid) ((object[]) x[3])[0]));
-            typeCreator.Create(
-                typeof(ReadOnlyModelWrapper),
-                nameof(AdditionalWrapper.Child),
-                Arg.Any<IExecuteStrategy>(),
-                Arg.Any<object[]>()).Returns(x => new ReadOnlyModelWrapper((ReadOnlyModel) ((object[]) x[3])[0]));
-            typeCreator.Populate(Arg.Any<object>(), Arg.Any<IExecuteStrategy>()).Returns(x => x[0]);
-            valueGenerator.IsMatch(typeof(Guid), "value", Arg.Any<IBuildChain>()).Returns(true);
-            valueGenerator.Generate(typeof(Guid), "value", Arg.Any<IExecuteStrategy>()).Returns(value);
+            var actual = (SimpleConstructor) target.Create(typeof(SimpleConstructor), model);
 
-            var actual = target.Create(typeof(AdditionalWrapper), number);
+            actual.Should().Be(expected);
+            actual.Model.Should().Be(model);
+            actual.Age.Should().Be(age);
 
-            actual.Should().NotBeNull();
             propertyResolver.Received(1).ShouldPopulateProperty(
                 buildConfiguration,
-                Arg.Is<object>(x => x.GetType() == typeof(ReadOnlyModel)),
-                Arg.Is<PropertyInfo>(x => x.Name == nameof(ReadOnlyModel.Value)),
-                Arg.Is<object[]>(x => (Guid) x[0] == value));
+                Arg.Is<object>(x => x.GetType() == typeof(SimpleConstructor)),
+                Arg.Is<PropertyInfo>(x => x.Name == nameof(SimpleConstructor.Age)),
+                Arg.Is<object[]>(x => x[0] == model));
         }
 
         [Fact]
-        public void CreateDoesNotBuildPropertiesWhenTypeCreatorDisablesAutoPopulateTest()
+        public void CreateDoesNotBuildPropertiesWhenCapabilityDoesNotSupportPopulationTest()
         {
-            var model = new SlimModel();
-            var typeCreators = new Collection<ITypeCreator>();
+            var buildHistory = new BuildHistory();
+            var expected = new SlimModel();
+            var typeCapability = new BuildCapability
+            {
+                SupportsPopulate = false,
+                ImplementedByType = GetType(),
+                AutoDetectConstructor = false,
+                AutoPopulate = true,
+                SupportsCreate = true
+            };
 
-            var typeCreator = Substitute.For<ITypeCreator>();
+            var processor = Substitute.For<IBuildProcessor>();
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
 
-            typeCreators.Add(typeCreator);
+            var target = new DefaultExecuteStrategy(buildHistory, _buildLog, processor);
 
-            buildConfiguration.TypeCreators.Returns(typeCreators);
-
-            var target = new DefaultExecuteStrategy();
+            processor.GetBuildCapability(buildConfiguration, buildHistory, Arg.Any<BuildRequirement>(),
+                    typeof(SlimModel))
+                .Returns(typeCapability);
+            processor.Build(target, typeof(SlimModel), Arg.Any<object[]>()).Returns(expected);
 
             target.Initialize(buildConfiguration);
 
-            typeCreator.CanCreate(typeof(SlimModel), null, Arg.Any<IBuildChain>()).Returns(true);
-            typeCreator.Create(typeof(SlimModel), null, Arg.Any<IExecuteStrategy>()).Returns(model);
-            typeCreator.Priority.Returns(1);
-            typeCreator.AutoPopulate.Returns(false);
-            typeCreator.Populate(model, target).Returns(model);
-
             var actual = (SlimModel) target.Create(typeof(SlimModel));
 
-            actual.Should().BeSameAs(model);
+            actual.Should().Be(expected);
             actual.Value.Should().BeEmpty();
+
+            processor.DidNotReceive().Populate(target, expected);
         }
 
         [Fact]
@@ -176,8 +196,10 @@
             var buildConfiguration = Model.UsingDefaultConfiguration().Add(firstAction).Add(secondAction);
             var executeCount = 0;
 
-            firstAction.IsMatch(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<IBuildChain>()).Returns(true);
-            secondAction.IsMatch(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<IBuildChain>()).Returns(true);
+            firstAction.IsMatch(typeof(Simple), Arg.Any<string>(), Arg.Any<IBuildChain>()).Returns(true);
+            firstAction.Priority.Returns(int.MaxValue);
+            secondAction.IsMatch(typeof(Simple), Arg.Any<string>(), Arg.Any<IBuildChain>()).Returns(true);
+            secondAction.Priority.Returns(int.MinValue);
             firstAction.WhenForAnyArgs(x => x.Execute(null, null, null)).Do(
                 x =>
                 {
@@ -239,6 +261,40 @@
 
             firstAction.DidNotReceive().Execute(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<IBuildChain>());
             secondAction.Received().Execute(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<IBuildChain>());
+        }
+
+        [Fact]
+        public void CreatePopulatesWithProcessorOnlyWhenAutoPopulateDisabledTest()
+        {
+            var buildHistory = new BuildHistory();
+            var expected = new SlimModel();
+            var typeCapability = new BuildCapability
+            {
+                SupportsPopulate = true,
+                ImplementedByType = GetType(),
+                AutoDetectConstructor = false,
+                AutoPopulate = false,
+                SupportsCreate = true
+            };
+
+            var processor = Substitute.For<IBuildProcessor>();
+            var buildConfiguration = Substitute.For<IBuildConfiguration>();
+
+            var target = new DefaultExecuteStrategy(buildHistory, _buildLog, processor);
+
+            processor.GetBuildCapability(buildConfiguration, buildHistory, Arg.Any<BuildRequirement>(),
+                    typeof(SlimModel))
+                .Returns(typeCapability);
+            processor.Build(target, typeof(SlimModel), Arg.Any<object[]>()).Returns(expected);
+
+            target.Initialize(buildConfiguration);
+
+            var actual = (SlimModel) target.Create(typeof(SlimModel));
+
+            actual.Should().Be(expected);
+            actual.Value.Should().BeEmpty();
+
+            processor.Received().Populate(target, expected);
         }
 
         [Fact]
@@ -352,51 +408,6 @@
             var actual = target.Create(typeof(int));
 
             actual.Should().BeNull();
-        }
-
-        [Fact]
-        public void CreateReturnsReferenceTypeFromCreatorTest()
-        {
-            var expected = new SlimModel();
-            var value = Guid.NewGuid();
-
-            var typeCreators = new Collection<ITypeCreator>();
-            var valueGenerators = new Collection<IValueGenerator>();
-
-            var typeCreator = Substitute.For<ITypeCreator>();
-            var generator = Substitute.For<IValueGenerator>();
-            var buildConfiguration = Substitute.For<IBuildConfiguration>();
-            var propertyResolver = Substitute.For<IPropertyResolver>();
-
-            typeCreators.Add(typeCreator);
-            valueGenerators.Add(generator);
-
-            buildConfiguration.PropertyResolver.Returns(propertyResolver);
-            buildConfiguration.TypeCreators.Returns(typeCreators);
-            buildConfiguration.ValueGenerators.Returns(valueGenerators);
-
-            var target = new DefaultExecuteStrategy();
-
-            target.Initialize(buildConfiguration);
-
-            propertyResolver.CanPopulate(Arg.Any<PropertyInfo>()).Returns(true);
-            propertyResolver.ShouldPopulateProperty(
-                Arg.Any<IBuildConfiguration>(),
-                Arg.Any<object>(),
-                Arg.Any<PropertyInfo>(),
-                Arg.Any<object[]>()).Returns(true);
-            typeCreator.CanCreate(typeof(SlimModel), null, Arg.Any<IBuildChain>()).Returns(true);
-            typeCreator.Create(typeof(SlimModel), null, Arg.Any<IExecuteStrategy>()).Returns(expected);
-            typeCreator.Populate(expected, target).Returns(expected);
-            typeCreator.AutoPopulate.Returns(true);
-            generator.IsMatch(typeof(Guid), "Value", Arg.Is<IBuildChain>(x => x.Last == expected)).Returns(true);
-            generator.Generate(typeof(Guid), "Value", Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == expected))
-                .Returns(value);
-
-            var actual = (SlimModel) target.Create(typeof(SlimModel));
-
-            actual.Should().Be(expected);
-            actual.Value.Should().Be(value);
         }
 
         [Fact]
@@ -526,59 +537,6 @@
 
             actual.Should().BeOfType<TestItem>();
             actual.FirstName.Should().Be(value);
-        }
-
-        [Fact]
-        public void CreateReturnsValueFromCreatorWithHighestPriorityTest()
-        {
-            var firstModel = new SlimModel();
-            var secondModel = new SlimModel();
-            var value = Guid.NewGuid();
-            var typeCreators = new Collection<ITypeCreator>();
-            var valueGenerators = new Collection<IValueGenerator>();
-
-            var propertyResolver = Substitute.For<IPropertyResolver>();
-            var buildConfiguration = Substitute.For<IBuildConfiguration>();
-            var firstCreator = Substitute.For<ITypeCreator>();
-            var secondCreator = Substitute.For<ITypeCreator>();
-            var generator = Substitute.For<IValueGenerator>();
-
-            typeCreators.Add(firstCreator);
-            typeCreators.Add(secondCreator);
-            valueGenerators.Add(generator);
-
-            buildConfiguration.PropertyResolver.Returns(propertyResolver);
-            buildConfiguration.TypeCreators.Returns(typeCreators);
-            buildConfiguration.ValueGenerators.Returns(valueGenerators);
-
-            var target = new DefaultExecuteStrategy();
-
-            target.Initialize(buildConfiguration);
-
-            propertyResolver.CanPopulate(Arg.Any<PropertyInfo>()).Returns(true);
-            propertyResolver.ShouldPopulateProperty(
-                Arg.Any<IBuildConfiguration>(),
-                Arg.Any<object>(),
-                Arg.Any<PropertyInfo>(),
-                Arg.Any<object[]>()).Returns(true);
-            firstCreator.CanCreate(typeof(SlimModel), null, Arg.Any<IBuildChain>()).Returns(true);
-            firstCreator.Create(typeof(SlimModel), null, Arg.Any<IExecuteStrategy>()).Returns(firstModel);
-            firstCreator.Priority.Returns(1);
-            firstCreator.AutoPopulate.Returns(true);
-            firstCreator.Populate(firstModel, target).Returns(firstModel);
-            secondCreator.CanCreate(typeof(SlimModel), null, Arg.Any<IBuildChain>()).Returns(true);
-            secondCreator.Create(typeof(SlimModel), null, Arg.Any<IExecuteStrategy>()).Returns(secondModel);
-            secondCreator.Priority.Returns(2);
-            secondCreator.AutoPopulate.Returns(true);
-            secondCreator.Populate(secondModel, target).Returns(secondModel);
-            generator.IsMatch(typeof(Guid), "Value", Arg.Is<IBuildChain>(x => x.Last == secondModel)).Returns(true);
-            generator.Generate(typeof(Guid), "Value", Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == secondModel))
-                .Returns(value);
-
-            var actual = (SlimModel) target.Create(typeof(SlimModel));
-
-            actual.Should().BeSameAs(secondModel);
-            actual.Value.Should().Be(value);
         }
 
         [Fact]
@@ -721,6 +679,60 @@
             var actual = target.Create(typeof(Guid));
 
             actual.Should().Be(secondValue);
+        }
+
+        [Fact]
+        public void CreateReturnsValueFromProcessorWithPropertyPopulationTest()
+        {
+            var buildHistory = new BuildHistory();
+            var expected = new SlimModel();
+            var value = Guid.NewGuid();
+            var typeCapability = new BuildCapability
+            {
+                SupportsPopulate = true,
+                ImplementedByType = GetType(),
+                AutoDetectConstructor = false,
+                AutoPopulate = true,
+                SupportsCreate = true
+            };
+            var propertyCapability = new BuildCapability
+            {
+                SupportsPopulate = false,
+                ImplementedByType = GetType(),
+                AutoDetectConstructor = false,
+                AutoPopulate = false,
+                SupportsCreate = true
+            };
+
+            var processor = Substitute.For<IBuildProcessor>();
+            var buildConfiguration = Substitute.For<IBuildConfiguration>();
+            var propertyResolver = Substitute.For<IPropertyResolver>();
+
+            var target = new DefaultExecuteStrategy(buildHistory, _buildLog, processor);
+
+            processor.GetBuildCapability(buildConfiguration, buildHistory, Arg.Any<BuildRequirement>(),
+                    typeof(SlimModel))
+                .Returns(typeCapability);
+            processor.GetBuildCapability(buildConfiguration, buildHistory, Arg.Any<BuildRequirement>(),
+                    Arg.Any<PropertyInfo>())
+                .Returns(propertyCapability);
+            processor.Build(target, typeof(SlimModel), Arg.Any<object[]>()).Returns(expected);
+            processor.Build(target, Arg.Any<PropertyInfo>(), Arg.Any<object[]>()).Returns(value);
+            processor.Populate(target, expected).Returns(expected);
+            buildConfiguration.PropertyResolver.Returns(propertyResolver);
+            propertyResolver.CanPopulate(Arg.Any<PropertyInfo>()).Returns(true);
+            propertyResolver.ShouldPopulateProperty(
+                Arg.Any<IBuildConfiguration>(),
+                Arg.Any<object>(),
+                Arg.Any<PropertyInfo>(),
+                Arg.Any<object[]>()).Returns(true);
+
+            target.Initialize(buildConfiguration);
+
+            var actual = (SlimModel) target.Create(typeof(SlimModel));
+
+            actual.Should().Be(expected);
+            actual.Value.Should().Be(value);
         }
 
         [Fact]
@@ -2210,7 +2222,7 @@
         {
             public void RunTest(object instance = null, PropertyInfo propertyInfo = null)
             {
-                PopulateProperty(instance, propertyInfo);
+                PopulateProperty(propertyInfo, instance);
             }
         }
 

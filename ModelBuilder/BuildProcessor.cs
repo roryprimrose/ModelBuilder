@@ -24,7 +24,8 @@
             {
                 new CircularReferenceBuildAction(),
                 new CreationRuleBuildAction(),
-                new ValueGeneratorBuildAction()
+                new ValueGeneratorBuildAction(),
+                new TypeCreatorBuildAction()
             };
         }
 

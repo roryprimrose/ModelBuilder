@@ -309,7 +309,6 @@
         public void BuildForTypeReturnsActionValue()
         {
             var type = typeof(Person);
-            var arguments = new object[] {Guid.NewGuid().ToString()};
             var expected = new Person();
             var match = new BuildCapability {SupportsCreate = true};
 
@@ -339,7 +338,6 @@
         public void BuildForTypeReturnsValueFromActionWithHighestPriority()
         {
             var type = typeof(Person);
-            var arguments = new object[] {Guid.NewGuid().ToString()};
             var expected = new Person();
             var match = new BuildCapability {SupportsCreate = true};
 
@@ -374,7 +372,6 @@
         public void BuildForTypeReturnsValueFromMatchingAction()
         {
             var type = typeof(Person);
-            var arguments = new object[] {Guid.NewGuid().ToString()};
             var expected = new Person();
             var match = new BuildCapability {SupportsCreate = true};
 
@@ -926,7 +923,6 @@
         [Fact]
         public void PopulateReturnsActionValue()
         {
-            var arguments = new object[] {Guid.NewGuid().ToString()};
             var expected = new Person();
             var match = new BuildCapability {SupportsPopulate = true};
 
@@ -955,7 +951,6 @@
         [Fact]
         public void PopulateReturnsValueFromActionWithHighestPriority()
         {
-            var arguments = new object[] {Guid.NewGuid().ToString()};
             var expected = new Person();
             var match = new BuildCapability {SupportsPopulate = true};
 
@@ -989,7 +984,6 @@
         [Fact]
         public void PopulateReturnsValueFromMatchingAction()
         {
-            var arguments = new object[] {Guid.NewGuid().ToString()};
             var expected = new Person();
             var match = new BuildCapability {SupportsPopulate = true};
 
