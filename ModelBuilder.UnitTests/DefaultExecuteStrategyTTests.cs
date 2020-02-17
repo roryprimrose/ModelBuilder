@@ -280,7 +280,7 @@
         {
             public void RunTest()
             {
-                AutoPopulateInstance(null, null);
+                Populate(null, null);
             }
         }
 

@@ -189,9 +189,7 @@
                 return instance;
             }
 
-            typeCreator.Populate(instance, executeStrategy);
-
-            return instance;
+            return typeCreator.Populate(instance, executeStrategy);
         }
 
         private static object Build(ITypeCreator typeCreator, Type typeToBuild, string referenceName,

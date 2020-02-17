@@ -75,62 +75,7 @@
 
             EnsureInitialized();
 
-            var type = instance.GetType();
-            var capability =
-                _buildProcessor.GetBuildCapability(Configuration, _buildHistory, BuildRequirement.Populate, type);
-
-            _buildHistory.Push(instance);
-
-            try
-            {
-                instance = Populate(capability, instance, null, null);
-
-                RunPostBuildActions(instance, null);
-            }
-            finally
-            {
-                _buildHistory.Pop();
-            }
-
-            return instance;
-        }
-
-        /// <summary>
-        ///     Populates the properties on the specified instance.
-        /// </summary>
-        /// <param name="instance">The instance to populate.</param>
-        /// <param name="args">The constructor parameters for the instance.</param>
-        /// <returns>The updated instance.</returns>
-        /// <exception cref="ArgumentNullException">The <paramref name="instance" /> parameter is <c>null</c>.</exception>
-        protected virtual object AutoPopulateInstance(object instance, object[] args)
-        {
-            if (instance == null)
-            {
-                throw new ArgumentNullException(nameof(instance));
-            }
-
-            EnsureInitialized();
-
-            var propertyResolver = Configuration.PropertyResolver;
-            var type = instance.GetType();
-
-            var propertyInfos = from x in propertyResolver.GetProperties(type)
-                orderby GetMaximumOrderPriority(x) descending
-                select x;
-
-            foreach (var propertyInfo in propertyInfos)
-            {
-                if (propertyResolver.ShouldPopulateProperty(Configuration, instance, propertyInfo, args))
-                {
-                    PopulateProperty(propertyInfo, instance, args);
-                }
-                else
-                {
-                    Log.IgnoringProperty(propertyInfo.PropertyType, propertyInfo.Name, instance);
-                }
-            }
-
-            return instance;
+            return Populate(instance, null, null);
         }
 
         protected virtual object Build(Type type, params object[] arguments)
@@ -173,9 +118,32 @@
                 args);
         }
 
-        protected virtual object Populate(BuildCapability capability, object instance, string referenceName,
-            params object[] args)
+        protected virtual object Populate(object instance, string referenceName, params object[] args)
         {
+            if (instance == null)
+            {
+                throw new ArgumentNullException(nameof(instance));
+            }
+
+            var type = instance.GetType();
+            var capability =
+                _buildProcessor.GetBuildCapability(Configuration, _buildHistory, BuildRequirement.Populate, type);
+
+            if (capability == null)
+            {
+                var message = $"Failed to identify build capabilities for {type.FullName}.";
+
+                throw new BuildException(message, type, referenceName, null, Log.Output);
+            }
+
+            if (capability.SupportsPopulate == false)
+            {
+                RunPostBuildActions(instance, referenceName);
+
+                return instance;
+            }
+
+            _buildHistory.Push(instance);
             Log.PopulatingInstance(instance);
 
             try
@@ -183,17 +151,22 @@
                 if (capability.AutoPopulate)
                 {
                     // The type creator has indicated that this type should be auto populated by the execute strategy
-                    instance = AutoPopulateInstance(instance, args);
+                    AutoPopulateInstance(instance, args);
 
                     Debug.Assert(instance != null, "Populating the instance did not return the original instance");
                 }
 
                 // Allow the type creator to do its own population of the instance
-                return _buildProcessor.Populate(this, instance);
+                instance = _buildProcessor.Populate(this, instance);
+
+                RunPostBuildActions(instance, referenceName);
+
+                return instance;
             }
             finally
             {
                 Log.PopulatedInstance(instance);
+                _buildHistory.Pop();
             }
         }
 
@@ -240,13 +213,46 @@
                 return;
             }
 
-            Populate(existingValue);
+            Populate(existingValue, propertyInfo.Name, args);
+        }
+
+        private void AutoPopulateInstance(object instance, object[] args)
+        {
+            EnsureInitialized();
+
+            var propertyResolver = Configuration.PropertyResolver;
+            var type = instance.GetType();
+
+            var propertyInfos = from x in propertyResolver.GetProperties(type)
+                orderby GetMaximumOrderPriority(x) descending
+                select x;
+
+            foreach (var propertyInfo in propertyInfos)
+            {
+                if (propertyResolver.ShouldPopulateProperty(Configuration, instance, propertyInfo, args))
+                {
+                    PopulateProperty(propertyInfo, instance, args);
+                }
+                else
+                {
+                    Log.IgnoringProperty(propertyInfo.PropertyType, propertyInfo.Name, instance);
+                }
+            }
         }
 
         private object Build(Func<BuildCapability> getCapability, Func<object[], object> buildInstance, Type type,
             string referenceName, params object[] args)
         {
             EnsureInitialized();
+
+            var capability = getCapability();
+
+            if (capability == null)
+            {
+                var message = $"Failed to identify build capabilities for {type.FullName}.";
+
+                throw new BuildException(message, type, referenceName, null, Log.Output);
+            }
 
             var typeToBuild = Configuration.GetBuildType(type, Log);
 
@@ -260,20 +266,11 @@
                     context, Log.Output);
             }
 
-            var capability = getCapability();
-
-            if (capability == null)
-            {
-                var message = $"Failed to identify build capabilities for {type.FullName}.";
-
-                throw new BuildException(message, type, referenceName, null, Log.Output);
-            }
-
             Log.CreatingType(typeToBuild, capability.ImplementedByType, context);
 
             try
             {
-                object instance = null;
+                object instance;
 
                 if (args?.Length > 0)
                 {
@@ -284,6 +281,8 @@
                 {
                     // Use constructor detection to figure out how to create this instance
                     var constructor = Configuration.ConstructorResolver.Resolve(type);
+
+                    // TODO: Validate that there is a constructor to use
 
                     var parameterInfos = constructor.GetParameters();
 
@@ -326,22 +325,8 @@
                     return null;
                 }
 
-                _buildHistory.Push(instance);
-
-                try
-                {
-                    if (capability.SupportsPopulate)
-                    {
-                        // Populate the properties
-                        instance = Populate(capability, instance, referenceName, args);
-                    }
-
-                    RunPostBuildActions(instance, null);
-                }
-                finally
-                {
-                    _buildHistory.Pop();
-                }
+                // Populate the properties
+                instance = Populate(instance, referenceName, args);
 
                 return instance;
             }
