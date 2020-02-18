@@ -236,9 +236,23 @@
         }
 
         [Fact]
-        public void PopulateInstanceThrowsExceptionWithNullInstanceTest()
+        public void PopulatePropertyThrowsExceptionWithNullInstanceTest()
         {
-            var target = new PopulateInstanceWrapper();
+            var property = typeof(Person).GetProperty(nameof(Person.FirstName));
+
+            var target = new PopulatePropertyWrapper(property, null);
+
+            Action action = () => target.RunTest();
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void PopulatePropertyThrowsExceptionWithNullPropertyTest()
+        {
+            var instance = new Person();
+
+            var target = new PopulatePropertyWrapper(null, instance);
 
             Action action = () => target.RunTest();
 
@@ -276,11 +290,19 @@
             public string Stuff { get; set; }
         }
 
-        private class PopulateInstanceWrapper : DefaultExecuteStrategy<Company>
+        private class PopulatePropertyWrapper : DefaultExecuteStrategy<Company>
         {
+            private readonly PropertyInfo _propertyInfo;
+            private readonly object _instance;
+
+            public PopulatePropertyWrapper(PropertyInfo propertyInfo, object instance)
+            {
+                _propertyInfo = propertyInfo;
+                _instance = instance;
+            }
             public void RunTest()
             {
-                Populate(null, null);
+                PopulateProperty(_propertyInfo, _instance);
             }
         }
 

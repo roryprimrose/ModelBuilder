@@ -66,7 +66,7 @@
         ///     generate a requested type.
         /// </exception>
         /// <exception cref="BuildException">Failed to generate a requested type.</exception>
-        public object Populate(object instance)
+        public virtual object Populate(object instance)
         {
             if (instance == null)
             {
@@ -78,7 +78,13 @@
             return Populate(instance, null, null);
         }
 
-        protected virtual object Build(Type type, params object[] arguments)
+        /// <summary>
+        /// Builds a value for the specified type.
+        /// </summary>
+        /// <param name="type">The type of value to build.</param>
+        /// <param name="args">The arguments used to create the value.</param>
+        /// <returns>The value created.</returns>
+        protected virtual object Build(Type type, params object[] args)
         {
             if (type == null)
             {
@@ -87,9 +93,14 @@
 
             return Build(
                 () => _buildProcessor.GetBuildCapability(Configuration, BuildChain, BuildRequirement.Create, type),
-                items => _buildProcessor.Build(this, type, items), type, null, arguments);
+                items => _buildProcessor.Build(this, type, items), type, null, args);
         }
 
+        /// <summary>
+        /// Builds a value for the specified parameter.
+        /// </summary>
+        /// <param name="parameterInfo">The parameter to build a value for.</param>
+        /// <returns>The value created for the parameter.</returns>
         protected virtual object Build(ParameterInfo parameterInfo)
         {
             if (parameterInfo == null)
@@ -104,6 +115,12 @@
                 parameterInfo.Name, null);
         }
 
+        /// <summary>
+        /// Builds a value for the specified property.
+        /// </summary>
+        /// <param name="propertyInfo">The property to build a value for.</param>
+        /// <param name="args">The arguments used to create the parent instance.</param>
+        /// <returns>The value created for the property.</returns>
         protected virtual object Build(PropertyInfo propertyInfo, params object[] args)
         {
             if (propertyInfo == null)
@@ -118,73 +135,22 @@
                 args);
         }
 
-        protected virtual object Populate(object instance, string referenceName, params object[] args)
-        {
-            if (instance == null)
-            {
-                throw new ArgumentNullException(nameof(instance));
-            }
-
-            var type = instance.GetType();
-            var capability =
-                _buildProcessor.GetBuildCapability(Configuration, _buildHistory, BuildRequirement.Populate, type);
-
-            if (capability == null)
-            {
-                var message = $"Failed to identify build capabilities for {type.FullName}.";
-
-                throw new BuildException(message, type, referenceName, null, Log.Output);
-            }
-
-            if (capability.SupportsPopulate == false)
-            {
-                RunPostBuildActions(instance, referenceName);
-
-                return instance;
-            }
-
-            _buildHistory.Push(instance);
-            Log.PopulatingInstance(instance);
-
-            try
-            {
-                if (capability.AutoPopulate)
-                {
-                    // The type creator has indicated that this type should be auto populated by the execute strategy
-                    AutoPopulateInstance(instance, args);
-
-                    Debug.Assert(instance != null, "Populating the instance did not return the original instance");
-                }
-
-                // Allow the type creator to do its own population of the instance
-                instance = _buildProcessor.Populate(this, instance);
-
-                RunPostBuildActions(instance, referenceName);
-
-                return instance;
-            }
-            finally
-            {
-                Log.PopulatedInstance(instance);
-                _buildHistory.Pop();
-            }
-        }
-
         /// <summary>
         ///     Populates the specified property on the provided instance.
         /// </summary>
         /// <param name="propertyInfo">The property to populate.</param>
         /// <param name="instance">The instance being populated.</param>
+        /// <param name="args">The arguments used to create <paramref name="instance"/>.</param>
         protected virtual void PopulateProperty(PropertyInfo propertyInfo, object instance, params object[] args)
         {
-            if (instance == null)
-            {
-                throw new ArgumentNullException(nameof(instance));
-            }
-
             if (propertyInfo == null)
             {
                 throw new ArgumentNullException(nameof(propertyInfo));
+            }
+
+            if (instance == null)
+            {
+                throw new ArgumentNullException(nameof(instance));
             }
 
             EnsureInitialized();
@@ -282,7 +248,13 @@
                     // Use constructor detection to figure out how to create this instance
                     var constructor = Configuration.ConstructorResolver.Resolve(type);
 
-                    // TODO: Validate that there is a constructor to use
+                    if (constructor == null)
+                    {
+                        var message = string.Format(CultureInfo.CurrentCulture,
+                            "Failed to resolve constructor for type {0}.", type.FullName);
+
+                        throw new BuildException(message);
+                    }
 
                     var parameterInfos = constructor.GetParameters();
 
@@ -369,6 +341,58 @@
             }
 
             return matchingRule.Priority;
+        }
+
+        private object Populate(object instance, string referenceName, params object[] args)
+        {
+            if (instance == null)
+            {
+                throw new ArgumentNullException(nameof(instance));
+            }
+
+            var type = instance.GetType();
+            var capability =
+                _buildProcessor.GetBuildCapability(Configuration, _buildHistory, BuildRequirement.Populate, type);
+
+            if (capability == null)
+            {
+                var message = $"Failed to identify build capabilities for {type.FullName}.";
+
+                throw new BuildException(message, type, referenceName, null, Log.Output);
+            }
+
+            if (capability.SupportsPopulate == false)
+            {
+                RunPostBuildActions(instance, referenceName);
+
+                return instance;
+            }
+
+            _buildHistory.Push(instance);
+            Log.PopulatingInstance(instance);
+
+            try
+            {
+                if (capability.AutoPopulate)
+                {
+                    // The type creator has indicated that this type should be auto populated by the execute strategy
+                    AutoPopulateInstance(instance, args);
+
+                    Debug.Assert(instance != null, "Populating the instance did not return the original instance");
+                }
+
+                // Allow the type creator to do its own population of the instance
+                instance = _buildProcessor.Populate(this, instance);
+
+                RunPostBuildActions(instance, referenceName);
+
+                return instance;
+            }
+            finally
+            {
+                Log.PopulatedInstance(instance);
+                _buildHistory.Pop();
+            }
         }
 
         private void RunPostBuildActions(object instance, string referenceName)
