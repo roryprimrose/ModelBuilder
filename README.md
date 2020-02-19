@@ -304,3 +304,5 @@ The package had some large design changes that introduce breaking changes to the
 - The `IgnoreRule` class has been replaced with the `IIgnoreRule` interface. The logic for processing rule matches moves from `DefaultPropertyResolver` to the rule itself.
 - Renamed IValueGenerator.IsSupported to IsMatch
 - Renamed IPostBuildAction.IsSupported to IsMatch
+- Added IBuildConfiguration.TypeResolver
+- Added IBuildConfiguration parameter to ITypeCreator.CanCreate

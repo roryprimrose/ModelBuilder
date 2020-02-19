@@ -13,9 +13,10 @@
         /// </summary>
         /// <param name="type">The type to evaluate.</param>
         /// <param name="referenceName">Identifies the possible parameter or property name the instance is intended for.</param>
+        /// <param name="configuration">The build configuration.</param>
         /// <param name="buildChain">The chain of instances built up to this point.</param>
         /// <returns><c>true</c> if this creator can create the type; otherwise <c>false</c>.</returns>
-        bool CanCreate(Type type, string referenceName, IBuildChain buildChain);
+        bool CanCreate(Type type, string referenceName, IBuildConfiguration configuration, IBuildChain buildChain);
 
         /// <summary>
         ///     Returns whether this type creator can populate the specified type.

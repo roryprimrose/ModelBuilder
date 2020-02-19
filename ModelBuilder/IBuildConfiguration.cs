@@ -42,7 +42,7 @@
         /// <summary>
         ///     Gets or sets the property resolver used to populate an instance of a type.
         /// </summary>
-        IPropertyResolver PropertyResolver { get; set;  }
+        IPropertyResolver PropertyResolver { get; set; }
 
         /// <summary>
         ///     Gets the type creators used to create instances.
@@ -53,6 +53,11 @@
         ///     Gets the rules used to map between types before attempting to create a value of the source type.
         /// </summary>
         ICollection<TypeMappingRule> TypeMappingRules { get; }
+
+        /// <summary>
+        ///     Gets or sets the type resolver used to determine the build type.
+        /// </summary>
+        ITypeResolver TypeResolver { get; set; }
 
         /// <summary>
         ///     Gets the value generators used to generate flat values.

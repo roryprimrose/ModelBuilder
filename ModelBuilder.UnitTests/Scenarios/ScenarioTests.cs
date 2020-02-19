@@ -460,7 +460,7 @@
         {
             var typeCreator = Substitute.For<ITypeCreator>();
 
-            typeCreator.CanCreate(typeof(Address), "Address", Arg.Any<IBuildChain>()).Returns(true);
+            typeCreator.CanCreate(typeof(Address), "Address", Arg.Any<IBuildConfiguration>(), Arg.Any<IBuildChain>()).Returns(true);
             typeCreator.Priority.Returns(int.MaxValue);
             typeCreator.AutoDetectConstructor.Returns(true);
             typeCreator.AutoPopulate.Returns(true);

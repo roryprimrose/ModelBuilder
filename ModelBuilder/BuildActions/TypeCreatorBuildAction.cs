@@ -106,7 +106,7 @@
 
             var typeCreator = GetMatchingTypeCreator(type, null, buildConfiguration, buildChain);
 
-            return GetMatchResult(typeCreator, type, null, buildChain);
+            return GetMatchResult(typeCreator, type, null, buildConfiguration, buildChain);
         }
 
         /// <inheritdoc />
@@ -135,7 +135,7 @@
                 buildConfiguration,
                 buildChain);
 
-            return GetMatchResult(typeCreator, parameterInfo.ParameterType, parameterInfo.Name, buildChain);
+            return GetMatchResult(typeCreator, parameterInfo.ParameterType, parameterInfo.Name, buildConfiguration, buildChain);
         }
 
         /// <inheritdoc />
@@ -163,7 +163,7 @@
             var typeCreator = GetMatchingTypeCreator(propertyInfo.PropertyType, propertyInfo.Name, buildConfiguration,
                 buildChain);
 
-            return GetMatchResult(typeCreator, propertyInfo.PropertyType, propertyInfo.Name, buildChain);
+            return GetMatchResult(typeCreator, propertyInfo.PropertyType, propertyInfo.Name, buildConfiguration, buildChain);
         }
 
         /// <inheritdoc />
@@ -237,18 +237,20 @@
             IBuildConfiguration buildConfiguration,
             IBuildChain buildChain)
         {
-            return buildConfiguration.TypeCreators?.Where(x => x.CanCreate(type, referenceName, buildChain))
+            return buildConfiguration.TypeCreators?.Where(x => x.CanCreate(type, referenceName, buildConfiguration, buildChain))
                 .OrderByDescending(x => x.Priority).FirstOrDefault();
         }
 
-        private static BuildCapability GetMatchResult(ITypeCreator typeCreator, Type type, string referenceName, IBuildChain buildChain)
+        private static BuildCapability GetMatchResult(ITypeCreator typeCreator, Type type, string referenceName,
+            IBuildConfiguration configuration,
+            IBuildChain buildChain)
         {
             if (typeCreator == null)
             {
                 return null;
             }
 
-            var canCreate = typeCreator.CanCreate(type, referenceName, buildChain);
+            var canCreate = typeCreator.CanCreate(type, referenceName, configuration, buildChain);
             var canPopulate = typeCreator.CanPopulate(type, referenceName, buildChain);
 
             return new BuildCapability

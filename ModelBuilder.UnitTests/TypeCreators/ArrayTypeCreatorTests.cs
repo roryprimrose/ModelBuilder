@@ -46,9 +46,11 @@
         [InlineData(typeof(Person[]), true)]
         public void CanCreateReturnsWhetherTypeIsSupportedTest(Type type, bool supported)
         {
+            var configuration = Substitute.For<IBuildConfiguration>();
+
             var target = new ArrayTypeCreator();
 
-            var actual = target.CanCreate(type, null, null);
+            var actual = target.CanCreate(type, null, configuration, null);
 
             actual.Should().Be(supported);
         }
@@ -56,9 +58,11 @@
         [Fact]
         public void CanCreateThrowsExceptionWithNullTypeTest()
         {
+            var configuration = Substitute.For<IBuildConfiguration>();
+
             var target = new ArrayTypeCreator();
 
-            Action action = () => target.CanCreate(null, null, null);
+            Action action = () => target.CanCreate(null, null, configuration, null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -118,6 +122,18 @@
             action.Should().Throw<ArgumentNullException>();
         }
 
+        [Fact]
+        public void CreateInstanceThrowsExceptionWithNullType()
+        {
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            var sut = new ArrayTypeCreatorWrapper();
+
+            Action action = () => sut.RunCreateInstance(null, null, executeStrategy);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
         [Theory]
         [InlineData(typeof(byte[]))]
         [InlineData(typeof(int[]))]
@@ -126,9 +142,15 @@
         public void CreateReturnsInstanceTest(Type type)
         {
             var buildChain = new BuildHistory();
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
 
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+            var typeResolver = Substitute.For<ITypeResolver>();
+            var configuration = Substitute.For<IBuildConfiguration>();
+
+            configuration.TypeResolver.Returns(typeResolver);
+            typeResolver.GetBuildType(configuration, Arg.Any<Type>()).Returns(x => x.Arg<Type>());
             executeStrategy.BuildChain.Returns(buildChain);
+            executeStrategy.Configuration.Returns(configuration);
 
             var target = new ArrayTypeCreator();
 
@@ -162,9 +184,15 @@
         public void CreateValidatesWhetherTypeIsSupportedTest(Type type, bool supported)
         {
             var buildChain = new BuildHistory();
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
 
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+            var typeResolver = Substitute.For<ITypeResolver>();
+            var configuration = Substitute.For<IBuildConfiguration>();
+
+            configuration.TypeResolver.Returns(typeResolver);
+            typeResolver.GetBuildType(configuration, Arg.Any<Type>()).Returns(x => x.Arg<Type>());
             executeStrategy.BuildChain.Returns(buildChain);
+            executeStrategy.Configuration.Returns(configuration);
 
             var target = new ArrayTypeCreator();
 
@@ -209,8 +237,13 @@
 
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
+            var typeResolver = Substitute.For<ITypeResolver>();
+            var configuration = Substitute.For<IBuildConfiguration>();
 
+            configuration.TypeResolver.Returns(typeResolver);
+            typeResolver.GetBuildType(configuration, Arg.Any<Type>()).Returns(x => x.Arg<Type>());
             executeStrategy.BuildChain.Returns(buildChain);
+            executeStrategy.Configuration.Returns(configuration);
             executeStrategy.Create(typeof(Guid)).Returns(Guid.NewGuid());
 
             var target = new ArrayTypeCreator
@@ -258,7 +291,8 @@
         public void PopulateCanAddItemsBasedOnPreviousItemTest()
         {
             var actual = new int[15];
-            var executeStrategy = Model.UsingDefaultConfiguration().UsingExecuteStrategy<DefaultExecuteStrategy<List<Company>>>();
+            var executeStrategy = Model.UsingDefaultConfiguration()
+                .UsingExecuteStrategy<DefaultExecuteStrategy<List<Company>>>();
 
             var target = new IncrementingArrayTypeCreator();
 
@@ -279,13 +313,38 @@
         public void PopulateInfersItemTypeByArrayTypeWhenFirstItemIsNullTest()
         {
             var actual = new Person[15];
-            var executeStrategy = Model.UsingDefaultConfiguration().UsingExecuteStrategy<DefaultExecuteStrategy<List<Company>>>();
+            var executeStrategy = Model.UsingDefaultConfiguration()
+                .UsingExecuteStrategy<DefaultExecuteStrategy<List<Company>>>();
 
             var target = new ArrayTypeCreator();
 
             var result = (Person[]) target.Populate(actual, executeStrategy);
 
             result.All(x => x != null).Should().BeTrue();
+        }
+
+        [Fact]
+        public void PopulateInstanceThrowsExceptionWithNullExecuteStrategy()
+        {
+            var value = new List<string>();
+
+            var sut = new ArrayTypeCreatorWrapper();
+
+            Action action = () => sut.RunPopulateInstance(value, null);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void PopulateInstanceThrowsExceptionWithNullInstance()
+        {
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            var sut = new ArrayTypeCreatorWrapper();
+
+            Action action = () => sut.RunPopulateInstance(null, executeStrategy);
+
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -405,6 +464,17 @@
             public void CreateItem(Type type, IExecuteStrategy executeStrategy, object item)
             {
                 CreateChildItem(type, executeStrategy, item);
+            }
+
+            public void RunCreateInstance(Type type, string referenceName, IExecuteStrategy executeStrategy,
+                params object[] args)
+            {
+                base.CreateInstance(type, referenceName, executeStrategy, args);
+            }
+
+            public object RunPopulateInstance(object instance, IExecuteStrategy executeStrategy)
+            {
+                return base.PopulateInstance(instance, executeStrategy);
             }
         }
     }

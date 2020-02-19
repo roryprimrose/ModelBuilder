@@ -25,7 +25,7 @@
             typeCreators.Add(typeCreator);
 
             buildConfiguration.TypeCreators.Returns(typeCreators);
-            typeCreator.CanCreate(typeof(SlimModel), null, Arg.Any<IBuildChain>()).Returns(true);
+            typeCreator.CanCreate(typeof(SlimModel), null, buildConfiguration, Arg.Any<IBuildChain>()).Returns(true);
             typeCreator.CanPopulate(typeof(SlimModel), null, Arg.Any<IBuildChain>()).Returns(true);
 
             var target = new DefaultExecuteStrategy<SlimModel>();
@@ -48,7 +48,7 @@
             typeCreators.Add(typeCreator);
 
             buildConfiguration.TypeCreators.Returns(typeCreators);
-            typeCreator.CanCreate(typeof(MemoryStream), null, Arg.Any<IBuildChain>()).Returns(true);
+            typeCreator.CanCreate(typeof(MemoryStream), null, buildConfiguration, Arg.Any<IBuildChain>()).Returns(true);
             typeCreator.CanPopulate(typeof(MemoryStream), null, Arg.Any<IBuildChain>()).Returns(true);
             typeCreator.Create(typeof(MemoryStream), null, Arg.Any<IExecuteStrategy>()).Returns(null);
 
@@ -115,7 +115,7 @@
                 Arg.Any<object>(),
                 Arg.Any<PropertyInfo>(),
                 Arg.Any<object[]>()).Returns(true);
-            typeCreator.CanCreate(typeof(SlimModel), null, Arg.Any<IBuildChain>()).Returns(true);
+            typeCreator.CanCreate(typeof(SlimModel), null, buildConfiguration, Arg.Any<IBuildChain>()).Returns(true);
             typeCreator.CanPopulate(typeof(SlimModel), null, Arg.Any<IBuildChain>()).Returns(true);
             typeCreator.Create(typeof(SlimModel), null, Arg.Any<IExecuteStrategy>()).Returns(expected);
             typeCreator.Populate(expected, target).Returns(expected);
@@ -156,7 +156,7 @@
 
             target.Initialize(buildConfiguration);
 
-            typeCreator.CanCreate(typeof(Person), null, Arg.Any<IBuildChain>()).Returns(true);
+            typeCreator.CanCreate(typeof(Person), null, buildConfiguration, Arg.Any<IBuildChain>()).Returns(true);
             typeCreator.CanPopulate(typeof(Person), null, Arg.Any<IBuildChain>()).Returns(true);
             typeCreator.Create(typeof(Person), null, Arg.Any<IExecuteStrategy>(), args).Returns(expected);
             typeCreator.Populate(expected, target).Returns(expected);
@@ -207,7 +207,7 @@
             enumerableTypeCreator.AutoPopulate.Returns(false);
             enumerableTypeCreator.CanCreate(
                 typeof(IEnumerable<Person>),
-                "Staff",
+                "Staff", buildConfiguration,
                 Arg.Is<IBuildChain>(x => x.Last == expected)).Returns(true);
             enumerableTypeCreator.Create(
                 typeof(IEnumerable<Person>),

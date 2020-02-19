@@ -6,9 +6,10 @@
 
     public class IncrementingEnumerableTypeCreator : EnumerableTypeCreator
     {
-        public override bool CanCreate(Type type, string referenceName, IBuildChain buildChain)
+        public override bool CanCreate(Type type, string referenceName, IBuildConfiguration configuration,
+            IBuildChain buildChain)
         {
-            if (base.CanCreate(type, referenceName, buildChain) == false)
+            if (base.CanCreate(type, referenceName, configuration, buildChain) == false)
             {
                 return false;
             }

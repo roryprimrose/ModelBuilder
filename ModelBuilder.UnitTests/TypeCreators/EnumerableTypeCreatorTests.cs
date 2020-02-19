@@ -62,9 +62,17 @@
         [InlineData(typeof(InheritedGenericCollection), true)]
         public void CanCreateReturnsWhetherTypeIsSupportedTest(Type type, bool supported)
         {
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+            var typeResolver = Substitute.For<ITypeResolver>();
+            var configuration = Substitute.For<IBuildConfiguration>();
+
+            configuration.TypeResolver.Returns(typeResolver);
+            typeResolver.GetBuildType(configuration, Arg.Any<Type>()).Returns(x => x.Arg<Type>());
+            executeStrategy.Configuration.Returns(configuration);
+
             var target = new EnumerableTypeCreator();
 
-            var actual = target.CanCreate(type, null, null);
+            var actual = target.CanCreate(type, null, configuration, null);
 
             actual.Should().Be(supported);
         }
@@ -72,9 +80,17 @@
         [Fact]
         public void CanCreateThrowsExceptionWithNullTypeTest()
         {
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+            var typeResolver = Substitute.For<ITypeResolver>();
+            var configuration = Substitute.For<IBuildConfiguration>();
+
+            configuration.TypeResolver.Returns(typeResolver);
+            typeResolver.GetBuildType(configuration, Arg.Any<Type>()).Returns(x => x.Arg<Type>());
+            executeStrategy.Configuration.Returns(configuration);
+
             var target = new EnumerableTypeCreator();
 
-            Action action = () => target.CanCreate(null, null, null);
+            Action action = () => target.CanCreate(null, null, configuration, null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -143,9 +159,15 @@
         public void CreateDoesNotPopulateListTest()
         {
             var buildChain = new BuildHistory();
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
 
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+            var typeResolver = Substitute.For<ITypeResolver>();
+            var configuration = Substitute.For<IBuildConfiguration>();
+
+            configuration.TypeResolver.Returns(typeResolver);
+            typeResolver.GetBuildType(configuration, Arg.Any<Type>()).Returns(x => x.Arg<Type>());
             executeStrategy.BuildChain.Returns(buildChain);
+            executeStrategy.Configuration.Returns(configuration);
 
             var target = new IncrementingEnumerableTypeCreator();
 
@@ -166,9 +188,15 @@
         public void CreateReturnsInstanceTest(Type type)
         {
             var buildChain = new BuildHistory();
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
 
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+            var typeResolver = Substitute.For<ITypeResolver>();
+            var configuration = Substitute.For<IBuildConfiguration>();
+
+            configuration.TypeResolver.Returns(typeResolver);
+            typeResolver.GetBuildType(configuration, Arg.Any<Type>()).Returns(x => x.Arg<Type>());
             executeStrategy.BuildChain.Returns(buildChain);
+            executeStrategy.Configuration.Returns(configuration);
 
             var target = new EnumerableTypeCreator();
 
@@ -184,9 +212,15 @@
         public void CreateReturnsNewListOfSpecifiedTypeTest(Type targetType)
         {
             var buildChain = new BuildHistory();
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
 
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+            var typeResolver = Substitute.For<ITypeResolver>();
+            var configuration = Substitute.For<IBuildConfiguration>();
+
+            configuration.TypeResolver.Returns(typeResolver);
+            typeResolver.GetBuildType(configuration, Arg.Any<Type>()).Returns(x => x.Arg<Type>());
             executeStrategy.BuildChain.Returns(buildChain);
+            executeStrategy.Configuration.Returns(configuration);
 
             var target = new EnumerableTypeCreator();
 
@@ -228,9 +262,15 @@
         public void CreateValidatesWhetherTypeIsSupportedTest(Type type, bool supported)
         {
             var buildChain = new BuildHistory();
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
 
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+            var typeResolver = Substitute.For<ITypeResolver>();
+            var configuration = Substitute.For<IBuildConfiguration>();
+
+            configuration.TypeResolver.Returns(typeResolver);
+            typeResolver.GetBuildType(configuration, Arg.Any<Type>()).Returns(x => x.Arg<Type>());
             executeStrategy.BuildChain.Returns(buildChain);
+            executeStrategy.Configuration.Returns(configuration);
 
             var target = new EnumerableTypeCreator();
 
@@ -250,11 +290,17 @@
         public void PopulateAddsItemsToCollectionFromExecuteStrategyTest()
         {
             var expected = new Collection<Guid>();
-
             var buildChain = new BuildHistory();
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
 
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+            var typeResolver = Substitute.For<ITypeResolver>();
+            var configuration = Substitute.For<IBuildConfiguration>();
+
+            configuration.TypeResolver.Returns(typeResolver);
+            typeResolver.GetBuildType(configuration, Arg.Any<Type>()).Returns(x => x.Arg<Type>());
             executeStrategy.BuildChain.Returns(buildChain);
+            executeStrategy.Configuration.Returns(configuration);
+
             executeStrategy.Create(typeof(Guid)).Returns(Guid.NewGuid());
 
             var target = new EnumerableTypeCreator

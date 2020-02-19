@@ -21,7 +21,7 @@
         {
             var requestedType = typeof(T);
 
-            var instance = Build(requestedType, null, null, args);
+            var instance = Build(requestedType, args);
 
             if (instance == null)
             {

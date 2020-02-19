@@ -1,16 +1,11 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
     using System.Linq;
     using System.Reflection;
     using FluentAssertions;
     using ModelBuilder.BuildActions;
-    using ModelBuilder.CreationRules;
-    using ModelBuilder.TypeCreators;
     using ModelBuilder.UnitTests.Models;
-    using ModelBuilder.ValueGenerators;
     using NSubstitute;
     using Xunit;
     using Xunit.Abstractions;
@@ -18,11 +13,9 @@
     public class DefaultExecuteStrategyTests
     {
         private readonly IBuildLog _buildLog;
-        private readonly ITestOutputHelper _output;
 
         public DefaultExecuteStrategyTests(ITestOutputHelper output)
         {
-            _output = output;
             _buildLog = new OutputBuildLog(output);
         }
 
@@ -62,7 +55,6 @@
         [Fact]
         public void BuildParameterThrowsExceptionWhenNotInitializedTest()
         {
-            var value = new Person();
             var parameterInfo = typeof(Person).GetConstructors()
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
 
@@ -86,7 +78,6 @@
         [Fact]
         public void BuildPropertyThrowsExceptionWhenNotInitializedTest()
         {
-            var value = new Person();
             var property = typeof(Person).GetProperty(nameof(Person.FirstName));
 
             var target = new BuildPropertyWrapper();
@@ -638,65 +629,6 @@
         }
 
         [Fact]
-        public void CreateReturnsValueWithAutomaticTypeMappingTest()
-        {
-            var expected = new TestItem();
-            var firstName = Guid.NewGuid().ToString();
-            var buildHistory = new BuildHistory();
-            var typeCapability = new BuildCapability
-            {
-                SupportsPopulate = true,
-                ImplementedByType = GetType(),
-                AutoDetectConstructor = false,
-                AutoPopulate = true,
-                SupportsCreate = true
-            };
-            var valueCapability = new BuildCapability
-            {
-                SupportsPopulate = false,
-                ImplementedByType = GetType(),
-                AutoDetectConstructor = false,
-                AutoPopulate = false,
-                SupportsCreate = true
-            };
-
-            var processor = Substitute.For<IBuildProcessor>();
-            var buildConfiguration = Substitute.For<IBuildConfiguration>();
-            var propertyResolver = Substitute.For<IPropertyResolver>();
-
-            var target = new DefaultExecuteStrategy(buildHistory, _buildLog, processor);
-
-            processor.GetBuildCapability(buildConfiguration, buildHistory, Arg.Any<BuildRequirement>(),
-                    typeof(TestItem))
-                .Returns(typeCapability);
-            processor.GetBuildCapability(buildConfiguration, buildHistory, Arg.Any<BuildRequirement>(),
-                    Arg.Any<PropertyInfo>())
-                .Returns(valueCapability);
-            processor.GetBuildCapability(buildConfiguration, buildHistory, Arg.Any<BuildRequirement>(),
-                    typeof(string))
-                .Returns(valueCapability);
-            processor.Build(target, typeof(TestItem), Arg.Any<object[]>()).Returns(expected);
-            processor.Build(target, Arg.Is<PropertyInfo>(x => x.Name == nameof(TestItem.FirstName)),
-                Arg.Any<object[]>()).Returns(firstName);
-            processor.Populate(target, expected).Returns(expected);
-            buildConfiguration.PropertyResolver.Returns(propertyResolver);
-            propertyResolver.CanPopulate(Arg.Is<PropertyInfo>(x => x.Name == nameof(TestItem.FirstName)))
-                .Returns(true);
-            propertyResolver.ShouldPopulateProperty(
-                Arg.Any<IBuildConfiguration>(),
-                expected,
-                Arg.Is<PropertyInfo>(x => x.Name == nameof(TestItem.FirstName)),
-                Arg.Any<object[]>()).Returns(true);
-
-            target.Initialize(buildConfiguration);
-
-            var actual = (ITestItem) target.Create(typeof(ITestItem));
-
-            actual.Should().BeOfType<TestItem>();
-            actual.FirstName.Should().Be(firstName);
-        }
-
-        [Fact]
         public void CreateReturnsValueWithNoArgumentsAndDetectConstructorEnabledCreatedUsingEmptyConstructorTest()
         {
             var buildHistory = new BuildHistory();
@@ -993,31 +925,6 @@
         }
 
         [Fact]
-        public void PopulateThrowsExceptionWhenMatchingTypeCreatorNotFoundTest()
-        {
-            var item = new List<string>();
-            var typeCreator = Substitute.For<ITypeCreator>();
-            var typeCreators = new Collection<ITypeCreator>
-            {
-                typeCreator
-            };
-
-            var buildConfiguration = Substitute.For<IBuildConfiguration>();
-
-            buildConfiguration.TypeCreators.Returns(typeCreators);
-            typeCreator.CanCreate(item.GetType(), null, Arg.Any<IBuildChain>()).Returns(true);
-            typeCreator.CanPopulate(item.GetType(), null, Arg.Any<IBuildChain>()).Returns(false);
-
-            var target = new DefaultExecuteStrategy();
-
-            target.Initialize(buildConfiguration);
-
-            Action action = () => target.Populate(item);
-
-            action.Should().Throw<BuildException>();
-        }
-
-        [Fact]
         public void PopulateThrowsExceptionWhenNotInitializedTest()
         {
             var value = new Person();
@@ -1027,25 +934,6 @@
             Action action = () => target.Populate(value);
 
             action.Should().Throw<InvalidOperationException>();
-        }
-
-        [Fact]
-        public void PopulateThrowsExceptionWhenNoTypeCreatorNotFoundTest()
-        {
-            var item = new List<string>();
-            var typeCreators = new Collection<ITypeCreator>();
-
-            var buildConfiguration = Substitute.For<IBuildConfiguration>();
-
-            buildConfiguration.TypeCreators.Returns(typeCreators);
-
-            var target = new DefaultExecuteStrategy();
-
-            target.Initialize(buildConfiguration);
-
-            Action action = () => target.Populate(item);
-
-            action.Should().Throw<BuildException>();
         }
 
         [Fact]

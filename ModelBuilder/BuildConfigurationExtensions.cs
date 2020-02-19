@@ -703,64 +703,6 @@
         }
 
         /// <summary>
-        ///     Gets the type to build which may be different to the provided type.
-        /// </summary>
-        /// <param name="configuration">The build configuration.</param>
-        /// <param name="source">The source type.</param>
-        /// <param name="buildLog">The build log.</param>
-        /// <returns>The type of object to build.</returns>
-        public static Type GetBuildType(this IBuildConfiguration configuration, Type source, IBuildLog buildLog)
-        {
-            if (configuration == null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
-
-            if (source == null)
-            {
-                throw new ArgumentNullException(nameof(source));
-            }
-
-            if (buildLog == null)
-            {
-                throw new ArgumentNullException(nameof(buildLog));
-            }
-
-            var typeMappingRule = configuration.TypeMappingRules?.Where(x => x.SourceType == source).FirstOrDefault();
-
-            if (typeMappingRule != null)
-            {
-                buildLog.MappedType(source, typeMappingRule.TargetType);
-
-                return typeMappingRule.TargetType;
-            }
-
-            // There is no type mapping for this type
-            if (source.IsInterface
-                || source.IsAbstract)
-            {
-                // Automatically resolve a derived type within the same assembly
-                var assemblyTypes = source.GetTypeInfo().Assembly.GetTypes();
-                var possibleTypes = from x in assemblyTypes
-                    where x.IsPublic && x.IsInterface == false && x.IsAbstract == false && source.IsAssignableFrom(x)
-                    select x;
-
-                var matchingType = possibleTypes.FirstOrDefault(source.IsAssignableFrom);
-
-                if (matchingType == null)
-                {
-                    return source;
-                }
-
-                buildLog.MappedType(source, matchingType);
-
-                return matchingType;
-            }
-
-            return source;
-        }
-
-        /// <summary>
         ///     Appends a new <see cref="IIgnoreRule" /> to the build configuration using the specified expression.
         /// </summary>
         /// <typeparam name="T">The type of instance that matches the rule.</typeparam>

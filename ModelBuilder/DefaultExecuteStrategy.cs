@@ -7,7 +7,6 @@
     using System.Linq;
     using System.Reflection;
     using ModelBuilder.BuildActions;
-    using ModelBuilder.Properties;
     using ModelBuilder.TypeCreators;
     using ModelBuilder.ValueGenerators;
 
@@ -220,19 +219,11 @@
                 throw new BuildException(message, type, referenceName, null, Log.Output);
             }
 
-            var typeToBuild = Configuration.GetBuildType(type, Log);
-
             var buildChain = BuildChain;
 
             var context = BuildChain.Last;
 
-            if (typeToBuild == null)
-            {
-                throw new BuildException(Resources.DefaultBuildStrategy_UndeterminedTargetType, type, null,
-                    context, Log.Output);
-            }
-
-            Log.CreatingType(typeToBuild, capability.ImplementedByType, context);
+            Log.CreatingType(type, capability.ImplementedByType, context);
 
             try
             {
@@ -304,7 +295,7 @@
             }
             finally
             {
-                Log.CreatedType(typeToBuild, context);
+                Log.CreatedType(type, context);
             }
         }
 

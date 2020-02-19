@@ -31,6 +31,18 @@
         }
 
         [Fact]
+        public void CanSetTypeResolver()
+        {
+            var expected = Substitute.For<ITypeResolver>();
+
+            var sut = new BuildConfiguration {TypeResolver = expected};
+
+            var actual = sut.TypeResolver;
+
+            actual.Should().Be(expected);
+        }
+
+        [Fact]
         public void CreatedWithDefaultValues()
         {
             var sut = new BuildConfiguration();
@@ -44,6 +56,7 @@
             sut.PostBuildActions.Should().BeEmpty();
             sut.ConstructorResolver.Should().NotBeNull();
             sut.PropertyResolver.Should().NotBeNull();
+            sut.TypeResolver.Should().NotBeNull();
         }
     }
 }

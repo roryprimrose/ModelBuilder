@@ -1,4 +1,4 @@
-﻿namespace ModelBuilder.UnitTests
+﻿namespace ModelBuilder.UnitTests.TypeCreators
 {
     using System;
     using System.Collections.Generic;
@@ -22,9 +22,15 @@
         [InlineData(typeof(KeyValuePair<string, Person>), true)]
         public void CanCreateReturnsWhetherTypeCanBeCreatedTest(Type targetType, bool expected)
         {
+            var typeResolver = Substitute.For<ITypeResolver>();
+            var configuration = Substitute.For<IBuildConfiguration>();
+
+            configuration.TypeResolver.Returns(typeResolver);
+            typeResolver.GetBuildType(configuration, targetType).Returns(targetType);
+
             var target = new DefaultTypeCreator();
 
-            var actual = target.CanCreate(targetType, null, null);
+            var actual = target.CanCreate(targetType, null, configuration, null);
 
             actual.Should().Be(expected);
         }
@@ -32,9 +38,11 @@
         [Fact]
         public void CanCreateThrowsExceptionWithNullTypeTest()
         {
+            var configuration = Substitute.For<IBuildConfiguration>();
+
             var target = new TypeCreatorWrapper();
 
-            Action action = () => target.CanCreate(null, null, null);
+            Action action = () => target.CanCreate(null, null, configuration, null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -52,31 +60,41 @@
         }
 
         [Fact]
-        public void CreateDoesNotThrowsExceptionWhenCreateVerificationPassesTest()
+        public void CreateReturnsValueTest()
         {
-            var buildChain = new BuildHistory();
+            var targetType = typeof(List<string>);
+
+            var typeResolver = Substitute.For<ITypeResolver>();
+            var configuration = Substitute.For<IBuildConfiguration>();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
-            executeStrategy.BuildChain.Returns(buildChain);
+            configuration.TypeResolver.Returns(typeResolver);
+            typeResolver.GetBuildType(configuration, targetType).Returns(targetType);
+            executeStrategy.Configuration.Returns(configuration);
 
             var target = new TypeCreatorWrapper();
 
-            Action action = () => target.Create(typeof(List<string>), null, executeStrategy);
+            var actual = target.Create(targetType, null, executeStrategy);
 
-            action.Should().NotThrow();
+            actual.Should().NotBeNull();
         }
 
         [Fact]
-        public void CreateThrowsExceptionWhenCreateVerificationFailsTest()
+        public void CreateThrowsExceptionWhenTypeNotSupported()
         {
-            var buildChain = new BuildHistory();
+            var targetType = typeof(Environment);
+
+            var typeResolver = Substitute.For<ITypeResolver>();
+            var configuration = Substitute.For<IBuildConfiguration>();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
-            executeStrategy.BuildChain.Returns(buildChain);
+            configuration.TypeResolver.Returns(typeResolver);
+            typeResolver.GetBuildType(configuration, targetType).Returns(targetType);
+            executeStrategy.Configuration.Returns(configuration);
 
-            var target = new TypeCreatorWrapper();
+            var target = new DefaultTypeCreator();
 
-            Action action = () => target.Create(typeof(bool), null, executeStrategy);
+            Action action = () => target.Create(targetType, null, executeStrategy);
 
             action.Should().Throw<NotSupportedException>();
         }
@@ -239,6 +257,49 @@
         }
 
         [Fact]
+        public void ResolveBuildTypeReturnsValueFromTypeResolver()
+        {
+            var requestedType = typeof(IEnumerable<string>);
+            var expected = typeof(List<string>);
+
+            var typeResolver = Substitute.For<ITypeResolver>();
+            var configuration = Substitute.For<IBuildConfiguration>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            configuration.TypeResolver.Returns(typeResolver);
+            typeResolver.GetBuildType(configuration, requestedType).Returns(expected);
+            executeStrategy.Configuration.Returns(configuration);
+
+            var target = new ResolveBuildTypeWrapper();
+
+            var actual = target.RunResolveBuildType(requestedType, configuration);
+
+            actual.Should().Be(expected);
+        }
+
+        [Fact]
+        public void ResolveBuildTypeThrowsExceptionWithNullConfiguration()
+        {
+            var sut = new ResolveBuildTypeWrapper();
+
+            Action action = () => sut.RunResolveBuildType(typeof(Stream), null);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void ResolveBuildTypeThrowsExceptionWithNullRequestedType()
+        {
+            var configuration = Substitute.For<IBuildConfiguration>();
+
+            var sut = new ResolveBuildTypeWrapper();
+
+            Action action = () => sut.RunResolveBuildType(null, configuration);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
         public void SetsDefaultConfigurationForCreatorsTest()
         {
             var target = new DummyTypeCreator();
@@ -248,79 +309,31 @@
             target.Priority.Should().Be(0);
         }
 
-        [Fact]
-        public void VerifyCreateRequestThrowsExceptionWithNullExecuteStrategyTest()
+        private class ResolveBuildTypeWrapper : TypeCreatorBase
         {
-            var target = new DummyTypeCreator();
+            public Type RunResolveBuildType(Type requestedType, IBuildConfiguration buildConfiguration)
+            {
+                return base.ResolveBuildType(requestedType, buildConfiguration);
+            }
 
-            Action action = () => target.VerifyCreateRequestWithNullExecuteStrategy();
+            protected override object CreateInstance(Type type, string referenceName, IExecuteStrategy executeStrategy,
+                params object[] args)
+            {
+                throw new NotImplementedException();
+            }
 
-            action.Should().Throw<ArgumentNullException>();
-        }
-
-        [Fact]
-        public void VerifyCreateRequestThrowsExceptionWithNullStrategyBuildChainTest()
-        {
-            var strategy = Substitute.For<IExecuteStrategy>();
-
-            strategy.BuildChain.Returns((IBuildChain) null);
-
-            var target = new TypeCreatorWrapper();
-
-            Action action = () => target.RunVerifyCreateRequest(typeof(string), "stuff", strategy);
-
-            action.Should().Throw<InvalidOperationException>();
-        }
-
-        [Fact]
-        public void VerifyCreateRequestThrowsExceptionWithNullTypeTest()
-        {
-            var target = new DummyTypeCreator();
-
-            Action action = () => target.VerifyCreateRequestWithNullType();
-
-            action.Should().Throw<ArgumentNullException>();
-        }
-
-        [Fact]
-        public void VerifyPopulateRequestThrowsExceptionWithNullExecuteStrategyTest()
-        {
-            var target = new DummyTypeCreator();
-
-            Action action = () => target.VerifyPopulateRequestWithNullExecuteStrategy();
-
-            action.Should().Throw<ArgumentNullException>();
-        }
-
-        [Fact]
-        public void VerifyPopulateRequestThrowsExceptionWithNullStrategyBuildChainTest()
-        {
-            var strategy = Substitute.For<IExecuteStrategy>();
-
-            strategy.BuildChain.Returns((IBuildChain) null);
-
-            var target = new TypeCreatorWrapper();
-
-            Action action = () => target.RunVerifyPopulateRequest(typeof(string), "stuff", strategy);
-
-            action.Should().Throw<InvalidOperationException>();
-        }
-
-        [Fact]
-        public void VerifyPopulateRequestThrowsExceptionWithNullTypeTest()
-        {
-            var target = new DummyTypeCreator();
-
-            Action action = () => target.VerifyPopulateRequestWithNullType();
-
-            action.Should().Throw<ArgumentNullException>();
+            protected override object PopulateInstance(object instance, IExecuteStrategy executeStrategy)
+            {
+                throw new NotImplementedException();
+            }
         }
 
         private class TypeCreatorWrapper : TypeCreatorBase
         {
-            public override bool CanCreate(Type type, string referenceName, IBuildChain buildChain)
+            public override bool CanCreate(Type type, string referenceName, IBuildConfiguration configuration,
+                IBuildChain buildChain)
             {
-                var canCreate = base.CanCreate(type, referenceName, buildChain);
+                var canCreate = base.CanCreate(type, referenceName, configuration, buildChain);
 
                 if (canCreate == false)
                 {
@@ -340,16 +353,6 @@
                 }
 
                 return type == typeof(List<string>);
-            }
-
-            public void RunVerifyCreateRequest(Type type, string referenceName, IExecuteStrategy executeStrategy)
-            {
-                VerifyCreateRequest(type, referenceName, executeStrategy);
-            }
-
-            public void RunVerifyPopulateRequest(Type type, string referenceName, IExecuteStrategy executeStrategy)
-            {
-                VerifyPopulateRequest(type, referenceName, executeStrategy);
             }
 
             protected override object CreateInstance(

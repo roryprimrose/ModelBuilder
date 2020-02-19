@@ -29,26 +29,29 @@
 
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
-        public override bool CanCreate(Type type, string referenceName, IBuildChain buildChain)
+        public override bool CanCreate(Type type, string referenceName, IBuildConfiguration configuration,
+            IBuildChain buildChain)
         {
             if (type == null)
             {
                 throw new ArgumentNullException(nameof(type));
             }
 
-            if (type.IsClass
-                && type.IsAbstract)
+            var buildType = ResolveBuildType(type, configuration);
+
+            if (buildType.IsClass
+                && buildType.IsAbstract)
             {
                 // This is an abstract class so we can't create it
                 return false;
             }
 
-            if (IsReadOnlyType(type) == false)
+            if (IsReadOnlyType(buildType) == false)
             {
                 return false;
             }
 
-            var internalType = FindEnumerableTypeArgument(type);
+            var internalType = FindEnumerableTypeArgument(buildType);
 
             if (internalType == null)
             {
@@ -56,12 +59,12 @@
                 return false;
             }
 
-            if (type.IsInterface)
+            if (buildType.IsInterface)
             {
                 var listGenericType = typeof(List<string>).GetGenericTypeDefinition();
                 var listType = listGenericType.MakeGenericType(internalType);
 
-                if (type.IsAssignableFrom(listType))
+                if (buildType.IsAssignableFrom(listType))
                 {
                     // The instance is assignable from List<T> and therefore can be both created and populated by this type creator
                     return true;
@@ -71,7 +74,7 @@
             }
 
             // This is a class that we can presumably create so we need to check if it can be populated
-            if (CanPopulate(type, referenceName, buildChain) == false)
+            if (CanPopulate(buildType, referenceName, buildChain) == false)
             {
                 // There is no point trying to create something that we can't populate
                 return false;

@@ -1,9 +1,8 @@
-namespace ModelBuilder
+namespace ModelBuilder.TypeCreators
 {
     using System;
     using System.Globalization;
     using ModelBuilder.Properties;
-    using ModelBuilder.TypeCreators;
 
     /// <summary>
     ///     The <see cref="TypeCreatorBase" />
@@ -15,19 +14,22 @@ namespace ModelBuilder
 
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
-        public virtual bool CanCreate(Type type, string referenceName, IBuildChain buildChain)
+        public virtual bool CanCreate(Type type, string referenceName, IBuildConfiguration configuration,
+            IBuildChain buildChain)
         {
             if (type == null)
             {
                 throw new ArgumentNullException(nameof(type));
             }
 
-            if (type.IsInterface)
+            var buildType = ResolveBuildType(type, configuration);
+
+            if (buildType.IsInterface)
             {
                 return false;
             }
 
-            if (type.IsAbstract)
+            if (buildType.IsAbstract)
             {
                 return false;
             }
@@ -71,9 +73,21 @@ namespace ModelBuilder
                 throw new InvalidOperationException(Resources.ExecuteStrategy_NoBuildChain);
             }
 
-            VerifyCreateRequest(type, referenceName, executeStrategy);
+            var buildType = ResolveBuildType(type, executeStrategy.Configuration);
 
-            return CreateInstance(type, referenceName, executeStrategy, args);
+            if (CanCreate(type, referenceName, executeStrategy.Configuration, executeStrategy.BuildChain) == false)
+            {
+                var message = string.Format(
+                    CultureInfo.CurrentCulture,
+                    Resources.Error_GenerationNotSupportedFormat,
+                    GetType().FullName,
+                    type.FullName,
+                    referenceName ?? "<null>");
+
+                throw new NotSupportedException(message);
+            }
+
+            return CreateInstance(buildType, referenceName, executeStrategy, args);
         }
 
         /// <inheritdoc />
@@ -95,9 +109,18 @@ namespace ModelBuilder
             {
                 throw new InvalidOperationException(Resources.ExecuteStrategy_NoBuildChain);
             }
+            
+            if (CanPopulate(instance.GetType(), null, executeStrategy.BuildChain) == false)
+            {
+                var message = string.Format(
+                    CultureInfo.CurrentCulture,
+                    Resources.Error_GenerationNotSupportedFormat,
+                    GetType().FullName,
+                    instance.GetType(),
+                    "<null>");
 
-            VerifyPopulateRequest(instance.GetType(), null, executeStrategy);
-
+                throw new NotSupportedException(message);
+            }
             // The default will be to not do any additional population of the instance
             return PopulateInstance(instance, executeStrategy);
         }
@@ -125,91 +148,24 @@ namespace ModelBuilder
         protected abstract object PopulateInstance(object instance, IExecuteStrategy executeStrategy);
 
         /// <summary>
-        ///     Verifies that the minimum required information has been provided in order to create an instance.
+        ///     Resolves the type to build based on the specified type.
         /// </summary>
-        /// <param name="type">The type of value to generate.</param>
-        /// <param name="referenceName">Identifies the possible parameter or property name this value is intended for.</param>
-        /// <param name="executeStrategy">The execution strategy.</param>
-        /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is <c>null</c>.</exception>
-        /// <exception cref="NotSupportedException">This generator does not support creating the requested value.</exception>
-        protected virtual void VerifyCreateRequest(Type type, string referenceName, IExecuteStrategy executeStrategy)
+        /// <param name="requestedType">The requested type.</param>
+        /// <param name="buildConfiguration">The build configuration.</param>
+        /// <returns>The type to build.</returns>
+        protected virtual Type ResolveBuildType(Type requestedType, IBuildConfiguration buildConfiguration)
         {
-            if (type == null)
+            if (requestedType == null)
             {
-                throw new ArgumentNullException(nameof(type));
+                throw new ArgumentNullException(nameof(requestedType));
             }
 
-            if (executeStrategy == null)
+            if (buildConfiguration == null)
             {
-                throw new ArgumentNullException(nameof(executeStrategy));
+                throw new ArgumentNullException(nameof(buildConfiguration));
             }
 
-            // Calculate the build chain just once
-            var buildChain = executeStrategy.BuildChain;
-
-            if (buildChain == null)
-            {
-                throw new InvalidOperationException(Resources.ExecuteStrategy_NoBuildChain);
-            }
-
-            if (CanCreate(type, referenceName, buildChain))
-            {
-                return;
-            }
-
-            var message = string.Format(
-                CultureInfo.CurrentCulture,
-                Resources.Error_GenerationNotSupportedFormat,
-                GetType().FullName,
-                type.FullName,
-                referenceName ?? "<null>");
-
-            throw new NotSupportedException(message);
-        }
-
-        /// <summary>
-        ///     Verifies that the minimum required information has been provided in order to populate an instance.
-        /// </summary>
-        /// <param name="type">The type to evaluate.</param>
-        /// <param name="referenceName">Identifies the possible parameter or property name the instance is intended for.</param>
-        /// <param name="executeStrategy">The execution strategy.</param>
-        /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is <c>null</c>.</exception>
-        /// <exception cref="NotSupportedException">This generator does not support creating the requested value.</exception>
-        protected virtual void VerifyPopulateRequest(Type type, string referenceName, IExecuteStrategy executeStrategy)
-        {
-            if (type == null)
-            {
-                throw new ArgumentNullException(nameof(type));
-            }
-
-            if (executeStrategy == null)
-            {
-                throw new ArgumentNullException(nameof(executeStrategy));
-            }
-
-            // Calculate the build chain just once
-            var buildChain = executeStrategy.BuildChain;
-
-            if (buildChain == null)
-            {
-                throw new InvalidOperationException(Resources.ExecuteStrategy_NoBuildChain);
-            }
-
-            if (CanPopulate(type, referenceName, buildChain))
-            {
-                return;
-            }
-
-            var message = string.Format(
-                CultureInfo.CurrentCulture,
-                Resources.Error_GenerationNotSupportedFormat,
-                GetType().FullName,
-                type.FullName,
-                referenceName ?? "<null>");
-
-            throw new NotSupportedException(message);
+            return buildConfiguration.TypeResolver.GetBuildType(buildConfiguration, requestedType);
         }
 
         /// <inheritdoc />

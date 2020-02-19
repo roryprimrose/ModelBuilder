@@ -35,6 +35,10 @@
                 return Activator.CreateInstance(type);
             }
 
+            // Resolve the type to build
+            // buildLog.MappedType(requestedType, typeMappingRule.TargetType);
+
+
             var constructor = executeStrategy?.Configuration?.ConstructorResolver?.Resolve(type, args);
 
             if (constructor == null)
