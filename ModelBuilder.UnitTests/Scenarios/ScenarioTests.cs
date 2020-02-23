@@ -464,12 +464,12 @@
             typeCreator.Priority.Returns(int.MaxValue);
             typeCreator.AutoDetectConstructor.Returns(true);
             typeCreator.AutoPopulate.Returns(true);
-            typeCreator.Create(typeof(Address), "Address", Arg.Any<IExecuteStrategy>())
+            typeCreator.Create(typeof(Address), "Address", Arg.Any<IExecuteStrategy>(), null)
                 .Throws(new InvalidOperationException());
 
             var configuration = Model.UsingDefaultConfiguration().Add(typeCreator);
 
-            var target = new DefaultExecuteStrategy<Company>();
+            var target = new DefaultExecuteStrategy<Office>();
 
             target.Initialize(configuration);
 
@@ -486,8 +486,7 @@
         {
             var expected = Guid.NewGuid();
 
-            var strategy = Model.UsingDefaultConfiguration().AddCreationRule<Person>(x => x.Id, 100, expected)
-                ;
+            var strategy = Model.UsingDefaultConfiguration().AddCreationRule<Person>(x => x.Id, 100, expected);
 
             var actual = strategy.Create<List<Person>>();
 
