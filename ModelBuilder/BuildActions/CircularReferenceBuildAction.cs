@@ -125,7 +125,7 @@
         /// <exception cref="NotSupportedException">Populate is not supported by this build action.</exception>
         public object Populate(IExecuteStrategy executeStrategy, object instance)
         {
-            return instance;
+            throw new NotSupportedException();
         }
 
         private static object FindItemByType(IBuildChain buildChain, Type type)
@@ -157,7 +157,7 @@
             }
 
             return new BuildCapability
-                {SupportsCreate = true, SupportsPopulate = true, AutoPopulate = false, ImplementedByType = GetType()};
+                {SupportsCreate = true, ImplementedByType = GetType()};
         }
 
         /// <inheritdoc />

@@ -74,7 +74,10 @@
 
             EnsureInitialized();
 
-            return Populate(instance, null);
+            var capability = _buildProcessor.GetBuildCapability(Configuration, _buildHistory, BuildRequirement.Populate,
+                instance.GetType());
+
+            return Populate(capability, instance, null);
         }
 
         /// <summary>
@@ -179,7 +182,10 @@
                 return;
             }
 
-            Populate(existingValue, propertyInfo.Name, args);
+            var capability = _buildProcessor.GetBuildCapability(Configuration, _buildHistory, BuildRequirement.Populate,
+                existingValue.GetType());
+
+            Populate(capability, existingValue, propertyInfo.Name, args);
         }
 
         private void AutoPopulateInstance(object instance, object[] args)
@@ -190,8 +196,8 @@
             var type = instance.GetType();
 
             var propertyInfos = from x in propertyResolver.GetProperties(type)
-                orderby GetMaximumOrderPriority(x) descending
-                select x;
+                                orderby GetMaximumOrderPriority(x) descending
+                                select x;
 
             foreach (var propertyInfo in propertyInfos)
             {
@@ -211,9 +217,9 @@
         {
             EnsureInitialized();
 
-            var createCapability = getCapability();
+            var capability = getCapability();
 
-            if (createCapability == null)
+            if (capability == null)
             {
                 var message = $"Failed to identify build capabilities for {type.FullName}.";
 
@@ -224,8 +230,8 @@
 
             var context = BuildChain.Last;
 
-            Log.CreatingType(type, createCapability.ImplementedByType, context);
-            
+            Log.CreatingType(type, capability.ImplementedByType, context);
+
             try
             {
                 object instance;
@@ -235,7 +241,7 @@
                     // We have arguments so will just let the type creator do the work here
                     instance = buildInstance(args);
                 }
-                else if (createCapability.AutoDetectConstructor)
+                else if (capability.AutoDetectConstructor)
                 {
                     // Resolve the type being created
                     var typeToCreate = Configuration.TypeResolver.GetBuildType(Configuration, type);
@@ -292,11 +298,20 @@
                     return null;
                 }
 
-                if (createCapability.SupportsPopulate)
+                if (capability.SupportsPopulate == false
+                    && instance.GetType() != type)
                 {
-                    // Populate the properties
-                    instance = Populate(instance, referenceName, args);
+                    // Get the capability again on the instance type
+                    // The scenario here is that an instance has been created with a different type
+                    // where the build action didn't support populating the original type
+                    // It has however created a different type that may support population
+                    // The example here is IEnumerable<T> which may be built as something like List<T>
+                    capability = _buildProcessor.GetBuildCapability(Configuration, _buildHistory, BuildRequirement.Create,
+                        instance.GetType());
                 }
+
+                // Populate the properties
+                instance = Populate(capability, instance, referenceName, args);
 
                 return instance;
             }
@@ -328,9 +343,9 @@
             }
 
             var matchingRules = from x in Configuration.ExecuteOrderRules
-                where x.IsMatch(property)
-                orderby x.Priority descending
-                select x;
+                                where x.IsMatch(property)
+                                orderby x.Priority descending
+                                select x;
             var matchingRule = matchingRules.FirstOrDefault();
 
             if (matchingRule == null)
@@ -341,25 +356,15 @@
             return matchingRule.Priority;
         }
 
-        private object Populate(object instance, string referenceName, params object[] args)
+        private object Populate(BuildCapability capability, object instance, string referenceName, params object[] args)
         {
             if (instance == null)
             {
                 throw new ArgumentNullException(nameof(instance));
             }
 
-            var type = instance.GetType();
-            var capability = _buildProcessor.GetBuildCapability(Configuration, _buildHistory, BuildRequirement.Populate,
-                type);
-
-            if (capability == null)
-            {
-                var message = $"Failed to identify populate capabilities for {type.FullName}.";
-
-                throw new BuildException(message, type, null, null, Log.Output);
-            }
-
-            if (capability.SupportsPopulate == false)
+            if (capability == null
+                || capability.SupportsPopulate == false)
             {
                 RunPostBuildActions(instance, referenceName);
 
