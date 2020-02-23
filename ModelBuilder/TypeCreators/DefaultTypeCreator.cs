@@ -25,6 +25,9 @@
         {
             Debug.Assert(type != null, "type != null");
 
+            // TODO: Resolve the type to build
+            // buildLog.MappedType(requestedType, typeMappingRule.TargetType);
+
             if (args == null)
             {
                 return Activator.CreateInstance(type);
@@ -34,10 +37,6 @@
             {
                 return Activator.CreateInstance(type);
             }
-
-            // Resolve the type to build
-            // buildLog.MappedType(requestedType, typeMappingRule.TargetType);
-
 
             var constructor = executeStrategy?.Configuration?.ConstructorResolver?.Resolve(type, args);
 

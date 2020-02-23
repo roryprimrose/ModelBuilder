@@ -23,9 +23,11 @@
         /// </summary>
         /// <param name="type">The type to evaluate.</param>
         /// <param name="referenceName">Identifies the possible parameter or property name the instance is intended for.</param>
+        /// <param name="configuration">The build configuration.</param>
         /// <param name="buildChain">The chain of instances built up to this point.</param>
         /// <returns><c>true</c> if this creator can populate the type; otherwise <c>false</c>.</returns>
-        bool CanPopulate(Type type, string referenceName, IBuildChain buildChain);
+        bool CanPopulate(Type type, string referenceName, IBuildConfiguration configuration,
+            IBuildChain buildChain);
 
         /// <summary>
         ///     Creates an instance of the type with the specified arguments.

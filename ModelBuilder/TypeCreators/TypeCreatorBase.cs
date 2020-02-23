@@ -39,7 +39,8 @@ namespace ModelBuilder.TypeCreators
 
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
-        public virtual bool CanPopulate(Type type, string referenceName, IBuildChain buildChain)
+        public virtual bool CanPopulate(Type type, string referenceName, IBuildConfiguration buildConfiguration,
+            IBuildChain buildChain)
         {
             if (type == null)
             {
@@ -110,7 +111,7 @@ namespace ModelBuilder.TypeCreators
                 throw new InvalidOperationException(Resources.ExecuteStrategy_NoBuildChain);
             }
             
-            if (CanPopulate(instance.GetType(), null, executeStrategy.BuildChain) == false)
+            if (CanPopulate(instance.GetType(), null, executeStrategy.Configuration, executeStrategy.BuildChain) == false)
             {
                 var message = string.Format(
                     CultureInfo.CurrentCulture,

@@ -50,11 +50,12 @@
         [Fact]
         public void CanPopulateThrowsExceptionWithNullTypeTest()
         {
+            var configuration = Substitute.For<IBuildConfiguration>();
             var buildChain = new BuildHistory();
 
             var target = new TypeCreatorWrapper();
 
-            Action action = () => target.CanPopulate(null, "Name", buildChain);
+            Action action = () => target.CanPopulate(null, "Name", configuration, buildChain);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -343,9 +344,10 @@
                 return type == typeof(List<string>);
             }
 
-            public override bool CanPopulate(Type type, string referenceName, IBuildChain buildChain)
+            public override bool CanPopulate(Type type, string referenceName, IBuildConfiguration buildConfiguration,
+                IBuildChain buildChain)
             {
-                var canPopulate = base.CanPopulate(type, referenceName, buildChain);
+                var canPopulate = base.CanPopulate(type, referenceName, buildConfiguration, buildChain);
 
                 if (canPopulate == false)
                 {

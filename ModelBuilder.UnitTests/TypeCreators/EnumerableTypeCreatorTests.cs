@@ -127,8 +127,9 @@
         public void CanPopulateReturnsWhetherTypeIsSupportedTest(Type type, bool supported)
         {
             var target = new EnumerableTypeCreator();
+            var configuration = Substitute.For<IBuildConfiguration>();
 
-            var actual = target.CanPopulate(type, null, null);
+            var actual = target.CanPopulate(type, null, configuration, null);
 
             actual.Should().Be(supported);
         }
@@ -137,8 +138,9 @@
         public void CanPopulateThrowsExceptionWithNullTypeTest()
         {
             var target = new EnumerableTypeCreator();
+            var configuration = Substitute.For<IBuildConfiguration>();
 
-            Action action = () => target.CanPopulate(null, null, null);
+            Action action = () => target.CanPopulate(null, null, configuration, null);
 
             action.Should().Throw<ArgumentNullException>();
         }

@@ -855,32 +855,14 @@
         [Fact]
         public void PopulateUsesDefaultExecuteStrategyToPopulateInstanceTest()
         {
-            var value = Guid.NewGuid();
             var expected = new SlimModel();
 
-            var target = Substitute.For<IBuildConfiguration>();
-            var creator = Substitute.For<ITypeCreator>();
-            var creators = new Collection<ITypeCreator>
-            {
-                creator
-            };
-            var generator = Substitute.For<IValueGenerator>();
-            var generators = new Collection<IValueGenerator>
-            {
-                generator
-            };
-
-            target.TypeCreators.Returns(creators);
-            target.ValueGenerators.Returns(generators);
-            creator.CanPopulate(typeof(SlimModel), null, Arg.Any<IBuildChain>()).Returns(true);
-            creator.Populate(expected, Arg.Any<IExecuteStrategy>()).Returns(expected);
-            generator.IsMatch(typeof(Guid), "Value", Arg.Is<IBuildChain>(x => x.Last == expected)).Returns(true);
-            generator.Generate(typeof(Guid), "Value", Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == expected))
-                .Returns(value);
+            var target = new BuildConfiguration().UsingModule<DefaultConfigurationModule>();
 
             var actual = target.Populate(expected);
 
             actual.Should().Be(expected);
+            actual.Value.Should().NotBeEmpty();
         }
 
         [Fact]

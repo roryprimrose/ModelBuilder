@@ -93,9 +93,11 @@
         {
             _output.WriteLine("Testing " + type.FullName);
 
+            var configuration = Substitute.For<IBuildConfiguration>();
+
             var target = new ArrayTypeCreator();
 
-            var actual = target.CanPopulate(type, null, null);
+            var actual = target.CanPopulate(type, null, configuration, null);
 
             actual.Should().Be(supported);
         }
@@ -103,9 +105,11 @@
         [Fact]
         public void CanPopulateThrowsExceptionWithNullTypeTest()
         {
+            var configuration = Substitute.For<IBuildConfiguration>();
+
             var target = new ArrayTypeCreator();
 
-            Action action = () => target.CanPopulate(null, null, null);
+            Action action = () => target.CanPopulate(null, null, configuration, null);
 
             action.Should().Throw<ArgumentNullException>();
         }

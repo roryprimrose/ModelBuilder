@@ -251,7 +251,7 @@
             }
 
             var canCreate = typeCreator.CanCreate(type, referenceName, configuration, buildChain);
-            var canPopulate = typeCreator.CanPopulate(type, referenceName, buildChain);
+            var canPopulate = typeCreator.CanPopulate(type, referenceName, configuration, buildChain);
 
             return new BuildCapability
             {

@@ -37,21 +37,21 @@
                 throw new ArgumentNullException(nameof(type));
             }
 
-            var buildType = ResolveBuildType(type, configuration);
+            var targetType = ResolveBuildType(type, configuration);
 
-            if (buildType.IsClass
-                && buildType.IsAbstract)
+            if (targetType.IsClass
+                && targetType.IsAbstract)
             {
                 // This is an abstract class so we can't create it
                 return false;
             }
 
-            if (IsReadOnlyType(buildType) == false)
+            if (IsReadOnlyType(targetType) == false)
             {
                 return false;
             }
 
-            var internalType = FindEnumerableTypeArgument(buildType);
+            var internalType = FindEnumerableTypeArgument(targetType);
 
             if (internalType == null)
             {
@@ -59,12 +59,12 @@
                 return false;
             }
 
-            if (buildType.IsInterface)
+            if (targetType.IsInterface)
             {
                 var listGenericType = typeof(List<string>).GetGenericTypeDefinition();
                 var listType = listGenericType.MakeGenericType(internalType);
 
-                if (buildType.IsAssignableFrom(listType))
+                if (targetType.IsAssignableFrom(listType))
                 {
                     // The instance is assignable from List<T> and therefore can be both created and populated by this type creator
                     return true;
@@ -74,7 +74,7 @@
             }
 
             // This is a class that we can presumably create so we need to check if it can be populated
-            if (CanPopulate(buildType, referenceName, buildChain) == false)
+            if (CanPopulate(targetType, referenceName, configuration, buildChain) == false)
             {
                 // There is no point trying to create something that we can't populate
                 return false;
@@ -85,19 +85,27 @@
 
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
-        public override bool CanPopulate(Type type, string referenceName, IBuildChain buildChain)
+        public override bool CanPopulate(Type type, string referenceName, IBuildConfiguration configuration,
+            IBuildChain buildChain)
         {
             if (type == null)
             {
                 throw new ArgumentNullException(nameof(type));
             }
 
-            if (IsReadOnlyType(type) == false)
+            if (configuration == null)
+            {
+                throw new ArgumentNullException(nameof(configuration));
+            }
+
+            var targetType = ResolveBuildType(type, configuration);
+
+            if (IsReadOnlyType(targetType) == false)
             {
                 return false;
             }
 
-            var internalType = FindEnumerableTypeArgument(type);
+            var internalType = FindEnumerableTypeArgument(targetType);
 
             if (internalType == null)
             {
@@ -105,7 +113,7 @@
                 return false;
             }
 
-            if (IsUnsupportedType(type))
+            if (IsUnsupportedType(targetType))
             {
                 return false;
             }
@@ -113,9 +121,9 @@
             var genericTypeDefinition = typeof(ICollection<string>).GetGenericTypeDefinition();
             var genericType = genericTypeDefinition.MakeGenericType(internalType);
 
-            if (genericType.IsAssignableFrom(type))
+            if (genericType.IsAssignableFrom(targetType))
             {
-                // The instance is ICollection<T> and therefore can be created by this type creator
+                // The instance is ICollection<T> and therefore can be populated by this type creator
                 return true;
             }
 

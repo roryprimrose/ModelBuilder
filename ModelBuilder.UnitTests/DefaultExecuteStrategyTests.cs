@@ -599,6 +599,7 @@
             var processor = Substitute.For<IBuildProcessor>();
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
             var constructorResolver = Substitute.For<IConstructorResolver>();
+            var typeResolver = Substitute.For<ITypeResolver>();
 
             var target = new DefaultExecuteStrategy(buildHistory, _buildLog, processor);
 
@@ -617,6 +618,8 @@
                 .Returns(expected);
             processor.Populate(target, expected).Returns(expected);
             buildConfiguration.ConstructorResolver.Returns(constructorResolver);
+            buildConfiguration.TypeResolver.Returns(typeResolver);
+            typeResolver.GetBuildType(buildConfiguration, Arg.Any<Type>()).Returns(x => x.Arg<Type>());
             constructorResolver.Resolve(typeof(ReadOnlyModel))
                 .Returns(typeof(ReadOnlyModel).GetConstructors().Single());
 
@@ -644,9 +647,12 @@
 
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
             var constructorResolver = Substitute.For<IConstructorResolver>();
+            var typeResolver = Substitute.For<ITypeResolver>();
             var processor = Substitute.For<IBuildProcessor>();
 
             buildConfiguration.ConstructorResolver.Returns(constructorResolver);
+            buildConfiguration.TypeResolver.Returns(typeResolver);
+            typeResolver.GetBuildType(buildConfiguration, Arg.Any<Type>()).Returns(x => x.Arg<Type>());
 
             var target = new DefaultExecuteStrategy(buildHistory, _buildLog, processor);
 
@@ -709,12 +715,15 @@
             var processor = Substitute.For<IBuildProcessor>();
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
             var constructorResolver = Substitute.For<IConstructorResolver>();
+            var typeResolver = Substitute.For<ITypeResolver>();
 
             var target = new DefaultExecuteStrategy(buildHistory, _buildLog, processor);
 
             processor.GetBuildCapability(buildConfiguration, buildHistory, Arg.Any<BuildRequirement>(),
                     typeof(ReadOnlyModel))
                 .Returns(typeCapability);
+            buildConfiguration.TypeResolver.Returns(typeResolver);
+            typeResolver.GetBuildType(buildConfiguration, Arg.Any<Type>()).Returns(x => x.Arg<Type>());
             constructorResolver.Resolve(typeof(ReadOnlyModel), null)
                 .Returns(typeof(ReadOnlyModel).GetConstructors().Single());
             buildConfiguration.ConstructorResolver.Returns(constructorResolver);
@@ -922,6 +931,24 @@
             Action action = () => target.RunTest(property);
 
             action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void PopulateThrowsExceptionWhenNoBuildActionCapabilityFound()
+        {
+            var buildHistory = new BuildHistory();
+            var model = new SlimModel();
+
+            var processor = Substitute.For<IBuildProcessor>();
+            var buildConfiguration = Substitute.For<IBuildConfiguration>();
+
+            var target = new DefaultExecuteStrategy(buildHistory, _buildLog, processor);
+
+            target.Initialize(buildConfiguration);
+
+            Action action = () => target.Populate(model);
+
+            action.Should().Throw<BuildException>();
         }
 
         [Fact]

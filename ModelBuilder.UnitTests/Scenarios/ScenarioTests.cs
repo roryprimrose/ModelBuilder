@@ -589,7 +589,7 @@
         {
             var actual = new ReadOnlyParent();
 
-            actual = Model.Populate(actual);
+            actual = Model.Ignoring<ReadOnlyParent>(x => x.RestrictedPeople).Populate(actual);
 
             actual.Company.Address.Should().NotBeNullOrWhiteSpace();
             actual.AssignablePeople.Should().NotBeEmpty();

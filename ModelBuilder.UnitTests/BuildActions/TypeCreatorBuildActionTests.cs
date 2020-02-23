@@ -588,7 +588,7 @@
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Log.Returns(_buildLog);
             creator.CanCreate(parameterInfo.ParameterType, parameterInfo.Name, buildConfiguration, buildChain).Returns(true);
-            creator.CanPopulate(parameterInfo.ParameterType, parameterInfo.Name, buildChain).Returns(canPopulate);
+            creator.CanPopulate(parameterInfo.ParameterType, parameterInfo.Name, buildConfiguration, buildChain).Returns(canPopulate);
             creator.Create(parameterInfo.ParameterType, parameterInfo.Name, executeStrategy, arguments)
                 .Returns(expected);
             creator.AutoDetectConstructor.Returns(autoDetectConstructor);
@@ -715,7 +715,7 @@
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Log.Returns(_buildLog);
             creator.CanCreate(propertyInfo.PropertyType, propertyInfo.Name, buildConfiguration, buildChain).Returns(true);
-            creator.CanPopulate(propertyInfo.PropertyType, propertyInfo.Name, buildChain).Returns(canPopulate);
+            creator.CanPopulate(propertyInfo.PropertyType, propertyInfo.Name, buildConfiguration, buildChain).Returns(canPopulate);
             creator.Create(propertyInfo.PropertyType, propertyInfo.Name, executeStrategy, arguments).Returns(expected);
             creator.AutoDetectConstructor.Returns(autoDetectConstructor);
             creator.AutoPopulate.Returns(autoPopulate);
@@ -759,7 +759,7 @@
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Log.Returns(_buildLog);
             creator.CanCreate(type, null, buildConfiguration, buildChain).Returns(true);
-            creator.CanPopulate(type, null, buildChain).Returns(canPopulate);
+            creator.CanPopulate(type, null, buildConfiguration, buildChain).Returns(canPopulate);
             creator.Create(type, null, executeStrategy).Returns(expected);
             creator.AutoDetectConstructor.Returns(autoDetectConstructor);
             creator.AutoPopulate.Returns(autoPopulate);
