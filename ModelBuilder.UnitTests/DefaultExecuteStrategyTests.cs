@@ -934,7 +934,7 @@
         }
 
         [Fact]
-        public void PopulateThrowsExceptionWhenNoBuildActionCapabilityFound()
+        public void PopulateReturnsInstanceWhenNoBuildActionCapabilityFound()
         {
             var buildHistory = new BuildHistory();
             var model = new SlimModel();
@@ -946,9 +946,9 @@
 
             target.Initialize(buildConfiguration);
 
-            Action action = () => target.Populate(model);
+            var actual = target.Populate(model);
 
-            action.Should().Throw<BuildException>();
+            actual.Should().Be(model);
         }
 
         [Fact]
