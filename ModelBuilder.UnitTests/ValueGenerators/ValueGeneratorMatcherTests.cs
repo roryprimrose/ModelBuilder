@@ -28,9 +28,9 @@
 
             var buildChain = Substitute.For<IBuildChain>();
 
-            var target = new WrapperGenerator(regex, typeof(bool), typeof(bool?));
+            var target = new Wrapper(regex, typeof(bool), typeof(bool?));
 
-            var actual = target.IsMatch(type, referenceName, buildChain);
+            var actual = target.RunIsMatch(type, referenceName, buildChain);
 
             actual.Should().Be(expected);
         }
@@ -45,9 +45,9 @@
 
             var buildChain = Substitute.For<IBuildChain>();
 
-            var target = new WrapperGenerator(regex);
+            var target = new Wrapper(regex);
 
-            var actual = target.IsMatch(typeof(Guid), referenceName, buildChain);
+            var actual = target.RunIsMatch(typeof(Guid), referenceName, buildChain);
 
             actual.Should().Be(expected);
         }
@@ -66,9 +66,9 @@
         {
             var buildChain = Substitute.For<IBuildChain>();
 
-            var target = new WrapperGenerator("Match", typeof(bool), typeof(bool?));
+            var target = new Wrapper("Match", typeof(bool), typeof(bool?));
 
-            var actual = target.IsMatch(type, referenceName, buildChain);
+            var actual = target.RunIsMatch(type, referenceName, buildChain);
 
             actual.Should().Be(expected);
         }
@@ -82,9 +82,9 @@
         {
             var buildChain = Substitute.For<IBuildChain>();
 
-            var target = new WrapperGenerator("Match");
+            var target = new Wrapper("Match");
 
-            var actual = target.IsMatch(typeof(Guid), referenceName, buildChain);
+            var actual = target.RunIsMatch(typeof(Guid), referenceName, buildChain);
 
             actual.Should().Be(expected);
         }
@@ -97,9 +97,9 @@
         {
             var buildChain = Substitute.For<IBuildChain>();
 
-            var target = new WrapperGenerator(typeof(bool), typeof(bool?));
+            var target = new Wrapper(typeof(bool), typeof(bool?));
 
-            var actual = target.IsMatch(type, null, buildChain);
+            var actual = target.RunIsMatch(type, null, buildChain);
 
             actual.Should().Be(expected);
         }
@@ -109,10 +109,10 @@
         {
             var type = typeof(string);
 
-            var target = new WrapperGenerator("Test");
+            var target = new Wrapper("Test");
 
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-            Action action = () => target.IsMatch(type, "Test", null);
+            Action action = () => target.RunIsMatch(type, "Test", null);
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
             action.Should().Throw<ArgumentNullException>();
@@ -123,10 +123,10 @@
         {
             var buildChain = new BuildHistory();
 
-            var target = new WrapperGenerator("Test");
+            var target = new Wrapper("Test");
 
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-            Action action = () => target.IsMatch(null, "Test", buildChain);
+            Action action = () => target.RunIsMatch(null, "Test", buildChain);
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
             action.Should().Throw<ArgumentNullException>();
@@ -137,7 +137,7 @@
         {
             // ReSharper disable once ObjectCreationAsStatement
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-            Action action = () => new WrapperGenerator((Regex)null);
+            Action action = () => new Wrapper((Regex)null);
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
             action.Should().Throw<ArgumentNullException>();
@@ -148,7 +148,7 @@
         {
             // ReSharper disable once ObjectCreationAsStatement
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-            Action action = () => new WrapperGenerator((string)null);
+            Action action = () => new Wrapper((string)null);
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
             action.Should().Throw<ArgumentNullException>();
@@ -159,29 +159,34 @@
         {
             // ReSharper disable once ObjectCreationAsStatement
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-            Action action = () => new WrapperGenerator((Type[])null);
+            Action action = () => new Wrapper((Type[])null);
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
             action.Should().Throw<ArgumentNullException>();
         }
 
-        private class WrapperGenerator : ValueGeneratorMatcher
+        private class Wrapper : ValueGeneratorMatcher
         {
-            public WrapperGenerator(params Type[] types) : base(types)
+            public Wrapper(params Type[] types) : base(types)
             {
             }
 
-            public WrapperGenerator(string referenceName, params Type[] types) : base(referenceName, types)
+            public Wrapper(string referenceName, params Type[] types) : base(referenceName, types)
             {
             }
 
-            public WrapperGenerator(Regex expression, params Type[] types) : base(expression, types)
+            public Wrapper(Regex expression, params Type[] types) : base(expression, types)
             {
             }
 
-            public override object Generate(Type type, string referenceName, IExecuteStrategy executeStrategy)
+            protected override object Generate(Type type, string referenceName, IExecuteStrategy executeStrategy)
             {
                 throw new NotImplementedException();
+            }
+
+            public bool RunIsMatch(Type type, string referenceName, IBuildChain buildChain)
+            {
+                return IsMatch(type, referenceName, buildChain);
             }
         }
     }

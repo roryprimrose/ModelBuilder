@@ -26,9 +26,9 @@
 
             buildChain.Push(address);
 
-            var target = new StateValueGenerator();
+            var target = new Wrapper();
 
-            var actual = target.Generate(typeof(string), "state", executeStrategy) as string;
+            var actual = target.RunGenerate(typeof(string), "State", executeStrategy) as string;
 
             actual.Should().NotBeNullOrWhiteSpace();
 
@@ -53,9 +53,9 @@
 
             buildChain.Push(address);
 
-            var target = new StateValueGenerator();
+            var target = new Wrapper();
 
-            var actual = target.Generate(typeof(string), "state", executeStrategy) as string;
+            var actual = target.RunGenerate(typeof(string), "State", executeStrategy) as string;
 
             actual.Should().NotBeNullOrWhiteSpace();
 
@@ -78,9 +78,9 @@
 
             buildChain.Push(address);
 
-            var target = new StateValueGenerator();
+            var target = new Wrapper();
 
-            var actual = target.Generate(typeof(string), "state", executeStrategy) as string;
+            var actual = target.RunGenerate(typeof(string), "State", executeStrategy) as string;
 
             TestData.Locations.Select(x => x.State).Should().Contain(actual);
         }
@@ -96,15 +96,15 @@
 
             buildChain.Push(address);
 
-            var target = new StateValueGenerator();
+            var target = new Wrapper();
 
-            var first = (string)target.Generate(typeof(string), "state", executeStrategy);
+            var first = (string) target.RunGenerate(typeof(string), "State", executeStrategy);
 
             string second = null;
 
             for (var index = 0; index < 1000; index++)
             {
-                second = (string)target.Generate(typeof(string), "state", executeStrategy);
+                second = (string) target.RunGenerate(typeof(string), "State", executeStrategy);
 
                 if (string.Equals(first, second, StringComparison.OrdinalIgnoreCase) == false)
                 {
@@ -126,9 +126,9 @@
 
             buildChain.Push(address);
 
-            var target = new StateValueGenerator();
+            var target = new Wrapper();
 
-            var actual = target.Generate(typeof(string), "state", executeStrategy) as string;
+            var actual = target.RunGenerate(typeof(string), "State", executeStrategy) as string;
 
             actual.Should().BeOfType<string>();
             actual.As<string>().Should().NotBeNullOrWhiteSpace();
@@ -143,15 +143,16 @@
         {
             var address = new Address();
             var buildChain = new BuildHistory();
+
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
 
             buildChain.Push(address);
 
-            var target = new StateValueGenerator();
+            var target = new Wrapper();
 
-            var actual = (string)target.Generate(type, referenceName, executeStrategy);
+            var actual = (string) target.RunGenerate(type, referenceName, executeStrategy);
 
             actual.Should().NotBeNullOrEmpty();
         }
@@ -159,7 +160,7 @@
         [Fact]
         public void HasHigherPriorityThanStringValueGeneratorTest()
         {
-            var target = new StateValueGenerator();
+            var target = new Wrapper();
             var other = new StringValueGenerator();
 
             target.Priority.Should().BeGreaterThan(other.Priority);
@@ -174,46 +175,31 @@
         [InlineData(typeof(string), "State", true)]
         [InlineData(typeof(string), "region", true)]
         [InlineData(typeof(string), "Region", true)]
-        public void IsMatchTest(Type type, string referenceName, bool expected)
+        public void IsMatchReturnsWhetherTypeAndNameAreSupportedTest(Type type, string referenceName, bool expected)
         {
             var address = new Address();
             var buildChain = new BuildHistory();
 
             buildChain.Push(address);
 
-            var target = new StateValueGenerator();
+            var target = new Wrapper();
 
-            var actual = target.IsMatch(type, referenceName, buildChain);
+            var actual = target.RunIsMatch(type, referenceName, buildChain);
 
             actual.Should().Be(expected);
         }
 
-        [Fact]
-        public void IsMatchThrowsExceptionWithNullBuildChainTest()
+        private class Wrapper : StateValueGenerator
         {
-            var type = typeof(string);
+            public object RunGenerate(Type type, string referenceName, IExecuteStrategy executeStrategy)
+            {
+                return Generate(type, referenceName, executeStrategy);
+            }
 
-            var target = new StateValueGenerator();
-
-#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-            Action action = () => target.IsMatch(type, null, null);
-#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
-
-            action.Should().Throw<ArgumentNullException>();
-        }
-
-        [Fact]
-        public void IsMatchThrowsExceptionWithNullTypeTest()
-        {
-            var buildChain = Substitute.For<IBuildChain>();
-
-            var target = new StateValueGenerator();
-
-#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-            Action action = () => target.IsMatch(null, null, buildChain);
-#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
-
-            action.Should().Throw<ArgumentNullException>();
+            public bool RunIsMatch(Type type, string referenceName, IBuildChain buildChain)
+            {
+                return IsMatch(type, referenceName, buildChain);
+            }
         }
     }
 }

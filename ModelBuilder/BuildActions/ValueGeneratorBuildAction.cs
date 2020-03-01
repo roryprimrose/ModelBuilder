@@ -27,10 +27,10 @@
                 throw new ArgumentNullException(nameof(type));
             }
 
-            var generator = GetMatchingGenerator(type, null, executeStrategy.Configuration, executeStrategy.BuildChain);
+            var generator = GetMatchingGenerator(executeStrategy.Configuration, x => x.IsMatch(type, executeStrategy.BuildChain));
 
             return Build(generator, type, null, executeStrategy.BuildChain,
-                () => generator?.Generate(type, null, executeStrategy),
+                () => generator?.Generate(type, executeStrategy),
                 executeStrategy.Log);
         }
 
@@ -49,12 +49,10 @@
                 throw new ArgumentNullException(nameof(parameterInfo));
             }
 
-            var generator = GetMatchingGenerator(parameterInfo.ParameterType, parameterInfo.Name,
-                executeStrategy.Configuration,
-                executeStrategy.BuildChain);
+            var generator = GetMatchingGenerator(executeStrategy.Configuration, x => x.IsMatch(parameterInfo, executeStrategy.BuildChain));
 
             return Build(generator, parameterInfo.ParameterType, parameterInfo.Name, executeStrategy.BuildChain,
-                () => generator?.Generate(parameterInfo.ParameterType, parameterInfo.Name, executeStrategy),
+                () => generator?.Generate(parameterInfo, executeStrategy),
                 executeStrategy.Log);
         }
 
@@ -73,12 +71,10 @@
                 throw new ArgumentNullException(nameof(propertyInfo));
             }
 
-            var generator = GetMatchingGenerator(propertyInfo.PropertyType, propertyInfo.Name,
-                executeStrategy.Configuration,
-                executeStrategy.BuildChain);
+            var generator = GetMatchingGenerator(executeStrategy.Configuration, x => x.IsMatch(propertyInfo, executeStrategy.BuildChain));
 
             return Build(generator, propertyInfo.PropertyType, propertyInfo.Name, executeStrategy.BuildChain,
-                () => generator?.Generate(propertyInfo.PropertyType, propertyInfo.Name, executeStrategy),
+                () => generator?.Generate(propertyInfo, executeStrategy),
                 executeStrategy.Log);
         }
 
@@ -104,7 +100,7 @@
                 throw new ArgumentNullException(nameof(type));
             }
 
-            return GetBuildCapability(type, null, buildConfiguration, buildChain);
+            return GetBuildCapability(buildConfiguration, x => x.IsMatch(type, buildChain));
         }
 
         /// <inheritdoc />
@@ -129,7 +125,7 @@
                 throw new ArgumentNullException(nameof(parameterInfo));
             }
 
-            return GetBuildCapability(parameterInfo.ParameterType, parameterInfo.Name, buildConfiguration, buildChain);
+            return GetBuildCapability(buildConfiguration, x => x.IsMatch(parameterInfo, buildChain));
         }
 
         /// <inheritdoc />
@@ -154,7 +150,7 @@
                 throw new ArgumentNullException(nameof(propertyInfo));
             }
 
-            return GetBuildCapability(propertyInfo.PropertyType, propertyInfo.Name, buildConfiguration, buildChain);
+            return GetBuildCapability(buildConfiguration, x => x.IsMatch(propertyInfo, buildChain));
         }
 
         /// <inheritdoc />
@@ -207,19 +203,12 @@
             }
         }
 
-        private static BuildCapability GetBuildCapability(Type type, string referenceName,
-            IBuildConfiguration buildConfiguration, IBuildChain buildChain)
+        private static BuildCapability GetBuildCapability(IBuildConfiguration buildConfiguration,
+            Func<IValueGenerator, bool> isMatch)
         {
-            var generator = GetMatchingGenerator(type, referenceName, buildConfiguration, buildChain);
+            var generator = GetMatchingGenerator(buildConfiguration, isMatch);
 
             if (generator == null)
-            {
-                return null;
-            }
-
-            var isMatch = generator.IsMatch(type, referenceName, buildChain);
-
-            if (isMatch == false)
             {
                 return null;
             }
@@ -231,11 +220,10 @@
             };
         }
 
-        private static IValueGenerator GetMatchingGenerator(Type type, string referenceName,
-            IBuildConfiguration buildConfiguration,
-            IBuildChain buildChain)
+        private static IValueGenerator GetMatchingGenerator(IBuildConfiguration buildConfiguration,
+            Func<IValueGenerator, bool> isMatch)
         {
-            return buildConfiguration.ValueGenerators?.Where(x => x.IsMatch(type, referenceName, buildChain))
+            return buildConfiguration.ValueGenerators?.Where(isMatch)
                 .OrderByDescending(x => x.Priority).FirstOrDefault();
         }
 

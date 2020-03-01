@@ -18,9 +18,9 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var target = new CultureValueGenerator();
+            var target = new Wrapper();
 
-            var actual = target.Generate(typeof(CultureInfo), "culture", executeStrategy);
+            var actual = target.RunGenerate(typeof(CultureInfo), "culture", executeStrategy);
 
             actual.Should().BeOfType<CultureInfo>();
             actual.As<CultureInfo>().Should().NotBeNull();
@@ -34,15 +34,15 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var target = new CultureValueGenerator();
+            var target = new Wrapper();
 
-            var first = (CultureInfo) target.Generate(typeof(CultureInfo), "culture", executeStrategy);
+            var first = (CultureInfo) target.RunGenerate(typeof(CultureInfo), "culture", executeStrategy);
 
             var second = first;
 
             for (var index = 0; index < 1000; index++)
             {
-                second = (CultureInfo) target.Generate(typeof(CultureInfo), "culture", executeStrategy);
+                second = (CultureInfo) target.RunGenerate(typeof(CultureInfo), "culture", executeStrategy);
 
                 if (string.Equals(first.Name, second.Name, StringComparison.OrdinalIgnoreCase) == false)
                 {
@@ -61,15 +61,15 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var target = new CultureValueGenerator();
+            var target = new Wrapper();
 
-            var first = (string) target.Generate(typeof(string), "culture", executeStrategy);
+            var first = (string) target.RunGenerate(typeof(string), "culture", executeStrategy);
 
             var second = first;
 
             for (var index = 0; index < 1000; index++)
             {
-                second = (string) target.Generate(typeof(string), "culture", executeStrategy);
+                second = (string) target.RunGenerate(typeof(string), "culture", executeStrategy);
 
                 if (string.Equals(first, second, StringComparison.OrdinalIgnoreCase) == false)
                 {
@@ -88,9 +88,9 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var target = new CultureValueGenerator();
+            var target = new Wrapper();
 
-            var actual = target.Generate(typeof(string), "culture", executeStrategy);
+            var actual = target.RunGenerate(typeof(string), "culture", executeStrategy);
 
             actual.Should().BeOfType<string>();
             actual.As<string>().Should().NotBeNullOrWhiteSpace();
@@ -116,9 +116,9 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var target = new CultureValueGenerator();
+            var target = new Wrapper();
 
-            var actual = target.Generate(type, referenceName, executeStrategy);
+            var actual = target.RunGenerate(type, referenceName, executeStrategy);
 
             if (type == typeof(string))
             {
@@ -133,7 +133,7 @@
         [Fact]
         public void HasHigherPriorityThanStringValueGeneratorTest()
         {
-            var target = new CultureValueGenerator();
+            var target = new Wrapper();
             var other = new StringValueGenerator();
 
             target.Priority.Should().BeGreaterThan(other.Priority);
@@ -156,13 +156,13 @@
         [InlineData(typeof(CultureInfo), "Culturename", true)]
         [InlineData(typeof(CultureInfo), "cultureName", true)]
         [InlineData(typeof(CultureInfo), "CultureName", true)]
-        public void IsMatchTest(Type type, string referenceName, bool expected)
+        public void IsMatchReturnsWhetherTypeAndNameAreSupportedTest(Type type, string referenceName, bool expected)
         {
             var buildChain = Substitute.For<IBuildChain>();
 
-            var target = new CultureValueGenerator();
+            var target = new Wrapper();
 
-            var actual = target.IsMatch(type, referenceName, buildChain);
+            var actual = target.RunIsMatch(type, referenceName, buildChain);
 
             actual.Should().Be(expected);
         }
@@ -172,11 +172,24 @@
         {
             var buildChain = Substitute.For<IBuildChain>();
 
-            var target = new CultureValueGenerator();
+            var target = new Wrapper();
 
-            Action action = () => target.IsMatch(null, null, buildChain);
+            Action action = () => target.RunIsMatch(null, null, buildChain);
 
             action.Should().Throw<ArgumentNullException>();
+        }
+
+        private class Wrapper : CultureValueGenerator
+        {
+            public object RunGenerate(Type type, string referenceName, IExecuteStrategy executeStrategy)
+            {
+                return Generate(type, referenceName, executeStrategy);
+            }
+
+            public bool RunIsMatch(Type type, string referenceName, IBuildChain buildChain)
+            {
+                return IsMatch(type, referenceName, buildChain);
+            }
         }
     }
 }

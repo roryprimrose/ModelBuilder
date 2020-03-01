@@ -17,11 +17,11 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var target = new DateTimeValueGenerator();
+            var target = new Wrapper();
 
             for (var index = 0; index < 1000; index++)
             {
-                var value = (DateTime?) target.Generate(typeof(DateTime?), null, executeStrategy);
+                var value = (DateTime?) target.RunGenerate(typeof(DateTime?), null, executeStrategy);
 
                 if (value == null)
                 {
@@ -47,11 +47,11 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var target = new DateTimeValueGenerator();
+            var target = new Wrapper();
 
             for (var index = 0; index < 1000; index++)
             {
-                var value = target.Generate(targetType, null, executeStrategy);
+                var value = target.RunGenerate(targetType, null, executeStrategy);
 
                 if (value == null)
                 {
@@ -80,9 +80,9 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var target = new DateTimeValueGenerator();
+            var target = new Wrapper();
 
-            var actual = target.Generate(typeof(DateTimeOffset), null, executeStrategy);
+            var actual = target.RunGenerate(typeof(DateTimeOffset), null, executeStrategy);
 
             actual.Should().BeOfType<DateTimeOffset>();
         }
@@ -95,9 +95,9 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var target = new DateTimeValueGenerator();
+            var target = new Wrapper();
 
-            var actual = target.Generate(typeof(DateTime), null, executeStrategy);
+            var actual = target.RunGenerate(typeof(DateTime), null, executeStrategy);
 
             actual.Should().BeOfType<DateTime>();
         }
@@ -110,9 +110,9 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var target = new DateTimeValueGenerator();
+            var target = new Wrapper();
 
-            var first = (DateTimeOffset) target.Generate(typeof(DateTimeOffset), null, executeStrategy);
+            var first = (DateTimeOffset) target.RunGenerate(typeof(DateTimeOffset), null, executeStrategy);
 
             first.As<DateTimeOffset>().Offset.Should().Be(TimeSpan.Zero);
 
@@ -120,7 +120,7 @@
 
             for (var index = 0; index < 1000; index++)
             {
-                second = (DateTimeOffset) target.Generate(typeof(DateTimeOffset), null, executeStrategy);
+                second = (DateTimeOffset) target.RunGenerate(typeof(DateTimeOffset), null, executeStrategy);
 
                 if (first != second)
                 {
@@ -139,9 +139,9 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var target = new DateTimeValueGenerator();
+            var target = new Wrapper();
 
-            var first = (DateTime) target.Generate(typeof(DateTime), null, executeStrategy);
+            var first = (DateTime) target.RunGenerate(typeof(DateTime), null, executeStrategy);
 
             first.As<DateTime>().Kind.Should().Be(DateTimeKind.Utc);
 
@@ -149,7 +149,7 @@
 
             for (var index = 0; index < 1000; index++)
             {
-                second = (DateTime) target.Generate(typeof(DateTime), null, executeStrategy);
+                second = (DateTime) target.RunGenerate(typeof(DateTime), null, executeStrategy);
 
                 if (first != second)
                 {
@@ -168,15 +168,15 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var target = new DateTimeValueGenerator();
+            var target = new Wrapper();
 
-            var first = (TimeSpan) target.Generate(typeof(TimeSpan), null, executeStrategy);
+            var first = (TimeSpan) target.RunGenerate(typeof(TimeSpan), null, executeStrategy);
 
             var second = first;
 
             for (var index = 0; index < 1000; index++)
             {
-                second = (TimeSpan) target.Generate(typeof(TimeSpan), null, executeStrategy);
+                second = (TimeSpan) target.RunGenerate(typeof(TimeSpan), null, executeStrategy);
 
                 if (first != second)
                 {
@@ -201,9 +201,9 @@
         {
             var buildChain = Substitute.For<IBuildChain>();
 
-            var target = new DateTimeValueGenerator();
+            var target = new Wrapper();
 
-            var actual = target.IsMatch(type, null, buildChain);
+            var actual = target.RunIsMatch(type, null, buildChain);
 
             actual.Should().Be(expected);
         }
@@ -213,11 +213,24 @@
         {
             var buildChain = Substitute.For<IBuildChain>();
 
-            var target = new DateTimeValueGenerator();
+            var target = new Wrapper();
 
-            Action action = () => target.IsMatch(null, null, buildChain);
+            Action action = () => target.RunIsMatch(null, null, buildChain);
 
             action.Should().Throw<ArgumentNullException>();
+        }
+
+        private class Wrapper : DateTimeValueGenerator
+        {
+            public object RunGenerate(Type type, string referenceName, IExecuteStrategy executeStrategy)
+            {
+                return Generate(type, referenceName, executeStrategy);
+            }
+
+            public bool RunIsMatch(Type type, string referenceName, IBuildChain buildChain)
+            {
+                return IsMatch(type, referenceName, buildChain);
+            }
         }
     }
 }

@@ -9,7 +9,7 @@
     public class NumericValueGenerator : ValueGeneratorBase
     {
         /// <inheritdoc />
-        public override object Generate(Type type, string referenceName, IExecuteStrategy executeStrategy)
+        protected override object Generate(Type type, string referenceName, IExecuteStrategy executeStrategy)
         {
             if (type == null)
             {
@@ -47,7 +47,7 @@
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="buildChain" /> parameter is <c>null</c>.</exception>
-        public override bool IsMatch(Type type, string referenceName, IBuildChain buildChain)
+        protected override bool IsMatch(Type type, string referenceName, IBuildChain buildChain)
         {
             if (type == null)
             {

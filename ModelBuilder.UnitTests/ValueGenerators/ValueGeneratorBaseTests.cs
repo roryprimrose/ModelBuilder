@@ -19,7 +19,7 @@
 
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
-            var target = new GenerateWrapper(true, value);
+            var target = new Wrapper(true, value);
 
             target.Generate(parameterInfo, executeStrategy);
 
@@ -35,7 +35,7 @@
 
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
-            var target = new GenerateWrapper(true, value);
+            var target = new Wrapper(true, value);
 
             target.Generate(propertyInfo, executeStrategy);
 
@@ -50,7 +50,7 @@
 
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
-            var target = new GenerateWrapper(true, value);
+            var target = new Wrapper(true, value);
 
             Action action = () => target.Generate((ParameterInfo) null, executeStrategy);
 
@@ -64,7 +64,7 @@
 
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
-            var target = new GenerateWrapper(true, value);
+            var target = new Wrapper(true, value);
 
             Action action = () => target.Generate((PropertyInfo) null, executeStrategy);
 
@@ -74,7 +74,7 @@
         [Fact]
         public void GeneratorReturnsCachedInstance()
         {
-            var target = new GenerateWrapper(true, null);
+            var target = new Wrapper(true, null);
 
             var first = target.RandomGenerator;
             var second = target.RandomGenerator;
@@ -89,7 +89,7 @@
             var parameterInfo = typeof(Person).GetConstructors()
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
 
-            var target = new GenerateWrapper(true, value);
+            var target = new Wrapper(true, value);
 
             Action action = () => target.IsMatch(parameterInfo, null);
 
@@ -102,7 +102,7 @@
             var value = Guid.NewGuid().ToString();
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
 
-            var target = new GenerateWrapper(true, value);
+            var target = new Wrapper(true, value);
 
             Action action = () => target.IsMatch(propertyInfo, null);
 
@@ -117,7 +117,7 @@
 
             var buildChain = Substitute.For<IBuildChain>();
 
-            var target = new GenerateWrapper(true, value);
+            var target = new Wrapper(true, value);
 
             target.IsMatch(parameterInfo, buildChain);
 
@@ -133,7 +133,7 @@
 
             var buildChain = Substitute.For<IBuildChain>();
 
-            var target = new GenerateWrapper(true, value);
+            var target = new Wrapper(true, value);
 
             target.IsMatch(parameterInfo, buildChain);
 
@@ -148,7 +148,7 @@
 
             var buildChain = Substitute.For<IBuildChain>();
 
-            var target = new GenerateWrapper(true, value);
+            var target = new Wrapper(true, value);
 
             Action action = () => target.IsMatch((ParameterInfo) null, buildChain);
 
@@ -162,7 +162,7 @@
 
             var buildChain = Substitute.For<IBuildChain>();
 
-            var target = new GenerateWrapper(true, value);
+            var target = new Wrapper(true, value);
 
             Action action = () => target.IsMatch((PropertyInfo) null, buildChain);
 
@@ -184,18 +184,18 @@
             actual.Should().Be(int.MinValue);
         }
 
-        private class GenerateWrapper : ValueGeneratorBase
+        private class Wrapper : ValueGeneratorBase
         {
             private readonly bool _isSupported;
             private readonly object _value;
 
-            public GenerateWrapper(bool isSupported, object value)
+            public Wrapper(bool isSupported, object value)
             {
                 _isSupported = isSupported;
                 _value = value;
             }
 
-            public override object Generate(Type type, string referenceName, IExecuteStrategy executeStrategy)
+            protected override object Generate(Type type, string referenceName, IExecuteStrategy executeStrategy)
             {
                 TypeUsed = type;
                 ReferenceNameUsed = referenceName;
@@ -203,7 +203,7 @@
                 return _value;
             }
 
-            public override bool IsMatch(Type type, string referenceName, IBuildChain buildChain)
+            protected override bool IsMatch(Type type, string referenceName, IBuildChain buildChain)
             {
                 TypeUsed = type;
                 ReferenceNameUsed = referenceName;

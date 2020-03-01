@@ -1,5 +1,7 @@
 ﻿namespace ModelBuilder.UnitTests.ValueGenerators
 {
+    using System;
+    using System.IO;
     using System.Linq;
     using FluentAssertions;
     using ModelBuilder.Data;
@@ -24,9 +26,9 @@
 
             buildChain.Push(person);
 
-            var target = new FirstNameValueGenerator();
+            var target = new Wrapper();
 
-            var actual = (string) target.Generate(typeof(string), "FirstName", executeStrategy);
+            var actual = (string) target.RunGenerate(typeof(string), "FirstName", executeStrategy);
 
             TestData.FemaleNames.Any(x => x == actual).Should().BeTrue();
         }
@@ -45,9 +47,9 @@
 
             buildChain.Push(person);
 
-            var target = new FirstNameValueGenerator();
+            var target = new Wrapper();
 
-            var actual = (string) target.Generate(typeof(string), "FirstName", executeStrategy);
+            var actual = (string) target.RunGenerate(typeof(string), "FirstName", executeStrategy);
 
             TestData.FemaleNames.Any(x => x == actual).Should().BeTrue();
         }
@@ -66,9 +68,9 @@
 
             buildChain.Push(person);
 
-            var target = new FirstNameValueGenerator();
+            var target = new Wrapper();
 
-            var actual = (string) target.Generate(typeof(string), "FirstName", executeStrategy);
+            var actual = (string) target.RunGenerate(typeof(string), "FirstName", executeStrategy);
 
             TestData.MaleNames.Any(x => x == actual).Should().BeTrue();
         }
@@ -84,9 +86,9 @@
 
             buildChain.Push(person);
 
-            var target = new FirstNameValueGenerator();
+            var target = new Wrapper();
 
-            var actual = (string) target.Generate(typeof(string), "FirstName", executeStrategy);
+            var actual = (string) target.RunGenerate(typeof(string), "FirstName", executeStrategy);
 
             if (TestData.MaleNames.Any(x => x == actual))
             {
@@ -99,13 +101,57 @@
             }
         }
 
+        [Theory]
+        [InlineData(typeof(Stream), "firstname", false)]
+        [InlineData(typeof(string), null, false)]
+        [InlineData(typeof(string), "", false)]
+        [InlineData(typeof(string), "Stuff", false)]
+        [InlineData(typeof(string), "FirstName", true)]
+        [InlineData(typeof(string), "firstname", true)]
+        [InlineData(typeof(string), "FIRSTNAME", true)]
+        [InlineData(typeof(string), "First_Name", true)]
+        [InlineData(typeof(string), "first_name", true)]
+        [InlineData(typeof(string), "FIRST_NAME", true)]
+        [InlineData(typeof(string), "GivenName", true)]
+        [InlineData(typeof(string), "givenname", true)]
+        [InlineData(typeof(string), "GIVENNAME", true)]
+        [InlineData(typeof(string), "Given_Name", true)]
+        [InlineData(typeof(string), "given_name", true)]
+        [InlineData(typeof(string), "GIVEN_NAME", true)]
+        public void IsMatchReturnsWhetherTypeAndNameAreSupportedTest(Type type, string referenceName, bool expected)
+        {
+            var person = new Person();
+            var buildChain = new BuildHistory();
+
+            buildChain.Push(person);
+
+            var target = new Wrapper();
+
+            var actual = target.RunIsMatch(type, referenceName, buildChain);
+
+            actual.Should().Be(expected);
+        }
+
         [Fact]
         public void PriorityReturnsHigherPriorityThanStringValidatorTest()
         {
-            var target = new FirstNameValueGenerator();
+            var target = new Wrapper();
             var other = new StringValueGenerator();
 
             target.Priority.Should().BeGreaterThan(other.Priority);
+        }
+
+        private class Wrapper : FirstNameValueGenerator
+        {
+            public object RunGenerate(Type type, string referenceName, IExecuteStrategy executeStrategy)
+            {
+                return Generate(type, referenceName, executeStrategy);
+            }
+
+            public bool RunIsMatch(Type type, string referenceName, IBuildChain buildChain)
+            {
+                return IsMatch(type, referenceName, buildChain);
+            }
         }
     }
 }

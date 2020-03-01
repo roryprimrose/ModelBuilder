@@ -1,75 +1,27 @@
 ﻿namespace ModelBuilder.UnitTests.ValueGenerators
 {
     using System;
-    using System.Linq;
     using System.Text.RegularExpressions;
     using FluentAssertions;
-    using ModelBuilder.UnitTests.Models;
     using ModelBuilder.ValueGenerators;
     using NSubstitute;
     using Xunit;
 
     public class RegexTypeNameValueGeneratorTests
     {
-        [Fact]
-        public void GenerateForParameterReturnsValue()
-        {
-            var parameterInfo = typeof(Person).GetConstructors()
-                .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
-            var expected = Guid.NewGuid().ToString();
-
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            var sut = new Wrapper(PropertyExpression.FirstName, typeof(string), expected);
-
-            var actual = sut.Generate(parameterInfo, executeStrategy);
-
-            actual.Should().Be(expected);
-        }
-
-        [Fact]
-        public void GenerateForPropertyReturnsValue()
-        {
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
-            var expected = Guid.NewGuid().ToString();
-
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            var sut = new Wrapper(PropertyExpression.FirstName, typeof(string), expected);
-
-            var actual = sut.Generate(propertyInfo, executeStrategy);
-
-            actual.Should().Be(expected);
-        }
-
-        [Fact]
-        public void GenerateForTypeThrowsNotSupportedException()
-        {
-            var value = Guid.NewGuid().ToString();
-
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            var sut = new Wrapper(PropertyExpression.FirstName, typeof(string), value);
-
-            Action action = () => sut.Generate(typeof(string), executeStrategy);
-
-            action.Should().Throw<NotSupportedException>();
-        }
-
         [Theory]
         [InlineData(typeof(string), "FirstName", true)]
         [InlineData(typeof(string), "LastName", false)]
         public void IsMatchForReturnsWhetherNameMatchesExpression(Type type, string expression, bool expected)
         {
             var nameRegex = new Regex(expression);
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
             var value = Guid.NewGuid().ToString();
 
             var buildChain = Substitute.For<IBuildChain>();
 
             var sut = new Wrapper(nameRegex, type, value);
 
-            var actual = sut.IsMatch(propertyInfo, buildChain);
+            var actual = sut.RunIsMatch(typeof(string), "FirstName", buildChain);
 
             actual.Should().Be(expected);
         }
@@ -80,30 +32,15 @@
         public void IsMatchForReturnsWhetherTypeMatches(Type type, string expression, bool expected)
         {
             var nameRegex = new Regex(expression);
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
             var value = Guid.NewGuid().ToString();
 
             var buildChain = Substitute.For<IBuildChain>();
 
             var sut = new Wrapper(nameRegex, type, value);
 
-            var actual = sut.IsMatch(propertyInfo, buildChain);
+            var actual = sut.RunIsMatch(typeof(string), "FirstName", buildChain);
 
             actual.Should().Be(expected);
-        }
-
-        [Fact]
-        public void IsMatchForTargetTypeReturnsFalse()
-        {
-            var value = Guid.NewGuid().ToString();
-
-            var buildChain = Substitute.For<IBuildChain>();
-
-            var sut = new Wrapper(PropertyExpression.FirstName, typeof(string), value);
-
-            var actual = sut.IsSupported(typeof(string), buildChain);
-
-            actual.Should().BeFalse();
         }
 
         [Theory]
@@ -119,7 +56,7 @@
 
             var sut = new Wrapper(nameRegex, typeof(string), value);
 
-            var actual = sut.IsMatch(typeof(string), referenceName, buildChain);
+            var actual = sut.RunIsMatch(typeof(string), referenceName, buildChain);
 
             actual.Should().BeFalse();
         }
@@ -129,6 +66,7 @@
         {
             var value = Guid.NewGuid().ToString();
 
+            // ReSharper disable once ObjectCreationAsStatement
             Action action = () => new Wrapper(null, typeof(string), value);
 
             action.Should().Throw<ArgumentNullException>();
@@ -139,6 +77,7 @@
         {
             var value = Guid.NewGuid().ToString();
 
+            // ReSharper disable once ObjectCreationAsStatement
             Action action = () => new Wrapper(PropertyExpression.FirstName, null, value);
 
             action.Should().Throw<ArgumentNullException>();
@@ -153,7 +92,12 @@
                 _value = value;
             }
 
-            public override object Generate(Type type, string referenceName, IExecuteStrategy executeStrategy)
+            public bool RunIsMatch(Type type, string referenceName, IBuildChain buildChain)
+            {
+                return IsMatch(type, referenceName, buildChain);
+            }
+
+            protected override object Generate(Type type, string referenceName, IExecuteStrategy executeStrategy)
             {
                 return _value;
             }

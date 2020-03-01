@@ -68,7 +68,7 @@
         [Fact]
         public void NextThrowsExceptionWithNullSourceTest()
         {
-            Action action = () => Extensions.Next<int>(null);
+            Action action = () => ModelBuilder.Extensions.Next<int>(null);
 
             action.Should().Throw<ArgumentNullException>();
         }

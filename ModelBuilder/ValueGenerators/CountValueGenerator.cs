@@ -9,7 +9,7 @@ namespace ModelBuilder.ValueGenerators
     public class CountValueGenerator : NumericValueGenerator
     {
         /// <inheritdoc />
-        public override bool IsMatch(Type type, string referenceName, IBuildChain buildChain)
+        protected override bool IsMatch(Type type, string referenceName, IBuildChain buildChain)
         {
             var baseSupported = base.IsMatch(type, referenceName, buildChain);
 

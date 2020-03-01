@@ -25,7 +25,7 @@
         }
 
         /// <inheritdoc />
-        public override object Generate(Type type, string referenceName, IExecuteStrategy executeStrategy)
+        protected override object Generate(Type type, string referenceName, IExecuteStrategy executeStrategy)
         {
             var multipleMatch = _multipleAddressExpression.Match(referenceName);
 

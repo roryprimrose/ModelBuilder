@@ -26,9 +26,9 @@
 
             buildChain.Push(address);
 
-            var target = new PhoneValueGenerator();
+            var target = new Wrapper();
 
-            var actual = target.Generate(typeof(string), "phone", executeStrategy) as string;
+            var actual = target.RunGenerate(typeof(string), "phone", executeStrategy) as string;
 
             actual.Should().NotBeNullOrWhiteSpace();
 
@@ -53,9 +53,9 @@
 
             buildChain.Push(address);
 
-            var target = new PhoneValueGenerator();
+            var target = new Wrapper();
 
-            var actual = target.Generate(typeof(string), "phone", executeStrategy) as string;
+            var actual = target.RunGenerate(typeof(string), "phone", executeStrategy) as string;
 
             actual.Should().NotBeNullOrWhiteSpace();
 
@@ -78,9 +78,9 @@
 
             buildChain.Push(address);
 
-            var target = new PhoneValueGenerator();
+            var target = new Wrapper();
 
-            var actual = target.Generate(typeof(string), "phone", executeStrategy) as string;
+            var actual = target.RunGenerate(typeof(string), "phone", executeStrategy) as string;
 
             TestData.Locations.Select(x => x.Phone).Should().Contain(actual);
         }
@@ -96,15 +96,15 @@
 
             buildChain.Push(address);
 
-            var target = new PhoneValueGenerator();
+            var target = new Wrapper();
 
-            var first = (string) target.Generate(typeof(string), "cell", executeStrategy);
+            var first = (string) target.RunGenerate(typeof(string), "cell", executeStrategy);
 
             var second = first;
 
             for (var index = 0; index < 1000; index++)
             {
-                second = (string) target.Generate(typeof(string), "cell", executeStrategy);
+                second = (string) target.RunGenerate(typeof(string), "cell", executeStrategy);
 
                 if (string.Equals(first, second, StringComparison.OrdinalIgnoreCase) == false)
                 {
@@ -126,9 +126,9 @@
 
             buildChain.Push(address);
 
-            var target = new PhoneValueGenerator();
+            var target = new Wrapper();
 
-            var actual = target.Generate(typeof(string), "cell", executeStrategy);
+            var actual = target.RunGenerate(typeof(string), "cell", executeStrategy);
 
             actual.Should().BeOfType<string>();
             actual.As<string>().Should().NotBeNullOrWhiteSpace();
@@ -169,9 +169,9 @@
 
             buildChain.Push(address);
 
-            var target = new PhoneValueGenerator();
+            var target = new Wrapper();
 
-            var actual = (string) target.Generate(type, referenceName, executeStrategy);
+            var actual = (string) target.RunGenerate(type, referenceName, executeStrategy);
 
             actual.Should().NotBeNullOrEmpty();
         }
@@ -179,7 +179,7 @@
         [Fact]
         public void HasHigherPriorityThanStringValueGeneratorTest()
         {
-            var target = new PhoneValueGenerator();
+            var target = new Wrapper();
             var other = new StringValueGenerator();
 
             target.Priority.Should().BeGreaterThan(other.Priority);
@@ -213,36 +213,39 @@
         [InlineData(typeof(string), "faxNumber", true)]
         [InlineData(typeof(string), "FaxNumber", true)]
         [InlineData(typeof(string), "faxnumber", true)]
-        public void IsMatchTest(Type type, string referenceName, bool expected)
+        public void IsMatchReturnsWhetherTypeAndNameAreSupportedTest(Type type, string referenceName, bool expected)
         {
             var address = new Address();
             var buildChain = new BuildHistory();
 
             buildChain.Push(address);
 
-            var target = new PhoneValueGenerator();
+            var target = new Wrapper();
 
-            var actual = target.IsMatch(type, referenceName, buildChain);
+            var actual = target.RunIsMatch(type, referenceName, buildChain);
 
             actual.Should().Be(expected);
         }
 
         [Fact]
-        public void IsMatchThrowsExceptionWithNullTypeTest()
-        {
-            var target = new PhoneValueGenerator();
-
-            Action action = () => target.IsMatch(null, null, null);
-
-            action.Should().Throw<ArgumentNullException>();
-        }
-
-        [Fact]
         public void PriorityReturnsPositiveValueTest()
         {
-            var target = new PhoneValueGenerator();
+            var target = new Wrapper();
 
             target.Priority.Should().BeGreaterThan(0);
+        }
+
+        private class Wrapper : PhoneValueGenerator
+        {
+            public object RunGenerate(Type type, string referenceName, IExecuteStrategy executeStrategy)
+            {
+                return Generate(type, referenceName, executeStrategy);
+            }
+
+            public bool RunIsMatch(Type type, string referenceName, IBuildChain buildChain)
+            {
+                return IsMatch(type, referenceName, buildChain);
+            }
         }
     }
 }

@@ -16,15 +16,15 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var target = new StringValueGenerator();
+            var target = new Wrapper();
 
-            var first = (string) target.Generate(typeof(string), null, executeStrategy);
+            var first = (string) target.RunGenerate(typeof(string), null, executeStrategy);
 
             var second = first;
 
             for (var index = 0; index < 1000; index++)
             {
-                second = (string) target.Generate(typeof(string), null, executeStrategy);
+                second = (string) target.RunGenerate(typeof(string), null, executeStrategy);
 
                 if (string.Equals(first, second, StringComparison.OrdinalIgnoreCase) == false)
                 {
@@ -45,9 +45,9 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var target = new StringValueGenerator();
+            var target = new Wrapper();
 
-            var actual = target.Generate(typeof(string), null, executeStrategy);
+            var actual = target.RunGenerate(typeof(string), null, executeStrategy);
 
             actual.Should().BeOfType<string>();
             actual.As<string>().Should().NotBeNullOrWhiteSpace();
@@ -60,23 +60,24 @@
         {
             var buildChain = Substitute.For<IBuildChain>();
 
-            var target = new StringValueGenerator();
+            var target = new Wrapper();
 
-            var actual = target.IsMatch(type, null, buildChain);
+            var actual = target.RunIsMatch(type, null, buildChain);
 
             actual.Should().Be(supported);
         }
 
-        [Fact]
-        public void IsMatchThrowsExceptionWithNullTypeTest()
+        private class Wrapper : StringValueGenerator
         {
-            var buildChain = Substitute.For<IBuildChain>();
+            public object RunGenerate(Type type, string referenceName, IExecuteStrategy executeStrategy)
+            {
+                return Generate(type, referenceName, executeStrategy);
+            }
 
-            var target = new StringValueGenerator();
-
-            Action action = () => target.IsMatch(null, null, buildChain);
-
-            action.Should().Throw<ArgumentNullException>();
+            public bool RunIsMatch(Type type, string referenceName, IBuildChain buildChain)
+            {
+                return IsMatch(type, referenceName, buildChain);
+            }
         }
     }
 }

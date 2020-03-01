@@ -1,5 +1,7 @@
 ﻿namespace ModelBuilder.UnitTests.ValueGenerators
 {
+    using System;
+    using System.IO;
     using System.Linq;
     using FluentAssertions;
     using ModelBuilder.Data;
@@ -21,11 +23,39 @@
 
             buildChain.Push(person);
 
-            var target = new LastNameValueGenerator();
+            var target = new Wrapper();
 
-            var actual = (string) target.Generate(typeof(string), "LastName", executeStrategy);
+            var actual = (string) target.RunGenerate(typeof(string), "LastName", executeStrategy);
 
             TestData.LastNames.Any(x => x == actual).Should().BeTrue();
+        }
+
+        [Theory]
+        [InlineData(typeof(Stream), "lastname", false)]
+        [InlineData(typeof(string), null, false)]
+        [InlineData(typeof(string), "", false)]
+        [InlineData(typeof(string), "Stuff", false)]
+        [InlineData(typeof(string), "LastName", true)]
+        [InlineData(typeof(string), "lastname", true)]
+        [InlineData(typeof(string), "LASTNAME", true)]
+        [InlineData(typeof(string), "Last_Name", true)]
+        [InlineData(typeof(string), "last_name", true)]
+        [InlineData(typeof(string), "LAST_NAME", true)]
+        [InlineData(typeof(string), "Surname", true)]
+        [InlineData(typeof(string), "surname", true)]
+        [InlineData(typeof(string), "SURNAME", true)]
+        public void IsMatchReturnsWhetherTypeAndNameAreSupportedTest(Type type, string referenceName, bool expected)
+        {
+            var person = new Person();
+            var buildChain = new BuildHistory();
+
+            buildChain.Push(person);
+
+            var target = new Wrapper();
+
+            var actual = target.RunIsMatch(type, referenceName, buildChain);
+
+            actual.Should().Be(expected);
         }
 
         [Fact]
@@ -35,6 +65,19 @@
             var other = new StringValueGenerator();
 
             target.Priority.Should().BeGreaterThan(other.Priority);
+        }
+
+        private class Wrapper : LastNameValueGenerator
+        {
+            public object RunGenerate(Type type, string referenceName, IExecuteStrategy executeStrategy)
+            {
+                return Generate(type, referenceName, executeStrategy);
+            }
+
+            public bool RunIsMatch(Type type, string referenceName, IBuildChain buildChain)
+            {
+                return IsMatch(type, referenceName, buildChain);
+            }
         }
     }
 }
