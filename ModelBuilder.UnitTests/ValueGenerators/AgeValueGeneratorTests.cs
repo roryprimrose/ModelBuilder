@@ -107,7 +107,7 @@
 
         [Theory]
         [ClassData(typeof(NumericTypeDataSource))]
-        public void IsMatchReturnsWhetherScenarioIsSupported(Type type, string referenceName, bool typeSupported)
+        public void IsMatchReturnsWhetherTypeIsSupported(Type type, bool typeSupported)
         {
             if (typeSupported == false)
             {
@@ -119,7 +119,7 @@
 
             var target = new Wrapper();
 
-            var actual = target.RunIsMatch(type, referenceName, buildChain);
+            var actual = target.RunIsMatch(type, "age", buildChain);
 
             actual.Should().BeTrue();
         }

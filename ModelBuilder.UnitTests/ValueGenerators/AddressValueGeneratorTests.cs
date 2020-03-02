@@ -91,32 +91,21 @@
         }
 
         [Theory]
-        [InlineData("address", true)]
-        [InlineData("Address", true)]
-        [InlineData("address1", true)]
-        [InlineData("Address1", true)]
-        [InlineData("addressline1", true)]
-        [InlineData("addressLine1", true)]
-        [InlineData("AddressLine1", true)]
-        [InlineData("Addressline1", true)]
-        [InlineData("address2", true)]
-        [InlineData("Address2", true)]
-        [InlineData("addressline2", true)]
-        [InlineData("addressLine2", true)]
-        [InlineData("AddressLine2", true)]
-        [InlineData("Addressline2", true)]
-        [InlineData("address3", false)]
-        [InlineData("addressline3", false)]
-        [InlineData("addressLine3", false)]
-        [InlineData("AddressLine3", false)]
-        [InlineData("Addressline3", false)]
-        [InlineData("Address4", false)]
-        [InlineData("emailAddress", false)]
-        [InlineData("EmailAddress", false)]
-        [InlineData("internetAddress", false)]
-        [InlineData("InternetAddress", false)]
-        [InlineData("WrongName", false)]
-        public void GenerateReturnsValuesForSeveralNameFormatsTest(string referenceName, bool valueExpected)
+        [InlineData("address")]
+        [InlineData("Address")]
+        [InlineData("address1")]
+        [InlineData("Address1")]
+        [InlineData("addressline1")]
+        [InlineData("addressLine1")]
+        [InlineData("AddressLine1")]
+        [InlineData("Addressline1")]
+        [InlineData("address2")]
+        [InlineData("Address2")]
+        [InlineData("addressline2")]
+        [InlineData("addressLine2")]
+        [InlineData("AddressLine2")]
+        [InlineData("Addressline2")]
+        public void GenerateReturnsValuesForSeveralNameFormatsTest(string referenceName)
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -127,14 +116,7 @@
 
             var actual = target.RunGenerate(typeof(string), referenceName, executeStrategy) as string;
 
-            if (valueExpected)
-            {
-                actual.Should().NotBeNullOrEmpty();
-            }
-            else
-            {
-                actual.Should().BeNull();
-            }
+            actual.Should().NotBeNullOrEmpty();
         }
 
         [Theory]
@@ -144,8 +126,8 @@
         [InlineData("Address1", true)]
         [InlineData("address2", true)]
         [InlineData("Address2", true)]
-        [InlineData("address3", false)]
-        [InlineData("Address3", false)]
+        [InlineData("address3", true)]
+        [InlineData("Address3", true)]
         [InlineData("addressline1", true)]
         [InlineData("addressLine1", true)]
         [InlineData("AddressLine1", true)]
@@ -154,11 +136,14 @@
         [InlineData("addressLine2", true)]
         [InlineData("AddressLine2", true)]
         [InlineData("Addressline2", true)]
-        [InlineData("addressline3", false)]
-        [InlineData("addressLine3", false)]
-        [InlineData("AddressLine3", false)]
-        [InlineData("Addressline3", false)]
-        [InlineData("Address4", false)]
+        [InlineData("addressline3", true)]
+        [InlineData("addressLine3", true)]
+        [InlineData("AddressLine3", true)]
+        [InlineData("Addressline3", true)]
+        [InlineData("addressline4", true)]
+        [InlineData("addressLine4", true)]
+        [InlineData("AddressLine4", true)]
+        [InlineData("Addressline4", true)]
         [InlineData("emailAddress", false)]
         [InlineData("EmailAddress", false)]
         [InlineData("internetAddress", false)]
