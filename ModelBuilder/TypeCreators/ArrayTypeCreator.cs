@@ -11,7 +11,7 @@
     {
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
-        public override bool CanCreate(Type type, string referenceName, IBuildConfiguration configuration,
+        protected override bool CanCreate(Type type, string referenceName, IBuildConfiguration configuration,
             IBuildChain buildChain)
         {
             // Creating using this creator has the same rules for populate as it does for create
@@ -20,7 +20,7 @@
 
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
-        public override bool CanPopulate(Type type, string referenceName, IBuildConfiguration buildConfiguration,
+        protected override bool CanPopulate(Type type, string referenceName, IBuildConfiguration buildConfiguration,
             IBuildChain buildChain)
         {
             if (type == null)

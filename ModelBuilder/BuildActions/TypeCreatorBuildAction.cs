@@ -7,8 +7,9 @@
     using ModelBuilder.TypeCreators;
 
     /// <summary>
-    /// The <see cref="TypeCreatorBuildAction"/>
-    /// class is used to provide a build action that uses a matching <see cref="ITypeCreator"/> to create and/or populate values.
+    ///     The <see cref="TypeCreatorBuildAction" />
+    ///     class is used to provide a build action that uses a matching <see cref="ITypeCreator" /> to create and/or populate
+    ///     values.
     /// </summary>
     public class TypeCreatorBuildAction : IBuildAction
     {
@@ -28,10 +29,12 @@
             }
 
             var typeCreator =
-                GetMatchingTypeCreator(type, null, executeStrategy.Configuration, executeStrategy.BuildChain);
+                GetMatchingTypeCreator(
+                    x => x.CanCreate(type, executeStrategy.Configuration, executeStrategy.BuildChain),
+                    executeStrategy.Configuration);
 
             return Build(typeCreator, type, null, executeStrategy.BuildChain,
-                () => typeCreator?.Create(type, null, executeStrategy, arguments),
+                () => typeCreator?.Create(type, executeStrategy, arguments),
                 executeStrategy.Log);
         }
 
@@ -50,12 +53,12 @@
                 throw new ArgumentNullException(nameof(parameterInfo));
             }
 
-            var typeCreator = GetMatchingTypeCreator(parameterInfo.ParameterType, parameterInfo.Name,
-                executeStrategy.Configuration,
-                executeStrategy.BuildChain);
+            var typeCreator = GetMatchingTypeCreator(
+                x => x.CanCreate(parameterInfo, executeStrategy.Configuration, executeStrategy.BuildChain),
+                executeStrategy.Configuration);
 
             return Build(typeCreator, parameterInfo.ParameterType, parameterInfo.Name, executeStrategy.BuildChain,
-                () => typeCreator?.Create(parameterInfo.ParameterType, parameterInfo.Name, executeStrategy, arguments),
+                () => typeCreator?.Create(parameterInfo, executeStrategy, arguments),
                 executeStrategy.Log);
         }
 
@@ -74,12 +77,12 @@
                 throw new ArgumentNullException(nameof(propertyInfo));
             }
 
-            var typeCreator = GetMatchingTypeCreator(propertyInfo.PropertyType, propertyInfo.Name,
-                executeStrategy.Configuration,
-                executeStrategy.BuildChain);
+            var typeCreator = GetMatchingTypeCreator(
+                x => x.CanCreate(propertyInfo, executeStrategy.Configuration, executeStrategy.BuildChain),
+                executeStrategy.Configuration);
 
             return Build(typeCreator, propertyInfo.PropertyType, propertyInfo.Name, executeStrategy.BuildChain,
-                () => typeCreator?.Create(propertyInfo.PropertyType, propertyInfo.Name, executeStrategy, arguments),
+                () => typeCreator?.Create(propertyInfo, executeStrategy, arguments),
                 executeStrategy.Log);
         }
 
@@ -87,7 +90,8 @@
         /// <exception cref="ArgumentNullException">The <paramref name="buildChain" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="buildConfiguration" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
-        public BuildCapability GetBuildCapability(IBuildConfiguration buildConfiguration, IBuildChain buildChain, Type type)
+        public BuildCapability GetBuildCapability(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
+            Type type)
         {
             if (buildConfiguration == null)
             {
@@ -104,9 +108,9 @@
                 throw new ArgumentNullException(nameof(type));
             }
 
-            var typeCreator = GetMatchingTypeCreator(type, null, buildConfiguration, buildChain);
-
-            return GetMatchResult(typeCreator, type, null, buildConfiguration, buildChain);
+            return GetBuildCapability(
+                x => x.CanCreate(type, buildConfiguration, buildChain),
+                x => x.CanPopulate(type, buildConfiguration, buildChain), buildConfiguration);
         }
 
         /// <inheritdoc />
@@ -131,11 +135,9 @@
                 throw new ArgumentNullException(nameof(parameterInfo));
             }
 
-            var typeCreator = GetMatchingTypeCreator(parameterInfo.ParameterType, parameterInfo.Name,
-                buildConfiguration,
-                buildChain);
-
-            return GetMatchResult(typeCreator, parameterInfo.ParameterType, parameterInfo.Name, buildConfiguration, buildChain);
+            return GetBuildCapability(
+                x => x.CanCreate(parameterInfo, buildConfiguration, buildChain),
+                x => x.CanPopulate(parameterInfo, buildConfiguration, buildChain), buildConfiguration);
         }
 
         /// <inheritdoc />
@@ -160,10 +162,9 @@
                 throw new ArgumentNullException(nameof(propertyInfo));
             }
 
-            var typeCreator = GetMatchingTypeCreator(propertyInfo.PropertyType, propertyInfo.Name, buildConfiguration,
-                buildChain);
-
-            return GetMatchResult(typeCreator, propertyInfo.PropertyType, propertyInfo.Name, buildConfiguration, buildChain);
+            return GetBuildCapability(
+                x => x.CanCreate(propertyInfo, buildConfiguration, buildChain),
+                x => x.CanPopulate(propertyInfo, buildConfiguration, buildChain), buildConfiguration);
         }
 
         /// <inheritdoc />
@@ -180,9 +181,9 @@
                 throw new ArgumentNullException(nameof(instance));
             }
 
-            var typeCreator = GetMatchingTypeCreator(instance.GetType(), null,
-                executeStrategy.Configuration,
-                executeStrategy.BuildChain);
+            var typeCreator = GetMatchingTypeCreator(
+                x => x.CanCreate(instance.GetType(), executeStrategy.Configuration, executeStrategy.BuildChain),
+                executeStrategy.Configuration);
 
             if (typeCreator == null)
             {
@@ -233,34 +234,34 @@
             }
         }
 
-        private static ITypeCreator GetMatchingTypeCreator(Type type, string referenceName,
-            IBuildConfiguration buildConfiguration,
-            IBuildChain buildChain)
+        private static BuildCapability GetBuildCapability(Func<ITypeCreator, bool> canCreate,
+            Func<ITypeCreator, bool> canPopulate, IBuildConfiguration buildConfiguration)
         {
-            return buildConfiguration.TypeCreators?.Where(x => x.CanCreate(type, referenceName, buildConfiguration, buildChain))
-                .OrderByDescending(x => x.Priority).FirstOrDefault();
-        }
+            var typeCreator = GetMatchingTypeCreator(canCreate, buildConfiguration);
 
-        private static BuildCapability GetMatchResult(ITypeCreator typeCreator, Type type, string referenceName,
-            IBuildConfiguration configuration,
-            IBuildChain buildChain)
-        {
             if (typeCreator == null)
             {
                 return null;
             }
 
-            var canCreate = typeCreator.CanCreate(type, referenceName, configuration, buildChain);
-            var canPopulate = typeCreator.CanPopulate(type, referenceName, configuration, buildChain);
+            var canCreateValue = canCreate(typeCreator);
+            var canPopulateValue = canPopulate(typeCreator);
 
             return new BuildCapability
             {
-                SupportsCreate = canCreate,
-                SupportsPopulate = canPopulate,
+                SupportsCreate = canCreateValue,
+                SupportsPopulate = canPopulateValue,
                 AutoPopulate = typeCreator.AutoPopulate,
                 AutoDetectConstructor = typeCreator.AutoDetectConstructor,
                 ImplementedByType = typeCreator.GetType()
             };
+        }
+
+        private static ITypeCreator GetMatchingTypeCreator(Func<ITypeCreator, bool> canCreate,
+            IBuildConfiguration buildConfiguration)
+        {
+            return buildConfiguration.TypeCreators?.Where(canCreate)
+                .OrderByDescending(x => x.Priority).FirstOrDefault();
         }
 
         /// <inheritdoc />

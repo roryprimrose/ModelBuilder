@@ -6,7 +6,7 @@
 
     public class IncrementingEnumerableTypeCreator : EnumerableTypeCreator
     {
-        public override bool CanCreate(Type type, string referenceName, IBuildConfiguration configuration,
+        protected override bool CanCreate(Type type, string referenceName, IBuildConfiguration configuration,
             IBuildChain buildChain)
         {
             if (base.CanCreate(type, referenceName, configuration, buildChain) == false)
@@ -26,7 +26,7 @@
             return generator.IsSupported(baseType);
         }
 
-        public override bool CanPopulate(Type type, string referenceName, IBuildConfiguration buildConfiguration,
+        protected override bool CanPopulate(Type type, string referenceName, IBuildConfiguration buildConfiguration,
             IBuildChain buildChain)
         {
             if (base.CanPopulate(type, referenceName, buildConfiguration, buildChain) == false)

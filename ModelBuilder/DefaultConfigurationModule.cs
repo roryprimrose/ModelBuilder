@@ -5,8 +5,8 @@
     using ModelBuilder.ValueGenerators;
 
     /// <summary>
-    /// The <see cref="DefaultConfigurationModule"/>
-    /// class is used to provide the default configuration for building values.
+    ///     The <see cref="DefaultConfigurationModule" />
+    ///     class is used to provide the default configuration for building values.
     /// </summary>
     public class DefaultConfigurationModule : IConfigurationModule
     {
@@ -26,7 +26,7 @@
             AddValueGenerators(configuration);
         }
 
-        private void AddExecuteOrderRules(IBuildConfiguration configuration)
+        private static void AddExecuteOrderRules(IBuildConfiguration configuration)
         {
             configuration.AddExecuteOrderRule(x => x.PropertyType.IsEnum, 4000);
             configuration.AddExecuteOrderRule(x => x.PropertyType.IsValueType, 3000);
@@ -48,14 +48,14 @@
             configuration.AddExecuteOrderRule(x => x.PropertyType.IsClass, 1000);
         }
 
-        private void AddTypeCreators(IBuildConfiguration configuration)
+        private static void AddTypeCreators(IBuildConfiguration configuration)
         {
             configuration.AddTypeCreator<ArrayTypeCreator>();
             configuration.AddTypeCreator<EnumerableTypeCreator>();
             configuration.AddTypeCreator<DefaultTypeCreator>();
         }
 
-        private void AddValueGenerators(IBuildConfiguration configuration)
+        private static void AddValueGenerators(IBuildConfiguration configuration)
         {
             configuration.AddValueGenerator<AddressValueGenerator>();
             configuration.AddValueGenerator<AgeValueGenerator>();

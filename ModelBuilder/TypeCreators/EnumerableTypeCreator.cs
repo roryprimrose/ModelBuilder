@@ -29,7 +29,7 @@
 
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
-        public override bool CanCreate(Type type, string referenceName, IBuildConfiguration configuration,
+        protected override bool CanCreate(Type type, string referenceName, IBuildConfiguration configuration,
             IBuildChain buildChain)
         {
             if (type == null)
@@ -85,7 +85,7 @@
 
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
-        public override bool CanPopulate(Type type, string referenceName, IBuildConfiguration configuration,
+        protected override bool CanPopulate(Type type, string referenceName, IBuildConfiguration configuration,
             IBuildChain buildChain)
         {
             if (type == null)

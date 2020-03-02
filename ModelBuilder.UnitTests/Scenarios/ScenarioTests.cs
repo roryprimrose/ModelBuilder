@@ -5,6 +5,7 @@
     using System.Collections.ObjectModel;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
+    using System.Reflection;
     using System.Threading;
     using System.Threading.Tasks;
     using FluentAssertions;
@@ -124,6 +125,36 @@
         }
 
         [Fact]
+        public void CreateBuildLogOfIgnoreRuleTest()
+        {
+            var strategy = Model.Ignoring<Company>(x => x.Address)
+                .UsingExecuteStrategy<DefaultExecuteStrategy<Company>>();
+
+            strategy.Create();
+
+            var actual = strategy.Log.Output;
+
+            actual.Should().Contain("Ignoring");
+
+            _output.WriteLine(actual);
+        }
+
+        [Fact]
+        public void CreateBuildLogOfPostActionsTest()
+        {
+            var strategy = Model.UsingDefaultConfiguration().UsingModule<TestConfigurationModule>()
+                .UsingExecuteStrategy<DefaultExecuteStrategy<Company>>();
+
+            strategy.Create();
+
+            var actual = strategy.Log.Output;
+
+            actual.Should().Contain(typeof(DummyPostBuildAction).FullName);
+
+            _output.WriteLine(actual);
+        }
+
+        [Fact]
         public void CreateBuildsAddressUsingValidCombinationOfValuesTest()
         {
             var actual = Model.Create<Address>();
@@ -200,35 +231,6 @@
             var actual = strategy.Log.Output;
 
             actual.Should().NotBeNullOrWhiteSpace();
-
-            _output.WriteLine(actual);
-        }
-
-        [Fact]
-        public void CreateBuildLogOfIgnoreRuleTest()
-        {
-            var strategy = Model.Ignoring<Company>(x => x.Address)
-                .UsingExecuteStrategy<DefaultExecuteStrategy<Company>>();
-
-            strategy.Create();
-
-            var actual = strategy.Log.Output;
-
-            actual.Should().Contain("Ignoring");
-
-            _output.WriteLine(actual);
-        }
-
-        [Fact]
-        public void CreateBuildLogOfPostActionsTest()
-        {
-            var strategy = Model.UsingDefaultConfiguration().UsingModule<TestConfigurationModule>().UsingExecuteStrategy<DefaultExecuteStrategy<Company>>();
-
-            strategy.Create();
-
-            var actual = strategy.Log.Output;
-
-            actual.Should().Contain(typeof(DummyPostBuildAction).FullName);
 
             _output.WriteLine(actual);
         }
@@ -460,11 +462,12 @@
         {
             var typeCreator = Substitute.For<ITypeCreator>();
 
-            typeCreator.CanCreate(typeof(Address), "Address", Arg.Any<IBuildConfiguration>(), Arg.Any<IBuildChain>()).Returns(true);
+            typeCreator.CanCreate(Arg.Is<PropertyInfo>(x => x.DeclaringType == typeof(Office) && x.Name == nameof(Office.Address)),
+                Arg.Any<IBuildConfiguration>(), Arg.Any<IBuildChain>()).Returns(true);
             typeCreator.Priority.Returns(int.MaxValue);
             typeCreator.AutoDetectConstructor.Returns(true);
             typeCreator.AutoPopulate.Returns(true);
-            typeCreator.Create(typeof(Address), "Address", Arg.Any<IExecuteStrategy>(), null)
+            typeCreator.Create(Arg.Is<PropertyInfo>(x => x.DeclaringType == typeof(Office ) && x.Name == nameof(Office.Address)), Arg.Any<IExecuteStrategy>(), null)
                 .Throws(new InvalidOperationException());
 
             var configuration = Model.UsingDefaultConfiguration().Add(typeCreator);

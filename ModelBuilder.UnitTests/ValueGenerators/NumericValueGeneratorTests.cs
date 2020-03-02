@@ -85,6 +85,28 @@
             randomValueFound.Should().BeTrue();
         }
 
+        [Fact]
+        public void GenerateThrowsExceptionWithNullExecuteStrategy()
+        {
+            var target = new Wrapper();
+
+            Action action = () => target.RunGenerate(typeof(int), null, null);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void GenerateThrowsExceptionWithNullType()
+        {
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            var target = new Wrapper();
+
+            Action action = () => target.RunGenerate(null, null, executeStrategy);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
         [Theory]
         [ClassData(typeof(NumericTypeDataSource))]
         public void IsMatchForTypeEvaluatesRequestedTypeTest(Type type, bool typeSupported)
@@ -96,6 +118,28 @@
             var actual = target.RunIsMatch(type, null, buildChain);
 
             actual.Should().Be(typeSupported);
+        }
+
+        [Fact]
+        public void IsMatchThrowsExceptionWithNullBuildChain()
+        {
+            var target = new Wrapper();
+
+            Action action = () => target.RunIsMatch(typeof(int), null, null);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void IsMatchThrowsExceptionWithNullType()
+        {
+            var buildChain = Substitute.For<IBuildChain>();
+
+            var target = new Wrapper();
+
+            Action action = () => target.RunIsMatch(null, null, buildChain);
+
+            action.Should().Throw<ArgumentNullException>();
         }
 
         private class Wrapper : NumericValueGenerator

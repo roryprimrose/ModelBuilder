@@ -11,6 +11,45 @@
 
     public class ValueGeneratorBaseTests
     {
+        [Fact]
+        public void GenerateForParameterThrowsExceptionWithNullExecuteStrategy()
+        {
+            var value = Guid.NewGuid().ToString();
+            var parameterInfo = typeof(Person).GetConstructors()
+                .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
+
+            var target = new Wrapper(true, value);
+
+            Action action = () => target.Generate(parameterInfo, null);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void GenerateForPropertyThrowsExceptionWithNullExecuteStrategy()
+        {
+            var value = Guid.NewGuid().ToString();
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+
+            var target = new Wrapper(true, value);
+
+            Action action = () => target.Generate(propertyInfo, null);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void GenerateForTypeThrowsExceptionWithNullExecuteStrategy()
+        {
+            var value = Guid.NewGuid().ToString();
+
+            var target = new Wrapper(true, value);
+
+            Action action = () => target.Generate(typeof(Person), null);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
         [Theory]
         [MemberData(nameof(DataSet.GetParameters), typeof(WithConstructorParameters), MemberType = typeof(DataSet))]
         public void GenerateRequestsValueForParameterTest(ParameterInfo parameterInfo)
@@ -72,6 +111,20 @@
         }
 
         [Fact]
+        public void GenerateThrowsExceptionWithNullType()
+        {
+            var value = Guid.NewGuid().ToString();
+
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            var target = new Wrapper(true, value);
+
+            Action action = () => target.Generate((Type) null, executeStrategy);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
         public void GeneratorReturnsCachedInstance()
         {
             var target = new Wrapper(true, null);
@@ -105,6 +158,18 @@
             var target = new Wrapper(true, value);
 
             Action action = () => target.IsMatch(propertyInfo, null);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void IsMatchForTypeThrowsExceptionWithNullBuildChain()
+        {
+            var value = Guid.NewGuid().ToString();
+
+            var target = new Wrapper(true, value);
+
+            Action action = () => target.IsMatch(typeof(string), null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -165,6 +230,20 @@
             var target = new Wrapper(true, value);
 
             Action action = () => target.IsMatch((PropertyInfo) null, buildChain);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void IsMatchThrowsExceptionWithNullType()
+        {
+            var value = Guid.NewGuid().ToString();
+
+            var buildChain = Substitute.For<IBuildChain>();
+
+            var target = new Wrapper(true, value);
+
+            Action action = () => target.IsMatch((Type) null, buildChain);
 
             action.Should().Throw<ArgumentNullException>();
         }

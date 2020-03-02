@@ -1,6 +1,7 @@
 ﻿namespace ModelBuilder.TypeCreators
 {
     using System;
+    using System.Reflection;
 
     /// <summary>
     ///     The <see cref="ITypeCreator" />
@@ -12,32 +13,85 @@
         ///     Returns whether this type creator can create the specified type.
         /// </summary>
         /// <param name="type">The type to evaluate.</param>
-        /// <param name="referenceName">Identifies the possible parameter or property name the instance is intended for.</param>
         /// <param name="configuration">The build configuration.</param>
         /// <param name="buildChain">The chain of instances built up to this point.</param>
         /// <returns><c>true</c> if this creator can create the type; otherwise <c>false</c>.</returns>
-        bool CanCreate(Type type, string referenceName, IBuildConfiguration configuration, IBuildChain buildChain);
+        bool CanCreate(Type type, IBuildConfiguration configuration, IBuildChain buildChain);
+
+        /// <summary>
+        ///     Returns whether this type creator can create the specified type.
+        /// </summary>
+        /// <param name="parameterInfo">The parameter to evaluate.</param>
+        /// <param name="configuration">The build configuration.</param>
+        /// <param name="buildChain">The chain of instances built up to this point.</param>
+        /// <returns><c>true</c> if this creator can create the type; otherwise <c>false</c>.</returns>
+        bool CanCreate(ParameterInfo parameterInfo, IBuildConfiguration configuration, IBuildChain buildChain);
+
+        /// <summary>
+        ///     Returns whether this type creator can create the specified type.
+        /// </summary>
+        /// <param name="propertyInfo">The property to evaluate.</param>
+        /// <param name="configuration">The build configuration.</param>
+        /// <param name="buildChain">The chain of instances built up to this point.</param>
+        /// <returns><c>true</c> if this creator can create the type; otherwise <c>false</c>.</returns>
+        bool CanCreate(PropertyInfo propertyInfo, IBuildConfiguration configuration, IBuildChain buildChain);
 
         /// <summary>
         ///     Returns whether this type creator can populate the specified type.
         /// </summary>
         /// <param name="type">The type to evaluate.</param>
-        /// <param name="referenceName">Identifies the possible parameter or property name the instance is intended for.</param>
         /// <param name="configuration">The build configuration.</param>
         /// <param name="buildChain">The chain of instances built up to this point.</param>
         /// <returns><c>true</c> if this creator can populate the type; otherwise <c>false</c>.</returns>
-        bool CanPopulate(Type type, string referenceName, IBuildConfiguration configuration,
+        bool CanPopulate(Type type, IBuildConfiguration configuration,
+            IBuildChain buildChain);
+
+        /// <summary>
+        ///     Returns whether this type creator can populate the specified type.
+        /// </summary>
+        /// <param name="parameterInfo">The parameter to evaluate.</param>
+        /// <param name="configuration">The build configuration.</param>
+        /// <param name="buildChain">The chain of instances built up to this point.</param>
+        /// <returns><c>true</c> if this creator can populate the type; otherwise <c>false</c>.</returns>
+        bool CanPopulate(ParameterInfo parameterInfo, IBuildConfiguration configuration,
+            IBuildChain buildChain);
+
+        /// <summary>
+        ///     Returns whether this type creator can populate the specified type.
+        /// </summary>
+        /// <param name="propertyInfo">The property to evaluate.</param>
+        /// <param name="configuration">The build configuration.</param>
+        /// <param name="buildChain">The chain of instances built up to this point.</param>
+        /// <returns><c>true</c> if this creator can populate the type; otherwise <c>false</c>.</returns>
+        bool CanPopulate(PropertyInfo propertyInfo, IBuildConfiguration configuration,
             IBuildChain buildChain);
 
         /// <summary>
         ///     Creates an instance of the type with the specified arguments.
         /// </summary>
         /// <param name="type">The type of instance to create.</param>
-        /// <param name="referenceName">Identifies the possible parameter or property name the instance is intended for.</param>
         /// <param name="executeStrategy">The execution strategy.</param>
         /// <param name="args">The constructor parameters to create the instance with.</param>
         /// <returns>A new instance.</returns>
-        object Create(Type type, string referenceName, IExecuteStrategy executeStrategy, params object[] args);
+        object Create(Type type, IExecuteStrategy executeStrategy, params object[] args);
+
+        /// <summary>
+        ///     Creates an instance of the type with the specified arguments.
+        /// </summary>
+        /// <param name="parameterInfo">The parameter to evaluate.</param>
+        /// <param name="executeStrategy">The execution strategy.</param>
+        /// <param name="args">The constructor parameters to create the instance with.</param>
+        /// <returns>A new instance.</returns>
+        object Create(ParameterInfo parameterInfo, IExecuteStrategy executeStrategy, params object[] args);
+
+        /// <summary>
+        ///     Creates an instance of the type with the specified arguments.
+        /// </summary>
+        /// <param name="propertyInfo">The property to evaluate.</param>
+        /// <param name="executeStrategy">The execution strategy.</param>
+        /// <param name="args">The constructor parameters to create the instance with.</param>
+        /// <returns>A new instance.</returns>
+        object Create(PropertyInfo propertyInfo, IExecuteStrategy executeStrategy, params object[] args);
 
         /// <summary>
         ///     Populates the specified instance using an execution strategy.

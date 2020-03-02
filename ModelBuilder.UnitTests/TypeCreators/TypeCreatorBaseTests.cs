@@ -3,6 +3,8 @@
     using System;
     using System.Collections.Generic;
     using System.IO;
+    using System.Linq;
+    using System.Reflection;
     using FluentAssertions;
     using ModelBuilder.TypeCreators;
     using ModelBuilder.UnitTests.Models;
@@ -30,9 +32,33 @@
 
             var target = new DefaultTypeCreator();
 
-            var actual = target.CanCreate(targetType, null, configuration, null);
+            var actual = target.CanCreate(targetType, configuration, null);
 
             actual.Should().Be(expected);
+        }
+
+        [Fact]
+        public void CanCreateThrowsExceptionWithNullParameterTest()
+        {
+            var configuration = Substitute.For<IBuildConfiguration>();
+
+            var target = new TypeCreatorWrapper();
+
+            Action action = () => target.CanCreate((ParameterInfo) null, configuration, null);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void CanCreateThrowsExceptionWithNullPropertyTest()
+        {
+            var configuration = Substitute.For<IBuildConfiguration>();
+
+            var target = new TypeCreatorWrapper();
+
+            Action action = () => target.CanCreate((PropertyInfo) null, configuration, null);
+
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -42,7 +68,33 @@
 
             var target = new TypeCreatorWrapper();
 
-            Action action = () => target.CanCreate(null, null, configuration, null);
+            Action action = () => target.CanCreate((Type) null, configuration, null);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void CanPopulateThrowsExceptionWithNullParameterTest()
+        {
+            var configuration = Substitute.For<IBuildConfiguration>();
+            var buildChain = new BuildHistory();
+
+            var target = new TypeCreatorWrapper();
+
+            Action action = () => target.CanPopulate((ParameterInfo) null, configuration, buildChain);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void CanPopulateThrowsExceptionWithNullPropertyTest()
+        {
+            var configuration = Substitute.For<IBuildConfiguration>();
+            var buildChain = new BuildHistory();
+
+            var target = new TypeCreatorWrapper();
+
+            Action action = () => target.CanPopulate((PropertyInfo) null, configuration, buildChain);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -55,7 +107,55 @@
 
             var target = new TypeCreatorWrapper();
 
-            Action action = () => target.CanPopulate(null, "Name", configuration, buildChain);
+            Action action = () => target.CanPopulate((Type) null, configuration, buildChain);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void CreateForParameterThrowsExceptionWithNullStrategyTest()
+        {
+            var parameterInfo = typeof(Person).GetConstructors()
+                .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
+            var buildChain = new BuildHistory();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            var target = new TypeCreatorWrapper();
+
+            Action action = () => target.Create(parameterInfo, null);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void CreateForPropertyThrowsExceptionWithNullStrategyTest()
+        {
+            var property = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var buildChain = new BuildHistory();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            var target = new TypeCreatorWrapper();
+
+            Action action = () => target.Create(property, null);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void CreateForTypeThrowsExceptionWithNullStrategyTest()
+        {
+            var buildChain = new BuildHistory();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            var target = new TypeCreatorWrapper();
+
+            Action action = () => target.Create(typeof(string), null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -75,7 +175,7 @@
 
             var target = new TypeCreatorWrapper();
 
-            var actual = target.Create(targetType, null, executeStrategy);
+            var actual = target.Create(targetType, executeStrategy);
 
             actual.Should().NotBeNull();
         }
@@ -95,9 +195,39 @@
 
             var target = new DefaultTypeCreator();
 
-            Action action = () => target.Create(targetType, null, executeStrategy);
+            Action action = () => target.Create(targetType, executeStrategy);
 
             action.Should().Throw<NotSupportedException>();
+        }
+
+        [Fact]
+        public void CreateThrowsExceptionWithNullParameterTest()
+        {
+            var buildChain = new BuildHistory();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            var target = new TypeCreatorWrapper();
+
+            Action action = () => target.Create((ParameterInfo) null, executeStrategy);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void CreateThrowsExceptionWithNullPropertyTest()
+        {
+            var buildChain = new BuildHistory();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            var target = new TypeCreatorWrapper();
+
+            Action action = () => target.Create((PropertyInfo) null, executeStrategy);
+
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -109,24 +239,9 @@
 
             var target = new TypeCreatorWrapper();
 
-            Action action = () => target.Create(typeof(string), "Name", executeStrategy);
+            Action action = () => target.Create(typeof(string), executeStrategy);
 
             action.Should().Throw<InvalidOperationException>();
-        }
-
-        [Fact]
-        public void CreateThrowsExceptionWithNullStrategyTest()
-        {
-            var buildChain = new BuildHistory();
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            executeStrategy.BuildChain.Returns(buildChain);
-
-            var target = new TypeCreatorWrapper();
-
-            Action action = () => target.Create(typeof(string), "Name", null);
-
-            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -139,7 +254,7 @@
 
             var target = new TypeCreatorWrapper();
 
-            Action action = () => target.Create(null, "Name", executeStrategy);
+            Action action = () => target.Create((Type) null, executeStrategy);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -331,7 +446,7 @@
 
         private class TypeCreatorWrapper : TypeCreatorBase
         {
-            public override bool CanCreate(Type type, string referenceName, IBuildConfiguration configuration,
+            protected override bool CanCreate(Type type, string referenceName, IBuildConfiguration configuration,
                 IBuildChain buildChain)
             {
                 var canCreate = base.CanCreate(type, referenceName, configuration, buildChain);
@@ -344,7 +459,7 @@
                 return type == typeof(List<string>);
             }
 
-            public override bool CanPopulate(Type type, string referenceName, IBuildConfiguration buildConfiguration,
+            protected override bool CanPopulate(Type type, string referenceName, IBuildConfiguration buildConfiguration,
                 IBuildChain buildChain)
             {
                 var canPopulate = base.CanPopulate(type, referenceName, buildConfiguration, buildChain);

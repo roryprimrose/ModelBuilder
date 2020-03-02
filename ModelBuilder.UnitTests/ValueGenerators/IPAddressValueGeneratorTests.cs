@@ -61,6 +61,16 @@
         }
 
         [Fact]
+        public void IsMatchThrowsExceptionWithNullType()
+        {
+            var target = new Wrapper();
+
+            Action action = () => target.RunIsMatch(null, null, null);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
         public void PriorityIsHigherThanStringValueGeneratorPriorityTest()
         {
             var target = new Wrapper();

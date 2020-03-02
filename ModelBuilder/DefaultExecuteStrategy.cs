@@ -358,11 +358,6 @@
 
         private object Populate(BuildCapability capability, object instance, string referenceName, params object[] args)
         {
-            if (instance == null)
-            {
-                throw new ArgumentNullException(nameof(instance));
-            }
-
             if (capability == null
                 || capability.SupportsPopulate == false)
             {

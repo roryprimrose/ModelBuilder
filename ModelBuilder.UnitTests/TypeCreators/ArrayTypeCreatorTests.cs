@@ -6,6 +6,7 @@
     using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Linq;
+    using System.Reflection;
     using FluentAssertions;
     using ModelBuilder.TypeCreators;
     using ModelBuilder.UnitTests.Models;
@@ -50,9 +51,33 @@
 
             var target = new ArrayTypeCreator();
 
-            var actual = target.CanCreate(type, null, configuration, null);
+            var actual = target.CanCreate(type, configuration, null);
 
             actual.Should().Be(supported);
+        }
+
+        [Fact]
+        public void CanCreateThrowsExceptionWithNullParameterTest()
+        {
+            var configuration = Substitute.For<IBuildConfiguration>();
+
+            var target = new ArrayTypeCreator();
+
+            Action action = () => target.CanCreate((ParameterInfo) null, configuration, null);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void CanCreateThrowsExceptionWithNullPropertyTest()
+        {
+            var configuration = Substitute.For<IBuildConfiguration>();
+
+            var target = new ArrayTypeCreator();
+
+            Action action = () => target.CanCreate((PropertyInfo) null, configuration, null);
+
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -62,7 +87,7 @@
 
             var target = new ArrayTypeCreator();
 
-            Action action = () => target.CanCreate(null, null, configuration, null);
+            Action action = () => target.CanCreate((Type) null, configuration, null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -97,9 +122,33 @@
 
             var target = new ArrayTypeCreator();
 
-            var actual = target.CanPopulate(type, null, configuration, null);
+            var actual = target.CanPopulate(type, configuration, null);
 
             actual.Should().Be(supported);
+        }
+
+        [Fact]
+        public void CanPopulateThrowsExceptionWithNullParameterTest()
+        {
+            var configuration = Substitute.For<IBuildConfiguration>();
+
+            var target = new ArrayTypeCreator();
+
+            Action action = () => target.CanPopulate((ParameterInfo) null, configuration, null);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void CanPopulateThrowsExceptionWithNullPropertyTest()
+        {
+            var configuration = Substitute.For<IBuildConfiguration>();
+
+            var target = new ArrayTypeCreator();
+
+            Action action = () => target.CanPopulate((PropertyInfo) null, configuration, null);
+
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -109,7 +158,7 @@
 
             var target = new ArrayTypeCreator();
 
-            Action action = () => target.CanPopulate(null, null, configuration, null);
+            Action action = () => target.CanPopulate((Type) null, configuration, null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -158,7 +207,7 @@
 
             var target = new ArrayTypeCreator();
 
-            var actual = target.Create(type, null, executeStrategy);
+            var actual = target.Create(type, executeStrategy);
 
             actual.Should().NotBeNull();
         }
@@ -200,7 +249,7 @@
 
             var target = new ArrayTypeCreator();
 
-            Action action = () => target.Create(type, null, executeStrategy);
+            Action action = () => target.Create(type, executeStrategy);
 
             if (supported)
             {
