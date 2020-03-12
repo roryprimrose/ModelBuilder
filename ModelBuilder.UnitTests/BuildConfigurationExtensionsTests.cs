@@ -66,6 +66,7 @@
         {
             var priority = Environment.TickCount;
             var value = Guid.NewGuid().ToString();
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
 
             var target = new BuildConfiguration();
 
@@ -75,7 +76,7 @@
 
             rule.Priority.Should().Be(priority);
 
-            var actual = rule.Create(typeof(Person), nameof(Person.FirstName), null);
+            var actual = rule.Create(propertyInfo, null);
 
             actual.Should().Be(value);
         }
@@ -483,7 +484,7 @@
         [Fact]
         public void AddWithCreationRuleAddsRuleToCompilerTest()
         {
-            var rule = new CreationRule(typeof(Person), "FirstName", Environment.TickCount, (object) null);
+            var rule = new ExpressionCreationRule<Person>(x => x.FirstName, (object) null, Environment.TickCount);
 
             var target = new BuildConfiguration();
 
@@ -495,7 +496,7 @@
         [Fact]
         public void AddWithCreationRuleThrowsExceptionWithNullCompilerTest()
         {
-            var rule = new CreationRule(typeof(Person), "FirstName", Environment.TickCount, (object) null);
+            var rule = new ExpressionCreationRule<Person>(x => x.FirstName, (object)null, Environment.TickCount);
 
             Action action = () => BuildConfigurationExtensions.Add(null, rule);
 
@@ -507,7 +508,7 @@
         {
             var target = Substitute.For<IBuildConfiguration>();
 
-            Action action = () => target.Add((CreationRule) null);
+            Action action = () => target.Add((ICreationRule) null);
 
             action.Should().Throw<ArgumentNullException>();
         }

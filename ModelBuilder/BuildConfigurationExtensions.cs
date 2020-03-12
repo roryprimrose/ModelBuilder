@@ -282,10 +282,7 @@
                 throw new ArgumentNullException(nameof(expression));
             }
 
-            var targetType = typeof(T);
-            var property = expression.GetProperty();
-
-            var rule = new CreationRule(targetType, property.Name, priority, value);
+            var rule = new ExpressionCreationRule<T>(expression, value, priority);
 
             configuration.CreationRules.Add(rule);
 
@@ -789,7 +786,7 @@
             Justification =
                 "This signature is designed for ease of use rather than requiring that T is either a parameter or return type.")]
         public static IBuildConfiguration RemoveCreationRule<T>(this IBuildConfiguration configuration)
-            where T : CreationRule
+            where T : ICreationRule
         {
             if (configuration == null)
             {

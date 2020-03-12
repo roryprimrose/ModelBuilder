@@ -27,10 +27,10 @@
                 throw new ArgumentNullException(nameof(type));
             }
 
-            var rule = GetMatchingRule(type, null, executeStrategy.Configuration);
+            var rule = GetMatchingRule(x => x.IsMatch(type), executeStrategy.Configuration);
 
             return Build(rule, type, null, executeStrategy.BuildChain,
-                () => rule?.Create(type, null, executeStrategy),
+                () => rule?.Create(type, executeStrategy),
                 executeStrategy.Log);
         }
 
@@ -49,10 +49,10 @@
                 throw new ArgumentNullException(nameof(parameterInfo));
             }
 
-            var rule = GetMatchingRule(parameterInfo.ParameterType, parameterInfo.Name, executeStrategy.Configuration);
+            var rule = GetMatchingRule(x => x.IsMatch(parameterInfo), executeStrategy.Configuration);
 
             return Build(rule, parameterInfo.ParameterType, parameterInfo.Name, executeStrategy.BuildChain,
-                () => rule?.Create(parameterInfo.ParameterType, parameterInfo.Name, executeStrategy),
+                () => rule?.Create(parameterInfo, executeStrategy),
                 executeStrategy.Log);
         }
 
@@ -71,10 +71,10 @@
                 throw new ArgumentNullException(nameof(propertyInfo));
             }
 
-            var rule = GetMatchingRule(propertyInfo.PropertyType, propertyInfo.Name, executeStrategy.Configuration);
+            var rule = GetMatchingRule(x => x.IsMatch(propertyInfo), executeStrategy.Configuration);
 
             return Build(rule, propertyInfo.PropertyType, propertyInfo.Name, executeStrategy.BuildChain,
-                () => rule?.Create(propertyInfo.PropertyType, propertyInfo.Name, executeStrategy),
+                () => rule?.Create(propertyInfo, executeStrategy),
                 executeStrategy.Log);
         }
 
@@ -100,7 +100,7 @@
                 throw new ArgumentNullException(nameof(type));
             }
 
-            return GetBuildCapability(type, null, buildConfiguration);
+            return GetBuildCapability(x => x.IsMatch(type), buildConfiguration);
         }
 
         /// <inheritdoc />
@@ -125,7 +125,7 @@
                 throw new ArgumentNullException(nameof(parameterInfo));
             }
 
-            return GetBuildCapability(parameterInfo.ParameterType, parameterInfo.Name, buildConfiguration);
+            return GetBuildCapability(x => x.IsMatch(parameterInfo), buildConfiguration);
         }
 
         /// <inheritdoc />
@@ -150,7 +150,7 @@
                 throw new ArgumentNullException(nameof(propertyInfo));
             }
 
-            return GetBuildCapability(propertyInfo.PropertyType, propertyInfo.Name, buildConfiguration);
+            return GetBuildCapability(x => x.IsMatch(propertyInfo), buildConfiguration);
         }
 
         /// <inheritdoc />
@@ -202,19 +202,19 @@
             }
         }
 
-        private static BuildCapability GetBuildCapability(Type type, string referenceName,
+        private static BuildCapability GetBuildCapability(Func<ICreationRule, bool> isMatch,
             IBuildConfiguration buildConfiguration)
         {
-            var rule = GetMatchingRule(type, referenceName, buildConfiguration);
+            var rule = GetMatchingRule(isMatch, buildConfiguration);
 
             if (rule == null)
             {
                 return null;
             }
 
-            var isMatch = rule.IsMatch(type, referenceName);
+            var matchFound = isMatch(rule);
 
-            if (isMatch == false)
+            if (matchFound == false)
             {
                 return null;
             }
@@ -226,10 +226,10 @@
             };
         }
 
-        private static ICreationRule GetMatchingRule(Type type, string referenceName,
+        private static ICreationRule GetMatchingRule(Func<ICreationRule, bool> isMatch,
             IBuildConfiguration buildConfiguration)
         {
-            return buildConfiguration.CreationRules?.Where(x => x.IsMatch(type, referenceName))
+            return buildConfiguration.CreationRules?.Where(isMatch)
                 .OrderByDescending(x => x.Priority).FirstOrDefault();
         }
 

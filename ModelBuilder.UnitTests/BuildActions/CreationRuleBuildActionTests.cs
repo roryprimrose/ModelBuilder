@@ -79,8 +79,8 @@
 
             executeStrategy.Configuration.Returns(buildConfiguration);
             executeStrategy.Log.Returns(_buildLog);
-            rule.IsMatch(parameterInfo.ParameterType, parameterInfo.Name).Returns(true);
-            rule.Create(parameterInfo.ParameterType, parameterInfo.Name, executeStrategy).Returns(expected);
+            rule.IsMatch(parameterInfo).Returns(true);
+            rule.Create(parameterInfo, executeStrategy).Returns(expected);
 
             var sut = new CreationRuleBuildAction();
 
@@ -107,10 +107,10 @@
             executeStrategy.Configuration.Returns(buildConfiguration);
             executeStrategy.Log.Returns(_buildLog);
             firstRule.Priority.Returns(10);
-            firstRule.IsMatch(parameterInfo.ParameterType, parameterInfo.Name).Returns(true);
+            firstRule.IsMatch(parameterInfo).Returns(true);
             secondRule.Priority.Returns(20);
-            secondRule.IsMatch(parameterInfo.ParameterType, parameterInfo.Name).Returns(true);
-            secondRule.Create(parameterInfo.ParameterType, parameterInfo.Name, executeStrategy).Returns(expected);
+            secondRule.IsMatch(parameterInfo).Returns(true);
+            secondRule.Create(parameterInfo, executeStrategy).Returns(expected);
 
             var sut = new CreationRuleBuildAction();
 
@@ -157,8 +157,8 @@
 
             executeStrategy.Configuration.Returns(buildConfiguration);
             executeStrategy.Log.Returns(_buildLog);
-            rule.IsMatch(propertyInfo.PropertyType, propertyInfo.Name).Returns(true);
-            rule.Create(propertyInfo.PropertyType, propertyInfo.Name, executeStrategy).Throws<BuildException>();
+            rule.IsMatch(propertyInfo).Returns(true);
+            rule.Create(propertyInfo, executeStrategy).Throws<BuildException>();
 
             var sut = new CreationRuleBuildAction();
 
@@ -222,8 +222,8 @@
 
             executeStrategy.Configuration.Returns(buildConfiguration);
             executeStrategy.Log.Returns(_buildLog);
-            rule.IsMatch(propertyInfo.PropertyType, propertyInfo.Name).Returns(true);
-            rule.Create(propertyInfo.PropertyType, propertyInfo.Name, executeStrategy).Returns(expected);
+            rule.IsMatch(propertyInfo).Returns(true);
+            rule.Create(propertyInfo, executeStrategy).Returns(expected);
 
             var sut = new CreationRuleBuildAction();
 
@@ -249,10 +249,10 @@
             executeStrategy.Configuration.Returns(buildConfiguration);
             executeStrategy.Log.Returns(_buildLog);
             firstRule.Priority.Returns(10);
-            firstRule.IsMatch(propertyInfo.PropertyType, propertyInfo.Name).Returns(true);
+            firstRule.IsMatch(propertyInfo).Returns(true);
             secondRule.Priority.Returns(20);
-            secondRule.IsMatch(propertyInfo.PropertyType, propertyInfo.Name).Returns(true);
-            secondRule.Create(propertyInfo.PropertyType, propertyInfo.Name, executeStrategy).Returns(expected);
+            secondRule.IsMatch(propertyInfo).Returns(true);
+            secondRule.Create(propertyInfo, executeStrategy).Returns(expected);
 
             var sut = new CreationRuleBuildAction();
 
@@ -338,8 +338,8 @@
 
             executeStrategy.Configuration.Returns(buildConfiguration);
             executeStrategy.Log.Returns(_buildLog);
-            rule.IsMatch(type, null).Returns(true);
-            rule.Create(type, null, executeStrategy).Returns(expected);
+            rule.IsMatch(type).Returns(true);
+            rule.Create(type, executeStrategy).Returns(expected);
 
             var sut = new CreationRuleBuildAction();
 
@@ -365,10 +365,10 @@
             executeStrategy.Configuration.Returns(buildConfiguration);
             executeStrategy.Log.Returns(_buildLog);
             firstRule.Priority.Returns(10);
-            firstRule.IsMatch(type, null).Returns(true);
+            firstRule.IsMatch(type).Returns(true);
             secondRule.Priority.Returns(20);
-            secondRule.IsMatch(type, null).Returns(true);
-            secondRule.Create(type, null, executeStrategy).Returns(expected);
+            secondRule.IsMatch(type).Returns(true);
+            secondRule.Create(type, executeStrategy).Returns(expected);
 
             var sut = new CreationRuleBuildAction();
 
@@ -416,8 +416,8 @@
 
             executeStrategy.Configuration.Returns(buildConfiguration);
             executeStrategy.Log.Returns(buildLog);
-            rule.IsMatch(type, null).Returns(true);
-            rule.Create(type, null, executeStrategy).Returns(expected);
+            rule.IsMatch(type).Returns(true);
+            rule.Create(type, executeStrategy).Returns(expected);
 
             var sut = new CreationRuleBuildAction();
 
@@ -440,8 +440,8 @@
 
             executeStrategy.Configuration.Returns(buildConfiguration);
             executeStrategy.Log.Returns(_buildLog);
-            rule.IsMatch(parameterInfo.ParameterType, parameterInfo.Name).Returns(true);
-            rule.Create(parameterInfo.ParameterType, parameterInfo.Name, executeStrategy).Throws<BuildException>();
+            rule.IsMatch(parameterInfo).Returns(true);
+            rule.Create(parameterInfo, executeStrategy).Throws<BuildException>();
 
             var sut = new CreationRuleBuildAction();
 
@@ -465,8 +465,8 @@
 
             executeStrategy.Configuration.Returns(buildConfiguration);
             executeStrategy.Log.Returns(_buildLog);
-            rule.IsMatch(propertyInfo.PropertyType, propertyInfo.Name).Returns(true);
-            rule.Create(propertyInfo.PropertyType, propertyInfo.Name, executeStrategy).Throws<TimeoutException>();
+            rule.IsMatch(propertyInfo).Returns(true);
+            rule.Create(propertyInfo, executeStrategy).Throws<TimeoutException>();
 
             var sut = new CreationRuleBuildAction();
 
@@ -538,8 +538,8 @@
 
             executeStrategy.Configuration.Returns(buildConfiguration);
             executeStrategy.Log.Returns(_buildLog);
-            rule.IsMatch(parameterInfo.ParameterType, parameterInfo.Name).Returns(true);
-            rule.Create(parameterInfo.ParameterType, parameterInfo.Name, executeStrategy).Returns(expected);
+            rule.IsMatch(parameterInfo).Returns(true);
+            rule.Create(parameterInfo, executeStrategy).Returns(expected);
 
             var sut = new CreationRuleBuildAction();
 
@@ -649,8 +649,8 @@
 
             executeStrategy.Configuration.Returns(buildConfiguration);
             executeStrategy.Log.Returns(_buildLog);
-            rule.IsMatch(propertyInfo.PropertyType, propertyInfo.Name).Returns(true);
-            rule.Create(propertyInfo.PropertyType, propertyInfo.Name, executeStrategy).Returns(expected);
+            rule.IsMatch(propertyInfo).Returns(true);
+            rule.Create(propertyInfo, executeStrategy).Returns(expected);
 
             var sut = new CreationRuleBuildAction();
 
@@ -758,8 +758,8 @@
 
             executeStrategy.Configuration.Returns(buildConfiguration);
             executeStrategy.Log.Returns(_buildLog);
-            rule.IsMatch(type, null).Returns(true);
-            rule.Create(type, null, executeStrategy).Returns(expected);
+            rule.IsMatch(type).Returns(true);
+            rule.Create(type, executeStrategy).Returns(expected);
 
             var sut = new CreationRuleBuildAction();
 
