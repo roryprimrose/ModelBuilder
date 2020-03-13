@@ -231,4 +231,10 @@
   <data name="DefaultBuildStrategy_UndeterminedTargetType" xml:space="preserve">
     <value>Failed to determine type to build.</value>
   </data>
+  <data name="ExpressionCreationRule_CreateWithTypeNotSupported" xml:space="preserve">
+    <value>The class does not support creating values for types.</value>
+  </data>
+  <data name="ExpressionCreationRule_CreateWithParameterNotSupported" xml:space="preserve">
+    <value>The class does not support creating values for parameters.</value>
+  </data>
 </root>

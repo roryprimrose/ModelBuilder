@@ -11,7 +11,7 @@
             return false;
         }
 
-        protected override bool CanPopulate(Type type, string referenceName, IBuildConfiguration buildConfiguration,
+        protected override bool CanPopulate(Type type, string referenceName, IBuildConfiguration configuration,
             IBuildChain buildChain)
         {
             return false;

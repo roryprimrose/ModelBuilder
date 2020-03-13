@@ -3,6 +3,7 @@
     using System;
     using System.Linq.Expressions;
     using System.Reflection;
+    using ModelBuilder.Properties;
 
     /// <summary>
     ///     The <see cref="ExpressionCreationRule{T}" />
@@ -51,7 +52,7 @@
         /// <exception cref="NotSupportedException">The class does not support creating values for types.</exception>
         public object Create(Type type, IExecuteStrategy executeStrategy)
         {
-            throw new NotSupportedException("The class does not support creating values for types.");
+            throw new NotSupportedException(Resources.ExpressionCreationRule_CreateWithTypeNotSupported);
         }
 
         /// <inheritdoc />
@@ -64,7 +65,7 @@
         /// <exception cref="NotSupportedException">The class does not support creating values for parameters.</exception>
         public object Create(ParameterInfo parameterInfo, IExecuteStrategy executeStrategy)
         {
-            throw new NotSupportedException("The class does not support creating values for parameters.");
+            throw new NotSupportedException(Resources.ExpressionCreationRule_CreateWithParameterNotSupported);
         }
 
         /// <inheritdoc />

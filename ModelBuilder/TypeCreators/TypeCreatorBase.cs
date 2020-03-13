@@ -183,11 +183,11 @@ namespace ModelBuilder.TypeCreators
         /// </summary>
         /// <param name="type">The type to evaluate.</param>
         /// <param name="referenceName">The property or parameter name to evaluate.</param>
-        /// <param name="buildConfiguration">The build configuration.</param>
+        /// <param name="configuration">The build configuration.</param>
         /// <param name="buildChain">The chain of instances built up to this point.</param>
         /// <returns><c>true</c> if this creator can populate the type; otherwise <c>false</c>.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
-        protected virtual bool CanPopulate(Type type, string referenceName, IBuildConfiguration buildConfiguration,
+        protected virtual bool CanPopulate(Type type, string referenceName, IBuildConfiguration configuration,
             IBuildChain buildChain)
         {
             if (type == null)

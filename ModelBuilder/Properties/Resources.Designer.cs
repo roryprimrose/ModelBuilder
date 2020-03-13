@@ -295,6 +295,24 @@ namespace ModelBuilder.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The class does not support creating values for parameters..
+        /// </summary>
+        internal static string ExpressionCreationRule_CreateWithParameterNotSupported {
+            get {
+                return ResourceManager.GetString("ExpressionCreationRule_CreateWithParameterNotSupported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The class does not support creating values for types..
+        /// </summary>
+        internal static string ExpressionCreationRule_CreateWithTypeNotSupported {
+            get {
+                return ResourceManager.GetString("ExpressionCreationRule_CreateWithTypeNotSupported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No supporting ICreationRule, ITypeCreator or IValueGenerator was found to build the type &apos;{0}&apos;.
         /// </summary>
         internal static string NoMatchingBuildActionFound {

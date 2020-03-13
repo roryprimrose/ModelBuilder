@@ -20,7 +20,7 @@
 
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
-        protected override bool CanPopulate(Type type, string referenceName, IBuildConfiguration buildConfiguration,
+        protected override bool CanPopulate(Type type, string referenceName, IBuildConfiguration configuration,
             IBuildChain buildChain)
         {
             if (type == null)

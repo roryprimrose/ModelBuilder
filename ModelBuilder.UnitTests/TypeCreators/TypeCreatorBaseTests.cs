@@ -459,10 +459,10 @@
                 return type == typeof(List<string>);
             }
 
-            protected override bool CanPopulate(Type type, string referenceName, IBuildConfiguration buildConfiguration,
+            protected override bool CanPopulate(Type type, string referenceName, IBuildConfiguration configuration,
                 IBuildChain buildChain)
             {
-                var canPopulate = base.CanPopulate(type, referenceName, buildConfiguration, buildChain);
+                var canPopulate = base.CanPopulate(type, referenceName, configuration, buildChain);
 
                 if (canPopulate == false)
                 {

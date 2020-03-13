@@ -3,76 +3,76 @@
     public class NumericParameterTest
     {
         public NumericParameterTest(
-            sbyte param_sbyte,
-            byte param_byte,
-            short param_short,
-            ushort param_ushort,
-            int param_int,
-            uint param_uint,
-            long param_long,
-            ulong param_ulong,
-            double param_double,
-            float param_float,
-            decimal param_decimal,
-            sbyte? paramNullable_sbyte,
-            byte? paramNullable_byte,
-            short? paramNullable_short,
-            ushort? paramNullable_ushort,
-            int? paramNullable_int,
-            uint? paramNullable_uint,
-            long? paramNullable_long,
-            ulong? paramNullable_ulong,
-            double? paramNullable_double,
-            float? paramNullable_float,
-            decimal? paramNullable_decimal
+            sbyte paramSbyte,
+            byte paramByte,
+            short paramShort,
+            ushort paramUshort,
+            int paramInt,
+            uint paramUint,
+            long paramLong,
+            ulong paramUlong,
+            double paramDouble,
+            float paramFloat,
+            decimal paramDecimal,
+            sbyte? paramNullableSbyte,
+            byte? paramNullableByte,
+            short? paramNullableShort,
+            ushort? paramNullableUshort,
+            int? paramNullableInt,
+            uint? paramNullableUint,
+            long? paramNullableLong,
+            ulong? paramNullableUlong,
+            double? paramNullableDouble,
+            float? paramNullableFloat,
+            decimal? paramNullableDecimal
         )
         {
-            Param_sbyte = param_sbyte;
-            Param_byte = param_byte;
-            Param_short = param_short;
-            Param_ushort = param_ushort;
-            Param_int = param_int;
-            Param_uint = param_uint;
-            Param_long = param_long;
-            Param_ulong = param_ulong;
-            Param_double = param_double;
-            Param_float = param_float;
-            Param_decimal = param_decimal;
-            ParamNullable_sbyte = paramNullable_sbyte;
-            ParamNullable_byte = paramNullable_byte;
-            ParamNullable_short = paramNullable_short;
-            ParamNullable_ushort = paramNullable_ushort;
-            ParamNullable_int = paramNullable_int;
-            ParamNullable_uint = paramNullable_uint;
-            ParamNullable_long = paramNullable_long;
-            ParamNullable_ulong = paramNullable_ulong;
-            ParamNullable_double = paramNullable_double;
-            ParamNullable_float = paramNullable_float;
-            ParamNullable_decimal = paramNullable_decimal;
+            ParamSbyte = paramSbyte;
+            ParamByte = paramByte;
+            ParamShort = paramShort;
+            ParamUshort = paramUshort;
+            ParamInt = paramInt;
+            ParamUint = paramUint;
+            ParamLong = paramLong;
+            ParamUlong = paramUlong;
+            ParamDouble = paramDouble;
+            ParamFloat = paramFloat;
+            ParamDecimal = paramDecimal;
+            ParamNullableSbyte = paramNullableSbyte;
+            ParamNullableByte = paramNullableByte;
+            ParamNullableShort = paramNullableShort;
+            ParamNullableUshort = paramNullableUshort;
+            ParamNullableInt = paramNullableInt;
+            ParamNullableUint = paramNullableUint;
+            ParamNullableLong = paramNullableLong;
+            ParamNullableUlong = paramNullableUlong;
+            ParamNullableDouble = paramNullableDouble;
+            ParamNullableFloat = paramNullableFloat;
+            ParamNullableDecimal = paramNullableDecimal;
         }
 
-        public byte Param_byte { get; }
-        public decimal Param_decimal { get; }
-        public double Param_double { get; }
-        public float Param_float { get; }
-        public int Param_int { get; }
-        public long Param_long { get; }
+        public byte ParamByte { get; }
+        public decimal ParamDecimal { get; }
+        public double ParamDouble { get; }
+        public float ParamFloat { get; }
+        public int ParamInt { get; }
+        public long ParamLong { get; }
 
-        public sbyte Param_sbyte { get; }
-        public short Param_short { get; }
-        public uint Param_uint { get; }
-        public ulong Param_ulong { get; }
-        public ushort Param_ushort { get; }
-        public byte? ParamNullable_byte { get; }
-        public decimal? ParamNullable_decimal { get; }
-        public double? ParamNullable_double { get; }
-        public float? ParamNullable_float { get; }
-        public int? ParamNullable_int { get; }
-        public long? ParamNullable_long { get; }
-        public sbyte? ParamNullable_sbyte { get; }
-        public short? ParamNullable_short { get; }
-        public uint? ParamNullable_uint { get; }
-        public ulong? ParamNullable_ulong { get; }
-        public ushort? ParamNullable_ushort { get; }
+        public sbyte ParamSbyte { get; }
+        public short ParamShort { get; }
+        public uint ParamUint { get; }
+        public ulong ParamUlong { get; }
+        public ushort ParamUshort { get; }
+        public byte? ParamNullableByte { get; }
+        public decimal? ParamNullableDecimal { get; }
+        public double? ParamNullableDouble { get; }
+        public float? ParamNullableFloat { get; }
+        public int? ParamNullableInt { get; }
+        public long? ParamNullableLong { get; }
+        public sbyte? ParamNullableSbyte { get; }
+        public short? ParamNullableShort { get; }
+        public uint? ParamNullableUint { get; }
+        public ulong? ParamNullableUlong { get; }
+        public ushort? ParamNullableUshort { get; }
     }
 }

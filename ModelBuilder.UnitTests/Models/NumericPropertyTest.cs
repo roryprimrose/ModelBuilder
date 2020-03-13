@@ -2,27 +2,27 @@
 {
     public class NumericPropertyTest
     {
-        public byte Prop_byte { get; set; }
-        public decimal Prop_decimal { get; set; }
-        public double Prop_double { get; set; }
-        public float Prop_float { get; set; }
-        public int Prop_int { get; set; }
-        public long Prop_long { get; set; }
-        public sbyte Prop_sbyte { get; set; }
-        public short Prop_short { get; set; }
-        public uint Prop_uint { get; set; }
-        public ulong Prop_ulong { get; set; }
-        public ushort Prop_ushort { get; set; }
-        public byte? PropNullable_byte { get; set; }
-        public decimal? PropNullable_decimal { get; set; }
-        public double? PropNullable_double { get; set; }
-        public float? PropNullable_float { get; set; }
-        public int? PropNullable_int { get; set; }
-        public long? PropNullable_long { get; set; }
-        public sbyte? PropNullable_sbyte { get; set; }
-        public short? PropNullable_short { get; set; }
-        public uint? PropNullable_uint { get; set; }
-        public ulong? PropNullable_ulong { get; set; }
-        public ushort? PropNullable_ushort { get; set; }
+        public byte PropByte { get; set; }
+        public decimal PropDecimal { get; set; }
+        public double PropDouble { get; set; }
+        public float PropFloat { get; set; }
+        public int PropInt { get; set; }
+        public long PropLong { get; set; }
+        public sbyte PropSbyte { get; set; }
+        public short PropShort { get; set; }
+        public uint PropUint { get; set; }
+        public ulong PropUlong { get; set; }
+        public ushort PropUshort { get; set; }
+        public byte? PropNullableByte { get; set; }
+        public decimal? PropNullableDecimal { get; set; }
+        public double? PropNullableDouble { get; set; }
+        public float? PropNullableFloat { get; set; }
+        public int? PropNullableInt { get; set; }
+        public long? PropNullableLong { get; set; }
+        public sbyte? PropNullableSbyte { get; set; }
+        public short? PropNullableShort { get; set; }
+        public uint? PropNullableUint { get; set; }
+        public ulong? PropNullableUlong { get; set; }
+        public ushort? PropNullableUshort { get; set; }
     }
 }

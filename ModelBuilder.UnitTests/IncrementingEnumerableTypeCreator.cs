@@ -26,10 +26,10 @@
             return generator.IsSupported(baseType);
         }
 
-        protected override bool CanPopulate(Type type, string referenceName, IBuildConfiguration buildConfiguration,
+        protected override bool CanPopulate(Type type, string referenceName, IBuildConfiguration configuration,
             IBuildChain buildChain)
         {
-            if (base.CanPopulate(type, referenceName, buildConfiguration, buildChain) == false)
+            if (base.CanPopulate(type, referenceName, configuration, buildChain) == false)
             {
                 return false;
             }
