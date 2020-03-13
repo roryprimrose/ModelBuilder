@@ -132,7 +132,7 @@
         public void ThrowsExceptionWhenCreatedWithNullValueGenerator()
         {
             Action action = () =>
-                new ExpressionCreationRule<Person>(x => x.FirstName, (object) null, Environment.TickCount);
+                new ExpressionCreationRule<Person>(x => x.FirstName, null, Environment.TickCount);
 
             action.Should().Throw<ArgumentNullException>();
         }
