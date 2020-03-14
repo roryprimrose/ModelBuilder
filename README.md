@@ -307,4 +307,4 @@ The package had some large design changes that introduce breaking changes to the
 - Added IBuildConfiguration.TypeResolver
 - Added IBuildConfiguration parameter to ITypeCreator.CanCreate
 - ICreationRule, ITypeCreator and IValueGenerator now have overloads for ParameterInfo, PropertyInfo and Type rather than (Type, string)
-- IExecuteOrderRule and IIgnoreRule now have overloads for ParameterInfo, PropertyInfo and Type rather than (Type, string)
+- IExecuteOrderRule, IIgnoreRule and IPostBuildAction now have overloads for ParameterInfo, PropertyInfo and Type rather than (Type, string)

@@ -1,11 +1,15 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
     using FluentAssertions;
     using ModelBuilder.BuildActions;
+    using ModelBuilder.ExecuteOrderRules;
+    using ModelBuilder.TypeCreators;
     using ModelBuilder.UnitTests.Models;
+    using ModelBuilder.ValueGenerators;
     using NSubstitute;
     using Xunit;
     using Xunit.Abstractions;
@@ -247,6 +251,26 @@
         }
 
         [Fact]
+        public void CreateEvaluatesPostBuildActionsForParametersTest()
+        {
+            var postBuildAction = Substitute.For<IPostBuildAction>();
+            var buildConfiguration = Model.UsingDefaultConfiguration().Add(postBuildAction);
+            var parameterInfo = typeof(SimpleConstructor).GetConstructors()
+                .First(x => x.GetParameters().FirstOrDefault()?.Name == "model").GetParameters().First();
+
+            postBuildAction.IsMatch(parameterInfo, Arg.Any<IBuildChain>())
+                .Returns(true);
+
+            var target = new DefaultExecuteStrategy();
+
+            target.Initialize(buildConfiguration);
+
+            target.Create(typeof(SimpleConstructor));
+
+            postBuildAction.Received().Execute(Arg.Any<SlimModel>(), parameterInfo, Arg.Any<IBuildChain>());
+        }
+
+        [Fact]
         public void CreateEvaluatesPostBuildActionsInOrderOfDescendingPriorityTest()
         {
             var firstAction = Substitute.For<IPostBuildAction>();
@@ -254,18 +278,18 @@
             var buildConfiguration = Model.UsingDefaultConfiguration().Add(firstAction).Add(secondAction);
             var executeCount = 0;
 
-            firstAction.IsMatch(typeof(Simple), Arg.Any<string>(), Arg.Any<IBuildChain>()).Returns(true);
+            firstAction.IsMatch(typeof(Simple), Arg.Any<IBuildChain>()).Returns(true);
             firstAction.Priority.Returns(int.MaxValue);
-            secondAction.IsMatch(typeof(Simple), Arg.Any<string>(), Arg.Any<IBuildChain>()).Returns(true);
+            secondAction.IsMatch(typeof(Simple), Arg.Any<IBuildChain>()).Returns(true);
             secondAction.Priority.Returns(int.MinValue);
-            firstAction.WhenForAnyArgs(x => x.Execute(null, null, null)).Do(
+            firstAction.WhenForAnyArgs(x => x.Execute(null, (Type) null, null)).Do(
                 x =>
                 {
                     executeCount++;
 
                     executeCount.Should().Be(1);
                 });
-            secondAction.WhenForAnyArgs(x => x.Execute(null, null, null)).Do(
+            secondAction.WhenForAnyArgs(x => x.Execute(null, (Type) null, null)).Do(
                 x =>
                 {
                     executeCount++;
@@ -279,8 +303,8 @@
 
             target.Create(typeof(Simple));
 
-            firstAction.Received().Execute(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<IBuildChain>());
-            secondAction.Received().Execute(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<IBuildChain>());
+            firstAction.Received().Execute(Arg.Any<Simple>(), Arg.Any<Type>(), Arg.Any<IBuildChain>());
+            secondAction.Received().Execute(Arg.Any<Simple>(), Arg.Any<Type>(), Arg.Any<IBuildChain>());
         }
 
         [Fact]
@@ -288,8 +312,9 @@
         {
             var postBuildAction = Substitute.For<IPostBuildAction>();
             var buildConfiguration = Model.UsingDefaultConfiguration().Add(postBuildAction);
+            var propertyInfo = typeof(ReadOnlyParent).GetProperty(nameof(ReadOnlyParent.Company));
 
-            postBuildAction.IsMatch(typeof(Company), nameof(ReadOnlyParent.Company), Arg.Any<IBuildChain>())
+            postBuildAction.IsMatch(propertyInfo, Arg.Any<IBuildChain>())
                 .Returns(true);
 
             var target = new DefaultExecuteStrategy();
@@ -298,7 +323,7 @@
 
             target.Create(typeof(ReadOnlyParent));
 
-            postBuildAction.Received().Execute(typeof(Company), nameof(ReadOnlyParent.Company), Arg.Any<IBuildChain>());
+            postBuildAction.Received().Execute(Arg.Any<Company>(), propertyInfo, Arg.Any<IBuildChain>());
         }
 
         [Fact]
@@ -308,8 +333,8 @@
             var secondAction = Substitute.For<IPostBuildAction>();
             var buildConfiguration = Model.UsingDefaultConfiguration().Add(firstAction).Add(secondAction);
 
-            firstAction.IsMatch(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<IBuildChain>()).Returns(false);
-            secondAction.IsMatch(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<IBuildChain>()).Returns(true);
+            firstAction.IsMatch(Arg.Any<Type>(), Arg.Any<IBuildChain>()).Returns(false);
+            secondAction.IsMatch(Arg.Any<Type>(), Arg.Any<IBuildChain>()).Returns(true);
 
             var target = new DefaultExecuteStrategy();
 
@@ -317,8 +342,8 @@
 
             target.Create(typeof(Simple));
 
-            firstAction.DidNotReceive().Execute(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<IBuildChain>());
-            secondAction.Received().Execute(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<IBuildChain>());
+            firstAction.DidNotReceive().Execute(Arg.Any<object>(), Arg.Any<Type>(), Arg.Any<IBuildChain>());
+            secondAction.Received().Execute(Arg.Any<object>(), Arg.Any<Type>(), Arg.Any<IBuildChain>());
         }
 
         [Fact]
@@ -327,7 +352,7 @@
             var action = Substitute.For<IPostBuildAction>();
             var buildConfiguration = Model.UsingDefaultConfiguration().Add(action);
 
-            action.IsMatch(Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<IBuildChain>()).Returns(true);
+            action.IsMatch(Arg.Any<Type>(), Arg.Any<IBuildChain>()).Returns(true);
 
             var target = new DefaultExecuteStrategy();
 
@@ -335,8 +360,45 @@
 
             target.Create(typeof(SlimModel));
 
-            action.Received().Execute(typeof(SlimModel), null, Arg.Any<IBuildChain>());
-            action.Received().Execute(typeof(Guid), nameof(SlimModel.Value), Arg.Any<IBuildChain>());
+            action.Received().Execute(Arg.Any<SlimModel>(), typeof(SlimModel), Arg.Any<IBuildChain>());
+            action.Received().Execute(Arg.Any<SlimModel>(), typeof(SlimModel), Arg.Any<IBuildChain>());
+        }
+
+        [Fact]
+        public void CreatePopulatesPropertiesWhenExecuteOrderRulesIsNullTest()
+        {
+            var expected = new SlimModel();
+            var value = Guid.NewGuid();
+
+            var creator = Substitute.For<ITypeCreator>();
+            var generator = Substitute.For<IValueGenerator>();
+            var resolver = Substitute.For<IPropertyResolver>();
+            var buildConfiguration = Substitute.For<IBuildConfiguration>();
+
+            creator.CanCreate(typeof(SlimModel), buildConfiguration, Arg.Any<IBuildChain>()).Returns(true);
+            creator.CanPopulate(typeof(SlimModel), buildConfiguration, Arg.Any<IBuildChain>()).Returns(true);
+            creator.Create(typeof(SlimModel), Arg.Any<IExecuteStrategy>(), null).Returns(expected);
+            creator.Populate(expected, Arg.Any<IExecuteStrategy>()).Returns(expected);
+            creator.AutoPopulate.Returns(true);
+            resolver.CanPopulate(Arg.Any<PropertyInfo>()).Returns(true);
+            resolver.ShouldPopulateProperty(buildConfiguration, expected, Arg.Any<PropertyInfo>(),
+                Array.Empty<object>()).Returns(true);
+            generator.IsMatch(Arg.Any<PropertyInfo>(), Arg.Any<IBuildChain>()).Returns(true);
+            generator.Generate(Arg.Any<PropertyInfo>(), Arg.Any<IExecuteStrategy>()).Returns(value);
+            buildConfiguration.PropertyResolver.Returns(resolver);
+            buildConfiguration.ExecuteOrderRules.Returns((ICollection<IExecuteOrderRule>) null);
+            buildConfiguration.TypeCreators.Returns(new List<ITypeCreator> {creator});
+            buildConfiguration.ValueGenerators.Returns(new List<IValueGenerator> {generator});
+
+            var target = new DefaultExecuteStrategy();
+
+            target.Initialize(buildConfiguration);
+
+            var actual = (SlimModel) target.Create(typeof(SlimModel));
+
+            actual.Should().Be(expected);
+            resolver.Received().CanPopulate(Arg.Any<PropertyInfo>());
+            actual.Value.Should().Be(value);
         }
 
         [Fact]
@@ -929,6 +991,18 @@
             var property = typeof(Person).GetProperty("FirstName");
 
             Action action = () => target.RunTest(property);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void PopulatePropertyThrowsExceptionWithNullProperty()
+        {
+            var instance = new SlimModel();
+
+            var sut = new PopulatePropertyWrapper();
+
+            Action action = () => sut.RunTest(null, instance);
 
             action.Should().Throw<ArgumentNullException>();
         }

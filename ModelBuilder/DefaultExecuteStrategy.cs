@@ -77,11 +77,11 @@
             var capability = _buildProcessor.GetBuildCapability(Configuration, _buildHistory, BuildRequirement.Populate,
                 instance.GetType());
 
-            return Populate(capability, instance, null);
+            return Populate(capability, instance);
         }
 
         /// <summary>
-        /// Builds a value for the specified type.
+        ///     Builds a value for the specified type.
         /// </summary>
         /// <param name="type">The type of value to build.</param>
         /// <param name="args">The arguments used to create the value.</param>
@@ -93,13 +93,17 @@
                 throw new ArgumentNullException(nameof(type));
             }
 
-            return Build(
+            var instance = Build(
                 () => _buildProcessor.GetBuildCapability(Configuration, BuildChain, BuildRequirement.Create, type),
                 items => _buildProcessor.Build(this, type, items), type, null, args);
+
+            RunPostBuildActions(instance, type);
+
+            return instance;
         }
 
         /// <summary>
-        /// Builds a value for the specified parameter.
+        ///     Builds a value for the specified parameter.
         /// </summary>
         /// <param name="parameterInfo">The parameter to build a value for.</param>
         /// <returns>The value created for the parameter.</returns>
@@ -110,15 +114,19 @@
                 throw new ArgumentNullException(nameof(parameterInfo));
             }
 
-            return Build(
+            var instance = Build(
                 () => _buildProcessor.GetBuildCapability(Configuration, BuildChain, BuildRequirement.Create,
                     parameterInfo),
                 items => _buildProcessor.Build(this, parameterInfo, items), parameterInfo.ParameterType,
                 parameterInfo.Name, null);
+
+            RunPostBuildActions(instance, parameterInfo);
+
+            return instance;
         }
 
         /// <summary>
-        /// Builds a value for the specified property.
+        ///     Builds a value for the specified property.
         /// </summary>
         /// <param name="propertyInfo">The property to build a value for.</param>
         /// <param name="args">The arguments used to create the parent instance.</param>
@@ -130,11 +138,15 @@
                 throw new ArgumentNullException(nameof(propertyInfo));
             }
 
-            return Build(
+            var instance = Build(
                 () => _buildProcessor.GetBuildCapability(Configuration, BuildChain, BuildRequirement.Create,
                     propertyInfo),
                 items => _buildProcessor.Build(this, propertyInfo, items), propertyInfo.PropertyType, propertyInfo.Name,
                 args);
+
+            RunPostBuildActions(instance, propertyInfo);
+
+            return instance;
         }
 
         /// <summary>
@@ -142,7 +154,7 @@
         /// </summary>
         /// <param name="propertyInfo">The property to populate.</param>
         /// <param name="instance">The instance being populated.</param>
-        /// <param name="args">The arguments used to create <paramref name="instance"/>.</param>
+        /// <param name="args">The arguments used to create <paramref name="instance" />.</param>
         protected virtual void PopulateProperty(PropertyInfo propertyInfo, object instance,
             params object[] args)
         {
@@ -185,7 +197,11 @@
             var capability = _buildProcessor.GetBuildCapability(Configuration, _buildHistory, BuildRequirement.Populate,
                 existingValue.GetType());
 
-            Populate(capability, existingValue, propertyInfo.Name, args);
+            Populate(capability, existingValue, args);
+
+            // This object was never created here but was populated
+            // Run post build actions against it so that they can be applied against this existing instance
+            RunPostBuildActions(existingValue, propertyInfo);
         }
 
         private void AutoPopulateInstance(object instance, object[] args)
@@ -196,8 +212,8 @@
             var type = instance.GetType();
 
             var propertyInfos = from x in propertyResolver.GetProperties(type)
-                                orderby GetMaximumOrderPriority(x) descending
-                                select x;
+                orderby GetMaximumOrderPriority(x) descending
+                select x;
 
             foreach (var propertyInfo in propertyInfos)
             {
@@ -306,12 +322,13 @@
                     // where the build action didn't support populating the original type
                     // It has however created a different type that may support population
                     // The example here is IEnumerable<T> which may be built as something like List<T>
-                    capability = _buildProcessor.GetBuildCapability(Configuration, _buildHistory, BuildRequirement.Create,
+                    capability = _buildProcessor.GetBuildCapability(Configuration, _buildHistory,
+                        BuildRequirement.Create,
                         instance.GetType());
                 }
 
                 // Populate the properties
-                instance = Populate(capability, instance, referenceName, args);
+                instance = Populate(capability, instance, args);
 
                 return instance;
             }
@@ -343,9 +360,9 @@
             }
 
             var matchingRules = from x in Configuration.ExecuteOrderRules
-                                where x.IsMatch(property)
-                                orderby x.Priority descending
-                                select x;
+                where x.IsMatch(property)
+                orderby x.Priority descending
+                select x;
             var matchingRule = matchingRules.FirstOrDefault();
 
             if (matchingRule == null)
@@ -356,13 +373,11 @@
             return matchingRule.Priority;
         }
 
-        private object Populate(BuildCapability capability, object instance, string referenceName, params object[] args)
+        private object Populate(BuildCapability capability, object instance, params object[] args)
         {
             if (capability == null
                 || capability.SupportsPopulate == false)
             {
-                RunPostBuildActions(instance, referenceName);
-
                 return instance;
             }
 
@@ -382,8 +397,6 @@
                 // Allow the type creator to do its own population of the instance
                 instance = _buildProcessor.Populate(this, instance);
 
-                RunPostBuildActions(instance, referenceName);
-
                 return instance;
             }
             finally
@@ -393,12 +406,10 @@
             }
         }
 
-        private void RunPostBuildActions(object instance, string referenceName)
+        private void RunPostBuildActions(object instance, Type type)
         {
-            var type = instance.GetType();
-
             var postBuildActions = Configuration.PostBuildActions
-                ?.Where(x => x.IsMatch(type, referenceName, _buildHistory)).OrderByDescending(x => x.Priority);
+                ?.Where(x => x.IsMatch(type, _buildHistory)).OrderByDescending(x => x.Priority);
 
             if (postBuildActions != null)
             {
@@ -406,7 +417,39 @@
                 {
                     Log.PostBuildAction(type, postBuildAction.GetType(), instance);
 
-                    postBuildAction.Execute(type, referenceName, _buildHistory);
+                    postBuildAction.Execute(instance, type, _buildHistory);
+                }
+            }
+        }
+
+        private void RunPostBuildActions(object instance, ParameterInfo parameterInfo)
+        {
+            var postBuildActions = Configuration.PostBuildActions
+                ?.Where(x => x.IsMatch(parameterInfo, _buildHistory)).OrderByDescending(x => x.Priority);
+
+            if (postBuildActions != null)
+            {
+                foreach (var postBuildAction in postBuildActions)
+                {
+                    Log.PostBuildAction(parameterInfo.ParameterType, postBuildAction.GetType(), instance);
+
+                    postBuildAction.Execute(instance, parameterInfo, _buildHistory);
+                }
+            }
+        }
+
+        private void RunPostBuildActions(object instance, PropertyInfo propertyInfo)
+        {
+            var postBuildActions = Configuration.PostBuildActions
+                ?.Where(x => x.IsMatch(propertyInfo, _buildHistory)).OrderByDescending(x => x.Priority);
+
+            if (postBuildActions != null)
+            {
+                foreach (var postBuildAction in postBuildActions)
+                {
+                    Log.PostBuildAction(propertyInfo.PropertyType, postBuildAction.GetType(), instance);
+
+                    postBuildAction.Execute(instance, propertyInfo, _buildHistory);
                 }
             }
         }

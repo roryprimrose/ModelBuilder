@@ -111,6 +111,18 @@
         }
 
         [Fact]
+        public void IsMatchThrowsExceptionWithNullProperty()
+        {
+            var priority = Environment.TickCount;
+
+            var sut = new ExpressionCreationRule<Person>(x => x.FirstName, (object) null, priority);
+
+            Action action = () => sut.IsMatch((PropertyInfo) null);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
         public void PriorityReturnsConstructorValue()
         {
             var priority = Environment.TickCount;
@@ -135,6 +147,16 @@
                 new ExpressionCreationRule<Person>(x => x.FirstName, null, Environment.TickCount);
 
             action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void ToStringReturnsExpressionDisplay()
+        {
+            var sut = new ExpressionCreationRule<Person>(x => x.FirstName, (object) null, Environment.TickCount);
+
+            var actual = sut.ToString();
+
+            actual.Should().NotBe(sut.GetType().ToString());
         }
     }
 }
