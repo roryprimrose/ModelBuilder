@@ -130,5 +130,15 @@
 
             action.Should().Throw<ArgumentNullException>();
         }
+
+        [Fact]
+        public void ToStringReturnsExpressionDisplay()
+        {
+            var sut = new ExpressionExecuteOrderRule<Person>(x => x.FirstName, Environment.TickCount);
+
+            var actual = sut.ToString();
+
+            actual.Should().NotBe(sut.GetType().ToString());
+        }
     }
 }

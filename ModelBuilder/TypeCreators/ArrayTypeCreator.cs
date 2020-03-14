@@ -2,7 +2,6 @@
 {
     using System;
     using System.Diagnostics;
-    using System.Diagnostics.CodeAnalysis;
 
     /// <summary>
     ///     The <see cref="ArrayTypeCreator" />
@@ -12,15 +11,17 @@
     {
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
-        public override bool CanCreate(Type type, string referenceName, IBuildChain buildChain)
+        protected override bool CanCreate(Type type, string referenceName, IBuildConfiguration configuration,
+            IBuildChain buildChain)
         {
             // Creating using this creator has the same rules for populate as it does for create
-            return CanPopulate(type, referenceName, buildChain);
+            return CanPopulate(type, referenceName, configuration, buildChain);
         }
 
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
-        public override bool CanPopulate(Type type, string referenceName, IBuildChain buildChain)
+        protected override bool CanPopulate(Type type, string referenceName, IBuildConfiguration configuration,
+            IBuildChain buildChain)
         {
             if (type == null)
             {
@@ -35,20 +36,33 @@
             return false;
         }
 
+        /// <summary>
+        ///     Creates a child item given the context of a possible previous item being created.
+        /// </summary>
+        /// <param name="type">The type of value to generate.</param>
+        /// <param name="executeStrategy">The execute strategy.</param>
+        /// <param name="previousItem">The previous item generated, or <c>null</c>.</param>
+        /// <returns>The new item generated.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is <c>null</c>.</exception>
+        protected virtual object CreateChildItem(Type type, IExecuteStrategy executeStrategy, object previousItem)
+        {
+            if (executeStrategy == null)
+            {
+                throw new ArgumentNullException(nameof(executeStrategy));
+            }
+
+            return executeStrategy.Create(type);
+        }
+
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
-        [SuppressMessage(
-            "Microsoft.Design",
-            "CA1062:Validate arguments of public methods",
-            MessageId = "0",
-            Justification = "The parameter is validated in the call to VerifyCreateRequest.")]
-        public override object Create(
-            Type type,
-            string referenceName,
-            IExecuteStrategy executeStrategy,
+        protected override object CreateInstance(Type type, string referenceName, IExecuteStrategy executeStrategy,
             params object[] args)
         {
-            VerifyCreateRequest(type, referenceName, executeStrategy);
+            if (type == null)
+            {
+                throw new ArgumentNullException(nameof(type));
+            }
 
             var count = Generator.NextValue(1, MaxCount);
 
@@ -72,7 +86,7 @@
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="instance" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is <c>null</c>.</exception>
-        public override object Populate(object instance, IExecuteStrategy executeStrategy)
+        protected override object PopulateInstance(object instance, IExecuteStrategy executeStrategy)
         {
             if (instance == null)
             {
@@ -86,13 +100,11 @@
 
             var instanceType = instance.GetType();
 
-            VerifyCreateRequest(instanceType, null, executeStrategy);
-
-            var target = (Array)instance;
+            var target = (Array) instance;
 
             if (target.Length == 0)
             {
-                return base.Populate(instance, executeStrategy);
+                return instance;
             }
 
             Type itemType;
@@ -130,25 +142,7 @@
                 previousItem = childInstance;
             }
 
-            return base.Populate(instance, executeStrategy);
-        }
-
-        /// <summary>
-        ///     Creates a child item given the context of a possible previous item being created.
-        /// </summary>
-        /// <param name="type">The type of value to generate.</param>
-        /// <param name="executeStrategy">The execute strategy.</param>
-        /// <param name="previousItem">The previous item generated, or <c>null</c>.</param>
-        /// <returns>The new item generated.</returns>
-        /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is <c>null</c>.</exception>
-        protected virtual object CreateChildItem(Type type, IExecuteStrategy executeStrategy, object previousItem)
-        {
-            if (executeStrategy == null)
-            {
-                throw new ArgumentNullException(nameof(executeStrategy));
-            }
-
-            return executeStrategy.Create(type);
+            return instance;
         }
 
         /// <summary>

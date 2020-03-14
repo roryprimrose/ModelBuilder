@@ -7,6 +7,7 @@
     using System.IO;
     using System.Linq;
     using System.Net.NetworkInformation;
+    using System.Reflection;
     using FluentAssertions;
     using ModelBuilder.TypeCreators;
     using ModelBuilder.UnitTests.Models;
@@ -62,19 +63,71 @@
         [InlineData(typeof(InheritedGenericCollection), true)]
         public void CanCreateReturnsWhetherTypeIsSupportedTest(Type type, bool supported)
         {
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+            var typeResolver = Substitute.For<ITypeResolver>();
+            var configuration = Substitute.For<IBuildConfiguration>();
+
+            configuration.TypeResolver.Returns(typeResolver);
+            typeResolver.GetBuildType(configuration, Arg.Any<Type>()).Returns(x => x.Arg<Type>());
+            executeStrategy.Configuration.Returns(configuration);
+
             var target = new EnumerableTypeCreator();
 
-            var actual = target.CanCreate(type, null, null);
+            var actual = target.CanCreate(type, configuration, null);
 
             actual.Should().Be(supported);
         }
 
         [Fact]
-        public void CanCreateThrowsExceptionWithNullTypeTest()
+        public void CanCreateThrowsExceptionWithNullParameterTest()
         {
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+            var typeResolver = Substitute.For<ITypeResolver>();
+            var configuration = Substitute.For<IBuildConfiguration>();
+
+            configuration.TypeResolver.Returns(typeResolver);
+            typeResolver.GetBuildType(configuration, Arg.Any<Type>()).Returns(x => x.Arg<Type>());
+            executeStrategy.Configuration.Returns(configuration);
+
             var target = new EnumerableTypeCreator();
 
-            Action action = () => target.CanCreate(null, null, null);
+            Action action = () => target.CanCreate((ParameterInfo) null, configuration, null);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void CanCreateThrowsExceptionWithNullPropertyTest()
+        {
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+            var typeResolver = Substitute.For<ITypeResolver>();
+            var configuration = Substitute.For<IBuildConfiguration>();
+
+            configuration.TypeResolver.Returns(typeResolver);
+            typeResolver.GetBuildType(configuration, Arg.Any<Type>()).Returns(x => x.Arg<Type>());
+            executeStrategy.Configuration.Returns(configuration);
+
+            var target = new EnumerableTypeCreator();
+
+            Action action = () => target.CanCreate((PropertyInfo) null, configuration, null);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void CanCreateThrowsExceptionWithNullTypeTest()
+        {
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+            var typeResolver = Substitute.For<ITypeResolver>();
+            var configuration = Substitute.For<IBuildConfiguration>();
+
+            configuration.TypeResolver.Returns(typeResolver);
+            typeResolver.GetBuildType(configuration, Arg.Any<Type>()).Returns(x => x.Arg<Type>());
+            executeStrategy.Configuration.Returns(configuration);
+
+            var target = new EnumerableTypeCreator();
+
+            Action action = () => target.CanCreate((Type) null, configuration, null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -110,19 +163,58 @@
         [InlineData(typeof(InheritedGenericCollection), true)]
         public void CanPopulateReturnsWhetherTypeIsSupportedTest(Type type, bool supported)
         {
+            var configuration = Substitute.For<IBuildConfiguration>();
+            var typeResolver = Substitute.For<ITypeResolver>();
+
+            typeResolver.GetBuildType(configuration, Arg.Any<Type>()).Returns(x => x.Arg<Type>());
+            configuration.TypeResolver.Returns(typeResolver);
+
             var target = new EnumerableTypeCreator();
 
-            var actual = target.CanPopulate(type, null, null);
+            var actual = target.CanPopulate(type, configuration, null);
 
             actual.Should().Be(supported);
+        }
+
+        [Fact]
+        public void CanPopulateThrowsExceptionWithNullConfigurationTest()
+        {
+            var target = new EnumerableTypeCreator();
+
+            Action action = () => target.CanPopulate(typeof(string), null, null);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void CanPopulateThrowsExceptionWithNullParameterTest()
+        {
+            var target = new EnumerableTypeCreator();
+            var configuration = Substitute.For<IBuildConfiguration>();
+
+            Action action = () => target.CanPopulate((ParameterInfo) null, configuration, null);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void CanPopulateThrowsExceptionWithNullPropertyTest()
+        {
+            var target = new EnumerableTypeCreator();
+            var configuration = Substitute.For<IBuildConfiguration>();
+
+            Action action = () => target.CanPopulate((PropertyInfo) null, configuration, null);
+
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
         public void CanPopulateThrowsExceptionWithNullTypeTest()
         {
             var target = new EnumerableTypeCreator();
+            var configuration = Substitute.For<IBuildConfiguration>();
 
-            Action action = () => target.CanPopulate(null, null, null);
+            Action action = () => target.CanPopulate((Type) null, configuration, null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -143,13 +235,19 @@
         public void CreateDoesNotPopulateListTest()
         {
             var buildChain = new BuildHistory();
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
 
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+            var typeResolver = Substitute.For<ITypeResolver>();
+            var configuration = Substitute.For<IBuildConfiguration>();
+
+            configuration.TypeResolver.Returns(typeResolver);
+            typeResolver.GetBuildType(configuration, Arg.Any<Type>()).Returns(x => x.Arg<Type>());
             executeStrategy.BuildChain.Returns(buildChain);
+            executeStrategy.Configuration.Returns(configuration);
 
             var target = new IncrementingEnumerableTypeCreator();
 
-            var result = (IList<int>) target.Create(typeof(IList<int>), null, executeStrategy);
+            var result = (IList<int>) target.Create(typeof(IList<int>), executeStrategy);
 
             result.Should().BeEmpty();
         }
@@ -166,13 +264,19 @@
         public void CreateReturnsInstanceTest(Type type)
         {
             var buildChain = new BuildHistory();
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
 
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+            var typeResolver = Substitute.For<ITypeResolver>();
+            var configuration = Substitute.For<IBuildConfiguration>();
+
+            configuration.TypeResolver.Returns(typeResolver);
+            typeResolver.GetBuildType(configuration, Arg.Any<Type>()).Returns(x => x.Arg<Type>());
             executeStrategy.BuildChain.Returns(buildChain);
+            executeStrategy.Configuration.Returns(configuration);
 
             var target = new EnumerableTypeCreator();
 
-            var actual = target.Create(type, null, executeStrategy);
+            var actual = target.Create(type, executeStrategy);
 
             actual.Should().NotBeNull();
         }
@@ -184,13 +288,19 @@
         public void CreateReturnsNewListOfSpecifiedTypeTest(Type targetType)
         {
             var buildChain = new BuildHistory();
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
 
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+            var typeResolver = Substitute.For<ITypeResolver>();
+            var configuration = Substitute.For<IBuildConfiguration>();
+
+            configuration.TypeResolver.Returns(typeResolver);
+            typeResolver.GetBuildType(configuration, Arg.Any<Type>()).Returns(x => x.Arg<Type>());
             executeStrategy.BuildChain.Returns(buildChain);
+            executeStrategy.Configuration.Returns(configuration);
 
             var target = new EnumerableTypeCreator();
 
-            var actual = target.Create(targetType, null, executeStrategy);
+            var actual = target.Create(targetType, executeStrategy);
 
             actual.Should().BeOfType<List<int>>();
             actual.As<List<int>>().Should().BeEmpty();
@@ -228,13 +338,19 @@
         public void CreateValidatesWhetherTypeIsSupportedTest(Type type, bool supported)
         {
             var buildChain = new BuildHistory();
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
 
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+            var typeResolver = Substitute.For<ITypeResolver>();
+            var configuration = Substitute.For<IBuildConfiguration>();
+
+            configuration.TypeResolver.Returns(typeResolver);
+            typeResolver.GetBuildType(configuration, Arg.Any<Type>()).Returns(x => x.Arg<Type>());
             executeStrategy.BuildChain.Returns(buildChain);
+            executeStrategy.Configuration.Returns(configuration);
 
             var target = new EnumerableTypeCreator();
 
-            Action action = () => target.Create(type, null, executeStrategy);
+            Action action = () => target.Create(type, executeStrategy);
 
             if (supported)
             {
@@ -250,11 +366,17 @@
         public void PopulateAddsItemsToCollectionFromExecuteStrategyTest()
         {
             var expected = new Collection<Guid>();
-
             var buildChain = new BuildHistory();
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
 
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+            var typeResolver = Substitute.For<ITypeResolver>();
+            var configuration = Substitute.For<IBuildConfiguration>();
+
+            configuration.TypeResolver.Returns(typeResolver);
+            typeResolver.GetBuildType(configuration, Arg.Any<Type>()).Returns(x => x.Arg<Type>());
             executeStrategy.BuildChain.Returns(buildChain);
+            executeStrategy.Configuration.Returns(configuration);
+
             executeStrategy.Create(typeof(Guid)).Returns(Guid.NewGuid());
 
             var target = new EnumerableTypeCreator
@@ -291,7 +413,7 @@
 
             executeStrategy.Initialize(configuration);
 
-            var actual = target.Create(type, null, executeStrategy);
+            var actual = target.Create(type, executeStrategy);
 
             target.Populate(actual, executeStrategy);
 
@@ -307,7 +429,12 @@
 
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
+            var configuration = Substitute.For<IBuildConfiguration>();
+            var typeResolver = Substitute.For<ITypeResolver>();
 
+            typeResolver.GetBuildType(configuration, Arg.Any<Type>()).Returns(x => x.Arg<Type>());
+            configuration.TypeResolver.Returns(typeResolver);
+            executeStrategy.Configuration.Returns(configuration);
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Create(typeof(Guid)).Returns(Guid.NewGuid());
 
@@ -330,7 +457,8 @@
         public void PopulateCanAddItemsBasedOnPreviousItemTest()
         {
             var actual = new List<int>();
-            var executeStrategy = Model.UsingDefaultConfiguration().UsingExecuteStrategy<DefaultExecuteStrategy<List<int>>>();
+            var executeStrategy = Model.UsingDefaultConfiguration()
+                .UsingExecuteStrategy<DefaultExecuteStrategy<List<int>>>();
 
             var target = new IncrementingEnumerableTypeCreator();
 
@@ -354,7 +482,12 @@
 
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
+            var configuration = Substitute.For<IBuildConfiguration>();
+            var typeResolver = Substitute.For<ITypeResolver>();
 
+            typeResolver.GetBuildType(configuration, Arg.Any<Type>()).Returns(x => x.Arg<Type>());
+            configuration.TypeResolver.Returns(typeResolver);
+            executeStrategy.Configuration.Returns(configuration);
             executeStrategy.BuildChain.Returns(buildChain);
 
             var target = new EnumerableTypeCreator();

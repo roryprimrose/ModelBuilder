@@ -12,7 +12,7 @@
     {
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
-        protected override bool IsSupported(Type type, string referenceName, IBuildChain buildChain)
+        protected override bool IsMatch(Type type, string referenceName, IBuildChain buildChain)
         {
             if (type == null)
             {
@@ -54,11 +54,11 @@
                 return new IPAddress(buffer);
             }
 
-            const string AddressFormat = "{0}.{1}.{2}.{3}";
+            const string addressFormat = "{0}.{1}.{2}.{3}";
 
             var address = string.Format(
                 CultureInfo.InvariantCulture,
-                AddressFormat,
+                addressFormat,
                 buffer[0],
                 buffer[1],
                 buffer[2],

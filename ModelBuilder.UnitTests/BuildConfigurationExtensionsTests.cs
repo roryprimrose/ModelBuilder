@@ -8,6 +8,7 @@
     using System.Reflection;
     using System.Text.RegularExpressions;
     using FluentAssertions;
+    using ModelBuilder.CreationRules;
     using ModelBuilder.ExecuteOrderRules;
     using ModelBuilder.IgnoreRules;
     using ModelBuilder.TypeCreators;
@@ -65,6 +66,7 @@
         {
             var priority = Environment.TickCount;
             var value = Guid.NewGuid().ToString();
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
 
             var target = new BuildConfiguration();
 
@@ -74,7 +76,7 @@
 
             rule.Priority.Should().Be(priority);
 
-            var actual = rule.Create(typeof(Person), nameof(Person.FirstName), null);
+            var actual = rule.Create(propertyInfo, null);
 
             actual.Should().Be(value);
         }
@@ -482,7 +484,7 @@
         [Fact]
         public void AddWithCreationRuleAddsRuleToCompilerTest()
         {
-            var rule = new CreationRule(typeof(Person), "FirstName", Environment.TickCount, (object) null);
+            var rule = new ExpressionCreationRule<Person>(x => x.FirstName, (object) null, Environment.TickCount);
 
             var target = new BuildConfiguration();
 
@@ -494,7 +496,7 @@
         [Fact]
         public void AddWithCreationRuleThrowsExceptionWithNullCompilerTest()
         {
-            var rule = new CreationRule(typeof(Person), "FirstName", Environment.TickCount, (object) null);
+            var rule = new ExpressionCreationRule<Person>(x => x.FirstName, (object)null, Environment.TickCount);
 
             Action action = () => BuildConfigurationExtensions.Add(null, rule);
 
@@ -506,7 +508,7 @@
         {
             var target = Substitute.For<IBuildConfiguration>();
 
-            Action action = () => target.Add((CreationRule) null);
+            Action action = () => target.Add((ICreationRule) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -716,8 +718,8 @@
             var target = Substitute.For<IBuildConfiguration>();
 
             target.ValueGenerators.Returns(generators);
-            generator.IsSupported(typeof(Guid), null, Arg.Any<IBuildChain>()).Returns(true);
-            generator.Generate(typeof(Guid), null, Arg.Any<IExecuteStrategy>()).Returns(value);
+            generator.IsMatch(typeof(Guid), Arg.Any<IBuildChain>()).Returns(true);
+            generator.Generate(typeof(Guid), Arg.Any<IExecuteStrategy>()).Returns(value);
 
             var actual = target.Create(typeof(Guid));
 
@@ -755,8 +757,8 @@
             var target = Substitute.For<IBuildConfiguration>();
 
             target.ValueGenerators.Returns(generators);
-            generator.IsSupported(typeof(Guid), null, Arg.Any<IBuildChain>()).Returns(true);
-            generator.Generate(typeof(Guid), null, Arg.Any<IExecuteStrategy>()).Returns(value);
+            generator.IsMatch(typeof(Guid), Arg.Any<IBuildChain>()).Returns(true);
+            generator.Generate(typeof(Guid), Arg.Any<IExecuteStrategy>()).Returns(value);
 
             var actual = target.Create<Guid>();
 
@@ -767,122 +769,6 @@
         public void CreateTThrowsExceptionWithNullBuildConfigurationTest()
         {
             Action action = () => ((IBuildConfiguration) null).Create<Guid>();
-
-            action.Should().Throw<ArgumentNullException>();
-        }
-
-        [Fact]
-        public void GetBuildTypeReturnsSourceWhenNoTypeMappingIsFound()
-        {
-            var source = typeof(string);
-
-            var buildLog = Substitute.For<IBuildLog>();
-            var sut = new BuildConfiguration().Mapping<Stream, MemoryStream>();
-
-            var actual = sut.GetBuildType(source, buildLog);
-
-            actual.Should().Be<string>();
-        }
-
-        [Fact]
-        public void GetBuildTypeReturnsSourceWhenTypeMappingIsEmpty()
-        {
-            var source = typeof(string);
-
-            var buildLog = Substitute.For<IBuildLog>();
-            var sut = new BuildConfiguration();
-
-            var actual = sut.GetBuildType(source, buildLog);
-
-            actual.Should().Be<string>();
-        }
-
-        [Fact]
-        public void GetBuildTypeReturnsSourceWhenTypeMappingIsNull()
-        {
-            var source = typeof(string);
-
-            var buildLog = Substitute.For<IBuildLog>();
-            var sut = Substitute.For<IBuildConfiguration>();
-
-            var actual = sut.GetBuildType(source, buildLog);
-
-            actual.Should().Be<string>();
-        }
-
-        [Fact]
-        public void GetBuildTypeReturnsTargetTypeWhenSourceIsAbstractClass()
-        {
-            var source = typeof(Entity);
-
-            var buildLog = Substitute.For<IBuildLog>();
-            var sut = new BuildConfiguration();
-
-            var actual = sut.GetBuildType(source, buildLog);
-
-            actual.Should().Be<Person>();
-        }
-
-        [Fact]
-        public void GetBuildTypeReturnsTargetTypeWhenSourceIsInterface()
-        {
-            var source = typeof(ITestItem);
-
-            var buildLog = Substitute.For<IBuildLog>();
-            var sut = new BuildConfiguration();
-
-            var actual = sut.GetBuildType(source, buildLog);
-
-            actual.Should().Be<TestItem>();
-        }
-
-        [Fact]
-        public void GetBuildTypeReturnsTargetTypeWhenTypeMappingFound()
-        {
-            var source = typeof(Stream);
-
-            var buildLog = Substitute.For<IBuildLog>();
-            var sut = new BuildConfiguration().Mapping<Stream, MemoryStream>();
-
-            var actual = sut.GetBuildType(source, buildLog);
-
-            actual.Should().Be<MemoryStream>();
-        }
-
-        [Fact]
-        public void GetBuildTypeThrowsExceptionWithNullBuildLog()
-        {
-            var source = typeof(string);
-
-            var sut = Substitute.For<IBuildConfiguration>();
-
-            Action action = () => sut.GetBuildType(source, null);
-
-            action.Should().Throw<ArgumentNullException>();
-        }
-
-        [Fact]
-        public void GetBuildTypeThrowsExceptionWithNullConfiguration()
-        {
-            var source = typeof(string);
-
-            var buildLog = Substitute.For<IBuildLog>();
-
-            IBuildConfiguration config = null;
-
-            Action action = () => config.GetBuildType(source, buildLog);
-
-            action.Should().Throw<ArgumentNullException>();
-        }
-
-        [Fact]
-        public void GetBuildTypeThrowsExceptionWithNullSourceType()
-        {
-            var buildLog = Substitute.For<IBuildLog>();
-
-            var sut = Substitute.For<IBuildConfiguration>();
-
-            Action action = () => sut.GetBuildType(null, buildLog);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -970,32 +856,14 @@
         [Fact]
         public void PopulateUsesDefaultExecuteStrategyToPopulateInstanceTest()
         {
-            var value = Guid.NewGuid();
             var expected = new SlimModel();
 
-            var target = Substitute.For<IBuildConfiguration>();
-            var creator = Substitute.For<ITypeCreator>();
-            var creators = new Collection<ITypeCreator>
-            {
-                creator
-            };
-            var generator = Substitute.For<IValueGenerator>();
-            var generators = new Collection<IValueGenerator>
-            {
-                generator
-            };
-
-            target.TypeCreators.Returns(creators);
-            target.ValueGenerators.Returns(generators);
-            creator.CanPopulate(typeof(SlimModel), null, Arg.Any<IBuildChain>()).Returns(true);
-            creator.Populate(expected, Arg.Any<IExecuteStrategy>()).Returns(expected);
-            generator.IsSupported(typeof(Guid), "Value", Arg.Is<IBuildChain>(x => x.Last == expected)).Returns(true);
-            generator.Generate(typeof(Guid), "Value", Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == expected))
-                .Returns(value);
+            var target = new BuildConfiguration().UsingModule<DefaultConfigurationModule>();
 
             var actual = target.Populate(expected);
 
             actual.Should().Be(expected);
+            actual.Value.Should().NotBeEmpty();
         }
 
         [Fact]

@@ -19,11 +19,11 @@
             var nullFound = false;
             var valueFound = false;
 
-            var target = new GuidValueGenerator();
+            var target = new Wrapper();
 
             for (var index = 0; index < 1000; index++)
             {
-                var value = (Guid?) target.Generate(typeof(Guid?), null, executeStrategy);
+                var value = (Guid?) target.RunGenerate(typeof(Guid?), null, executeStrategy);
 
                 if (value == null)
                 {
@@ -52,9 +52,9 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var target = new GuidValueGenerator();
+            var target = new Wrapper();
 
-            var actual = target.Generate(typeof(Guid), null, executeStrategy);
+            var actual = target.RunGenerate(typeof(Guid), null, executeStrategy);
 
             actual.Should().BeOfType<Guid>();
             actual.As<Guid>().Should().NotBeEmpty();
@@ -68,15 +68,15 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var target = new GuidValueGenerator();
+            var target = new Wrapper();
 
-            var first = (Guid) target.Generate(typeof(Guid), null, executeStrategy);
+            var first = (Guid) target.RunGenerate(typeof(Guid), null, executeStrategy);
 
             var second = first;
 
             for (var index = 0; index < 1000; index++)
             {
-                second = (Guid) target.Generate(typeof(Guid), null, executeStrategy);
+                second = (Guid) target.RunGenerate(typeof(Guid), null, executeStrategy);
 
                 if (first != second)
                 {
@@ -93,29 +93,28 @@
         [InlineData(typeof(Guid), true)]
         [InlineData(typeof(Guid?), true)]
         [InlineData(typeof(string), false)]
-        public void IsSupportedReturnsWhetherTypeIsSupportedTest(Type type, bool supportedType)
+        public void IsMatchReturnsWhetherTypeIsSupportedTest(Type type, bool supportedType)
         {
             var buildChain = Substitute.For<IBuildChain>();
 
-            var target = new GuidValueGenerator();
+            var target = new Wrapper();
 
-            var actual = target.IsSupported(type, null, buildChain);
+            var actual = target.RunIsMatch(type, null, buildChain);
 
             actual.Should().Be(supportedType);
         }
 
-        [Fact]
-        public void IsSupportedThrowsExceptionWithNullTypeTest()
+        private class Wrapper : GuidValueGenerator
         {
-            var buildChain = new BuildHistory();
+            public object RunGenerate(Type type, string referenceName, IExecuteStrategy executeStrategy)
+            {
+                return Generate(type, referenceName, executeStrategy);
+            }
 
-            buildChain.Push(Guid.NewGuid().ToString());
-
-            var target = new GuidValueGenerator();
-
-            Action action = () => target.IsSupported(null, Guid.NewGuid().ToString(), buildChain);
-
-            action.Should().Throw<ArgumentNullException>();
+            public object RunIsMatch(Type type, string referenceName, IBuildChain buildChain)
+            {
+                return IsMatch(type, referenceName, buildChain);
+            }
         }
     }
 }

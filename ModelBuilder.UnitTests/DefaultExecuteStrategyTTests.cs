@@ -1,81 +1,46 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.IO;
+    using System.Linq;
     using System.Reflection;
     using FluentAssertions;
-    using ModelBuilder.TypeCreators;
+    using ModelBuilder.BuildActions;
     using ModelBuilder.UnitTests.Models;
-    using ModelBuilder.ValueGenerators;
     using NSubstitute;
     using Xunit;
+    using Xunit.Abstractions;
 
     public class DefaultExecuteStrategyTTests
     {
-        [Fact]
-        public void CreateReturnsDefaultValueWhenInstanceFailsToBeCreatedTest()
+        private readonly IBuildLog _buildLog;
+
+        public DefaultExecuteStrategyTTests(ITestOutputHelper output)
         {
-            var typeCreators = new Collection<ITypeCreator>();
-
-            var typeCreator = Substitute.For<ITypeCreator>();
-            var buildConfiguration = Substitute.For<IBuildConfiguration>();
-
-            typeCreators.Add(typeCreator);
-
-            buildConfiguration.TypeCreators.Returns(typeCreators);
-            typeCreator.CanCreate(typeof(SlimModel), null, Arg.Any<IBuildChain>()).Returns(true);
-            typeCreator.CanPopulate(typeof(SlimModel), null, Arg.Any<IBuildChain>()).Returns(true);
-
-            var target = new DefaultExecuteStrategy<SlimModel>();
-
-            target.Initialize(buildConfiguration);
-
-            var actual = target.Create();
-
-            actual.Should().BeNull();
+            _buildLog = new OutputBuildLog(output);
         }
 
         [Fact]
-        public void CreateReturnsDefaultValueWhenNoReferenceTypeCreatedTest()
+        public void CreateReturnsDefaultWhenNullReturnedByProcessorTest()
         {
-            var typeCreators = new Collection<ITypeCreator>();
+            var buildHistory = new BuildHistory();
+            var typeCapability = new BuildCapability
+            {
+                SupportsPopulate = false,
+                ImplementedByType = GetType(),
+                AutoDetectConstructor = false,
+                AutoPopulate = false,
+                SupportsCreate = true
+            };
 
-            var typeCreator = Substitute.For<ITypeCreator>();
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
+            var processor = Substitute.For<IBuildProcessor>();
 
-            typeCreators.Add(typeCreator);
+            var target = new DefaultExecuteStrategy<int>(buildHistory, _buildLog, processor);
 
-            buildConfiguration.TypeCreators.Returns(typeCreators);
-            typeCreator.CanCreate(typeof(MemoryStream), null, Arg.Any<IBuildChain>()).Returns(true);
-            typeCreator.CanPopulate(typeof(MemoryStream), null, Arg.Any<IBuildChain>()).Returns(true);
-            typeCreator.Create(typeof(MemoryStream), null, Arg.Any<IExecuteStrategy>()).Returns(null);
-
-            var target = new DefaultExecuteStrategy<MemoryStream>();
-
-            target.Initialize(buildConfiguration);
-
-            var actual = target.Create();
-
-            actual.Should().BeNull();
-        }
-
-        [Fact]
-        public void CreateReturnsDefaultValueWhenNoValueTypeCreatedTest()
-        {
-            var valueGenerators = new Collection<IValueGenerator>();
-
-            var valueGenerator = Substitute.For<IValueGenerator>();
-            var buildConfiguration = Substitute.For<IBuildConfiguration>();
-
-            valueGenerators.Add(valueGenerator);
-
-            buildConfiguration.ValueGenerators.Returns(valueGenerators);
-            valueGenerator.IsSupported(typeof(int), null, Arg.Any<IBuildChain>()).Returns(true);
-            valueGenerator.Generate(typeof(int), null, Arg.Any<IExecuteStrategy>()).Returns(null);
-
-            var target = new DefaultExecuteStrategy<int>();
+            processor.GetBuildCapability(buildConfiguration, buildHistory, Arg.Any<BuildRequirement>(),
+                    typeof(int))
+                .Returns(typeCapability);
+            processor.Build(target, typeof(int), null).Returns((object) null);
 
             target.Initialize(buildConfiguration);
 
@@ -85,54 +50,47 @@
         }
 
         [Fact]
-        public void CreateReturnsReferenceTypeFromCreatorTest()
+        public void CreateReturnsNullCalculatedByProcessorTest()
         {
-            var expected = new SlimModel();
-            var value = Guid.NewGuid();
+            var buildHistory = new BuildHistory();
+            var typeCapability = new BuildCapability
+            {
+                SupportsPopulate = false,
+                ImplementedByType = GetType(),
+                AutoDetectConstructor = true,
+                AutoPopulate = false,
+                SupportsCreate = true
+            };
 
-            var typeCreators = new Collection<ITypeCreator>();
-            var valueGenerators = new Collection<IValueGenerator>();
-
-            var typeCreator = Substitute.For<ITypeCreator>();
-            var generator = Substitute.For<IValueGenerator>();
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
-            var propertyResolver = Substitute.For<IPropertyResolver>();
+            var constructorResolver = Substitute.For<IConstructorResolver>();
+            var typeResolver = Substitute.For<ITypeResolver>();
+            var processor = Substitute.For<IBuildProcessor>();
 
-            typeCreators.Add(typeCreator);
-            valueGenerators.Add(generator);
+            buildConfiguration.ConstructorResolver.Returns(constructorResolver);
+            buildConfiguration.TypeResolver.Returns(typeResolver);
+            typeResolver.GetBuildType(buildConfiguration, typeof(Person)).Returns(x => x.Arg<Type>());
 
-            buildConfiguration.TypeCreators.Returns(typeCreators);
-            buildConfiguration.ValueGenerators.Returns(valueGenerators);
+            var target = new DefaultExecuteStrategy<Person>(buildHistory, _buildLog, processor);
 
-            var target = new DefaultExecuteStrategy<SlimModel>();
+            processor.GetBuildCapability(buildConfiguration, buildHistory, Arg.Any<BuildRequirement>(),
+                    typeof(Person))
+                .Returns(typeCapability);
+            constructorResolver.Resolve(typeof(Person))
+                .Returns(typeof(Person).GetConstructors().Single(x => x.GetParameters().Length == 0));
+            processor.Build(target, typeof(Person), null).Returns((Person) null);
 
             target.Initialize(buildConfiguration);
 
-            buildConfiguration.PropertyResolver.Returns(propertyResolver);
-            propertyResolver.CanPopulate(Arg.Any<PropertyInfo>()).Returns(true);
-            propertyResolver.ShouldPopulateProperty(
-                Arg.Any<IBuildConfiguration>(),
-                Arg.Any<object>(),
-                Arg.Any<PropertyInfo>(),
-                Arg.Any<object[]>()).Returns(true);
-            typeCreator.CanCreate(typeof(SlimModel), null, Arg.Any<IBuildChain>()).Returns(true);
-            typeCreator.CanPopulate(typeof(SlimModel), null, Arg.Any<IBuildChain>()).Returns(true);
-            typeCreator.Create(typeof(SlimModel), null, Arg.Any<IExecuteStrategy>()).Returns(expected);
-            typeCreator.Populate(expected, target).Returns(expected);
-            typeCreator.AutoPopulate.Returns(true);
-            generator.IsSupported(typeof(Guid), "Value", Arg.Is<IBuildChain>(x => x.Last == expected)).Returns(true);
-            generator.Generate(typeof(Guid), "Value", Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == expected))
-                .Returns(value);
-
             var actual = target.Create();
 
-            actual.Should().Be(expected);
-            actual.Value.Should().Be(value);
+            actual.Should().BeNull();
         }
 
         [Fact]
         public void CreateReturnsValueCreatedFromProvidedArgumentsTest()
         {
+            var buildHistory = new BuildHistory();
             var expected = new Person();
             var args = new object[]
             {
@@ -143,24 +101,28 @@
                 Guid.NewGuid(),
                 Environment.TickCount
             };
-            var typeCreators = new Collection<ITypeCreator>();
+            var typeCapability = new BuildCapability
+            {
+                SupportsPopulate = false,
+                ImplementedByType = GetType(),
+                AutoDetectConstructor = true,
+                AutoPopulate = false,
+                SupportsCreate = true
+            };
 
-            var typeCreator = Substitute.For<ITypeCreator>();
+            var processor = Substitute.For<IBuildProcessor>();
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
+            var propertyResolver = Substitute.For<IPropertyResolver>();
 
-            typeCreators.Add(typeCreator);
+            var target = new DefaultExecuteStrategy<Person>(buildHistory, _buildLog, processor);
 
-            buildConfiguration.TypeCreators.Returns(typeCreators);
-
-            var target = new DefaultExecuteStrategy<Person>();
+            processor.GetBuildCapability(buildConfiguration, buildHistory, Arg.Any<BuildRequirement>(),
+                    typeof(Person))
+                .Returns(typeCapability);
+            processor.Build(target, typeof(Person), args).Returns(expected);
+            buildConfiguration.PropertyResolver.Returns(propertyResolver);
 
             target.Initialize(buildConfiguration);
-
-            typeCreator.CanCreate(typeof(Person), null, Arg.Any<IBuildChain>()).Returns(true);
-            typeCreator.CanPopulate(typeof(Person), null, Arg.Any<IBuildChain>()).Returns(true);
-            typeCreator.Create(typeof(Person), null, Arg.Any<IExecuteStrategy>(), args).Returns(expected);
-            typeCreator.Populate(expected, target).Returns(expected);
-            typeCreator.AutoPopulate.Returns(false);
 
             var actual = target.Create(args);
 
@@ -168,127 +130,100 @@
         }
 
         [Fact]
-        public void PopulateAssignsPropertyValuesToExistingInstanceTest()
+        public void CreateReturnsValueCreatedWithoutArgumentsTest()
         {
-            var staff = new List<Person>();
-            var name = Guid.NewGuid().ToString();
-            var address = Guid.NewGuid().ToString();
-            var expected = new Company();
-            var valueGenerators = new Collection<IValueGenerator>();
-            var typeCreators = new Collection<ITypeCreator>();
+            var buildHistory = new BuildHistory();
+            var expected = new Person();
+            var typeCapability = new BuildCapability
+            {
+                SupportsPopulate = false,
+                ImplementedByType = GetType(),
+                AutoDetectConstructor = true,
+                AutoPopulate = false,
+                SupportsCreate = true
+            };
 
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
-            var typeCreator = Substitute.For<ITypeCreator>();
-            var enumerableTypeCreator = Substitute.For<ITypeCreator>();
-            var valueGenerator = Substitute.For<IValueGenerator>();
-            var propertyResolver = Substitute.For<IPropertyResolver>();
+            var constructorResolver = Substitute.For<IConstructorResolver>();
+            var typeResolver = Substitute.For<ITypeResolver>();
+            var processor = Substitute.For<IBuildProcessor>();
 
-            typeCreators.Add(enumerableTypeCreator);
-            typeCreators.Add(typeCreator);
-            valueGenerators.Add(valueGenerator);
+            buildConfiguration.ConstructorResolver.Returns(constructorResolver);
+            buildConfiguration.TypeResolver.Returns(typeResolver);
+            typeResolver.GetBuildType(buildConfiguration, typeof(Person)).Returns(x => x.Arg<Type>());
 
-            buildConfiguration.PropertyResolver.Returns(propertyResolver);
-            propertyResolver.CanPopulate(Arg.Any<PropertyInfo>()).Returns(true);
-            propertyResolver.ShouldPopulateProperty(
-                Arg.Any<IBuildConfiguration>(),
-                Arg.Any<object>(),
-                Arg.Any<PropertyInfo>(),
-                Arg.Any<object[]>()).Returns(true);
-            buildConfiguration.TypeCreators.Returns(typeCreators);
-            buildConfiguration.ValueGenerators.Returns(valueGenerators);
+            var target = new DefaultExecuteStrategy<Person>(buildHistory, _buildLog, processor);
 
-            var target = new DefaultExecuteStrategy<Company>();
+            processor.GetBuildCapability(buildConfiguration, buildHistory, Arg.Any<BuildRequirement>(),
+                    typeof(Person))
+                .Returns(typeCapability);
+            constructorResolver.Resolve(typeof(Person))
+                .Returns(typeof(Person).GetConstructors().Single(x => x.GetParameters().Length == 0));
+            processor.Build(target, typeof(Person), null).Returns(expected);
+            processor.Populate(target, expected).Returns(expected);
 
             target.Initialize(buildConfiguration);
 
-            typeCreator.CanPopulate(typeof(Company), null, Arg.Any<IBuildChain>()).Returns(true);
-            typeCreator.Populate(expected, target).Returns(expected);
-            typeCreator.AutoPopulate.Returns(true);
-            enumerableTypeCreator.AutoPopulate.Returns(false);
-            enumerableTypeCreator.CanCreate(
-                typeof(IEnumerable<Person>),
-                "Staff",
-                Arg.Is<IBuildChain>(x => x.Last == expected)).Returns(true);
-            enumerableTypeCreator.Create(
-                typeof(IEnumerable<Person>),
-                "Staff",
-                Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == expected)).Returns(staff);
-            enumerableTypeCreator.Populate(staff, target).Returns(staff);
-            valueGenerator.IsSupported(typeof(string), "Name", Arg.Is<IBuildChain>(x => x.Last == expected))
-                .Returns(true);
-            valueGenerator.Generate(
-                typeof(string),
-                "Name",
-                Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == expected)).Returns(name);
-            valueGenerator.IsSupported(typeof(string), "Address", Arg.Is<IBuildChain>(x => x.Last == expected))
-                .Returns(true);
-            valueGenerator.Generate(
-                typeof(string),
-                "Address",
-                Arg.Is<IExecuteStrategy>(x => x.BuildChain.Last == expected)).Returns(address);
-
-            var actual = target.Populate(expected);
+            var actual = target.Create();
 
             actual.Should().BeSameAs(expected);
-            actual.Name.Should().Be(name);
-            actual.Address.Should().Be(address);
-            actual.Staff.Should().BeSameAs(staff);
         }
 
         [Fact]
-        public void PopulateInstanceThrowsExceptionWithNullInstanceTest()
+        public void PopulateAssignsPropertyValuesToExistingInstanceTest()
         {
-            var target = new PopulateInstanceWrapper();
-
-            Action action = () => target.RunTest();
-
-            action.Should().Throw<ArgumentNullException>();
-        }
-
-        [Fact]
-        public void PopulateThrowsExceptionWithNullInstanceTest()
-        {
-            var target = new DefaultExecuteStrategy<Person>();
-
-            Action action = () => target.Populate(null);
-
-            action.Should().Throw<ArgumentNullException>();
-        }
-
-        private class Bottom
-        {
-            public Top Root { get; set; }
-
-            public string Value { get; set; }
-        }
-
-        private class Child
-        {
-            public Bottom End { get; set; }
-
-            public string Value { get; set; }
-        }
-
-        private class Looper
-        {
-            public Looper Other { get; set; }
-
-            public string Stuff { get; set; }
-        }
-
-        private class PopulateInstanceWrapper : DefaultExecuteStrategy<Company>
-        {
-            public void RunTest()
+            var buildHistory = new BuildHistory();
+            var model = new SlimModel();
+            var expected = Guid.NewGuid();
+            var typeCapability = new BuildCapability
             {
-                AutoPopulateInstance(null, null);
-            }
-        }
+                SupportsPopulate = true,
+                ImplementedByType = GetType(),
+                AutoDetectConstructor = false,
+                AutoPopulate = true,
+                SupportsCreate = true
+            };
+            var valueCapability = new BuildCapability
+            {
+                SupportsPopulate = false,
+                ImplementedByType = GetType(),
+                AutoDetectConstructor = false,
+                AutoPopulate = false,
+                SupportsCreate = true
+            };
 
-        private class Top
-        {
-            public Child Next { get; set; }
+            var processor = Substitute.For<IBuildProcessor>();
+            var buildConfiguration = Substitute.For<IBuildConfiguration>();
+            var propertyResolver = Substitute.For<IPropertyResolver>();
 
-            public string Value { get; set; }
+            var target = new DefaultExecuteStrategy<SlimModel>(buildHistory, _buildLog, processor);
+
+            processor.GetBuildCapability(buildConfiguration, buildHistory, BuildRequirement.Populate,
+                    typeof(SlimModel))
+                .Returns(typeCapability);
+            buildConfiguration.PropertyResolver.Returns(propertyResolver);
+            propertyResolver.CanPopulate(Arg.Is<PropertyInfo>(x => x.Name == nameof(SlimModel.Value)))
+                .Returns(true);
+            propertyResolver.ShouldPopulateProperty(
+                buildConfiguration,
+                model,
+                Arg.Is<PropertyInfo>(x => x.Name == nameof(SlimModel.Value)),
+                Arg.Any<object[]>()).Returns(true);
+            processor.GetBuildCapability(buildConfiguration, buildHistory, BuildRequirement.Create,
+                    Arg.Is<PropertyInfo>(x => x.Name == nameof(SlimModel.Value)))
+                .Returns(valueCapability);
+            processor.Build(target, Arg.Is<PropertyInfo>(x => x.Name == nameof(SlimModel.Value)), null)
+                .Returns(expected);
+            processor.GetBuildCapability(buildConfiguration, buildHistory, BuildRequirement.Populate,
+                    typeof(Guid))
+                .Returns(valueCapability);
+            processor.Populate(target, model).Returns(model);
+
+            target.Initialize(buildConfiguration);
+
+            var actual = target.Populate(model);
+
+            actual.Value.Should().Be(expected);
         }
     }
 }

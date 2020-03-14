@@ -38,6 +38,9 @@
         public ICollection<TypeMappingRule> TypeMappingRules { get; } = new List<TypeMappingRule>();
 
         /// <inheritdoc />
+        public ITypeResolver TypeResolver { get; set; } = new DefaultTypeResolver();
+
+        /// <inheritdoc />
         public ICollection<IValueGenerator> ValueGenerators { get; } = new List<IValueGenerator>();
     }
 }

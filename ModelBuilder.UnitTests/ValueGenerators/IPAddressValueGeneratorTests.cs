@@ -18,9 +18,9 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var target = new IPAddressValueGenerator();
+            var target = new Wrapper();
 
-            var actual = target.Generate(typeof(IPAddress), null, executeStrategy);
+            var actual = target.RunGenerate(typeof(IPAddress), null, executeStrategy);
 
             actual.Should().NotBeNull();
             actual.As<IPAddress>().GetAddressBytes().Any(x => x != 0).Should().BeTrue();
@@ -34,9 +34,9 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var target = new IPAddressValueGenerator();
+            var target = new Wrapper();
 
-            var actual = target.Generate(typeof(string), "IpAddress", executeStrategy);
+            var actual = target.RunGenerate(typeof(string), "IpAddress", executeStrategy);
 
             actual.Should().NotBeNull();
             actual.As<string>().Should().MatchRegex(@"\d+(\.\d+){3}");
@@ -51,25 +51,21 @@
         [InlineData(typeof(string), "ipaddress", true)]
         [InlineData(typeof(string), "IPADDRESS", true)]
         [InlineData(typeof(IPAddress), (string) null, true)]
-        public void IsSupportedReturnsWhetherScenarioIsValidTest(Type type, string referenceName, bool supported)
+        public void IsMatchReturnsWhetherScenarioIsValidTest(Type type, string referenceName, bool supported)
         {
-            var target = new IPAddressValueGenerator();
+            var target = new Wrapper();
 
-            var actual = target.IsSupported(type, referenceName, null);
+            var actual = target.RunIsMatch(type, referenceName, null);
 
             actual.Should().Be(supported);
         }
 
         [Fact]
-        public void IsSupportedThrowsExceptionWithNullTypeTest()
+        public void IsMatchThrowsExceptionWithNullType()
         {
-            var buildChain = new BuildHistory();
+            var target = new Wrapper();
 
-            buildChain.Push(Guid.NewGuid().ToString());
-
-            var target = new IPAddressValueGenerator();
-
-            Action action = () => target.IsSupported(null, Guid.NewGuid().ToString(), buildChain);
+            Action action = () => target.RunIsMatch(null, null, null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -77,10 +73,23 @@
         [Fact]
         public void PriorityIsHigherThanStringValueGeneratorPriorityTest()
         {
-            var target = new IPAddressValueGenerator();
+            var target = new Wrapper();
             var other = new StringValueGenerator();
 
             target.Priority.Should().BeGreaterThan(other.Priority);
+        }
+
+        private class Wrapper : IPAddressValueGenerator
+        {
+            public object RunGenerate(Type type, string referenceName, IExecuteStrategy executeStrategy)
+            {
+                return Generate(type, referenceName, executeStrategy);
+            }
+
+            public object RunIsMatch(Type type, string referenceName, IBuildChain buildChain)
+            {
+                return IsMatch(type, referenceName, buildChain);
+            }
         }
     }
 }

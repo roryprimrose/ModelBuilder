@@ -10,21 +10,21 @@
     public class GenderValueGeneratorTests
     {
         [Fact]
-        public void GenerateReturnsRandomValuesForGenderTypeTest()
+        public void GenerateReturnsRandomValuesTest()
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var target = new GenderValueGenerator();
+            var target = new Wrapper();
 
             var maleFound = false;
             var femaleFound = false;
 
             for (var index = 0; index < 1000; index++)
             {
-                var actual = (string) target.Generate(typeof(string), "Gender", executeStrategy);
+                var actual = (string) target.RunGenerate(typeof(string), "Gender", executeStrategy);
 
                 if (actual == "Male")
                 {
@@ -46,16 +46,16 @@
         }
 
         [Fact]
-        public void GenerateReturnsValueForGenderTypeTest()
+        public void GenerateReturnsValueTest()
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var target = new GenderValueGenerator();
+            var target = new Wrapper();
 
-            var actual = target.Generate(typeof(string), "Sex", executeStrategy);
+            var actual = target.RunGenerate(typeof(string), "Sex", executeStrategy);
 
             actual.Should().BeOfType<string>();
         }
@@ -72,9 +72,9 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var target = new GenderValueGenerator();
+            var target = new Wrapper();
 
-            var actual = (string) target.Generate(type, referenceName, executeStrategy);
+            var actual = (string) target.RunGenerate(type, referenceName, executeStrategy);
 
             actual.Should().NotBeNullOrEmpty();
         }
@@ -88,35 +88,36 @@
         [InlineData(typeof(string), "Gender", true)]
         [InlineData(typeof(string), "sex", true)]
         [InlineData(typeof(string), "Sex", true)]
-        public void IsSupportedTest(Type type, string referenceName, bool expected)
+        public void IsMatchReturnsWhetherTypeAndNameAreSupportedTest(Type type, string referenceName, bool expected)
         {
             var buildChain = Substitute.For<IBuildChain>();
 
-            var target = new GenderValueGenerator();
+            var target = new Wrapper();
 
-            var actual = target.IsSupported(type, referenceName, buildChain);
+            var actual = target.RunIsMatch(type, referenceName, buildChain);
 
             actual.Should().Be(expected);
         }
 
         [Fact]
-        public void IsSupportedThrowsExceptionWithNullTypeTest()
-        {
-            var buildChain = Substitute.For<IBuildChain>();
-
-            var target = new GenderValueGenerator();
-
-            Action action = () => target.IsSupported(null, null, buildChain);
-
-            action.Should().Throw<ArgumentNullException>();
-        }
-
-        [Fact]
         public void PriorityReturnsPositiveValueTest()
         {
-            var target = new GenderValueGenerator();
+            var target = new Wrapper();
 
             target.Priority.Should().BeGreaterThan(0);
+        }
+
+        private class Wrapper : GenderValueGenerator
+        {
+            public object RunGenerate(Type type, string referenceName, IExecuteStrategy executeStrategy)
+            {
+                return Generate(type, referenceName, executeStrategy);
+            }
+
+            public bool RunIsMatch(Type type, string referenceName, IBuildChain buildChain)
+            {
+                return IsMatch(type, referenceName, buildChain);
+            }
         }
     }
 }

@@ -27,9 +27,9 @@
 
             buildChain.Push(address);
 
-            var target = new TimeZoneValueGenerator();
+            var target = new Wrapper();
 
-            var actual = target.Generate(typeof(string), "timezone", executeStrategy) as string;
+            var actual = target.RunGenerate(typeof(string), "Timezone",executeStrategy) as string;
 
             actual.Should().NotBeNullOrWhiteSpace();
 
@@ -53,9 +53,9 @@
 
             buildChain.Push(address);
 
-            var target = new TimeZoneValueGenerator();
+            var target = new Wrapper();
 
-            var actual = target.Generate(typeof(string), "timezone", executeStrategy) as string;
+            var actual = target.RunGenerate(typeof(string), "Timezone",executeStrategy) as string;
 
             actual.Should().NotBeNullOrWhiteSpace();
 
@@ -78,9 +78,9 @@
 
             buildChain.Push(address);
 
-            var target = new TimeZoneValueGenerator();
+            var target = new Wrapper();
 
-            var actual = target.Generate(typeof(string), "timezone", executeStrategy) as string;
+            var actual = target.RunGenerate(typeof(string), "Timezone",executeStrategy) as string;
 
             actual.Should().NotBeNullOrWhiteSpace();
 
@@ -96,15 +96,16 @@
                 Country = Guid.NewGuid().ToString()
             };
             var buildChain = new BuildHistory();
+
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
 
             buildChain.Push(address);
 
-            var target = new TimeZoneValueGenerator();
+            var target = new Wrapper();
 
-            var actual = target.Generate(typeof(string), "timezone", executeStrategy) as string;
+            var actual = target.RunGenerate(typeof(string), "Timezone",executeStrategy) as string;
 
             TestData.TimeZones.Should().Contain(actual);
         }
@@ -114,21 +115,22 @@
         {
             var address = new Address();
             var buildChain = new BuildHistory();
+
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
 
             buildChain.Push(address);
 
-            var target = new TimeZoneValueGenerator();
+            var target = new Wrapper();
 
-            var first = (string) target.Generate(typeof(string), "timezone", executeStrategy);
+            var first = (string) target.RunGenerate(typeof(string), "Timezone",executeStrategy);
 
             var second = first;
 
             for (var index = 0; index < 1000; index++)
             {
-                second = (string) target.Generate(typeof(string), "timezone", executeStrategy);
+                second = (string) target.RunGenerate(typeof(string), "Timezone",executeStrategy);
 
                 if (string.Equals(first, second, StringComparison.OrdinalIgnoreCase) == false)
                 {
@@ -150,9 +152,9 @@
 
             buildChain.Push(address);
 
-            var target = new TimeZoneValueGenerator();
+            var target = new Wrapper();
 
-            var actual = target.Generate(typeof(string), "timezone", executeStrategy);
+            var actual = target.RunGenerate(typeof(string), "Timezone",executeStrategy);
 
             actual.Should().BeOfType<string>();
             actual.As<string>().Should().NotBeNullOrWhiteSpace();
@@ -169,13 +171,13 @@
 
             buildChain.Push(address);
 
-            var target = new TimeZoneValueGenerator();
+            var target = new Wrapper();
 
             var ids = TzdbDateTimeZoneSource.Default.GetIds().ToList();
 
             for (var index = 0; index < 1000; index++)
             {
-                var actual = target.Generate(typeof(string), "timezone", executeStrategy) as string;
+                var actual = target.RunGenerate(typeof(string), "Timezone",executeStrategy) as string;
 
                 ids.Should().Contain(actual);
             }
@@ -201,9 +203,9 @@
 
             buildChain.Push(address);
 
-            var target = new TimeZoneValueGenerator();
+            var target = new Wrapper();
 
-            var actual = target.Generate(typeof(string), "timezone", executeStrategy) as string;
+            var actual = target.RunGenerate(typeof(string), "Timezone",executeStrategy) as string;
 
             actual.Should().Be("Australia/Canberra");
         }
@@ -212,19 +214,21 @@
         [InlineData(typeof(string), "timezone")]
         [InlineData(typeof(string), "TimeZone")]
         [InlineData(typeof(string), "timeZone")]
+        [InlineData(typeof(string), "TIMEZONE")]
         public void GenerateReturnsValuesForSeveralNameFormatsTest(Type type, string referenceName)
         {
             var address = new Address();
             var buildChain = new BuildHistory();
+
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
 
             buildChain.Push(address);
 
-            var target = new TimeZoneValueGenerator();
+            var target = new Wrapper();
 
-            var actual = (string) target.Generate(type, referenceName, executeStrategy);
+            var actual = (string) target.RunGenerate(type, referenceName, executeStrategy);
 
             actual.Should().NotBeNullOrEmpty();
         }
@@ -232,7 +236,7 @@
         [Fact]
         public void HasHigherPriorityThanStringValueGeneratorTest()
         {
-            var target = new TimeZoneValueGenerator();
+            var target = new Wrapper();
             var other = new StringValueGenerator();
 
             target.Priority.Should().BeGreaterThan(other.Priority);
@@ -246,36 +250,31 @@
         [InlineData(typeof(string), "timezone", true)]
         [InlineData(typeof(string), "TimeZone", true)]
         [InlineData(typeof(string), "timeZone", true)]
-        public void IsSupportedTest(Type type, string referenceName, bool expected)
+        public void IsMatchReturnsWhetherTypeAndNameAreSupportedTest(Type type, string referenceName, bool expected)
         {
             var address = new Address();
             var buildChain = new BuildHistory();
 
             buildChain.Push(address);
 
-            var target = new TimeZoneValueGenerator();
+            var target = new Wrapper();
 
-            var actual = target.IsSupported(type, referenceName, buildChain);
+            var actual = target.RunIsMatch(type, referenceName, buildChain);
 
             actual.Should().Be(expected);
         }
 
-        [Fact]
-        public void IsSupportedThrowsExceptionWithNullTypeTest()
+        private class Wrapper : TimeZoneValueGenerator
         {
-            var target = new TimeZoneValueGenerator();
+            public object RunGenerate(Type type, string referenceName, IExecuteStrategy executeStrategy)
+            {
+                return Generate(type, referenceName, executeStrategy);
+            }
 
-            Action action = () => target.IsSupported(null, null, null);
-
-            action.Should().Throw<ArgumentNullException>();
-        }
-
-        [Fact]
-        public void PriorityReturnsPositiveValueTest()
-        {
-            var target = new TimeZoneValueGenerator();
-
-            target.Priority.Should().BeGreaterThan(0);
+            public bool RunIsMatch(Type type, string referenceName, IBuildChain buildChain)
+            {
+                return IsMatch(type, referenceName, buildChain);
+            }
         }
     }
 }

@@ -10,86 +10,6 @@
     public class CountValueGeneratorTests
     {
         [Theory]
-        [ClassData(typeof(NumericTypeRangeDataSource))]
-        public void GenerateCanEvaluateManyTimesTest(Type type, bool isSupported, double min, double max)
-        {
-            var buildChain = new BuildHistory();
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            executeStrategy.BuildChain.Returns(buildChain);
-
-            if (isSupported == false)
-            {
-                // Ignore this test
-                return;
-            }
-
-            var target = new CountValueGenerator();
-
-            for (var index = 0; index < 1000; index++)
-            {
-                var value = target.Generate(type, "Count", executeStrategy);
-
-                if (type.IsNullable()
-                    && value == null)
-                {
-                    // Nullable values could be returned so nothing more to assert
-                    return;
-                }
-
-                var evaluateType = type;
-
-                if (type.IsNullable())
-                {
-                    evaluateType = type.GenericTypeArguments[0];
-                }
-
-                value.Should().BeOfType(evaluateType);
-
-                var convertedValue = Convert.ToDouble(value, CultureInfo.InvariantCulture);
-
-                convertedValue.Should().BeGreaterOrEqualTo(min);
-                convertedValue.Should().BeLessOrEqualTo(max);
-            }
-        }
-
-        [Fact]
-        public void GenerateCanReturnNullAndNonNullValuesTest()
-        {
-            var buildChain = new BuildHistory();
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            executeStrategy.BuildChain.Returns(buildChain);
-
-            var nullFound = false;
-            var valueFound = false;
-
-            var target = new CountValueGenerator();
-
-            for (var index = 0; index < 1000; index++)
-            {
-                var value = (int?) target.Generate(typeof(int?), "Count", executeStrategy);
-
-                if (value == null)
-                {
-                    nullFound = true;
-                }
-                else
-                {
-                    valueFound = true;
-                }
-
-                if (nullFound && valueFound)
-                {
-                    break;
-                }
-            }
-
-            nullFound.Should().BeTrue();
-            valueFound.Should().BeTrue();
-        }
-
-        [Theory]
         [ClassData(typeof(NumericTypeDataSource))]
         public void GenerateReturnsNewValueTest(Type type, bool isSupported)
         {
@@ -104,9 +24,9 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var target = new CountValueGenerator();
+            var target = new Wrapper();
 
-            var value = target.Generate(type, "Count", executeStrategy);
+            var value = target.RunGenerate(type, "Count", executeStrategy);
 
             if (type.IsNullable()
                 && value == null)
@@ -130,26 +50,22 @@
             convertedValue.Should().BeGreaterOrEqualTo(1);
         }
 
-        [Theory]
-        [ClassData(typeof(NumericTypeDataSource))]
-        public void GenerateValidatesRequestedTypeTest(Type type, bool isSupported)
+        [Fact]
+        public void GenerateReturnsValueBetweenDefinedMinAndMaxValues()
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var target = new CountValueGenerator();
+            var target = new Wrapper();
 
-            Action action = () => target.Generate(type, "Count", executeStrategy);
+            for (var index = 0; index < 1000; index++)
+            {
+                var value = (int) target.RunGenerate(typeof(int), "Count", executeStrategy);
 
-            if (isSupported)
-            {
-                action.Should().NotThrow();
-            }
-            else
-            {
-                action.Should().Throw<NotSupportedException>();
+                value.Should().BeGreaterOrEqualTo(1);
+                value.Should().BeLessOrEqualTo(target.MaxCount);
             }
         }
 
@@ -163,33 +79,33 @@
         [InlineData("Length", true)]
         [InlineData("count", true)]
         [InlineData("Count", true)]
-        public void IsSupportedEvaluatesRequestedReferenceNameTest(string referenceName, bool isSupported)
+        public void IsMatchEvaluatesRequestedReferenceNameTest(string referenceName, bool isSupported)
         {
             var buildChain = Substitute.For<IBuildChain>();
 
-            var target = new CountValueGenerator();
+            var target = new Wrapper();
 
-            var actual = target.IsSupported(typeof(int), referenceName, buildChain);
+            var actual = target.RunIsMatch(typeof(int), referenceName, buildChain);
 
             actual.Should().Be(isSupported);
         }
 
         [Theory]
         [ClassData(typeof(NumericTypeDataSource))]
-        public void IsSupportedEvaluatesRequestedTypeTest(Type type, bool isSupported)
+        public void IsMatchEvaluatesRequestedTypeTest(Type type, bool isSupported)
         {
             var buildChain = Substitute.For<IBuildChain>();
 
-            var target = new CountValueGenerator();
+            var target = new Wrapper();
 
-            var actual = target.IsSupported(type, "Count", buildChain);
+            var actual = target.RunIsMatch(type, "Count", buildChain);
 
             actual.Should().Be(isSupported);
         }
 
         [Theory]
         [ClassData(typeof(NumericTypeDataSource))]
-        public void IsSupportedReturnsFalseWhenReferenceNameIsNullTest(Type type, bool isSupported)
+        public void IsMatchReturnsFalseWhenReferenceNameIsNullTest(Type type, bool isSupported)
         {
             if (isSupported == false)
             {
@@ -199,16 +115,16 @@
 
             var buildChain = Substitute.For<IBuildChain>();
 
-            var target = new CountValueGenerator();
+            var target = new Wrapper();
 
-            var actual = target.IsSupported(type, null, buildChain);
+            var actual = target.RunIsMatch(type, null, buildChain);
 
             actual.Should().BeFalse();
         }
 
         [Theory]
         [ClassData(typeof(NumericTypeDataSource))]
-        public void IsSupportedReturnsFalseWhenReferenceNameNotCountTest(Type type, bool isSupported)
+        public void IsMatchReturnsFalseWhenReferenceNameNotCountTest(Type type, bool isSupported)
         {
             if (isSupported == false)
             {
@@ -218,16 +134,16 @@
 
             var buildChain = Substitute.For<IBuildChain>();
 
-            var target = new CountValueGenerator();
+            var target = new Wrapper();
 
-            var actual = target.IsSupported(type, "Stuff", buildChain);
+            var actual = target.RunIsMatch(type, "Stuff", buildChain);
 
             actual.Should().BeFalse();
         }
 
         [Theory]
         [ClassData(typeof(NumericTypeDataSource))]
-        public void IsSupportedReturnsTrueWhenReferenceNameIsCountTest(Type type, bool isSupported)
+        public void IsMatchReturnsTrueWhenReferenceNameIsCountTest(Type type, bool isSupported)
         {
             if (isSupported == false)
             {
@@ -237,29 +153,18 @@
 
             var buildChain = Substitute.For<IBuildChain>();
 
-            var target = new CountValueGenerator();
+            var target = new Wrapper();
 
-            var actual = target.IsSupported(type, "Count", buildChain);
+            var actual = target.RunIsMatch(type, "Count", buildChain);
 
             actual.Should().BeTrue();
         }
 
         [Fact]
-        public void IsSupportedThrowsExceptionWithNullTypeTest()
-        {
-            var buildChain = Substitute.For<IBuildChain>();
-
-            var target = new CountValueGenerator();
-
-            Action action = () => target.IsSupported(null, null, buildChain);
-
-            action.Should().Throw<ArgumentNullException>();
-        }
-
-        [Fact]
         public void PriorityReturnsGreaterThanNumericValueGeneratorTest()
         {
-            var target = new CountValueGenerator();
+            var target = new Wrapper();
+            
             var generator = new NumericValueGenerator();
 
             target.Priority.Should().BeGreaterThan(generator.Priority);
@@ -296,6 +201,19 @@
             };
 
             CountValueGenerator.DefaultMaxCount.Should().NotBe(target.MaxCount);
+        }
+
+        private class Wrapper : CountValueGenerator
+        {
+            public object RunGenerate(Type type, string referenceName, IExecuteStrategy executeStrategy)
+            {
+                return Generate(type, referenceName, executeStrategy);
+            }
+
+            public bool RunIsMatch(Type type, string referenceName, IBuildChain buildChain)
+            {
+                return IsMatch(type, referenceName, buildChain);
+            }
         }
     }
 }

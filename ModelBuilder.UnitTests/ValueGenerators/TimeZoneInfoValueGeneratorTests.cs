@@ -17,15 +17,15 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var target = new TimeZoneInfoValueGenerator();
+            var target = new Wrapper();
 
-            var first = (TimeZoneInfo) target.Generate(typeof(TimeZoneInfo), null, executeStrategy);
+            var first = (TimeZoneInfo) target.RunGenerate(typeof(TimeZoneInfo), null, executeStrategy);
 
             var second = first;
 
             for (var index = 0; index < 1000; index++)
             {
-                second = (TimeZoneInfo) target.Generate(typeof(TimeZoneInfo), null, executeStrategy);
+                second = (TimeZoneInfo) target.RunGenerate(typeof(TimeZoneInfo), null, executeStrategy);
 
                 if (first.Equals(second) == false)
                 {
@@ -35,7 +35,7 @@
 
             first.Should().NotBe(second);
         }
-        
+
         [Theory]
         [InlineData(typeof(string), false)]
         [InlineData(typeof(Stream), false)]
@@ -46,27 +46,28 @@
         [InlineData(typeof(DateTime), false)]
         [InlineData(typeof(DateTime?), false)]
         [InlineData(typeof(TimeZoneInfo), true)]
-        public void IsSupportedTest(Type type, bool expected)
+        public void IsMatchTest(Type type, bool expected)
         {
             var buildChain = Substitute.For<IBuildChain>();
 
-            var target = new TimeZoneInfoValueGenerator();
+            var target = new Wrapper();
 
-            var actual = target.IsSupported(type, null, buildChain);
+            var actual = target.RunIsMatch(type, null, buildChain);
 
             actual.Should().Be(expected);
         }
 
-        [Fact]
-        public void IsSupportedThrowsExceptionWithNullTypeTest()
+        private class Wrapper : TimeZoneInfoValueGenerator
         {
-            var buildChain = Substitute.For<IBuildChain>();
+            public object RunGenerate(Type type, string referenceName, IExecuteStrategy executeStrategy)
+            {
+                return Generate(type, referenceName, executeStrategy);
+            }
 
-            var target = new TimeZoneInfoValueGenerator();
-
-            Action action = () => target.IsSupported(null, null, buildChain);
-
-            action.Should().Throw<ArgumentNullException>();
+            public bool RunIsMatch(Type type, string referenceName, IBuildChain buildChain)
+            {
+                return IsMatch(type, referenceName, buildChain);
+            }
         }
     }
 }

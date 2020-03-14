@@ -22,7 +22,7 @@ namespace ModelBuilder.UnitTests.ValueGenerators
                 YearStarted = null
             };
 
-            var target = new GeneratorWrapper<int?>(PropertyExpression.FirstName, new Regex("YearStarted"));
+            var target = new Wrapper<int?>(PropertyExpression.FirstName, new Regex("YearStarted"));
 
             var actual = target.ReadSourceValue(context);
 
@@ -34,7 +34,7 @@ namespace ModelBuilder.UnitTests.ValueGenerators
         {
             var context = new Person();
 
-            var target = new GeneratorWrapper<string>(PropertyExpression.FirstName, PropertyExpression.LastName);
+            var target = new Wrapper<string>(PropertyExpression.FirstName, PropertyExpression.LastName);
 
             var actual = target.ReadSourceValue(context);
 
@@ -46,7 +46,7 @@ namespace ModelBuilder.UnitTests.ValueGenerators
         {
             var context = new SlimModel();
 
-            var target = new GeneratorWrapper<string>(PropertyExpression.FirstName, PropertyExpression.LastName);
+            var target = new Wrapper<string>(PropertyExpression.FirstName, PropertyExpression.LastName);
 
             var actual = target.ReadSourceValue(context);
 
@@ -61,7 +61,7 @@ namespace ModelBuilder.UnitTests.ValueGenerators
                 Priority = Environment.TickCount
             };
 
-            var target = new GeneratorWrapper<int>(PropertyExpression.FirstName, new Regex("Priority"));
+            var target = new Wrapper<int>(PropertyExpression.FirstName, new Regex("Priority"));
 
             var actual = target.ReadSourceValue(context);
 
@@ -76,7 +76,7 @@ namespace ModelBuilder.UnitTests.ValueGenerators
                 YearStarted = Environment.TickCount
             };
 
-            var target = new GeneratorWrapper<int?>(PropertyExpression.FirstName, new Regex("YearStarted"));
+            var target = new Wrapper<int?>(PropertyExpression.FirstName, new Regex("YearStarted"));
 
             var actual = target.ReadSourceValue(context);
 
@@ -94,7 +94,7 @@ namespace ModelBuilder.UnitTests.ValueGenerators
                 Gender = gender
             };
 
-            var target = new GeneratorWrapper<string>(PropertyExpression.FirstName, PropertyExpression.Gender);
+            var target = new Wrapper<string>(PropertyExpression.FirstName, PropertyExpression.Gender);
 
             var actual = target.ReadSourceValue(context);
 
@@ -109,7 +109,7 @@ namespace ModelBuilder.UnitTests.ValueGenerators
                 LastName = Guid.NewGuid().ToString()
             };
 
-            var target = new GeneratorWrapper<string>(PropertyExpression.FirstName, PropertyExpression.LastName);
+            var target = new Wrapper<string>(PropertyExpression.FirstName, PropertyExpression.LastName);
 
             var actual = target.ReadSourceValue(context);
 
@@ -121,7 +121,7 @@ namespace ModelBuilder.UnitTests.ValueGenerators
         {
             var context = new Person();
 
-            var target = new GeneratorWrapper<string>(PropertyExpression.FirstName, (Regex) null, (Type) null);
+            var target = new Wrapper<string>(PropertyExpression.FirstName, (Regex) null, (Type) null);
 
             Action action = () => target.ReadSourceValue(context);
 
@@ -131,7 +131,7 @@ namespace ModelBuilder.UnitTests.ValueGenerators
         [Fact]
         public void GetSourceValueThrowsExceptionWithNullContextTest()
         {
-            var target = new GeneratorWrapper<string>(PropertyExpression.FirstName, PropertyExpression.LastName);
+            var target = new Wrapper<string>(PropertyExpression.FirstName, PropertyExpression.LastName);
 
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
             Action action = () => target.ReadSourceValue(null);
@@ -143,7 +143,7 @@ namespace ModelBuilder.UnitTests.ValueGenerators
         [Fact]
         public void GetValueThrowsExceptionWithNullContextTest()
         {
-            var target = new GeneratorWrapper<string>(
+            var target = new Wrapper<string>(
                 PropertyExpression.FirstName,
                 PropertyExpression.FirstName,
                 (Type) null);
@@ -160,7 +160,7 @@ namespace ModelBuilder.UnitTests.ValueGenerators
         {
             var context = new Person();
 
-            var target = new GeneratorWrapper<string>(
+            var target = new Wrapper<string>(
                 PropertyExpression.FirstName,
                 PropertyExpression.FirstName,
                 (Type) null);
@@ -177,7 +177,7 @@ namespace ModelBuilder.UnitTests.ValueGenerators
         {
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
-            var sut = new GeneratorWrapper<string>(
+            var sut = new Wrapper<string>(
                 PropertyExpression.FirstName,
                 PropertyExpression.Email,
                 typeof(string));
@@ -220,7 +220,7 @@ namespace ModelBuilder.UnitTests.ValueGenerators
 
             buildChain.Push(person);
 
-            var sut = new GeneratorWrapper<string>(
+            var sut = new Wrapper<string>(
                 PropertyExpression.FirstName,
                 PropertyExpression.Email,
                 typeof(string));
@@ -269,7 +269,7 @@ namespace ModelBuilder.UnitTests.ValueGenerators
 
             buildChain.Push(person);
 
-            var sut = new GeneratorWrapper<string>(
+            var sut = new Wrapper<string>(
                 PropertyExpression.FirstName,
                 PropertyExpression.Email,
                 typeof(string));
@@ -282,7 +282,7 @@ namespace ModelBuilder.UnitTests.ValueGenerators
         [Fact]
         public void IsMaleThrowsExceptionWithNullExecuteStrategyTest()
         {
-            var sut = new GeneratorWrapper<string>(
+            var sut = new Wrapper<string>(
                 PropertyExpression.FirstName,
                 PropertyExpression.Email,
                 typeof(string));
@@ -299,7 +299,7 @@ namespace ModelBuilder.UnitTests.ValueGenerators
         [InlineData(typeof(string), "FirstName", typeof(List<string>), false)]
         [InlineData(typeof(string), "stuff", typeof(Person), false)]
         [InlineData(typeof(string), "FirstName", typeof(Person), true)]
-        public void IsSupportedReturnsFalseForUnsupportedScenariosTest(
+        public void IsMatchReturnsFalseForUnsupportedScenariosTest(
             Type type,
             string referenceName,
             Type contextType,
@@ -314,15 +314,15 @@ namespace ModelBuilder.UnitTests.ValueGenerators
                 buildChain.Push(context);
             }
 
-            var target = new GeneratorWrapper<string>(PropertyExpression.FirstName, PropertyExpression.Gender);
+            var target = new Wrapper<string>(PropertyExpression.FirstName, PropertyExpression.Gender);
 
-            var actual = target.RunIsSupported(type, referenceName, buildChain);
+            var actual = target.RunIsMatch(type, referenceName, buildChain);
 
             actual.Should().Be(expected);
         }
 
         [Fact]
-        public void IsSupportedReturnsTrueWhenSourceExpressionIsNullAndTargetExpressionMatchesReferenceNameTest()
+        public void IsMatchReturnsTrueWhenSourceExpressionIsNullAndTargetExpressionMatchesReferenceNameTest()
         {
             var context = new SlimModel();
             var buildChain = new BuildHistory();
@@ -330,53 +330,53 @@ namespace ModelBuilder.UnitTests.ValueGenerators
             buildChain.Push(context);
 
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-            var target = new GeneratorWrapper<string>(PropertyExpression.FirstName, (Regex) null);
+            var target = new Wrapper<string>(PropertyExpression.FirstName, (Regex) null);
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
-            var actual = target.RunIsSupported(typeof(string), "FirstName", buildChain);
+            var actual = target.RunIsMatch(typeof(string), "FirstName", buildChain);
 
             actual.Should().BeTrue();
         }
 
         [Fact]
-        public void IsSupportedReturnsTrueWhenTargetExpressionMatchesReferenceNameTest()
+        public void IsMatchReturnsTrueWhenTargetExpressionMatchesReferenceNameTest()
         {
             var context = new SlimModel();
             var buildChain = new BuildHistory();
 
             buildChain.Push(context);
 
-            var target = new GeneratorWrapper<string>(PropertyExpression.FirstName, typeof(string));
+            var target = new Wrapper<string>(PropertyExpression.FirstName, typeof(string));
 
-            var actual = target.RunIsSupported(typeof(string), "FirstName", buildChain);
+            var actual = target.RunIsMatch(typeof(string), "FirstName", buildChain);
 
             actual.Should().BeTrue();
         }
 
         [Fact]
-        public void IsSupportedThrowsExceptionWithNullBuildChainTest()
+        public void IsMatchThrowsExceptionWithNullBuildChainTest()
         {
-            var target = new GeneratorWrapper<string>(PropertyExpression.FirstName, typeof(string));
+            var target = new Wrapper<string>(PropertyExpression.FirstName, typeof(string));
 
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-            Action action = () => target.RunIsSupported(typeof(string), "FirstName", null);
+            Action action = () => target.RunIsMatch(typeof(string), "FirstName", null);
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
             action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
-        public void IsSupportedThrowsExceptionWithNullTypeTest()
+        public void IsMatchThrowsExceptionWithNullTypeTest()
         {
             var context = new SlimModel();
             var buildChain = new BuildHistory();
 
             buildChain.Push(context);
 
-            var target = new GeneratorWrapper<string>(PropertyExpression.FirstName, typeof(string));
+            var target = new Wrapper<string>(PropertyExpression.FirstName, typeof(string));
 
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-            Action action = () => target.RunIsSupported(null, "FirstName", buildChain);
+            Action action = () => target.RunIsMatch(null, "FirstName", buildChain);
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
             action.Should().Throw<ArgumentNullException>();
@@ -387,7 +387,7 @@ namespace ModelBuilder.UnitTests.ValueGenerators
         {
             // ReSharper disable once ObjectCreationAsStatement
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-            Action action = () => new GeneratorWrapper<string>(null, PropertyExpression.FirstName, typeof(string));
+            Action action = () => new Wrapper<string>(null, PropertyExpression.FirstName, typeof(string));
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
             action.Should().Throw<ArgumentException>();
@@ -398,26 +398,26 @@ namespace ModelBuilder.UnitTests.ValueGenerators
         {
             // ReSharper disable once ObjectCreationAsStatement
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-            Action action = () => new GeneratorWrapper<string>(null, PropertyExpression.Gender);
+            Action action = () => new Wrapper<string>(null, PropertyExpression.Gender);
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
             action.Should().Throw<ArgumentException>();
         }
 
-        private class GeneratorWrapper<T> : RelativeValueGenerator
+        private class Wrapper<T> : RelativeValueGenerator
         {
-            public GeneratorWrapper(Regex targetNameExpression, params Type[] types) : base(targetNameExpression, types)
+            public Wrapper(Regex targetNameExpression, params Type[] types) : base(targetNameExpression, types)
             {
             }
 
-            public GeneratorWrapper(Regex targetNameExpression, Regex sourceNameExpression, params Type[] types) : base(
+            public Wrapper(Regex targetNameExpression, Regex sourceNameExpression, params Type[] types) : base(
                 targetNameExpression,
                 sourceNameExpression,
                 types)
             {
             }
 
-            public GeneratorWrapper(Regex targetNameExpression, Regex sourceNameExpression) : base(
+            public Wrapper(Regex targetNameExpression, Regex sourceNameExpression) : base(
                 targetNameExpression,
                 sourceNameExpression,
                 typeof(string))
@@ -439,9 +439,9 @@ namespace ModelBuilder.UnitTests.ValueGenerators
                 return GetValue<T>(expression, context);
             }
 
-            public bool RunIsSupported(Type type, string referenceName, IBuildChain buildChain)
+            public bool RunIsMatch(Type type, string referenceName, IBuildChain buildChain)
             {
-                return IsSupported(type, referenceName, buildChain);
+                return IsMatch(type, referenceName, buildChain);
             }
 
             protected override object Generate(Type type, string referenceName, IExecuteStrategy executeStrategy)

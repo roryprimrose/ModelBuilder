@@ -26,9 +26,9 @@
 
             buildChain.Push(address);
 
-            var target = new PostCodeValueGenerator();
+            var target = new Wrapper();
 
-            var actual = target.Generate(typeof(string), "PostCode", executeStrategy) as string;
+            var actual = target.RunGenerate(typeof(string), "City", executeStrategy) as string;
 
             TestData.Locations.Select(x => x.PostCode).Should().Contain(actual);
         }
@@ -47,9 +47,9 @@
 
             buildChain.Push(address);
 
-            var target = new PostCodeValueGenerator();
+            var target = new Wrapper();
 
-            var actual = target.Generate(typeof(string), "PostCode", executeStrategy) as string;
+            var actual = target.RunGenerate(typeof(string), "City", executeStrategy) as string;
 
             TestData.Locations.Select(x => x.PostCode).Should().Contain(actual);
         }
@@ -68,9 +68,9 @@
 
             buildChain.Push(address);
 
-            var target = new PostCodeValueGenerator();
+            var target = new Wrapper();
 
-            var actual = target.Generate(typeof(string), "PostCode", executeStrategy) as string;
+            var actual = target.RunGenerate(typeof(string), "City", executeStrategy) as string;
 
             actual.Should().NotBeNullOrWhiteSpace();
 
@@ -95,9 +95,9 @@
 
             buildChain.Push(address);
 
-            var target = new PostCodeValueGenerator();
+            var target = new Wrapper();
 
-            var actual = target.Generate(typeof(string), "PostCode", executeStrategy) as string;
+            var actual = target.RunGenerate(typeof(string), "City", executeStrategy) as string;
 
             actual.Should().NotBeNullOrWhiteSpace();
 
@@ -122,9 +122,9 @@
 
             buildChain.Push(address);
 
-            var target = new PostCodeValueGenerator();
+            var target = new Wrapper();
 
-            var actual = target.Generate(typeof(string), "PostCode", executeStrategy) as string;
+            var actual = target.RunGenerate(typeof(string), "City", executeStrategy) as string;
 
             actual.Should().NotBeNullOrWhiteSpace();
 
@@ -149,9 +149,9 @@
 
             buildChain.Push(address);
 
-            var target = new PostCodeValueGenerator();
+            var target = new Wrapper();
 
-            var actual = target.Generate(typeof(string), "PostCode", executeStrategy) as string;
+            var actual = target.RunGenerate(typeof(string), "City", executeStrategy) as string;
 
             actual.Should().NotBeNullOrWhiteSpace();
 
@@ -174,9 +174,9 @@
 
             buildChain.Push(address);
 
-            var target = new PostCodeValueGenerator();
+            var target = new Wrapper();
 
-            var actual = target.Generate(typeof(string), "PostCode", executeStrategy) as string;
+            var actual = target.RunGenerate(typeof(string), "City", executeStrategy) as string;
 
             actual.Should().NotBeNullOrWhiteSpace();
 
@@ -199,9 +199,9 @@
 
             buildChain.Push(address);
 
-            var target = new PostCodeValueGenerator();
+            var target = new Wrapper();
 
-            var actual = target.Generate(typeof(string), "PostCode", executeStrategy) as string;
+            var actual = target.RunGenerate(typeof(string), "City", executeStrategy) as string;
 
             actual.Should().NotBeNullOrWhiteSpace();
 
@@ -221,15 +221,15 @@
 
             buildChain.Push(address);
 
-            var target = new PostCodeValueGenerator();
+            var target = new Wrapper();
 
-            var first = (string)target.Generate(typeof(string), "Zip", executeStrategy);
+            var first = (string) target.RunGenerate(typeof(string), "City", executeStrategy);
 
             var second = first;
 
             for (var index = 0; index < 1000; index++)
             {
-                second = (string)target.Generate(typeof(string), "Zip", executeStrategy);
+                second = (string) target.RunGenerate(typeof(string), "City", executeStrategy);
 
                 if (string.Equals(first, second, StringComparison.OrdinalIgnoreCase) == false)
                 {
@@ -248,15 +248,16 @@
                 State = Guid.NewGuid().ToString()
             };
             var buildChain = new BuildHistory();
+            var property = address.GetProperty(x => x.City);
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
 
             buildChain.Push(address);
 
-            var target = new PostCodeValueGenerator();
+            var target = new Wrapper();
 
-            var actual = target.Generate(typeof(string), "PostCode", executeStrategy) as string;
+            var actual = target.RunGenerate(typeof(string), "City", executeStrategy) as string;
 
             TestData.Locations.Select(x => x.PostCode).Should().Contain(actual);
         }
@@ -272,9 +273,9 @@
 
             buildChain.Push(address);
 
-            var target = new PostCodeValueGenerator();
+            var target = new Wrapper();
 
-            var actual = target.Generate(typeof(string), "Zip", executeStrategy);
+            var actual = target.RunGenerate(typeof(string), "City", executeStrategy);
 
             actual.Should().BeOfType<string>();
             actual.As<string>().Should().NotBeNullOrWhiteSpace();
@@ -293,40 +294,24 @@
         {
             var address = new Address();
             var buildChain = new BuildHistory();
+
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
 
             buildChain.Push(address);
 
-            var target = new PostCodeValueGenerator();
+            var target = new Wrapper();
 
-            var actual = (string)target.Generate(typeof(string), referenceName, executeStrategy);
+            var actual = (string) target.RunGenerate(typeof(string), referenceName, executeStrategy);
 
             actual.Should().NotBeNullOrEmpty();
         }
 
         [Fact]
-        public void GenerateThrowsExceptionWithNullTypeTest()
-        {
-            var buildChain = new BuildHistory();
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            executeStrategy.BuildChain.Returns(buildChain);
-
-            var target = new PostCodeValueGenerator();
-
-#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-            Action action = () => target.Generate(null, null, executeStrategy);
-#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
-
-            action.Should().Throw<ArgumentNullException>();
-        }
-
-        [Fact]
         public void HasHigherPriorityThanStringValueGeneratorTest()
         {
-            var target = new PostCodeValueGenerator();
+            var target = new Wrapper();
             var other = new StringValueGenerator();
 
             target.Priority.Should().BeGreaterThan(other.Priority);
@@ -345,54 +330,31 @@
         [InlineData(typeof(string), "ZipCode", true)]
         [InlineData(typeof(string), "zipcode", true)]
         [InlineData(typeof(string), "Zipcode", true)]
-        public void IsSupportedTest(Type type, string referenceName, bool expected)
+        public void IsMatchReturnsWhetherTypeAndNameAreSupportedTest(Type type, string referenceName, bool expected)
         {
             var address = new Address();
             var buildChain = new BuildHistory();
 
             buildChain.Push(address);
 
-            var target = new PostCodeValueGenerator();
+            var target = new Wrapper();
 
-            var actual = target.IsSupported(type, referenceName, buildChain);
+            var actual = target.RunIsMatch(type, referenceName, buildChain);
 
             actual.Should().Be(expected);
         }
 
-        [Fact]
-        public void IsSupportedThrowsExceptionWithNullBuildChainTest()
+        private class Wrapper : PostCodeValueGenerator
         {
-            var type = typeof(string);
+            public object RunGenerate(Type type, string referenceName, IExecuteStrategy executeStrategy)
+            {
+                return Generate(type, referenceName, executeStrategy);
+            }
 
-            var target = new PostCodeValueGenerator();
-
-#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-            Action action = () => target.IsSupported(type, null, null);
-#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
-
-            action.Should().Throw<ArgumentNullException>();
-        }
-
-        [Fact]
-        public void IsSupportedThrowsExceptionWithNullTypeTest()
-        {
-            var buildChain = Substitute.For<IBuildChain>();
-
-            var target = new PostCodeValueGenerator();
-
-#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-            Action action = () => target.IsSupported(null, null, buildChain);
-#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
-
-            action.Should().Throw<ArgumentNullException>();
-        }
-
-        [Fact]
-        public void PriorityReturnsPositiveValueTest()
-        {
-            var target = new PostCodeValueGenerator();
-
-            target.Priority.Should().BeGreaterThan(0);
+            public bool RunIsMatch(Type type, string referenceName, IBuildChain buildChain)
+            {
+                return IsMatch(type, referenceName, buildChain);
+            }
         }
     }
 }

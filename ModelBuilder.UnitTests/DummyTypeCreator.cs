@@ -1,43 +1,20 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
-    using ModelBuilder.UnitTests.Models;
-    using NSubstitute;
+    using ModelBuilder.TypeCreators;
 
     public class DummyTypeCreator : TypeCreatorBase
     {
-        public override bool CanCreate(Type type, string referenceName, IBuildChain buildChain)
+        protected override bool CanCreate(Type type, string referenceName, IBuildConfiguration configuration,
+            IBuildChain buildChain)
         {
             return false;
         }
 
-        public override bool CanPopulate(Type type, string referenceName, IBuildChain buildChain)
+        protected override bool CanPopulate(Type type, string referenceName, IBuildConfiguration configuration,
+            IBuildChain buildChain)
         {
             return false;
-        }
-
-        public void VerifyCreateRequestWithNullExecuteStrategy()
-        {
-            VerifyCreateRequest(typeof(Company), null, null);
-        }
-
-        public void VerifyCreateRequestWithNullType()
-        {
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            VerifyCreateRequest(null, null, executeStrategy);
-        }
-
-        public void VerifyPopulateRequestWithNullExecuteStrategy()
-        {
-            VerifyPopulateRequest(typeof(Company), null, null);
-        }
-
-        public void VerifyPopulateRequestWithNullType()
-        {
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            VerifyPopulateRequest(null, null, executeStrategy);
         }
 
         protected override object CreateInstance(
