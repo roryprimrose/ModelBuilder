@@ -462,12 +462,11 @@
         {
             var typeCreator = Substitute.For<ITypeCreator>();
 
-            typeCreator.CanCreate(Arg.Is<PropertyInfo>(x => x.DeclaringType == typeof(Office) && x.Name == nameof(Office.Address)),
-                Arg.Any<IBuildConfiguration>(), Arg.Any<IBuildChain>()).Returns(true);
+            typeCreator.CanCreate(Arg.Any<IBuildConfiguration>(), Arg.Any<IBuildChain>(), Arg.Is<PropertyInfo>(x => x.DeclaringType == typeof(Office) && x.Name == nameof(Office.Address))).Returns(true);
             typeCreator.Priority.Returns(int.MaxValue);
             typeCreator.AutoDetectConstructor.Returns(true);
             typeCreator.AutoPopulate.Returns(true);
-            typeCreator.Create(Arg.Is<PropertyInfo>(x => x.DeclaringType == typeof(Office ) && x.Name == nameof(Office.Address)), Arg.Any<IExecuteStrategy>(), null)
+            typeCreator.Create(Arg.Any<IExecuteStrategy>(), Arg.Is<PropertyInfo>(x => x.DeclaringType == typeof(Office ) && x.Name == nameof(Office.Address)), null)
                 .Throws(new InvalidOperationException());
 
             var configuration = Model.UsingDefaultConfiguration().Add(typeCreator);

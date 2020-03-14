@@ -27,7 +27,7 @@
 
             var target = new DefaultTypeCreator();
 
-            var actual = target.Create(typeof(Person), executeStrategy, args);
+            var actual = target.Create(executeStrategy, typeof(Person), args);
 
             actual.Should().NotBeNull();
         }
@@ -48,7 +48,7 @@
 
             var target = new DefaultTypeCreator();
 
-            var actual = target.Create(typeof(Person), executeStrategy, null);
+            var actual = target.Create(executeStrategy, typeof(Person), null);
 
             actual.Should().NotBeNull();
         }
@@ -81,7 +81,7 @@
 
             var target = new DefaultTypeCreator();
 
-            var actual = target.Create(typeof(Person), executeStrategy, args);
+            var actual = target.Create(executeStrategy, typeof(Person), args);
 
             actual.Should().BeOfType<Person>();
 
@@ -116,7 +116,7 @@
 
             var target = new DefaultTypeCreator();
 
-            Action action = () => target.Create(typeof(Person), executeStrategy, args);
+            Action action = () => target.Create(executeStrategy, typeof(Person), args);
 
             action.Should().Throw<MissingMemberException>();
         }
@@ -137,7 +137,7 @@
 
             var target = new DefaultTypeCreator();
 
-            Action action = () => target.Create(typeof(Stream), executeStrategy);
+            Action action = () => target.Create(executeStrategy, typeof(Stream));
 
             action.Should().Throw<NotSupportedException>();
         }
@@ -161,7 +161,7 @@
 
             var target = new DefaultTypeCreator();
 
-            var actual = target.Populate(expected, executeStrategy);
+            var actual = target.Populate(executeStrategy, expected);
 
             actual.Should().Be(expected);
         }

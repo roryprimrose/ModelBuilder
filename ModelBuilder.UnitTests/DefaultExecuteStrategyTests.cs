@@ -375,10 +375,10 @@
             var resolver = Substitute.For<IPropertyResolver>();
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
 
-            creator.CanCreate(typeof(SlimModel), buildConfiguration, Arg.Any<IBuildChain>()).Returns(true);
-            creator.CanPopulate(typeof(SlimModel), buildConfiguration, Arg.Any<IBuildChain>()).Returns(true);
-            creator.Create(typeof(SlimModel), Arg.Any<IExecuteStrategy>(), null).Returns(expected);
-            creator.Populate(expected, Arg.Any<IExecuteStrategy>()).Returns(expected);
+            creator.CanCreate(buildConfiguration, Arg.Any<IBuildChain>(), typeof(SlimModel)).Returns(true);
+            creator.CanPopulate(buildConfiguration, Arg.Any<IBuildChain>(), typeof(SlimModel)).Returns(true);
+            creator.Create(Arg.Any<IExecuteStrategy>(), typeof(SlimModel), null).Returns(expected);
+            creator.Populate(Arg.Any<IExecuteStrategy>(), expected).Returns(expected);
             creator.AutoPopulate.Returns(true);
             resolver.CanPopulate(Arg.Any<PropertyInfo>()).Returns(true);
             resolver.ShouldPopulateProperty(buildConfiguration, expected, Arg.Any<PropertyInfo>(),

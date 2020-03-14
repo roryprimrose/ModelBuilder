@@ -15,14 +15,14 @@ namespace ModelBuilder.TypeCreators
 
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
-        public bool CanCreate(Type type, IBuildConfiguration configuration, IBuildChain buildChain)
+        public bool CanCreate(IBuildConfiguration configuration, IBuildChain buildChain, Type type)
         {
             return CanCreate(type, null, configuration, buildChain);
         }
 
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="parameterInfo" /> parameter is <c>null</c>.</exception>
-        public bool CanCreate(ParameterInfo parameterInfo, IBuildConfiguration configuration, IBuildChain buildChain)
+        public bool CanCreate(IBuildConfiguration configuration, IBuildChain buildChain, ParameterInfo parameterInfo)
         {
             if (parameterInfo == null)
             {
@@ -34,7 +34,7 @@ namespace ModelBuilder.TypeCreators
 
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="propertyInfo" /> parameter is <c>null</c>.</exception>
-        public bool CanCreate(PropertyInfo propertyInfo, IBuildConfiguration configuration, IBuildChain buildChain)
+        public bool CanCreate(IBuildConfiguration configuration, IBuildChain buildChain, PropertyInfo propertyInfo)
         {
             if (propertyInfo == null)
             {
@@ -46,14 +46,14 @@ namespace ModelBuilder.TypeCreators
 
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
-        public bool CanPopulate(Type type, IBuildConfiguration configuration, IBuildChain buildChain)
+        public bool CanPopulate(IBuildConfiguration configuration, IBuildChain buildChain, Type type)
         {
             return CanPopulate(type, null, configuration, buildChain);
         }
 
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="parameterInfo" /> parameter is <c>null</c>.</exception>
-        public bool CanPopulate(ParameterInfo parameterInfo, IBuildConfiguration configuration, IBuildChain buildChain)
+        public bool CanPopulate(IBuildConfiguration configuration, IBuildChain buildChain, ParameterInfo parameterInfo)
         {
             if (parameterInfo == null)
             {
@@ -65,7 +65,7 @@ namespace ModelBuilder.TypeCreators
 
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="propertyInfo" /> parameter is <c>null</c>.</exception>
-        public bool CanPopulate(PropertyInfo propertyInfo, IBuildConfiguration configuration, IBuildChain buildChain)
+        public bool CanPopulate(IBuildConfiguration configuration, IBuildChain buildChain, PropertyInfo propertyInfo)
         {
             if (propertyInfo == null)
             {
@@ -78,7 +78,7 @@ namespace ModelBuilder.TypeCreators
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is <c>null</c>.</exception>
-        public object Create(Type type, IExecuteStrategy executeStrategy, params object[] args)
+        public object Create(IExecuteStrategy executeStrategy, Type type, params object[] args)
         {
             return Create(type, null, executeStrategy, args);
         }
@@ -86,7 +86,7 @@ namespace ModelBuilder.TypeCreators
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="parameterInfo" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is <c>null</c>.</exception>
-        public object Create(ParameterInfo parameterInfo, IExecuteStrategy executeStrategy, params object[] args)
+        public object Create(IExecuteStrategy executeStrategy, ParameterInfo parameterInfo, params object[] args)
         {
             if (parameterInfo == null)
             {
@@ -99,7 +99,7 @@ namespace ModelBuilder.TypeCreators
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="propertyInfo" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is <c>null</c>.</exception>
-        public object Create(PropertyInfo propertyInfo, IExecuteStrategy executeStrategy, params object[] args)
+        public object Create(IExecuteStrategy executeStrategy, PropertyInfo propertyInfo, params object[] args)
         {
             if (propertyInfo == null)
             {
@@ -112,7 +112,7 @@ namespace ModelBuilder.TypeCreators
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="instance" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is <c>null</c>.</exception>
-        public virtual object Populate(object instance, IExecuteStrategy executeStrategy)
+        public virtual object Populate(IExecuteStrategy executeStrategy, object instance)
         {
             if (instance == null)
             {

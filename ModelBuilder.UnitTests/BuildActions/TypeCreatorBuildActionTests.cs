@@ -41,8 +41,8 @@
             executeStrategy.Log.Returns(_buildLog);
 
             executeStrategy.Configuration.Returns(buildConfiguration);
-            creator.CanCreate(parameterInfo, buildConfiguration, buildChain).Returns(true);
-            creator.Create(parameterInfo, executeStrategy, arguments)
+            creator.CanCreate(buildConfiguration, buildChain, parameterInfo).Returns(true);
+            creator.Create(executeStrategy, parameterInfo, arguments)
                 .Returns(expected);
 
             var sut = new TypeCreatorBuildAction();
@@ -120,10 +120,10 @@
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Log.Returns(_buildLog);
             firstCreator.Priority.Returns(10);
-            firstCreator.CanCreate(parameterInfo, buildConfiguration, buildChain).Returns(true);
+            firstCreator.CanCreate(buildConfiguration, buildChain, parameterInfo).Returns(true);
             secondCreator.Priority.Returns(20);
-            secondCreator.CanCreate(parameterInfo, buildConfiguration, buildChain).Returns(true);
-            secondCreator.Create(parameterInfo, executeStrategy, arguments)
+            secondCreator.CanCreate(buildConfiguration, buildChain, parameterInfo).Returns(true);
+            secondCreator.Create(executeStrategy, parameterInfo, arguments)
                 .Returns(expected);
 
             var sut = new TypeCreatorBuildAction();
@@ -176,8 +176,8 @@
             executeStrategy.Configuration.Returns(buildConfiguration);
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Log.Returns(_buildLog);
-            creator.CanCreate(propertyInfo, buildConfiguration, buildChain).Returns(true);
-            creator.Create(propertyInfo, executeStrategy, arguments).Returns(expected);
+            creator.CanCreate(buildConfiguration, buildChain, propertyInfo).Returns(true);
+            creator.Create(executeStrategy, propertyInfo, arguments).Returns(expected);
 
             var sut = new TypeCreatorBuildAction();
 
@@ -251,10 +251,10 @@
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Log.Returns(_buildLog);
             firstCreator.Priority.Returns(10);
-            firstCreator.CanCreate(propertyInfo, buildConfiguration, buildChain).Returns(true);
+            firstCreator.CanCreate(buildConfiguration, buildChain, propertyInfo).Returns(true);
             secondCreator.Priority.Returns(20);
-            secondCreator.CanCreate(propertyInfo, buildConfiguration, buildChain).Returns(true);
-            secondCreator.Create(propertyInfo, executeStrategy, arguments)
+            secondCreator.CanCreate(buildConfiguration, buildChain, propertyInfo).Returns(true);
+            secondCreator.Create(executeStrategy, propertyInfo, arguments)
                 .Returns(expected);
 
             var sut = new TypeCreatorBuildAction();
@@ -306,8 +306,8 @@
             executeStrategy.Configuration.Returns(buildConfiguration);
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Log.Returns(_buildLog);
-            creator.CanCreate(type, buildConfiguration, buildChain).Returns(true);
-            creator.Create(type, executeStrategy, arguments).Returns(expected);
+            creator.CanCreate(buildConfiguration, buildChain, type).Returns(true);
+            creator.Create(executeStrategy, type, arguments).Returns(expected);
 
             var sut = new TypeCreatorBuildAction();
 
@@ -376,10 +376,10 @@
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Log.Returns(_buildLog);
             firstCreator.Priority.Returns(10);
-            firstCreator.CanCreate(type, buildConfiguration, buildChain).Returns(true);
+            firstCreator.CanCreate(buildConfiguration, buildChain, type).Returns(true);
             secondCreator.Priority.Returns(20);
-            secondCreator.CanCreate(type, buildConfiguration, buildChain).Returns(true);
-            secondCreator.Create(type, executeStrategy, arguments).Returns(expected);
+            secondCreator.CanCreate(buildConfiguration, buildChain, type).Returns(true);
+            secondCreator.Create(executeStrategy, type, arguments).Returns(expected);
 
             var sut = new TypeCreatorBuildAction();
 
@@ -429,8 +429,8 @@
             executeStrategy.Configuration.Returns(buildConfiguration);
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Log.Returns(_buildLog);
-            creator.CanCreate(parameterInfo, buildConfiguration, buildChain).Returns(true);
-            creator.Create(parameterInfo, executeStrategy, arguments)
+            creator.CanCreate(buildConfiguration, buildChain, parameterInfo).Returns(true);
+            creator.Create(executeStrategy, parameterInfo, arguments)
                 .Throws<BuildException>();
 
             var sut = new TypeCreatorBuildAction();
@@ -458,8 +458,8 @@
             executeStrategy.Configuration.Returns(buildConfiguration);
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Log.Returns(_buildLog);
-            creator.CanCreate(propertyInfo, buildConfiguration, buildChain).Returns(true);
-            creator.Create(propertyInfo, executeStrategy, arguments)
+            creator.CanCreate(buildConfiguration, buildChain, propertyInfo).Returns(true);
+            creator.Create(executeStrategy, propertyInfo, arguments)
                 .Throws<TimeoutException>();
 
             var sut = new TypeCreatorBuildAction();
@@ -587,9 +587,9 @@
             executeStrategy.Configuration.Returns(buildConfiguration);
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Log.Returns(_buildLog);
-            creator.CanCreate(parameterInfo, buildConfiguration, buildChain).Returns(true);
-            creator.CanPopulate(parameterInfo, buildConfiguration, buildChain).Returns(canPopulate);
-            creator.Create(parameterInfo, executeStrategy, arguments)
+            creator.CanCreate(buildConfiguration, buildChain, parameterInfo).Returns(true);
+            creator.CanPopulate(buildConfiguration, buildChain, parameterInfo).Returns(canPopulate);
+            creator.Create(executeStrategy, parameterInfo, arguments)
                 .Returns(expected);
             creator.AutoDetectConstructor.Returns(autoDetectConstructor);
             creator.AutoPopulate.Returns(autoPopulate);
@@ -714,9 +714,9 @@
             executeStrategy.Configuration.Returns(buildConfiguration);
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Log.Returns(_buildLog);
-            creator.CanCreate(propertyInfo, buildConfiguration, buildChain).Returns(true);
-            creator.CanPopulate(propertyInfo, buildConfiguration, buildChain).Returns(canPopulate);
-            creator.Create(propertyInfo, executeStrategy, arguments).Returns(expected);
+            creator.CanCreate(buildConfiguration, buildChain, propertyInfo).Returns(true);
+            creator.CanPopulate(buildConfiguration, buildChain, propertyInfo).Returns(canPopulate);
+            creator.Create(executeStrategy, propertyInfo, arguments).Returns(expected);
             creator.AutoDetectConstructor.Returns(autoDetectConstructor);
             creator.AutoPopulate.Returns(autoPopulate);
 
@@ -757,9 +757,9 @@
             executeStrategy.Configuration.Returns(buildConfiguration);
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Log.Returns(_buildLog);
-            creator.CanCreate(type, buildConfiguration, buildChain).Returns(true);
-            creator.CanPopulate(type, buildConfiguration, buildChain).Returns(canPopulate);
-            creator.Create(type, executeStrategy).Returns(expected);
+            creator.CanCreate(buildConfiguration, buildChain, type).Returns(true);
+            creator.CanPopulate(buildConfiguration, buildChain, type).Returns(canPopulate);
+            creator.Create(executeStrategy, type).Returns(expected);
             creator.AutoDetectConstructor.Returns(autoDetectConstructor);
             creator.AutoPopulate.Returns(autoPopulate);
 
@@ -870,8 +870,8 @@
             executeStrategy.Configuration.Returns(buildConfiguration);
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Log.Returns(_buildLog);
-            creator.CanCreate(instance.GetType(), buildConfiguration, buildChain).Returns(true);
-            creator.Populate(instance, executeStrategy).Returns(instance);
+            creator.CanCreate(buildConfiguration, buildChain, instance.GetType()).Returns(true);
+            creator.Populate(executeStrategy, instance).Returns(instance);
 
             var sut = new TypeCreatorBuildAction();
 
@@ -879,7 +879,7 @@
 
             actual.Should().Be(instance);
 
-            creator.Received().Populate(instance, executeStrategy);
+            creator.Received().Populate(executeStrategy, instance);
         }
 
         [Fact]
@@ -920,10 +920,10 @@
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Log.Returns(_buildLog);
             firstCreator.Priority.Returns(10);
-            firstCreator.CanCreate(instance.GetType(), buildConfiguration, buildChain).Returns(true);
+            firstCreator.CanCreate(buildConfiguration, buildChain, instance.GetType()).Returns(true);
             secondCreator.Priority.Returns(20);
-            secondCreator.CanCreate(instance.GetType(), buildConfiguration, buildChain).Returns(true);
-            secondCreator.Populate(instance, executeStrategy).Returns(instance);
+            secondCreator.CanCreate(buildConfiguration, buildChain, instance.GetType()).Returns(true);
+            secondCreator.Populate(executeStrategy, instance).Returns(instance);
 
             var sut = new TypeCreatorBuildAction();
 
@@ -931,7 +931,7 @@
 
             actual.Should().Be(instance);
 
-            secondCreator.Received().Populate(instance, executeStrategy);
+            secondCreator.Received().Populate(executeStrategy, instance);
         }
 
         [Fact]

@@ -73,7 +73,7 @@
 
             var target = new EnumerableTypeCreator();
 
-            var actual = target.CanCreate(type, configuration, null);
+            var actual = target.CanCreate(configuration, null, type);
 
             actual.Should().Be(supported);
         }
@@ -91,7 +91,7 @@
 
             var target = new EnumerableTypeCreator();
 
-            Action action = () => target.CanCreate((ParameterInfo) null, configuration, null);
+            Action action = () => target.CanCreate(configuration, null, (ParameterInfo) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -109,7 +109,7 @@
 
             var target = new EnumerableTypeCreator();
 
-            Action action = () => target.CanCreate((PropertyInfo) null, configuration, null);
+            Action action = () => target.CanCreate(configuration, null, (PropertyInfo) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -127,7 +127,7 @@
 
             var target = new EnumerableTypeCreator();
 
-            Action action = () => target.CanCreate((Type) null, configuration, null);
+            Action action = () => target.CanCreate(configuration, null, (Type) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -171,7 +171,7 @@
 
             var target = new EnumerableTypeCreator();
 
-            var actual = target.CanPopulate(type, configuration, null);
+            var actual = target.CanPopulate(configuration, null, type);
 
             actual.Should().Be(supported);
         }
@@ -181,7 +181,7 @@
         {
             var target = new EnumerableTypeCreator();
 
-            Action action = () => target.CanPopulate(typeof(string), null, null);
+            Action action = () => target.CanPopulate(null, null, typeof(string));
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -192,7 +192,7 @@
             var target = new EnumerableTypeCreator();
             var configuration = Substitute.For<IBuildConfiguration>();
 
-            Action action = () => target.CanPopulate((ParameterInfo) null, configuration, null);
+            Action action = () => target.CanPopulate(configuration, null, (ParameterInfo) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -203,7 +203,7 @@
             var target = new EnumerableTypeCreator();
             var configuration = Substitute.For<IBuildConfiguration>();
 
-            Action action = () => target.CanPopulate((PropertyInfo) null, configuration, null);
+            Action action = () => target.CanPopulate(configuration, null, (PropertyInfo) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -214,7 +214,7 @@
             var target = new EnumerableTypeCreator();
             var configuration = Substitute.For<IBuildConfiguration>();
 
-            Action action = () => target.CanPopulate((Type) null, configuration, null);
+            Action action = () => target.CanPopulate(configuration, null, (Type) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -247,7 +247,7 @@
 
             var target = new IncrementingEnumerableTypeCreator();
 
-            var result = (IList<int>) target.Create(typeof(IList<int>), executeStrategy);
+            var result = (IList<int>) target.Create(executeStrategy, typeof(IList<int>));
 
             result.Should().BeEmpty();
         }
@@ -276,7 +276,7 @@
 
             var target = new EnumerableTypeCreator();
 
-            var actual = target.Create(type, executeStrategy);
+            var actual = target.Create(executeStrategy, type);
 
             actual.Should().NotBeNull();
         }
@@ -300,7 +300,7 @@
 
             var target = new EnumerableTypeCreator();
 
-            var actual = target.Create(targetType, executeStrategy);
+            var actual = target.Create(executeStrategy, targetType);
 
             actual.Should().BeOfType<List<int>>();
             actual.As<List<int>>().Should().BeEmpty();
@@ -350,7 +350,7 @@
 
             var target = new EnumerableTypeCreator();
 
-            Action action = () => target.Create(type, executeStrategy);
+            Action action = () => target.Create(executeStrategy, type);
 
             if (supported)
             {
@@ -384,7 +384,7 @@
                 AutoPopulateCount = 15
             };
 
-            var actual = target.Populate(expected, executeStrategy);
+            var actual = target.Populate(executeStrategy, expected);
 
             actual.Should().BeSameAs(expected);
 
@@ -413,9 +413,9 @@
 
             executeStrategy.Initialize(configuration);
 
-            var actual = target.Create(type, executeStrategy);
+            var actual = target.Create(executeStrategy, type);
 
-            target.Populate(actual, executeStrategy);
+            target.Populate(executeStrategy, actual);
 
             var converted = (IEnumerable) actual;
 
@@ -443,7 +443,7 @@
                 AutoPopulateCount = 15
             };
 
-            var actual = target.Populate(expected, executeStrategy);
+            var actual = target.Populate(executeStrategy, expected);
 
             actual.Should().BeSameAs(expected);
 
@@ -462,7 +462,7 @@
 
             var target = new IncrementingEnumerableTypeCreator();
 
-            var result = (List<int>) target.Populate(actual, executeStrategy);
+            var result = (List<int>) target.Populate(executeStrategy, actual);
 
             var baseValue = result[0];
             var expected = new List<int>(target.AutoPopulateCount);
@@ -492,7 +492,7 @@
 
             var target = new EnumerableTypeCreator();
 
-            Action action = () => target.Populate(instance, executeStrategy);
+            Action action = () => target.Populate(executeStrategy, instance);
 
             action.Should().Throw<NotSupportedException>();
         }

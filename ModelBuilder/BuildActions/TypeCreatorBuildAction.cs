@@ -30,11 +30,11 @@
 
             var typeCreator =
                 GetMatchingTypeCreator(
-                    x => x.CanCreate(type, executeStrategy.Configuration, executeStrategy.BuildChain),
+                    x => x.CanCreate(executeStrategy.Configuration, executeStrategy.BuildChain, type),
                     executeStrategy.Configuration);
 
             return Build(typeCreator, type, null, executeStrategy.BuildChain,
-                () => typeCreator?.Create(type, executeStrategy, arguments),
+                () => typeCreator?.Create(executeStrategy, type, arguments),
                 executeStrategy.Log);
         }
 
@@ -54,11 +54,11 @@
             }
 
             var typeCreator = GetMatchingTypeCreator(
-                x => x.CanCreate(parameterInfo, executeStrategy.Configuration, executeStrategy.BuildChain),
+                x => x.CanCreate(executeStrategy.Configuration, executeStrategy.BuildChain, parameterInfo),
                 executeStrategy.Configuration);
 
             return Build(typeCreator, parameterInfo.ParameterType, parameterInfo.Name, executeStrategy.BuildChain,
-                () => typeCreator?.Create(parameterInfo, executeStrategy, arguments),
+                () => typeCreator?.Create(executeStrategy, parameterInfo, arguments),
                 executeStrategy.Log);
         }
 
@@ -78,11 +78,11 @@
             }
 
             var typeCreator = GetMatchingTypeCreator(
-                x => x.CanCreate(propertyInfo, executeStrategy.Configuration, executeStrategy.BuildChain),
+                x => x.CanCreate(executeStrategy.Configuration, executeStrategy.BuildChain, propertyInfo),
                 executeStrategy.Configuration);
 
             return Build(typeCreator, propertyInfo.PropertyType, propertyInfo.Name, executeStrategy.BuildChain,
-                () => typeCreator?.Create(propertyInfo, executeStrategy, arguments),
+                () => typeCreator?.Create(executeStrategy, propertyInfo, arguments),
                 executeStrategy.Log);
         }
 
@@ -109,8 +109,8 @@
             }
 
             return GetBuildCapability(
-                x => x.CanCreate(type, buildConfiguration, buildChain),
-                x => x.CanPopulate(type, buildConfiguration, buildChain), buildConfiguration);
+                x => x.CanCreate(buildConfiguration, buildChain, type),
+                x => x.CanPopulate(buildConfiguration, buildChain, type), buildConfiguration);
         }
 
         /// <inheritdoc />
@@ -136,8 +136,8 @@
             }
 
             return GetBuildCapability(
-                x => x.CanCreate(parameterInfo, buildConfiguration, buildChain),
-                x => x.CanPopulate(parameterInfo, buildConfiguration, buildChain), buildConfiguration);
+                x => x.CanCreate(buildConfiguration, buildChain, parameterInfo),
+                x => x.CanPopulate(buildConfiguration, buildChain, parameterInfo), buildConfiguration);
         }
 
         /// <inheritdoc />
@@ -163,8 +163,8 @@
             }
 
             return GetBuildCapability(
-                x => x.CanCreate(propertyInfo, buildConfiguration, buildChain),
-                x => x.CanPopulate(propertyInfo, buildConfiguration, buildChain), buildConfiguration);
+                x => x.CanCreate(buildConfiguration, buildChain, propertyInfo),
+                x => x.CanPopulate(buildConfiguration, buildChain, propertyInfo), buildConfiguration);
         }
 
         /// <inheritdoc />
@@ -182,7 +182,7 @@
             }
 
             var typeCreator = GetMatchingTypeCreator(
-                x => x.CanCreate(instance.GetType(), executeStrategy.Configuration, executeStrategy.BuildChain),
+                x => x.CanCreate(executeStrategy.Configuration, executeStrategy.BuildChain, instance.GetType()),
                 executeStrategy.Configuration);
 
             if (typeCreator == null)
@@ -190,7 +190,7 @@
                 return instance;
             }
 
-            return typeCreator.Populate(instance, executeStrategy);
+            return typeCreator.Populate(executeStrategy, instance);
         }
 
         private static object Build(ITypeCreator typeCreator, Type typeToBuild, string referenceName,

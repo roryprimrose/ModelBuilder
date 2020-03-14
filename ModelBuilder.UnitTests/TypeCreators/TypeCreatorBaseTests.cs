@@ -32,7 +32,7 @@
 
             var target = new DefaultTypeCreator();
 
-            var actual = target.CanCreate(targetType, configuration, null);
+            var actual = target.CanCreate(configuration, null, targetType);
 
             actual.Should().Be(expected);
         }
@@ -44,7 +44,7 @@
 
             var target = new TypeCreatorWrapper();
 
-            Action action = () => target.CanCreate((ParameterInfo) null, configuration, null);
+            Action action = () => target.CanCreate(configuration, null, (ParameterInfo) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -56,7 +56,7 @@
 
             var target = new TypeCreatorWrapper();
 
-            Action action = () => target.CanCreate((PropertyInfo) null, configuration, null);
+            Action action = () => target.CanCreate(configuration, null, (PropertyInfo) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -68,7 +68,7 @@
 
             var target = new TypeCreatorWrapper();
 
-            Action action = () => target.CanCreate((Type) null, configuration, null);
+            Action action = () => target.CanCreate(configuration, null, (Type) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -81,7 +81,7 @@
 
             var target = new TypeCreatorWrapper();
 
-            Action action = () => target.CanPopulate((ParameterInfo) null, configuration, buildChain);
+            Action action = () => target.CanPopulate(configuration, buildChain, (ParameterInfo) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -94,7 +94,7 @@
 
             var target = new TypeCreatorWrapper();
 
-            Action action = () => target.CanPopulate((PropertyInfo) null, configuration, buildChain);
+            Action action = () => target.CanPopulate(configuration, buildChain, (PropertyInfo) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -107,7 +107,7 @@
 
             var target = new TypeCreatorWrapper();
 
-            Action action = () => target.CanPopulate((Type) null, configuration, buildChain);
+            Action action = () => target.CanPopulate(configuration, buildChain, (Type) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -124,7 +124,7 @@
 
             var target = new TypeCreatorWrapper();
 
-            Action action = () => target.Create(parameterInfo, null);
+            Action action = () => target.Create(null, parameterInfo);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -140,7 +140,7 @@
 
             var target = new TypeCreatorWrapper();
 
-            Action action = () => target.Create(property, null);
+            Action action = () => target.Create(null, property);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -155,7 +155,7 @@
 
             var target = new TypeCreatorWrapper();
 
-            Action action = () => target.Create(typeof(string), null);
+            Action action = () => target.Create(null, typeof(string));
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -175,7 +175,7 @@
 
             var target = new TypeCreatorWrapper();
 
-            var actual = target.Create(targetType, executeStrategy);
+            var actual = target.Create(executeStrategy, targetType);
 
             actual.Should().NotBeNull();
         }
@@ -195,7 +195,7 @@
 
             var target = new DefaultTypeCreator();
 
-            Action action = () => target.Create(targetType, executeStrategy);
+            Action action = () => target.Create(executeStrategy, targetType);
 
             action.Should().Throw<NotSupportedException>();
         }
@@ -210,7 +210,7 @@
 
             var target = new TypeCreatorWrapper();
 
-            Action action = () => target.Create((ParameterInfo) null, executeStrategy);
+            Action action = () => target.Create(executeStrategy, (ParameterInfo) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -225,7 +225,7 @@
 
             var target = new TypeCreatorWrapper();
 
-            Action action = () => target.Create((PropertyInfo) null, executeStrategy);
+            Action action = () => target.Create(executeStrategy, (PropertyInfo) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -239,7 +239,7 @@
 
             var target = new TypeCreatorWrapper();
 
-            Action action = () => target.Create(typeof(string), executeStrategy);
+            Action action = () => target.Create(executeStrategy, typeof(string));
 
             action.Should().Throw<InvalidOperationException>();
         }
@@ -254,7 +254,7 @@
 
             var target = new TypeCreatorWrapper();
 
-            Action action = () => target.Create((Type) null, executeStrategy);
+            Action action = () => target.Create(executeStrategy, (Type) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -279,7 +279,7 @@
 
             var target = new TypeCreatorWrapper();
 
-            Action action = () => target.Populate(value, executeStrategy);
+            Action action = () => target.Populate(executeStrategy, value);
 
             action.Should().NotThrow();
         }
@@ -296,7 +296,7 @@
 
             var target = new TypeCreatorWrapper();
 
-            var actual = target.Populate(expected, executeStrategy);
+            var actual = target.Populate(executeStrategy, expected);
 
             actual.Should().BeSameAs(expected);
         }
@@ -311,7 +311,7 @@
 
             var target = new TypeCreatorWrapper();
 
-            Action action = () => target.Populate(false, executeStrategy);
+            Action action = () => target.Populate(executeStrategy, false);
 
             action.Should().Throw<NotSupportedException>();
         }
@@ -323,7 +323,7 @@
 
             var target = new TypeCreatorWrapper();
 
-            Action action = () => target.Populate(person, null);
+            Action action = () => target.Populate(null, person);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -338,7 +338,7 @@
 
             var target = new TypeCreatorWrapper();
 
-            Action action = () => target.Populate(null, executeStrategy);
+            Action action = () => target.Populate(executeStrategy, null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -352,7 +352,7 @@
 
             var target = new TypeCreatorWrapper();
 
-            Action action = () => target.Populate(typeof(string), executeStrategy);
+            Action action = () => target.Populate(executeStrategy, typeof(string));
 
             action.Should().Throw<InvalidOperationException>();
         }
@@ -367,7 +367,7 @@
 
             var target = new TypeCreatorWrapper();
 
-            Action action = () => target.Populate(null, executeStrategy);
+            Action action = () => target.Populate(executeStrategy, null);
 
             action.Should().Throw<ArgumentNullException>();
         }

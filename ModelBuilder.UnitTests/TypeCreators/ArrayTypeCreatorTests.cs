@@ -51,7 +51,7 @@
 
             var target = new ArrayTypeCreator();
 
-            var actual = target.CanCreate(type, configuration, null);
+            var actual = target.CanCreate(configuration, null, type);
 
             actual.Should().Be(supported);
         }
@@ -63,7 +63,7 @@
 
             var target = new ArrayTypeCreator();
 
-            Action action = () => target.CanCreate((ParameterInfo) null, configuration, null);
+            Action action = () => target.CanCreate(configuration, null, (ParameterInfo) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -75,7 +75,7 @@
 
             var target = new ArrayTypeCreator();
 
-            Action action = () => target.CanCreate((PropertyInfo) null, configuration, null);
+            Action action = () => target.CanCreate(configuration, null, (PropertyInfo) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -87,7 +87,7 @@
 
             var target = new ArrayTypeCreator();
 
-            Action action = () => target.CanCreate((Type) null, configuration, null);
+            Action action = () => target.CanCreate(configuration, null, (Type) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -122,7 +122,7 @@
 
             var target = new ArrayTypeCreator();
 
-            var actual = target.CanPopulate(type, configuration, null);
+            var actual = target.CanPopulate(configuration, null, type);
 
             actual.Should().Be(supported);
         }
@@ -134,7 +134,7 @@
 
             var target = new ArrayTypeCreator();
 
-            Action action = () => target.CanPopulate((ParameterInfo) null, configuration, null);
+            Action action = () => target.CanPopulate(configuration, null, (ParameterInfo) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -146,7 +146,7 @@
 
             var target = new ArrayTypeCreator();
 
-            Action action = () => target.CanPopulate((PropertyInfo) null, configuration, null);
+            Action action = () => target.CanPopulate(configuration, null, (PropertyInfo) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -158,7 +158,7 @@
 
             var target = new ArrayTypeCreator();
 
-            Action action = () => target.CanPopulate((Type) null, configuration, null);
+            Action action = () => target.CanPopulate(configuration, null, (Type) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -207,7 +207,7 @@
 
             var target = new ArrayTypeCreator();
 
-            var actual = target.Create(type, executeStrategy);
+            var actual = target.Create(executeStrategy, type);
 
             actual.Should().NotBeNull();
         }
@@ -249,7 +249,7 @@
 
             var target = new ArrayTypeCreator();
 
-            Action action = () => target.Create(type, executeStrategy);
+            Action action = () => target.Create(executeStrategy, type);
 
             if (supported)
             {
@@ -304,7 +304,7 @@
                 MaxCount = 15
             };
 
-            var actual = target.Populate(expected, executeStrategy);
+            var actual = target.Populate(executeStrategy, expected);
 
             actual.Should().BeSameAs(expected);
 
@@ -330,7 +330,7 @@
                 MaxCount = 15
             };
 
-            var actual = target.Populate(expected, executeStrategy);
+            var actual = target.Populate(executeStrategy, expected);
 
             actual.Should().BeSameAs(expected);
 
@@ -349,7 +349,7 @@
 
             var target = new IncrementingArrayTypeCreator();
 
-            var result = (int[]) target.Populate(actual, executeStrategy);
+            var result = (int[]) target.Populate(executeStrategy, actual);
 
             var baseValue = result[0];
             var expected = new int[actual.Length];
@@ -371,7 +371,7 @@
 
             var target = new ArrayTypeCreator();
 
-            var result = (Person[]) target.Populate(actual, executeStrategy);
+            var result = (Person[]) target.Populate(executeStrategy, actual);
 
             result.All(x => x != null).Should().BeTrue();
         }
@@ -420,7 +420,7 @@
                 MaxCount = 15
             };
 
-            var actual = target.Populate(expected, executeStrategy);
+            var actual = target.Populate(executeStrategy, expected);
 
             actual.Should().BeSameAs(expected);
 
@@ -436,7 +436,7 @@
 
             var target = new ArrayTypeCreator();
 
-            Action action = () => target.Populate(null, strategy);
+            Action action = () => target.Populate(strategy, null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -448,7 +448,7 @@
 
             var target = new ArrayTypeCreator();
 
-            Action action = () => target.Populate(instance, null);
+            Action action = () => target.Populate(null, instance);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -465,7 +465,7 @@
 
             var target = new ArrayTypeCreator();
 
-            Action action = () => target.Populate(instance, executeStrategy);
+            Action action = () => target.Populate(executeStrategy, instance);
 
             action.Should().Throw<NotSupportedException>();
         }
