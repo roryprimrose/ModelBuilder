@@ -20,7 +20,7 @@
 
             var sut = new PredicateCreationRule((ParameterInfo item) => true, () => value, priority);
 
-            var actual = sut.Create(parameterInfo, null);
+            var actual = sut.Create(null, parameterInfo);
 
             actual.Should().Be(value);
         }
@@ -35,7 +35,7 @@
 
             var sut = new PredicateCreationRule((ParameterInfo item) => true, value, priority);
 
-            var actual = sut.Create(parameterInfo, null);
+            var actual = sut.Create(null, parameterInfo);
 
             actual.Should().Be(value);
         }
@@ -49,7 +49,7 @@
 
             var sut = new PredicateCreationRule((PropertyInfo item) => true, () => value, priority);
 
-            var actual = sut.Create(propertyInfo, null);
+            var actual = sut.Create(null, propertyInfo);
 
             actual.Should().Be(value);
         }
@@ -63,7 +63,7 @@
 
             var sut = new PredicateCreationRule((PropertyInfo item) => true, value, priority);
 
-            var actual = sut.Create(propertyInfo, null);
+            var actual = sut.Create(null, propertyInfo);
 
             actual.Should().Be(value);
         }
@@ -76,7 +76,7 @@
 
             var sut = new PredicateCreationRule((Type item) => true, () => value, priority);
 
-            var actual = sut.Create(typeof(string), null);
+            var actual = sut.Create(null, typeof(string));
 
             actual.Should().Be(value);
         }
@@ -89,7 +89,7 @@
 
             var sut = new PredicateCreationRule((Type item) => true, value, priority);
 
-            var actual = sut.Create(typeof(string), null);
+            var actual = sut.Create(null, typeof(string));
 
             actual.Should().Be(value);
         }

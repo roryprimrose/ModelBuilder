@@ -76,7 +76,7 @@
 
             rule.Priority.Should().Be(priority);
 
-            var actual = rule.Create(propertyInfo, null);
+            var actual = rule.Create(null, propertyInfo);
 
             actual.Should().Be(value);
         }

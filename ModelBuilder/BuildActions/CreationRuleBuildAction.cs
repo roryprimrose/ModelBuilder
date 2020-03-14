@@ -30,7 +30,7 @@
             var rule = GetMatchingRule(x => x.IsMatch(type), executeStrategy.Configuration);
 
             return Build(rule, type, null, executeStrategy.BuildChain,
-                () => rule?.Create(type, executeStrategy),
+                () => rule?.Create(executeStrategy, type),
                 executeStrategy.Log);
         }
 
@@ -52,7 +52,7 @@
             var rule = GetMatchingRule(x => x.IsMatch(parameterInfo), executeStrategy.Configuration);
 
             return Build(rule, parameterInfo.ParameterType, parameterInfo.Name, executeStrategy.BuildChain,
-                () => rule?.Create(parameterInfo, executeStrategy),
+                () => rule?.Create(executeStrategy, parameterInfo),
                 executeStrategy.Log);
         }
 
@@ -74,7 +74,7 @@
             var rule = GetMatchingRule(x => x.IsMatch(propertyInfo), executeStrategy.Configuration);
 
             return Build(rule, propertyInfo.PropertyType, propertyInfo.Name, executeStrategy.BuildChain,
-                () => rule?.Create(propertyInfo, executeStrategy),
+                () => rule?.Create(executeStrategy, propertyInfo),
                 executeStrategy.Log);
         }
 

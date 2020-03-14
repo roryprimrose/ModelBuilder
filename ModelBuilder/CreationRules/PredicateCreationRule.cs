@@ -99,19 +99,19 @@
         }
 
         /// <inheritdoc />
-        public object Create(Type type, IExecuteStrategy executeStrategy)
+        public object Create(IExecuteStrategy executeStrategy, Type type)
         {
             return _valueGenerator();
         }
 
         /// <inheritdoc />
-        public object Create(PropertyInfo propertyInfo, IExecuteStrategy executeStrategy)
+        public object Create(IExecuteStrategy executeStrategy, PropertyInfo propertyInfo)
         {
             return _valueGenerator();
         }
 
         /// <inheritdoc />
-        public object Create(ParameterInfo parameterInfo, IExecuteStrategy executeStrategy)
+        public object Create(IExecuteStrategy executeStrategy, ParameterInfo parameterInfo)
         {
             return _valueGenerator();
         }

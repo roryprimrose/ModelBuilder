@@ -48,20 +48,20 @@
 
         /// <inheritdoc />
         /// <exception cref="NotSupportedException">The class does not support creating values for types.</exception>
-        public object Create(Type type, IExecuteStrategy executeStrategy)
+        public object Create(IExecuteStrategy executeStrategy, Type type)
         {
             throw new NotSupportedException(Resources.ExpressionCreationRule_CreateWithTypeNotSupported);
         }
 
         /// <inheritdoc />
-        public object Create(PropertyInfo propertyInfo, IExecuteStrategy executeStrategy)
+        public object Create(IExecuteStrategy executeStrategy, PropertyInfo propertyInfo)
         {
             return _valueGenerator();
         }
 
         /// <inheritdoc />
         /// <exception cref="NotSupportedException">The class does not support creating values for parameters.</exception>
-        public object Create(ParameterInfo parameterInfo, IExecuteStrategy executeStrategy)
+        public object Create(IExecuteStrategy executeStrategy, ParameterInfo parameterInfo)
         {
             throw new NotSupportedException(Resources.ExpressionCreationRule_CreateWithParameterNotSupported);
         }

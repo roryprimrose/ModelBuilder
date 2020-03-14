@@ -14,7 +14,7 @@
         {
             var sut = new ExpressionCreationRule<Person>(x => x.FirstName, (object) null, Environment.TickCount);
 
-            Action action = () => sut.Create((ParameterInfo) null, null);
+            Action action = () => sut.Create(null, (ParameterInfo) null);
 
             action.Should().Throw<NotSupportedException>();
         }
@@ -26,7 +26,7 @@
 
             var sut = new ExpressionCreationRule<Person>(x => x.FirstName, (object) null, Environment.TickCount);
 
-            var actual = sut.Create(propertyInfo, null);
+            var actual = sut.Create(null, propertyInfo);
 
             actual.Should().BeNull();
         }
@@ -39,7 +39,7 @@
 
             var sut = new ExpressionCreationRule<Person>(x => x.FirstName, expected, Environment.TickCount);
 
-            var actual = sut.Create(propertyInfo, null);
+            var actual = sut.Create(null, propertyInfo);
 
             actual.Should().Be(expected);
         }
@@ -52,7 +52,7 @@
 
             var sut = new ExpressionCreationRule<Person>(x => x.FirstName, () => expected, Environment.TickCount);
 
-            var actual = sut.Create(propertyInfo, null);
+            var actual = sut.Create(null, propertyInfo);
 
             actual.Should().Be(expected);
         }
@@ -62,7 +62,7 @@
         {
             var sut = new ExpressionCreationRule<Person>(x => x.FirstName, (object) null, Environment.TickCount);
 
-            Action action = () => sut.Create(typeof(string), null);
+            Action action = () => sut.Create(null, typeof(string));
 
             action.Should().Throw<NotSupportedException>();
         }

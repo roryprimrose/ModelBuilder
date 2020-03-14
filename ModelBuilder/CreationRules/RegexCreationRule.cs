@@ -49,14 +49,14 @@
 
         /// <inheritdoc />
         /// <exception cref="NotSupportedException">The class does not support creating values for types.</exception>
-        public object Create(Type type, IExecuteStrategy executeStrategy)
+        public object Create(IExecuteStrategy executeStrategy, Type type)
         {
             throw new NotSupportedException();
         }
 
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="propertyInfo" /> parameter is <c>null</c>.</exception>
-        public object Create(PropertyInfo propertyInfo, IExecuteStrategy executeStrategy)
+        public object Create(IExecuteStrategy executeStrategy, PropertyInfo propertyInfo)
         {
             if (propertyInfo == null)
             {
@@ -68,7 +68,7 @@
 
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="parameterInfo" /> parameter is <c>null</c>.</exception>
-        public object Create(ParameterInfo parameterInfo, IExecuteStrategy executeStrategy)
+        public object Create(IExecuteStrategy executeStrategy, ParameterInfo parameterInfo)
         {
             if (parameterInfo == null)
             {

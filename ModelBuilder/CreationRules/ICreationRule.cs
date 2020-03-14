@@ -12,26 +12,26 @@
         /// <summary>
         ///     Creates a new value of the specified type.
         /// </summary>
+        /// <param name="executeStrategy">The execution strategy.</param>
         /// <param name="type">The type of value to create.</param>
-        /// <param name="executeStrategy">The execution strategy.</param>
         /// <returns>A new value of the type.</returns>
-        object Create(Type type, IExecuteStrategy executeStrategy);
+        object Create(IExecuteStrategy executeStrategy, Type type);
 
         /// <summary>
         ///     Creates a new value of the specified type.
         /// </summary>
+        /// <param name="executeStrategy">The execution strategy.</param>
         /// <param name="propertyInfo">The property to create the value for.</param>
-        /// <param name="executeStrategy">The execution strategy.</param>
         /// <returns>A new value of the type.</returns>
-        object Create(PropertyInfo propertyInfo, IExecuteStrategy executeStrategy);
+        object Create(IExecuteStrategy executeStrategy, PropertyInfo propertyInfo);
 
         /// <summary>
         ///     Creates a new value of the specified type.
         /// </summary>
-        /// <param name="parameterInfo">The parameter to create the value for.</param>
         /// <param name="executeStrategy">The execution strategy.</param>
+        /// <param name="parameterInfo">The parameter to create the value for.</param>
         /// <returns>A new value of the type.</returns>
-        object Create(ParameterInfo parameterInfo, IExecuteStrategy executeStrategy);
+        object Create(IExecuteStrategy executeStrategy, ParameterInfo parameterInfo);
 
         /// <summary>
         ///     Returns whether the specified type matches this rule.
