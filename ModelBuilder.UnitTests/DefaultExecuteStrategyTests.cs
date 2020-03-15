@@ -74,7 +74,7 @@
         {
             var sut = new BuildParameterWrapper();
 
-            Action action = () => sut.Run();
+            Action action = () => sut.RunTest();
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -96,7 +96,7 @@
         {
             var sut = new BuildPropertyWrapper();
 
-            Action action = () => sut.Run();
+            Action action = () => sut.RunTest();
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -140,7 +140,7 @@
         {
             var sut = new BuildTypeWrapper();
 
-            Action action = () => sut.Run();
+            Action action = () => sut.RunTest();
 
             action.Should().Throw<ArgumentNullException>();
         }
