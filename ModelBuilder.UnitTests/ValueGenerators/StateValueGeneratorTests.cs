@@ -13,7 +13,7 @@
     public class StateValueGeneratorTests
     {
         [Fact]
-        public void GenerateReturnsRandomStateMatchingCaseInsensitiveCountryTest()
+        public void GenerateReturnsRandomStateMatchingCaseInsensitiveCountry()
         {
             var address = new Address
             {
@@ -40,7 +40,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsRandomStateMatchingCountryTest()
+        public void GenerateReturnsRandomStateMatchingCountry()
         {
             var address = new Address
             {
@@ -65,7 +65,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsRandomStateWhenNoMatchingCountryTest()
+        public void GenerateReturnsRandomStateWhenNoMatchingCountry()
         {
             var address = new Address
             {
@@ -86,7 +86,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsRandomValueTest()
+        public void GenerateReturnsRandomValue()
         {
             var address = new Address();
             var buildChain = new BuildHistory();
@@ -116,7 +116,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsStringValueTest()
+        public void GenerateReturnsStringValue()
         {
             var address = new Address();
             var buildChain = new BuildHistory();
@@ -158,7 +158,7 @@
         }
 
         [Fact]
-        public void HasHigherPriorityThanStringValueGeneratorTest()
+        public void HasHigherPriorityThanStringValueGenerator()
         {
             var target = new Wrapper();
             var other = new StringValueGenerator();

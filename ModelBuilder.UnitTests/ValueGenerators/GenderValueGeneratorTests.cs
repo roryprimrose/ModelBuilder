@@ -10,7 +10,7 @@
     public class GenderValueGeneratorTests
     {
         [Fact]
-        public void GenerateReturnsRandomValuesTest()
+        public void GenerateReturnsRandomValues()
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -46,7 +46,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsValueTest()
+        public void GenerateReturnsValue()
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -100,7 +100,7 @@
         }
 
         [Fact]
-        public void PriorityReturnsPositiveValueTest()
+        public void PriorityReturnsPositiveValue()
         {
             var target = new Wrapper();
 

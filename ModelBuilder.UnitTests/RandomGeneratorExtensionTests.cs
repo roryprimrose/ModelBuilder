@@ -8,7 +8,7 @@
     public class RandomGeneratorExtensionTests
     {
         [Fact]
-        public void NextValueReturnsRandomValueTest()
+        public void NextValueReturnsRandomValue()
         {
             var type = typeof(int);
             var expected = Environment.TickCount;
@@ -41,7 +41,7 @@
         }
 
         [Fact]
-        public void NextValueThrowsExceptionWhenMinimumGreaterThanMaximumTest()
+        public void NextValueThrowsExceptionWhenMinimumGreaterThanMaximum()
         {
             var target = new RandomGenerator();
 
@@ -51,7 +51,7 @@
         }
 
         [Fact]
-        public void NextValueThrowsExceptionWithMinimumAndMaximumWhenGeneratorIsNullTest()
+        public void NextValueThrowsExceptionWithMinimumAndMaximumWhenGeneratorIsNull()
         {
             Action action = () => ((RandomGenerator) null).NextValue(1, 10);
 
@@ -59,7 +59,7 @@
         }
 
         [Fact]
-        public void NextValueThrowsExceptionWithNullGeneratorTest()
+        public void NextValueThrowsExceptionWithNullGenerator()
         {
             Action action = () => ((IRandomGenerator) null).NextValue<int>();
 
@@ -67,7 +67,7 @@
         }
 
         [Fact]
-        public void NextValueThrowsExceptionWithUnsupportedTypeTest()
+        public void NextValueThrowsExceptionWithUnsupportedType()
         {
             var target = new RandomGenerator();
 
@@ -77,7 +77,7 @@
         }
 
         [Fact]
-        public void NextValueWithMaxReturnsRandomValueTest()
+        public void NextValueWithMaxReturnsRandomValue()
         {
             var type = typeof(int);
             var max = 100;
@@ -94,7 +94,7 @@
         }
 
         [Fact]
-        public void NextValueWithMaxThrowsExceptionWithNullGeneratorTest()
+        public void NextValueWithMaxThrowsExceptionWithNullGenerator()
         {
             Action action = () => ((IRandomGenerator) null).NextValue(100);
 
@@ -102,7 +102,7 @@
         }
 
         [Fact]
-        public void NextValueWithTypeAndMaxReturnsRandomValueTest()
+        public void NextValueWithTypeAndMaxReturnsRandomValue()
         {
             var max = Environment.TickCount;
             var type = typeof(int);
@@ -119,7 +119,7 @@
         }
 
         [Fact]
-        public void NextValueWithTypeAndMaxThrowsExceptionWithNullGeneratorTest()
+        public void NextValueWithTypeAndMaxThrowsExceptionWithNullGenerator()
         {
             var max = Environment.TickCount;
 
@@ -129,7 +129,7 @@
         }
 
         [Fact]
-        public void NextValueWithTypeAndMaxThrowsExceptionWithNullTypeTest()
+        public void NextValueWithTypeAndMaxThrowsExceptionWithNullType()
         {
             var max = Environment.TickCount;
 
@@ -141,7 +141,7 @@
         }
 
         [Fact]
-        public void NextValueWithTypeReturnsRandomValueTest()
+        public void NextValueWithTypeReturnsRandomValue()
         {
             var type = typeof(int);
             var expected = Environment.TickCount;
@@ -158,7 +158,7 @@
         }
 
         [Fact]
-        public void NextValueWithTypeThrowsExceptionWithNullGeneratorTest()
+        public void NextValueWithTypeThrowsExceptionWithNullGenerator()
         {
             Action action = () => ((IRandomGenerator) null).NextValue(typeof(int));
 
@@ -166,7 +166,7 @@
         }
 
         [Fact]
-        public void NextValueWithTypeThrowsExceptionWithNullTypeTest()
+        public void NextValueWithTypeThrowsExceptionWithNullType()
         {
             var target = Substitute.For<IRandomGenerator>();
 

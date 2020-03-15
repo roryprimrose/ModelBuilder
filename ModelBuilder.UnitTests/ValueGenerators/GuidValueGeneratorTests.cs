@@ -9,7 +9,7 @@
     public class GuidValueGeneratorTests
     {
         [Fact]
-        public void GenerateCanReturnNullAndRandomValuesTest()
+        public void GenerateCanReturnNullAndRandomValues()
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -45,7 +45,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsGuidValueTest()
+        public void GenerateReturnsGuidValue()
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -61,7 +61,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsRandomValueTest()
+        public void GenerateReturnsRandomValue()
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();

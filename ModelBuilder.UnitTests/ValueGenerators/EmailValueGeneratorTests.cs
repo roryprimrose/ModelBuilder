@@ -19,7 +19,7 @@
     public class EmailValueGeneratorTests
     {
         [Fact]
-        public void GenerateReturnsDomainFromDerivedClassTest()
+        public void GenerateReturnsDomainFromDerivedClass()
         {
             var property = typeof(Person).GetProperty(nameof(Person.PersonalEmail));
             var person = new Person();
@@ -38,7 +38,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsDomainFromTestDataTest()
+        public void GenerateReturnsDomainFromTestData()
         {
             var person = new Person();
             var buildChain = new BuildHistory();
@@ -58,7 +58,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsEmailAddressWithNameSpacesRemovedTest()
+        public void GenerateReturnsEmailAddressWithNameSpacesRemoved()
         {
             var person = new Person
             {
@@ -82,7 +82,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsFirstAndLastNameRelativeToFemaleGenderTest()
+        public void GenerateReturnsFirstAndLastNameRelativeToFemaleGender()
         {
             var person = new Person
             {
@@ -105,7 +105,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsFirstAndLastNameRelativeToMaleGenderTest()
+        public void GenerateReturnsFirstAndLastNameRelativeToMaleGender()
         {
             var person = new Person
             {
@@ -128,7 +128,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsRandomEmailAddressUsingDomainOfContextTest()
+        public void GenerateReturnsRandomEmailAddressUsingDomainOfContext()
         {
             var parts = new EmailParts
             {
@@ -149,7 +149,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsRandomEmailAddressUsingFirstNameAndLastNameOfContextTest()
+        public void GenerateReturnsRandomEmailAddressUsingFirstNameAndLastNameOfContext()
         {
             var parts = new EmailParts
             {
@@ -173,7 +173,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsRandomEmailAddressUsingFirstNameLastNameAndDomainOfContextTest()
+        public void GenerateReturnsRandomEmailAddressUsingFirstNameLastNameAndDomainOfContext()
         {
             var parts = new EmailParts
             {
@@ -198,7 +198,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsRandomEmailAddressUsingFirstOfContextTest()
+        public void GenerateReturnsRandomEmailAddressUsingFirstOfContext()
         {
             var person = new Person
             {
@@ -221,7 +221,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsRandomEmailAddressUsingLastNameOfContextTest()
+        public void GenerateReturnsRandomEmailAddressUsingLastNameOfContext()
         {
             var person = new Person
             {
@@ -244,7 +244,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsRandomValueTest()
+        public void GenerateReturnsRandomValue()
         {
             var firstPerson = new Person
             {
@@ -290,7 +290,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsStringValueTest()
+        public void GenerateReturnsStringValue()
         {
             var firstPerson = new Person
             {
@@ -314,7 +314,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsValueWhenContextLacksNameAndGenderPropertiesTest()
+        public void GenerateReturnsValueWhenContextLacksNameAndGenderProperties()
         {
             var model = new SlimModel();
             var buildChain = new BuildHistory();
@@ -332,7 +332,7 @@
         }
 
         [Fact]
-        public void HasHigherPriorityThanStringValueGeneratorTest()
+        public void HasHigherPriorityThanStringValueGenerator()
         {
             var target = new Wrapper();
             var other = new StringValueGenerator();

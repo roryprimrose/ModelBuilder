@@ -8,7 +8,7 @@
     public class BuildExceptionTests
     {
         [Fact]
-        public void CanCreatesWithDefaultValuesTest()
+        public void CanCreatesWithDefaultValues()
         {
             var target = new BuildException();
 
@@ -20,7 +20,7 @@
         }
 
         [Fact]
-        public void CanCreateWithBuildInformationAndInnerExceptionTest()
+        public void CanCreateWithBuildInformationAndInnerException()
         {
             var message = Guid.NewGuid().ToString();
             var targetType = typeof(Person);
@@ -40,7 +40,7 @@
         }
 
         [Fact]
-        public void CanCreateWithBuildInformationTest()
+        public void CanCreateWithBuildInformation()
         {
             var message = Guid.NewGuid().ToString();
             var targetType = typeof(Person);
@@ -59,7 +59,7 @@
         }
 
         [Fact]
-        public void CanCreateWithMessageAndExceptionTest()
+        public void CanCreateWithMessageAndException()
         {
             var message = Guid.NewGuid().ToString();
             var inner = new TimeoutException();
@@ -71,7 +71,7 @@
         }
 
         [Fact]
-        public void CanCreateWithMessageTest()
+        public void CanCreateWithMessage()
         {
             var message = Guid.NewGuid().ToString();
 

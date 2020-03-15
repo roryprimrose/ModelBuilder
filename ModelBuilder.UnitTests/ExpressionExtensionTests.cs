@@ -11,7 +11,7 @@
     public class ExpressionExtensionTests
     {
         [Fact]
-        public void GetPropertyReturnsPropertyInfoOfExpressionTest()
+        public void GetPropertyReturnsPropertyInfoOfExpression()
         {
             var actual = Wrapper<Person>(x => x.Priority);
 
@@ -20,7 +20,7 @@
         }
 
         [Fact]
-        public void GetPropertyThrowsExceptionForStaticPropertyTest()
+        public void GetPropertyThrowsExceptionForStaticProperty()
         {
             Action action = () => Wrapper<WithStatic>(x => WithStatic.Second);
 
@@ -28,7 +28,7 @@
         }
 
         [Fact]
-        public void GetPropertyThrowsExceptionForStaticReadOnlyPropertyTest()
+        public void GetPropertyThrowsExceptionForStaticReadOnlyProperty()
         {
             Action action = () => Wrapper<WithStatic>(x => StaticGetter.Value);
 
@@ -36,7 +36,7 @@
         }
 
         [Fact]
-        public void GetPropertyThrowsExceptionWhenPropertyNotOnTargetTypeTest()
+        public void GetPropertyThrowsExceptionWhenPropertyNotOnTargetType()
         {
             Action action = () => Wrapper<Person>(x => x.Priority.ToString(CultureInfo.InvariantCulture).Length);
 
@@ -44,7 +44,7 @@
         }
 
         [Fact]
-        public void GetPropertyThrowsExceptionWithFieldExpressionTest()
+        public void GetPropertyThrowsExceptionWithFieldExpression()
         {
             Action action = () => Wrapper<Person>(x => x.MinAge);
 
@@ -52,7 +52,7 @@
         }
 
         [Fact]
-        public void GetPropertyThrowsExceptionWithMethodExpressionTest()
+        public void GetPropertyThrowsExceptionWithMethodExpression()
         {
             Action action = () => Wrapper<Person>(x => x.DoSomething());
 
@@ -60,7 +60,7 @@
         }
 
         [Fact]
-        public void GetPropertyThrowsExceptionWithNullExpressionTest()
+        public void GetPropertyThrowsExceptionWithNullExpression()
         {
             Action action = () => Wrapper<Person>(null);
 

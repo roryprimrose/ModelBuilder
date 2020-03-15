@@ -11,7 +11,7 @@
     public class DefaultTypeCreatorTests
     {
         [Fact]
-        public void CreateReturnsInstanceCreatedWithDefaultConstructorWhenArgumentsAreEmptyTest()
+        public void CreateReturnsInstanceCreatedWithDefaultConstructorWhenArgumentsAreEmpty()
         {
             var buildChain = new BuildHistory();
             var args = Array.Empty<object>();
@@ -33,7 +33,7 @@
         }
 
         [Fact]
-        public void CreateReturnsInstanceCreatedWithDefaultConstructorWhenArgumentsAreNullTest()
+        public void CreateReturnsInstanceCreatedWithDefaultConstructorWhenArgumentsAreNull()
         {
             var buildChain = new BuildHistory();
 
@@ -54,7 +54,7 @@
         }
 
         [Fact]
-        public void CreateReturnsInstanceCreatedWithMatchingParameterConstructorTest()
+        public void CreateReturnsInstanceCreatedWithMatchingParameterConstructor()
         {
             var buildChain = new BuildHistory();
             var constructorResolver = new DefaultConstructorResolver();
@@ -96,7 +96,7 @@
         }
 
         [Fact]
-        public void CreateThrowsExceptionWhenNoAppropriateConstructorFoundTest()
+        public void CreateThrowsExceptionWhenNoAppropriateConstructorFound()
         {
             var buildChain = new BuildHistory();
 
@@ -122,7 +122,7 @@
         }
 
         [Fact]
-        public void CreateThrowsExceptionWhenNoTypeNotSupportedTest()
+        public void CreateThrowsExceptionWhenNoTypeNotSupported()
         {
             var buildChain = new BuildHistory();
 

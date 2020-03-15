@@ -11,7 +11,7 @@
     public class CompanyValueGeneratorTests
     {
         [Fact]
-        public void GenerateReturnsRandomValueTest()
+        public void GenerateReturnsRandomValue()
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -38,7 +38,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsStringValueTest()
+        public void GenerateReturnsStringValue()
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -71,7 +71,7 @@
         }
 
         [Fact]
-        public void HasHigherPriorityThanStringValueGeneratorTest()
+        public void HasHigherPriorityThanStringValueGenerator()
         {
             var target = new Wrapper();
             var other = new StringValueGenerator();
@@ -98,7 +98,7 @@
         }
 
         [Fact]
-        public void IsMatchThrowsExceptionWithNullTypeTest()
+        public void IsMatchThrowsExceptionWithNullType()
         {
             var buildChain = Substitute.For<IBuildChain>();
 

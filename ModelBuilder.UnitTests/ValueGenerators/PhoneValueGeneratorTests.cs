@@ -13,7 +13,7 @@
     public class PhoneValueGeneratorTests
     {
         [Fact]
-        public void GenerateReturnsRandomPhoneMatchingCaseInsensitiveCountryTest()
+        public void GenerateReturnsRandomPhoneMatchingCaseInsensitiveCountry()
         {
             var address = new Address
             {
@@ -40,7 +40,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsRandomPhoneMatchingCountryTest()
+        public void GenerateReturnsRandomPhoneMatchingCountry()
         {
             var address = new Address
             {
@@ -65,7 +65,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsRandomPhoneWhenNoMatchingCountryTest()
+        public void GenerateReturnsRandomPhoneWhenNoMatchingCountry()
         {
             var address = new Address
             {
@@ -86,7 +86,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsRandomValueTest()
+        public void GenerateReturnsRandomValue()
         {
             var address = new Address();
             var buildChain = new BuildHistory();
@@ -116,7 +116,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsStringValueTest()
+        public void GenerateReturnsStringValue()
         {
             var address = new Address();
             var buildChain = new BuildHistory();
@@ -177,7 +177,7 @@
         }
 
         [Fact]
-        public void HasHigherPriorityThanStringValueGeneratorTest()
+        public void HasHigherPriorityThanStringValueGenerator()
         {
             var target = new Wrapper();
             var other = new StringValueGenerator();
@@ -228,7 +228,7 @@
         }
 
         [Fact]
-        public void PriorityReturnsPositiveValueTest()
+        public void PriorityReturnsPositiveValue()
         {
             var target = new Wrapper();
 

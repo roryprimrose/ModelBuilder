@@ -249,7 +249,7 @@
         }
 
         [Fact]
-        public void PriorityReturnsMinimumValueTest()
+        public void PriorityReturnsMinimumValue()
         {
             var buildStrategy = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();

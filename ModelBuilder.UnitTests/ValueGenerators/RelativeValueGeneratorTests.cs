@@ -15,7 +15,7 @@ namespace ModelBuilder.UnitTests.ValueGenerators
     public class RelativeValueGeneratorTests
     {
         [Fact]
-        public void GetSourceValueReturnsNullFromSourceNullableIntPropertyTest()
+        public void GetSourceValueReturnsNullFromSourceNullableIntProperty()
         {
             var context = new RelativeNullableInt
             {
@@ -30,7 +30,7 @@ namespace ModelBuilder.UnitTests.ValueGenerators
         }
 
         [Fact]
-        public void GetSourceValueReturnsNullFromSourcePropertyTest()
+        public void GetSourceValueReturnsNullFromSourceProperty()
         {
             var context = new Person();
 
@@ -42,7 +42,7 @@ namespace ModelBuilder.UnitTests.ValueGenerators
         }
 
         [Fact]
-        public void GetSourceValueReturnsNullWhenPropertyNotFoundTest()
+        public void GetSourceValueReturnsNullWhenPropertyNotFound()
         {
             var context = new SlimModel();
 
@@ -54,7 +54,7 @@ namespace ModelBuilder.UnitTests.ValueGenerators
         }
 
         [Fact]
-        public void GetSourceValueReturnsValueFromSourceIntPropertyTest()
+        public void GetSourceValueReturnsValueFromSourceIntProperty()
         {
             var context = new Person
             {
@@ -69,7 +69,7 @@ namespace ModelBuilder.UnitTests.ValueGenerators
         }
 
         [Fact]
-        public void GetSourceValueReturnsValueFromSourceNullableIntPropertyTest()
+        public void GetSourceValueReturnsValueFromSourceNullableIntProperty()
         {
             var context = new RelativeNullableInt
             {
@@ -102,7 +102,7 @@ namespace ModelBuilder.UnitTests.ValueGenerators
         }
 
         [Fact]
-        public void GetSourceValueReturnsValueFromSourceStringPropertyTest()
+        public void GetSourceValueReturnsValueFromSourceStringProperty()
         {
             var context = new Person
             {
@@ -117,7 +117,7 @@ namespace ModelBuilder.UnitTests.ValueGenerators
         }
 
         [Fact]
-        public void GetSourceValueThrowsExceptionWhenNoSourceExpressionProvidedTest()
+        public void GetSourceValueThrowsExceptionWhenNoSourceExpressionProvided()
         {
             var context = new Person();
 
@@ -129,7 +129,7 @@ namespace ModelBuilder.UnitTests.ValueGenerators
         }
 
         [Fact]
-        public void GetSourceValueThrowsExceptionWithNullContextTest()
+        public void GetSourceValueThrowsExceptionWithNullContext()
         {
             var target = new Wrapper<string>(PropertyExpression.FirstName, PropertyExpression.LastName);
 
@@ -141,7 +141,7 @@ namespace ModelBuilder.UnitTests.ValueGenerators
         }
 
         [Fact]
-        public void GetValueThrowsExceptionWithNullContextTest()
+        public void GetValueThrowsExceptionWithNullContext()
         {
             var target = new Wrapper<string>(
                 PropertyExpression.FirstName,
@@ -156,7 +156,7 @@ namespace ModelBuilder.UnitTests.ValueGenerators
         }
 
         [Fact]
-        public void GetValueThrowsExceptionWithNullExpressionTest()
+        public void GetValueThrowsExceptionWithNullExpression()
         {
             var context = new Person();
 
@@ -173,7 +173,7 @@ namespace ModelBuilder.UnitTests.ValueGenerators
         }
 
         [Fact]
-        public void IsMaleReturnsRandomValueWhenNoContextFoundTest()
+        public void IsMaleReturnsRandomValueWhenNoContextFound()
         {
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
@@ -210,7 +210,7 @@ namespace ModelBuilder.UnitTests.ValueGenerators
         }
 
         [Fact]
-        public void IsMaleReturnsRandomValueWhenNoGenderPropertyFoundTest()
+        public void IsMaleReturnsRandomValueWhenNoGenderPropertyFound()
         {
             var person = new PersonWithoutGender();
             var buildChain = new BuildHistory();
@@ -280,7 +280,7 @@ namespace ModelBuilder.UnitTests.ValueGenerators
         }
 
         [Fact]
-        public void IsMaleThrowsExceptionWithNullExecuteStrategyTest()
+        public void IsMaleThrowsExceptionWithNullExecuteStrategy()
         {
             var sut = new Wrapper<string>(
                 PropertyExpression.FirstName,
@@ -322,7 +322,7 @@ namespace ModelBuilder.UnitTests.ValueGenerators
         }
 
         [Fact]
-        public void IsMatchReturnsTrueWhenSourceExpressionIsNullAndTargetExpressionMatchesReferenceNameTest()
+        public void IsMatchReturnsTrueWhenSourceExpressionIsNullAndTargetExpressionMatchesReferenceName()
         {
             var context = new SlimModel();
             var buildChain = new BuildHistory();
@@ -339,7 +339,7 @@ namespace ModelBuilder.UnitTests.ValueGenerators
         }
 
         [Fact]
-        public void IsMatchReturnsTrueWhenTargetExpressionMatchesReferenceNameTest()
+        public void IsMatchReturnsTrueWhenTargetExpressionMatchesReferenceName()
         {
             var context = new SlimModel();
             var buildChain = new BuildHistory();
@@ -354,7 +354,7 @@ namespace ModelBuilder.UnitTests.ValueGenerators
         }
 
         [Fact]
-        public void IsMatchThrowsExceptionWithNullBuildChainTest()
+        public void IsMatchThrowsExceptionWithNullBuildChain()
         {
             var target = new Wrapper<string>(PropertyExpression.FirstName, typeof(string));
 
@@ -366,7 +366,7 @@ namespace ModelBuilder.UnitTests.ValueGenerators
         }
 
         [Fact]
-        public void IsMatchThrowsExceptionWithNullTypeTest()
+        public void IsMatchThrowsExceptionWithNullType()
         {
             var context = new SlimModel();
             var buildChain = new BuildHistory();
@@ -383,7 +383,7 @@ namespace ModelBuilder.UnitTests.ValueGenerators
         }
 
         [Fact]
-        public void ThrowsExceptionWithNullTargetExpressionAndTypesTest()
+        public void ThrowsExceptionWithNullTargetExpressionAndTypes()
         {
             // ReSharper disable once ObjectCreationAsStatement
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
@@ -394,7 +394,7 @@ namespace ModelBuilder.UnitTests.ValueGenerators
         }
 
         [Fact]
-        public void ThrowsExceptionWithNullTargetExpressionTest()
+        public void ThrowsExceptionWithNullTargetExpression()
         {
             // ReSharper disable once ObjectCreationAsStatement
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.

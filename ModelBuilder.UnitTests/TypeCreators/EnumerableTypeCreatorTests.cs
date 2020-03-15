@@ -17,7 +17,7 @@
     public class EnumerableTypeCreatorTests
     {
         [Fact]
-        public void AutoDetectConstructorReturnsFalseTest()
+        public void AutoDetectConstructorReturnsFalse()
         {
             var target = new EnumerableTypeCreator();
 
@@ -25,7 +25,7 @@
         }
 
         [Fact]
-        public void AutoPopulateReturnsFalseTest()
+        public void AutoPopulateReturnsFalse()
         {
             var target = new EnumerableTypeCreator();
 
@@ -79,7 +79,7 @@
         }
 
         [Fact]
-        public void CanCreateThrowsExceptionWithNullParameterTest()
+        public void CanCreateThrowsExceptionWithNullParameter()
         {
             var executeStrategy = Substitute.For<IExecuteStrategy>();
             var typeResolver = Substitute.For<ITypeResolver>();
@@ -97,7 +97,7 @@
         }
 
         [Fact]
-        public void CanCreateThrowsExceptionWithNullPropertyTest()
+        public void CanCreateThrowsExceptionWithNullProperty()
         {
             var executeStrategy = Substitute.For<IExecuteStrategy>();
             var typeResolver = Substitute.For<ITypeResolver>();
@@ -115,7 +115,7 @@
         }
 
         [Fact]
-        public void CanCreateThrowsExceptionWithNullTypeTest()
+        public void CanCreateThrowsExceptionWithNullType()
         {
             var executeStrategy = Substitute.For<IExecuteStrategy>();
             var typeResolver = Substitute.For<ITypeResolver>();
@@ -177,7 +177,7 @@
         }
 
         [Fact]
-        public void CanPopulateThrowsExceptionWithNullConfigurationTest()
+        public void CanPopulateThrowsExceptionWithNullConfiguration()
         {
             var target = new EnumerableTypeCreator();
 
@@ -187,7 +187,7 @@
         }
 
         [Fact]
-        public void CanPopulateThrowsExceptionWithNullParameterTest()
+        public void CanPopulateThrowsExceptionWithNullParameter()
         {
             var target = new EnumerableTypeCreator();
             var configuration = Substitute.For<IBuildConfiguration>();
@@ -198,7 +198,7 @@
         }
 
         [Fact]
-        public void CanPopulateThrowsExceptionWithNullPropertyTest()
+        public void CanPopulateThrowsExceptionWithNullProperty()
         {
             var target = new EnumerableTypeCreator();
             var configuration = Substitute.For<IBuildConfiguration>();
@@ -209,7 +209,7 @@
         }
 
         [Fact]
-        public void CanPopulateThrowsExceptionWithNullTypeTest()
+        public void CanPopulateThrowsExceptionWithNullType()
         {
             var target = new EnumerableTypeCreator();
             var configuration = Substitute.For<IBuildConfiguration>();
@@ -220,7 +220,7 @@
         }
 
         [Fact]
-        public void CreateChildItemThrowsExceptionWithNullExecuteStrategyTest()
+        public void CreateChildItemThrowsExceptionWithNullExecuteStrategy()
         {
             var person = new Person();
 
@@ -232,7 +232,7 @@
         }
 
         [Fact]
-        public void CreateDoesNotPopulateListTest()
+        public void CreateDoesNotPopulateList()
         {
             var buildChain = new BuildHistory();
 
@@ -363,7 +363,7 @@
         }
 
         [Fact]
-        public void PopulateAddsItemsToCollectionFromExecuteStrategyTest()
+        public void PopulateAddsItemsToCollectionFromExecuteStrategy()
         {
             var expected = new Collection<Guid>();
             var buildChain = new BuildHistory();
@@ -423,7 +423,7 @@
         }
 
         [Fact]
-        public void PopulateAddsItemsToListFromExecuteStrategyTest()
+        public void PopulateAddsItemsToListFromExecuteStrategy()
         {
             var expected = new List<Guid>();
 
@@ -454,7 +454,7 @@
         }
 
         [Fact]
-        public void PopulateCanAddItemsBasedOnPreviousItemTest()
+        public void PopulateCanAddItemsBasedOnPreviousItem()
         {
             var actual = new List<int>();
             var executeStrategy = Model.UsingDefaultConfiguration()
@@ -476,7 +476,7 @@
         }
 
         [Fact]
-        public void PopulateThrowsExceptionWithUnsupportedTypeTest()
+        public void PopulateThrowsExceptionWithUnsupportedType()
         {
             var instance = new Lazy<bool>(() => true);
 
@@ -498,7 +498,7 @@
         }
 
         [Fact]
-        public void PriorityReturnsHigherThanDefaultTypeCreatorTest()
+        public void PriorityReturnsHigherThanDefaultTypeCreator()
         {
             var target = new EnumerableTypeCreator();
             var other = new DefaultTypeCreator();
@@ -507,7 +507,7 @@
         }
 
         [Fact]
-        public void SettingAutoPopulateCountShouldNotChangeDefaultAutoPopulateCountTest()
+        public void SettingAutoPopulateCountShouldNotChangeDefaultAutoPopulateCount()
         {
             var target = new EnumerableTypeCreator
             {
@@ -518,7 +518,7 @@
         }
 
         [Fact]
-        public void SettingDefaultAutoPopulateCountOnlyAffectsNewInstancesTest()
+        public void SettingDefaultAutoPopulateCountOnlyAffectsNewInstances()
         {
             var expected = EnumerableTypeCreator.DefaultAutoPopulateCount;
 

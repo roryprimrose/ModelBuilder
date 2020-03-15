@@ -27,7 +27,7 @@
         }
 
         [Fact]
-        public void IsNullableThrowsExceptionWithNullTypeTest()
+        public void IsNullableThrowsExceptionWithNullType()
         {
             Action action = () => ((Type) null).IsNullable();
 
@@ -35,7 +35,7 @@
         }
 
         [Fact]
-        public void NextReturnsDefaultValueWhenListIsEmptyTest()
+        public void NextReturnsDefaultValueWhenListIsEmpty()
         {
             var values = new List<Location>();
 
@@ -45,7 +45,7 @@
         }
 
         [Fact]
-        public void NextReturnsRandomValueTest()
+        public void NextReturnsRandomValue()
         {
             var values = Model.Create<List<int>>();
 
@@ -66,7 +66,7 @@
         }
 
         [Fact]
-        public void NextThrowsExceptionWithNullSourceTest()
+        public void NextThrowsExceptionWithNullSource()
         {
             Action action = () => ModelBuilder.Extensions.Next<int>(null);
 
@@ -74,7 +74,7 @@
         }
 
         [Fact]
-        public void SetEachCollectionRunsActionAgainstInstanceTest()
+        public void SetEachCollectionRunsActionAgainstInstance()
         {
             var index = 0;
             var target = new Collection<Person>
@@ -97,7 +97,7 @@
         }
 
         [Fact]
-        public void SetEachCollectionThrowsExceptionWithNullActionTest()
+        public void SetEachCollectionThrowsExceptionWithNullAction()
         {
             var target = new Collection<string>();
 
@@ -107,7 +107,7 @@
         }
 
         [Fact]
-        public void SetEachCollectionThrowsExceptionWithNullInstanceTest()
+        public void SetEachCollectionThrowsExceptionWithNullInstance()
         {
             Action action = () => ((Collection<string>) null).SetEach(x => { });
 
@@ -115,7 +115,7 @@
         }
 
         [Fact]
-        public void SetEachDictionaryRunsActionAgainstInstanceTest()
+        public void SetEachDictionaryRunsActionAgainstInstance()
         {
             var target = new Dictionary<Guid, Person>
             {
@@ -136,7 +136,7 @@
         }
 
         [Fact]
-        public void SetEachEnumerableThrowsExceptionWithNullActionTest()
+        public void SetEachEnumerableThrowsExceptionWithNullAction()
         {
             IEnumerable<string> target = new Collection<string>();
 
@@ -146,7 +146,7 @@
         }
 
         [Fact]
-        public void SetEachIEnumerableRunsActionAgainstInstanceTest()
+        public void SetEachIEnumerableRunsActionAgainstInstance()
         {
             var index = 0;
             var target = BuildPeople();
@@ -164,7 +164,7 @@
         }
 
         [Fact]
-        public void SetEachIEnumerableThrowsExceptionWithNullInstanceTest()
+        public void SetEachIEnumerableThrowsExceptionWithNullInstance()
         {
             Action action = () => ((IEnumerable<string>) null).SetEach(x => { });
 
@@ -172,7 +172,7 @@
         }
 
         [Fact]
-        public void SetEachListAsIEnumerableRunsActionAgainstInstanceTest()
+        public void SetEachListAsIEnumerableRunsActionAgainstInstance()
         {
             var index = 0;
             var target = new List<Person>
@@ -195,7 +195,7 @@
         }
 
         [Fact]
-        public void SetEachListThrowsExceptionWithNullActionTest()
+        public void SetEachListThrowsExceptionWithNullAction()
         {
             var target = new List<string>();
 
@@ -205,7 +205,7 @@
         }
 
         [Fact]
-        public void SetEachListThrowsExceptionWithNullInstanceTest()
+        public void SetEachListThrowsExceptionWithNullInstance()
         {
             Action action = () => ((List<string>) null).SetEach(x => { });
 
@@ -213,7 +213,7 @@
         }
 
         [Fact]
-        public void SetEachReadOnlyCollectionRunsActionAgainstInstanceTest()
+        public void SetEachReadOnlyCollectionRunsActionAgainstInstance()
         {
             var index = 0;
             var source = new List<Person>
@@ -237,7 +237,7 @@
         }
 
         [Fact]
-        public void SetRunsActionAgainstInstanceTest()
+        public void SetRunsActionAgainstInstance()
         {
             var value = Guid.NewGuid();
             var target = new Person();
@@ -249,7 +249,7 @@
         }
 
         [Fact]
-        public void SetThrowsExceptionWithNullActionTest()
+        public void SetThrowsExceptionWithNullAction()
         {
             var target = new Person();
 
@@ -259,7 +259,7 @@
         }
 
         [Fact]
-        public void SetThrowsExceptionWithNullInstanceTest()
+        public void SetThrowsExceptionWithNullInstance()
         {
             Action action = () => ((object) null).Set(x => { });
 

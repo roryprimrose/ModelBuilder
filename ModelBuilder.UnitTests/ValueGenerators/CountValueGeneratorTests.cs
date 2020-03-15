@@ -161,7 +161,7 @@
         }
 
         [Fact]
-        public void PriorityReturnsGreaterThanNumericValueGeneratorTest()
+        public void PriorityReturnsGreaterThanNumericValueGenerator()
         {
             var target = new Wrapper();
             
@@ -171,7 +171,7 @@
         }
 
         [Fact]
-        public void SettingDefaultMaxCountOnlyAffectsNewInstancesTest()
+        public void SettingDefaultMaxCountOnlyAffectsNewInstances()
         {
             var expected = CountValueGenerator.DefaultMaxCount;
 
@@ -193,7 +193,7 @@
         }
 
         [Fact]
-        public void SettingMaxCountShouldNotChangeDefaultMaxCountTest()
+        public void SettingMaxCountShouldNotChangeDefaultMaxCount()
         {
             var target = new CountValueGenerator
             {

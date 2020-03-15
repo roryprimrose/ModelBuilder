@@ -20,7 +20,7 @@
     public class BuildConfigurationExtensionsTests
     {
         [Fact]
-        public void AddConfigurationModuleAddsRuleToCompilerTest()
+        public void AddConfigurationModuleAddsRuleToCompiler()
         {
             var target = new BuildConfiguration();
 
@@ -34,7 +34,7 @@
         }
 
         [Fact]
-        public void AddConfigurationModuleThrowsExceptionWithNullCompilerTest()
+        public void AddConfigurationModuleThrowsExceptionWithNullCompiler()
         {
             Action action = () => BuildConfigurationExtensions.UsingModule<TestConfigurationModule>(null);
 
@@ -42,7 +42,7 @@
         }
 
         [Fact]
-        public void AddCreationRuleAddsRuleToCompilerTest()
+        public void AddCreationRuleAddsRuleToCompiler()
         {
             var target = new BuildConfiguration();
 
@@ -54,7 +54,7 @@
         }
 
         [Fact]
-        public void AddCreationRuleThrowsExceptionWithNullCompilerTest()
+        public void AddCreationRuleThrowsExceptionWithNullCompiler()
         {
             Action action = () => BuildConfigurationExtensions.AddCreationRule<DummyCreationRule>(null);
 
@@ -62,7 +62,7 @@
         }
 
         [Fact]
-        public void AddCreationRuleWithExpressionAddsRuleToCompilerTest()
+        public void AddCreationRuleWithExpressionAddsRuleToCompiler()
         {
             var priority = Environment.TickCount;
             var value = Guid.NewGuid().ToString();
@@ -82,7 +82,7 @@
         }
 
         [Fact]
-        public void AddCreationRuleWithExpressionThrowsExceptionWithNullCompilerTest()
+        public void AddCreationRuleWithExpressionThrowsExceptionWithNullCompiler()
         {
             var priority = Environment.TickCount;
             var value = Guid.NewGuid().ToString();
@@ -94,7 +94,7 @@
         }
 
         [Fact]
-        public void AddCreationRuleWithExpressionThrowsExceptionWithNullExpressionTest()
+        public void AddCreationRuleWithExpressionThrowsExceptionWithNullExpression()
         {
             var priority = Environment.TickCount;
             var value = Guid.NewGuid().ToString();
@@ -107,7 +107,7 @@
         }
 
         [Fact]
-        public void AddExecuteOrderRuleAddsRuleToCompilerTest()
+        public void AddExecuteOrderRuleAddsRuleToCompiler()
         {
             var target = new BuildConfiguration();
 
@@ -119,7 +119,7 @@
         }
 
         [Fact]
-        public void AddExecuteOrderRuleThrowsExceptionWithNullCompilerTest()
+        public void AddExecuteOrderRuleThrowsExceptionWithNullCompiler()
         {
             Action action = () => BuildConfigurationExtensions.AddExecuteOrderRule<DummyExecuteOrderRule>(null);
 
@@ -127,7 +127,7 @@
         }
 
         [Fact]
-        public void AddExecuteOrderRuleWithExpressionAddsRuleToCompilerTest()
+        public void AddExecuteOrderRuleWithExpressionAddsRuleToCompiler()
         {
             var priority = Environment.TickCount;
 
@@ -147,7 +147,7 @@
         }
 
         [Fact]
-        public void AddExecuteOrderRuleWithExpressionThrowsExceptionWithNullCompilerTest()
+        public void AddExecuteOrderRuleWithExpressionThrowsExceptionWithNullCompiler()
         {
             var priority = Environment.TickCount;
 
@@ -158,7 +158,7 @@
         }
 
         [Fact]
-        public void AddExecuteOrderRuleWithExpressionThrowsExceptionWithNullExpressionTest()
+        public void AddExecuteOrderRuleWithExpressionThrowsExceptionWithNullExpression()
         {
             var priority = Environment.TickCount;
 
@@ -170,7 +170,7 @@
         }
 
         [Fact]
-        public void AddExecuteOrderRuleWithPredicateAddsRuleToCompilerTest()
+        public void AddExecuteOrderRuleWithPredicateAddsRuleToCompiler()
         {
             var priority = Environment.TickCount;
 
@@ -190,7 +190,7 @@
         }
 
         [Fact]
-        public void AddExecuteOrderRuleWithPredicateThrowsExceptionWithNullCompilerTest()
+        public void AddExecuteOrderRuleWithPredicateThrowsExceptionWithNullCompiler()
         {
             var priority = Environment.TickCount;
 
@@ -202,7 +202,7 @@
         }
 
         [Fact]
-        public void AddExecuteOrderRuleWithPredicateThrowsExceptionWithNullPredicateTest()
+        public void AddExecuteOrderRuleWithPredicateThrowsExceptionWithNullPredicate()
         {
             var priority = Environment.TickCount;
 
@@ -214,7 +214,7 @@
         }
 
         [Fact]
-        public void AddExecuteOrderRuleWithRegexAddsRuleToCompilerTest()
+        public void AddExecuteOrderRuleWithRegexAddsRuleToCompiler()
         {
             var priority = Environment.TickCount;
 
@@ -230,7 +230,7 @@
         }
 
         [Fact]
-        public void AddExecuteOrderRuleWithRegexThrowsExceptionWithNullCompilerTest()
+        public void AddExecuteOrderRuleWithRegexThrowsExceptionWithNullCompiler()
         {
             var priority = Environment.TickCount;
 
@@ -241,7 +241,7 @@
         }
 
         [Fact]
-        public void AddExecuteOrderRuleWithRegexThrowsExceptionWithNullExpressionTest()
+        public void AddExecuteOrderRuleWithRegexThrowsExceptionWithNullExpression()
         {
             var priority = Environment.TickCount;
 
@@ -253,7 +253,7 @@
         }
 
         [Fact]
-        public void AddIgnoreRuleAddsRuleToCompilerTest()
+        public void AddIgnoreRuleAddsRuleToCompiler()
         {
             var target = new BuildConfiguration();
 
@@ -265,7 +265,7 @@
         }
 
         [Fact]
-        public void AddIgnoreRuleThrowsExceptionWithNullCompilerTest()
+        public void AddIgnoreRuleThrowsExceptionWithNullCompiler()
         {
             Action action = () => BuildConfigurationExtensions.AddIgnoreRule<DummyIgnoreRule>(null);
 
@@ -273,7 +273,7 @@
         }
 
         [Fact]
-        public void AddIgnoreRuleWithExpressionAddsRuleToCompilerTest()
+        public void AddIgnoreRuleWithExpressionAddsRuleToCompiler()
         {
             var target = new BuildConfiguration();
 
@@ -287,7 +287,7 @@
         }
 
         [Fact]
-        public void AddIgnoreRuleWithExpressionThrowsExceptionWithNullCompilerTest()
+        public void AddIgnoreRuleWithExpressionThrowsExceptionWithNullCompiler()
         {
             Action action = () => BuildConfigurationExtensions.AddIgnoreRule<Person>(null, x => x.FirstName);
 
@@ -295,7 +295,7 @@
         }
 
         [Fact]
-        public void AddIgnoreRuleWithExpressionThrowsExceptionWithNullExpressionTest()
+        public void AddIgnoreRuleWithExpressionThrowsExceptionWithNullExpression()
         {
             var target = new BuildConfiguration();
 
@@ -305,7 +305,7 @@
         }
 
         [Fact]
-        public void AddIgnoreRuleWithPredicateAddsRuleToCompilerTest()
+        public void AddIgnoreRuleWithPredicateAddsRuleToCompiler()
         {
             var target = new BuildConfiguration();
 
@@ -319,7 +319,7 @@
         }
 
         [Fact]
-        public void AddIgnoreRuleWithPredicateThrowsExceptionWithNullCompilerTest()
+        public void AddIgnoreRuleWithPredicateThrowsExceptionWithNullCompiler()
         {
             Action action = () =>
                 BuildConfigurationExtensions.AddIgnoreRule(null, info => info.PropertyType == typeof(string));
@@ -328,7 +328,7 @@
         }
 
         [Fact]
-        public void AddIgnoreRuleWithPredicateThrowsExceptionWithNullExpressionTest()
+        public void AddIgnoreRuleWithPredicateThrowsExceptionWithNullExpression()
         {
             var target = new BuildConfiguration();
 
@@ -338,7 +338,7 @@
         }
 
         [Fact]
-        public void AddIgnoreRuleWithRegexAddsRuleToCompilerTest()
+        public void AddIgnoreRuleWithRegexAddsRuleToCompiler()
         {
             var target = new BuildConfiguration();
 
@@ -352,7 +352,7 @@
         }
 
         [Fact]
-        public void AddIgnoreRuleWithRegexThrowsExceptionWithNullCompilerTest()
+        public void AddIgnoreRuleWithRegexThrowsExceptionWithNullCompiler()
         {
             Action action = () => BuildConfigurationExtensions.AddIgnoreRule(null, PropertyExpression.LastName);
 
@@ -360,7 +360,7 @@
         }
 
         [Fact]
-        public void AddIgnoreRuleWithRegexThrowsExceptionWithNullExpressionTest()
+        public void AddIgnoreRuleWithRegexThrowsExceptionWithNullExpression()
         {
             var target = new BuildConfiguration();
 
@@ -370,7 +370,7 @@
         }
 
         [Fact]
-        public void AddPostBuildActionAddsRuleToCompilerTest()
+        public void AddPostBuildActionAddsRuleToCompiler()
         {
             var target = new BuildConfiguration();
 
@@ -382,7 +382,7 @@
         }
 
         [Fact]
-        public void AddPostBuildActionThrowsExceptionWithNullCompilerTest()
+        public void AddPostBuildActionThrowsExceptionWithNullCompiler()
         {
             Action action = () => BuildConfigurationExtensions.AddPostBuildAction<DummyPostBuildAction>(null);
 
@@ -390,7 +390,7 @@
         }
 
         [Fact]
-        public void AddTypeCreatorAddsRuleToCompilerTest()
+        public void AddTypeCreatorAddsRuleToCompiler()
         {
             var target = new BuildConfiguration();
 
@@ -402,7 +402,7 @@
         }
 
         [Fact]
-        public void AddTypeCreatorThrowsExceptionWithNullCompilerTest()
+        public void AddTypeCreatorThrowsExceptionWithNullCompiler()
         {
             Action action = () => BuildConfigurationExtensions.AddTypeCreator<DefaultTypeCreator>(null);
 
@@ -410,7 +410,7 @@
         }
 
         [Fact]
-        public void AddTypeMappingRuleAddsRuleToCompilerTest()
+        public void AddTypeMappingRuleAddsRuleToCompiler()
         {
             var target = new BuildConfiguration();
 
@@ -422,7 +422,7 @@
         }
 
         [Fact]
-        public void AddTypeMappingRuleThrowsExceptionWithNullCompilerTest()
+        public void AddTypeMappingRuleThrowsExceptionWithNullCompiler()
         {
             Action action = () => BuildConfigurationExtensions.AddTypeMappingRule<DummyTypeMappingRule>(null);
 
@@ -430,7 +430,7 @@
         }
 
         [Fact]
-        public void AddValueGeneratorAddsRuleToCompilerTest()
+        public void AddValueGeneratorAddsRuleToCompiler()
         {
             var target = new BuildConfiguration();
 
@@ -442,7 +442,7 @@
         }
 
         [Fact]
-        public void AddValueGeneratorThrowsExceptionWithNullCompilerTest()
+        public void AddValueGeneratorThrowsExceptionWithNullCompiler()
         {
             Action action = () => BuildConfigurationExtensions.AddValueGenerator<StringValueGenerator>(null);
 
@@ -450,7 +450,7 @@
         }
 
         [Fact]
-        public void AddWithCompilerModuleThrowsExceptionWithNullCompilerTest()
+        public void AddWithCompilerModuleThrowsExceptionWithNullCompiler()
         {
             var module = new TestConfigurationModule();
 
@@ -460,7 +460,7 @@
         }
 
         [Fact]
-        public void AddWithCompilerModuleThrowsExceptionWithNullRuleTest()
+        public void AddWithCompilerModuleThrowsExceptionWithNullRule()
         {
             var target = Substitute.For<IBuildConfiguration>();
 
@@ -470,7 +470,7 @@
         }
 
         [Fact]
-        public void AddWithConfigurationModuleAddsRuleToCompilerTest()
+        public void AddWithConfigurationModuleAddsRuleToCompiler()
         {
             var module = Substitute.For<IConfigurationModule>();
 
@@ -482,7 +482,7 @@
         }
 
         [Fact]
-        public void AddWithCreationRuleAddsRuleToCompilerTest()
+        public void AddWithCreationRuleAddsRuleToCompiler()
         {
             var rule = new ExpressionCreationRule<Person>(x => x.FirstName, (object) null, Environment.TickCount);
 
@@ -494,7 +494,7 @@
         }
 
         [Fact]
-        public void AddWithCreationRuleThrowsExceptionWithNullCompilerTest()
+        public void AddWithCreationRuleThrowsExceptionWithNullCompiler()
         {
             var rule = new ExpressionCreationRule<Person>(x => x.FirstName, (object)null, Environment.TickCount);
 
@@ -504,7 +504,7 @@
         }
 
         [Fact]
-        public void AddWithCreationRuleThrowsExceptionWithNullRuleTest()
+        public void AddWithCreationRuleThrowsExceptionWithNullRule()
         {
             var target = Substitute.For<IBuildConfiguration>();
 
@@ -514,7 +514,7 @@
         }
 
         [Fact]
-        public void AddWithExecuteOrderRuleAddsRuleToCompilerTest()
+        public void AddWithExecuteOrderRuleAddsRuleToCompiler()
         {
             var rule = new PredicateExecuteOrderRule(x => x.Name == "FirstName", Environment.TickCount);
 
@@ -526,7 +526,7 @@
         }
 
         [Fact]
-        public void AddWithExecuteOrderRuleThrowsExceptionWithNullCompilerTest()
+        public void AddWithExecuteOrderRuleThrowsExceptionWithNullCompiler()
         {
             var rule = new PredicateExecuteOrderRule(x => x.Name == "FirstName", Environment.TickCount);
 
@@ -536,7 +536,7 @@
         }
 
         [Fact]
-        public void AddWithExecuteOrderRuleThrowsExceptionWithNullRuleTest()
+        public void AddWithExecuteOrderRuleThrowsExceptionWithNullRule()
         {
             var target = Substitute.For<IBuildConfiguration>();
 
@@ -546,7 +546,7 @@
         }
 
         [Fact]
-        public void AddWithIgnoreRuleAddsRuleToCompilerTest()
+        public void AddWithIgnoreRuleAddsRuleToCompiler()
         {
             var rule = new ExpressionIgnoreRule<Person>(x => x.FirstName);
 
@@ -558,7 +558,7 @@
         }
 
         [Fact]
-        public void AddWithIgnoreRuleThrowsExceptionWithNullCompilerTest()
+        public void AddWithIgnoreRuleThrowsExceptionWithNullCompiler()
         {
             var rule = new ExpressionIgnoreRule<Person>(x => x.FirstName);
 
@@ -568,7 +568,7 @@
         }
 
         [Fact]
-        public void AddWithIgnoreRuleThrowsExceptionWithNullRuleTest()
+        public void AddWithIgnoreRuleThrowsExceptionWithNullRule()
         {
             var target = Substitute.For<IBuildConfiguration>();
 
@@ -578,7 +578,7 @@
         }
 
         [Fact]
-        public void AddWithPostBuildActionAddsRuleToCompilerTest()
+        public void AddWithPostBuildActionAddsRuleToCompiler()
         {
             var postBuildAction = new DummyPostBuildAction();
 
@@ -590,7 +590,7 @@
         }
 
         [Fact]
-        public void AddWithPostBuildActionThrowsExceptionWithNullCompilerTest()
+        public void AddWithPostBuildActionThrowsExceptionWithNullCompiler()
         {
             var postBuildAction = new DummyPostBuildAction();
 
@@ -600,7 +600,7 @@
         }
 
         [Fact]
-        public void AddWithPostBuildActionThrowsExceptionWithNullRuleTest()
+        public void AddWithPostBuildActionThrowsExceptionWithNullRule()
         {
             var target = Substitute.For<IBuildConfiguration>();
 
@@ -610,7 +610,7 @@
         }
 
         [Fact]
-        public void AddWithTypeCreatorAddsRuleToCompilerTest()
+        public void AddWithTypeCreatorAddsRuleToCompiler()
         {
             var rule = new DefaultTypeCreator();
 
@@ -622,7 +622,7 @@
         }
 
         [Fact]
-        public void AddWithTypeCreatorThrowsExceptionWithNullCompilerTest()
+        public void AddWithTypeCreatorThrowsExceptionWithNullCompiler()
         {
             var rule = new DefaultTypeCreator();
 
@@ -632,7 +632,7 @@
         }
 
         [Fact]
-        public void AddWithTypeCreatorThrowsExceptionWithNullRuleTest()
+        public void AddWithTypeCreatorThrowsExceptionWithNullRule()
         {
             var target = Substitute.For<IBuildConfiguration>();
 
@@ -642,7 +642,7 @@
         }
 
         [Fact]
-        public void AddWithTypeMappingRuleAddsRuleToCompilerTest()
+        public void AddWithTypeMappingRuleAddsRuleToCompiler()
         {
             var rule = new TypeMappingRule(typeof(Stream), typeof(MemoryStream));
 
@@ -654,7 +654,7 @@
         }
 
         [Fact]
-        public void AddWithTypeMappingRuleThrowsExceptionWithNullCompilerTest()
+        public void AddWithTypeMappingRuleThrowsExceptionWithNullCompiler()
         {
             var rule = new TypeMappingRule(typeof(Stream), typeof(MemoryStream));
 
@@ -664,7 +664,7 @@
         }
 
         [Fact]
-        public void AddWithTypeMappingRuleThrowsExceptionWithNullRuleTest()
+        public void AddWithTypeMappingRuleThrowsExceptionWithNullRule()
         {
             var target = Substitute.For<IBuildConfiguration>();
 
@@ -674,7 +674,7 @@
         }
 
         [Fact]
-        public void AddWithValueGeneratorAddsRuleToCompilerTest()
+        public void AddWithValueGeneratorAddsRuleToCompiler()
         {
             var rule = new StringValueGenerator();
 
@@ -686,7 +686,7 @@
         }
 
         [Fact]
-        public void AddWithValueGeneratorThrowsExceptionWithNullCompilerTest()
+        public void AddWithValueGeneratorThrowsExceptionWithNullCompiler()
         {
             var rule = new StringValueGenerator();
 
@@ -696,7 +696,7 @@
         }
 
         [Fact]
-        public void AddWithValueGeneratorThrowsExceptionWithNullRuleTest()
+        public void AddWithValueGeneratorThrowsExceptionWithNullRule()
         {
             var target = Substitute.For<IBuildConfiguration>();
 
@@ -706,7 +706,7 @@
         }
 
         [Fact]
-        public void CreateReturnsInstanceCreatedByDefaultExecuteStrategyTest()
+        public void CreateReturnsInstanceCreatedByDefaultExecuteStrategy()
         {
             var value = Guid.NewGuid();
 
@@ -727,7 +727,7 @@
         }
 
         [Fact]
-        public void CreateThrowsExceptionWithNullBuildConfigurationTest()
+        public void CreateThrowsExceptionWithNullBuildConfiguration()
         {
             Action action = () => ((IBuildConfiguration) null).Create(typeof(Guid));
 
@@ -735,7 +735,7 @@
         }
 
         [Fact]
-        public void CreateThrowsExceptionWithNullInstanceTypeTest()
+        public void CreateThrowsExceptionWithNullInstanceType()
         {
             var target = Substitute.For<IBuildConfiguration>();
 
@@ -745,7 +745,7 @@
         }
 
         [Fact]
-        public void CreateTReturnsInstanceCreatedByDefaultExecuteStrategyTest()
+        public void CreateTReturnsInstanceCreatedByDefaultExecuteStrategy()
         {
             var value = Guid.NewGuid();
 
@@ -766,7 +766,7 @@
         }
 
         [Fact]
-        public void CreateTThrowsExceptionWithNullBuildConfigurationTest()
+        public void CreateTThrowsExceptionWithNullBuildConfiguration()
         {
             Action action = () => ((IBuildConfiguration) null).Create<Guid>();
 
@@ -774,7 +774,7 @@
         }
 
         [Fact]
-        public void IgnoringReturnsNewBuildConfigurationWithIgnoreRuleAppendedTest()
+        public void IgnoringReturnsNewBuildConfigurationWithIgnoreRuleAppended()
         {
             var ignoreRules = new Collection<IIgnoreRule>();
 
@@ -789,7 +789,7 @@
         }
 
         [Fact]
-        public void IgnoringThrowsExceptionWithNullBuildConfigurationTest()
+        public void IgnoringThrowsExceptionWithNullBuildConfiguration()
         {
             Action action = () => ((IBuildConfiguration) null).Ignoring<Person>(x => x.Priority);
 
@@ -797,7 +797,7 @@
         }
 
         [Fact]
-        public void IgnoringThrowsExceptionWithNullExpressionTest()
+        public void IgnoringThrowsExceptionWithNullExpression()
         {
             var target = Substitute.For<IBuildConfiguration>();
 
@@ -807,7 +807,7 @@
         }
 
         [Fact]
-        public void MappingReturnsNewBuildConfigurationWithTypeMappingRuleAppendedTest()
+        public void MappingReturnsNewBuildConfigurationWithTypeMappingRuleAppended()
         {
             var typeMappings = new Collection<TypeMappingRule>();
 
@@ -826,7 +826,7 @@
         }
 
         [Fact]
-        public void MappingThrowsExceptionWithNullBuildConfigurationTest()
+        public void MappingThrowsExceptionWithNullBuildConfiguration()
         {
             Action action = () => ((IBuildConfiguration) null).Mapping<Stream, MemoryStream>();
 
@@ -834,7 +834,7 @@
         }
 
         [Fact]
-        public void PopulateThrowsExceptionWithNullBuildConfigurationTest()
+        public void PopulateThrowsExceptionWithNullBuildConfiguration()
         {
             var model = new Person();
 
@@ -844,7 +844,7 @@
         }
 
         [Fact]
-        public void PopulateThrowsExceptionWithNullInstanceTest()
+        public void PopulateThrowsExceptionWithNullInstance()
         {
             var target = Substitute.For<IBuildConfiguration>();
 
@@ -854,7 +854,7 @@
         }
 
         [Fact]
-        public void PopulateUsesDefaultExecuteStrategyToPopulateInstanceTest()
+        public void PopulateUsesDefaultExecuteStrategyToPopulateInstance()
         {
             var expected = new SlimModel();
 
@@ -867,7 +867,7 @@
         }
 
         [Fact]
-        public void RemoveCreationRuleRemovesMultipleMatchingRulesFromCompilerTest()
+        public void RemoveCreationRuleRemovesMultipleMatchingRulesFromCompiler()
         {
             var target = new BuildConfiguration();
 
@@ -880,7 +880,7 @@
         }
 
         [Fact]
-        public void RemoveCreationRuleRemovesRulesFromCompilerTest()
+        public void RemoveCreationRuleRemovesRulesFromCompiler()
         {
             var target = new BuildConfiguration();
 
@@ -891,7 +891,7 @@
         }
 
         [Fact]
-        public void RemoveCreationRuleThrowsExceptionWithNullCompilerTest()
+        public void RemoveCreationRuleThrowsExceptionWithNullCompiler()
         {
             Action action = () => BuildConfigurationExtensions.RemoveCreationRule<DummyCreationRule>(null);
 
@@ -899,7 +899,7 @@
         }
 
         [Fact]
-        public void RemoveExecuteOrderRuleRemovesMultipleMatchingRulesFromCompilerTest()
+        public void RemoveExecuteOrderRuleRemovesMultipleMatchingRulesFromCompiler()
         {
             var target = new BuildConfiguration();
 
@@ -912,7 +912,7 @@
         }
 
         [Fact]
-        public void RemoveExecuteOrderRuleRemovesRulesFromCompilerTest()
+        public void RemoveExecuteOrderRuleRemovesRulesFromCompiler()
         {
             var target = new BuildConfiguration();
 
@@ -923,7 +923,7 @@
         }
 
         [Fact]
-        public void RemoveExecuteOrderRuleThrowsExceptionWithNullCompilerTest()
+        public void RemoveExecuteOrderRuleThrowsExceptionWithNullCompiler()
         {
             Action action = () => BuildConfigurationExtensions.RemoveExecuteOrderRule<DummyExecuteOrderRule>(null);
 
@@ -931,7 +931,7 @@
         }
 
         [Fact]
-        public void RemoveIgnoreRuleRemovesMultipleMatchingRulesFromCompilerTest()
+        public void RemoveIgnoreRuleRemovesMultipleMatchingRulesFromCompiler()
         {
             var target = new BuildConfiguration();
 
@@ -944,7 +944,7 @@
         }
 
         [Fact]
-        public void RemoveIgnoreRuleRemovesRulesFromCompilerTest()
+        public void RemoveIgnoreRuleRemovesRulesFromCompiler()
         {
             var target = new BuildConfiguration();
 
@@ -955,7 +955,7 @@
         }
 
         [Fact]
-        public void RemoveIgnoreRuleThrowsExceptionWithNullCompilerTest()
+        public void RemoveIgnoreRuleThrowsExceptionWithNullCompiler()
         {
             Action action = () => BuildConfigurationExtensions.RemoveIgnoreRule<DummyIgnoreRule>(null);
 
@@ -963,7 +963,7 @@
         }
 
         [Fact]
-        public void RemovePostBuildActionRemovesMultipleMatchingRulesFromCompilerTest()
+        public void RemovePostBuildActionRemovesMultipleMatchingRulesFromCompiler()
         {
             var target = new BuildConfiguration();
 
@@ -976,7 +976,7 @@
         }
 
         [Fact]
-        public void RemovePostBuildActionRemovesRulesFromCompilerTest()
+        public void RemovePostBuildActionRemovesRulesFromCompiler()
         {
             var target = new BuildConfiguration();
 
@@ -987,7 +987,7 @@
         }
 
         [Fact]
-        public void RemovePostBuildActionThrowsExceptionWithNullCompilerTest()
+        public void RemovePostBuildActionThrowsExceptionWithNullCompiler()
         {
             Action action = () => BuildConfigurationExtensions.RemovePostBuildAction<DummyPostBuildAction>(null);
 
@@ -995,7 +995,7 @@
         }
 
         [Fact]
-        public void RemoveTypeCreatorRemovesMultipleMatchingRulesFromCompilerTest()
+        public void RemoveTypeCreatorRemovesMultipleMatchingRulesFromCompiler()
         {
             var target = new BuildConfiguration();
 
@@ -1008,7 +1008,7 @@
         }
 
         [Fact]
-        public void RemoveTypeCreatorRemovesRulesFromCompilerTest()
+        public void RemoveTypeCreatorRemovesRulesFromCompiler()
         {
             var target = new BuildConfiguration();
 
@@ -1019,7 +1019,7 @@
         }
 
         [Fact]
-        public void RemoveTypeCreatorThrowsExceptionWithNullCompilerTest()
+        public void RemoveTypeCreatorThrowsExceptionWithNullCompiler()
         {
             Action action = () => BuildConfigurationExtensions.RemoveTypeCreator<DefaultTypeCreator>(null);
 
@@ -1027,7 +1027,7 @@
         }
 
         [Fact]
-        public void RemoveTypeMappingRuleRemovesMultipleMatchingRulesFromCompilerTest()
+        public void RemoveTypeMappingRuleRemovesMultipleMatchingRulesFromCompiler()
         {
             var target = new BuildConfiguration();
 
@@ -1040,7 +1040,7 @@
         }
 
         [Fact]
-        public void RemoveTypeMappingRuleRemovesRulesFromCompilerTest()
+        public void RemoveTypeMappingRuleRemovesRulesFromCompiler()
         {
             var target = new BuildConfiguration();
 
@@ -1051,7 +1051,7 @@
         }
 
         [Fact]
-        public void RemoveTypeMappingRuleThrowsExceptionWithNullCompilerTest()
+        public void RemoveTypeMappingRuleThrowsExceptionWithNullCompiler()
         {
             Action action = () => BuildConfigurationExtensions.RemoveTypeMappingRule<DummyTypeMappingRule>(null);
 
@@ -1059,7 +1059,7 @@
         }
 
         [Fact]
-        public void RemoveValueGeneratorRemovesMultipleMatchingRulesFromCompilerTest()
+        public void RemoveValueGeneratorRemovesMultipleMatchingRulesFromCompiler()
         {
             var target = new BuildConfiguration();
 
@@ -1072,7 +1072,7 @@
         }
 
         [Fact]
-        public void RemoveValueGeneratorRemovesRulesFromCompilerTest()
+        public void RemoveValueGeneratorRemovesRulesFromCompiler()
         {
             var target = new BuildConfiguration();
 
@@ -1083,7 +1083,7 @@
         }
 
         [Fact]
-        public void RemoveValueGeneratorThrowsExceptionWithNullCompilerTest()
+        public void RemoveValueGeneratorThrowsExceptionWithNullCompiler()
         {
             Action action = () => BuildConfigurationExtensions.RemoveValueGenerator<StringValueGenerator>(null);
 
@@ -1091,7 +1091,7 @@
         }
 
         [Fact]
-        public void UsingExecuteStrategyReturnsExecuteStrategyWithBuildConfigurationTest()
+        public void UsingExecuteStrategyReturnsExecuteStrategyWithBuildConfiguration()
         {
             var target = Substitute.For<IBuildConfiguration>();
 
@@ -1102,7 +1102,7 @@
         }
 
         [Fact]
-        public void UsingExecuteStrategyThrowsExceptionWithNullConfigurationTest()
+        public void UsingExecuteStrategyThrowsExceptionWithNullConfiguration()
         {
             Action action = () => ((IBuildConfiguration) null).UsingExecuteStrategy<NullExecuteStrategy>();
 

@@ -20,7 +20,7 @@
         }
 
         [Fact]
-        public void CreateReturnsDefaultWhenNullReturnedByProcessorTest()
+        public void CreateReturnsDefaultWhenNullReturnedByProcessor()
         {
             var buildHistory = new BuildHistory();
             var typeCapability = new BuildCapability
@@ -50,7 +50,7 @@
         }
 
         [Fact]
-        public void CreateReturnsNullCalculatedByProcessorTest()
+        public void CreateReturnsNullCalculatedByProcessor()
         {
             var buildHistory = new BuildHistory();
             var typeCapability = new BuildCapability
@@ -88,7 +88,7 @@
         }
 
         [Fact]
-        public void CreateReturnsValueCreatedFromProvidedArgumentsTest()
+        public void CreateReturnsValueCreatedFromProvidedArguments()
         {
             var buildHistory = new BuildHistory();
             var expected = new Person();
@@ -130,7 +130,7 @@
         }
 
         [Fact]
-        public void CreateReturnsValueCreatedWithoutArgumentsTest()
+        public void CreateReturnsValueCreatedWithoutArguments()
         {
             var buildHistory = new BuildHistory();
             var expected = new Person();
@@ -170,7 +170,7 @@
         }
 
         [Fact]
-        public void PopulateAssignsPropertyValuesToExistingInstanceTest()
+        public void PopulateAssignsPropertyValuesToExistingInstance()
         {
             var buildHistory = new BuildHistory();
             var model = new SlimModel();

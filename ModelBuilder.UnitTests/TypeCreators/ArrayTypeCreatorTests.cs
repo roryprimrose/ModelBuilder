@@ -57,7 +57,7 @@
         }
 
         [Fact]
-        public void CanCreateThrowsExceptionWithNullParameterTest()
+        public void CanCreateThrowsExceptionWithNullParameter()
         {
             var configuration = Substitute.For<IBuildConfiguration>();
 
@@ -69,7 +69,7 @@
         }
 
         [Fact]
-        public void CanCreateThrowsExceptionWithNullPropertyTest()
+        public void CanCreateThrowsExceptionWithNullProperty()
         {
             var configuration = Substitute.For<IBuildConfiguration>();
 
@@ -81,7 +81,7 @@
         }
 
         [Fact]
-        public void CanCreateThrowsExceptionWithNullTypeTest()
+        public void CanCreateThrowsExceptionWithNullType()
         {
             var configuration = Substitute.For<IBuildConfiguration>();
 
@@ -128,7 +128,7 @@
         }
 
         [Fact]
-        public void CanPopulateThrowsExceptionWithNullParameterTest()
+        public void CanPopulateThrowsExceptionWithNullParameter()
         {
             var configuration = Substitute.For<IBuildConfiguration>();
 
@@ -140,7 +140,7 @@
         }
 
         [Fact]
-        public void CanPopulateThrowsExceptionWithNullPropertyTest()
+        public void CanPopulateThrowsExceptionWithNullProperty()
         {
             var configuration = Substitute.For<IBuildConfiguration>();
 
@@ -152,7 +152,7 @@
         }
 
         [Fact]
-        public void CanPopulateThrowsExceptionWithNullTypeTest()
+        public void CanPopulateThrowsExceptionWithNullType()
         {
             var configuration = Substitute.For<IBuildConfiguration>();
 
@@ -164,7 +164,7 @@
         }
 
         [Fact]
-        public void CreateChildItemThrowsExceptionWithNullExecuteStrategyTest()
+        public void CreateChildItemThrowsExceptionWithNullExecuteStrategy()
         {
             var person = new Person();
 
@@ -262,13 +262,13 @@
         }
 
         [Fact]
-        public void DefaultMaxCountIsPositiveTest()
+        public void DefaultMaxCountIsPositive()
         {
             ArrayTypeCreator.DefaultMaxCount.Should().BeGreaterThan(0);
         }
 
         [Fact]
-        public void DisablesAutoConstructorDetectionTest()
+        public void DisablesAutoConstructorDetection()
         {
             var target = new ArrayTypeCreatorWrapper();
 
@@ -276,7 +276,7 @@
         }
 
         [Fact]
-        public void DisablesAutoPopulateTest()
+        public void DisablesAutoPopulate()
         {
             var target = new ArrayTypeCreatorWrapper();
 
@@ -284,7 +284,7 @@
         }
 
         [Fact]
-        public void PopulateAddsItemsToCollectionFromExecuteStrategyTest()
+        public void PopulateAddsItemsToCollectionFromExecuteStrategy()
         {
             var expected = new Guid[15];
 
@@ -315,7 +315,7 @@
         }
 
         [Fact]
-        public void PopulateAddsItemsToListFromExecuteStrategyTest()
+        public void PopulateAddsItemsToListFromExecuteStrategy()
         {
             var expected = new Guid[15];
 
@@ -341,7 +341,7 @@
         }
 
         [Fact]
-        public void PopulateCanAddItemsBasedOnPreviousItemTest()
+        public void PopulateCanAddItemsBasedOnPreviousItem()
         {
             var actual = new int[15];
             var executeStrategy = Model.UsingDefaultConfiguration()
@@ -363,7 +363,7 @@
         }
 
         [Fact]
-        public void PopulateInfersItemTypeByArrayTypeWhenFirstItemIsNullTest()
+        public void PopulateInfersItemTypeByArrayTypeWhenFirstItemIsNull()
         {
             var actual = new Person[15];
             var executeStrategy = Model.UsingDefaultConfiguration()
@@ -405,7 +405,7 @@
             "Microsoft.Design",
             "CA1825",
             Justification = "The Array.Empty<T> is not available on net452.")]
-        public void PopulateReturnsEmptyArrayWhenSourceHasZeroLengthTest()
+        public void PopulateReturnsEmptyArrayWhenSourceHasZeroLength()
         {
             var expected = new Guid[0];
 
@@ -430,7 +430,7 @@
         }
 
         [Fact]
-        public void PopulateThrowsExceptionWithNullInstanceTest()
+        public void PopulateThrowsExceptionWithNullInstance()
         {
             var strategy = Substitute.For<IExecuteStrategy>();
 
@@ -442,7 +442,7 @@
         }
 
         [Fact]
-        public void PopulateThrowsExceptionWithNullStrategyTest()
+        public void PopulateThrowsExceptionWithNullStrategy()
         {
             var instance = new List<string>();
 
@@ -454,7 +454,7 @@
         }
 
         [Fact]
-        public void PopulateThrowsExceptionWithUnsupportedTypeTest()
+        public void PopulateThrowsExceptionWithUnsupportedType()
         {
             var instance = new Lazy<bool>(() => true);
 
@@ -471,7 +471,7 @@
         }
 
         [Fact]
-        public void PriorityReturnsHigherThanDefaultTypeCreatorTest()
+        public void PriorityReturnsHigherThanDefaultTypeCreator()
         {
             var target = new ArrayTypeCreator();
             var other = new DefaultTypeCreator();
@@ -480,7 +480,7 @@
         }
 
         [Fact]
-        public void SettingDefaultMaxCountOnlyAffectsNewInstancesTest()
+        public void SettingDefaultMaxCountOnlyAffectsNewInstances()
         {
             var expected = ArrayTypeCreator.DefaultMaxCount;
 
@@ -502,7 +502,7 @@
         }
 
         [Fact]
-        public void SettingMaxCountShouldNotChangeDefaultMaxCountTest()
+        public void SettingMaxCountShouldNotChangeDefaultMaxCount()
         {
             var target = new ArrayTypeCreator
             {

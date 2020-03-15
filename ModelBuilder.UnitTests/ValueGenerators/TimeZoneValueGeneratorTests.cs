@@ -14,7 +14,7 @@
     public class TimeZoneValueGeneratorTests
     {
         [Fact]
-        public void GenerateReturnsRandomTimeZoneMatchingCaseInsensitiveCountryTest()
+        public void GenerateReturnsRandomTimeZoneMatchingCaseInsensitiveCountry()
         {
             var address = new Address
             {
@@ -40,7 +40,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsRandomTimeZoneMatchingCountryTest()
+        public void GenerateReturnsRandomTimeZoneMatchingCountry()
         {
             var address = new Address
             {
@@ -64,7 +64,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsRandomTimeZoneMatchingCountryWhenNoCityMatchTest()
+        public void GenerateReturnsRandomTimeZoneMatchingCountryWhenNoCityMatch()
         {
             var address = new Address
             {
@@ -89,7 +89,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsRandomTimeZoneWhenNoMatchingCountryTest()
+        public void GenerateReturnsRandomTimeZoneWhenNoMatchingCountry()
         {
             var address = new Address
             {
@@ -111,7 +111,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsRandomValueTest()
+        public void GenerateReturnsRandomValue()
         {
             var address = new Address();
             var buildChain = new BuildHistory();
@@ -142,7 +142,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsStringValueTest()
+        public void GenerateReturnsStringValue()
         {
             var address = new Address();
             var buildChain = new BuildHistory();
@@ -161,7 +161,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsValueInNodaTimeDatabaseTest()
+        public void GenerateReturnsValueInNodaTimeDatabase()
         {
             var address = new Address();
             var buildChain = new BuildHistory();
@@ -234,7 +234,7 @@
         }
 
         [Fact]
-        public void HasHigherPriorityThanStringValueGeneratorTest()
+        public void HasHigherPriorityThanStringValueGenerator()
         {
             var target = new Wrapper();
             var other = new StringValueGenerator();

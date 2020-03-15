@@ -94,7 +94,7 @@
         }
 
         [Fact]
-        public void IsMatchThrowsExceptionWithNullPropertyTest()
+        public void IsMatchThrowsExceptionWithNullProperty()
         {
             var sut = new PredicateIgnoreRule(x => x.Name == nameof(Person.FirstName));
 
@@ -104,7 +104,7 @@
         }
 
         [Fact]
-        public void ThrowsExceptionWhenCreatedWithNullExpressionTest()
+        public void ThrowsExceptionWhenCreatedWithNullExpression()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Action action = () => new PredicateIgnoreRule(null);

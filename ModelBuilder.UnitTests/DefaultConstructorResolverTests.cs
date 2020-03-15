@@ -16,7 +16,7 @@
         }
 
         [Fact]
-        public void ResolveMatchesConstructorMatchingParameterLengthWhereParameterValueIsNullTest()
+        public void ResolveMatchesConstructorMatchingParameterLengthWhereParameterValueIsNull()
         {
             var target = new DefaultConstructorResolver();
 
@@ -26,7 +26,7 @@
         }
 
         [Fact]
-        public void ResolveMatchesConstructorWithDerivedParameterTypesTest()
+        public void ResolveMatchesConstructorWithDerivedParameterTypes()
         {
             var person = new Person
             {
@@ -41,7 +41,7 @@
         }
 
         [Fact]
-        public void ResolveMatchesConstructorWithMatchingParametersTypesTest()
+        public void ResolveMatchesConstructorWithMatchingParametersTypes()
         {
             var args = new object[]
             {
@@ -56,7 +56,7 @@
         }
 
         [Fact]
-        public void ResolveReturnsConstructorThatMatchesAgainstNullParametersTest()
+        public void ResolveReturnsConstructorThatMatchesAgainstNullParameters()
         {
             var target = new DefaultConstructorResolver();
 
@@ -66,7 +66,7 @@
         }
 
         [Fact]
-        public void ResolveReturnsConstructorWhenArgsContainsNullableParameterWithNullValueTest()
+        public void ResolveReturnsConstructorWhenArgsContainsNullableParameterWithNullValue()
         {
             var target = new DefaultConstructorResolver();
 
@@ -76,7 +76,7 @@
         }
 
         [Fact]
-        public void ResolveReturnsConstructorWhenArgsContainsNullAndArgCountFillsNonOptionalParamTest()
+        public void ResolveReturnsConstructorWhenArgsContainsNullAndArgCountFillsNonOptionalParam()
         {
             var target = new DefaultConstructorResolver();
 
@@ -86,7 +86,7 @@
         }
 
         [Fact]
-        public void ResolveReturnsConstructorWhenArgsContainsNullAndMatchesDerivedTypeTest()
+        public void ResolveReturnsConstructorWhenArgsContainsNullAndMatchesDerivedType()
         {
             var company = new SpecificCompany();
 
@@ -98,7 +98,7 @@
         }
 
         [Fact]
-        public void ResolveReturnsConstructorWhenArgsContainsNullAndNonNullArgIsCopyConstructorTest()
+        public void ResolveReturnsConstructorWhenArgsContainsNullAndNonNullArgIsCopyConstructor()
         {
             var source = Clone.Create();
 
@@ -110,7 +110,7 @@
         }
 
         [Fact]
-        public void ResolveReturnsConstructorWhenArgsContainsNullAndNullArgIsCopyConstructorTest()
+        public void ResolveReturnsConstructorWhenArgsContainsNullAndNullArgIsCopyConstructor()
         {
             var target = new DefaultConstructorResolver();
 
@@ -120,7 +120,7 @@
         }
 
         [Fact]
-        public void ResolveReturnsConstructorWithLeastParametersExcludingConstructorsWithSameTypeTest()
+        public void ResolveReturnsConstructorWithLeastParametersExcludingConstructorsWithSameType()
         {
             var target = new DefaultConstructorResolver();
 
@@ -131,7 +131,7 @@
         }
 
         [Fact]
-        public void ResolveReturnsConstructorWithLeastParametersTest()
+        public void ResolveReturnsConstructorWithLeastParameters()
         {
             var target = new DefaultConstructorResolver();
 
@@ -141,7 +141,7 @@
         }
 
         [Fact]
-        public void ResolveReturnsConstructorWithLeastParametersWhenArgsIsNullTest()
+        public void ResolveReturnsConstructorWithLeastParametersWhenArgsIsNull()
         {
             var target = new DefaultConstructorResolver();
 
@@ -151,7 +151,7 @@
         }
 
         [Fact]
-        public void ResolveReturnsDefaultConstructorOnSimpleModelTest()
+        public void ResolveReturnsDefaultConstructorOnSimpleModel()
         {
             var target = new DefaultConstructorResolver();
 
@@ -161,7 +161,7 @@
         }
 
         [Fact]
-        public void ResolveReturnsDefaultConstructorWhenManyConstructorsAvailableTest()
+        public void ResolveReturnsDefaultConstructorWhenManyConstructorsAvailable()
         {
             var target = new DefaultConstructorResolver();
 
@@ -171,7 +171,7 @@
         }
 
         [Fact]
-        public void ResolveReturnsParameterConstructorTest()
+        public void ResolveReturnsParameterConstructor()
         {
             var target = new DefaultConstructorResolver();
 
@@ -181,7 +181,7 @@
         }
 
         [Fact]
-        public void ResolveThrowsExceptionWhenArgsContainsNullAndArgCountLessThanOptionalParamTest()
+        public void ResolveThrowsExceptionWhenArgsContainsNullAndArgCountLessThanOptionalParam()
         {
             var target = new DefaultConstructorResolver();
 
@@ -191,7 +191,7 @@
         }
 
         [Fact]
-        public void ResolveThrowsExceptionWhenArgsContainsNullAndHasArgParamTypeMismatchTest()
+        public void ResolveThrowsExceptionWhenArgsContainsNullAndHasArgParamTypeMismatch()
         {
             var target = new DefaultConstructorResolver();
 
@@ -201,7 +201,7 @@
         }
 
         [Fact]
-        public void ResolveThrowsExceptionWhenArgsContainsNullAndNoMatchFoundOnTypesTest()
+        public void ResolveThrowsExceptionWhenArgsContainsNullAndNoMatchFoundOnTypes()
         {
             var target = new DefaultConstructorResolver();
 
@@ -211,7 +211,7 @@
         }
 
         [Fact]
-        public void ResolveThrowsExceptionWhenArgsContainsNullAndParamIsSubtypeTest()
+        public void ResolveThrowsExceptionWhenArgsContainsNullAndParamIsSubtype()
         {
             var company = new Company();
 
@@ -223,7 +223,7 @@
         }
 
         [Fact]
-        public void ResolveThrowsExceptionWhenArgsContainsNullAndTooManyArgumentsProvidedTest()
+        public void ResolveThrowsExceptionWhenArgsContainsNullAndTooManyArgumentsProvided()
         {
             var target = new DefaultConstructorResolver();
 
@@ -239,7 +239,7 @@
         }
 
         [Fact]
-        public void ResolveThrowsExceptionWhenArgsContainsNullMatchingValueTypeParameterTest()
+        public void ResolveThrowsExceptionWhenArgsContainsNullMatchingValueTypeParameter()
         {
             var target = new DefaultConstructorResolver();
 
@@ -249,7 +249,7 @@
         }
 
         [Fact]
-        public void ResolveThrowsExceptionWhenArgsContainsNullNoOptionalParamsAndArgumentCountMismatchTest()
+        public void ResolveThrowsExceptionWhenArgsContainsNullNoOptionalParamsAndArgumentCountMismatch()
         {
             var target = new DefaultConstructorResolver();
 
@@ -259,7 +259,7 @@
         }
 
         [Fact]
-        public void ResolveThrowsExceptionWhenClassOnlyContainsConstructorsThatReferenceTheSameTypeTest()
+        public void ResolveThrowsExceptionWhenClassOnlyContainsConstructorsThatReferenceTheSameType()
         {
             var target = new DefaultConstructorResolver();
 
@@ -269,7 +269,7 @@
         }
 
         [Fact]
-        public void ResolveThrowsExceptionWhenClassOnlyContainsCopyConstructorTest()
+        public void ResolveThrowsExceptionWhenClassOnlyContainsCopyConstructor()
         {
             var target = new DefaultConstructorResolver();
 
@@ -279,7 +279,7 @@
         }
 
         [Fact]
-        public void ResolveThrowsExceptionWhenNoConstructorMatchingSpecifiedParametersTest()
+        public void ResolveThrowsExceptionWhenNoConstructorMatchingSpecifiedParameters()
         {
             var target = new DefaultConstructorResolver();
 
@@ -289,7 +289,7 @@
         }
 
         [Fact]
-        public void ResolveThrowsExceptionWhenNoPublicConstructorFoundTest()
+        public void ResolveThrowsExceptionWhenNoPublicConstructorFound()
         {
             var target = new DefaultConstructorResolver();
 
@@ -299,7 +299,7 @@
         }
 
         [Fact]
-        public void ResolveThrowsExceptionWhenParameterValuesDoNotMatchParameterTypesTest()
+        public void ResolveThrowsExceptionWhenParameterValuesDoNotMatchParameterTypes()
         {
             var target = new DefaultConstructorResolver();
 
@@ -318,7 +318,7 @@
         }
 
         [Fact]
-        public void ResolveThrowsExceptionWhenWhenOnlyPrivateConstructorAvailableTest()
+        public void ResolveThrowsExceptionWhenWhenOnlyPrivateConstructorAvailable()
         {
             var target = new DefaultConstructorResolver();
 
@@ -328,7 +328,7 @@
         }
 
         [Fact]
-        public void ResolveThrowsExceptionWithNullTypeTest()
+        public void ResolveThrowsExceptionWithNullType()
         {
             var target = new DefaultConstructorResolver();
 

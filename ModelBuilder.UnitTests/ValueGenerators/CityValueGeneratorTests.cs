@@ -13,7 +13,7 @@
     public class CityValueGeneratorTests
     {
         [Fact]
-        public void GenerateReturnsRandomCityMatchingCaseInsensitiveCountryTest()
+        public void GenerateReturnsRandomCityMatchingCaseInsensitiveCountry()
         {
             var address = new Address
             {
@@ -40,7 +40,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsRandomCityMatchingCountryTest()
+        public void GenerateReturnsRandomCityMatchingCountry()
         {
             var address = new Address
             {
@@ -65,7 +65,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsRandomCityWhenNoMatchingCountryTest()
+        public void GenerateReturnsRandomCityWhenNoMatchingCountry()
         {
             var address = new Address
             {
@@ -86,7 +86,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsRandomStateMatchingCaseInsensitiveStateTest()
+        public void GenerateReturnsRandomStateMatchingCaseInsensitiveState()
         {
             var address = new Address
             {
@@ -113,7 +113,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsRandomStateMatchingStateTest()
+        public void GenerateReturnsRandomStateMatchingState()
         {
             var address = new Address
             {
@@ -138,7 +138,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsRandomStateWhenNoMatchingStateTest()
+        public void GenerateReturnsRandomStateWhenNoMatchingState()
         {
             var address = new Address
             {
@@ -159,7 +159,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsRandomValueTest()
+        public void GenerateReturnsRandomValue()
         {
             var address = new Address();
             var buildChain = new BuildHistory();
@@ -189,7 +189,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsStringValueTest()
+        public void GenerateReturnsStringValue()
         {
             var address = new Address();
             var buildChain = new BuildHistory();
@@ -229,7 +229,7 @@
         }
 
         [Fact]
-        public void HasHigherPriorityThanStringValueGeneratorTest()
+        public void HasHigherPriorityThanStringValueGenerator()
         {
             var target = new Wrapper();
             var other = new StringValueGenerator();
@@ -259,7 +259,7 @@
         }
 
         [Fact]
-        public void IsMatchThrowsExceptionWithNullBuildChainTest()
+        public void IsMatchThrowsExceptionWithNullBuildChain()
         {
             var type = typeof(string);
 
@@ -273,7 +273,7 @@
         }
 
         [Fact]
-        public void IsMatchThrowsExceptionWithNullTypeTest()
+        public void IsMatchThrowsExceptionWithNullType()
         {
             var buildChain = Substitute.For<IBuildChain>();
 

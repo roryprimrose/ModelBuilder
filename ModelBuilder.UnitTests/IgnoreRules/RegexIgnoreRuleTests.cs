@@ -33,7 +33,7 @@
         }
 
         [Fact]
-        public void IsMatchThrowsExceptionWithNullPropertyTest()
+        public void IsMatchThrowsExceptionWithNullProperty()
         {
             var sut = new RegexIgnoreRule(PropertyExpression.FirstName);
 
@@ -43,7 +43,7 @@
         }
 
         [Fact]
-        public void ThrowsExceptionWhenCreatedWithNullExpressionTest()
+        public void ThrowsExceptionWhenCreatedWithNullExpression()
         {
             Action action = () => new RegexIgnoreRule(null);
 

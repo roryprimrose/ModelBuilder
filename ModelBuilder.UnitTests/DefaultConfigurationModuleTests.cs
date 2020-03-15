@@ -40,7 +40,7 @@
         }
 
         [Fact]
-        public void ConfigureDoesNotIncludeMailinatorEmailValueGeneratorTest()
+        public void ConfigureDoesNotIncludeMailinatorEmailValueGenerator()
         {
             var configuration = new BuildConfiguration();
 
@@ -53,7 +53,7 @@
         }
 
         [Fact]
-        public void ConfigureIncludesAllAvailableTypeCreatorsTest()
+        public void ConfigureIncludesAllAvailableTypeCreators()
         {
             var types = from x in typeof(DefaultConfigurationModule).GetTypeInfo().Assembly.GetTypes()
                 where typeof(ITypeCreator).IsAssignableFrom(x) && x.GetTypeInfo().IsAbstract == false &&
@@ -73,7 +73,7 @@
         }
 
         [Fact]
-        public void ConfigureIncludesAllAvailableValueGeneratorsExceptMailinatorTest()
+        public void ConfigureIncludesAllAvailableValueGeneratorsExceptMailinator()
         {
             var types = from x in typeof(DefaultConfigurationModule).GetTypeInfo().Assembly.GetTypes()
                 where typeof(IValueGenerator).IsAssignableFrom(x) && x.GetTypeInfo().IsAbstract == false &&
@@ -103,7 +103,7 @@
         }
 
         [Fact]
-        public void DefaultExecuteOrderRulesReturnsExecutableRulesTest()
+        public void DefaultExecuteOrderRulesReturnsExecutableRules()
         {
             var configuration = new BuildConfiguration();
 

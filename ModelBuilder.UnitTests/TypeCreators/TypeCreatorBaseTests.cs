@@ -38,7 +38,7 @@
         }
 
         [Fact]
-        public void CanCreateThrowsExceptionWithNullParameterTest()
+        public void CanCreateThrowsExceptionWithNullParameter()
         {
             var configuration = Substitute.For<IBuildConfiguration>();
 
@@ -50,7 +50,7 @@
         }
 
         [Fact]
-        public void CanCreateThrowsExceptionWithNullPropertyTest()
+        public void CanCreateThrowsExceptionWithNullProperty()
         {
             var configuration = Substitute.For<IBuildConfiguration>();
 
@@ -62,7 +62,7 @@
         }
 
         [Fact]
-        public void CanCreateThrowsExceptionWithNullTypeTest()
+        public void CanCreateThrowsExceptionWithNullType()
         {
             var configuration = Substitute.For<IBuildConfiguration>();
 
@@ -74,7 +74,7 @@
         }
 
         [Fact]
-        public void CanPopulateThrowsExceptionWithNullParameterTest()
+        public void CanPopulateThrowsExceptionWithNullParameter()
         {
             var configuration = Substitute.For<IBuildConfiguration>();
             var buildChain = new BuildHistory();
@@ -87,7 +87,7 @@
         }
 
         [Fact]
-        public void CanPopulateThrowsExceptionWithNullPropertyTest()
+        public void CanPopulateThrowsExceptionWithNullProperty()
         {
             var configuration = Substitute.For<IBuildConfiguration>();
             var buildChain = new BuildHistory();
@@ -100,7 +100,7 @@
         }
 
         [Fact]
-        public void CanPopulateThrowsExceptionWithNullTypeTest()
+        public void CanPopulateThrowsExceptionWithNullType()
         {
             var configuration = Substitute.For<IBuildConfiguration>();
             var buildChain = new BuildHistory();
@@ -113,7 +113,7 @@
         }
 
         [Fact]
-        public void CreateForParameterThrowsExceptionWithNullStrategyTest()
+        public void CreateForParameterThrowsExceptionWithNullStrategy()
         {
             var parameterInfo = typeof(Person).GetConstructors()
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
@@ -130,7 +130,7 @@
         }
 
         [Fact]
-        public void CreateForPropertyThrowsExceptionWithNullStrategyTest()
+        public void CreateForPropertyThrowsExceptionWithNullStrategy()
         {
             var property = typeof(Person).GetProperty(nameof(Person.FirstName));
             var buildChain = new BuildHistory();
@@ -146,7 +146,7 @@
         }
 
         [Fact]
-        public void CreateForTypeThrowsExceptionWithNullStrategyTest()
+        public void CreateForTypeThrowsExceptionWithNullStrategy()
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -161,7 +161,7 @@
         }
 
         [Fact]
-        public void CreateReturnsValueTest()
+        public void CreateReturnsValue()
         {
             var targetType = typeof(List<string>);
 
@@ -201,7 +201,7 @@
         }
 
         [Fact]
-        public void CreateThrowsExceptionWithNullParameterTest()
+        public void CreateThrowsExceptionWithNullParameter()
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -216,7 +216,7 @@
         }
 
         [Fact]
-        public void CreateThrowsExceptionWithNullPropertyTest()
+        public void CreateThrowsExceptionWithNullProperty()
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -231,7 +231,7 @@
         }
 
         [Fact]
-        public void CreateThrowsExceptionWithNullStrategyBuildChainTest()
+        public void CreateThrowsExceptionWithNullStrategyBuildChain()
         {
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
@@ -245,7 +245,7 @@
         }
 
         [Fact]
-        public void CreateThrowsExceptionWithNullTypeTest()
+        public void CreateThrowsExceptionWithNullType()
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -260,7 +260,7 @@
         }
 
         [Fact]
-        public void GeneratorReturnsInstanceTest()
+        public void GeneratorReturnsInstance()
         {
             var target = new TypeCreatorWrapper();
 
@@ -268,7 +268,7 @@
         }
 
         [Fact]
-        public void PopulateDoesNotThrowsExceptionWhenPopulateVerificationPassesTest()
+        public void PopulateDoesNotThrowsExceptionWhenPopulateVerificationPasses()
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -285,7 +285,7 @@
         }
 
         [Fact]
-        public void PopulateReturnsProvidedInstanceTest()
+        public void PopulateReturnsProvidedInstance()
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -302,7 +302,7 @@
         }
 
         [Fact]
-        public void PopulateThrowsExceptionWhenPopulateVerificationFailsTest()
+        public void PopulateThrowsExceptionWhenPopulateVerificationFails()
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -317,7 +317,7 @@
         }
 
         [Fact]
-        public void PopulateThrowsExceptionWithNullExecuteStrategyTest()
+        public void PopulateThrowsExceptionWithNullExecuteStrategy()
         {
             var person = new Person();
 
@@ -329,7 +329,7 @@
         }
 
         [Fact]
-        public void PopulateThrowsExceptionWithNullInstanceTest()
+        public void PopulateThrowsExceptionWithNullInstance()
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -344,7 +344,7 @@
         }
 
         [Fact]
-        public void PopulateThrowsExceptionWithNullStrategyBuildChainTest()
+        public void PopulateThrowsExceptionWithNullStrategyBuildChain()
         {
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
@@ -358,7 +358,7 @@
         }
 
         [Fact]
-        public void PopulateThrowsExceptionWithNullTypeTest()
+        public void PopulateThrowsExceptionWithNullType()
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -416,7 +416,7 @@
         }
 
         [Fact]
-        public void SetsDefaultConfigurationForCreatorsTest()
+        public void SetsDefaultConfigurationForCreators()
         {
             var target = new DummyTypeCreator();
 

@@ -7,7 +7,7 @@
     public class TestDataTests
     {
         [Fact]
-        public void CompaniesReturnsTestDataTest()
+        public void CompaniesReturnsTestData()
         {
             var target = TestData.Companies;
 
@@ -15,7 +15,7 @@
         }
 
         [Fact]
-        public void DomainsReturnsTestDataTest()
+        public void DomainsReturnsTestData()
         {
             var target = TestData.Domains;
 
@@ -23,7 +23,7 @@
         }
 
         [Fact]
-        public void FemaleNamesReturnsTestDataTest()
+        public void FemaleNamesReturnsTestData()
         {
             var target = TestData.FemaleNames;
 
@@ -31,7 +31,7 @@
         }
 
         [Fact]
-        public void LastNamesReturnsTestDataTest()
+        public void LastNamesReturnsTestData()
         {
             var target = TestData.LastNames;
 
@@ -39,7 +39,7 @@
         }
 
         [Fact]
-        public void LocationsReturnsTestDataTest()
+        public void LocationsReturnsTestData()
         {
             var target = TestData.Locations;
 
@@ -47,7 +47,7 @@
         }
 
         [Fact]
-        public void MaleNamesReturnsTestDataTest()
+        public void MaleNamesReturnsTestData()
         {
             var target = TestData.MaleNames;
 
@@ -55,7 +55,7 @@
         }
 
         [Fact]
-        public void TimeZonesReturnsTestDataTest()
+        public void TimeZonesReturnsTestData()
         {
             var target = TestData.TimeZones;
 

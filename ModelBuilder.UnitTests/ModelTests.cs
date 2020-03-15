@@ -9,7 +9,7 @@
     public class ModelTests
     {
         [Fact]
-        public void CreateReturnsInstanceTest()
+        public void CreateReturnsInstance()
         {
             var actual = Model.Create(typeof(SlimModel));
 
@@ -18,7 +18,7 @@
         }
 
         [Fact]
-        public void CreateReturnsInstanceUsingConstructorParametersTest()
+        public void CreateReturnsInstanceUsingConstructorParameters()
         {
             var value = Guid.NewGuid();
 
@@ -29,7 +29,7 @@
         }
 
         [Fact]
-        public void CreateThrowsExceptionWithNullInstanceTypeTest()
+        public void CreateThrowsExceptionWithNullInstanceType()
         {
             Action action = () => Model.Create(null);
 
@@ -37,7 +37,7 @@
         }
 
         [Fact]
-        public void CreateTReturnsInstanceTest()
+        public void CreateTReturnsInstance()
         {
             var actual = Model.Create<SlimModel>();
 
@@ -46,7 +46,7 @@
         }
 
         [Fact]
-        public void CreateTReturnsInstanceUsingConstructorParametersTest()
+        public void CreateTReturnsInstanceUsingConstructorParameters()
         {
             var value = Guid.NewGuid();
 
@@ -57,7 +57,7 @@
         }
 
         [Fact]
-        public void IgnoringThrowsExceptionWithNullExpressionTest()
+        public void IgnoringThrowsExceptionWithNullExpression()
         {
             Action action = () => Model.Ignoring<Person>(null);
 
@@ -65,7 +65,7 @@
         }
 
         [Fact]
-        public void IgnoringUsesBuildStrategyToCreateInstanceTest()
+        public void IgnoringUsesBuildStrategyToCreateInstance()
         {
             var actual = Model.Ignoring<Person>(x => x.FirstName).Create<Person>();
 
@@ -73,7 +73,7 @@
         }
 
         [Fact]
-        public void MappingUsesBuildStrategyToCreateInstanceTest()
+        public void MappingUsesBuildStrategyToCreateInstance()
         {
             var actual = Model.Mapping<ITestItem, TestItem>().Create<ITestItem>();
 
@@ -82,7 +82,7 @@
         }
 
         [Fact]
-        public void PopulateReturnsProvidedInstanceWithPopulatedPropertiesTest()
+        public void PopulateReturnsProvidedInstanceWithPopulatedProperties()
         {
             var expected = new Person();
 
@@ -94,7 +94,7 @@
         }
 
         [Fact]
-        public void UsingDefaultConfigurationReturnsNewInstanceTest()
+        public void UsingDefaultConfigurationReturnsNewInstance()
         {
             var firstActual = Model.UsingDefaultConfiguration();
             var secondActual = Model.UsingDefaultConfiguration();
@@ -103,7 +103,7 @@
         }
 
         [Fact]
-        public void UsingExecuteStrategyReturnsSpecifiedExecuteStrategyTest()
+        public void UsingExecuteStrategyReturnsSpecifiedExecuteStrategy()
         {
             var actual = Model.UsingExecuteStrategy<DummyExecuteStrategy>();
 
@@ -111,7 +111,7 @@
         }
 
         [Fact]
-        public void UsingExecuteStrategyReturnsStrategyWithDefaultConfigurationTest()
+        public void UsingExecuteStrategyReturnsStrategyWithDefaultConfiguration()
         {
             var defaultConfig = Model.UsingDefaultConfiguration();
 
@@ -167,7 +167,7 @@
         }
 
         [Fact]
-        public void UsingModuleReturnsBuildConfigurationWithModuleModificationsAppliedTest()
+        public void UsingModuleReturnsBuildConfigurationWithModuleModificationsApplied()
         {
             var actual = Model.UsingModule<TestConfigurationModule>();
 

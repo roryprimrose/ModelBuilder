@@ -18,7 +18,7 @@
         }
 
         [Fact]
-        public void GetMaxDecimalTest()
+        public void GetMaxDecimal()
         {
             var target = new RandomGenerator();
 
@@ -50,7 +50,7 @@
         }
 
         [Fact]
-        public void GetMaxThrowsExceptionWithNullTypeTest()
+        public void GetMaxThrowsExceptionWithNullType()
         {
             var target = new RandomGenerator();
 
@@ -60,7 +60,7 @@
         }
 
         [Fact]
-        public void GetMinDecimalTest()
+        public void GetMinDecimal()
         {
             var target = new RandomGenerator();
 
@@ -92,7 +92,7 @@
         }
 
         [Fact]
-        public void GetMinThrowsExceptionWithNullTypeTest()
+        public void GetMinThrowsExceptionWithNullType()
         {
             var target = new RandomGenerator();
 
@@ -118,7 +118,7 @@
         }
 
         [Fact]
-        public void IsSupportedReturnsTrueForDecimalTest()
+        public void IsSupportedReturnsTrueForDecimal()
         {
             var target = new RandomGenerator();
 
@@ -128,7 +128,7 @@
         }
 
         [Fact]
-        public void IsSupportedThrowsExceptionWithNullTypeTest()
+        public void IsSupportedThrowsExceptionWithNullType()
         {
             var target = new RandomGenerator();
 
@@ -138,7 +138,7 @@
         }
 
         [Fact]
-        public void NextValueByteArrayPopulatesBufferTest()
+        public void NextValueByteArrayPopulatesBuffer()
         {
             var buffer = new byte[10240];
 
@@ -150,7 +150,7 @@
         }
 
         [Fact]
-        public void NextValueForByteArrayThrowsExceptionWithNullBufferTest()
+        public void NextValueForByteArrayThrowsExceptionWithNullBuffer()
         {
             var target = new RandomGenerator();
 
@@ -191,7 +191,7 @@
         }
 
         [Fact]
-        public void NextValueWithDecimalCanEvaluateManyTimesTest()
+        public void NextValueWithDecimalCanEvaluateManyTimes()
         {
             var target = new RandomGenerator();
 
@@ -205,7 +205,7 @@
         }
 
         [Fact]
-        public void NextValueWithDecimalReturnsDecimalMaxWhenGeneratedValueIsGreaterTest()
+        public void NextValueWithDecimalReturnsDecimalMaxWhenGeneratedValueIsGreater()
         {
             var target = new RandomGenerator();
 
@@ -218,7 +218,7 @@
         }
 
         [Fact]
-        public void NextValueWithDecimalReturnsDecimalMinWhenGeneratedValueIsLowerTest()
+        public void NextValueWithDecimalReturnsDecimalMinWhenGeneratedValueIsLower()
         {
             var target = new RandomGenerator();
 
@@ -336,7 +336,7 @@
         }
 
         [Fact]
-        public void NextValueWithTypeCanReturnNonMaxValuesTest()
+        public void NextValueWithTypeCanReturnNonMaxValues()
         {
             var valueFound = false;
 
@@ -360,7 +360,7 @@
         }
 
         [Fact]
-        public void NextValueWithTypeCanReturnNonMinValuesTest()
+        public void NextValueWithTypeCanReturnNonMinValues()
         {
             var valueFound = false;
 
@@ -384,7 +384,7 @@
         }
 
         [Fact]
-        public void NextValueWithTypeDoesNotReturnInfinityForDoubleTest()
+        public void NextValueWithTypeDoesNotReturnInfinityForDouble()
         {
             var target = new RandomGenerator();
 
@@ -470,7 +470,7 @@
         }
 
         [Fact]
-        public void NextValueWithTypeThrowsExceptionWhenMinimumGreaterThanMaximumTest()
+        public void NextValueWithTypeThrowsExceptionWhenMinimumGreaterThanMaximum()
         {
             var target = new RandomGenerator();
 
@@ -480,7 +480,7 @@
         }
 
         [Fact]
-        public void NextValueWithTypeThrowsExceptionWithNonNumericMaximumTest()
+        public void NextValueWithTypeThrowsExceptionWithNonNumericMaximum()
         {
             var target = new RandomGenerator();
 
@@ -490,7 +490,7 @@
         }
 
         [Fact]
-        public void NextValueWithTypeThrowsExceptionWithNonNumericMinimumTest()
+        public void NextValueWithTypeThrowsExceptionWithNonNumericMinimum()
         {
             var target = new RandomGenerator();
 
@@ -500,7 +500,7 @@
         }
 
         [Fact]
-        public void NextValueWithTypeThrowsExceptionWithNullMaximumTest()
+        public void NextValueWithTypeThrowsExceptionWithNullMaximum()
         {
             var target = new RandomGenerator();
 
@@ -510,7 +510,7 @@
         }
 
         [Fact]
-        public void NextValueWithTypeThrowsExceptionWithNullMinimumTest()
+        public void NextValueWithTypeThrowsExceptionWithNullMinimum()
         {
             var target = new RandomGenerator();
 
@@ -520,7 +520,7 @@
         }
 
         [Fact]
-        public void NextValueWithTypeThrowsExceptionWithNullTypeTest()
+        public void NextValueWithTypeThrowsExceptionWithNullType()
         {
             var target = new RandomGenerator();
 

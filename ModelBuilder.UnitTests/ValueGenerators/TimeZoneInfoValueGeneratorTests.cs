@@ -10,7 +10,7 @@
     public class TimeZoneInfoValueGeneratorTests
     {
         [Fact]
-        public void GenerateReturnsRandomTimeZoneInfoValueTest()
+        public void GenerateReturnsRandomTimeZoneInfoValue()
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();

@@ -13,7 +13,7 @@
     public class FirstNameValueGeneratorTests
     {
         [Fact]
-        public void GeneratorReturnsFemaleNameWhenGenderIsFemaleTest()
+        public void GeneratorReturnsFemaleNameWhenGenderIsFemale()
         {
             var person = new Person
             {
@@ -34,7 +34,7 @@
         }
 
         [Fact]
-        public void GeneratorReturnsFemaleNameWhenGenderIsUnknownTest()
+        public void GeneratorReturnsFemaleNameWhenGenderIsUnknown()
         {
             var person = new Person
             {
@@ -55,7 +55,7 @@
         }
 
         [Fact]
-        public void GeneratorReturnsMaleNameWhenGenderIsMaleTest()
+        public void GeneratorReturnsMaleNameWhenGenderIsMale()
         {
             var person = new Person
             {
@@ -76,7 +76,7 @@
         }
 
         [Fact]
-        public void GeneratorReturnsNameWhenTypeLacksGenderTest()
+        public void GeneratorReturnsNameWhenTypeLacksGender()
         {
             var person = new PersonWithoutGender();
             var buildChain = new BuildHistory();
@@ -133,7 +133,7 @@
         }
 
         [Fact]
-        public void PriorityReturnsHigherPriorityThanStringValidatorTest()
+        public void PriorityReturnsHigherPriorityThanStringValidator()
         {
             var target = new Wrapper();
             var other = new StringValueGenerator();

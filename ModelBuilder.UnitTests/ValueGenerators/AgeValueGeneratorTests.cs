@@ -141,7 +141,7 @@
         }
 
         [Fact]
-        public void PriorityReturnsValueHigherThanNumericValueGeneratorTest()
+        public void PriorityReturnsValueHigherThanNumericValueGenerator()
         {
             var target = new AgeValueGenerator();
             var other = new NumericValueGenerator();

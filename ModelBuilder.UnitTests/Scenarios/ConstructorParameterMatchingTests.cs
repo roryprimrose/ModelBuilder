@@ -8,7 +8,7 @@
     public class ConstructorParameterMatchingTests
     {
         [Fact]
-        public void DoesNotSetInstanceParameterAssignedToPropertyTest()
+        public void DoesNotSetInstanceParameterAssignedToProperty()
         {
             var company = Model.Create<Company>();
             var id = Model.Create<Guid>();
@@ -23,7 +23,7 @@
         }
 
         [Fact]
-        public void PopulatesInstanceTypePropertyWhenConstructorParameterMatchesDefaultTypeValueTest()
+        public void PopulatesInstanceTypePropertyWhenConstructorParameterMatchesDefaultTypeValue()
         {
             var id = Model.Create<Guid>();
             var refNumber = Model.Create<int?>();
@@ -36,7 +36,7 @@
         }
 
         [Fact]
-        public void PopulatesPropertyWhenTypeNotMatchingAnyConstructorParameterTest()
+        public void PopulatesPropertyWhenTypeNotMatchingAnyConstructorParameter()
         {
             var company = Model.Create<Company>();
             var id = Model.Create<Guid>();
@@ -50,7 +50,7 @@
         }
 
         [Fact]
-        public void PopulatesValueTypePropertyWhenConstructorParameterMatchesDefaultTypeValueTest()
+        public void PopulatesValueTypePropertyWhenConstructorParameterMatchesDefaultTypeValue()
         {
             var company = Model.Create<Company>();
             var id = Guid.Empty;

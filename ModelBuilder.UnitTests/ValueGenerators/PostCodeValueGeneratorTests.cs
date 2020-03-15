@@ -13,7 +13,7 @@
     public class PostCodeValueGeneratorTests
     {
         [Fact]
-        public void GenerateReturnsRandomCityWhenNoMatchingCityTest()
+        public void GenerateReturnsRandomCityWhenNoMatchingCity()
         {
             var address = new Address
             {
@@ -34,7 +34,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsRandomCountryWhenNoMatchingCountryTest()
+        public void GenerateReturnsRandomCountryWhenNoMatchingCountry()
         {
             var address = new Address
             {
@@ -55,7 +55,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsRandomPostCodeMatchingCaseInsensitiveCityTest()
+        public void GenerateReturnsRandomPostCodeMatchingCaseInsensitiveCity()
         {
             var address = new Address
             {
@@ -82,7 +82,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsRandomPostCodeMatchingCaseInsensitiveCountryTest()
+        public void GenerateReturnsRandomPostCodeMatchingCaseInsensitiveCountry()
         {
             var address = new Address
             {
@@ -109,7 +109,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsRandomPostCodeMatchingCaseInsensitiveStateTest()
+        public void GenerateReturnsRandomPostCodeMatchingCaseInsensitiveState()
         {
             var address = new Address
             {
@@ -136,7 +136,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsRandomPostCodeMatchingCityTest()
+        public void GenerateReturnsRandomPostCodeMatchingCity()
         {
             var address = new Address
             {
@@ -161,7 +161,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsRandomPostCodeMatchingCountryTest()
+        public void GenerateReturnsRandomPostCodeMatchingCountry()
         {
             var address = new Address
             {
@@ -186,7 +186,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsRandomPostCodeMatchingStateTest()
+        public void GenerateReturnsRandomPostCodeMatchingState()
         {
             var address = new Address
             {
@@ -211,7 +211,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsRandomPostCodeTest()
+        public void GenerateReturnsRandomPostCode()
         {
             var address = new Address();
             var buildChain = new BuildHistory();
@@ -241,7 +241,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsRandomStateWhenNoMatchingStateTest()
+        public void GenerateReturnsRandomStateWhenNoMatchingState()
         {
             var address = new Address
             {
@@ -263,7 +263,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsStringValueTest()
+        public void GenerateReturnsStringValue()
         {
             var address = new Address();
             var buildChain = new BuildHistory();
@@ -309,7 +309,7 @@
         }
 
         [Fact]
-        public void HasHigherPriorityThanStringValueGeneratorTest()
+        public void HasHigherPriorityThanStringValueGenerator()
         {
             var target = new Wrapper();
             var other = new StringValueGenerator();

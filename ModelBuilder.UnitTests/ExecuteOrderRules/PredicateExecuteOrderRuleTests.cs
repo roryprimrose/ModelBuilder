@@ -101,7 +101,7 @@
         }
 
         [Fact]
-        public void IsMatchThrowsExceptionWithNullPropertyTest()
+        public void IsMatchThrowsExceptionWithNullProperty()
         {
             var priority = Environment.TickCount;
             var sut = new PredicateExecuteOrderRule(x => x.Name == nameof(Person.FirstName), priority);
@@ -112,7 +112,7 @@
         }
 
         [Fact]
-        public void ThrowsExceptionWhenCreatedWithNullExpressionTest()
+        public void ThrowsExceptionWhenCreatedWithNullExpression()
         {
             var priority = Environment.TickCount;
 

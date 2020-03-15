@@ -9,7 +9,7 @@
     public class BooleanValueGeneratorTests
     {
         [Fact]
-        public void GenerateReturnsRandomValuesForBooleanTypeTest()
+        public void GenerateReturnsRandomValuesForBooleanType()
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -45,7 +45,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsRandomValuesForNullableBooleanTypeTest()
+        public void GenerateReturnsRandomValuesForNullableBooleanType()
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();

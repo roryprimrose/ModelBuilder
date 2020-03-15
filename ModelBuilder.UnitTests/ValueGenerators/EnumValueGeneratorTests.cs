@@ -11,7 +11,7 @@
     public class EnumValueGeneratorTests
     {
         [Fact]
-        public void GenerateCanReturnNullAndRandomValuesTest()
+        public void GenerateCanReturnNullAndRandomValues()
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -47,7 +47,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsOnlyAvailableEnumValueWhenSingleValueDefinedTest()
+        public void GenerateReturnsOnlyAvailableEnumValueWhenSingleValueDefined()
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -63,7 +63,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsRandomFileAttributesValueTest()
+        public void GenerateReturnsRandomFileAttributesValue()
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -92,7 +92,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsRandomFlagsEnumValueTest()
+        public void GenerateReturnsRandomFlagsEnumValue()
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -124,7 +124,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsRandomValueWhenTypeIsEnumTest()
+        public void GenerateReturnsRandomValueWhenTypeIsEnum()
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -156,7 +156,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsSmallFlagsEnumTest()
+        public void GenerateReturnsSmallFlagsEnum()
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -199,7 +199,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsZeroForEmptyEnumTest()
+        public void GenerateReturnsZeroForEmptyEnum()
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -233,7 +233,7 @@
         }
 
         [Fact]
-        public void IsMatchThrowsExceptionWithNullTypeTest()
+        public void IsMatchThrowsExceptionWithNullType()
         {
             var target = new Wrapper();
 

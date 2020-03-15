@@ -11,7 +11,7 @@
     public class UriValueGeneratorTests
     {
         [Fact]
-        public void GenerateReturnsUriTest()
+        public void GenerateReturnsUri()
         {
             var buildChain = new BuildHistory();
 
@@ -75,7 +75,7 @@
         }
 
         [Fact]
-        public void PriorityIsHigherThanStringValueGeneratorPriorityTest()
+        public void PriorityIsHigherThanStringValueGeneratorPriority()
         {
             var target = new Wrapper();
             var other = new StringValueGenerator();

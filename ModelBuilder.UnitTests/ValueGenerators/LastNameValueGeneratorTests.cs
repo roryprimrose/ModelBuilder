@@ -13,7 +13,7 @@
     public class LastNameValueGeneratorTests
     {
         [Fact]
-        public void GeneratorReturnsNameTest()
+        public void GeneratorReturnsName()
         {
             var person = new PersonWithoutGender();
             var buildChain = new BuildHistory();
@@ -59,7 +59,7 @@
         }
 
         [Fact]
-        public void PriorityReturnsHigherPriorityThanStringValidatorTest()
+        public void PriorityReturnsHigherPriorityThanStringValidator()
         {
             var target = new LastNameValueGenerator();
             var other = new StringValueGenerator();

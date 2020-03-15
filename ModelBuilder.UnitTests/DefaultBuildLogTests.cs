@@ -12,7 +12,7 @@
     public class DefaultBuildLogTests
     {
         [Fact]
-        public void BuildFailureAppendsLogEntryTest()
+        public void BuildFailureAppendsLogEntry()
         {
             var ex = new BuildException(Guid.NewGuid().ToString());
 
@@ -24,7 +24,7 @@
         }
 
         [Fact]
-        public void BuildFailureThrowsExceptionWithNullTypeTest()
+        public void BuildFailureThrowsExceptionWithNullType()
         {
             var target = new DefaultBuildLog();
 
@@ -34,7 +34,7 @@
         }
 
         [Fact]
-        public void CircularReferenceDetectedAppendsLogEntryTest()
+        public void CircularReferenceDetectedAppendsLogEntry()
         {
             var target = new DefaultBuildLog();
 
@@ -44,7 +44,7 @@
         }
 
         [Fact]
-        public void CircularReferenceDetectedThrowsExceptionWithNullTypeTest()
+        public void CircularReferenceDetectedThrowsExceptionWithNullType()
         {
             var target = new DefaultBuildLog();
 
@@ -54,7 +54,7 @@
         }
 
         [Fact]
-        public void ClearRemovesExistingBuildLogDataTest()
+        public void ClearRemovesExistingBuildLogData()
         {
             var generatorType = typeof(StateValueGenerator);
             var type = typeof(string);
@@ -71,7 +71,7 @@
         }
 
         [Fact]
-        public void CreatedParameterAppendsLogEntryTest()
+        public void CreatedParameterAppendsLogEntry()
         {
             var parameterInfo = typeof(Person).GetConstructors()
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
@@ -96,7 +96,7 @@
         }
 
         [Fact]
-        public void CreatedPropertyAppendsLogEntryTest()
+        public void CreatedPropertyAppendsLogEntry()
         {
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
             var context = new Person();
@@ -133,7 +133,7 @@
         }
 
         [Fact]
-        public void CreatedTypeAppendsLogEntryTest()
+        public void CreatedTypeAppendsLogEntry()
         {
             var target = new DefaultBuildLog();
 
@@ -143,7 +143,7 @@
         }
 
         [Fact]
-        public void CreatedTypeThrowsExceptionWithNullTypeTest()
+        public void CreatedTypeThrowsExceptionWithNullType()
         {
             var target = new DefaultBuildLog();
 
@@ -153,7 +153,7 @@
         }
 
         [Fact]
-        public void CreateTypeIndentsChildMessagesTest()
+        public void CreateTypeIndentsChildMessages()
         {
             var generatorType = typeof(StateValueGenerator);
             var creatorType = typeof(DefaultTypeCreator);
@@ -170,7 +170,7 @@
         }
 
         [Fact]
-        public void CreatingParameterAppendsLogEntryTest()
+        public void CreatingParameterAppendsLogEntry()
         {
             var parameterInfo = typeof(Person).GetConstructors()
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
@@ -195,7 +195,7 @@
         }
 
         [Fact]
-        public void CreatingPropertyAppendsLogEntryTest()
+        public void CreatingPropertyAppendsLogEntry()
         {
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
             var context = new Person();
@@ -232,7 +232,7 @@
         }
 
         [Fact]
-        public void CreatingTypeAppendsLogEntryTest()
+        public void CreatingTypeAppendsLogEntry()
         {
             var creatorType = typeof(DefaultTypeCreator);
 
@@ -244,7 +244,7 @@
         }
 
         [Fact]
-        public void CreatingTypeThrowsExceptionWithNullCreatorTypeTest()
+        public void CreatingTypeThrowsExceptionWithNullCreatorType()
         {
             var type = typeof(string);
 
@@ -256,7 +256,7 @@
         }
 
         [Fact]
-        public void CreatingTypeThrowsExceptionWithNullTypeTest()
+        public void CreatingTypeThrowsExceptionWithNullType()
         {
             var creatorType = typeof(DefaultTypeCreator);
 
@@ -268,7 +268,7 @@
         }
 
         [Fact]
-        public void CreatingValueAppendsLogEntryTest()
+        public void CreatingValueAppendsLogEntry()
         {
             var generatorType = typeof(StateValueGenerator);
             var type = typeof(string);
@@ -281,7 +281,7 @@
         }
 
         [Fact]
-        public void CreatingValueThrowsExceptionWithNullGeneratorTypeTest()
+        public void CreatingValueThrowsExceptionWithNullGeneratorType()
         {
             var type = typeof(string);
 
@@ -293,7 +293,7 @@
         }
 
         [Fact]
-        public void CreatingValueThrowsExceptionWithNullTypeTest()
+        public void CreatingValueThrowsExceptionWithNullType()
         {
             var generatorType = typeof(StateValueGenerator);
 
@@ -305,7 +305,7 @@
         }
 
         [Fact]
-        public void IgnoringPropertyAppendsLogEntryTest()
+        public void IgnoringPropertyAppendsLogEntry()
         {
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
             var context = new Person();
@@ -342,7 +342,7 @@
         }
 
         [Fact]
-        public void MappedTypeAppendsLogEntryTest()
+        public void MappedTypeAppendsLogEntry()
         {
             var target = new DefaultBuildLog();
 
@@ -352,7 +352,7 @@
         }
 
         [Fact]
-        public void MappedTypeThrowsExceptionWithNullSourceTypeTest()
+        public void MappedTypeThrowsExceptionWithNullSourceType()
         {
             var target = new DefaultBuildLog();
 
@@ -362,7 +362,7 @@
         }
 
         [Fact]
-        public void MappedTypeThrowsExceptionWithNullTargetTypeTest()
+        public void MappedTypeThrowsExceptionWithNullTargetType()
         {
             var target = new DefaultBuildLog();
 
@@ -372,7 +372,7 @@
         }
 
         [Fact]
-        public void PopulatedInstanceAppendsLogEntryTest()
+        public void PopulatedInstanceAppendsLogEntry()
         {
             var instance = new Person();
 
@@ -384,7 +384,7 @@
         }
 
         [Fact]
-        public void PopulatedInstanceThrowsExceptionWithNullInstanceTest()
+        public void PopulatedInstanceThrowsExceptionWithNullInstance()
         {
             var target = new DefaultBuildLog();
 
@@ -394,7 +394,7 @@
         }
 
         [Fact]
-        public void PopulateInstanceIndentsChildMessagesTest()
+        public void PopulateInstanceIndentsChildMessages()
         {
             var generatorType = typeof(StateValueGenerator);
             var type = typeof(string);
@@ -413,7 +413,7 @@
         }
 
         [Fact]
-        public void PopulatingInstanceAppendsLogEntryTest()
+        public void PopulatingInstanceAppendsLogEntry()
         {
             var instance = new Person();
 
@@ -425,7 +425,7 @@
         }
 
         [Fact]
-        public void PopulatingInstanceThrowsExceptionWithNullInstanceTest()
+        public void PopulatingInstanceThrowsExceptionWithNullInstance()
         {
             var target = new DefaultBuildLog();
 
@@ -435,7 +435,7 @@
         }
 
         [Fact]
-        public void PostBuildActionAppendsLogEntryTest()
+        public void PostBuildActionAppendsLogEntry()
         {
             var postBuildType = typeof(DummyPostBuildAction);
 
@@ -447,7 +447,7 @@
         }
 
         [Fact]
-        public void PostBuildActionThrowsExceptionWithNullPostBuildTypeTest()
+        public void PostBuildActionThrowsExceptionWithNullPostBuildType()
         {
             var type = typeof(string);
 
@@ -459,7 +459,7 @@
         }
 
         [Fact]
-        public void PostBuildActionThrowsExceptionWithNullTypeTest()
+        public void PostBuildActionThrowsExceptionWithNullType()
         {
             var creatorType = typeof(DefaultTypeCreator);
 
@@ -471,7 +471,7 @@
         }
 
         [Fact]
-        public void WritingLogEntryIndentsAllLinesOfMessageTest()
+        public void WritingLogEntryIndentsAllLinesOfMessage()
         {
             var creatorType = typeof(DefaultTypeCreator);
 

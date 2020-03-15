@@ -93,7 +93,7 @@
         }
 
         [Fact]
-        public void IsMatchThrowsExceptionWithNullPropertyTest()
+        public void IsMatchThrowsExceptionWithNullProperty()
         {
             var sut = new ExpressionIgnoreRule<Person>(x => x.FirstName);
 
@@ -103,7 +103,7 @@
         }
 
         [Fact]
-        public void ThrowsExceptionWhenCreatedWithNullExpressionTest()
+        public void ThrowsExceptionWhenCreatedWithNullExpression()
         {
             Action action = () => new ExpressionIgnoreRule<Person>(null);
 

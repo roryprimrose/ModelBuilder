@@ -10,7 +10,7 @@
     public class DateTimeValueGeneratorTests
     {
         [Fact]
-        public void GenerateAlwaysReturnsFutureValuesWithin10YearsTest()
+        public void GenerateAlwaysReturnsFutureValuesWithin10Years()
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -73,7 +73,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsDateTimeOffsetValueTest()
+        public void GenerateReturnsDateTimeOffsetValue()
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -88,7 +88,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsDateTimeValueTest()
+        public void GenerateReturnsDateTimeValue()
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -103,7 +103,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsRandomDateTimeOffsetValueTest()
+        public void GenerateReturnsRandomDateTimeOffsetValue()
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -132,7 +132,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsRandomDateTimeValueTest()
+        public void GenerateReturnsRandomDateTimeValue()
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -161,7 +161,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsRandomTimeSpanValueTest()
+        public void GenerateReturnsRandomTimeSpanValue()
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -209,7 +209,7 @@
         }
 
         [Fact]
-        public void IsMatchThrowsExceptionWithNullTypeTest()
+        public void IsMatchThrowsExceptionWithNullType()
         {
             var buildChain = Substitute.For<IBuildChain>();
 

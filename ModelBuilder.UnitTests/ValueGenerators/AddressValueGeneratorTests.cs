@@ -11,7 +11,7 @@
     public class AddressValueGeneratorTests
     {
         [Fact]
-        public void GenerateReturnsRandomValueTest()
+        public void GenerateReturnsRandomValue()
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -161,7 +161,7 @@
         }
 
         [Fact]
-        public void PriorityReturnsValueHigherThanStringValueGeneratorTest()
+        public void PriorityReturnsValueHigherThanStringValueGenerator()
         {
             var target = new AddressValueGenerator();
             var other = new StringValueGenerator();
@@ -170,7 +170,7 @@
         }
 
         [Fact]
-        public void PriorityReturnsValueLowerThanEmailValueGeneratorTest()
+        public void PriorityReturnsValueLowerThanEmailValueGenerator()
         {
             var target = new AddressValueGenerator();
             var other = new EmailValueGenerator();

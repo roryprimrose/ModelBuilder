@@ -11,7 +11,7 @@
     public class IPAddressValueGeneratorTests
     {
         [Fact]
-        public void GenerateReturnsIPAddressTest()
+        public void GenerateReturnsIPAddress()
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -27,7 +27,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsStringTest()
+        public void GenerateReturnsString()
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -71,7 +71,7 @@
         }
 
         [Fact]
-        public void PriorityIsHigherThanStringValueGeneratorPriorityTest()
+        public void PriorityIsHigherThanStringValueGeneratorPriority()
         {
             var target = new Wrapper();
             var other = new StringValueGenerator();

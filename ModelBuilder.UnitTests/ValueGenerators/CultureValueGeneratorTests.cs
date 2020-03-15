@@ -11,7 +11,7 @@
     public class CultureValueGeneratorTests
     {
         [Fact]
-        public void GenerateReturnsCultureInfoValueTest()
+        public void GenerateReturnsCultureInfoValue()
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -27,7 +27,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsRandomCultureInfoTest()
+        public void GenerateReturnsRandomCultureInfo()
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -54,7 +54,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsRandomStringValueTest()
+        public void GenerateReturnsRandomStringValue()
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -81,7 +81,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsStringValueTest()
+        public void GenerateReturnsStringValue()
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -131,7 +131,7 @@
         }
 
         [Fact]
-        public void HasHigherPriorityThanStringValueGeneratorTest()
+        public void HasHigherPriorityThanStringValueGenerator()
         {
             var target = new Wrapper();
             var other = new StringValueGenerator();
@@ -168,7 +168,7 @@
         }
 
         [Fact]
-        public void IsMatchThrowsExceptionWithNullTypeTest()
+        public void IsMatchThrowsExceptionWithNullType()
         {
             var buildChain = Substitute.For<IBuildChain>();
 

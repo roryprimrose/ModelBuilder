@@ -29,7 +29,7 @@
         }
 
         [Fact]
-        public void CanCreateAllNumberTypesTest()
+        public void CanCreateAllNumberTypes()
         {
             var actual = Model.Create<Numbers>();
 
@@ -46,7 +46,7 @@
         }
 
         [Fact]
-        public void CanCreateCultureDataTest()
+        public void CanCreateCultureData()
         {
             var actual = Model.Create<CultureData>();
 
@@ -55,7 +55,7 @@
         }
 
         [Fact]
-        public void CanCreateCustomBuildConfigurationToCreateModelsTest()
+        public void CanCreateCustomBuildConfigurationToCreateModels()
         {
             var strategy = Model.UsingDefaultConfiguration().Set(x => x.ValueGenerators.Clear())
                 .AddValueGenerator<StringValueGenerator>().AddValueGenerator<NumericValueGenerator>()
@@ -68,7 +68,7 @@
         }
 
         [Fact]
-        public void CanCreateEnumerableTypesTest()
+        public void CanCreateEnumerableTypes()
         {
             var actual = Model.Create<EnumerableParent>();
 
@@ -80,7 +80,7 @@
         }
 
         [Fact]
-        public void CanCreateInstanceWithoutPropertiesTest()
+        public void CanCreateInstanceWithoutProperties()
         {
             var actual = Model.Create<Empty>();
 
@@ -88,7 +88,7 @@
         }
 
         [Fact]
-        public void CanGenerateArrayOfCustomTypeTest()
+        public void CanGenerateArrayOfCustomType()
         {
             var actual = Model.Create<Person[]>();
 
@@ -96,7 +96,7 @@
         }
 
         [Fact]
-        public void CanGenerateByteArrayTest()
+        public void CanGenerateByteArray()
         {
             var actual = Model.Create<byte[]>();
 
@@ -104,7 +104,7 @@
         }
 
         [Fact]
-        public void CanGenerateUriDataTest()
+        public void CanGenerateUriData()
         {
             var actual = Model.Create<Location>();
 
@@ -114,7 +114,7 @@
         }
 
         [Fact]
-        public void CanPopulateCultureDataTest()
+        public void CanPopulateCultureData()
         {
             var actual = new CultureData();
 
@@ -125,7 +125,7 @@
         }
 
         [Fact]
-        public void CreateBuildLogOfIgnoreRuleTest()
+        public void CreateBuildLogOfIgnoreRule()
         {
             var strategy = Model.Ignoring<Company>(x => x.Address)
                 .UsingExecuteStrategy<DefaultExecuteStrategy<Company>>();
@@ -140,7 +140,7 @@
         }
 
         [Fact]
-        public void CreateBuildLogOfPostActionsTest()
+        public void CreateBuildLogOfPostActions()
         {
             var strategy = Model.UsingDefaultConfiguration().UsingModule<TestConfigurationModule>()
                 .UsingExecuteStrategy<DefaultExecuteStrategy<Company>>();
@@ -155,7 +155,7 @@
         }
 
         [Fact]
-        public void CreateBuildsAddressUsingValidCombinationOfValuesTest()
+        public void CreateBuildsAddressUsingValidCombinationOfValues()
         {
             var actual = Model.Create<Address>();
 
@@ -177,7 +177,7 @@
         }
 
         [Fact]
-        public void CreateBuildsAndPopulatesNestedInstancesTest()
+        public void CreateBuildsAndPopulatesNestedInstances()
         {
             var actual = Model.Create<Person>();
 
@@ -196,7 +196,7 @@
             "Microsoft.Globalization",
             "CA1308:NormalizeStringsToUppercase",
             Justification = "Email addresses are lower case by convention.")]
-        public void CreateBuildsEmailUsingValidCombinationOfValuesTest()
+        public void CreateBuildsEmailUsingValidCombinationOfValues()
         {
             var actual = Model.Create<EmailParts>();
 
@@ -208,7 +208,7 @@
         }
 
         [Fact]
-        public void CreateBuildsLogOfConstructionActionsTest()
+        public void CreateBuildsLogOfConstructionActions()
         {
             var strategy = Model.UsingExecuteStrategy<DefaultExecuteStrategy<Company>>();
 
@@ -222,7 +222,7 @@
         }
 
         [Fact]
-        public void CreateBuildsLogOfConstructionActionsWhereModelConstructorsAreUsedTest()
+        public void CreateBuildsLogOfConstructionActionsWhereModelConstructorsAreUsed()
         {
             var strategy = Model.UsingExecuteStrategy<DefaultExecuteStrategy<WithValueParameters>>();
 
@@ -236,7 +236,7 @@
         }
 
         [Fact]
-        public void CreateDoesNotPopulateReadOnlyValueTypePropertiesTest()
+        public void CreateDoesNotPopulateReadOnlyValueTypeProperties()
         {
             var actual = Model.Create<ReadOnlyParent>();
 
@@ -244,7 +244,7 @@
         }
 
         [Fact]
-        public void CreateDoesNotPopulateStaticPropertiesTest()
+        public void CreateDoesNotPopulateStaticProperties()
         {
             var actual = Model.Create<WithStatic>();
 
@@ -253,7 +253,7 @@
         }
 
         [Fact]
-        public void CreateDoesNotSetPropertiesProvidedByConstructorTest()
+        public void CreateDoesNotSetPropertiesProvidedByConstructor()
         {
             var args = new object[]
             {
@@ -270,7 +270,7 @@
         }
 
         [Fact]
-        public void CreatePopulatesBaseClassPropertiesTest()
+        public void CreatePopulatesBaseClassProperties()
         {
             var actual = Model.Create<SpecificCompany>();
 
@@ -279,7 +279,7 @@
         }
 
         [Fact]
-        public void CreatePopulatesReadOnlyReferenceTypePropertiesTest()
+        public void CreatePopulatesReadOnlyReferenceTypeProperties()
         {
             var actual = Model.Create<ReadOnlyParent>();
 
@@ -292,7 +292,7 @@
         }
 
         [Fact]
-        public void CreateReadOnlyCollectionWithAutoPopulatedItemsTest()
+        public void CreateReadOnlyCollectionWithAutoPopulatedItems()
         {
             var actual = Model.Create<ReadOnlyCollection<int>>();
 
@@ -301,7 +301,7 @@
         }
 
         [Fact]
-        public void CreateReturnsCollectionWithAutoPopulatedItemsInstanceTest()
+        public void CreateReturnsCollectionWithAutoPopulatedItemsInstance()
         {
             var actual = Model.Create<ICollection<int>>();
 
@@ -310,7 +310,7 @@
         }
 
         [Fact]
-        public void CreateReturnsCompanyWithEnumerableTypeCreatorUsageTest()
+        public void CreateReturnsCompanyWithEnumerableTypeCreatorUsage()
         {
             var actual = Model.Create<Company>();
 
@@ -320,7 +320,7 @@
         }
 
         [Fact]
-        public void CreateReturnsEnumerableWithAutoPopulatedItemsInstanceTest()
+        public void CreateReturnsEnumerableWithAutoPopulatedItemsInstance()
         {
             var actual = Model.Create<IEnumerable<int>>().ToList();
 
@@ -329,7 +329,7 @@
         }
 
         [Fact]
-        public void CreateReturnsGuidTest()
+        public void CreateReturnsGuid()
         {
             var actual = Model.Create<Guid>();
 
@@ -337,7 +337,7 @@
         }
 
         [Fact]
-        public void CreateReturnsListWithAutoPopulatedItemsInstanceTest()
+        public void CreateReturnsListWithAutoPopulatedItemsInstance()
         {
             var actual = Model.Create<IList<int>>();
 
@@ -346,7 +346,7 @@
         }
 
         [Fact]
-        public void CreateReturnsPersonCreatedWithArgumentsTest()
+        public void CreateReturnsPersonCreatedWithArguments()
         {
             var entity = Model.Create<Person>();
             var actual = Model.Create<Person>(entity);
@@ -361,7 +361,7 @@
         }
 
         [Fact]
-        public void CreateReturnsSimpleInstanceTest()
+        public void CreateReturnsSimpleInstance()
         {
             var actual = Model.Create<Simple>();
 
@@ -374,7 +374,7 @@
         }
 
         [Fact]
-        public void CreateReturnsStringTest()
+        public void CreateReturnsString()
         {
             var actual = Model.Create<string>();
 
@@ -382,7 +382,7 @@
         }
 
         [Fact]
-        public void CreatesCircularReferenceWithInstanceFromBuildChainTest()
+        public void CreatesCircularReferenceWithInstanceFromBuildChain()
         {
             var actual = Model.Create<Top>();
 
@@ -396,7 +396,7 @@
         }
 
         [Fact]
-        public void CreatesDirectCircularReferenceWithInstanceFromBuildChainTest()
+        public void CreatesDirectCircularReferenceWithInstanceFromBuildChain()
         {
             var actual = Model.Create<SelfReferrer>();
 
@@ -406,7 +406,7 @@
         }
 
         [Fact]
-        public void CreateSetsPropertyValuesWhenConstructorParametersHaveDefaultValuesTest()
+        public void CreateSetsPropertyValuesWhenConstructorParametersHaveDefaultValues()
         {
             var configuration = Model.UsingDefaultConfiguration();
 
@@ -428,7 +428,7 @@
         }
 
         [Fact]
-        public void CreateSetsPropertyValueWhenNoMatchOnConstructorParameterTest()
+        public void CreateSetsPropertyValueWhenNoMatchOnConstructorParameter()
         {
             var configuration = Model.UsingDefaultConfiguration();
 
@@ -448,7 +448,7 @@
         }
 
         [Fact]
-        public void CreatesPropertyOfSameTypeWithCreatedInstanceTest()
+        public void CreatesPropertyOfSameTypeWithCreatedInstance()
         {
             var actual = Model.Create<Looper>();
 
@@ -458,7 +458,7 @@
         }
 
         [Fact]
-        public void CreateThrowsExceptionWhenPropertyCannotBeCreatedTest()
+        public void CreateThrowsExceptionWhenPropertyCannotBeCreated()
         {
             var typeCreator = Substitute.For<ITypeCreator>();
 
@@ -484,7 +484,7 @@
         }
 
         [Fact]
-        public void CreatingRuleAppliesToAllItemsCreatedTest()
+        public void CreatingRuleAppliesToAllItemsCreated()
         {
             var expected = Guid.NewGuid();
 
@@ -496,7 +496,7 @@
         }
 
         [Fact]
-        public void IgnoringSkipsPropertyAssignmentOfNestedObjectsTest()
+        public void IgnoringSkipsPropertyAssignmentOfNestedObjects()
         {
             var actual = Model.Ignoring<Person>(x => x.FirstName).Ignoring<Address>(x => x.AddressLine1)
                 .Create<Person>();
@@ -507,7 +507,7 @@
         }
 
         [Fact]
-        public void IgnoringSkipsPropertyAssignmentTest()
+        public void IgnoringSkipsPropertyAssignment()
         {
             var entity = Model.Create<Person>();
             var actual = Model.Ignoring<Person>(x => x.Id).Ignoring<Person>(x => x.IsActive).Create<Person>(entity);
@@ -522,7 +522,7 @@
         }
 
         [Fact]
-        public void MailinatorEmailGeneratorIsAssignedAgainstAllInstancesTest()
+        public void MailinatorEmailGeneratorIsAssignedAgainstAllInstances()
         {
             var configuration = Model.UsingDefaultConfiguration().RemoveValueGenerator<EmailValueGenerator>()
                 .AddValueGenerator<MailinatorEmailValueGenerator>();
@@ -536,7 +536,7 @@
         }
 
         [Fact]
-        public void PopulateCanBuildExistingInstanceTest()
+        public void PopulateCanBuildExistingInstance()
         {
             var entity = new Person();
             var actual = Model.Populate(entity);
@@ -550,7 +550,7 @@
         }
 
         [Fact]
-        public void PopulateHandlesDirectCircularReferenceWithInstanceFromBuildChainTest()
+        public void PopulateHandlesDirectCircularReferenceWithInstanceFromBuildChain()
         {
             var expected = new SelfReferrer();
 
@@ -562,7 +562,7 @@
         }
 
         [Fact]
-        public void PopulateIgnoresEmptyInstanceTest()
+        public void PopulateIgnoresEmptyInstance()
         {
             var expected = new Empty();
 
@@ -572,7 +572,7 @@
         }
 
         [Fact]
-        public void PopulateOnlySetsPublicInstancePropertiesOnlyTest()
+        public void PopulateOnlySetsPublicInstancePropertiesOnly()
         {
             var expected = new PropertyScope();
 
@@ -586,7 +586,7 @@
         }
 
         [Fact]
-        public void PopulatePopulatesReadOnlyReferencePropertiesTest()
+        public void PopulatePopulatesReadOnlyReferenceProperties()
         {
             var actual = new ReadOnlyParent();
 
@@ -600,7 +600,7 @@
         }
 
         [Fact]
-        public void PopulateUsesResolvedTypeCreatorToPopulateInstanceTest()
+        public void PopulateUsesResolvedTypeCreatorToPopulateInstance()
         {
             var actual = new List<Person>();
 
@@ -611,7 +611,7 @@
         }
 
         [Fact]
-        public void UsesBuildLogInstancePerExecutionPipelineTest()
+        public void UsesBuildLogInstancePerExecutionPipeline()
         {
             var configuration = Model.UsingDefaultConfiguration();
 

@@ -26,7 +26,7 @@
         }
 
         [Fact]
-        public void GetPropertiesThrowsExceptionWithNullResolverTest()
+        public void GetPropertiesThrowsExceptionWithNullResolver()
         {
             var type = typeof(Person);
 
@@ -36,7 +36,7 @@
         }
 
         [Fact]
-        public void GetPropertiesThrowsExceptionWithNullTypeTest()
+        public void GetPropertiesThrowsExceptionWithNullType()
         {
             var target = new DefaultPropertyResolver();
 
@@ -71,7 +71,7 @@
         }
 
         [Fact]
-        public void GetPropertiesWithExpressionThrowsExceptionWithNullExpressionTest()
+        public void GetPropertiesWithExpressionThrowsExceptionWithNullExpression()
         {
             var type = typeof(Person);
 
@@ -83,7 +83,7 @@
         }
 
         [Fact]
-        public void GetPropertiesWithExpressionThrowsExceptionWithNullResolverTest()
+        public void GetPropertiesWithExpressionThrowsExceptionWithNullResolver()
         {
             var type = typeof(Person);
             var expression = new Regex("Stuff");
@@ -94,7 +94,7 @@
         }
 
         [Fact]
-        public void GetPropertiesWithExpressionThrowsExceptionWithNullTypeTest()
+        public void GetPropertiesWithExpressionThrowsExceptionWithNullType()
         {
             var expression = new Regex("Stuff");
 

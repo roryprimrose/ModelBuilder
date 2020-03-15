@@ -24,7 +24,7 @@
         }
 
         [Fact]
-        public void BuildChainShouldBeEmptyAfterCreateCompletedTest()
+        public void BuildChainShouldBeEmptyAfterCreateCompleted()
         {
             var buildHistory = new BuildHistory();
             var expected = new SlimModel();
@@ -57,7 +57,7 @@
         }
 
         [Fact]
-        public void BuildParameterThrowsExceptionWhenNotInitializedTest()
+        public void BuildParameterThrowsExceptionWhenNotInitialized()
         {
             var parameterInfo = typeof(Person).GetConstructors()
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
@@ -70,17 +70,17 @@
         }
 
         [Fact]
-        public void BuildParameterThrowsExceptionWithNullPropertyInfoTest()
+        public void BuildParameterThrowsExceptionWithNullPropertyInfo()
         {
             var target = new BuildParameterWrapper();
 
-            Action action = () => target.RunTest();
+            Action action = () => target.Run();
 
             action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
-        public void BuildPropertyThrowsExceptionWhenNotInitializedTest()
+        public void BuildPropertyThrowsExceptionWhenNotInitialized()
         {
             var property = typeof(Person).GetProperty(nameof(Person.FirstName));
 
@@ -92,17 +92,17 @@
         }
 
         [Fact]
-        public void BuildPropertyThrowsExceptionWithNullPropertyInfoTest()
+        public void BuildPropertyThrowsExceptionWithNullPropertyInfo()
         {
             var target = new BuildPropertyWrapper();
 
-            Action action = () => target.RunTest();
+            Action action = () => target.Run();
 
             action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
-        public void BuildThrowsExceptionWhenNotInitializedTest()
+        public void BuildThrowsExceptionWhenNotInitialized()
         {
             var type = typeof(Person);
 
@@ -114,7 +114,7 @@
         }
 
         [Fact]
-        public void BuildThrowsExceptionWithNullTypeTest()
+        public void BuildThrowsExceptionWithNullType()
         {
             var target = new BuildWrapper();
 
@@ -124,7 +124,7 @@
         }
 
         [Fact]
-        public void BuildTypeThrowsExceptionWhenNotInitializedTest()
+        public void BuildTypeThrowsExceptionWhenNotInitialized()
         {
             var type = typeof(Person);
 
@@ -136,17 +136,17 @@
         }
 
         [Fact]
-        public void BuildTypeThrowsExceptionWithNullTypeTest()
+        public void BuildTypeThrowsExceptionWithNullType()
         {
             var target = new BuildTypeWrapper();
 
-            Action action = () => target.RunTest();
+            Action action = () => target.Run();
 
             action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
-        public void CreateDeterminesPropertiesToCreateByProvidingConstructorArgsForNestedTypeTest()
+        public void CreateDeterminesPropertiesToCreateByProvidingConstructorArgsForNestedType()
         {
             var buildHistory = new BuildHistory();
             var model = new SlimModel();
@@ -217,7 +217,7 @@
         }
 
         [Fact]
-        public void CreateDoesNotBuildPropertiesWhenCapabilityDoesNotSupportPopulationTest()
+        public void CreateDoesNotBuildPropertiesWhenCapabilityDoesNotSupportPopulation()
         {
             var buildHistory = new BuildHistory();
             var expected = new SlimModel();
@@ -251,7 +251,7 @@
         }
 
         [Fact]
-        public void CreateEvaluatesPostBuildActionsForParametersTest()
+        public void CreateEvaluatesPostBuildActionsForParameters()
         {
             var postBuildAction = Substitute.For<IPostBuildAction>();
             var buildConfiguration = Model.UsingDefaultConfiguration().Add(postBuildAction);
@@ -271,7 +271,7 @@
         }
 
         [Fact]
-        public void CreateEvaluatesPostBuildActionsInOrderOfDescendingPriorityTest()
+        public void CreateEvaluatesPostBuildActionsInOrderOfDescendingPriority()
         {
             var firstAction = Substitute.For<IPostBuildAction>();
             var secondAction = Substitute.For<IPostBuildAction>();
@@ -308,7 +308,7 @@
         }
 
         [Fact]
-        public void CreateEvaluatesPostBuildActionsOfNestedInstancesExposedAsReadOnlyPropertiesTest()
+        public void CreateEvaluatesPostBuildActionsOfNestedInstancesExposedAsReadOnlyProperties()
         {
             var postBuildAction = Substitute.For<IPostBuildAction>();
             var buildConfiguration = Model.UsingDefaultConfiguration().Add(postBuildAction);
@@ -327,7 +327,7 @@
         }
 
         [Fact]
-        public void CreateEvaluatesPostBuildActionsThatSupportTheBuildScenarioTest()
+        public void CreateEvaluatesPostBuildActionsThatSupportTheBuildScenario()
         {
             var firstAction = Substitute.For<IPostBuildAction>();
             var secondAction = Substitute.For<IPostBuildAction>();
@@ -347,7 +347,7 @@
         }
 
         [Fact]
-        public void CreateEvaluatesPostBuildActionsWhenCapabilityDoesNotSupportPopulationTest()
+        public void CreateEvaluatesPostBuildActionsWhenCapabilityDoesNotSupportPopulation()
         {
             var action = Substitute.For<IPostBuildAction>();
             var buildConfiguration = Model.UsingDefaultConfiguration().Add(action);
@@ -365,7 +365,7 @@
         }
 
         [Fact]
-        public void CreatePopulatesPropertiesWhenExecuteOrderRulesIsNullTest()
+        public void CreatePopulatesPropertiesWhenExecuteOrderRulesIsNull()
         {
             var expected = new SlimModel();
             var value = Guid.NewGuid();
@@ -402,7 +402,7 @@
         }
 
         [Fact]
-        public void CreatePopulatesWithProcessorWhenAutoPopulateDisabledTest()
+        public void CreatePopulatesWithProcessorWhenAutoPopulateDisabled()
         {
             var buildHistory = new BuildHistory();
             var expected = new SlimModel();
@@ -437,7 +437,7 @@
         }
 
         [Fact]
-        public void CreatePushesInstanceIntoBuildChainTest()
+        public void CreatePushesInstanceIntoBuildChain()
         {
             var testPassed = false;
             var buildHistory = new BuildHistory();
@@ -537,7 +537,7 @@
         }
 
         [Fact]
-        public void CreateReturnsValueCreatedFromProvidedArgumentsTest()
+        public void CreateReturnsValueCreatedFromProvidedArguments()
         {
             var buildHistory = new BuildHistory();
             var expected = new Person();
@@ -579,7 +579,7 @@
         }
 
         [Fact]
-        public void CreateReturnsValueFromProcessorWithPropertyPopulationTest()
+        public void CreateReturnsValueFromProcessorWithPropertyPopulation()
         {
             var buildHistory = new BuildHistory();
             var expected = new SlimModel();
@@ -636,7 +636,7 @@
         }
 
         [Fact]
-        public void CreateReturnsValueFromResolvedConstructorAndBuiltParametersTest()
+        public void CreateReturnsValueFromResolvedConstructorAndBuiltParameters()
         {
             var value = Guid.NewGuid();
             var expected = new ReadOnlyModel(value);
@@ -694,7 +694,7 @@
         }
 
         [Fact]
-        public void CreateReturnsValueWithNoArgumentsAndDetectConstructorEnabledCreatedUsingEmptyConstructorTest()
+        public void CreateReturnsValueWithNoArgumentsAndDetectConstructorEnabledCreatedUsingEmptyConstructor()
         {
             var buildHistory = new BuildHistory();
             var expected = new Person();
@@ -734,7 +734,7 @@
         }
 
         [Fact]
-        public void CreateThrowsExceptionWhenAutomaticTypeMappingCantFindMatchTest()
+        public void CreateThrowsExceptionWhenAutomaticTypeMappingCantFindMatch()
         {
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
 
@@ -748,7 +748,7 @@
         }
 
         [Fact]
-        public void CreateThrowsExceptionWhenDerivedImplementationSuppliesNullTypeTest()
+        public void CreateThrowsExceptionWhenDerivedImplementationSuppliesNullType()
         {
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
 
@@ -762,7 +762,7 @@
         }
 
         [Fact]
-        public void CreateThrowsExceptionWhenNoCapabilityFoundForParameterTest()
+        public void CreateThrowsExceptionWhenNoCapabilityFoundForParameter()
         {
             var buildHistory = new BuildHistory();
             var typeCapability = new BuildCapability
@@ -805,7 +805,7 @@
         }
 
         [Fact]
-        public void CreateThrowsExceptionWhenNoCapabilityFoundForPropertyTest()
+        public void CreateThrowsExceptionWhenNoCapabilityFoundForProperty()
         {
             var buildHistory = new BuildHistory();
             var expected = new SlimModel();
@@ -846,7 +846,7 @@
         }
 
         [Fact]
-        public void CreateThrowsExceptionWhenNoCapabilityFoundForTypeTest()
+        public void CreateThrowsExceptionWhenNoCapabilityFoundForType()
         {
             var buildHistory = new BuildHistory();
 
@@ -863,7 +863,7 @@
         }
 
         [Fact]
-        public void CreateThrowsExceptionWhenNotInitializedTest()
+        public void CreateThrowsExceptionWhenNotInitialized()
         {
             var target = new DefaultExecuteStrategy();
 
@@ -873,7 +873,7 @@
         }
 
         [Fact]
-        public void CreateThrowsExceptionWithNullTypeTest()
+        public void CreateThrowsExceptionWithNullType()
         {
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
 
@@ -887,7 +887,7 @@
         }
 
         [Fact]
-        public void InitializeStoresConfigurationTest()
+        public void InitializeStoresConfiguration()
         {
             var configuration = Substitute.For<IBuildConfiguration>();
 
@@ -899,7 +899,7 @@
         }
 
         [Fact]
-        public void InitializeThrowsExceptionWithNullBuildConfigurationTest()
+        public void InitializeThrowsExceptionWithNullBuildConfiguration()
         {
             var target = new DefaultExecuteStrategy();
 
@@ -909,7 +909,7 @@
         }
 
         [Fact]
-        public void IsCreatedWithBuildChainInstanceTest()
+        public void IsCreatedWithBuildChainInstance()
         {
             var target = new DefaultExecuteStrategy();
 
@@ -917,7 +917,7 @@
         }
 
         [Fact]
-        public void IsCreatedWithNullBuildConfigurationAndBuildLogTest()
+        public void IsCreatedWithNullBuildConfigurationAndBuildLog()
         {
             var target = new DefaultExecuteStrategy();
 
@@ -927,7 +927,7 @@
         }
 
         [Fact]
-        public void PopulateAssignsPropertyValuesToExistingInstanceTest()
+        public void PopulateAssignsPropertyValuesToExistingInstance()
         {
             var buildHistory = new BuildHistory();
             var model = new SlimModel();
@@ -984,7 +984,7 @@
         }
 
         [Fact]
-        public void PopulatePropertyThrowsExceptionWithNullInstanceTest()
+        public void PopulatePropertyThrowsExceptionWithNullInstance()
         {
             var target = new PopulatePropertyWrapper();
 
@@ -1026,7 +1026,7 @@
         }
 
         [Fact]
-        public void PopulateThrowsExceptionWhenNotInitializedTest()
+        public void PopulateThrowsExceptionWhenNotInitialized()
         {
             var value = new Person();
 
@@ -1038,7 +1038,7 @@
         }
 
         [Fact]
-        public void PopulateThrowsExceptionWithNullInstanceTest()
+        public void PopulateThrowsExceptionWithNullInstance()
         {
             var target = new DefaultExecuteStrategy();
 

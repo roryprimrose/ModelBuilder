@@ -105,7 +105,7 @@
         }
 
         [Fact]
-        public void IsMatchThrowsExceptionWithNullBuildChainTest()
+        public void IsMatchThrowsExceptionWithNullBuildChain()
         {
             var type = typeof(string);
 
@@ -119,7 +119,7 @@
         }
 
         [Fact]
-        public void IsMatchThrowsExceptionWithNullTypeTest()
+        public void IsMatchThrowsExceptionWithNullType()
         {
             var buildChain = new BuildHistory();
 
@@ -133,7 +133,7 @@
         }
 
         [Fact]
-        public void ThrowsExceptionWithNullExpressionTest()
+        public void ThrowsExceptionWithNullExpression()
         {
             // ReSharper disable once ObjectCreationAsStatement
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
@@ -144,7 +144,7 @@
         }
 
         [Fact]
-        public void ThrowsExceptionWithNullReferenceNameTest()
+        public void ThrowsExceptionWithNullReferenceName()
         {
             // ReSharper disable once ObjectCreationAsStatement
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
@@ -155,7 +155,7 @@
         }
 
         [Fact]
-        public void ThrowsExceptionWithNullTypesTest()
+        public void ThrowsExceptionWithNullTypes()
         {
             // ReSharper disable once ObjectCreationAsStatement
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
