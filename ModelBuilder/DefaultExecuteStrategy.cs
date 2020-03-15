@@ -409,7 +409,7 @@
         private void RunPostBuildActions(object instance, Type type)
         {
             var postBuildActions = Configuration.PostBuildActions
-                ?.Where(x => x.IsMatch(type, _buildHistory)).OrderByDescending(x => x.Priority);
+                ?.Where(x => x.IsMatch(_buildHistory, type)).OrderByDescending(x => x.Priority);
 
             if (postBuildActions != null)
             {
@@ -417,7 +417,7 @@
                 {
                     Log.PostBuildAction(type, postBuildAction.GetType(), instance);
 
-                    postBuildAction.Execute(instance, type, _buildHistory);
+                    postBuildAction.Execute(_buildHistory, instance, type);
                 }
             }
         }
@@ -425,7 +425,7 @@
         private void RunPostBuildActions(object instance, ParameterInfo parameterInfo)
         {
             var postBuildActions = Configuration.PostBuildActions
-                ?.Where(x => x.IsMatch(parameterInfo, _buildHistory)).OrderByDescending(x => x.Priority);
+                ?.Where(x => x.IsMatch(_buildHistory, parameterInfo)).OrderByDescending(x => x.Priority);
 
             if (postBuildActions != null)
             {
@@ -433,7 +433,7 @@
                 {
                     Log.PostBuildAction(parameterInfo.ParameterType, postBuildAction.GetType(), instance);
 
-                    postBuildAction.Execute(instance, parameterInfo, _buildHistory);
+                    postBuildAction.Execute(_buildHistory, instance, parameterInfo);
                 }
             }
         }
@@ -441,7 +441,7 @@
         private void RunPostBuildActions(object instance, PropertyInfo propertyInfo)
         {
             var postBuildActions = Configuration.PostBuildActions
-                ?.Where(x => x.IsMatch(propertyInfo, _buildHistory)).OrderByDescending(x => x.Priority);
+                ?.Where(x => x.IsMatch(_buildHistory, propertyInfo)).OrderByDescending(x => x.Priority);
 
             if (postBuildActions != null)
             {
@@ -449,7 +449,7 @@
                 {
                     Log.PostBuildAction(propertyInfo.PropertyType, postBuildAction.GetType(), instance);
 
-                    postBuildAction.Execute(instance, propertyInfo, _buildHistory);
+                    postBuildAction.Execute(_buildHistory, instance, propertyInfo);
                 }
             }
         }

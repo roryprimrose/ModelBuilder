@@ -258,7 +258,7 @@
             var parameterInfo = typeof(SimpleConstructor).GetConstructors()
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "model").GetParameters().First();
 
-            postBuildAction.IsMatch(parameterInfo, Arg.Any<IBuildChain>())
+            postBuildAction.IsMatch(Arg.Any<IBuildChain>(), parameterInfo)
                 .Returns(true);
 
             var target = new DefaultExecuteStrategy();
@@ -267,7 +267,7 @@
 
             target.Create(typeof(SimpleConstructor));
 
-            postBuildAction.Received().Execute(Arg.Any<SlimModel>(), parameterInfo, Arg.Any<IBuildChain>());
+            postBuildAction.Received().Execute(Arg.Any<IBuildChain>(), Arg.Any<SlimModel>(), parameterInfo);
         }
 
         [Fact]
@@ -278,18 +278,18 @@
             var buildConfiguration = Model.UsingDefaultConfiguration().Add(firstAction).Add(secondAction);
             var executeCount = 0;
 
-            firstAction.IsMatch(typeof(Simple), Arg.Any<IBuildChain>()).Returns(true);
+            firstAction.IsMatch(Arg.Any<IBuildChain>(), typeof(Simple)).Returns(true);
             firstAction.Priority.Returns(int.MaxValue);
-            secondAction.IsMatch(typeof(Simple), Arg.Any<IBuildChain>()).Returns(true);
+            secondAction.IsMatch(Arg.Any<IBuildChain>(), typeof(Simple)).Returns(true);
             secondAction.Priority.Returns(int.MinValue);
-            firstAction.WhenForAnyArgs(x => x.Execute(null, (Type) null, null)).Do(
+            firstAction.WhenForAnyArgs(x => x.Execute(null, null, (Type) null)).Do(
                 x =>
                 {
                     executeCount++;
 
                     executeCount.Should().Be(1);
                 });
-            secondAction.WhenForAnyArgs(x => x.Execute(null, (Type) null, null)).Do(
+            secondAction.WhenForAnyArgs(x => x.Execute(null, null, (Type) null)).Do(
                 x =>
                 {
                     executeCount++;
@@ -303,8 +303,8 @@
 
             target.Create(typeof(Simple));
 
-            firstAction.Received().Execute(Arg.Any<Simple>(), Arg.Any<Type>(), Arg.Any<IBuildChain>());
-            secondAction.Received().Execute(Arg.Any<Simple>(), Arg.Any<Type>(), Arg.Any<IBuildChain>());
+            firstAction.Received().Execute(Arg.Any<IBuildChain>(), Arg.Any<Simple>(), Arg.Any<Type>());
+            secondAction.Received().Execute(Arg.Any<IBuildChain>(), Arg.Any<Simple>(), Arg.Any<Type>());
         }
 
         [Fact]
@@ -314,7 +314,7 @@
             var buildConfiguration = Model.UsingDefaultConfiguration().Add(postBuildAction);
             var propertyInfo = typeof(ReadOnlyParent).GetProperty(nameof(ReadOnlyParent.Company));
 
-            postBuildAction.IsMatch(propertyInfo, Arg.Any<IBuildChain>())
+            postBuildAction.IsMatch(Arg.Any<IBuildChain>(), propertyInfo)
                 .Returns(true);
 
             var target = new DefaultExecuteStrategy();
@@ -323,7 +323,7 @@
 
             target.Create(typeof(ReadOnlyParent));
 
-            postBuildAction.Received().Execute(Arg.Any<Company>(), propertyInfo, Arg.Any<IBuildChain>());
+            postBuildAction.Received().Execute(Arg.Any<IBuildChain>(), Arg.Any<Company>(), propertyInfo);
         }
 
         [Fact]
@@ -333,8 +333,8 @@
             var secondAction = Substitute.For<IPostBuildAction>();
             var buildConfiguration = Model.UsingDefaultConfiguration().Add(firstAction).Add(secondAction);
 
-            firstAction.IsMatch(Arg.Any<Type>(), Arg.Any<IBuildChain>()).Returns(false);
-            secondAction.IsMatch(Arg.Any<Type>(), Arg.Any<IBuildChain>()).Returns(true);
+            firstAction.IsMatch(Arg.Any<IBuildChain>(), Arg.Any<Type>()).Returns(false);
+            secondAction.IsMatch(Arg.Any<IBuildChain>(), Arg.Any<Type>()).Returns(true);
 
             var target = new DefaultExecuteStrategy();
 
@@ -342,8 +342,8 @@
 
             target.Create(typeof(Simple));
 
-            firstAction.DidNotReceive().Execute(Arg.Any<object>(), Arg.Any<Type>(), Arg.Any<IBuildChain>());
-            secondAction.Received().Execute(Arg.Any<object>(), Arg.Any<Type>(), Arg.Any<IBuildChain>());
+            firstAction.DidNotReceive().Execute(Arg.Any<IBuildChain>(), Arg.Any<object>(), Arg.Any<Type>());
+            secondAction.Received().Execute(Arg.Any<IBuildChain>(), Arg.Any<object>(), Arg.Any<Type>());
         }
 
         [Fact]
@@ -352,7 +352,7 @@
             var action = Substitute.For<IPostBuildAction>();
             var buildConfiguration = Model.UsingDefaultConfiguration().Add(action);
 
-            action.IsMatch(Arg.Any<Type>(), Arg.Any<IBuildChain>()).Returns(true);
+            action.IsMatch(Arg.Any<IBuildChain>(), Arg.Any<Type>()).Returns(true);
 
             var target = new DefaultExecuteStrategy();
 
@@ -360,8 +360,8 @@
 
             target.Create(typeof(SlimModel));
 
-            action.Received().Execute(Arg.Any<SlimModel>(), typeof(SlimModel), Arg.Any<IBuildChain>());
-            action.Received().Execute(Arg.Any<SlimModel>(), typeof(SlimModel), Arg.Any<IBuildChain>());
+            action.Received().Execute(Arg.Any<IBuildChain>(), Arg.Any<SlimModel>(), typeof(SlimModel));
+            action.Received().Execute(Arg.Any<IBuildChain>(), Arg.Any<SlimModel>(), typeof(SlimModel));
         }
 
         [Fact]

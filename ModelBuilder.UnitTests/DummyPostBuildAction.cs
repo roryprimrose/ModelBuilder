@@ -6,19 +6,19 @@ namespace ModelBuilder.UnitTests
 
     public class DummyPostBuildAction : IPostBuildAction
     {
-        public void Execute(object instance, Type type, IBuildChain buildChain)
+        public void Execute(IBuildChain buildChain, object instance, Type type)
         {
         }
 
-        public void Execute(object instance, ParameterInfo parameterInfo, IBuildChain buildChain)
+        public void Execute(IBuildChain buildChain, object instance, ParameterInfo parameterInfo)
         {
         }
 
-        public void Execute(object instance, PropertyInfo propertyInfo, IBuildChain buildChain)
+        public void Execute(IBuildChain buildChain, object instance, PropertyInfo propertyInfo)
         {
         }
 
-        public bool IsMatch(Type type, IBuildChain buildChain)
+        public bool IsMatch(IBuildChain buildChain, Type type)
         {
             if (type == typeof(Company))
             {
@@ -28,14 +28,14 @@ namespace ModelBuilder.UnitTests
             return false;
         }
 
-        public bool IsMatch(ParameterInfo parameterInfo, IBuildChain buildChain)
+        public bool IsMatch(IBuildChain buildChain, ParameterInfo parameterInfo)
         {
-            return IsMatch(parameterInfo.ParameterType, buildChain);
+            return IsMatch(buildChain, parameterInfo.ParameterType);
         }
 
-        public bool IsMatch(PropertyInfo propertyInfo, IBuildChain buildChain)
+        public bool IsMatch(IBuildChain buildChain, PropertyInfo propertyInfo)
         {
-            return IsMatch(propertyInfo.PropertyType, buildChain);
+            return IsMatch(buildChain, propertyInfo.PropertyType);
         }
 
         public int Priority { get; }
