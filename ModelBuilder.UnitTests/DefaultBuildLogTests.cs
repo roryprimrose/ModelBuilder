@@ -73,22 +73,24 @@
         [Fact]
         public void CreatedParameterAppendsLogEntryTest()
         {
+            var parameterInfo = typeof(Person).GetConstructors()
+                .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
+
             var target = new DefaultBuildLog();
 
-            target.CreatedParameter(typeof(Person), typeof(string), "FirstName", null);
+            target.CreatedParameter(parameterInfo, null);
 
             target.Output.Should().NotBeNullOrWhiteSpace();
         }
 
-        [Theory]
-        [InlineData(null, typeof(string), "FirstName")]
-        [InlineData(typeof(Person), null, "FirstName")]
-        [InlineData(typeof(Person), typeof(string), null)]
-        public void CreatedParameterValidatesParametersTest(Type instanceType, Type parameterType, string parameterName)
+        [Fact]
+        public void CreatedParameterThrowsExceptionWithNullParameter()
         {
+            var context = Guid.NewGuid().ToString();
+
             var target = new DefaultBuildLog();
 
-            Action action = () => target.CreatedParameter(instanceType, parameterType, parameterName, null);
+            Action action = () => target.CreatedParameter(null, context);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -96,31 +98,36 @@
         [Fact]
         public void CreatedPropertyAppendsLogEntryTest()
         {
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
             var context = new Person();
 
             var target = new DefaultBuildLog();
 
-            target.CreatedProperty(typeof(string), "FirstName", context);
+            target.CreatedProperty(propertyInfo, context);
 
             target.Output.Should().NotBeNullOrWhiteSpace();
         }
 
-        [Theory]
-        [InlineData(null, "FirstName", true)]
-        [InlineData(typeof(string), null, true)]
-        [InlineData(typeof(string), "FirstName", false)]
-        public void CreatedPropertyValidatesPropertiesTest(Type propertyType, string propertyName, bool includeContext)
+        [Fact]
+        public void CreatedPropertyThrowsExceptionWithNullContext()
         {
-            Person context = null;
-
-            if (includeContext)
-            {
-                context = new Person();
-            }
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
 
             var target = new DefaultBuildLog();
 
-            Action action = () => target.CreatedProperty(propertyType, propertyName, context);
+            Action action = () => target.CreatedProperty(propertyInfo, null);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void CreatedPropertyThrowsExceptionWithNullProperty()
+        {
+            var context = new Person();
+
+            var target = new DefaultBuildLog();
+
+            Action action = () => target.CreatedProperty(null, context);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -165,25 +172,24 @@
         [Fact]
         public void CreatingParameterAppendsLogEntryTest()
         {
+            var parameterInfo = typeof(Person).GetConstructors()
+                .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
+
             var target = new DefaultBuildLog();
 
-            target.CreatingParameter(typeof(Person), typeof(string), "FirstName", null);
+            target.CreatingParameter(parameterInfo, null);
 
             target.Output.Should().NotBeNullOrWhiteSpace();
         }
 
-        [Theory]
-        [InlineData(null, typeof(string), "FirstName")]
-        [InlineData(typeof(Person), null, "FirstName")]
-        [InlineData(typeof(Person), typeof(string), null)]
-        public void CreatingParameterValidatesParametersTest(
-            Type instanceType,
-            Type parameterType,
-            string parameterName)
+        [Fact]
+        public void CreatingParameterThrowsExceptionWithNullParameter()
         {
+            var context = Guid.NewGuid().ToString();
+
             var target = new DefaultBuildLog();
 
-            Action action = () => target.CreatingParameter(instanceType, parameterType, parameterName, null);
+            Action action = () => target.CreatingParameter(null, context);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -191,31 +197,36 @@
         [Fact]
         public void CreatingPropertyAppendsLogEntryTest()
         {
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
             var context = new Person();
 
             var target = new DefaultBuildLog();
 
-            target.CreatingProperty(typeof(string), "FirstName", context);
+            target.CreatingProperty(propertyInfo, context);
 
             target.Output.Should().NotBeNullOrWhiteSpace();
         }
 
-        [Theory]
-        [InlineData(null, "FirstName", true)]
-        [InlineData(typeof(string), null, true)]
-        [InlineData(typeof(string), "FirstName", false)]
-        public void CreatingPropertyValidatesPropertiesTest(Type propertyType, string propertyName, bool includeContext)
+        [Fact]
+        public void CreatingPropertyThrowsExceptionWithNullContext()
         {
-            Person context = null;
-
-            if (includeContext)
-            {
-                context = new Person();
-            }
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
 
             var target = new DefaultBuildLog();
 
-            Action action = () => target.CreatingProperty(propertyType, propertyName, context);
+            Action action = () => target.CreatingProperty(propertyInfo, null);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void CreatingPropertyThrowsExceptionWithNullProperty()
+        {
+            var context = new Person();
+
+            var target = new DefaultBuildLog();
+
+            Action action = () => target.CreatingProperty(null, context);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -296,31 +307,36 @@
         [Fact]
         public void IgnoringPropertyAppendsLogEntryTest()
         {
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
             var context = new Person();
 
             var target = new DefaultBuildLog();
 
-            target.IgnoringProperty(typeof(string), "FirstName", context);
+            target.IgnoringProperty(propertyInfo, context);
 
             target.Output.Should().NotBeNullOrWhiteSpace();
         }
 
-        [Theory]
-        [InlineData(null, "FirstName", true)]
-        [InlineData(typeof(string), null, true)]
-        [InlineData(typeof(string), "FirstName", false)]
-        public void IgnoringPropertyValidatesPropertiesTest(Type propertyType, string propertyName, bool includeContext)
+        [Fact]
+        public void IgnoringPropertyThrowsExceptionWithNullProperty()
         {
-            Person context = null;
-
-            if (includeContext)
-            {
-                context = new Person();
-            }
+            var context = new Person();
 
             var target = new DefaultBuildLog();
 
-            Action action = () => target.IgnoringProperty(propertyType, propertyName, context);
+            Action action = () => target.IgnoringProperty(null, context);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void IgnoringPropertyThrowsExceptionWithNullContext()
+        {
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+
+            var target = new DefaultBuildLog();
+
+            Action action = () => target.IgnoringProperty(propertyInfo, null);
 
             action.Should().Throw<ArgumentNullException>();
         }

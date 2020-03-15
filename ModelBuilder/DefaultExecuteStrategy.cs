@@ -173,13 +173,13 @@
             if (propertyInfo.GetSetMethod() != null)
             {
                 // We can assign to this property
-                Log.CreatingProperty(propertyInfo.PropertyType, propertyInfo.Name, instance);
+                Log.CreatingProperty(propertyInfo, instance);
 
                 var propertyValue = Build(propertyInfo, args);
 
                 propertyInfo.SetValue(instance, propertyValue, null);
 
-                Log.CreatedProperty(propertyInfo.PropertyType, propertyInfo.Name, instance);
+                Log.CreatedProperty(propertyInfo, instance);
 
                 return;
             }
@@ -223,7 +223,7 @@
                 }
                 else
                 {
-                    Log.IgnoringProperty(propertyInfo.PropertyType, propertyInfo.Name, instance);
+                    Log.IgnoringProperty(propertyInfo, instance);
                 }
             }
         }
@@ -288,14 +288,14 @@
                         {
                             var lastContext = buildChain.Last;
 
-                            Log.CreatingParameter(type, parameterInfo.ParameterType, parameterInfo.Name, lastContext);
+                            Log.CreatingParameter(parameterInfo, lastContext);
 
                             // Recurse to build this parameter value
                             var parameterValue = Build(parameterInfo);
 
                             parameters.Add(parameterValue);
 
-                            Log.CreatedParameter(type, parameterInfo.ParameterType, parameterInfo.Name, lastContext);
+                            Log.CreatedParameter(parameterInfo, lastContext);
                         }
 
                         args = parameters.ToArray();
