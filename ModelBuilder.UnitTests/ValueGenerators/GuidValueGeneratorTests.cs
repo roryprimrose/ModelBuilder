@@ -108,12 +108,12 @@
         {
             public object RunGenerate(Type type, string referenceName, IExecuteStrategy executeStrategy)
             {
-                return Generate(type, referenceName, executeStrategy);
+                return Generate(executeStrategy, type, referenceName);
             }
 
             public object RunIsMatch(Type type, string referenceName, IBuildChain buildChain)
             {
-                return IsMatch(type, referenceName, buildChain);
+                return IsMatch(buildChain, type, referenceName);
             }
         }
     }

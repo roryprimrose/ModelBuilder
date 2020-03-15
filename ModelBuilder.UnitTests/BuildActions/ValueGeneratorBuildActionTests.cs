@@ -40,8 +40,8 @@
             executeStrategy.Log.Returns(_buildLog);
 
             executeStrategy.Configuration.Returns(buildConfiguration);
-            generator.IsMatch(parameterInfo, buildChain).Returns(true);
-            generator.Generate(parameterInfo, executeStrategy).Returns(expected);
+            generator.IsMatch(buildChain, parameterInfo).Returns(true);
+            generator.Generate(executeStrategy, parameterInfo).Returns(expected);
 
             var sut = new ValueGeneratorBuildAction();
 
@@ -115,10 +115,10 @@
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Log.Returns(_buildLog);
             firstGenerator.Priority.Returns(10);
-            firstGenerator.IsMatch(parameterInfo, buildChain).Returns(true);
+            firstGenerator.IsMatch(buildChain, parameterInfo).Returns(true);
             secondGenerator.Priority.Returns(20);
-            secondGenerator.IsMatch(parameterInfo, buildChain).Returns(true);
-            secondGenerator.Generate(parameterInfo, executeStrategy)
+            secondGenerator.IsMatch(buildChain, parameterInfo).Returns(true);
+            secondGenerator.Generate(executeStrategy, parameterInfo)
                 .Returns(expected);
 
             var sut = new ValueGeneratorBuildAction();
@@ -169,8 +169,8 @@
             executeStrategy.Configuration.Returns(buildConfiguration);
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Log.Returns(_buildLog);
-            generator.IsMatch(propertyInfo, buildChain).Returns(true);
-            generator.Generate(propertyInfo, executeStrategy).Returns(expected);
+            generator.IsMatch(buildChain, propertyInfo).Returns(true);
+            generator.Generate(executeStrategy, propertyInfo).Returns(expected);
 
             var sut = new ValueGeneratorBuildAction();
 
@@ -241,10 +241,10 @@
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Log.Returns(_buildLog);
             firstGenerator.Priority.Returns(10);
-            firstGenerator.IsMatch(propertyInfo, buildChain).Returns(true);
+            firstGenerator.IsMatch(buildChain, propertyInfo).Returns(true);
             secondGenerator.Priority.Returns(20);
-            secondGenerator.IsMatch(propertyInfo, buildChain).Returns(true);
-            secondGenerator.Generate(propertyInfo, executeStrategy).Returns(expected);
+            secondGenerator.IsMatch(buildChain, propertyInfo).Returns(true);
+            secondGenerator.Generate(executeStrategy, propertyInfo).Returns(expected);
 
             var sut = new ValueGeneratorBuildAction();
 
@@ -293,8 +293,8 @@
             executeStrategy.Configuration.Returns(buildConfiguration);
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Log.Returns(_buildLog);
-            generator.IsMatch(type, buildChain).Returns(true);
-            generator.Generate(type, executeStrategy).Returns(expected);
+            generator.IsMatch(buildChain, type).Returns(true);
+            generator.Generate(executeStrategy, type).Returns(expected);
 
             var sut = new ValueGeneratorBuildAction();
 
@@ -360,10 +360,10 @@
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Log.Returns(_buildLog);
             firstGenerator.Priority.Returns(10);
-            firstGenerator.IsMatch(type, buildChain).Returns(true);
+            firstGenerator.IsMatch(buildChain, type).Returns(true);
             secondGenerator.Priority.Returns(20);
-            secondGenerator.IsMatch(type, buildChain).Returns(true);
-            secondGenerator.Generate(type, executeStrategy).Returns(expected);
+            secondGenerator.IsMatch(buildChain, type).Returns(true);
+            secondGenerator.Generate(executeStrategy, type).Returns(expected);
 
             var sut = new ValueGeneratorBuildAction();
 
@@ -413,8 +413,8 @@
             executeStrategy.Configuration.Returns(buildConfiguration);
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Log.Returns(buildLog);
-            generator.IsMatch(type, buildChain).Returns(true);
-            generator.Generate(type, executeStrategy).Returns(expected);
+            generator.IsMatch(buildChain, type).Returns(true);
+            generator.Generate(executeStrategy, type).Returns(expected);
 
             var sut = new ValueGeneratorBuildAction();
 
@@ -439,8 +439,8 @@
             executeStrategy.Configuration.Returns(buildConfiguration);
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Log.Returns(_buildLog);
-            generator.IsMatch(parameterInfo, buildChain).Returns(true);
-            generator.Generate(parameterInfo, executeStrategy)
+            generator.IsMatch(buildChain, parameterInfo).Returns(true);
+            generator.Generate(executeStrategy, parameterInfo)
                 .Throws<BuildException>();
 
             var sut = new ValueGeneratorBuildAction();
@@ -467,8 +467,8 @@
             executeStrategy.Configuration.Returns(buildConfiguration);
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Log.Returns(_buildLog);
-            generator.IsMatch(propertyInfo, buildChain).Returns(true);
-            generator.Generate(propertyInfo, executeStrategy)
+            generator.IsMatch(buildChain, propertyInfo).Returns(true);
+            generator.Generate(executeStrategy, propertyInfo)
                 .Throws<TimeoutException>();
 
             var sut = new ValueGeneratorBuildAction();
@@ -499,8 +499,8 @@
             executeStrategy.Configuration.Returns(buildConfiguration);
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Log.Returns(_buildLog);
-            generator.IsMatch(parameterInfo, buildChain).Returns(true);
-            generator.Generate(parameterInfo, executeStrategy).Returns(expected);
+            generator.IsMatch(buildChain, parameterInfo).Returns(true);
+            generator.Generate(executeStrategy, parameterInfo).Returns(expected);
 
             var sut = new ValueGeneratorBuildAction();
 
@@ -615,8 +615,8 @@
             executeStrategy.Configuration.Returns(buildConfiguration);
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Log.Returns(_buildLog);
-            generator.IsMatch(propertyInfo, buildChain).Returns(true);
-            generator.Generate(propertyInfo, executeStrategy).Returns(expected);
+            generator.IsMatch(buildChain, propertyInfo).Returns(true);
+            generator.Generate(executeStrategy, propertyInfo).Returns(expected);
 
             var sut = new ValueGeneratorBuildAction();
 
@@ -727,8 +727,8 @@
             executeStrategy.Configuration.Returns(buildConfiguration);
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Log.Returns(_buildLog);
-            generator.IsMatch(type, buildChain).Returns(true);
-            generator.Generate(type, executeStrategy).Returns(expected);
+            generator.IsMatch(buildChain, type).Returns(true);
+            generator.Generate(executeStrategy, type).Returns(expected);
 
             var sut = new ValueGeneratorBuildAction();
 

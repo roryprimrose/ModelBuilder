@@ -6,10 +6,10 @@
 
     public class IncrementingEnumerableTypeCreator : EnumerableTypeCreator
     {
-        protected override bool CanCreate(Type type, string referenceName, IBuildConfiguration configuration,
-            IBuildChain buildChain)
+        protected override bool CanCreate(IBuildConfiguration configuration,
+            IBuildChain buildChain, Type type, string referenceName)
         {
-            if (base.CanCreate(type, referenceName, configuration, buildChain) == false)
+            if (base.CanCreate(configuration, buildChain, type, referenceName) == false)
             {
                 return false;
             }
@@ -26,10 +26,10 @@
             return generator.IsSupported(baseType);
         }
 
-        protected override bool CanPopulate(Type type, string referenceName, IBuildConfiguration configuration,
-            IBuildChain buildChain)
+        protected override bool CanPopulate(IBuildConfiguration configuration,
+            IBuildChain buildChain, Type type, string referenceName)
         {
-            if (base.CanPopulate(type, referenceName, configuration, buildChain) == false)
+            if (base.CanPopulate(configuration, buildChain, type, referenceName) == false)
             {
                 return false;
             }

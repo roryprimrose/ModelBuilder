@@ -383,8 +383,8 @@
             resolver.CanPopulate(Arg.Any<PropertyInfo>()).Returns(true);
             resolver.ShouldPopulateProperty(buildConfiguration, expected, Arg.Any<PropertyInfo>(),
                 Array.Empty<object>()).Returns(true);
-            generator.IsMatch(Arg.Any<PropertyInfo>(), Arg.Any<IBuildChain>()).Returns(true);
-            generator.Generate(Arg.Any<PropertyInfo>(), Arg.Any<IExecuteStrategy>()).Returns(value);
+            generator.IsMatch(Arg.Any<IBuildChain>(), Arg.Any<PropertyInfo>()).Returns(true);
+            generator.Generate(Arg.Any<IExecuteStrategy>(), Arg.Any<PropertyInfo>()).Returns(value);
             buildConfiguration.PropertyResolver.Returns(resolver);
             buildConfiguration.ExecuteOrderRules.Returns((ICollection<IExecuteOrderRule>) null);
             buildConfiguration.TypeCreators.Returns(new List<ITypeCreator> {creator});

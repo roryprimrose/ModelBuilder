@@ -441,10 +441,10 @@ namespace ModelBuilder.UnitTests.ValueGenerators
 
             public bool RunIsMatch(Type type, string referenceName, IBuildChain buildChain)
             {
-                return IsMatch(type, referenceName, buildChain);
+                return IsMatch(buildChain, type, referenceName);
             }
 
-            protected override object Generate(Type type, string referenceName, IExecuteStrategy executeStrategy)
+            protected override object Generate(IExecuteStrategy executeStrategy, Type type, string referenceName)
             {
                 throw new NotImplementedException();
             }

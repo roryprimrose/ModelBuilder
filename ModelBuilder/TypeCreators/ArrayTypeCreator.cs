@@ -11,17 +11,17 @@
     {
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
-        protected override bool CanCreate(Type type, string referenceName, IBuildConfiguration configuration,
-            IBuildChain buildChain)
+        protected override bool CanCreate(IBuildConfiguration configuration,
+            IBuildChain buildChain, Type type, string referenceName)
         {
             // Creating using this creator has the same rules for populate as it does for create
-            return CanPopulate(type, referenceName, configuration, buildChain);
+            return CanPopulate(configuration, buildChain, type, referenceName);
         }
 
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
-        protected override bool CanPopulate(Type type, string referenceName, IBuildConfiguration configuration,
-            IBuildChain buildChain)
+        protected override bool CanPopulate(IBuildConfiguration configuration,
+            IBuildChain buildChain, Type type, string referenceName)
         {
             if (type == null)
             {
@@ -56,7 +56,8 @@
 
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
-        protected override object CreateInstance(Type type, string referenceName, IExecuteStrategy executeStrategy,
+        protected override object CreateInstance(IExecuteStrategy executeStrategy,
+            Type type, string referenceName,
             params object[] args)
         {
             if (type == null)
@@ -86,7 +87,7 @@
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="instance" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is <c>null</c>.</exception>
-        protected override object PopulateInstance(object instance, IExecuteStrategy executeStrategy)
+        protected override object PopulateInstance(IExecuteStrategy executeStrategy, object instance)
         {
             if (instance == null)
             {

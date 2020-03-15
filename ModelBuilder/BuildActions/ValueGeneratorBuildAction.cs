@@ -27,10 +27,10 @@
                 throw new ArgumentNullException(nameof(type));
             }
 
-            var generator = GetMatchingGenerator(executeStrategy.Configuration, x => x.IsMatch(type, executeStrategy.BuildChain));
+            var generator = GetMatchingGenerator(executeStrategy.Configuration, x => x.IsMatch(executeStrategy.BuildChain, type));
 
             return Build(generator, type, null, executeStrategy.BuildChain,
-                () => generator?.Generate(type, executeStrategy),
+                () => generator?.Generate(executeStrategy, type),
                 executeStrategy.Log);
         }
 
@@ -49,10 +49,10 @@
                 throw new ArgumentNullException(nameof(parameterInfo));
             }
 
-            var generator = GetMatchingGenerator(executeStrategy.Configuration, x => x.IsMatch(parameterInfo, executeStrategy.BuildChain));
+            var generator = GetMatchingGenerator(executeStrategy.Configuration, x => x.IsMatch(executeStrategy.BuildChain, parameterInfo));
 
             return Build(generator, parameterInfo.ParameterType, parameterInfo.Name, executeStrategy.BuildChain,
-                () => generator?.Generate(parameterInfo, executeStrategy),
+                () => generator?.Generate(executeStrategy, parameterInfo),
                 executeStrategy.Log);
         }
 
@@ -71,10 +71,10 @@
                 throw new ArgumentNullException(nameof(propertyInfo));
             }
 
-            var generator = GetMatchingGenerator(executeStrategy.Configuration, x => x.IsMatch(propertyInfo, executeStrategy.BuildChain));
+            var generator = GetMatchingGenerator(executeStrategy.Configuration, x => x.IsMatch(executeStrategy.BuildChain, propertyInfo));
 
             return Build(generator, propertyInfo.PropertyType, propertyInfo.Name, executeStrategy.BuildChain,
-                () => generator?.Generate(propertyInfo, executeStrategy),
+                () => generator?.Generate(executeStrategy, propertyInfo),
                 executeStrategy.Log);
         }
 
@@ -100,7 +100,7 @@
                 throw new ArgumentNullException(nameof(type));
             }
 
-            return GetBuildCapability(buildConfiguration, x => x.IsMatch(type, buildChain));
+            return GetBuildCapability(buildConfiguration, x => x.IsMatch(buildChain, type));
         }
 
         /// <inheritdoc />
@@ -125,7 +125,7 @@
                 throw new ArgumentNullException(nameof(parameterInfo));
             }
 
-            return GetBuildCapability(buildConfiguration, x => x.IsMatch(parameterInfo, buildChain));
+            return GetBuildCapability(buildConfiguration, x => x.IsMatch(buildChain, parameterInfo));
         }
 
         /// <inheritdoc />
@@ -150,7 +150,7 @@
                 throw new ArgumentNullException(nameof(propertyInfo));
             }
 
-            return GetBuildCapability(buildConfiguration, x => x.IsMatch(propertyInfo, buildChain));
+            return GetBuildCapability(buildConfiguration, x => x.IsMatch(buildChain, propertyInfo));
         }
 
         /// <inheritdoc />

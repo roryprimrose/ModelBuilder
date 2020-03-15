@@ -12,7 +12,7 @@
     {
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
-        protected override bool IsMatch(Type type, string referenceName, IBuildChain buildChain)
+        protected override bool IsMatch(IBuildChain buildChain, Type type, string referenceName)
         {
             if (type == null)
             {
@@ -35,7 +35,7 @@
         }
 
         /// <inheritdoc />
-        protected override object Generate(Type type, string referenceName, IExecuteStrategy executeStrategy)
+        protected override object Generate(IExecuteStrategy executeStrategy, Type type, string referenceName)
         {
             var generateType = type;
 

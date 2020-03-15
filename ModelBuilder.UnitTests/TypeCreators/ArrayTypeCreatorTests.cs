@@ -522,12 +522,12 @@
             public void RunCreateInstance(Type type, string referenceName, IExecuteStrategy executeStrategy,
                 params object[] args)
             {
-                base.CreateInstance(type, referenceName, executeStrategy, args);
+                base.CreateInstance(executeStrategy, type, referenceName, args);
             }
 
             public object RunPopulateInstance(object instance, IExecuteStrategy executeStrategy)
             {
-                return base.PopulateInstance(instance, executeStrategy);
+                return base.PopulateInstance(executeStrategy, instance);
             }
         }
     }

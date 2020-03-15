@@ -19,50 +19,50 @@
         /// <summary>
         ///     Generates a new value of the specified type.
         /// </summary>
+        /// <param name="executeStrategy">The execution strategy.</param>
         /// <param name="type">The type of value to generate.</param>
-        /// <param name="executeStrategy">The execution strategy.</param>
         /// <returns>A new value of the type.</returns>
-        object Generate(Type type, IExecuteStrategy executeStrategy);
+        object Generate(IExecuteStrategy executeStrategy, Type type);
 
         /// <summary>
         ///     Generates a new value of the specified type.
         /// </summary>
+        /// <param name="executeStrategy">The execution strategy.</param>
         /// <param name="propertyInfo">The property to generate the value for.</param>
-        /// <param name="executeStrategy">The execution strategy.</param>
         /// <returns>A new value of the type.</returns>
-        object Generate(PropertyInfo propertyInfo, IExecuteStrategy executeStrategy);
+        object Generate(IExecuteStrategy executeStrategy, PropertyInfo propertyInfo);
 
         /// <summary>
         ///     Generates a new value of the specified type.
         /// </summary>
-        /// <param name="parameterInfo">The parameter to generate the value for.</param>
         /// <param name="executeStrategy">The execution strategy.</param>
+        /// <param name="parameterInfo">The parameter to generate the value for.</param>
         /// <returns>A new value of the type.</returns>
-        object Generate(ParameterInfo parameterInfo, IExecuteStrategy executeStrategy);
+        object Generate(IExecuteStrategy executeStrategy, ParameterInfo parameterInfo);
 
         /// <summary>
         ///     Returns whether the specified type matches this generator.
         /// </summary>
-        /// <param name="type">The type to evaluate.</param>
         /// <param name="buildChain">The chain of instances built up to this point.</param>
+        /// <param name="type">The type to evaluate.</param>
         /// <returns><c>true</c> if the type matches this generator; otherwise <c>false</c>.</returns>
-        bool IsMatch(Type type, IBuildChain buildChain);
+        bool IsMatch(IBuildChain buildChain, Type type);
 
         /// <summary>
         ///     Returns whether the specified property matches this generator.
         /// </summary>
-        /// <param name="propertyInfo">The property to generate the value for.</param>
         /// <param name="buildChain">The chain of instances built up to this point.</param>
+        /// <param name="propertyInfo">The property to generate the value for.</param>
         /// <returns><c>true</c> if the property matches this generator; otherwise <c>false</c>.</returns>
-        bool IsMatch(PropertyInfo propertyInfo, IBuildChain buildChain);
+        bool IsMatch(IBuildChain buildChain, PropertyInfo propertyInfo);
 
         /// <summary>
         ///     Returns whether the specified parameter matches this generator.
         /// </summary>
-        /// <param name="parameterInfo">The parameter to generate the value for.</param>
         /// <param name="buildChain">The chain of instances built up to this point.</param>
+        /// <param name="parameterInfo">The parameter to generate the value for.</param>
         /// <returns><c>true</c> if the parameter matches this generator; otherwise <c>false</c>.</returns>
-        bool IsMatch(ParameterInfo parameterInfo, IBuildChain buildChain);
+        bool IsMatch(IBuildChain buildChain, ParameterInfo parameterInfo);
 
         /// <summary>
         ///     Gets the priority for this generator.

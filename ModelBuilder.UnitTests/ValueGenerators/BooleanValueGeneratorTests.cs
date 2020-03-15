@@ -23,7 +23,7 @@
 
             for (var index = 0; index < 1000; index++)
             {
-                var actual = (bool) target.Generate(typeof(bool), executeStrategy);
+                var actual = (bool) target.Generate(executeStrategy, typeof(bool));
 
                 if (actual)
                 {
@@ -60,7 +60,7 @@
 
             for (var index = 0; index < 1000; index++)
             {
-                var actual = (bool?) target.Generate(typeof(bool?), executeStrategy);
+                var actual = (bool?) target.Generate(executeStrategy, typeof(bool?));
 
                 if (actual == null)
                 {
@@ -98,7 +98,7 @@
 
             var target = new BooleanValueGenerator();
 
-            var actual = target.IsMatch(type, buildChain);
+            var actual = target.IsMatch(buildChain, type);
 
             actual.Should().Be(expected);
         }

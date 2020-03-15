@@ -17,10 +17,9 @@
             "CA1062:Validate arguments of public methods",
             MessageId = "0",
             Justification = "Type is validated by the base class")]
-        protected override object CreateInstance(
+        protected override object CreateInstance(IExecuteStrategy executeStrategy,
             Type type,
             string referenceName,
-            IExecuteStrategy executeStrategy,
             params object[] args)
         {
             Debug.Assert(type != null, "type != null");
@@ -49,7 +48,7 @@
         }
 
         /// <inheritdoc />
-        protected override object PopulateInstance(object instance, IExecuteStrategy executeStrategy)
+        protected override object PopulateInstance(IExecuteStrategy executeStrategy, object instance)
         {
             // There is no out of the box population and this is left up to the execution strategy
             return instance;

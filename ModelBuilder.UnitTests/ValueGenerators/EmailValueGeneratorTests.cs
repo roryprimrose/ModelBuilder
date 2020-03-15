@@ -32,7 +32,7 @@
 
             var target = new MailinatorEmailValueGenerator();
 
-            var actual = (string) target.Generate(property, executeStrategy);
+            var actual = (string) target.Generate(executeStrategy, property);
 
             actual.Should().EndWith("mailinator.com");
         }
@@ -364,12 +364,12 @@
         {
             public object RunGenerate(Type type, string referenceName, IExecuteStrategy executeStrategy)
             {
-                return Generate(type, referenceName, executeStrategy);
+                return Generate(executeStrategy, type, referenceName);
             }
 
             public bool RunIsMatch(Type type, string referenceName, IBuildChain buildChain)
             {
-                return IsMatch(type, referenceName, buildChain);
+                return IsMatch(buildChain, type, referenceName);
             }
         }
     }

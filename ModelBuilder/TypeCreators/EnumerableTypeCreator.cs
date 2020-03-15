@@ -29,15 +29,15 @@
 
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
-        protected override bool CanCreate(Type type, string referenceName, IBuildConfiguration configuration,
-            IBuildChain buildChain)
+        protected override bool CanCreate(IBuildConfiguration configuration,
+            IBuildChain buildChain, Type type, string referenceName)
         {
             if (type == null)
             {
                 throw new ArgumentNullException(nameof(type));
             }
 
-            var targetType = ResolveBuildType(type, configuration);
+            var targetType = ResolveBuildType(configuration, type);
 
             if (targetType.IsClass
                 && targetType.IsAbstract)
@@ -74,7 +74,7 @@
             }
 
             // This is a class that we can presumably create so we need to check if it can be populated
-            if (CanPopulate(targetType, referenceName, configuration, buildChain) == false)
+            if (CanPopulate(configuration, buildChain, targetType, referenceName) == false)
             {
                 // There is no point trying to create something that we can't populate
                 return false;
@@ -85,8 +85,8 @@
 
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
-        protected override bool CanPopulate(Type type, string referenceName, IBuildConfiguration configuration,
-            IBuildChain buildChain)
+        protected override bool CanPopulate(IBuildConfiguration configuration,
+            IBuildChain buildChain, Type type, string referenceName)
         {
             if (type == null)
             {
@@ -98,7 +98,7 @@
                 throw new ArgumentNullException(nameof(configuration));
             }
 
-            var targetType = ResolveBuildType(type, configuration);
+            var targetType = ResolveBuildType(configuration, type);
 
             if (IsReadOnlyType(targetType) == false)
             {
@@ -154,10 +154,9 @@
             "CA1062:Validate arguments of public methods",
             MessageId = "0",
             Justification = "Type is validated by the base class")]
-        protected override object CreateInstance(
+        protected override object CreateInstance(IExecuteStrategy executeStrategy,
             Type type,
             string referenceName,
-            IExecuteStrategy executeStrategy,
             params object[] args)
         {
             Debug.Assert(type != null, "type != null");
@@ -180,7 +179,7 @@
             "CA1062:Validate arguments of public methods",
             MessageId = "0",
             Justification = "Instance is validated by the base class")]
-        protected override object PopulateInstance(object instance, IExecuteStrategy executeStrategy)
+        protected override object PopulateInstance(IExecuteStrategy executeStrategy, object instance)
         {
             Debug.Assert(instance != null, "instance != null");
 

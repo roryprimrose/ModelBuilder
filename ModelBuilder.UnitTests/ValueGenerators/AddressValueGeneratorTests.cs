@@ -182,12 +182,12 @@
         {
             public object RunGenerate(Type type, string referenceName, IExecuteStrategy executeStrategy)
             {
-                return base.Generate(type, referenceName, executeStrategy);
+                return base.Generate(executeStrategy, type, referenceName);
             }
 
             public bool RunIsMatch(Type type, string referenceName, IBuildChain buildChain)
             {
-                return base.IsMatch(type, referenceName, buildChain);
+                return base.IsMatch(buildChain, type, referenceName);
             }
         }
     }

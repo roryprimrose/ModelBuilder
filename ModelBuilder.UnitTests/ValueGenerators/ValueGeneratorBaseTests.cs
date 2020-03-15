@@ -20,7 +20,7 @@
 
             var target = new Wrapper(true, value);
 
-            Action action = () => target.Generate(parameterInfo, null);
+            Action action = () => target.Generate(null, parameterInfo);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -33,7 +33,7 @@
 
             var target = new Wrapper(true, value);
 
-            Action action = () => target.Generate(propertyInfo, null);
+            Action action = () => target.Generate(null, propertyInfo);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -45,7 +45,7 @@
 
             var target = new Wrapper(true, value);
 
-            Action action = () => target.Generate(typeof(Person), null);
+            Action action = () => target.Generate(null, typeof(Person));
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -60,7 +60,7 @@
 
             var target = new Wrapper(true, value);
 
-            target.Generate(parameterInfo, executeStrategy);
+            target.Generate(executeStrategy, parameterInfo);
 
             target.TypeUsed.Should().Be(parameterInfo.ParameterType);
             target.ReferenceNameUsed.Should().Be(parameterInfo.Name);
@@ -76,7 +76,7 @@
 
             var target = new Wrapper(true, value);
 
-            target.Generate(propertyInfo, executeStrategy);
+            target.Generate(executeStrategy, propertyInfo);
 
             target.TypeUsed.Should().Be(propertyInfo.PropertyType);
             target.ReferenceNameUsed.Should().Be(propertyInfo.Name);
@@ -91,7 +91,7 @@
 
             var target = new Wrapper(true, value);
 
-            Action action = () => target.Generate((ParameterInfo) null, executeStrategy);
+            Action action = () => target.Generate(executeStrategy, (ParameterInfo) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -105,7 +105,7 @@
 
             var target = new Wrapper(true, value);
 
-            Action action = () => target.Generate((PropertyInfo) null, executeStrategy);
+            Action action = () => target.Generate(executeStrategy, (PropertyInfo) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -119,7 +119,7 @@
 
             var target = new Wrapper(true, value);
 
-            Action action = () => target.Generate((Type) null, executeStrategy);
+            Action action = () => target.Generate(executeStrategy, (Type) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -144,7 +144,7 @@
 
             var target = new Wrapper(true, value);
 
-            Action action = () => target.IsMatch(parameterInfo, null);
+            Action action = () => target.IsMatch(null, parameterInfo);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -157,7 +157,7 @@
 
             var target = new Wrapper(true, value);
 
-            Action action = () => target.IsMatch(propertyInfo, null);
+            Action action = () => target.IsMatch(null, propertyInfo);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -169,7 +169,7 @@
 
             var target = new Wrapper(true, value);
 
-            Action action = () => target.IsMatch(typeof(string), null);
+            Action action = () => target.IsMatch(null, typeof(string));
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -184,7 +184,7 @@
 
             var target = new Wrapper(true, value);
 
-            target.IsMatch(parameterInfo, buildChain);
+            target.IsMatch(buildChain, parameterInfo);
 
             target.TypeUsed.Should().Be(parameterInfo.ParameterType);
             target.ReferenceNameUsed.Should().Be(parameterInfo.Name);
@@ -200,7 +200,7 @@
 
             var target = new Wrapper(true, value);
 
-            target.IsMatch(parameterInfo, buildChain);
+            target.IsMatch(buildChain, parameterInfo);
 
             target.TypeUsed.Should().Be(parameterInfo.PropertyType);
             target.ReferenceNameUsed.Should().Be(parameterInfo.Name);
@@ -215,7 +215,7 @@
 
             var target = new Wrapper(true, value);
 
-            Action action = () => target.IsMatch((ParameterInfo) null, buildChain);
+            Action action = () => target.IsMatch(buildChain, (ParameterInfo) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -229,7 +229,7 @@
 
             var target = new Wrapper(true, value);
 
-            Action action = () => target.IsMatch((PropertyInfo) null, buildChain);
+            Action action = () => target.IsMatch(buildChain, (PropertyInfo) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -243,7 +243,7 @@
 
             var target = new Wrapper(true, value);
 
-            Action action = () => target.IsMatch((Type) null, buildChain);
+            Action action = () => target.IsMatch(buildChain, (Type) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -274,7 +274,7 @@
                 _value = value;
             }
 
-            protected override object Generate(Type type, string referenceName, IExecuteStrategy executeStrategy)
+            protected override object Generate(IExecuteStrategy executeStrategy, Type type, string referenceName)
             {
                 TypeUsed = type;
                 ReferenceNameUsed = referenceName;
@@ -282,7 +282,7 @@
                 return _value;
             }
 
-            protected override bool IsMatch(Type type, string referenceName, IBuildChain buildChain)
+            protected override bool IsMatch(IBuildChain buildChain, Type type, string referenceName)
             {
                 TypeUsed = type;
                 ReferenceNameUsed = referenceName;

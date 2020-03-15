@@ -429,16 +429,17 @@
         {
             public Type RunResolveBuildType(Type requestedType, IBuildConfiguration buildConfiguration)
             {
-                return base.ResolveBuildType(requestedType, buildConfiguration);
+                return base.ResolveBuildType(buildConfiguration, requestedType);
             }
 
-            protected override object CreateInstance(Type type, string referenceName, IExecuteStrategy executeStrategy,
+            protected override object CreateInstance(IExecuteStrategy executeStrategy,
+                Type type, string referenceName,
                 params object[] args)
             {
                 throw new NotImplementedException();
             }
 
-            protected override object PopulateInstance(object instance, IExecuteStrategy executeStrategy)
+            protected override object PopulateInstance(IExecuteStrategy executeStrategy, object instance)
             {
                 throw new NotImplementedException();
             }
@@ -446,10 +447,10 @@
 
         private class TypeCreatorWrapper : TypeCreatorBase
         {
-            protected override bool CanCreate(Type type, string referenceName, IBuildConfiguration configuration,
-                IBuildChain buildChain)
+            protected override bool CanCreate(IBuildConfiguration configuration,
+                IBuildChain buildChain, Type type, string referenceName)
             {
-                var canCreate = base.CanCreate(type, referenceName, configuration, buildChain);
+                var canCreate = base.CanCreate(configuration, buildChain, type, referenceName);
 
                 if (canCreate == false)
                 {
@@ -459,10 +460,10 @@
                 return type == typeof(List<string>);
             }
 
-            protected override bool CanPopulate(Type type, string referenceName, IBuildConfiguration configuration,
-                IBuildChain buildChain)
+            protected override bool CanPopulate(IBuildConfiguration configuration,
+                IBuildChain buildChain, Type type, string referenceName)
             {
-                var canPopulate = base.CanPopulate(type, referenceName, configuration, buildChain);
+                var canPopulate = base.CanPopulate(configuration, buildChain, type, referenceName);
 
                 if (canPopulate == false)
                 {
@@ -472,16 +473,15 @@
                 return type == typeof(List<string>);
             }
 
-            protected override object CreateInstance(
+            protected override object CreateInstance(IExecuteStrategy executeStrategy,
                 Type type,
                 string referenceName,
-                IExecuteStrategy executeStrategy,
                 params object[] args)
             {
                 return new List<string>();
             }
 
-            protected override object PopulateInstance(object instance, IExecuteStrategy executeStrategy)
+            protected override object PopulateInstance(IExecuteStrategy executeStrategy, object instance)
             {
                 return instance;
             }

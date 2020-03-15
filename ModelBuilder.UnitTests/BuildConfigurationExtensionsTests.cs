@@ -718,8 +718,8 @@
             var target = Substitute.For<IBuildConfiguration>();
 
             target.ValueGenerators.Returns(generators);
-            generator.IsMatch(typeof(Guid), Arg.Any<IBuildChain>()).Returns(true);
-            generator.Generate(typeof(Guid), Arg.Any<IExecuteStrategy>()).Returns(value);
+            generator.IsMatch(Arg.Any<IBuildChain>(), typeof(Guid)).Returns(true);
+            generator.Generate(Arg.Any<IExecuteStrategy>(), typeof(Guid)).Returns(value);
 
             var actual = target.Create(typeof(Guid));
 
@@ -757,8 +757,8 @@
             var target = Substitute.For<IBuildConfiguration>();
 
             target.ValueGenerators.Returns(generators);
-            generator.IsMatch(typeof(Guid), Arg.Any<IBuildChain>()).Returns(true);
-            generator.Generate(typeof(Guid), Arg.Any<IExecuteStrategy>()).Returns(value);
+            generator.IsMatch(Arg.Any<IBuildChain>(), typeof(Guid)).Returns(true);
+            generator.Generate(Arg.Any<IExecuteStrategy>(), typeof(Guid)).Returns(value);
 
             var actual = target.Create<Guid>();
 
