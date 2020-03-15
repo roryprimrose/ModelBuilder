@@ -19,11 +19,11 @@
             var nullFound = false;
             var valueFound = false;
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
             for (var index = 0; index < 1000; index++)
             {
-                var value = (Guid?) target.RunGenerate(typeof(Guid?), null, executeStrategy);
+                var value = (Guid?) sut.RunGenerate(typeof(Guid?), null, executeStrategy);
 
                 if (value == null)
                 {
@@ -52,9 +52,9 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var actual = target.RunGenerate(typeof(Guid), null, executeStrategy);
+            var actual = sut.RunGenerate(typeof(Guid), null, executeStrategy);
 
             actual.Should().BeOfType<Guid>();
             actual.As<Guid>().Should().NotBeEmpty();
@@ -68,15 +68,15 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var first = (Guid) target.RunGenerate(typeof(Guid), null, executeStrategy);
+            var first = (Guid) sut.RunGenerate(typeof(Guid), null, executeStrategy);
 
             var second = first;
 
             for (var index = 0; index < 1000; index++)
             {
-                second = (Guid) target.RunGenerate(typeof(Guid), null, executeStrategy);
+                second = (Guid) sut.RunGenerate(typeof(Guid), null, executeStrategy);
 
                 if (first != second)
                 {
@@ -97,9 +97,9 @@
         {
             var buildChain = Substitute.For<IBuildChain>();
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var actual = target.RunIsMatch(type, null, buildChain);
+            var actual = sut.RunIsMatch(type, null, buildChain);
 
             actual.Should().Be(supportedType);
         }

@@ -24,9 +24,9 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var value = target.RunGenerate(type, "Count", executeStrategy);
+            var value = sut.RunGenerate(type, "Count", executeStrategy);
 
             if (type.IsNullable()
                 && value == null)
@@ -46,7 +46,7 @@
 
             var convertedValue = Convert.ToDouble(value, CultureInfo.InvariantCulture);
 
-            convertedValue.Should().BeLessOrEqualTo(target.MaxCount);
+            convertedValue.Should().BeLessOrEqualTo(sut.MaxCount);
             convertedValue.Should().BeGreaterOrEqualTo(1);
         }
 
@@ -58,14 +58,14 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
             for (var index = 0; index < 1000; index++)
             {
-                var value = (int) target.RunGenerate(typeof(int), "Count", executeStrategy);
+                var value = (int) sut.RunGenerate(typeof(int), "Count", executeStrategy);
 
                 value.Should().BeGreaterOrEqualTo(1);
-                value.Should().BeLessOrEqualTo(target.MaxCount);
+                value.Should().BeLessOrEqualTo(sut.MaxCount);
             }
         }
 
@@ -83,9 +83,9 @@
         {
             var buildChain = Substitute.For<IBuildChain>();
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var actual = target.RunIsMatch(typeof(int), referenceName, buildChain);
+            var actual = sut.RunIsMatch(typeof(int), referenceName, buildChain);
 
             actual.Should().Be(isSupported);
         }
@@ -96,9 +96,9 @@
         {
             var buildChain = Substitute.For<IBuildChain>();
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var actual = target.RunIsMatch(type, "Count", buildChain);
+            var actual = sut.RunIsMatch(type, "Count", buildChain);
 
             actual.Should().Be(isSupported);
         }
@@ -115,9 +115,9 @@
 
             var buildChain = Substitute.For<IBuildChain>();
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var actual = target.RunIsMatch(type, null, buildChain);
+            var actual = sut.RunIsMatch(type, null, buildChain);
 
             actual.Should().BeFalse();
         }
@@ -134,9 +134,9 @@
 
             var buildChain = Substitute.For<IBuildChain>();
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var actual = target.RunIsMatch(type, "Stuff", buildChain);
+            var actual = sut.RunIsMatch(type, "Stuff", buildChain);
 
             actual.Should().BeFalse();
         }
@@ -153,9 +153,9 @@
 
             var buildChain = Substitute.For<IBuildChain>();
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var actual = target.RunIsMatch(type, "Count", buildChain);
+            var actual = sut.RunIsMatch(type, "Count", buildChain);
 
             actual.Should().BeTrue();
         }
@@ -163,11 +163,11 @@
         [Fact]
         public void PriorityReturnsGreaterThanNumericValueGenerator()
         {
-            var target = new Wrapper();
+            var sut = new Wrapper();
             
             var generator = new NumericValueGenerator();
 
-            target.Priority.Should().BeGreaterThan(generator.Priority);
+            sut.Priority.Should().BeGreaterThan(generator.Priority);
         }
 
         [Fact]
@@ -195,12 +195,12 @@
         [Fact]
         public void SettingMaxCountShouldNotChangeDefaultMaxCount()
         {
-            var target = new CountValueGenerator
+            var sut = new CountValueGenerator
             {
                 MaxCount = Environment.TickCount
             };
 
-            CountValueGenerator.DefaultMaxCount.Should().NotBe(target.MaxCount);
+            CountValueGenerator.DefaultMaxCount.Should().NotBe(sut.MaxCount);
         }
 
         private class Wrapper : CountValueGenerator

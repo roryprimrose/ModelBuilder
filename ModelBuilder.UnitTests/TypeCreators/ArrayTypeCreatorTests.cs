@@ -49,9 +49,9 @@
         {
             var configuration = Substitute.For<IBuildConfiguration>();
 
-            var target = new ArrayTypeCreator();
+            var sut = new ArrayTypeCreator();
 
-            var actual = target.CanCreate(configuration, null, type);
+            var actual = sut.CanCreate(configuration, null, type);
 
             actual.Should().Be(supported);
         }
@@ -61,9 +61,9 @@
         {
             var configuration = Substitute.For<IBuildConfiguration>();
 
-            var target = new ArrayTypeCreator();
+            var sut = new ArrayTypeCreator();
 
-            Action action = () => target.CanCreate(configuration, null, (ParameterInfo) null);
+            Action action = () => sut.CanCreate(configuration, null, (ParameterInfo) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -73,9 +73,9 @@
         {
             var configuration = Substitute.For<IBuildConfiguration>();
 
-            var target = new ArrayTypeCreator();
+            var sut = new ArrayTypeCreator();
 
-            Action action = () => target.CanCreate(configuration, null, (PropertyInfo) null);
+            Action action = () => sut.CanCreate(configuration, null, (PropertyInfo) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -85,9 +85,9 @@
         {
             var configuration = Substitute.For<IBuildConfiguration>();
 
-            var target = new ArrayTypeCreator();
+            var sut = new ArrayTypeCreator();
 
-            Action action = () => target.CanCreate(configuration, null, (Type) null);
+            Action action = () => sut.CanCreate(configuration, null, (Type) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -120,9 +120,9 @@
 
             var configuration = Substitute.For<IBuildConfiguration>();
 
-            var target = new ArrayTypeCreator();
+            var sut = new ArrayTypeCreator();
 
-            var actual = target.CanPopulate(configuration, null, type);
+            var actual = sut.CanPopulate(configuration, null, type);
 
             actual.Should().Be(supported);
         }
@@ -132,9 +132,9 @@
         {
             var configuration = Substitute.For<IBuildConfiguration>();
 
-            var target = new ArrayTypeCreator();
+            var sut = new ArrayTypeCreator();
 
-            Action action = () => target.CanPopulate(configuration, null, (ParameterInfo) null);
+            Action action = () => sut.CanPopulate(configuration, null, (ParameterInfo) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -144,9 +144,9 @@
         {
             var configuration = Substitute.For<IBuildConfiguration>();
 
-            var target = new ArrayTypeCreator();
+            var sut = new ArrayTypeCreator();
 
-            Action action = () => target.CanPopulate(configuration, null, (PropertyInfo) null);
+            Action action = () => sut.CanPopulate(configuration, null, (PropertyInfo) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -156,9 +156,9 @@
         {
             var configuration = Substitute.For<IBuildConfiguration>();
 
-            var target = new ArrayTypeCreator();
+            var sut = new ArrayTypeCreator();
 
-            Action action = () => target.CanPopulate(configuration, null, (Type) null);
+            Action action = () => sut.CanPopulate(configuration, null, (Type) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -168,9 +168,9 @@
         {
             var person = new Person();
 
-            var target = new ArrayTypeCreatorWrapper();
+            var sut = new ArrayTypeCreatorWrapper();
 
-            Action action = () => target.CreateItem(typeof(Person[]), null, person);
+            Action action = () => sut.CreateItem(typeof(Person[]), null, person);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -205,9 +205,9 @@
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Configuration.Returns(configuration);
 
-            var target = new ArrayTypeCreator();
+            var sut = new ArrayTypeCreator();
 
-            var actual = target.Create(executeStrategy, type);
+            var actual = sut.Create(executeStrategy, type);
 
             actual.Should().NotBeNull();
         }
@@ -247,9 +247,9 @@
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Configuration.Returns(configuration);
 
-            var target = new ArrayTypeCreator();
+            var sut = new ArrayTypeCreator();
 
-            Action action = () => target.Create(executeStrategy, type);
+            Action action = () => sut.Create(executeStrategy, type);
 
             if (supported)
             {
@@ -270,17 +270,17 @@
         [Fact]
         public void DisablesAutoConstructorDetection()
         {
-            var target = new ArrayTypeCreatorWrapper();
+            var sut = new ArrayTypeCreatorWrapper();
 
-            target.AutoDetectConstructor.Should().BeFalse();
+            sut.AutoDetectConstructor.Should().BeFalse();
         }
 
         [Fact]
         public void DisablesAutoPopulate()
         {
-            var target = new ArrayTypeCreatorWrapper();
+            var sut = new ArrayTypeCreatorWrapper();
 
-            target.AutoPopulate.Should().BeFalse();
+            sut.AutoPopulate.Should().BeFalse();
         }
 
         [Fact]
@@ -299,18 +299,18 @@
             executeStrategy.Configuration.Returns(configuration);
             executeStrategy.Create(typeof(Guid)).Returns(Guid.NewGuid());
 
-            var target = new ArrayTypeCreator
+            var sut = new ArrayTypeCreator
             {
                 MaxCount = 15
             };
 
-            var actual = target.Populate(executeStrategy, expected);
+            var actual = sut.Populate(executeStrategy, expected);
 
             actual.Should().BeSameAs(expected);
 
             var set = (Guid[]) actual;
 
-            set.Should().HaveCount(target.MaxCount);
+            set.Should().HaveCount(sut.MaxCount);
             set.All(x => x != Guid.Empty).Should().BeTrue();
         }
 
@@ -325,18 +325,18 @@
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Create(typeof(Guid)).Returns(Guid.NewGuid());
 
-            var target = new ArrayTypeCreator
+            var sut = new ArrayTypeCreator
             {
                 MaxCount = 15
             };
 
-            var actual = target.Populate(executeStrategy, expected);
+            var actual = sut.Populate(executeStrategy, expected);
 
             actual.Should().BeSameAs(expected);
 
             var set = (Guid[]) actual;
 
-            set.Should().HaveCount(target.MaxCount);
+            set.Should().HaveCount(sut.MaxCount);
             set.All(x => x != Guid.Empty).Should().BeTrue();
         }
 
@@ -347,9 +347,9 @@
             var executeStrategy = Model.UsingDefaultConfiguration()
                 .UsingExecuteStrategy<DefaultExecuteStrategy<List<Company>>>();
 
-            var target = new IncrementingArrayTypeCreator();
+            var sut = new IncrementingArrayTypeCreator();
 
-            var result = (int[]) target.Populate(executeStrategy, actual);
+            var result = (int[]) sut.Populate(executeStrategy, actual);
 
             var baseValue = result[0];
             var expected = new int[actual.Length];
@@ -369,9 +369,9 @@
             var executeStrategy = Model.UsingDefaultConfiguration()
                 .UsingExecuteStrategy<DefaultExecuteStrategy<List<Company>>>();
 
-            var target = new ArrayTypeCreator();
+            var sut = new ArrayTypeCreator();
 
-            var result = (Person[]) target.Populate(executeStrategy, actual);
+            var result = (Person[]) sut.Populate(executeStrategy, actual);
 
             result.All(x => x != null).Should().BeTrue();
         }
@@ -415,12 +415,12 @@
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Create(typeof(Guid)).Returns(Guid.NewGuid());
 
-            var target = new ArrayTypeCreator
+            var sut = new ArrayTypeCreator
             {
                 MaxCount = 15
             };
 
-            var actual = target.Populate(executeStrategy, expected);
+            var actual = sut.Populate(executeStrategy, expected);
 
             actual.Should().BeSameAs(expected);
 
@@ -434,9 +434,9 @@
         {
             var strategy = Substitute.For<IExecuteStrategy>();
 
-            var target = new ArrayTypeCreator();
+            var sut = new ArrayTypeCreator();
 
-            Action action = () => target.Populate(strategy, null);
+            Action action = () => sut.Populate(strategy, null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -446,9 +446,9 @@
         {
             var instance = new List<string>();
 
-            var target = new ArrayTypeCreator();
+            var sut = new ArrayTypeCreator();
 
-            Action action = () => target.Populate(null, instance);
+            Action action = () => sut.Populate(null, instance);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -463,9 +463,9 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var target = new ArrayTypeCreator();
+            var sut = new ArrayTypeCreator();
 
-            Action action = () => target.Populate(executeStrategy, instance);
+            Action action = () => sut.Populate(executeStrategy, instance);
 
             action.Should().Throw<NotSupportedException>();
         }
@@ -473,10 +473,10 @@
         [Fact]
         public void PriorityReturnsHigherThanDefaultTypeCreator()
         {
-            var target = new ArrayTypeCreator();
+            var sut = new ArrayTypeCreator();
             var other = new DefaultTypeCreator();
 
-            target.Priority.Should().BeGreaterThan(other.Priority);
+            sut.Priority.Should().BeGreaterThan(other.Priority);
         }
 
         [Fact]
@@ -504,12 +504,12 @@
         [Fact]
         public void SettingMaxCountShouldNotChangeDefaultMaxCount()
         {
-            var target = new ArrayTypeCreator
+            var sut = new ArrayTypeCreator
             {
                 MaxCount = Environment.TickCount
             };
 
-            ArrayTypeCreator.DefaultMaxCount.Should().NotBe(target.MaxCount);
+            ArrayTypeCreator.DefaultMaxCount.Should().NotBe(sut.MaxCount);
         }
 
         private class ArrayTypeCreatorWrapper : ArrayTypeCreator

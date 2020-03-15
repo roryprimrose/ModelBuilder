@@ -25,11 +25,11 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var target = new Wrapper {MinAge = 15, MaxAge = 30};
+            var sut = new Wrapper {MinAge = 15, MaxAge = 30};
 
             for (var index = 0; index < 1000; index++)
             {
-                var value = target.RunGenerate(type, "Age", executeStrategy);
+                var value = sut.RunGenerate(type, "Age", executeStrategy);
 
                 if (type.IsNullable()
                     && value == null)
@@ -49,8 +49,8 @@
 
                 var convertedValue = Convert.ToDouble(value, CultureInfo.InvariantCulture);
 
-                convertedValue.Should().BeGreaterOrEqualTo(target.MinAge);
-                convertedValue.Should().BeLessOrEqualTo(target.MaxAge);
+                convertedValue.Should().BeGreaterOrEqualTo(sut.MinAge);
+                convertedValue.Should().BeLessOrEqualTo(sut.MaxAge);
             }
         }
 
@@ -60,9 +60,9 @@
         {
             var buildChain = Substitute.For<IBuildChain>();
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var actual = target.RunIsMatch(type, "Age", buildChain);
+            var actual = sut.RunIsMatch(type, "Age", buildChain);
 
             actual.Should().Be(typeSupported);
         }
@@ -79,9 +79,9 @@
 
             var buildChain = Substitute.For<IBuildChain>();
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var actual = target.RunIsMatch(type, null, buildChain);
+            var actual = sut.RunIsMatch(type, null, buildChain);
 
             actual.Should().BeFalse();
         }
@@ -98,9 +98,9 @@
 
             var buildChain = Substitute.For<IBuildChain>();
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var actual = target.RunIsMatch(type, "Stuff", buildChain);
+            var actual = sut.RunIsMatch(type, "Stuff", buildChain);
 
             actual.Should().BeFalse();
         }
@@ -117,9 +117,9 @@
 
             var buildChain = Substitute.For<IBuildChain>();
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var actual = target.RunIsMatch(type, "age", buildChain);
+            var actual = sut.RunIsMatch(type, "age", buildChain);
 
             actual.Should().BeTrue();
         }
@@ -127,26 +127,26 @@
         [Fact]
         public void MaxAgeDefaultsTo100()
         {
-            var target = new AgeValueGenerator();
+            var sut = new AgeValueGenerator();
 
-            target.MaxAge.Should().Be(100);
+            sut.MaxAge.Should().Be(100);
         }
 
         [Fact]
         public void MinAgeDefaultsTo1()
         {
-            var target = new AgeValueGenerator();
+            var sut = new AgeValueGenerator();
 
-            target.MinAge.Should().Be(1);
+            sut.MinAge.Should().Be(1);
         }
 
         [Fact]
         public void PriorityReturnsValueHigherThanNumericValueGenerator()
         {
-            var target = new AgeValueGenerator();
+            var sut = new AgeValueGenerator();
             var other = new NumericValueGenerator();
 
-            target.Priority.Should().BeGreaterThan(other.Priority);
+            sut.Priority.Should().BeGreaterThan(other.Priority);
         }
 
         private class Wrapper : AgeValueGenerator

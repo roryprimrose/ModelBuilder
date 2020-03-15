@@ -16,9 +16,9 @@
         [InlineData(typeof(Person), "FirstName", true)]
         public void GetPropertiesReturnsAvailablePropertiesTest(Type type, string propertyName, bool expected)
         {
-            var target = new DefaultPropertyResolver();
+            var sut = new DefaultPropertyResolver();
 
-            var properties = target.GetProperties(type);
+            var properties = sut.GetProperties(type);
 
             var actual = properties.Any(x => x.Name == propertyName);
 
@@ -38,9 +38,9 @@
         [Fact]
         public void GetPropertiesThrowsExceptionWithNullType()
         {
-            var target = new DefaultPropertyResolver();
+            var sut = new DefaultPropertyResolver();
 
-            Action action = () => target.GetProperties(null);
+            Action action = () => sut.GetProperties(null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -56,9 +56,9 @@
         {
             var regex = new Regex(expression);
 
-            var target = new DefaultPropertyResolver();
+            var sut = new DefaultPropertyResolver();
 
-            var actual = target.GetProperties(type, regex);
+            var actual = sut.GetProperties(type, regex);
 
             if (shouldExist)
             {
@@ -75,9 +75,9 @@
         {
             var type = typeof(Person);
 
-            var target = new DefaultPropertyResolver();
+            var sut = new DefaultPropertyResolver();
 
-            Action action = () => target.GetProperties(type, null);
+            Action action = () => sut.GetProperties(type, null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -98,9 +98,9 @@
         {
             var expression = new Regex("Stuff");
 
-            var target = new DefaultPropertyResolver();
+            var sut = new DefaultPropertyResolver();
 
-            Action action = () => target.GetProperties(null, expression);
+            Action action = () => sut.GetProperties(null, expression);
 
             action.Should().Throw<ArgumentNullException>();
         }

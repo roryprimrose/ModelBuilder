@@ -17,15 +17,15 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var first = (TimeZoneInfo) target.RunGenerate(typeof(TimeZoneInfo), null, executeStrategy);
+            var first = (TimeZoneInfo) sut.RunGenerate(typeof(TimeZoneInfo), null, executeStrategy);
 
             var second = first;
 
             for (var index = 0; index < 1000; index++)
             {
-                second = (TimeZoneInfo) target.RunGenerate(typeof(TimeZoneInfo), null, executeStrategy);
+                second = (TimeZoneInfo) sut.RunGenerate(typeof(TimeZoneInfo), null, executeStrategy);
 
                 if (first.Equals(second) == false)
                 {
@@ -50,9 +50,9 @@
         {
             var buildChain = Substitute.For<IBuildChain>();
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var actual = target.RunIsMatch(type, null, buildChain);
+            var actual = sut.RunIsMatch(type, null, buildChain);
 
             actual.Should().Be(expected);
         }

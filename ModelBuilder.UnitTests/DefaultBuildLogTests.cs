@@ -16,19 +16,19 @@
         {
             var ex = new BuildException(Guid.NewGuid().ToString());
 
-            var target = new DefaultBuildLog();
+            var sut = new DefaultBuildLog();
 
-            target.BuildFailure(ex);
+            sut.BuildFailure(ex);
 
-            target.Output.Should().Contain(ex.ToString());
+            sut.Output.Should().Contain(ex.ToString());
         }
 
         [Fact]
         public void BuildFailureThrowsExceptionWithNullType()
         {
-            var target = new DefaultBuildLog();
+            var sut = new DefaultBuildLog();
 
-            Action action = () => target.BuildFailure(null);
+            Action action = () => sut.BuildFailure(null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -36,19 +36,19 @@
         [Fact]
         public void CircularReferenceDetectedAppendsLogEntry()
         {
-            var target = new DefaultBuildLog();
+            var sut = new DefaultBuildLog();
 
-            target.CircularReferenceDetected(typeof(string));
+            sut.CircularReferenceDetected(typeof(string));
 
-            target.Output.Should().NotBeNullOrWhiteSpace();
+            sut.Output.Should().NotBeNullOrWhiteSpace();
         }
 
         [Fact]
         public void CircularReferenceDetectedThrowsExceptionWithNullType()
         {
-            var target = new DefaultBuildLog();
+            var sut = new DefaultBuildLog();
 
-            Action action = () => target.CircularReferenceDetected(null);
+            Action action = () => sut.CircularReferenceDetected(null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -59,15 +59,15 @@
             var generatorType = typeof(StateValueGenerator);
             var type = typeof(string);
 
-            var target = new DefaultBuildLog();
+            var sut = new DefaultBuildLog();
 
-            target.CreatingValue(type, generatorType, null);
+            sut.CreatingValue(type, generatorType, null);
 
-            target.Output.Should().NotBeNullOrWhiteSpace();
+            sut.Output.Should().NotBeNullOrWhiteSpace();
 
-            target.Clear();
+            sut.Clear();
 
-            target.Output.Should().BeNullOrWhiteSpace();
+            sut.Output.Should().BeNullOrWhiteSpace();
         }
 
         [Fact]
@@ -76,11 +76,11 @@
             var parameterInfo = typeof(Person).GetConstructors()
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
 
-            var target = new DefaultBuildLog();
+            var sut = new DefaultBuildLog();
 
-            target.CreatedParameter(parameterInfo, null);
+            sut.CreatedParameter(parameterInfo, null);
 
-            target.Output.Should().NotBeNullOrWhiteSpace();
+            sut.Output.Should().NotBeNullOrWhiteSpace();
         }
 
         [Fact]
@@ -88,9 +88,9 @@
         {
             var context = Guid.NewGuid().ToString();
 
-            var target = new DefaultBuildLog();
+            var sut = new DefaultBuildLog();
 
-            Action action = () => target.CreatedParameter(null, context);
+            Action action = () => sut.CreatedParameter(null, context);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -101,11 +101,11 @@
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
             var context = new Person();
 
-            var target = new DefaultBuildLog();
+            var sut = new DefaultBuildLog();
 
-            target.CreatedProperty(propertyInfo, context);
+            sut.CreatedProperty(propertyInfo, context);
 
-            target.Output.Should().NotBeNullOrWhiteSpace();
+            sut.Output.Should().NotBeNullOrWhiteSpace();
         }
 
         [Fact]
@@ -113,9 +113,9 @@
         {
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
 
-            var target = new DefaultBuildLog();
+            var sut = new DefaultBuildLog();
 
-            Action action = () => target.CreatedProperty(propertyInfo, null);
+            Action action = () => sut.CreatedProperty(propertyInfo, null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -125,9 +125,9 @@
         {
             var context = new Person();
 
-            var target = new DefaultBuildLog();
+            var sut = new DefaultBuildLog();
 
-            Action action = () => target.CreatedProperty(null, context);
+            Action action = () => sut.CreatedProperty(null, context);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -135,19 +135,19 @@
         [Fact]
         public void CreatedTypeAppendsLogEntry()
         {
-            var target = new DefaultBuildLog();
+            var sut = new DefaultBuildLog();
 
-            target.CreatedType(typeof(string), null);
+            sut.CreatedType(typeof(string), null);
 
-            target.Output.Should().NotBeNullOrWhiteSpace();
+            sut.Output.Should().NotBeNullOrWhiteSpace();
         }
 
         [Fact]
         public void CreatedTypeThrowsExceptionWithNullType()
         {
-            var target = new DefaultBuildLog();
+            var sut = new DefaultBuildLog();
 
-            Action action = () => target.CreatedType(null, null);
+            Action action = () => sut.CreatedType(null, null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -158,13 +158,13 @@
             var generatorType = typeof(StateValueGenerator);
             var creatorType = typeof(DefaultTypeCreator);
 
-            var target = new DefaultBuildLog();
+            var sut = new DefaultBuildLog();
 
-            target.CreatingType(typeof(Person), creatorType, null);
-            target.CreatingValue(typeof(string), generatorType, null);
-            target.CreatedType(typeof(Person), null);
+            sut.CreatingType(typeof(Person), creatorType, null);
+            sut.CreatingValue(typeof(string), generatorType, null);
+            sut.CreatedType(typeof(Person), null);
 
-            var actual = target.Output;
+            var actual = sut.Output;
 
             actual.Should().Contain("    ");
         }
@@ -175,11 +175,11 @@
             var parameterInfo = typeof(Person).GetConstructors()
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
 
-            var target = new DefaultBuildLog();
+            var sut = new DefaultBuildLog();
 
-            target.CreatingParameter(parameterInfo, null);
+            sut.CreatingParameter(parameterInfo, null);
 
-            target.Output.Should().NotBeNullOrWhiteSpace();
+            sut.Output.Should().NotBeNullOrWhiteSpace();
         }
 
         [Fact]
@@ -187,9 +187,9 @@
         {
             var context = Guid.NewGuid().ToString();
 
-            var target = new DefaultBuildLog();
+            var sut = new DefaultBuildLog();
 
-            Action action = () => target.CreatingParameter(null, context);
+            Action action = () => sut.CreatingParameter(null, context);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -200,11 +200,11 @@
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
             var context = new Person();
 
-            var target = new DefaultBuildLog();
+            var sut = new DefaultBuildLog();
 
-            target.CreatingProperty(propertyInfo, context);
+            sut.CreatingProperty(propertyInfo, context);
 
-            target.Output.Should().NotBeNullOrWhiteSpace();
+            sut.Output.Should().NotBeNullOrWhiteSpace();
         }
 
         [Fact]
@@ -212,9 +212,9 @@
         {
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
 
-            var target = new DefaultBuildLog();
+            var sut = new DefaultBuildLog();
 
-            Action action = () => target.CreatingProperty(propertyInfo, null);
+            Action action = () => sut.CreatingProperty(propertyInfo, null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -224,9 +224,9 @@
         {
             var context = new Person();
 
-            var target = new DefaultBuildLog();
+            var sut = new DefaultBuildLog();
 
-            Action action = () => target.CreatingProperty(null, context);
+            Action action = () => sut.CreatingProperty(null, context);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -236,11 +236,11 @@
         {
             var creatorType = typeof(DefaultTypeCreator);
 
-            var target = new DefaultBuildLog();
+            var sut = new DefaultBuildLog();
 
-            target.CreatingType(typeof(string), creatorType, null);
+            sut.CreatingType(typeof(string), creatorType, null);
 
-            target.Output.Should().NotBeNullOrWhiteSpace();
+            sut.Output.Should().NotBeNullOrWhiteSpace();
         }
 
         [Fact]
@@ -248,9 +248,9 @@
         {
             var type = typeof(string);
 
-            var target = new DefaultBuildLog();
+            var sut = new DefaultBuildLog();
 
-            Action action = () => target.CreatingType(type, null, null);
+            Action action = () => sut.CreatingType(type, null, null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -260,9 +260,9 @@
         {
             var creatorType = typeof(DefaultTypeCreator);
 
-            var target = new DefaultBuildLog();
+            var sut = new DefaultBuildLog();
 
-            Action action = () => target.CreatingType(null, creatorType, null);
+            Action action = () => sut.CreatingType(null, creatorType, null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -273,11 +273,11 @@
             var generatorType = typeof(StateValueGenerator);
             var type = typeof(string);
 
-            var target = new DefaultBuildLog();
+            var sut = new DefaultBuildLog();
 
-            target.CreatingValue(type, generatorType, null);
+            sut.CreatingValue(type, generatorType, null);
 
-            target.Output.Should().NotBeNullOrWhiteSpace();
+            sut.Output.Should().NotBeNullOrWhiteSpace();
         }
 
         [Fact]
@@ -285,9 +285,9 @@
         {
             var type = typeof(string);
 
-            var target = new DefaultBuildLog();
+            var sut = new DefaultBuildLog();
 
-            Action action = () => target.CreatingValue(type, null, null);
+            Action action = () => sut.CreatingValue(type, null, null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -297,9 +297,9 @@
         {
             var generatorType = typeof(StateValueGenerator);
 
-            var target = new DefaultBuildLog();
+            var sut = new DefaultBuildLog();
 
-            Action action = () => target.CreatingValue(null, generatorType, null);
+            Action action = () => sut.CreatingValue(null, generatorType, null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -310,11 +310,11 @@
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
             var context = new Person();
 
-            var target = new DefaultBuildLog();
+            var sut = new DefaultBuildLog();
 
-            target.IgnoringProperty(propertyInfo, context);
+            sut.IgnoringProperty(propertyInfo, context);
 
-            target.Output.Should().NotBeNullOrWhiteSpace();
+            sut.Output.Should().NotBeNullOrWhiteSpace();
         }
 
         [Fact]
@@ -322,9 +322,9 @@
         {
             var context = new Person();
 
-            var target = new DefaultBuildLog();
+            var sut = new DefaultBuildLog();
 
-            Action action = () => target.IgnoringProperty(null, context);
+            Action action = () => sut.IgnoringProperty(null, context);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -334,9 +334,9 @@
         {
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
 
-            var target = new DefaultBuildLog();
+            var sut = new DefaultBuildLog();
 
-            Action action = () => target.IgnoringProperty(propertyInfo, null);
+            Action action = () => sut.IgnoringProperty(propertyInfo, null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -344,19 +344,19 @@
         [Fact]
         public void MappedTypeAppendsLogEntry()
         {
-            var target = new DefaultBuildLog();
+            var sut = new DefaultBuildLog();
 
-            target.MappedType(typeof(Stream), typeof(MemoryStream));
+            sut.MappedType(typeof(Stream), typeof(MemoryStream));
 
-            target.Output.Should().NotBeNullOrWhiteSpace();
+            sut.Output.Should().NotBeNullOrWhiteSpace();
         }
 
         [Fact]
         public void MappedTypeThrowsExceptionWithNullSourceType()
         {
-            var target = new DefaultBuildLog();
+            var sut = new DefaultBuildLog();
 
-            Action action = () => target.MappedType(null, typeof(MemoryStream));
+            Action action = () => sut.MappedType(null, typeof(MemoryStream));
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -364,9 +364,9 @@
         [Fact]
         public void MappedTypeThrowsExceptionWithNullTargetType()
         {
-            var target = new DefaultBuildLog();
+            var sut = new DefaultBuildLog();
 
-            Action action = () => target.MappedType(typeof(Stream), null);
+            Action action = () => sut.MappedType(typeof(Stream), null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -376,19 +376,19 @@
         {
             var instance = new Person();
 
-            var target = new DefaultBuildLog();
+            var sut = new DefaultBuildLog();
 
-            target.PopulatedInstance(instance);
+            sut.PopulatedInstance(instance);
 
-            target.Output.Should().NotBeNullOrWhiteSpace();
+            sut.Output.Should().NotBeNullOrWhiteSpace();
         }
 
         [Fact]
         public void PopulatedInstanceThrowsExceptionWithNullInstance()
         {
-            var target = new DefaultBuildLog();
+            var sut = new DefaultBuildLog();
 
-            Action action = () => target.PopulatedInstance(null);
+            Action action = () => sut.PopulatedInstance(null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -401,13 +401,13 @@
 
             var instance = new Person();
 
-            var target = new DefaultBuildLog();
+            var sut = new DefaultBuildLog();
 
-            target.PopulatingInstance(instance);
-            target.CreatingValue(type, generatorType, null);
-            target.PopulatedInstance(instance);
+            sut.PopulatingInstance(instance);
+            sut.CreatingValue(type, generatorType, null);
+            sut.PopulatedInstance(instance);
 
-            var actual = target.Output;
+            var actual = sut.Output;
 
             actual.Should().Contain("    ");
         }
@@ -417,19 +417,19 @@
         {
             var instance = new Person();
 
-            var target = new DefaultBuildLog();
+            var sut = new DefaultBuildLog();
 
-            target.PopulatingInstance(instance);
+            sut.PopulatingInstance(instance);
 
-            target.Output.Should().NotBeNullOrWhiteSpace();
+            sut.Output.Should().NotBeNullOrWhiteSpace();
         }
 
         [Fact]
         public void PopulatingInstanceThrowsExceptionWithNullInstance()
         {
-            var target = new DefaultBuildLog();
+            var sut = new DefaultBuildLog();
 
-            Action action = () => target.PopulatingInstance(null);
+            Action action = () => sut.PopulatingInstance(null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -439,11 +439,11 @@
         {
             var postBuildType = typeof(DummyPostBuildAction);
 
-            var target = new DefaultBuildLog();
+            var sut = new DefaultBuildLog();
 
-            target.PostBuildAction(typeof(string), postBuildType, null);
+            sut.PostBuildAction(typeof(string), postBuildType, null);
 
-            target.Output.Should().NotBeNullOrWhiteSpace();
+            sut.Output.Should().NotBeNullOrWhiteSpace();
         }
 
         [Fact]
@@ -451,9 +451,9 @@
         {
             var type = typeof(string);
 
-            var target = new DefaultBuildLog();
+            var sut = new DefaultBuildLog();
 
-            Action action = () => target.PostBuildAction(type, null, null);
+            Action action = () => sut.PostBuildAction(type, null, null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -463,9 +463,9 @@
         {
             var creatorType = typeof(DefaultTypeCreator);
 
-            var target = new DefaultBuildLog();
+            var sut = new DefaultBuildLog();
 
-            Action action = () => target.PostBuildAction(null, creatorType, null);
+            Action action = () => sut.PostBuildAction(null, creatorType, null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -475,7 +475,7 @@
         {
             var creatorType = typeof(DefaultTypeCreator);
 
-            var target = new DefaultBuildLog();
+            var sut = new DefaultBuildLog();
 
             Exception exception;
 
@@ -489,11 +489,11 @@
                 exception = ex;
             }
 
-            target.CreatingType(typeof(Person), creatorType, null);
-            target.BuildFailure(exception);
-            target.CreatedType(typeof(Person), null);
+            sut.CreatingType(typeof(Person), creatorType, null);
+            sut.BuildFailure(exception);
+            sut.CreatedType(typeof(Person), null);
 
-            var lines = target.Output.Split(
+            var lines = sut.Output.Split(
                 new[]
                 {
                     Environment.NewLine

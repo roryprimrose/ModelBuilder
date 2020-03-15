@@ -28,9 +28,9 @@
 
             var buildChain = Substitute.For<IBuildChain>();
 
-            var target = new Wrapper(regex, typeof(bool), typeof(bool?));
+            var sut = new Wrapper(regex, typeof(bool), typeof(bool?));
 
-            var actual = target.RunIsMatch(type, referenceName, buildChain);
+            var actual = sut.RunIsMatch(type, referenceName, buildChain);
 
             actual.Should().Be(expected);
         }
@@ -45,9 +45,9 @@
 
             var buildChain = Substitute.For<IBuildChain>();
 
-            var target = new Wrapper(regex);
+            var sut = new Wrapper(regex);
 
-            var actual = target.RunIsMatch(typeof(Guid), referenceName, buildChain);
+            var actual = sut.RunIsMatch(typeof(Guid), referenceName, buildChain);
 
             actual.Should().Be(expected);
         }
@@ -66,9 +66,9 @@
         {
             var buildChain = Substitute.For<IBuildChain>();
 
-            var target = new Wrapper("Match", typeof(bool), typeof(bool?));
+            var sut = new Wrapper("Match", typeof(bool), typeof(bool?));
 
-            var actual = target.RunIsMatch(type, referenceName, buildChain);
+            var actual = sut.RunIsMatch(type, referenceName, buildChain);
 
             actual.Should().Be(expected);
         }
@@ -82,9 +82,9 @@
         {
             var buildChain = Substitute.For<IBuildChain>();
 
-            var target = new Wrapper("Match");
+            var sut = new Wrapper("Match");
 
-            var actual = target.RunIsMatch(typeof(Guid), referenceName, buildChain);
+            var actual = sut.RunIsMatch(typeof(Guid), referenceName, buildChain);
 
             actual.Should().Be(expected);
         }
@@ -97,9 +97,9 @@
         {
             var buildChain = Substitute.For<IBuildChain>();
 
-            var target = new Wrapper(typeof(bool), typeof(bool?));
+            var sut = new Wrapper(typeof(bool), typeof(bool?));
 
-            var actual = target.RunIsMatch(type, null, buildChain);
+            var actual = sut.RunIsMatch(type, null, buildChain);
 
             actual.Should().Be(expected);
         }
@@ -109,10 +109,10 @@
         {
             var type = typeof(string);
 
-            var target = new Wrapper("Test");
+            var sut = new Wrapper("Test");
 
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-            Action action = () => target.RunIsMatch(type, "Test", null);
+            Action action = () => sut.RunIsMatch(type, "Test", null);
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
             action.Should().Throw<ArgumentNullException>();
@@ -123,10 +123,10 @@
         {
             var buildChain = new BuildHistory();
 
-            var target = new Wrapper("Test");
+            var sut = new Wrapper("Test");
 
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-            Action action = () => target.RunIsMatch(null, "Test", buildChain);
+            Action action = () => sut.RunIsMatch(null, "Test", buildChain);
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
             action.Should().Throw<ArgumentNullException>();

@@ -23,9 +23,9 @@
 
             buildChain.Push(person);
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var actual = (string) target.RunGenerate(typeof(string), "LastName", executeStrategy);
+            var actual = (string) sut.RunGenerate(typeof(string), "LastName", executeStrategy);
 
             TestData.LastNames.Any(x => x == actual).Should().BeTrue();
         }
@@ -51,9 +51,9 @@
 
             buildChain.Push(person);
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var actual = target.RunIsMatch(type, referenceName, buildChain);
+            var actual = sut.RunIsMatch(type, referenceName, buildChain);
 
             actual.Should().Be(expected);
         }
@@ -61,10 +61,10 @@
         [Fact]
         public void PriorityReturnsHigherPriorityThanStringValidator()
         {
-            var target = new LastNameValueGenerator();
+            var sut = new LastNameValueGenerator();
             var other = new StringValueGenerator();
 
-            target.Priority.Should().BeGreaterThan(other.Priority);
+            sut.Priority.Should().BeGreaterThan(other.Priority);
         }
 
         private class Wrapper : LastNameValueGenerator

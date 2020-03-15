@@ -24,9 +24,9 @@
         {
             var configuration = new BuildConfiguration();
 
-            var target = new DefaultConfigurationModule();
+            var sut = new DefaultConfigurationModule();
 
-            target.Configure(configuration);
+            sut.Configure(configuration);
 
             configuration.IgnoreRules.Should().BeEmpty();
             configuration.ConstructorResolver.Should().BeOfType<DefaultConstructorResolver>();
@@ -44,9 +44,9 @@
         {
             var configuration = new BuildConfiguration();
 
-            var target = new DefaultConfigurationModule();
+            var sut = new DefaultConfigurationModule();
 
-            target.Configure(configuration);
+            sut.Configure(configuration);
 
             configuration.ValueGenerators.Should()
                 .NotContain(x => x.GetType() == typeof(MailinatorEmailValueGenerator));
@@ -62,9 +62,9 @@
 
             var configuration = new BuildConfiguration();
 
-            var target = new DefaultConfigurationModule();
+            var sut = new DefaultConfigurationModule();
 
-            target.Configure(configuration);
+            sut.Configure(configuration);
 
             foreach (var type in types)
             {
@@ -82,9 +82,9 @@
 
             var configuration = new BuildConfiguration();
 
-            var target = new DefaultConfigurationModule();
+            var sut = new DefaultConfigurationModule();
 
-            target.Configure(configuration);
+            sut.Configure(configuration);
 
             foreach (var type in types)
             {
@@ -95,9 +95,9 @@
         [Fact]
         public void ConfigureThrowsExceptionWithNullConfiguration()
         {
-            var target = new DefaultConfigurationModule();
+            var sut = new DefaultConfigurationModule();
 
-            Action action = () => target.Configure(null);
+            Action action = () => sut.Configure(null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -107,9 +107,9 @@
         {
             var configuration = new BuildConfiguration();
 
-            var target = new DefaultConfigurationModule();
+            var sut = new DefaultConfigurationModule();
 
-            target.Configure(configuration);
+            sut.Configure(configuration);
 
             var rules = configuration.ExecuteOrderRules;
 
@@ -130,9 +130,9 @@
         {
             var configuration = new BuildConfiguration();
 
-            var target = new DefaultConfigurationModule();
+            var sut = new DefaultConfigurationModule();
 
-            target.Configure(configuration);
+            sut.Configure(configuration);
 
             var items = configuration.TypeCreators.OrderByDescending(x => x.Priority);
 
@@ -149,9 +149,9 @@
         {
             var configuration = new BuildConfiguration();
 
-            var target = new DefaultConfigurationModule();
+            var sut = new DefaultConfigurationModule();
 
-            target.Configure(configuration);
+            sut.Configure(configuration);
 
             var items = configuration.ExecuteOrderRules.OrderByDescending(x => x.Priority);
 
@@ -168,9 +168,9 @@
         {
             var configuration = new BuildConfiguration();
 
-            var target = new DefaultConfigurationModule();
+            var sut = new DefaultConfigurationModule();
 
-            target.Configure(configuration);
+            sut.Configure(configuration);
 
             var items = configuration.ValueGenerators.OrderByDescending(x => x.Priority);
 

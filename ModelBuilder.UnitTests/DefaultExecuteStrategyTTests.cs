@@ -35,16 +35,16 @@
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
             var processor = Substitute.For<IBuildProcessor>();
 
-            var target = new DefaultExecuteStrategy<int>(buildHistory, _buildLog, processor);
+            var sut = new DefaultExecuteStrategy<int>(buildHistory, _buildLog, processor);
 
             processor.GetBuildCapability(buildConfiguration, buildHistory, Arg.Any<BuildRequirement>(),
                     typeof(int))
                 .Returns(typeCapability);
-            processor.Build(target, typeof(int), null).Returns((object) null);
+            processor.Build(sut, typeof(int), null).Returns((object) null);
 
-            target.Initialize(buildConfiguration);
+            sut.Initialize(buildConfiguration);
 
-            var actual = target.Create();
+            var actual = sut.Create();
 
             actual.Should().Be(0);
         }
@@ -71,18 +71,18 @@
             buildConfiguration.TypeResolver.Returns(typeResolver);
             typeResolver.GetBuildType(buildConfiguration, typeof(Person)).Returns(x => x.Arg<Type>());
 
-            var target = new DefaultExecuteStrategy<Person>(buildHistory, _buildLog, processor);
+            var sut = new DefaultExecuteStrategy<Person>(buildHistory, _buildLog, processor);
 
             processor.GetBuildCapability(buildConfiguration, buildHistory, Arg.Any<BuildRequirement>(),
                     typeof(Person))
                 .Returns(typeCapability);
             constructorResolver.Resolve(typeof(Person))
                 .Returns(typeof(Person).GetConstructors().Single(x => x.GetParameters().Length == 0));
-            processor.Build(target, typeof(Person), null).Returns((Person) null);
+            processor.Build(sut, typeof(Person), null).Returns((Person) null);
 
-            target.Initialize(buildConfiguration);
+            sut.Initialize(buildConfiguration);
 
-            var actual = target.Create();
+            var actual = sut.Create();
 
             actual.Should().BeNull();
         }
@@ -114,17 +114,17 @@
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
             var propertyResolver = Substitute.For<IPropertyResolver>();
 
-            var target = new DefaultExecuteStrategy<Person>(buildHistory, _buildLog, processor);
+            var sut = new DefaultExecuteStrategy<Person>(buildHistory, _buildLog, processor);
 
             processor.GetBuildCapability(buildConfiguration, buildHistory, Arg.Any<BuildRequirement>(),
                     typeof(Person))
                 .Returns(typeCapability);
-            processor.Build(target, typeof(Person), args).Returns(expected);
+            processor.Build(sut, typeof(Person), args).Returns(expected);
             buildConfiguration.PropertyResolver.Returns(propertyResolver);
 
-            target.Initialize(buildConfiguration);
+            sut.Initialize(buildConfiguration);
 
-            var actual = target.Create(args);
+            var actual = sut.Create(args);
 
             actual.Should().BeSameAs(expected);
         }
@@ -152,19 +152,19 @@
             buildConfiguration.TypeResolver.Returns(typeResolver);
             typeResolver.GetBuildType(buildConfiguration, typeof(Person)).Returns(x => x.Arg<Type>());
 
-            var target = new DefaultExecuteStrategy<Person>(buildHistory, _buildLog, processor);
+            var sut = new DefaultExecuteStrategy<Person>(buildHistory, _buildLog, processor);
 
             processor.GetBuildCapability(buildConfiguration, buildHistory, Arg.Any<BuildRequirement>(),
                     typeof(Person))
                 .Returns(typeCapability);
             constructorResolver.Resolve(typeof(Person))
                 .Returns(typeof(Person).GetConstructors().Single(x => x.GetParameters().Length == 0));
-            processor.Build(target, typeof(Person), null).Returns(expected);
-            processor.Populate(target, expected).Returns(expected);
+            processor.Build(sut, typeof(Person), null).Returns(expected);
+            processor.Populate(sut, expected).Returns(expected);
 
-            target.Initialize(buildConfiguration);
+            sut.Initialize(buildConfiguration);
 
-            var actual = target.Create();
+            var actual = sut.Create();
 
             actual.Should().BeSameAs(expected);
         }
@@ -196,7 +196,7 @@
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
             var propertyResolver = Substitute.For<IPropertyResolver>();
 
-            var target = new DefaultExecuteStrategy<SlimModel>(buildHistory, _buildLog, processor);
+            var sut = new DefaultExecuteStrategy<SlimModel>(buildHistory, _buildLog, processor);
 
             processor.GetBuildCapability(buildConfiguration, buildHistory, BuildRequirement.Populate,
                     typeof(SlimModel))
@@ -212,16 +212,16 @@
             processor.GetBuildCapability(buildConfiguration, buildHistory, BuildRequirement.Create,
                     Arg.Is<PropertyInfo>(x => x.Name == nameof(SlimModel.Value)))
                 .Returns(valueCapability);
-            processor.Build(target, Arg.Is<PropertyInfo>(x => x.Name == nameof(SlimModel.Value)), null)
+            processor.Build(sut, Arg.Is<PropertyInfo>(x => x.Name == nameof(SlimModel.Value)), null)
                 .Returns(expected);
             processor.GetBuildCapability(buildConfiguration, buildHistory, BuildRequirement.Populate,
                     typeof(Guid))
                 .Returns(valueCapability);
-            processor.Populate(target, model).Returns(model);
+            processor.Populate(sut, model).Returns(model);
 
-            target.Initialize(buildConfiguration);
+            sut.Initialize(buildConfiguration);
 
-            var actual = target.Populate(model);
+            var actual = sut.Populate(model);
 
             actual.Value.Should().Be(expected);
         }

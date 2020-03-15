@@ -18,9 +18,9 @@
             var parameterInfo = typeof(Person).GetConstructors()
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
 
-            var target = new Wrapper(true, value);
+            var sut = new Wrapper(true, value);
 
-            Action action = () => target.Generate(null, parameterInfo);
+            Action action = () => sut.Generate(null, parameterInfo);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -31,9 +31,9 @@
             var value = Guid.NewGuid().ToString();
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
 
-            var target = new Wrapper(true, value);
+            var sut = new Wrapper(true, value);
 
-            Action action = () => target.Generate(null, propertyInfo);
+            Action action = () => sut.Generate(null, propertyInfo);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -43,9 +43,9 @@
         {
             var value = Guid.NewGuid().ToString();
 
-            var target = new Wrapper(true, value);
+            var sut = new Wrapper(true, value);
 
-            Action action = () => target.Generate(null, typeof(Person));
+            Action action = () => sut.Generate(null, typeof(Person));
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -58,12 +58,12 @@
 
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
-            var target = new Wrapper(true, value);
+            var sut = new Wrapper(true, value);
 
-            target.Generate(executeStrategy, parameterInfo);
+            sut.Generate(executeStrategy, parameterInfo);
 
-            target.TypeUsed.Should().Be(parameterInfo.ParameterType);
-            target.ReferenceNameUsed.Should().Be(parameterInfo.Name);
+            sut.TypeUsed.Should().Be(parameterInfo.ParameterType);
+            sut.ReferenceNameUsed.Should().Be(parameterInfo.Name);
         }
 
         [Theory]
@@ -74,12 +74,12 @@
 
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
-            var target = new Wrapper(true, value);
+            var sut = new Wrapper(true, value);
 
-            target.Generate(executeStrategy, propertyInfo);
+            sut.Generate(executeStrategy, propertyInfo);
 
-            target.TypeUsed.Should().Be(propertyInfo.PropertyType);
-            target.ReferenceNameUsed.Should().Be(propertyInfo.Name);
+            sut.TypeUsed.Should().Be(propertyInfo.PropertyType);
+            sut.ReferenceNameUsed.Should().Be(propertyInfo.Name);
         }
 
         [Fact]
@@ -89,9 +89,9 @@
 
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
-            var target = new Wrapper(true, value);
+            var sut = new Wrapper(true, value);
 
-            Action action = () => target.Generate(executeStrategy, (ParameterInfo) null);
+            Action action = () => sut.Generate(executeStrategy, (ParameterInfo) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -103,9 +103,9 @@
 
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
-            var target = new Wrapper(true, value);
+            var sut = new Wrapper(true, value);
 
-            Action action = () => target.Generate(executeStrategy, (PropertyInfo) null);
+            Action action = () => sut.Generate(executeStrategy, (PropertyInfo) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -117,9 +117,9 @@
 
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
-            var target = new Wrapper(true, value);
+            var sut = new Wrapper(true, value);
 
-            Action action = () => target.Generate(executeStrategy, (Type) null);
+            Action action = () => sut.Generate(executeStrategy, (Type) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -127,10 +127,10 @@
         [Fact]
         public void GeneratorReturnsCachedInstance()
         {
-            var target = new Wrapper(true, null);
+            var sut = new Wrapper(true, null);
 
-            var first = target.RandomGenerator;
-            var second = target.RandomGenerator;
+            var first = sut.RandomGenerator;
+            var second = sut.RandomGenerator;
 
             first.Should().BeSameAs(second);
         }
@@ -142,9 +142,9 @@
             var parameterInfo = typeof(Person).GetConstructors()
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
 
-            var target = new Wrapper(true, value);
+            var sut = new Wrapper(true, value);
 
-            Action action = () => target.IsMatch(null, parameterInfo);
+            Action action = () => sut.IsMatch(null, parameterInfo);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -155,9 +155,9 @@
             var value = Guid.NewGuid().ToString();
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
 
-            var target = new Wrapper(true, value);
+            var sut = new Wrapper(true, value);
 
-            Action action = () => target.IsMatch(null, propertyInfo);
+            Action action = () => sut.IsMatch(null, propertyInfo);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -167,9 +167,9 @@
         {
             var value = Guid.NewGuid().ToString();
 
-            var target = new Wrapper(true, value);
+            var sut = new Wrapper(true, value);
 
-            Action action = () => target.IsMatch(null, typeof(string));
+            Action action = () => sut.IsMatch(null, typeof(string));
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -182,12 +182,12 @@
 
             var buildChain = Substitute.For<IBuildChain>();
 
-            var target = new Wrapper(true, value);
+            var sut = new Wrapper(true, value);
 
-            target.IsMatch(buildChain, parameterInfo);
+            sut.IsMatch(buildChain, parameterInfo);
 
-            target.TypeUsed.Should().Be(parameterInfo.ParameterType);
-            target.ReferenceNameUsed.Should().Be(parameterInfo.Name);
+            sut.TypeUsed.Should().Be(parameterInfo.ParameterType);
+            sut.ReferenceNameUsed.Should().Be(parameterInfo.Name);
         }
 
         [Theory]
@@ -198,12 +198,12 @@
 
             var buildChain = Substitute.For<IBuildChain>();
 
-            var target = new Wrapper(true, value);
+            var sut = new Wrapper(true, value);
 
-            target.IsMatch(buildChain, parameterInfo);
+            sut.IsMatch(buildChain, parameterInfo);
 
-            target.TypeUsed.Should().Be(parameterInfo.PropertyType);
-            target.ReferenceNameUsed.Should().Be(parameterInfo.Name);
+            sut.TypeUsed.Should().Be(parameterInfo.PropertyType);
+            sut.ReferenceNameUsed.Should().Be(parameterInfo.Name);
         }
 
         [Fact]
@@ -213,9 +213,9 @@
 
             var buildChain = Substitute.For<IBuildChain>();
 
-            var target = new Wrapper(true, value);
+            var sut = new Wrapper(true, value);
 
-            Action action = () => target.IsMatch(buildChain, (ParameterInfo) null);
+            Action action = () => sut.IsMatch(buildChain, (ParameterInfo) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -227,9 +227,9 @@
 
             var buildChain = Substitute.For<IBuildChain>();
 
-            var target = new Wrapper(true, value);
+            var sut = new Wrapper(true, value);
 
-            Action action = () => target.IsMatch(buildChain, (PropertyInfo) null);
+            Action action = () => sut.IsMatch(buildChain, (PropertyInfo) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -241,9 +241,9 @@
 
             var buildChain = Substitute.For<IBuildChain>();
 
-            var target = new Wrapper(true, value);
+            var sut = new Wrapper(true, value);
 
-            Action action = () => target.IsMatch(buildChain, (Type) null);
+            Action action = () => sut.IsMatch(buildChain, (Type) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -256,9 +256,9 @@
 
             executeStrategy.BuildChain.Returns(buildStrategy);
 
-            var target = Substitute.ForPartsOf<ValueGeneratorBase>();
+            var sut = Substitute.ForPartsOf<ValueGeneratorBase>();
 
-            var actual = target.Priority;
+            var actual = sut.Priority;
 
             actual.Should().Be(int.MinValue);
         }

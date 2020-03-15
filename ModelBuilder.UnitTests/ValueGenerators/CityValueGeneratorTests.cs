@@ -26,9 +26,9 @@
 
             buildChain.Push(address);
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var actual = target.RunGenerate(typeof(string), "city", executeStrategy) as string;
+            var actual = sut.RunGenerate(typeof(string), "city", executeStrategy) as string;
 
             actual.Should().NotBeNullOrWhiteSpace();
 
@@ -53,9 +53,9 @@
 
             buildChain.Push(address);
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var actual = target.RunGenerate(typeof(string), "city", executeStrategy) as string;
+            var actual = sut.RunGenerate(typeof(string), "city", executeStrategy) as string;
 
             actual.Should().NotBeNullOrWhiteSpace();
 
@@ -78,9 +78,9 @@
 
             buildChain.Push(address);
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var actual = target.RunGenerate(typeof(string), "city", executeStrategy) as string;
+            var actual = sut.RunGenerate(typeof(string), "city", executeStrategy) as string;
 
             TestData.Locations.Select(x => x.City).Should().Contain(actual);
         }
@@ -99,9 +99,9 @@
 
             buildChain.Push(address);
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var actual = target.RunGenerate(typeof(string), "city", executeStrategy) as string;
+            var actual = sut.RunGenerate(typeof(string), "city", executeStrategy) as string;
 
             actual.Should().NotBeNullOrWhiteSpace();
 
@@ -126,9 +126,9 @@
 
             buildChain.Push(address);
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var actual = target.RunGenerate(typeof(string), "city", executeStrategy) as string;
+            var actual = sut.RunGenerate(typeof(string), "city", executeStrategy) as string;
 
             actual.Should().NotBeNullOrWhiteSpace();
 
@@ -151,9 +151,9 @@
 
             buildChain.Push(address);
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var actual = target.RunGenerate(typeof(string), "city", executeStrategy) as string;
+            var actual = sut.RunGenerate(typeof(string), "city", executeStrategy) as string;
 
             TestData.Locations.Select(x => x.City).Should().Contain(actual);
         }
@@ -169,15 +169,15 @@
 
             buildChain.Push(address);
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var first = (string) target.RunGenerate(typeof(string), "city", executeStrategy);
+            var first = (string) sut.RunGenerate(typeof(string), "city", executeStrategy);
 
             var second = first;
 
             for (var index = 0; index < 1000; index++)
             {
-                second = (string) target.RunGenerate(typeof(string), "city", executeStrategy);
+                second = (string) sut.RunGenerate(typeof(string), "city", executeStrategy);
 
                 if (string.Equals(first, second, StringComparison.OrdinalIgnoreCase) == false)
                 {
@@ -199,9 +199,9 @@
 
             buildChain.Push(address);
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var actual = target.RunGenerate(typeof(string), "city", executeStrategy);
+            var actual = sut.RunGenerate(typeof(string), "city", executeStrategy);
 
             actual.Should().BeOfType<string>();
             actual.As<string>().Should().NotBeNullOrWhiteSpace();
@@ -221,9 +221,9 @@
 
             buildChain.Push(address);
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var actual = (string) target.RunGenerate(typeof(string), referenceName, executeStrategy);
+            var actual = (string) sut.RunGenerate(typeof(string), referenceName, executeStrategy);
 
             actual.Should().NotBeNullOrEmpty();
         }
@@ -231,10 +231,10 @@
         [Fact]
         public void HasHigherPriorityThanStringValueGenerator()
         {
-            var target = new Wrapper();
+            var sut = new Wrapper();
             var other = new StringValueGenerator();
 
-            target.Priority.Should().BeGreaterThan(other.Priority);
+            sut.Priority.Should().BeGreaterThan(other.Priority);
         }
 
         [Theory]
@@ -251,9 +251,9 @@
 
             buildChain.Push(address);
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var actual = target.RunIsMatch(type, referenceName, buildChain);
+            var actual = sut.RunIsMatch(type, referenceName, buildChain);
 
             actual.Should().Be(expected);
         }
@@ -263,10 +263,10 @@
         {
             var type = typeof(string);
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-            Action action = () => target.RunIsMatch(type, null, null);
+            Action action = () => sut.RunIsMatch(type, null, null);
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
             action.Should().Throw<ArgumentNullException>();
@@ -277,10 +277,10 @@
         {
             var buildChain = Substitute.For<IBuildChain>();
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-            Action action = () => target.RunIsMatch(null, null, buildChain);
+            Action action = () => sut.RunIsMatch(null, null, buildChain);
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
             action.Should().Throw<ArgumentNullException>();

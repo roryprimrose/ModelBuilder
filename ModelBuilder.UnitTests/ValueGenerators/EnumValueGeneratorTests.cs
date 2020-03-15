@@ -21,11 +21,11 @@
             var nullFound = false;
             var valueFound = false;
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
             for (var index = 0; index < 1000; index++)
             {
-                var value = (SingleEnum?) target.RunGenerate(typeof(SingleEnum?), null, executeStrategy);
+                var value = (SingleEnum?) sut.RunGenerate(typeof(SingleEnum?), null, executeStrategy);
 
                 if (value == null)
                 {
@@ -54,9 +54,9 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var actual = target.RunGenerate(typeof(SingleEnum), null, executeStrategy);
+            var actual = sut.RunGenerate(typeof(SingleEnum), null, executeStrategy);
 
             actual.Should().BeOfType<SingleEnum>();
             actual.Should().Be(SingleEnum.First);
@@ -70,9 +70,9 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var first = target.RunGenerate(typeof(FileAttributes), null, executeStrategy);
+            var first = sut.RunGenerate(typeof(FileAttributes), null, executeStrategy);
 
             first.Should().BeOfType<FileAttributes>();
 
@@ -80,7 +80,7 @@
 
             for (var index = 0; index < 1000; index++)
             {
-                second = target.RunGenerate(typeof(FileAttributes), null, executeStrategy);
+                second = sut.RunGenerate(typeof(FileAttributes), null, executeStrategy);
 
                 if (first != second)
                 {
@@ -99,9 +99,9 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var first = target.RunGenerate(typeof(BigValues), null, executeStrategy);
+            var first = sut.RunGenerate(typeof(BigValues), null, executeStrategy);
 
             first.Should().BeOfType<BigValues>();
 
@@ -112,7 +112,7 @@
 
             for (var index = 0; index < 1000; index++)
             {
-                second = target.RunGenerate(typeof(BigValues), null, executeStrategy);
+                second = sut.RunGenerate(typeof(BigValues), null, executeStrategy);
 
                 if (first != second)
                 {
@@ -131,9 +131,9 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var first = target.RunGenerate(typeof(BigEnum), null, executeStrategy);
+            var first = sut.RunGenerate(typeof(BigEnum), null, executeStrategy);
 
             first.Should().BeOfType<BigEnum>();
             Enum.IsDefined(typeof(BigEnum), first).Should().BeTrue();
@@ -142,7 +142,7 @@
 
             for (var index = 0; index < 1000; index++)
             {
-                var second = target.RunGenerate(typeof(BigEnum), null, executeStrategy);
+                var second = sut.RunGenerate(typeof(BigEnum), null, executeStrategy);
 
                 if (first != second)
                 {
@@ -163,14 +163,14 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
             var first = false;
             var second = false;
             var third = false;
 
             for (var index = 0; index < 1000; index++)
             {
-                var actual = (SmallFlags) target.RunGenerate(typeof(SmallFlags), null, executeStrategy);
+                var actual = (SmallFlags) sut.RunGenerate(typeof(SmallFlags), null, executeStrategy);
 
                 if (actual == SmallFlags.First)
                 {
@@ -206,9 +206,9 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var actual = target.RunGenerate(typeof(NoValues), null, executeStrategy);
+            var actual = sut.RunGenerate(typeof(NoValues), null, executeStrategy);
 
             actual.Should().BeOfType<NoValues>();
             actual.Should().Be((NoValues) 0);
@@ -225,9 +225,9 @@
         [InlineData(typeof(BigValues?), true)]
         public void IsMatchTest(Type type, bool expected)
         {
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var actual = target.RunIsMatch(type, null, null);
+            var actual = sut.RunIsMatch(type, null, null);
 
             actual.Should().Be(expected);
         }
@@ -235,9 +235,9 @@
         [Fact]
         public void IsMatchThrowsExceptionWithNullType()
         {
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            Action action = () => target.RunIsMatch(null, null, null);
+            Action action = () => sut.RunIsMatch(null, null, null);
 
             action.Should().Throw<ArgumentNullException>();
         }

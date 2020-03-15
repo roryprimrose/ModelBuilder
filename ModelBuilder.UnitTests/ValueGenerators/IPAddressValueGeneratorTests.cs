@@ -18,9 +18,9 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var actual = target.RunGenerate(typeof(IPAddress), null, executeStrategy);
+            var actual = sut.RunGenerate(typeof(IPAddress), null, executeStrategy);
 
             actual.Should().NotBeNull();
             actual.As<IPAddress>().GetAddressBytes().Any(x => x != 0).Should().BeTrue();
@@ -34,9 +34,9 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var actual = target.RunGenerate(typeof(string), "IpAddress", executeStrategy);
+            var actual = sut.RunGenerate(typeof(string), "IpAddress", executeStrategy);
 
             actual.Should().NotBeNull();
             actual.As<string>().Should().MatchRegex(@"\d+(\.\d+){3}");
@@ -53,9 +53,9 @@
         [InlineData(typeof(IPAddress), (string) null, true)]
         public void IsMatchReturnsWhetherScenarioIsValidTest(Type type, string referenceName, bool supported)
         {
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var actual = target.RunIsMatch(type, referenceName, null);
+            var actual = sut.RunIsMatch(type, referenceName, null);
 
             actual.Should().Be(supported);
         }
@@ -63,9 +63,9 @@
         [Fact]
         public void IsMatchThrowsExceptionWithNullType()
         {
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            Action action = () => target.RunIsMatch(null, null, null);
+            Action action = () => sut.RunIsMatch(null, null, null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -73,10 +73,10 @@
         [Fact]
         public void PriorityIsHigherThanStringValueGeneratorPriority()
         {
-            var target = new Wrapper();
+            var sut = new Wrapper();
             var other = new StringValueGenerator();
 
-            target.Priority.Should().BeGreaterThan(other.Priority);
+            sut.Priority.Should().BeGreaterThan(other.Priority);
         }
 
         private class Wrapper : IPAddressValueGenerator

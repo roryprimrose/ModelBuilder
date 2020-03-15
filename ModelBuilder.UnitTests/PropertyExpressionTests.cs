@@ -19,9 +19,9 @@
         [InlineData("email_address", true)]
         public void EmailEvaluatesValueTest(string value, bool expected)
         {
-            var target = PropertyExpression.Email;
+            var sut = PropertyExpression.Email;
 
-            var actual = target.IsMatch(value);
+            var actual = sut.IsMatch(value);
 
             actual.Should().Be(expected);
         }
@@ -46,9 +46,9 @@
         [InlineData("given_Name", true)]
         public void FirstNameEvaluatesValueTest(string value, bool expected)
         {
-            var target = PropertyExpression.FirstName;
+            var sut = PropertyExpression.FirstName;
 
-            var actual = target.IsMatch(value);
+            var actual = sut.IsMatch(value);
 
             actual.Should().Be(expected);
         }
@@ -61,9 +61,9 @@
         [InlineData("sex", true)]
         public void GenderEvaluatesValueTest(string value, bool expected)
         {
-            var target = PropertyExpression.Gender;
+            var sut = PropertyExpression.Gender;
 
-            var actual = target.IsMatch(value);
+            var actual = sut.IsMatch(value);
 
             actual.Should().Be(expected);
         }
@@ -82,9 +82,9 @@
         [InlineData("Surname", true)]
         public void LastNameEvaluatesValueTest(string value, bool expected)
         {
-            var target = PropertyExpression.LastName;
+            var sut = PropertyExpression.LastName;
 
-            var actual = target.IsMatch(value);
+            var actual = sut.IsMatch(value);
 
             actual.Should().Be(expected);
         }

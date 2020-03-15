@@ -22,9 +22,9 @@ namespace ModelBuilder.UnitTests.ValueGenerators
                 YearStarted = null
             };
 
-            var target = new Wrapper<int?>(PropertyExpression.FirstName, new Regex("YearStarted"));
+            var sut = new Wrapper<int?>(PropertyExpression.FirstName, new Regex("YearStarted"));
 
-            var actual = target.ReadSourceValue(context);
+            var actual = sut.ReadSourceValue(context);
 
             actual.Should().NotHaveValue();
         }
@@ -34,9 +34,9 @@ namespace ModelBuilder.UnitTests.ValueGenerators
         {
             var context = new Person();
 
-            var target = new Wrapper<string>(PropertyExpression.FirstName, PropertyExpression.LastName);
+            var sut = new Wrapper<string>(PropertyExpression.FirstName, PropertyExpression.LastName);
 
-            var actual = target.ReadSourceValue(context);
+            var actual = sut.ReadSourceValue(context);
 
             actual.Should().BeNull();
         }
@@ -46,9 +46,9 @@ namespace ModelBuilder.UnitTests.ValueGenerators
         {
             var context = new SlimModel();
 
-            var target = new Wrapper<string>(PropertyExpression.FirstName, PropertyExpression.LastName);
+            var sut = new Wrapper<string>(PropertyExpression.FirstName, PropertyExpression.LastName);
 
-            var actual = target.ReadSourceValue(context);
+            var actual = sut.ReadSourceValue(context);
 
             actual.Should().BeNull();
         }
@@ -61,9 +61,9 @@ namespace ModelBuilder.UnitTests.ValueGenerators
                 Priority = Environment.TickCount
             };
 
-            var target = new Wrapper<int>(PropertyExpression.FirstName, new Regex("Priority"));
+            var sut = new Wrapper<int>(PropertyExpression.FirstName, new Regex("Priority"));
 
-            var actual = target.ReadSourceValue(context);
+            var actual = sut.ReadSourceValue(context);
 
             actual.Should().Be(context.Priority);
         }
@@ -76,9 +76,9 @@ namespace ModelBuilder.UnitTests.ValueGenerators
                 YearStarted = Environment.TickCount
             };
 
-            var target = new Wrapper<int?>(PropertyExpression.FirstName, new Regex("YearStarted"));
+            var sut = new Wrapper<int?>(PropertyExpression.FirstName, new Regex("YearStarted"));
 
-            var actual = target.ReadSourceValue(context);
+            var actual = sut.ReadSourceValue(context);
 
             actual.Should().Be(context.YearStarted);
         }
@@ -94,9 +94,9 @@ namespace ModelBuilder.UnitTests.ValueGenerators
                 Gender = gender
             };
 
-            var target = new Wrapper<string>(PropertyExpression.FirstName, PropertyExpression.Gender);
+            var sut = new Wrapper<string>(PropertyExpression.FirstName, PropertyExpression.Gender);
 
-            var actual = target.ReadSourceValue(context);
+            var actual = sut.ReadSourceValue(context);
 
             actual.Should().Be(expected);
         }
@@ -109,9 +109,9 @@ namespace ModelBuilder.UnitTests.ValueGenerators
                 LastName = Guid.NewGuid().ToString()
             };
 
-            var target = new Wrapper<string>(PropertyExpression.FirstName, PropertyExpression.LastName);
+            var sut = new Wrapper<string>(PropertyExpression.FirstName, PropertyExpression.LastName);
 
-            var actual = target.ReadSourceValue(context);
+            var actual = sut.ReadSourceValue(context);
 
             actual.Should().Be(context.LastName);
         }
@@ -121,9 +121,9 @@ namespace ModelBuilder.UnitTests.ValueGenerators
         {
             var context = new Person();
 
-            var target = new Wrapper<string>(PropertyExpression.FirstName, (Regex) null, (Type) null);
+            var sut = new Wrapper<string>(PropertyExpression.FirstName, (Regex) null, (Type) null);
 
-            Action action = () => target.ReadSourceValue(context);
+            Action action = () => sut.ReadSourceValue(context);
 
             action.Should().Throw<InvalidOperationException>();
         }
@@ -131,10 +131,10 @@ namespace ModelBuilder.UnitTests.ValueGenerators
         [Fact]
         public void GetSourceValueThrowsExceptionWithNullContext()
         {
-            var target = new Wrapper<string>(PropertyExpression.FirstName, PropertyExpression.LastName);
+            var sut = new Wrapper<string>(PropertyExpression.FirstName, PropertyExpression.LastName);
 
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-            Action action = () => target.ReadSourceValue(null);
+            Action action = () => sut.ReadSourceValue(null);
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
             action.Should().Throw<ArgumentNullException>();
@@ -143,13 +143,13 @@ namespace ModelBuilder.UnitTests.ValueGenerators
         [Fact]
         public void GetValueThrowsExceptionWithNullContext()
         {
-            var target = new Wrapper<string>(
+            var sut = new Wrapper<string>(
                 PropertyExpression.FirstName,
                 PropertyExpression.FirstName,
                 (Type) null);
 
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-            Action action = () => target.ReadValue(PropertyExpression.LastName, null);
+            Action action = () => sut.ReadValue(PropertyExpression.LastName, null);
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
             action.Should().Throw<ArgumentNullException>();
@@ -160,13 +160,13 @@ namespace ModelBuilder.UnitTests.ValueGenerators
         {
             var context = new Person();
 
-            var target = new Wrapper<string>(
+            var sut = new Wrapper<string>(
                 PropertyExpression.FirstName,
                 PropertyExpression.FirstName,
                 (Type) null);
 
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-            Action action = () => target.ReadValue(null, context);
+            Action action = () => sut.ReadValue(null, context);
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
             action.Should().Throw<ArgumentNullException>();
@@ -314,9 +314,9 @@ namespace ModelBuilder.UnitTests.ValueGenerators
                 buildChain.Push(context);
             }
 
-            var target = new Wrapper<string>(PropertyExpression.FirstName, PropertyExpression.Gender);
+            var sut = new Wrapper<string>(PropertyExpression.FirstName, PropertyExpression.Gender);
 
-            var actual = target.RunIsMatch(type, referenceName, buildChain);
+            var actual = sut.RunIsMatch(type, referenceName, buildChain);
 
             actual.Should().Be(expected);
         }
@@ -330,10 +330,10 @@ namespace ModelBuilder.UnitTests.ValueGenerators
             buildChain.Push(context);
 
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-            var target = new Wrapper<string>(PropertyExpression.FirstName, (Regex) null);
+            var sut = new Wrapper<string>(PropertyExpression.FirstName, (Regex) null);
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
-            var actual = target.RunIsMatch(typeof(string), "FirstName", buildChain);
+            var actual = sut.RunIsMatch(typeof(string), "FirstName", buildChain);
 
             actual.Should().BeTrue();
         }
@@ -346,9 +346,9 @@ namespace ModelBuilder.UnitTests.ValueGenerators
 
             buildChain.Push(context);
 
-            var target = new Wrapper<string>(PropertyExpression.FirstName, typeof(string));
+            var sut = new Wrapper<string>(PropertyExpression.FirstName, typeof(string));
 
-            var actual = target.RunIsMatch(typeof(string), "FirstName", buildChain);
+            var actual = sut.RunIsMatch(typeof(string), "FirstName", buildChain);
 
             actual.Should().BeTrue();
         }
@@ -356,10 +356,10 @@ namespace ModelBuilder.UnitTests.ValueGenerators
         [Fact]
         public void IsMatchThrowsExceptionWithNullBuildChain()
         {
-            var target = new Wrapper<string>(PropertyExpression.FirstName, typeof(string));
+            var sut = new Wrapper<string>(PropertyExpression.FirstName, typeof(string));
 
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-            Action action = () => target.RunIsMatch(typeof(string), "FirstName", null);
+            Action action = () => sut.RunIsMatch(typeof(string), "FirstName", null);
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
             action.Should().Throw<ArgumentNullException>();
@@ -373,10 +373,10 @@ namespace ModelBuilder.UnitTests.ValueGenerators
 
             buildChain.Push(context);
 
-            var target = new Wrapper<string>(PropertyExpression.FirstName, typeof(string));
+            var sut = new Wrapper<string>(PropertyExpression.FirstName, typeof(string));
 
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-            Action action = () => target.RunIsMatch(null, "FirstName", buildChain);
+            Action action = () => sut.RunIsMatch(null, "FirstName", buildChain);
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
             action.Should().Throw<ArgumentNullException>();

@@ -22,13 +22,13 @@
         [Fact]
         public void AddConfigurationModuleAddsRuleToCompiler()
         {
-            var target = new BuildConfiguration();
+            var sut = new BuildConfiguration();
 
-            var config = target.UsingModule<TestConfigurationModule>();
+            var config = sut.UsingModule<TestConfigurationModule>();
 
-            config.Should().BeSameAs(target);
+            config.Should().BeSameAs(sut);
 
-            var actual = target.PostBuildActions.OfType<DummyPostBuildAction>();
+            var actual = sut.PostBuildActions.OfType<DummyPostBuildAction>();
 
             actual.Should().NotBeEmpty();
         }
@@ -44,11 +44,11 @@
         [Fact]
         public void AddCreationRuleAddsRuleToCompiler()
         {
-            var target = new BuildConfiguration();
+            var sut = new BuildConfiguration();
 
-            target.AddCreationRule<DummyCreationRule>();
+            sut.AddCreationRule<DummyCreationRule>();
 
-            var actual = target.CreationRules.Single();
+            var actual = sut.CreationRules.Single();
 
             actual.Should().BeOfType<DummyCreationRule>();
         }
@@ -68,11 +68,11 @@
             var value = Guid.NewGuid().ToString();
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
 
-            var target = new BuildConfiguration();
+            var sut = new BuildConfiguration();
 
-            target.AddCreationRule<Person>(x => x.FirstName, priority, value);
+            sut.AddCreationRule<Person>(x => x.FirstName, priority, value);
 
-            var rule = target.CreationRules.Single();
+            var rule = sut.CreationRules.Single();
 
             rule.Priority.Should().Be(priority);
 
@@ -99,9 +99,9 @@
             var priority = Environment.TickCount;
             var value = Guid.NewGuid().ToString();
 
-            var target = new BuildConfiguration();
+            var sut = new BuildConfiguration();
 
-            Action action = () => target.AddCreationRule((Expression<Func<Person, object>>) null, priority, value);
+            Action action = () => sut.AddCreationRule((Expression<Func<Person, object>>) null, priority, value);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -109,11 +109,11 @@
         [Fact]
         public void AddExecuteOrderRuleAddsRuleToCompiler()
         {
-            var target = new BuildConfiguration();
+            var sut = new BuildConfiguration();
 
-            target.AddExecuteOrderRule<DummyExecuteOrderRule>();
+            sut.AddExecuteOrderRule<DummyExecuteOrderRule>();
 
-            var actual = target.ExecuteOrderRules.Single();
+            var actual = sut.ExecuteOrderRules.Single();
 
             actual.Should().BeOfType<DummyExecuteOrderRule>();
         }
@@ -131,11 +131,11 @@
         {
             var priority = Environment.TickCount;
 
-            var target = new BuildConfiguration();
+            var sut = new BuildConfiguration();
 
-            target.AddExecuteOrderRule<Person>(x => x.FirstName, priority);
+            sut.AddExecuteOrderRule<Person>(x => x.FirstName, priority);
 
-            var rule = target.ExecuteOrderRules.Single();
+            var rule = sut.ExecuteOrderRules.Single();
 
             rule.Priority.Should().Be(priority);
 
@@ -162,9 +162,9 @@
         {
             var priority = Environment.TickCount;
 
-            var target = new BuildConfiguration();
+            var sut = new BuildConfiguration();
 
-            Action action = () => target.AddExecuteOrderRule((Expression<Func<Person, object>>) null, priority);
+            Action action = () => sut.AddExecuteOrderRule((Expression<Func<Person, object>>) null, priority);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -174,11 +174,11 @@
         {
             var priority = Environment.TickCount;
 
-            var target = new BuildConfiguration();
+            var sut = new BuildConfiguration();
 
-            target.AddExecuteOrderRule(x => x.Name == nameof(Person.FirstName), priority);
+            sut.AddExecuteOrderRule(x => x.Name == nameof(Person.FirstName), priority);
 
-            var rule = target.ExecuteOrderRules.Single();
+            var rule = sut.ExecuteOrderRules.Single();
 
             rule.Priority.Should().Be(priority);
 
@@ -206,9 +206,9 @@
         {
             var priority = Environment.TickCount;
 
-            var target = new BuildConfiguration();
+            var sut = new BuildConfiguration();
 
-            Action action = () => target.AddExecuteOrderRule((Predicate<PropertyInfo>) null, priority);
+            Action action = () => sut.AddExecuteOrderRule((Predicate<PropertyInfo>) null, priority);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -218,13 +218,13 @@
         {
             var priority = Environment.TickCount;
 
-            var target = new BuildConfiguration();
+            var sut = new BuildConfiguration();
 
-            var actual = target.AddExecuteOrderRule(PropertyExpression.FirstName, priority);
+            var actual = sut.AddExecuteOrderRule(PropertyExpression.FirstName, priority);
 
-            actual.Should().Be(target);
+            actual.Should().Be(sut);
 
-            var rule = target.ExecuteOrderRules.Single();
+            var rule = sut.ExecuteOrderRules.Single();
 
             rule.Should().BeOfType<RegexExecuteOrderRule>();
         }
@@ -245,9 +245,9 @@
         {
             var priority = Environment.TickCount;
 
-            var target = new BuildConfiguration();
+            var sut = new BuildConfiguration();
 
-            Action action = () => target.AddExecuteOrderRule((Regex) null, priority);
+            Action action = () => sut.AddExecuteOrderRule((Regex) null, priority);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -255,11 +255,11 @@
         [Fact]
         public void AddIgnoreRuleAddsRuleToCompiler()
         {
-            var target = new BuildConfiguration();
+            var sut = new BuildConfiguration();
 
-            target.AddIgnoreRule<DummyIgnoreRule>();
+            sut.AddIgnoreRule<DummyIgnoreRule>();
 
-            var actual = target.IgnoreRules.Single();
+            var actual = sut.IgnoreRules.Single();
 
             actual.Should().BeOfType<DummyIgnoreRule>();
         }
@@ -275,13 +275,13 @@
         [Fact]
         public void AddIgnoreRuleWithExpressionAddsRuleToCompiler()
         {
-            var target = new BuildConfiguration();
+            var sut = new BuildConfiguration();
 
-            var actual = target.AddIgnoreRule<Person>(x => x.FirstName);
+            var actual = sut.AddIgnoreRule<Person>(x => x.FirstName);
 
-            actual.Should().Be(target);
+            actual.Should().Be(sut);
 
-            var rule = target.IgnoreRules.Single();
+            var rule = sut.IgnoreRules.Single();
 
             rule.Should().BeOfType<ExpressionIgnoreRule<Person>>();
         }
@@ -297,9 +297,9 @@
         [Fact]
         public void AddIgnoreRuleWithExpressionThrowsExceptionWithNullExpression()
         {
-            var target = new BuildConfiguration();
+            var sut = new BuildConfiguration();
 
-            Action action = () => target.AddIgnoreRule((Expression<Func<Person, object>>) null);
+            Action action = () => sut.AddIgnoreRule((Expression<Func<Person, object>>) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -307,13 +307,13 @@
         [Fact]
         public void AddIgnoreRuleWithPredicateAddsRuleToCompiler()
         {
-            var target = new BuildConfiguration();
+            var sut = new BuildConfiguration();
 
-            var actual = target.AddIgnoreRule(x => x.PropertyType == typeof(string));
+            var actual = sut.AddIgnoreRule(x => x.PropertyType == typeof(string));
 
-            actual.Should().Be(target);
+            actual.Should().Be(sut);
 
-            var rule = target.IgnoreRules.Single();
+            var rule = sut.IgnoreRules.Single();
 
             rule.Should().BeOfType<PredicateIgnoreRule>();
         }
@@ -330,9 +330,9 @@
         [Fact]
         public void AddIgnoreRuleWithPredicateThrowsExceptionWithNullExpression()
         {
-            var target = new BuildConfiguration();
+            var sut = new BuildConfiguration();
 
-            Action action = () => target.AddIgnoreRule((Predicate<PropertyInfo>) null);
+            Action action = () => sut.AddIgnoreRule((Predicate<PropertyInfo>) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -340,13 +340,13 @@
         [Fact]
         public void AddIgnoreRuleWithRegexAddsRuleToCompiler()
         {
-            var target = new BuildConfiguration();
+            var sut = new BuildConfiguration();
 
-            var actual = target.AddIgnoreRule(PropertyExpression.FirstName);
+            var actual = sut.AddIgnoreRule(PropertyExpression.FirstName);
 
-            actual.Should().Be(target);
+            actual.Should().Be(sut);
 
-            var rule = target.IgnoreRules.Single();
+            var rule = sut.IgnoreRules.Single();
 
             rule.Should().BeOfType<RegexIgnoreRule>();
         }
@@ -362,9 +362,9 @@
         [Fact]
         public void AddIgnoreRuleWithRegexThrowsExceptionWithNullExpression()
         {
-            var target = new BuildConfiguration();
+            var sut = new BuildConfiguration();
 
-            Action action = () => target.AddIgnoreRule((Regex) null);
+            Action action = () => sut.AddIgnoreRule((Regex) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -372,11 +372,11 @@
         [Fact]
         public void AddPostBuildActionAddsRuleToCompiler()
         {
-            var target = new BuildConfiguration();
+            var sut = new BuildConfiguration();
 
-            target.AddPostBuildAction<DummyPostBuildAction>();
+            sut.AddPostBuildAction<DummyPostBuildAction>();
 
-            var actual = target.PostBuildActions.Single();
+            var actual = sut.PostBuildActions.Single();
 
             actual.Should().BeOfType<DummyPostBuildAction>();
         }
@@ -392,11 +392,11 @@
         [Fact]
         public void AddTypeCreatorAddsRuleToCompiler()
         {
-            var target = new BuildConfiguration();
+            var sut = new BuildConfiguration();
 
-            target.AddTypeCreator<DefaultTypeCreator>();
+            sut.AddTypeCreator<DefaultTypeCreator>();
 
-            var actual = target.TypeCreators.Single();
+            var actual = sut.TypeCreators.Single();
 
             actual.Should().BeOfType<DefaultTypeCreator>();
         }
@@ -412,11 +412,11 @@
         [Fact]
         public void AddTypeMappingRuleAddsRuleToCompiler()
         {
-            var target = new BuildConfiguration();
+            var sut = new BuildConfiguration();
 
-            target.AddTypeMappingRule<DummyTypeMappingRule>();
+            sut.AddTypeMappingRule<DummyTypeMappingRule>();
 
-            var actual = target.TypeMappingRules.Single();
+            var actual = sut.TypeMappingRules.Single();
 
             actual.Should().BeOfType<DummyTypeMappingRule>();
         }
@@ -432,11 +432,11 @@
         [Fact]
         public void AddValueGeneratorAddsRuleToCompiler()
         {
-            var target = new BuildConfiguration();
+            var sut = new BuildConfiguration();
 
-            target.AddValueGenerator<StringValueGenerator>();
+            sut.AddValueGenerator<StringValueGenerator>();
 
-            var actual = target.ValueGenerators.Single();
+            var actual = sut.ValueGenerators.Single();
 
             actual.Should().BeOfType<StringValueGenerator>();
         }
@@ -462,9 +462,9 @@
         [Fact]
         public void AddWithCompilerModuleThrowsExceptionWithNullRule()
         {
-            var target = Substitute.For<IBuildConfiguration>();
+            var sut = Substitute.For<IBuildConfiguration>();
 
-            Action action = () => target.Add((IConfigurationModule) null);
+            Action action = () => sut.Add((IConfigurationModule) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -474,11 +474,11 @@
         {
             var module = Substitute.For<IConfigurationModule>();
 
-            var target = new BuildConfiguration();
+            var sut = new BuildConfiguration();
 
-            target.Add(module);
+            sut.Add(module);
 
-            module.Received().Configure(target);
+            module.Received().Configure(sut);
         }
 
         [Fact]
@@ -486,11 +486,11 @@
         {
             var rule = new ExpressionCreationRule<Person>(x => x.FirstName, (object) null, Environment.TickCount);
 
-            var target = new BuildConfiguration();
+            var sut = new BuildConfiguration();
 
-            target.Add(rule);
+            sut.Add(rule);
 
-            target.CreationRules.Should().Contain(rule);
+            sut.CreationRules.Should().Contain(rule);
         }
 
         [Fact]
@@ -506,9 +506,9 @@
         [Fact]
         public void AddWithCreationRuleThrowsExceptionWithNullRule()
         {
-            var target = Substitute.For<IBuildConfiguration>();
+            var sut = Substitute.For<IBuildConfiguration>();
 
-            Action action = () => target.Add((ICreationRule) null);
+            Action action = () => sut.Add((ICreationRule) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -518,11 +518,11 @@
         {
             var rule = new PredicateExecuteOrderRule(x => x.Name == "FirstName", Environment.TickCount);
 
-            var target = new BuildConfiguration();
+            var sut = new BuildConfiguration();
 
-            target.Add(rule);
+            sut.Add(rule);
 
-            target.ExecuteOrderRules.Should().Contain(rule);
+            sut.ExecuteOrderRules.Should().Contain(rule);
         }
 
         [Fact]
@@ -538,9 +538,9 @@
         [Fact]
         public void AddWithExecuteOrderRuleThrowsExceptionWithNullRule()
         {
-            var target = Substitute.For<IBuildConfiguration>();
+            var sut = Substitute.For<IBuildConfiguration>();
 
-            Action action = () => target.Add((PredicateExecuteOrderRule) null);
+            Action action = () => sut.Add((PredicateExecuteOrderRule) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -550,11 +550,11 @@
         {
             var rule = new ExpressionIgnoreRule<Person>(x => x.FirstName);
 
-            var target = new BuildConfiguration();
+            var sut = new BuildConfiguration();
 
-            target.Add(rule);
+            sut.Add(rule);
 
-            target.IgnoreRules.Should().Contain(rule);
+            sut.IgnoreRules.Should().Contain(rule);
         }
 
         [Fact]
@@ -570,9 +570,9 @@
         [Fact]
         public void AddWithIgnoreRuleThrowsExceptionWithNullRule()
         {
-            var target = Substitute.For<IBuildConfiguration>();
+            var sut = Substitute.For<IBuildConfiguration>();
 
-            Action action = () => target.Add((IIgnoreRule) null);
+            Action action = () => sut.Add((IIgnoreRule) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -582,11 +582,11 @@
         {
             var postBuildAction = new DummyPostBuildAction();
 
-            var target = new BuildConfiguration();
+            var sut = new BuildConfiguration();
 
-            target.Add(postBuildAction);
+            sut.Add(postBuildAction);
 
-            target.PostBuildActions.Should().Contain(postBuildAction);
+            sut.PostBuildActions.Should().Contain(postBuildAction);
         }
 
         [Fact]
@@ -602,9 +602,9 @@
         [Fact]
         public void AddWithPostBuildActionThrowsExceptionWithNullRule()
         {
-            var target = Substitute.For<IBuildConfiguration>();
+            var sut = Substitute.For<IBuildConfiguration>();
 
-            Action action = () => target.Add((IPostBuildAction) null);
+            Action action = () => sut.Add((IPostBuildAction) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -614,11 +614,11 @@
         {
             var rule = new DefaultTypeCreator();
 
-            var target = new BuildConfiguration();
+            var sut = new BuildConfiguration();
 
-            target.Add(rule);
+            sut.Add(rule);
 
-            target.TypeCreators.Should().Contain(rule);
+            sut.TypeCreators.Should().Contain(rule);
         }
 
         [Fact]
@@ -634,9 +634,9 @@
         [Fact]
         public void AddWithTypeCreatorThrowsExceptionWithNullRule()
         {
-            var target = Substitute.For<IBuildConfiguration>();
+            var sut = Substitute.For<IBuildConfiguration>();
 
-            Action action = () => target.Add((ITypeCreator) null);
+            Action action = () => sut.Add((ITypeCreator) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -646,11 +646,11 @@
         {
             var rule = new TypeMappingRule(typeof(Stream), typeof(MemoryStream));
 
-            var target = new BuildConfiguration();
+            var sut = new BuildConfiguration();
 
-            target.Add(rule);
+            sut.Add(rule);
 
-            target.TypeMappingRules.Should().Contain(rule);
+            sut.TypeMappingRules.Should().Contain(rule);
         }
 
         [Fact]
@@ -666,9 +666,9 @@
         [Fact]
         public void AddWithTypeMappingRuleThrowsExceptionWithNullRule()
         {
-            var target = Substitute.For<IBuildConfiguration>();
+            var sut = Substitute.For<IBuildConfiguration>();
 
-            Action action = () => target.Add((TypeMappingRule) null);
+            Action action = () => sut.Add((TypeMappingRule) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -678,11 +678,11 @@
         {
             var rule = new StringValueGenerator();
 
-            var target = new BuildConfiguration();
+            var sut = new BuildConfiguration();
 
-            target.Add(rule);
+            sut.Add(rule);
 
-            target.ValueGenerators.Should().Contain(rule);
+            sut.ValueGenerators.Should().Contain(rule);
         }
 
         [Fact]
@@ -698,9 +698,9 @@
         [Fact]
         public void AddWithValueGeneratorThrowsExceptionWithNullRule()
         {
-            var target = Substitute.For<IBuildConfiguration>();
+            var sut = Substitute.For<IBuildConfiguration>();
 
-            Action action = () => target.Add((IValueGenerator) null);
+            Action action = () => sut.Add((IValueGenerator) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -715,13 +715,13 @@
             {
                 generator
             };
-            var target = Substitute.For<IBuildConfiguration>();
+            var sut = Substitute.For<IBuildConfiguration>();
 
-            target.ValueGenerators.Returns(generators);
+            sut.ValueGenerators.Returns(generators);
             generator.IsMatch(Arg.Any<IBuildChain>(), typeof(Guid)).Returns(true);
             generator.Generate(Arg.Any<IExecuteStrategy>(), typeof(Guid)).Returns(value);
 
-            var actual = target.Create(typeof(Guid));
+            var actual = sut.Create(typeof(Guid));
 
             actual.Should().Be(value);
         }
@@ -737,9 +737,9 @@
         [Fact]
         public void CreateThrowsExceptionWithNullInstanceType()
         {
-            var target = Substitute.For<IBuildConfiguration>();
+            var sut = Substitute.For<IBuildConfiguration>();
 
-            Action action = () => target.Create(null);
+            Action action = () => sut.Create(null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -754,13 +754,13 @@
             {
                 generator
             };
-            var target = Substitute.For<IBuildConfiguration>();
+            var sut = Substitute.For<IBuildConfiguration>();
 
-            target.ValueGenerators.Returns(generators);
+            sut.ValueGenerators.Returns(generators);
             generator.IsMatch(Arg.Any<IBuildChain>(), typeof(Guid)).Returns(true);
             generator.Generate(Arg.Any<IExecuteStrategy>(), typeof(Guid)).Returns(value);
 
-            var actual = target.Create<Guid>();
+            var actual = sut.Create<Guid>();
 
             actual.Should().Be(value);
         }
@@ -778,11 +778,11 @@
         {
             var ignoreRules = new Collection<IIgnoreRule>();
 
-            var target = Substitute.For<IBuildConfiguration>();
+            var sut = Substitute.For<IBuildConfiguration>();
 
-            target.IgnoreRules.Returns(ignoreRules);
+            sut.IgnoreRules.Returns(ignoreRules);
 
-            var actual = target.Ignoring<Person>(x => x.Priority);
+            var actual = sut.Ignoring<Person>(x => x.Priority);
 
             actual.IgnoreRules.Should().NotBeEmpty();
             actual.IgnoreRules.Single().Should().BeOfType<ExpressionIgnoreRule<Person>>();
@@ -799,9 +799,9 @@
         [Fact]
         public void IgnoringThrowsExceptionWithNullExpression()
         {
-            var target = Substitute.For<IBuildConfiguration>();
+            var sut = Substitute.For<IBuildConfiguration>();
 
-            Action action = () => target.Ignoring<Person>(null);
+            Action action = () => sut.Ignoring<Person>(null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -811,11 +811,11 @@
         {
             var typeMappings = new Collection<TypeMappingRule>();
 
-            var target = Substitute.For<IBuildConfiguration>();
+            var sut = Substitute.For<IBuildConfiguration>();
 
-            target.TypeMappingRules.Returns(typeMappings);
+            sut.TypeMappingRules.Returns(typeMappings);
 
-            var actual = target.Mapping<Stream, MemoryStream>();
+            var actual = sut.Mapping<Stream, MemoryStream>();
 
             actual.TypeMappingRules.Should().NotBeEmpty();
 
@@ -846,9 +846,9 @@
         [Fact]
         public void PopulateThrowsExceptionWithNullInstance()
         {
-            var target = Substitute.For<IBuildConfiguration>();
+            var sut = Substitute.For<IBuildConfiguration>();
 
-            Action action = () => target.Populate<Person>(null);
+            Action action = () => sut.Populate<Person>(null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -858,9 +858,9 @@
         {
             var expected = new SlimModel();
 
-            var target = new BuildConfiguration().UsingModule<DefaultConfigurationModule>();
+            var sut = new BuildConfiguration().UsingModule<DefaultConfigurationModule>();
 
-            var actual = target.Populate(expected);
+            var actual = sut.Populate(expected);
 
             actual.Should().Be(expected);
             actual.Value.Should().NotBeEmpty();
@@ -869,25 +869,25 @@
         [Fact]
         public void RemoveCreationRuleRemovesMultipleMatchingRulesFromCompiler()
         {
-            var target = new BuildConfiguration();
+            var sut = new BuildConfiguration();
 
-            target.AddCreationRule<DummyCreationRule>();
-            target.AddCreationRule<DummyCreationRule>();
-            target.AddCreationRule<DummyCreationRule>();
-            target.RemoveCreationRule<DummyCreationRule>();
+            sut.AddCreationRule<DummyCreationRule>();
+            sut.AddCreationRule<DummyCreationRule>();
+            sut.AddCreationRule<DummyCreationRule>();
+            sut.RemoveCreationRule<DummyCreationRule>();
 
-            target.CreationRules.Should().BeEmpty();
+            sut.CreationRules.Should().BeEmpty();
         }
 
         [Fact]
         public void RemoveCreationRuleRemovesRulesFromCompiler()
         {
-            var target = new BuildConfiguration();
+            var sut = new BuildConfiguration();
 
-            target.AddCreationRule<DummyCreationRule>();
-            target.RemoveCreationRule<DummyCreationRule>();
+            sut.AddCreationRule<DummyCreationRule>();
+            sut.RemoveCreationRule<DummyCreationRule>();
 
-            target.CreationRules.Should().BeEmpty();
+            sut.CreationRules.Should().BeEmpty();
         }
 
         [Fact]
@@ -901,25 +901,25 @@
         [Fact]
         public void RemoveExecuteOrderRuleRemovesMultipleMatchingRulesFromCompiler()
         {
-            var target = new BuildConfiguration();
+            var sut = new BuildConfiguration();
 
-            target.AddExecuteOrderRule<DummyExecuteOrderRule>();
-            target.AddExecuteOrderRule<DummyExecuteOrderRule>();
-            target.AddExecuteOrderRule<DummyExecuteOrderRule>();
-            target.RemoveExecuteOrderRule<DummyExecuteOrderRule>();
+            sut.AddExecuteOrderRule<DummyExecuteOrderRule>();
+            sut.AddExecuteOrderRule<DummyExecuteOrderRule>();
+            sut.AddExecuteOrderRule<DummyExecuteOrderRule>();
+            sut.RemoveExecuteOrderRule<DummyExecuteOrderRule>();
 
-            target.ExecuteOrderRules.Should().BeEmpty();
+            sut.ExecuteOrderRules.Should().BeEmpty();
         }
 
         [Fact]
         public void RemoveExecuteOrderRuleRemovesRulesFromCompiler()
         {
-            var target = new BuildConfiguration();
+            var sut = new BuildConfiguration();
 
-            target.AddExecuteOrderRule<DummyExecuteOrderRule>();
-            target.RemoveExecuteOrderRule<DummyExecuteOrderRule>();
+            sut.AddExecuteOrderRule<DummyExecuteOrderRule>();
+            sut.RemoveExecuteOrderRule<DummyExecuteOrderRule>();
 
-            target.ExecuteOrderRules.Should().BeEmpty();
+            sut.ExecuteOrderRules.Should().BeEmpty();
         }
 
         [Fact]
@@ -933,25 +933,25 @@
         [Fact]
         public void RemoveIgnoreRuleRemovesMultipleMatchingRulesFromCompiler()
         {
-            var target = new BuildConfiguration();
+            var sut = new BuildConfiguration();
 
-            target.AddIgnoreRule<DummyIgnoreRule>();
-            target.AddIgnoreRule<DummyIgnoreRule>();
-            target.AddIgnoreRule<DummyIgnoreRule>();
-            target.RemoveIgnoreRule<DummyIgnoreRule>();
+            sut.AddIgnoreRule<DummyIgnoreRule>();
+            sut.AddIgnoreRule<DummyIgnoreRule>();
+            sut.AddIgnoreRule<DummyIgnoreRule>();
+            sut.RemoveIgnoreRule<DummyIgnoreRule>();
 
-            target.IgnoreRules.Should().BeEmpty();
+            sut.IgnoreRules.Should().BeEmpty();
         }
 
         [Fact]
         public void RemoveIgnoreRuleRemovesRulesFromCompiler()
         {
-            var target = new BuildConfiguration();
+            var sut = new BuildConfiguration();
 
-            target.AddIgnoreRule<DummyIgnoreRule>();
-            target.RemoveIgnoreRule<DummyIgnoreRule>();
+            sut.AddIgnoreRule<DummyIgnoreRule>();
+            sut.RemoveIgnoreRule<DummyIgnoreRule>();
 
-            target.IgnoreRules.Should().BeEmpty();
+            sut.IgnoreRules.Should().BeEmpty();
         }
 
         [Fact]
@@ -965,25 +965,25 @@
         [Fact]
         public void RemovePostBuildActionRemovesMultipleMatchingRulesFromCompiler()
         {
-            var target = new BuildConfiguration();
+            var sut = new BuildConfiguration();
 
-            target.AddPostBuildAction<DummyPostBuildAction>();
-            target.AddPostBuildAction<DummyPostBuildAction>();
-            target.AddPostBuildAction<DummyPostBuildAction>();
-            target.RemovePostBuildAction<DummyPostBuildAction>();
+            sut.AddPostBuildAction<DummyPostBuildAction>();
+            sut.AddPostBuildAction<DummyPostBuildAction>();
+            sut.AddPostBuildAction<DummyPostBuildAction>();
+            sut.RemovePostBuildAction<DummyPostBuildAction>();
 
-            target.PostBuildActions.Should().BeEmpty();
+            sut.PostBuildActions.Should().BeEmpty();
         }
 
         [Fact]
         public void RemovePostBuildActionRemovesRulesFromCompiler()
         {
-            var target = new BuildConfiguration();
+            var sut = new BuildConfiguration();
 
-            target.AddPostBuildAction<DummyPostBuildAction>();
-            target.RemovePostBuildAction<DummyPostBuildAction>();
+            sut.AddPostBuildAction<DummyPostBuildAction>();
+            sut.RemovePostBuildAction<DummyPostBuildAction>();
 
-            target.PostBuildActions.Should().BeEmpty();
+            sut.PostBuildActions.Should().BeEmpty();
         }
 
         [Fact]
@@ -997,25 +997,25 @@
         [Fact]
         public void RemoveTypeCreatorRemovesMultipleMatchingRulesFromCompiler()
         {
-            var target = new BuildConfiguration();
+            var sut = new BuildConfiguration();
 
-            target.AddTypeCreator<DefaultTypeCreator>();
-            target.AddTypeCreator<DefaultTypeCreator>();
-            target.AddTypeCreator<DefaultTypeCreator>();
-            target.RemoveTypeCreator<DefaultTypeCreator>();
+            sut.AddTypeCreator<DefaultTypeCreator>();
+            sut.AddTypeCreator<DefaultTypeCreator>();
+            sut.AddTypeCreator<DefaultTypeCreator>();
+            sut.RemoveTypeCreator<DefaultTypeCreator>();
 
-            target.TypeCreators.Should().BeEmpty();
+            sut.TypeCreators.Should().BeEmpty();
         }
 
         [Fact]
         public void RemoveTypeCreatorRemovesRulesFromCompiler()
         {
-            var target = new BuildConfiguration();
+            var sut = new BuildConfiguration();
 
-            target.AddTypeCreator<DefaultTypeCreator>();
-            target.RemoveTypeCreator<DefaultTypeCreator>();
+            sut.AddTypeCreator<DefaultTypeCreator>();
+            sut.RemoveTypeCreator<DefaultTypeCreator>();
 
-            target.TypeCreators.Should().BeEmpty();
+            sut.TypeCreators.Should().BeEmpty();
         }
 
         [Fact]
@@ -1029,25 +1029,25 @@
         [Fact]
         public void RemoveTypeMappingRuleRemovesMultipleMatchingRulesFromCompiler()
         {
-            var target = new BuildConfiguration();
+            var sut = new BuildConfiguration();
 
-            target.AddTypeMappingRule<DummyTypeMappingRule>();
-            target.AddTypeMappingRule<DummyTypeMappingRule>();
-            target.AddTypeMappingRule<DummyTypeMappingRule>();
-            target.RemoveTypeMappingRule<DummyTypeMappingRule>();
+            sut.AddTypeMappingRule<DummyTypeMappingRule>();
+            sut.AddTypeMappingRule<DummyTypeMappingRule>();
+            sut.AddTypeMappingRule<DummyTypeMappingRule>();
+            sut.RemoveTypeMappingRule<DummyTypeMappingRule>();
 
-            target.TypeMappingRules.Should().BeEmpty();
+            sut.TypeMappingRules.Should().BeEmpty();
         }
 
         [Fact]
         public void RemoveTypeMappingRuleRemovesRulesFromCompiler()
         {
-            var target = new BuildConfiguration();
+            var sut = new BuildConfiguration();
 
-            target.AddTypeMappingRule<DummyTypeMappingRule>();
-            target.RemoveTypeMappingRule<DummyTypeMappingRule>();
+            sut.AddTypeMappingRule<DummyTypeMappingRule>();
+            sut.RemoveTypeMappingRule<DummyTypeMappingRule>();
 
-            target.TypeMappingRules.Should().BeEmpty();
+            sut.TypeMappingRules.Should().BeEmpty();
         }
 
         [Fact]
@@ -1061,25 +1061,25 @@
         [Fact]
         public void RemoveValueGeneratorRemovesMultipleMatchingRulesFromCompiler()
         {
-            var target = new BuildConfiguration();
+            var sut = new BuildConfiguration();
 
-            target.AddValueGenerator<StringValueGenerator>();
-            target.AddValueGenerator<StringValueGenerator>();
-            target.AddValueGenerator<StringValueGenerator>();
-            target.RemoveValueGenerator<StringValueGenerator>();
+            sut.AddValueGenerator<StringValueGenerator>();
+            sut.AddValueGenerator<StringValueGenerator>();
+            sut.AddValueGenerator<StringValueGenerator>();
+            sut.RemoveValueGenerator<StringValueGenerator>();
 
-            target.ValueGenerators.Should().BeEmpty();
+            sut.ValueGenerators.Should().BeEmpty();
         }
 
         [Fact]
         public void RemoveValueGeneratorRemovesRulesFromCompiler()
         {
-            var target = new BuildConfiguration();
+            var sut = new BuildConfiguration();
 
-            target.AddValueGenerator<StringValueGenerator>();
-            target.RemoveValueGenerator<StringValueGenerator>();
+            sut.AddValueGenerator<StringValueGenerator>();
+            sut.RemoveValueGenerator<StringValueGenerator>();
 
-            target.ValueGenerators.Should().BeEmpty();
+            sut.ValueGenerators.Should().BeEmpty();
         }
 
         [Fact]
@@ -1093,11 +1093,11 @@
         [Fact]
         public void UsingExecuteStrategyReturnsExecuteStrategyWithBuildConfiguration()
         {
-            var target = Substitute.For<IBuildConfiguration>();
+            var sut = Substitute.For<IBuildConfiguration>();
 
-            var actual = target.UsingExecuteStrategy<DefaultExecuteStrategy<Person>>();
+            var actual = sut.UsingExecuteStrategy<DefaultExecuteStrategy<Person>>();
 
-            actual.Configuration.Should().BeSameAs(target);
+            actual.Configuration.Should().BeSameAs(sut);
             actual.Log.Should().BeOfType<DefaultBuildLog>();
         }
 

@@ -30,9 +30,9 @@
 
             buildChain.Push(person);
 
-            var target = new MailinatorEmailValueGenerator();
+            var sut = new MailinatorEmailValueGenerator();
 
-            var actual = (string) target.Generate(executeStrategy, property);
+            var actual = (string) sut.Generate(executeStrategy, property);
 
             actual.Should().EndWith("mailinator.com");
         }
@@ -48,9 +48,9 @@
 
             buildChain.Push(person);
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var actual = (string) target.RunGenerate(typeof(string), "email", executeStrategy);
+            var actual = (string) sut.RunGenerate(typeof(string), "email", executeStrategy);
 
             var domain = actual.Substring(actual.IndexOf("@", StringComparison.Ordinal) + 1);
 
@@ -72,9 +72,9 @@
 
             buildChain.Push(person);
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var actual = (string) target.RunGenerate(typeof(string), "email", executeStrategy);
+            var actual = (string) sut.RunGenerate(typeof(string), "email", executeStrategy);
 
             var expected = "dejour.mccormick";
 
@@ -95,9 +95,9 @@
 
             buildChain.Push(person);
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var actual = (string) target.RunGenerate(typeof(string), "email", executeStrategy);
+            var actual = (string) sut.RunGenerate(typeof(string), "email", executeStrategy);
 
             var firstName = actual.Substring(0, actual.IndexOf(".", StringComparison.OrdinalIgnoreCase));
 
@@ -118,9 +118,9 @@
 
             buildChain.Push(person);
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var actual = (string) target.RunGenerate(typeof(string), "email", executeStrategy);
+            var actual = (string) sut.RunGenerate(typeof(string), "email", executeStrategy);
 
             var firstName = actual.Substring(0, actual.IndexOf(".", StringComparison.Ordinal));
 
@@ -141,9 +141,9 @@
 
             buildChain.Push(parts);
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var actual = (string) target.RunGenerate(typeof(string), "email", executeStrategy);
+            var actual = (string) sut.RunGenerate(typeof(string), "email", executeStrategy);
 
             actual.Should().EndWith(parts.Domain);
         }
@@ -163,9 +163,9 @@
 
             buildChain.Push(parts);
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var actual = (string) target.RunGenerate(typeof(string), "email", executeStrategy);
+            var actual = (string) sut.RunGenerate(typeof(string), "email", executeStrategy);
 
             var expected = parts.FirstName + "." + parts.LastName;
 
@@ -188,9 +188,9 @@
 
             buildChain.Push(parts);
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var actual = (string) target.RunGenerate(typeof(string), "email", executeStrategy);
+            var actual = (string) sut.RunGenerate(typeof(string), "email", executeStrategy);
 
             var expected = parts.FirstName + "." + parts.LastName + "@" + parts.Domain;
 
@@ -211,9 +211,9 @@
 
             buildChain.Push(person);
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var actual = (string) target.RunGenerate(typeof(string), "email", executeStrategy);
+            var actual = (string) sut.RunGenerate(typeof(string), "email", executeStrategy);
 
             var expected = person.FirstName.Substring(0, 1);
 
@@ -234,9 +234,9 @@
 
             buildChain.Push(person);
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var actual = (string) target.RunGenerate(typeof(string), "email", executeStrategy);
+            var actual = (string) sut.RunGenerate(typeof(string), "email", executeStrategy);
 
             var expected = person.LastName;
 
@@ -258,9 +258,9 @@
 
             firstBuildChain.Push(firstPerson);
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var first = (string) target.RunGenerate(typeof(string), "email", firstExecuteStrategy);
+            var first = (string) sut.RunGenerate(typeof(string), "email", firstExecuteStrategy);
 
             var secondPerson = new Person
             {
@@ -278,7 +278,7 @@
 
             for (var index = 0; index < 1000; index++)
             {
-                second = (string) target.RunGenerate(typeof(string), "email", secondExecuteStrategy);
+                second = (string) sut.RunGenerate(typeof(string), "email", secondExecuteStrategy);
 
                 if (string.Equals(first, second, StringComparison.OrdinalIgnoreCase) == false)
                 {
@@ -304,9 +304,9 @@
 
             firstBuildChain.Push(firstPerson);
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var actual = target.RunGenerate(typeof(string), "email", firstExecuteStrategy);
+            var actual = sut.RunGenerate(typeof(string), "email", firstExecuteStrategy);
 
             actual.Should().BeOfType<string>();
             actual.As<string>().Should().NotBeNullOrWhiteSpace();
@@ -324,9 +324,9 @@
 
             buildChain.Push(model);
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var actual = (string) target.RunGenerate(typeof(string), "email", executeStrategy);
+            var actual = (string) sut.RunGenerate(typeof(string), "email", executeStrategy);
 
             actual.Should().NotBeNullOrWhiteSpace();
         }
@@ -334,10 +334,10 @@
         [Fact]
         public void HasHigherPriorityThanStringValueGenerator()
         {
-            var target = new Wrapper();
+            var sut = new Wrapper();
             var other = new StringValueGenerator();
 
-            target.Priority.Should().BeGreaterThan(other.Priority);
+            sut.Priority.Should().BeGreaterThan(other.Priority);
         }
 
         [Theory]
@@ -353,9 +353,9 @@
 
             buildChain.Push(person);
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var actual = target.RunIsMatch(type, referenceName, buildChain);
+            var actual = sut.RunIsMatch(type, referenceName, buildChain);
 
             actual.Should().Be(expected);
         }

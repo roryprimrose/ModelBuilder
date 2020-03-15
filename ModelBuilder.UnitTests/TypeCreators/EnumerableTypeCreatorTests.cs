@@ -19,17 +19,17 @@
         [Fact]
         public void AutoDetectConstructorReturnsFalse()
         {
-            var target = new EnumerableTypeCreator();
+            var sut = new EnumerableTypeCreator();
 
-            target.AutoDetectConstructor.Should().BeFalse();
+            sut.AutoDetectConstructor.Should().BeFalse();
         }
 
         [Fact]
         public void AutoPopulateReturnsFalse()
         {
-            var target = new EnumerableTypeCreator();
+            var sut = new EnumerableTypeCreator();
 
-            target.AutoPopulate.Should().BeFalse();
+            sut.AutoPopulate.Should().BeFalse();
         }
 
         [Theory]
@@ -71,9 +71,9 @@
             typeResolver.GetBuildType(configuration, Arg.Any<Type>()).Returns(x => x.Arg<Type>());
             executeStrategy.Configuration.Returns(configuration);
 
-            var target = new EnumerableTypeCreator();
+            var sut = new EnumerableTypeCreator();
 
-            var actual = target.CanCreate(configuration, null, type);
+            var actual = sut.CanCreate(configuration, null, type);
 
             actual.Should().Be(supported);
         }
@@ -89,9 +89,9 @@
             typeResolver.GetBuildType(configuration, Arg.Any<Type>()).Returns(x => x.Arg<Type>());
             executeStrategy.Configuration.Returns(configuration);
 
-            var target = new EnumerableTypeCreator();
+            var sut = new EnumerableTypeCreator();
 
-            Action action = () => target.CanCreate(configuration, null, (ParameterInfo) null);
+            Action action = () => sut.CanCreate(configuration, null, (ParameterInfo) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -107,9 +107,9 @@
             typeResolver.GetBuildType(configuration, Arg.Any<Type>()).Returns(x => x.Arg<Type>());
             executeStrategy.Configuration.Returns(configuration);
 
-            var target = new EnumerableTypeCreator();
+            var sut = new EnumerableTypeCreator();
 
-            Action action = () => target.CanCreate(configuration, null, (PropertyInfo) null);
+            Action action = () => sut.CanCreate(configuration, null, (PropertyInfo) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -125,9 +125,9 @@
             typeResolver.GetBuildType(configuration, Arg.Any<Type>()).Returns(x => x.Arg<Type>());
             executeStrategy.Configuration.Returns(configuration);
 
-            var target = new EnumerableTypeCreator();
+            var sut = new EnumerableTypeCreator();
 
-            Action action = () => target.CanCreate(configuration, null, (Type) null);
+            Action action = () => sut.CanCreate(configuration, null, (Type) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -169,9 +169,9 @@
             typeResolver.GetBuildType(configuration, Arg.Any<Type>()).Returns(x => x.Arg<Type>());
             configuration.TypeResolver.Returns(typeResolver);
 
-            var target = new EnumerableTypeCreator();
+            var sut = new EnumerableTypeCreator();
 
-            var actual = target.CanPopulate(configuration, null, type);
+            var actual = sut.CanPopulate(configuration, null, type);
 
             actual.Should().Be(supported);
         }
@@ -179,9 +179,9 @@
         [Fact]
         public void CanPopulateThrowsExceptionWithNullConfiguration()
         {
-            var target = new EnumerableTypeCreator();
+            var sut = new EnumerableTypeCreator();
 
-            Action action = () => target.CanPopulate(null, null, typeof(string));
+            Action action = () => sut.CanPopulate(null, null, typeof(string));
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -189,10 +189,10 @@
         [Fact]
         public void CanPopulateThrowsExceptionWithNullParameter()
         {
-            var target = new EnumerableTypeCreator();
+            var sut = new EnumerableTypeCreator();
             var configuration = Substitute.For<IBuildConfiguration>();
 
-            Action action = () => target.CanPopulate(configuration, null, (ParameterInfo) null);
+            Action action = () => sut.CanPopulate(configuration, null, (ParameterInfo) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -200,10 +200,10 @@
         [Fact]
         public void CanPopulateThrowsExceptionWithNullProperty()
         {
-            var target = new EnumerableTypeCreator();
+            var sut = new EnumerableTypeCreator();
             var configuration = Substitute.For<IBuildConfiguration>();
 
-            Action action = () => target.CanPopulate(configuration, null, (PropertyInfo) null);
+            Action action = () => sut.CanPopulate(configuration, null, (PropertyInfo) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -211,10 +211,10 @@
         [Fact]
         public void CanPopulateThrowsExceptionWithNullType()
         {
-            var target = new EnumerableTypeCreator();
+            var sut = new EnumerableTypeCreator();
             var configuration = Substitute.For<IBuildConfiguration>();
 
-            Action action = () => target.CanPopulate(configuration, null, (Type) null);
+            Action action = () => sut.CanPopulate(configuration, null, (Type) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -224,9 +224,9 @@
         {
             var person = new Person();
 
-            var target = new EnumerableTypeCreatorWrapper();
+            var sut = new EnumerableTypeCreatorWrapper();
 
-            Action action = () => target.CreateItem(typeof(Person), null, person);
+            Action action = () => sut.CreateItem(typeof(Person), null, person);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -245,9 +245,9 @@
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Configuration.Returns(configuration);
 
-            var target = new IncrementingEnumerableTypeCreator();
+            var sut = new IncrementingEnumerableTypeCreator();
 
-            var result = (IList<int>) target.Create(executeStrategy, typeof(IList<int>));
+            var result = (IList<int>) sut.Create(executeStrategy, typeof(IList<int>));
 
             result.Should().BeEmpty();
         }
@@ -274,9 +274,9 @@
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Configuration.Returns(configuration);
 
-            var target = new EnumerableTypeCreator();
+            var sut = new EnumerableTypeCreator();
 
-            var actual = target.Create(executeStrategy, type);
+            var actual = sut.Create(executeStrategy, type);
 
             actual.Should().NotBeNull();
         }
@@ -298,9 +298,9 @@
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Configuration.Returns(configuration);
 
-            var target = new EnumerableTypeCreator();
+            var sut = new EnumerableTypeCreator();
 
-            var actual = target.Create(executeStrategy, targetType);
+            var actual = sut.Create(executeStrategy, targetType);
 
             actual.Should().BeOfType<List<int>>();
             actual.As<List<int>>().Should().BeEmpty();
@@ -348,9 +348,9 @@
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Configuration.Returns(configuration);
 
-            var target = new EnumerableTypeCreator();
+            var sut = new EnumerableTypeCreator();
 
-            Action action = () => target.Create(executeStrategy, type);
+            Action action = () => sut.Create(executeStrategy, type);
 
             if (supported)
             {
@@ -379,18 +379,18 @@
 
             executeStrategy.Create(typeof(Guid)).Returns(Guid.NewGuid());
 
-            var target = new EnumerableTypeCreator
+            var sut = new EnumerableTypeCreator
             {
                 AutoPopulateCount = 15
             };
 
-            var actual = target.Populate(executeStrategy, expected);
+            var actual = sut.Populate(executeStrategy, expected);
 
             actual.Should().BeSameAs(expected);
 
             var set = (Collection<Guid>) actual;
 
-            set.Should().HaveCount(target.AutoPopulateCount);
+            set.Should().HaveCount(sut.AutoPopulateCount);
             set.All(x => x != Guid.Empty).Should().BeTrue();
         }
 
@@ -407,15 +407,15 @@
         {
             var configuration = Model.UsingDefaultConfiguration();
 
-            var target = new EnumerableTypeCreator();
+            var sut = new EnumerableTypeCreator();
 
             var executeStrategy = new DefaultExecuteStrategy();
 
             executeStrategy.Initialize(configuration);
 
-            var actual = target.Create(executeStrategy, type);
+            var actual = sut.Create(executeStrategy, type);
 
-            target.Populate(executeStrategy, actual);
+            sut.Populate(executeStrategy, actual);
 
             var converted = (IEnumerable) actual;
 
@@ -438,18 +438,18 @@
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Create(typeof(Guid)).Returns(Guid.NewGuid());
 
-            var target = new EnumerableTypeCreator
+            var sut = new EnumerableTypeCreator
             {
                 AutoPopulateCount = 15
             };
 
-            var actual = target.Populate(executeStrategy, expected);
+            var actual = sut.Populate(executeStrategy, expected);
 
             actual.Should().BeSameAs(expected);
 
             var set = (List<Guid>) actual;
 
-            set.Should().HaveCount(target.AutoPopulateCount);
+            set.Should().HaveCount(sut.AutoPopulateCount);
             set.All(x => x != Guid.Empty).Should().BeTrue();
         }
 
@@ -460,14 +460,14 @@
             var executeStrategy = Model.UsingDefaultConfiguration()
                 .UsingExecuteStrategy<DefaultExecuteStrategy<List<int>>>();
 
-            var target = new IncrementingEnumerableTypeCreator();
+            var sut = new IncrementingEnumerableTypeCreator();
 
-            var result = (List<int>) target.Populate(executeStrategy, actual);
+            var result = (List<int>) sut.Populate(executeStrategy, actual);
 
             var baseValue = result[0];
-            var expected = new List<int>(target.AutoPopulateCount);
+            var expected = new List<int>(sut.AutoPopulateCount);
 
-            for (var index = 0; index < target.AutoPopulateCount; index++)
+            for (var index = 0; index < sut.AutoPopulateCount; index++)
             {
                 expected.Add(baseValue + index);
             }
@@ -490,9 +490,9 @@
             executeStrategy.Configuration.Returns(configuration);
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var target = new EnumerableTypeCreator();
+            var sut = new EnumerableTypeCreator();
 
-            Action action = () => target.Populate(executeStrategy, instance);
+            Action action = () => sut.Populate(executeStrategy, instance);
 
             action.Should().Throw<NotSupportedException>();
         }
@@ -500,21 +500,21 @@
         [Fact]
         public void PriorityReturnsHigherThanDefaultTypeCreator()
         {
-            var target = new EnumerableTypeCreator();
+            var sut = new EnumerableTypeCreator();
             var other = new DefaultTypeCreator();
 
-            target.Priority.Should().BeGreaterThan(other.Priority);
+            sut.Priority.Should().BeGreaterThan(other.Priority);
         }
 
         [Fact]
         public void SettingAutoPopulateCountShouldNotChangeDefaultAutoPopulateCount()
         {
-            var target = new EnumerableTypeCreator
+            var sut = new EnumerableTypeCreator
             {
                 AutoPopulateCount = Environment.TickCount
             };
 
-            EnumerableTypeCreator.DefaultAutoPopulateCount.Should().NotBe(target.AutoPopulateCount);
+            EnumerableTypeCreator.DefaultAutoPopulateCount.Should().NotBe(sut.AutoPopulateCount);
         }
 
         [Fact]

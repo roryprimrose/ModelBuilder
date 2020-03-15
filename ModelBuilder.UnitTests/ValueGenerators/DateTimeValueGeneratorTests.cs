@@ -17,11 +17,11 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
             for (var index = 0; index < 1000; index++)
             {
-                var value = (DateTime?) target.RunGenerate(typeof(DateTime?), null, executeStrategy);
+                var value = (DateTime?) sut.RunGenerate(typeof(DateTime?), null, executeStrategy);
 
                 if (value == null)
                 {
@@ -47,11 +47,11 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
             for (var index = 0; index < 1000; index++)
             {
-                var value = target.RunGenerate(targetType, null, executeStrategy);
+                var value = sut.RunGenerate(targetType, null, executeStrategy);
 
                 if (value == null)
                 {
@@ -80,9 +80,9 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var actual = target.RunGenerate(typeof(DateTimeOffset), null, executeStrategy);
+            var actual = sut.RunGenerate(typeof(DateTimeOffset), null, executeStrategy);
 
             actual.Should().BeOfType<DateTimeOffset>();
         }
@@ -95,9 +95,9 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var actual = target.RunGenerate(typeof(DateTime), null, executeStrategy);
+            var actual = sut.RunGenerate(typeof(DateTime), null, executeStrategy);
 
             actual.Should().BeOfType<DateTime>();
         }
@@ -110,9 +110,9 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var first = (DateTimeOffset) target.RunGenerate(typeof(DateTimeOffset), null, executeStrategy);
+            var first = (DateTimeOffset) sut.RunGenerate(typeof(DateTimeOffset), null, executeStrategy);
 
             first.As<DateTimeOffset>().Offset.Should().Be(TimeSpan.Zero);
 
@@ -120,7 +120,7 @@
 
             for (var index = 0; index < 1000; index++)
             {
-                second = (DateTimeOffset) target.RunGenerate(typeof(DateTimeOffset), null, executeStrategy);
+                second = (DateTimeOffset) sut.RunGenerate(typeof(DateTimeOffset), null, executeStrategy);
 
                 if (first != second)
                 {
@@ -139,9 +139,9 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var first = (DateTime) target.RunGenerate(typeof(DateTime), null, executeStrategy);
+            var first = (DateTime) sut.RunGenerate(typeof(DateTime), null, executeStrategy);
 
             first.As<DateTime>().Kind.Should().Be(DateTimeKind.Utc);
 
@@ -149,7 +149,7 @@
 
             for (var index = 0; index < 1000; index++)
             {
-                second = (DateTime) target.RunGenerate(typeof(DateTime), null, executeStrategy);
+                second = (DateTime) sut.RunGenerate(typeof(DateTime), null, executeStrategy);
 
                 if (first != second)
                 {
@@ -168,15 +168,15 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var first = (TimeSpan) target.RunGenerate(typeof(TimeSpan), null, executeStrategy);
+            var first = (TimeSpan) sut.RunGenerate(typeof(TimeSpan), null, executeStrategy);
 
             var second = first;
 
             for (var index = 0; index < 1000; index++)
             {
-                second = (TimeSpan) target.RunGenerate(typeof(TimeSpan), null, executeStrategy);
+                second = (TimeSpan) sut.RunGenerate(typeof(TimeSpan), null, executeStrategy);
 
                 if (first != second)
                 {
@@ -201,9 +201,9 @@
         {
             var buildChain = Substitute.For<IBuildChain>();
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var actual = target.RunIsMatch(type, null, buildChain);
+            var actual = sut.RunIsMatch(type, null, buildChain);
 
             actual.Should().Be(expected);
         }
@@ -213,9 +213,9 @@
         {
             var buildChain = Substitute.For<IBuildChain>();
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            Action action = () => target.RunIsMatch(null, null, buildChain);
+            Action action = () => sut.RunIsMatch(null, null, buildChain);
 
             action.Should().Throw<ArgumentNullException>();
         }

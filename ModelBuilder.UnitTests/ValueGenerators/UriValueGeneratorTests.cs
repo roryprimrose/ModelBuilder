@@ -19,9 +19,9 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var actual = target.RunGenerate(typeof(Uri), null, executeStrategy).As<Uri>();
+            var actual = sut.RunGenerate(typeof(Uri), null, executeStrategy).As<Uri>();
 
             TestData.Domains.Any(x => actual.AbsoluteUri.Contains(x, StringComparison.OrdinalIgnoreCase)).Should()
                 .BeTrue();
@@ -36,9 +36,9 @@
         [InlineData("url")]
         public void GenerateReturnsValuesForSeveralNameFormatsTest(string referenceName)
         {
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var actual = (string) target.RunGenerate(typeof(string), referenceName, null);
+            var actual = (string) sut.RunGenerate(typeof(string), referenceName, null);
 
             TestData.Domains.Any(x => actual.Contains(x, StringComparison.OrdinalIgnoreCase)).Should().BeTrue();
         }
@@ -57,9 +57,9 @@
         [InlineData(typeof(Uri), null, true)]
         public void IsMatchReturnsWhetherScenarioIsValidTest(Type type, string referenceName, bool supported)
         {
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var actual = target.RunIsMatch(type, referenceName, null);
+            var actual = sut.RunIsMatch(type, referenceName, null);
 
             actual.Should().Be(supported);
         }
@@ -67,9 +67,9 @@
         [Fact]
         public void IsMatchThrowsExceptionWithNullType()
         {
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            Action action = () => target.RunIsMatch(null, null, null);
+            Action action = () => sut.RunIsMatch(null, null, null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -77,10 +77,10 @@
         [Fact]
         public void PriorityIsHigherThanStringValueGeneratorPriority()
         {
-            var target = new Wrapper();
+            var sut = new Wrapper();
             var other = new StringValueGenerator();
 
-            target.Priority.Should().BeGreaterThan(other.Priority);
+            sut.Priority.Should().BeGreaterThan(other.Priority);
         }
 
         private class Wrapper : UriValueGenerator

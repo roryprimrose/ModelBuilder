@@ -410,9 +410,9 @@
         {
             var configuration = Model.UsingDefaultConfiguration();
 
-            var target = new DefaultExecuteStrategy();
+            var sut = new DefaultExecuteStrategy();
 
-            target.Initialize(configuration);
+            sut.Initialize(configuration);
 
             var args = new object[]
             {
@@ -432,9 +432,9 @@
         {
             var configuration = Model.UsingDefaultConfiguration();
 
-            var target = new DefaultExecuteStrategy();
+            var sut = new DefaultExecuteStrategy();
 
-            target.Initialize(configuration);
+            sut.Initialize(configuration);
 
             var args = new object[]
             {
@@ -471,11 +471,11 @@
 
             var configuration = Model.UsingDefaultConfiguration().Add(typeCreator);
 
-            var target = new DefaultExecuteStrategy<Office>();
+            var sut = new DefaultExecuteStrategy<Office>();
 
-            target.Initialize(configuration);
+            sut.Initialize(configuration);
 
-            Action action = () => target.Create();
+            Action action = () => sut.Create();
 
             var exception = action.Should().Throw<BuildException>().Where(x => x.Message != null)
                 .Where(x => x.BuildLog != null).Which;

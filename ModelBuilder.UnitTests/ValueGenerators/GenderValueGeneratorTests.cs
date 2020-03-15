@@ -17,14 +17,14 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
             var maleFound = false;
             var femaleFound = false;
 
             for (var index = 0; index < 1000; index++)
             {
-                var actual = (string) target.RunGenerate(typeof(string), "Gender", executeStrategy);
+                var actual = (string) sut.RunGenerate(typeof(string), "Gender", executeStrategy);
 
                 if (actual == "Male")
                 {
@@ -53,9 +53,9 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var actual = target.RunGenerate(typeof(string), "Sex", executeStrategy);
+            var actual = sut.RunGenerate(typeof(string), "Sex", executeStrategy);
 
             actual.Should().BeOfType<string>();
         }
@@ -72,9 +72,9 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var actual = (string) target.RunGenerate(type, referenceName, executeStrategy);
+            var actual = (string) sut.RunGenerate(type, referenceName, executeStrategy);
 
             actual.Should().NotBeNullOrEmpty();
         }
@@ -92,9 +92,9 @@
         {
             var buildChain = Substitute.For<IBuildChain>();
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var actual = target.RunIsMatch(type, referenceName, buildChain);
+            var actual = sut.RunIsMatch(type, referenceName, buildChain);
 
             actual.Should().Be(expected);
         }
@@ -102,9 +102,9 @@
         [Fact]
         public void PriorityReturnsPositiveValue()
         {
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            target.Priority.Should().BeGreaterThan(0);
+            sut.Priority.Should().BeGreaterThan(0);
         }
 
         private class Wrapper : GenderValueGenerator

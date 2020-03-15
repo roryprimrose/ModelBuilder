@@ -16,14 +16,14 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var target = new BooleanValueGenerator();
+            var sut = new BooleanValueGenerator();
 
             var trueFound = false;
             var falseFound = false;
 
             for (var index = 0; index < 1000; index++)
             {
-                var actual = (bool) target.Generate(executeStrategy, typeof(bool));
+                var actual = (bool) sut.Generate(executeStrategy, typeof(bool));
 
                 if (actual)
                 {
@@ -52,7 +52,7 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var target = new BooleanValueGenerator();
+            var sut = new BooleanValueGenerator();
 
             var nullFound = false;
             var trueFound = false;
@@ -60,7 +60,7 @@
 
             for (var index = 0; index < 1000; index++)
             {
-                var actual = (bool?) target.Generate(executeStrategy, typeof(bool?));
+                var actual = (bool?) sut.Generate(executeStrategy, typeof(bool?));
 
                 if (actual == null)
                 {
@@ -96,9 +96,9 @@
         {
             var buildChain = Substitute.For<IBuildChain>();
 
-            var target = new BooleanValueGenerator();
+            var sut = new BooleanValueGenerator();
 
-            var actual = target.IsMatch(buildChain, type);
+            var actual = sut.IsMatch(buildChain, type);
 
             actual.Should().Be(expected);
         }

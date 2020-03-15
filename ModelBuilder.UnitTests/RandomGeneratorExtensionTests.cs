@@ -13,13 +13,13 @@
             var type = typeof(int);
             var expected = Environment.TickCount;
 
-            var target = Substitute.For<IRandomGenerator>();
+            var sut = Substitute.For<IRandomGenerator>();
 
-            target.GetMax(type).Returns(int.MaxValue);
-            target.GetMin(type).Returns(int.MinValue);
-            target.NextValue(type, Arg.Is<object>(int.MinValue), Arg.Is<object>(int.MaxValue)).Returns(expected);
+            sut.GetMax(type).Returns(int.MaxValue);
+            sut.GetMin(type).Returns(int.MinValue);
+            sut.NextValue(type, Arg.Is<object>(int.MinValue), Arg.Is<object>(int.MaxValue)).Returns(expected);
 
-            var actual = target.NextValue<int>();
+            var actual = sut.NextValue<int>();
 
             actual.Should().Be(expected);
         }
@@ -30,9 +30,9 @@
         [InlineData(0, 0)]
         public void NextValueReturnsRandomValueUsingSpecifiedRangeTest(double min, double max)
         {
-            var target = new RandomGenerator();
+            var sut = new RandomGenerator();
 
-            var actual = target.NextValue(min, max);
+            var actual = sut.NextValue(min, max);
 
             var converted = Convert.ToDouble(actual);
 
@@ -43,9 +43,9 @@
         [Fact]
         public void NextValueThrowsExceptionWhenMinimumGreaterThanMaximum()
         {
-            var target = new RandomGenerator();
+            var sut = new RandomGenerator();
 
-            Action action = () => target.NextValue(1, 0);
+            Action action = () => sut.NextValue(1, 0);
 
             action.Should().Throw<ArgumentOutOfRangeException>();
         }
@@ -69,9 +69,9 @@
         [Fact]
         public void NextValueThrowsExceptionWithUnsupportedType()
         {
-            var target = new RandomGenerator();
+            var sut = new RandomGenerator();
 
-            Action action = () => target.NextValue('C', 'C');
+            Action action = () => sut.NextValue('C', 'C');
 
             action.Should().Throw<NotSupportedException>();
         }
@@ -83,12 +83,12 @@
             var max = 100;
             var expected = Environment.TickCount;
 
-            var target = Substitute.For<IRandomGenerator>();
+            var sut = Substitute.For<IRandomGenerator>();
 
-            target.GetMin(type).Returns(int.MinValue);
-            target.NextValue(type, Arg.Is<object>(int.MinValue), max).Returns(expected);
+            sut.GetMin(type).Returns(int.MinValue);
+            sut.NextValue(type, Arg.Is<object>(int.MinValue), max).Returns(expected);
 
-            var actual = target.NextValue(max);
+            var actual = sut.NextValue(max);
 
             actual.Should().Be(expected);
         }
@@ -108,12 +108,12 @@
             var type = typeof(int);
             var expected = Environment.TickCount;
 
-            var target = Substitute.For<IRandomGenerator>();
+            var sut = Substitute.For<IRandomGenerator>();
 
-            target.GetMin(type).Returns(int.MinValue);
-            target.NextValue(type, Arg.Is<object>(int.MinValue), max).Returns(expected);
+            sut.GetMin(type).Returns(int.MinValue);
+            sut.NextValue(type, Arg.Is<object>(int.MinValue), max).Returns(expected);
 
-            var actual = target.NextValue(typeof(int), max);
+            var actual = sut.NextValue(typeof(int), max);
 
             actual.Should().Be(expected);
         }
@@ -133,9 +133,9 @@
         {
             var max = Environment.TickCount;
 
-            var target = Substitute.For<IRandomGenerator>();
+            var sut = Substitute.For<IRandomGenerator>();
 
-            Action action = () => target.NextValue(null, max);
+            Action action = () => sut.NextValue(null, max);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -146,13 +146,13 @@
             var type = typeof(int);
             var expected = Environment.TickCount;
 
-            var target = Substitute.For<IRandomGenerator>();
+            var sut = Substitute.For<IRandomGenerator>();
 
-            target.GetMax(type).Returns(int.MaxValue);
-            target.GetMin(type).Returns(int.MinValue);
-            target.NextValue(type, Arg.Is<object>(int.MinValue), Arg.Is<object>(int.MaxValue)).Returns(expected);
+            sut.GetMax(type).Returns(int.MaxValue);
+            sut.GetMin(type).Returns(int.MinValue);
+            sut.NextValue(type, Arg.Is<object>(int.MinValue), Arg.Is<object>(int.MaxValue)).Returns(expected);
 
-            var actual = target.NextValue(typeof(int));
+            var actual = sut.NextValue(typeof(int));
 
             actual.Should().Be(expected);
         }
@@ -168,9 +168,9 @@
         [Fact]
         public void NextValueWithTypeThrowsExceptionWithNullType()
         {
-            var target = Substitute.For<IRandomGenerator>();
+            var sut = Substitute.For<IRandomGenerator>();
 
-            Action action = () => target.NextValue((Type) null);
+            Action action = () => sut.NextValue((Type) null);
 
             action.Should().Throw<ArgumentNullException>();
         }

@@ -18,15 +18,15 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var first = (string) target.RunGenerate(typeof(string), "AddressLine1", executeStrategy);
+            var first = (string) sut.RunGenerate(typeof(string), "AddressLine1", executeStrategy);
 
             string second = null;
 
             for (var index = 0; index < 1000; index++)
             {
-                second = (string) target.RunGenerate(typeof(string), "AddressLine1", executeStrategy);
+                second = (string) sut.RunGenerate(typeof(string), "AddressLine1", executeStrategy);
 
                 if (string.Equals(first, second, StringComparison.OrdinalIgnoreCase) == false)
                 {
@@ -53,9 +53,9 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var actual = target.RunGenerate(typeof(string), referenceName, executeStrategy) as string;
+            var actual = sut.RunGenerate(typeof(string), referenceName, executeStrategy) as string;
 
             actual.Should().NotBeNullOrWhiteSpace();
 
@@ -81,9 +81,9 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var actual = target.RunGenerate(typeof(string), referenceName, executeStrategy) as string;
+            var actual = sut.RunGenerate(typeof(string), referenceName, executeStrategy) as string;
 
             actual.Should().NotBeNullOrWhiteSpace();
             actual.Should().Contain("Unit ");
@@ -112,9 +112,9 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var actual = target.RunGenerate(typeof(string), referenceName, executeStrategy) as string;
+            var actual = sut.RunGenerate(typeof(string), referenceName, executeStrategy) as string;
 
             actual.Should().NotBeNullOrEmpty();
         }
@@ -153,9 +153,9 @@
         {
             var buildChain = Substitute.For<IBuildChain>();
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var actual = target.RunIsMatch(typeof(string), referenceName, buildChain);
+            var actual = sut.RunIsMatch(typeof(string), referenceName, buildChain);
 
             actual.Should().Be(expected);
         }
@@ -163,19 +163,19 @@
         [Fact]
         public void PriorityReturnsValueHigherThanStringValueGenerator()
         {
-            var target = new AddressValueGenerator();
+            var sut = new AddressValueGenerator();
             var other = new StringValueGenerator();
 
-            target.Priority.Should().BeGreaterThan(other.Priority);
+            sut.Priority.Should().BeGreaterThan(other.Priority);
         }
 
         [Fact]
         public void PriorityReturnsValueLowerThanEmailValueGenerator()
         {
-            var target = new AddressValueGenerator();
+            var sut = new AddressValueGenerator();
             var other = new EmailValueGenerator();
 
-            target.Priority.Should().BeLessThan(other.Priority);
+            sut.Priority.Should().BeLessThan(other.Priority);
         }
 
         private class Wrapper : AddressValueGenerator

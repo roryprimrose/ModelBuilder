@@ -26,9 +26,9 @@
 
             buildChain.Push(address);
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var actual = target.RunGenerate(typeof(string), "phone", executeStrategy) as string;
+            var actual = sut.RunGenerate(typeof(string), "phone", executeStrategy) as string;
 
             actual.Should().NotBeNullOrWhiteSpace();
 
@@ -53,9 +53,9 @@
 
             buildChain.Push(address);
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var actual = target.RunGenerate(typeof(string), "phone", executeStrategy) as string;
+            var actual = sut.RunGenerate(typeof(string), "phone", executeStrategy) as string;
 
             actual.Should().NotBeNullOrWhiteSpace();
 
@@ -78,9 +78,9 @@
 
             buildChain.Push(address);
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var actual = target.RunGenerate(typeof(string), "phone", executeStrategy) as string;
+            var actual = sut.RunGenerate(typeof(string), "phone", executeStrategy) as string;
 
             TestData.Locations.Select(x => x.Phone).Should().Contain(actual);
         }
@@ -96,15 +96,15 @@
 
             buildChain.Push(address);
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var first = (string) target.RunGenerate(typeof(string), "cell", executeStrategy);
+            var first = (string) sut.RunGenerate(typeof(string), "cell", executeStrategy);
 
             var second = first;
 
             for (var index = 0; index < 1000; index++)
             {
-                second = (string) target.RunGenerate(typeof(string), "cell", executeStrategy);
+                second = (string) sut.RunGenerate(typeof(string), "cell", executeStrategy);
 
                 if (string.Equals(first, second, StringComparison.OrdinalIgnoreCase) == false)
                 {
@@ -126,9 +126,9 @@
 
             buildChain.Push(address);
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var actual = target.RunGenerate(typeof(string), "cell", executeStrategy);
+            var actual = sut.RunGenerate(typeof(string), "cell", executeStrategy);
 
             actual.Should().BeOfType<string>();
             actual.As<string>().Should().NotBeNullOrWhiteSpace();
@@ -169,9 +169,9 @@
 
             buildChain.Push(address);
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var actual = (string) target.RunGenerate(type, referenceName, executeStrategy);
+            var actual = (string) sut.RunGenerate(type, referenceName, executeStrategy);
 
             actual.Should().NotBeNullOrEmpty();
         }
@@ -179,10 +179,10 @@
         [Fact]
         public void HasHigherPriorityThanStringValueGenerator()
         {
-            var target = new Wrapper();
+            var sut = new Wrapper();
             var other = new StringValueGenerator();
 
-            target.Priority.Should().BeGreaterThan(other.Priority);
+            sut.Priority.Should().BeGreaterThan(other.Priority);
         }
 
         [Theory]
@@ -220,9 +220,9 @@
 
             buildChain.Push(address);
 
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            var actual = target.RunIsMatch(type, referenceName, buildChain);
+            var actual = sut.RunIsMatch(type, referenceName, buildChain);
 
             actual.Should().Be(expected);
         }
@@ -230,9 +230,9 @@
         [Fact]
         public void PriorityReturnsPositiveValue()
         {
-            var target = new Wrapper();
+            var sut = new Wrapper();
 
-            target.Priority.Should().BeGreaterThan(0);
+            sut.Priority.Should().BeGreaterThan(0);
         }
 
         private class Wrapper : PhoneValueGenerator

@@ -25,9 +25,9 @@
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Configuration.Returns(configuration);
 
-            var target = new DefaultTypeCreator();
+            var sut = new DefaultTypeCreator();
 
-            var actual = target.Create(executeStrategy, typeof(Person), args);
+            var actual = sut.Create(executeStrategy, typeof(Person), args);
 
             actual.Should().NotBeNull();
         }
@@ -46,9 +46,9 @@
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Configuration.Returns(configuration);
 
-            var target = new DefaultTypeCreator();
+            var sut = new DefaultTypeCreator();
 
-            var actual = target.Create(executeStrategy, typeof(Person), null);
+            var actual = sut.Create(executeStrategy, typeof(Person), null);
 
             actual.Should().NotBeNull();
         }
@@ -79,9 +79,9 @@
                 Environment.TickCount
             };
 
-            var target = new DefaultTypeCreator();
+            var sut = new DefaultTypeCreator();
 
-            var actual = target.Create(executeStrategy, typeof(Person), args);
+            var actual = sut.Create(executeStrategy, typeof(Person), args);
 
             actual.Should().BeOfType<Person>();
 
@@ -114,9 +114,9 @@
                 Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), Guid.NewGuid(), Environment.TickCount
             };
 
-            var target = new DefaultTypeCreator();
+            var sut = new DefaultTypeCreator();
 
-            Action action = () => target.Create(executeStrategy, typeof(Person), args);
+            Action action = () => sut.Create(executeStrategy, typeof(Person), args);
 
             action.Should().Throw<MissingMemberException>();
         }
@@ -135,9 +135,9 @@
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Configuration.Returns(configuration);
 
-            var target = new DefaultTypeCreator();
+            var sut = new DefaultTypeCreator();
 
-            Action action = () => target.Create(executeStrategy, typeof(Stream));
+            Action action = () => sut.Create(executeStrategy, typeof(Stream));
 
             action.Should().Throw<NotSupportedException>();
         }
@@ -159,9 +159,9 @@
             executeStrategy.Configuration.Returns(configuration);
             configuration.ConstructorResolver.Returns(constructorResolver);
 
-            var target = new DefaultTypeCreator();
+            var sut = new DefaultTypeCreator();
 
-            var actual = target.Populate(executeStrategy, expected);
+            var actual = sut.Populate(executeStrategy, expected);
 
             actual.Should().Be(expected);
         }

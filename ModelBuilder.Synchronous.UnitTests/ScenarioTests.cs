@@ -24,7 +24,7 @@ namespace ModelBuilder.Synchronous.UnitTests
         }
 
         [Fact]
-        public void CanCreateInstanceTest()
+        public void CanCreateInstance()
         {
             var actual = Model.Create<Address>();
 
@@ -38,7 +38,7 @@ namespace ModelBuilder.Synchronous.UnitTests
         }
 
         [Fact]
-        public void CanCreateInstanceWithEnumerablePropertyTest()
+        public void CanCreateInstanceWithEnumerableProperty()
         {
             var actual = Model.Create<Company>();
 
@@ -48,7 +48,7 @@ namespace ModelBuilder.Synchronous.UnitTests
         }
 
         [Fact]
-        public void CanCreateInstanceWithParametersTest()
+        public void CanCreateInstanceWithParameters()
         {
             var actual = Model.Create<ReadOnlyModel>();
 
@@ -56,7 +56,7 @@ namespace ModelBuilder.Synchronous.UnitTests
         }
 
         [Fact]
-        public void CanPopulateExistingInstanceTest()
+        public void CanPopulateExistingInstance()
         {
             var expected = new SlimModel();
 
