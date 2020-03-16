@@ -15,8 +15,8 @@
         /// </summary>
         /// <param name="sourceType">The source type.</param>
         /// <param name="targetType">The target type</param>
-        /// <exception cref="ArgumentNullException">The <paramref name="sourceType" /> parameter is null.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="targetType" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="sourceType" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="targetType" /> parameter is <c>null</c>.</exception>
         public TypeMappingRule(Type sourceType, Type targetType)
         {
             SourceType = sourceType ?? throw new ArgumentNullException(nameof(sourceType));

@@ -295,29 +295,47 @@ namespace ModelBuilder.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No supporting ITypeCreator or IValueGenerator was found to build the type &apos;{0}&apos;.
+        ///   Looks up a localized string similar to The class does not support creating values for parameters..
         /// </summary>
-        internal static string NoMatchingCreatorOrGeneratorFound {
+        internal static string ExpressionCreationRule_CreateWithParameterNotSupported {
             get {
-                return ResourceManager.GetString("NoMatchingCreatorOrGeneratorFound", resourceCulture);
+                return ResourceManager.GetString("ExpressionCreationRule_CreateWithParameterNotSupported", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No supporting ITypeCreator or IValueGenerator was found to build the type &apos;{0}&apos; for &apos;{1}&apos;.
+        ///   Looks up a localized string similar to The class does not support creating values for types..
         /// </summary>
-        internal static string NoMatchingCreatorOrGeneratorFoundWithName {
+        internal static string ExpressionCreationRule_CreateWithTypeNotSupported {
             get {
-                return ResourceManager.GetString("NoMatchingCreatorOrGeneratorFoundWithName", resourceCulture);
+                return ResourceManager.GetString("ExpressionCreationRule_CreateWithTypeNotSupported", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No supporting ITypeCreator or IValueGenerator was found to build the type &apos;{0}&apos; for &apos;{1}&apos; on type &apos;{2}&apos;.
+        ///   Looks up a localized string similar to No supporting ICreationRule, ITypeCreator or IValueGenerator was found to build the type &apos;{0}&apos;.
         /// </summary>
-        internal static string NoMatchingCreatorOrGeneratorFoundWithNameAndContext {
+        internal static string NoMatchingBuildActionFound {
             get {
-                return ResourceManager.GetString("NoMatchingCreatorOrGeneratorFoundWithNameAndContext", resourceCulture);
+                return ResourceManager.GetString("NoMatchingBuildActionFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No supporting ICreationRule, ITypeCreator or IValueGenerator was found to build the type &apos;{0}&apos; for &apos;{1}&apos;.
+        /// </summary>
+        internal static string NoMatchingBuildActionFoundWithName {
+            get {
+                return ResourceManager.GetString("NoMatchingBuildActionFoundWithName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No supporting ICreationRule, ITypeCreator or IValueGenerator was found to build the type &apos;{0}&apos; for &apos;{1}&apos; on type &apos;{2}&apos;.
+        /// </summary>
+        internal static string NoMatchingBuildActionFoundWithNameAndContext {
+            get {
+                return ResourceManager.GetString("NoMatchingBuildActionFoundWithNameAndContext", resourceCulture);
             }
         }
         

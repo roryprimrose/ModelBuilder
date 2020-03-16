@@ -10,7 +10,7 @@
     public class DefaultPropertyResolverTests
     {
         [Fact]
-        public void CanPopulateReturnsFalseWhenPropertiesetterIsStaticTest()
+        public void CanPopulateReturnsFalseWhenPropertiesetterIsStatic()
         {
             var propertyInfo = typeof(StaticSetter).GetProperty(nameof(StaticSetter.Person));
 
@@ -22,7 +22,7 @@
         }
 
         [Fact]
-        public void CanPopulateReturnsFalseWhenPropertyGetterIsStaticTest()
+        public void CanPopulateReturnsFalseWhenPropertyGetterIsStatic()
         {
             var propertyInfo = typeof(StaticGetter).GetProperty(nameof(StaticGetter.Person));
 
@@ -34,7 +34,7 @@
         }
 
         [Fact]
-        public void CanPopulateReturnsFalseWhenPropertyIsPrivateTest()
+        public void CanPopulateReturnsFalseWhenPropertyIsPrivate()
         {
             var propertyInfo = typeof(PrivateProp).GetProperty(
                 "Person",
@@ -48,7 +48,7 @@
         }
 
         [Fact]
-        public void CanPopulateReturnsFalseWhenReadOnlyPropertyIsStringTypeTest()
+        public void CanPopulateReturnsFalseWhenReadOnlyPropertyIsStringType()
         {
             var propertyInfo = typeof(PrivateString).GetProperty(nameof(PrivateString.Name));
 
@@ -60,7 +60,7 @@
         }
 
         [Fact]
-        public void CanPopulateReturnsFalseWhenReadOnlyPropertyIsValueTypeTest()
+        public void CanPopulateReturnsFalseWhenReadOnlyPropertyIsValueType()
         {
             var propertyInfo = typeof(PrivateValue).GetProperty(nameof(PrivateValue.Id));
 
@@ -72,7 +72,7 @@
         }
 
         [Fact]
-        public void CanPopulateReturnsTrueWhenPropertiesetterIsPublicTest()
+        public void CanPopulateReturnsTrueWhenPropertiesetterIsPublic()
         {
             var propertyInfo = typeof(Address).GetProperty(nameof(Address.AddressLine1));
 
@@ -84,7 +84,7 @@
         }
 
         [Fact]
-        public void CanPopulateReturnsTrueWhenReadOnlyPropertyIsReferenceTypeTest()
+        public void CanPopulateReturnsTrueWhenReadOnlyPropertyIsReferenceType()
         {
             var propertyInfo = typeof(ReadOnlyParent).GetProperty(nameof(ReadOnlyParent.Company));
 
@@ -96,7 +96,7 @@
         }
 
         [Fact]
-        public void CanPopulateThrowsExceptionWithNullPropertyInfoTest()
+        public void CanPopulateThrowsExceptionWithNullPropertyInfo()
         {
             var sut = new DefaultPropertyResolver();
 
@@ -106,9 +106,9 @@
         }
 
         [Fact]
-        public void ShouldPopulatePropertieskipsNullValuesTest()
+        public void ShouldPopulatePropertiesSkipsNullValues()
         {
-            var configuration = new DefaultBuildStrategyCompiler().Compile();
+            var configuration = Model.UsingDefaultConfiguration();
             var instance = Model.Create<WithConstructorParameters>();
             var args = new object[]
             {
@@ -125,9 +125,9 @@
         }
 
         [Fact]
-        public void ShouldPopulatePropertyReturnsFalseWhenIgnoreRuleMatchedTest()
+        public void ShouldPopulatePropertyReturnsFalseWhenIgnoreRuleMatched()
         {
-            var configuration = new DefaultBuildStrategyCompiler().AddIgnoreRule<Person>(x => x.Address).Compile();
+            var configuration = Model.UsingDefaultConfiguration().AddIgnoreRule<Person>(x => x.Address);
             var instance = new Person();
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.Address));
 
@@ -139,9 +139,9 @@
         }
 
         [Fact]
-        public void ShouldPopulatePropertyReturnsFalseWhenParametersMatchPropertyReferenceTypeTest()
+        public void ShouldPopulatePropertyReturnsFalseWhenParametersMatchPropertyReferenceType()
         {
-            var configuration = new DefaultBuildStrategyCompiler().Compile();
+            var configuration = Model.UsingDefaultConfiguration();
             var instance = Model.Create<WithConstructorParameters>();
             var args = new object[]
             {
@@ -158,9 +158,9 @@
         }
 
         [Fact]
-        public void ShouldPopulatePropertyReturnsFalseWhenParametersMatchPropertyValueTypeTest()
+        public void ShouldPopulatePropertyReturnsFalseWhenParametersMatchPropertyValueType()
         {
-            var configuration = new DefaultBuildStrategyCompiler().Compile();
+            var configuration = Model.UsingDefaultConfiguration();
             var instance = Model.Create<WithConstructorParameters>();
             var args = new object[]
             {
@@ -177,9 +177,9 @@
         }
 
         [Fact]
-        public void ShouldPopulatePropertyReturnsTrueWhenNoParameterMatchesArgumentListTest()
+        public void ShouldPopulatePropertyReturnsTrueWhenNoParameterMatchesArgumentList()
         {
-            var configuration = new DefaultBuildStrategyCompiler().Compile();
+            var configuration = Model.UsingDefaultConfiguration();
             var instance = Model.Create<WithConstructorParameters>();
             var args = new object[]
             {
@@ -196,9 +196,9 @@
         }
 
         [Fact]
-        public void ShouldPopulatePropertyReturnsTrueWhenNoParametersMatchPropertyValueTypeTest()
+        public void ShouldPopulatePropertyReturnsTrueWhenNoParametersMatchPropertyValueType()
         {
-            var configuration = new DefaultBuildStrategyCompiler().Compile();
+            var configuration = Model.UsingDefaultConfiguration();
             var instance = Model.Create<WithConstructorParameters>();
             var args = new object[]
             {
@@ -215,9 +215,9 @@
         }
 
         [Fact]
-        public void ShouldPopulatePropertyReturnsTrueWhenNoParameterTypesMatchPropertyTypeTest()
+        public void ShouldPopulatePropertyReturnsTrueWhenNoParameterTypesMatchPropertyType()
         {
-            var configuration = new DefaultBuildStrategyCompiler().Compile();
+            var configuration = Model.UsingDefaultConfiguration();
             var instance = Model.Create<WithConstructorParameters>();
             var args = new object[]
             {
@@ -234,9 +234,9 @@
         }
 
         [Fact]
-        public void ShouldPopulatePropertyReturnsTrueWhenParametersDoNotMatchPropertyReferenceTypeTest()
+        public void ShouldPopulatePropertyReturnsTrueWhenParametersDoNotMatchPropertyReferenceType()
         {
-            var configuration = new DefaultBuildStrategyCompiler().Compile();
+            var configuration = Model.UsingDefaultConfiguration();
             var instance = Model.Create<WithConstructorParameters>();
             var args = new object[]
             {
@@ -253,9 +253,9 @@
         }
 
         [Fact]
-        public void ShouldPopulatePropertyReturnsTrueWhenPropertyContainsDefaultValueTypeValueTest()
+        public void ShouldPopulatePropertyReturnsTrueWhenPropertyContainsDefaultValueTypeValue()
         {
-            var configuration = new DefaultBuildStrategyCompiler().Compile();
+            var configuration = Model.UsingDefaultConfiguration();
             var instance = Model.Create<WithConstructorParameters>().Set(x => x.Id = Guid.Empty);
             var args = new object[]
             {
@@ -273,9 +273,9 @@
 
         [Fact]
         public void
-            ShouldPopulatePropertyReturnsTrueWhenPropertyContainsNullAndPropertyTypeCannotBeCreatedForEqualityCheckingTest()
+            ShouldPopulatePropertyReturnsTrueWhenPropertyContainsNullAndPropertyTypeCannotBeCreatedForEqualityChecking()
         {
-            var configuration = new DefaultBuildStrategyCompiler().Compile();
+            var configuration = Model.UsingDefaultConfiguration();
             var instance = Model.Create<ReadOnlyModelParent>().Set(x => x.Child = null);
             var args = new object[]
             {
@@ -292,9 +292,9 @@
         }
 
         [Fact]
-        public void ShouldPopulatePropertyReturnsTrueWhenPropertyContainsNullReferenceTypeValueTest()
+        public void ShouldPopulatePropertyReturnsTrueWhenPropertyContainsNullReferenceTypeValue()
         {
-            var configuration = new DefaultBuildStrategyCompiler().Compile();
+            var configuration = Model.UsingDefaultConfiguration();
             var instance = Model.Create<WithConstructorParameters>().Set(x => x.First = null);
             var args = new object[]
             {
@@ -311,9 +311,9 @@
         }
 
         [Fact]
-        public void ShouldPopulatePropertyReturnsTrueWhenPropertyContainsValueTypeValueNotMatchingConstructorTest()
+        public void ShouldPopulatePropertyReturnsTrueWhenPropertyContainsValueTypeValueNotMatchingConstructor()
         {
-            var configuration = new DefaultBuildStrategyCompiler().Compile();
+            var configuration = Model.UsingDefaultConfiguration();
             var instance = Model.Create<WithConstructorParameters>();
             var args = new object[]
             {
@@ -334,9 +334,9 @@
             "Microsoft.Design",
             "CA1825",
             Justification = "The Array.Empty<T> is not available on net452.")]
-        public void ShouldPopulatePropertyReturnsTrueWhenPropertyNotIgnoredAndEmptyArgumentsProvidedTest()
+        public void ShouldPopulatePropertyReturnsTrueWhenPropertyNotIgnoredAndEmptyArgumentsProvided()
         {
-            var configuration = new DefaultBuildStrategyCompiler().Compile();
+            var configuration = Model.UsingDefaultConfiguration();
             var instance = new Person();
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.Address));
 
@@ -348,9 +348,9 @@
         }
 
         [Fact]
-        public void ShouldPopulatePropertyReturnsTrueWhenPropertyNotIgnoredAndNullArgumentsProvidedTest()
+        public void ShouldPopulatePropertyReturnsTrueWhenPropertyNotIgnoredAndNullArgumentsProvided()
         {
-            var configuration = new DefaultBuildStrategyCompiler().Compile();
+            var configuration = Model.UsingDefaultConfiguration();
             var instance = new Person();
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.Address));
 
@@ -362,7 +362,7 @@
         }
 
         [Fact]
-        public void ShouldPopulatePropertyThrowsExceptionWithNullConfigurationTest()
+        public void ShouldPopulatePropertyThrowsExceptionWithNullConfiguration()
         {
             var instance = new Person();
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.Address));
@@ -375,9 +375,9 @@
         }
 
         [Fact]
-        public void ShouldPopulatePropertyThrowsExceptionWithNullInstanceTest()
+        public void ShouldPopulatePropertyThrowsExceptionWithNullInstance()
         {
-            var configuration = new DefaultBuildStrategyCompiler().Compile();
+            var configuration = Model.UsingDefaultConfiguration();
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.Address));
 
             var sut = new DefaultPropertyResolver();
@@ -388,9 +388,9 @@
         }
 
         [Fact]
-        public void ShouldPopulatePropertyThrowsExceptionWithNullPropertyInfoTest()
+        public void ShouldPopulatePropertyThrowsExceptionWithNullPropertyInfo()
         {
-            var configuration = new DefaultBuildStrategyCompiler().Compile();
+            var configuration = Model.UsingDefaultConfiguration();
             var instance = new Person();
 
             var sut = new DefaultPropertyResolver();

@@ -16,218 +16,218 @@
         }
 
         [Fact]
-        public void ResolveMatchesConstructorMatchingParameterLengthWhereParameterValueIsNullTest()
+        public void ResolveMatchesConstructorMatchingParameterLengthWhereParameterValueIsNull()
         {
-            var target = new DefaultConstructorResolver();
+            var sut = new DefaultConstructorResolver();
 
-            var constructor = target.Resolve(typeof(Person), (Person) null);
+            var constructor = sut.Resolve(typeof(Person), (Person) null);
 
             constructor.GetParameters().Length.Should().Be(1);
         }
 
         [Fact]
-        public void ResolveMatchesConstructorWithDerivedParameterTypesTest()
+        public void ResolveMatchesConstructorWithDerivedParameterTypes()
         {
             var person = new Person
             {
                 Id = Guid.NewGuid()
             };
 
-            var target = new DefaultConstructorResolver();
+            var sut = new DefaultConstructorResolver();
 
-            var constructor = target.Resolve(typeof(Person), person);
+            var constructor = sut.Resolve(typeof(Person), person);
 
             constructor.GetParameters().Length.Should().Be(1);
         }
 
         [Fact]
-        public void ResolveMatchesConstructorWithMatchingParametersTypesTest()
+        public void ResolveMatchesConstructorWithMatchingParametersTypes()
         {
             var args = new object[]
             {
                 "first", "last", DateTime.UtcNow, true, Guid.NewGuid(), Environment.TickCount
             };
 
-            var target = new DefaultConstructorResolver();
+            var sut = new DefaultConstructorResolver();
 
-            var constructor = target.Resolve(typeof(WithValueParameters), args);
+            var constructor = sut.Resolve(typeof(WithValueParameters), args);
 
             constructor.GetParameters().Length.Should().Be(6);
         }
 
         [Fact]
-        public void ResolveReturnsConstructorThatMatchesAgainstNullParametersTest()
+        public void ResolveReturnsConstructorThatMatchesAgainstNullParameters()
         {
-            var target = new DefaultConstructorResolver();
+            var sut = new DefaultConstructorResolver();
 
-            var actual = target.Resolve(typeof(Other), Guid.NewGuid(), null, 123, null);
+            var actual = sut.Resolve(typeof(Other), Guid.NewGuid(), null, 123, null);
 
             actual.GetParameters().Length.Should().Be(4);
         }
 
         [Fact]
-        public void ResolveReturnsConstructorWhenArgsContainsNullableParameterWithNullValueTest()
+        public void ResolveReturnsConstructorWhenArgsContainsNullableParameterWithNullValue()
         {
-            var target = new DefaultConstructorResolver();
+            var sut = new DefaultConstructorResolver();
 
-            var actual = target.Resolve(typeof(WithConstructorParameters), null, Guid.NewGuid(), null, 123, true);
+            var actual = sut.Resolve(typeof(WithConstructorParameters), null, Guid.NewGuid(), null, 123, true);
 
             actual.GetParameters().Length.Should().Be(5);
         }
 
         [Fact]
-        public void ResolveReturnsConstructorWhenArgsContainsNullAndArgCountFillsNonOptionalParamTest()
+        public void ResolveReturnsConstructorWhenArgsContainsNullAndArgCountFillsNonOptionalParam()
         {
-            var target = new DefaultConstructorResolver();
+            var sut = new DefaultConstructorResolver();
 
-            var actual = target.Resolve(typeof(Optionals), null, 10, "third");
+            var actual = sut.Resolve(typeof(Optionals), null, 10, "third");
 
             actual.GetParameters().Length.Should().Be(5);
         }
 
         [Fact]
-        public void ResolveReturnsConstructorWhenArgsContainsNullAndMatchesDerivedTypeTest()
+        public void ResolveReturnsConstructorWhenArgsContainsNullAndMatchesDerivedType()
         {
             var company = new SpecificCompany();
 
-            var target = new DefaultConstructorResolver();
+            var sut = new DefaultConstructorResolver();
 
-            var actual = target.Resolve(typeof(Derived), null, company);
+            var actual = sut.Resolve(typeof(Derived), null, company);
 
             actual.GetParameters().Length.Should().Be(2);
         }
 
         [Fact]
-        public void ResolveReturnsConstructorWhenArgsContainsNullAndNonNullArgIsCopyConstructorTest()
+        public void ResolveReturnsConstructorWhenArgsContainsNullAndNonNullArgIsCopyConstructor()
         {
             var source = Clone.Create();
 
-            var target = new DefaultConstructorResolver();
+            var sut = new DefaultConstructorResolver();
 
-            var actual = target.Resolve(typeof(Clone), source, null);
-
-            actual.GetParameters().Length.Should().Be(2);
-        }
-
-        [Fact]
-        public void ResolveReturnsConstructorWhenArgsContainsNullAndNullArgIsCopyConstructorTest()
-        {
-            var target = new DefaultConstructorResolver();
-
-            var actual = target.Resolve(typeof(Clone), null, "second");
+            var actual = sut.Resolve(typeof(Clone), source, null);
 
             actual.GetParameters().Length.Should().Be(2);
         }
 
         [Fact]
-        public void ResolveReturnsConstructorWithLeastParametersExcludingConstructorsWithSameTypeTest()
+        public void ResolveReturnsConstructorWhenArgsContainsNullAndNullArgIsCopyConstructor()
         {
-            var target = new DefaultConstructorResolver();
+            var sut = new DefaultConstructorResolver();
 
-            var constructor = target.Resolve(typeof(Other));
+            var actual = sut.Resolve(typeof(Clone), null, "second");
+
+            actual.GetParameters().Length.Should().Be(2);
+        }
+
+        [Fact]
+        public void ResolveReturnsConstructorWithLeastParametersExcludingConstructorsWithSameType()
+        {
+            var sut = new DefaultConstructorResolver();
+
+            var constructor = sut.Resolve(typeof(Other));
 
             constructor.GetParameters().Should().HaveCount(3);
             constructor.GetParameters().Should().NotContain(x => x.ParameterType == typeof(Other));
         }
 
         [Fact]
-        public void ResolveReturnsConstructorWithLeastParametersTest()
+        public void ResolveReturnsConstructorWithLeastParameters()
         {
-            var target = new DefaultConstructorResolver();
+            var sut = new DefaultConstructorResolver();
 
-            var constructor = target.Resolve(typeof(WithInterfaceAndAbstractParameters));
+            var constructor = sut.Resolve(typeof(WithInterfaceAndAbstractParameters));
 
             constructor.GetParameters().Should().HaveCount(1);
         }
 
         [Fact]
-        public void ResolveReturnsConstructorWithLeastParametersWhenArgsIsNullTest()
+        public void ResolveReturnsConstructorWithLeastParametersWhenArgsIsNull()
         {
-            var target = new DefaultConstructorResolver();
+            var sut = new DefaultConstructorResolver();
 
-            var constructor = target.Resolve(typeof(WithInterfaceAndAbstractParameters), null);
+            var constructor = sut.Resolve(typeof(WithInterfaceAndAbstractParameters), null);
 
             constructor.GetParameters().Should().HaveCount(1);
         }
 
         [Fact]
-        public void ResolveReturnsDefaultConstructorOnSimpleModelTest()
+        public void ResolveReturnsDefaultConstructorOnSimpleModel()
         {
-            var target = new DefaultConstructorResolver();
+            var sut = new DefaultConstructorResolver();
 
-            var constructor = target.Resolve(typeof(Simple));
+            var constructor = sut.Resolve(typeof(Simple));
 
             constructor.GetParameters().Should().BeEmpty();
         }
 
         [Fact]
-        public void ResolveReturnsDefaultConstructorWhenManyConstructorsAvailableTest()
+        public void ResolveReturnsDefaultConstructorWhenManyConstructorsAvailable()
         {
-            var target = new DefaultConstructorResolver();
+            var sut = new DefaultConstructorResolver();
 
-            var constructor = target.Resolve(typeof(WithMixedValueParameters));
+            var constructor = sut.Resolve(typeof(WithMixedValueParameters));
 
             constructor.GetParameters().Should().BeEmpty();
         }
 
         [Fact]
-        public void ResolveReturnsParameterConstructorTest()
+        public void ResolveReturnsParameterConstructor()
         {
-            var target = new DefaultConstructorResolver();
+            var sut = new DefaultConstructorResolver();
 
-            var constructor = target.Resolve(typeof(WithValueParameters));
+            var constructor = sut.Resolve(typeof(WithValueParameters));
 
             constructor.GetParameters().Should().NotBeEmpty();
         }
 
         [Fact]
-        public void ResolveThrowsExceptionWhenArgsContainsNullAndArgCountLessThanOptionalParamTest()
+        public void ResolveThrowsExceptionWhenArgsContainsNullAndArgCountLessThanOptionalParam()
         {
-            var target = new DefaultConstructorResolver();
+            var sut = new DefaultConstructorResolver();
 
-            Action action = () => target.Resolve(typeof(Optionals), "first", null);
+            Action action = () => sut.Resolve(typeof(Optionals), "first", null);
 
             _output.WriteLine(action.Should().Throw<MissingMemberException>().And.Message);
         }
 
         [Fact]
-        public void ResolveThrowsExceptionWhenArgsContainsNullAndHasArgParamTypeMismatchTest()
+        public void ResolveThrowsExceptionWhenArgsContainsNullAndHasArgParamTypeMismatch()
         {
-            var target = new DefaultConstructorResolver();
+            var sut = new DefaultConstructorResolver();
 
-            Action action = () => target.Resolve(typeof(Optionals), "first", "stuff", null);
+            Action action = () => sut.Resolve(typeof(Optionals), "first", "stuff", null);
 
             _output.WriteLine(action.Should().Throw<MissingMemberException>().And.Message);
         }
 
         [Fact]
-        public void ResolveThrowsExceptionWhenArgsContainsNullAndNoMatchFoundOnTypesTest()
+        public void ResolveThrowsExceptionWhenArgsContainsNullAndNoMatchFoundOnTypes()
         {
-            var target = new DefaultConstructorResolver();
+            var sut = new DefaultConstructorResolver();
 
-            Action action = () => target.Resolve(typeof(Other), Guid.NewGuid(), null, "NotAMatchingParameter", null);
+            Action action = () => sut.Resolve(typeof(Other), Guid.NewGuid(), null, "NotAMatchingParameter", null);
 
             _output.WriteLine(action.Should().Throw<MissingMemberException>().And.Message);
         }
 
         [Fact]
-        public void ResolveThrowsExceptionWhenArgsContainsNullAndParamIsSubtypeTest()
+        public void ResolveThrowsExceptionWhenArgsContainsNullAndParamIsSubtype()
         {
             var company = new Company();
 
-            var target = new DefaultConstructorResolver();
+            var sut = new DefaultConstructorResolver();
 
-            Action action = () => target.Resolve(typeof(Derived), null, company, "third");
+            Action action = () => sut.Resolve(typeof(Derived), null, company, "third");
 
             _output.WriteLine(action.Should().Throw<MissingMemberException>().And.Message);
         }
 
         [Fact]
-        public void ResolveThrowsExceptionWhenArgsContainsNullAndTooManyArgumentsProvidedTest()
+        public void ResolveThrowsExceptionWhenArgsContainsNullAndTooManyArgumentsProvided()
         {
-            var target = new DefaultConstructorResolver();
+            var sut = new DefaultConstructorResolver();
 
-            Action action = () => target.Resolve(
+            Action action = () => sut.Resolve(
                 typeof(Other),
                 Guid.NewGuid(),
                 null,
@@ -239,73 +239,73 @@
         }
 
         [Fact]
-        public void ResolveThrowsExceptionWhenArgsContainsNullMatchingValueTypeParameterTest()
+        public void ResolveThrowsExceptionWhenArgsContainsNullMatchingValueTypeParameter()
         {
-            var target = new DefaultConstructorResolver();
+            var sut = new DefaultConstructorResolver();
 
-            Action action = () => target.Resolve(typeof(Other), Guid.NewGuid(), "NextParameterIsInt", null, null);
+            Action action = () => sut.Resolve(typeof(Other), Guid.NewGuid(), "NextParameterIsInt", null, null);
 
             _output.WriteLine(action.Should().Throw<MissingMemberException>().And.Message);
         }
 
         [Fact]
-        public void ResolveThrowsExceptionWhenArgsContainsNullNoOptionalParamsAndArgumentCountMismatchTest()
+        public void ResolveThrowsExceptionWhenArgsContainsNullNoOptionalParamsAndArgumentCountMismatch()
         {
-            var target = new DefaultConstructorResolver();
+            var sut = new DefaultConstructorResolver();
 
-            Action action = () => target.Resolve(typeof(WithMixedValueParameters), "first", null, "this doesn't exist");
+            Action action = () => sut.Resolve(typeof(WithMixedValueParameters), "first", null, "this doesn't exist");
 
             _output.WriteLine(action.Should().Throw<MissingMemberException>().And.Message);
         }
 
         [Fact]
-        public void ResolveThrowsExceptionWhenClassOnlyContainsConstructorsThatReferenceTheSameTypeTest()
+        public void ResolveThrowsExceptionWhenClassOnlyContainsConstructorsThatReferenceTheSameType()
         {
-            var target = new DefaultConstructorResolver();
+            var sut = new DefaultConstructorResolver();
 
-            Action action = () => target.Resolve(typeof(Clone));
+            Action action = () => sut.Resolve(typeof(Clone));
 
             _output.WriteLine(action.Should().Throw<MissingMemberException>().And.Message);
         }
 
         [Fact]
-        public void ResolveThrowsExceptionWhenClassOnlyContainsCopyConstructorTest()
+        public void ResolveThrowsExceptionWhenClassOnlyContainsCopyConstructor()
         {
-            var target = new DefaultConstructorResolver();
+            var sut = new DefaultConstructorResolver();
 
-            Action action = () => target.Resolve(typeof(Copy));
+            Action action = () => sut.Resolve(typeof(Copy));
 
             _output.WriteLine(action.Should().Throw<MissingMemberException>().And.Message);
         }
 
         [Fact]
-        public void ResolveThrowsExceptionWhenNoConstructorMatchingSpecifiedParametersTest()
+        public void ResolveThrowsExceptionWhenNoConstructorMatchingSpecifiedParameters()
         {
-            var target = new DefaultConstructorResolver();
+            var sut = new DefaultConstructorResolver();
 
-            Action action = () => target.Resolve(typeof(Simple), Guid.NewGuid().ToString(), true, 123);
+            Action action = () => sut.Resolve(typeof(Simple), Guid.NewGuid().ToString(), true, 123);
 
             _output.WriteLine(action.Should().Throw<MissingMemberException>().And.Message);
         }
 
         [Fact]
-        public void ResolveThrowsExceptionWhenNoPublicConstructorFoundTest()
+        public void ResolveThrowsExceptionWhenNoPublicConstructorFound()
         {
-            var target = new DefaultConstructorResolver();
+            var sut = new DefaultConstructorResolver();
 
-            Action action = () => target.Resolve(typeof(Singleton));
+            Action action = () => sut.Resolve(typeof(Singleton));
 
             _output.WriteLine(action.Should().Throw<MissingMemberException>().And.Message);
         }
 
         [Fact]
-        public void ResolveThrowsExceptionWhenParameterValuesDoNotMatchParameterTypesTest()
+        public void ResolveThrowsExceptionWhenParameterValuesDoNotMatchParameterTypes()
         {
-            var target = new DefaultConstructorResolver();
+            var sut = new DefaultConstructorResolver();
 
             var priority = Convert.ToDouble(Environment.TickCount);
 
-            Action action = () => target.Resolve(
+            Action action = () => sut.Resolve(
                 typeof(WithValueParameters),
                 "first",
                 "last",
@@ -318,21 +318,21 @@
         }
 
         [Fact]
-        public void ResolveThrowsExceptionWhenWhenOnlyPrivateConstructorAvailableTest()
+        public void ResolveThrowsExceptionWhenWhenOnlyPrivateConstructorAvailable()
         {
-            var target = new DefaultConstructorResolver();
+            var sut = new DefaultConstructorResolver();
 
-            Action action = () => target.Resolve(typeof(Singleton));
+            Action action = () => sut.Resolve(typeof(Singleton));
 
             _output.WriteLine(action.Should().Throw<MissingMemberException>().And.Message);
         }
 
         [Fact]
-        public void ResolveThrowsExceptionWithNullTypeTest()
+        public void ResolveThrowsExceptionWithNullType()
         {
-            var target = new DefaultConstructorResolver();
+            var sut = new DefaultConstructorResolver();
 
-            Action action = () => target.Resolve(null);
+            Action action = () => sut.Resolve(null);
 
             action.Should().Throw<ArgumentNullException>();
         }

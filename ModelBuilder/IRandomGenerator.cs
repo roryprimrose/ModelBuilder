@@ -9,7 +9,7 @@
     public interface IRandomGenerator
     {
         /// <summary>
-        ///     Gets the maxmum value for the specified type.
+        ///     Gets the maximum value for the specified type.
         /// </summary>
         /// <param name="type">The type to evaluate.</param>
         /// <returns>The maximum value for the type.</returns>

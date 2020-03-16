@@ -1,6 +1,11 @@
 ﻿namespace ModelBuilder
 {
-    using System.Collections.ObjectModel;
+    using System.Collections.Generic;
+    using ModelBuilder.CreationRules;
+    using ModelBuilder.ExecuteOrderRules;
+    using ModelBuilder.IgnoreRules;
+    using ModelBuilder.TypeCreators;
+    using ModelBuilder.ValueGenerators;
 
     /// <summary>
     ///     The <see cref="IBuildConfiguration" />
@@ -9,49 +14,54 @@
     public interface IBuildConfiguration
     {
         /// <summary>
-        ///     Gets the constructor resolver used to create an instance of a type.
+        ///     Gets or sets the constructor resolver used to create an instance of a type.
         /// </summary>
-        IConstructorResolver ConstructorResolver { get; }
+        IConstructorResolver ConstructorResolver { get; set; }
 
         /// <summary>
         ///     Gets the creation rules used to quickly generate values without invoking <see cref="ITypeCreator" /> or
         ///     <see cref="IValueGenerator" /> instances.
         /// </summary>
-        ReadOnlyCollection<CreationRule> CreationRules { get; }
+        ICollection<ICreationRule> CreationRules { get; }
 
         /// <summary>
         ///     Gets the execute order rules used to determine the order that properties are populated.
         /// </summary>
-        ReadOnlyCollection<ExecuteOrderRule> ExecuteOrderRules { get; }
+        ICollection<IExecuteOrderRule> ExecuteOrderRules { get; }
 
         /// <summary>
         ///     Gets the ignore rules used to skip over property population.
         /// </summary>
-        ReadOnlyCollection<IgnoreRule> IgnoreRules { get; }
+        ICollection<IIgnoreRule> IgnoreRules { get; }
 
         /// <summary>
         ///     Gets the post build actions used to modify instances after they have been created or populated.
         /// </summary>
-        ReadOnlyCollection<IPostBuildAction> PostBuildActions { get; }
+        ICollection<IPostBuildAction> PostBuildActions { get; }
 
         /// <summary>
-        ///     Gets the property resolver used to populate an instance of a type.
+        ///     Gets or sets the property resolver used to populate an instance of a type.
         /// </summary>
-        IPropertyResolver PropertyResolver { get; }
+        IPropertyResolver PropertyResolver { get; set; }
 
         /// <summary>
         ///     Gets the type creators used to create instances.
         /// </summary>
-        ReadOnlyCollection<ITypeCreator> TypeCreators { get; }
+        ICollection<ITypeCreator> TypeCreators { get; }
 
         /// <summary>
         ///     Gets the rules used to map between types before attempting to create a value of the source type.
         /// </summary>
-        ReadOnlyCollection<TypeMappingRule> TypeMappingRules { get; }
+        ICollection<TypeMappingRule> TypeMappingRules { get; }
+
+        /// <summary>
+        ///     Gets or sets the type resolver used to determine the build type.
+        /// </summary>
+        ITypeResolver TypeResolver { get; set; }
 
         /// <summary>
         ///     Gets the value generators used to generate flat values.
         /// </summary>
-        ReadOnlyCollection<IValueGenerator> ValueGenerators { get; }
+        ICollection<IValueGenerator> ValueGenerators { get; }
     }
 }

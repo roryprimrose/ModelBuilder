@@ -1,15 +1,24 @@
 namespace ModelBuilder.UnitTests
 {
     using System;
+    using System.Reflection;
     using ModelBuilder.UnitTests.Models;
 
     public class DummyPostBuildAction : IPostBuildAction
     {
-        public void Execute(Type type, string referenceName, IBuildChain buildChain)
+        public void Execute(IBuildChain buildChain, object instance, Type type)
         {
         }
 
-        public bool IsSupported(Type type, string referenceName, IBuildChain buildChain)
+        public void Execute(IBuildChain buildChain, object instance, ParameterInfo parameterInfo)
+        {
+        }
+
+        public void Execute(IBuildChain buildChain, object instance, PropertyInfo propertyInfo)
+        {
+        }
+
+        public bool IsMatch(IBuildChain buildChain, Type type)
         {
             if (type == typeof(Company))
             {
@@ -17,6 +26,16 @@ namespace ModelBuilder.UnitTests
             }
 
             return false;
+        }
+
+        public bool IsMatch(IBuildChain buildChain, ParameterInfo parameterInfo)
+        {
+            return IsMatch(buildChain, parameterInfo.ParameterType);
+        }
+
+        public bool IsMatch(IBuildChain buildChain, PropertyInfo propertyInfo)
+        {
+            return IsMatch(buildChain, propertyInfo.PropertyType);
         }
 
         public int Priority { get; }

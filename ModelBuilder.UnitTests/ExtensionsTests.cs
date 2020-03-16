@@ -27,7 +27,7 @@
         }
 
         [Fact]
-        public void IsNullableThrowsExceptionWithNullTypeTest()
+        public void IsNullableThrowsExceptionWithNullType()
         {
             Action action = () => ((Type) null).IsNullable();
 
@@ -35,7 +35,7 @@
         }
 
         [Fact]
-        public void NextReturnsDefaultValueWhenListIsEmptyTest()
+        public void NextReturnsDefaultValueWhenListIsEmpty()
         {
             var values = new List<Location>();
 
@@ -45,7 +45,7 @@
         }
 
         [Fact]
-        public void NextReturnsRandomValueTest()
+        public void NextReturnsRandomValue()
         {
             var values = Model.Create<List<int>>();
 
@@ -66,48 +66,48 @@
         }
 
         [Fact]
-        public void NextThrowsExceptionWithNullSourceTest()
+        public void NextThrowsExceptionWithNullSource()
         {
-            Action action = () => Extensions.Next<int>(null);
+            Action action = () => ModelBuilder.Extensions.Next<int>(null);
 
             action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
-        public void SetEachCollectionRunsActionAgainstInstanceTest()
+        public void SetEachCollectionRunsActionAgainstInstance()
         {
             var index = 0;
-            var target = new Collection<Person>
+            var sut = new Collection<Person>
             {
                 new Person(),
                 new Person()
             };
 
-            var actual = target.SetEach(
+            var actual = sut.SetEach(
                 x =>
                 {
                     index++;
                     x.Priority = index;
                 });
 
-            actual.Should().BeSameAs(target);
+            actual.Should().BeSameAs(sut);
             actual.Count.Should().Be(2);
             actual.First().Priority.Should().Be(1);
             actual.Skip(1).First().Priority.Should().Be(2);
         }
 
         [Fact]
-        public void SetEachCollectionThrowsExceptionWithNullActionTest()
+        public void SetEachCollectionThrowsExceptionWithNullAction()
         {
-            var target = new Collection<string>();
+            var sut = new Collection<string>();
 
-            Action action = () => target.SetEach(null);
+            Action action = () => sut.SetEach(null);
 
             action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
-        public void SetEachCollectionThrowsExceptionWithNullInstanceTest()
+        public void SetEachCollectionThrowsExceptionWithNullInstance()
         {
             Action action = () => ((Collection<string>) null).SetEach(x => { });
 
@@ -115,9 +115,9 @@
         }
 
         [Fact]
-        public void SetEachDictionaryRunsActionAgainstInstanceTest()
+        public void SetEachDictionaryRunsActionAgainstInstance()
         {
-            var target = new Dictionary<Guid, Person>
+            var sut = new Dictionary<Guid, Person>
             {
                 {
                     Guid.NewGuid(), new Person()
@@ -127,31 +127,31 @@
                 }
             };
 
-            var actual = target.SetEach(x => { x.Value.Id = x.Key; });
+            var actual = sut.SetEach(x => { x.Value.Id = x.Key; });
 
-            actual.Should().BeSameAs(target);
+            actual.Should().BeSameAs(sut);
             actual.Count.Should().Be(2);
             actual.First().Key.Should().Be(actual.First().Value.Id);
             actual.Skip(1).First().Key.Should().Be(actual.Skip(1).First().Value.Id);
         }
 
         [Fact]
-        public void SetEachEnumerableThrowsExceptionWithNullActionTest()
+        public void SetEachEnumerableThrowsExceptionWithNullAction()
         {
-            IEnumerable<string> target = new Collection<string>();
+            IEnumerable<string> sut = new Collection<string>();
 
-            Action action = () => target.SetEach(null);
+            Action action = () => sut.SetEach(null);
 
             action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
-        public void SetEachIEnumerableRunsActionAgainstInstanceTest()
+        public void SetEachIEnumerableRunsActionAgainstInstance()
         {
             var index = 0;
-            var target = BuildPeople();
+            var sut = BuildPeople();
 
-            var actual = target.SetEach(
+            var actual = sut.SetEach(
                 x =>
                 {
                     index++;
@@ -164,7 +164,7 @@
         }
 
         [Fact]
-        public void SetEachIEnumerableThrowsExceptionWithNullInstanceTest()
+        public void SetEachIEnumerableThrowsExceptionWithNullInstance()
         {
             Action action = () => ((IEnumerable<string>) null).SetEach(x => { });
 
@@ -172,40 +172,40 @@
         }
 
         [Fact]
-        public void SetEachListAsIEnumerableRunsActionAgainstInstanceTest()
+        public void SetEachListAsIEnumerableRunsActionAgainstInstance()
         {
             var index = 0;
-            var target = new List<Person>
+            var sut = new List<Person>
             {
                 new Person(),
                 new Person()
             };
 
-            var actual = target.SetEach(
+            var actual = sut.SetEach(
                 x =>
                 {
                     index++;
                     x.Priority = index;
                 });
 
-            actual.Should().BeSameAs(target);
+            actual.Should().BeSameAs(sut);
             actual.Count.Should().Be(2);
             actual[0].Priority.Should().Be(1);
             actual[1].Priority.Should().Be(2);
         }
 
         [Fact]
-        public void SetEachListThrowsExceptionWithNullActionTest()
+        public void SetEachListThrowsExceptionWithNullAction()
         {
-            var target = new List<string>();
+            var sut = new List<string>();
 
-            Action action = () => target.SetEach(null);
+            Action action = () => sut.SetEach(null);
 
             action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
-        public void SetEachListThrowsExceptionWithNullInstanceTest()
+        public void SetEachListThrowsExceptionWithNullInstance()
         {
             Action action = () => ((List<string>) null).SetEach(x => { });
 
@@ -213,7 +213,7 @@
         }
 
         [Fact]
-        public void SetEachReadOnlyCollectionRunsActionAgainstInstanceTest()
+        public void SetEachReadOnlyCollectionRunsActionAgainstInstance()
         {
             var index = 0;
             var source = new List<Person>
@@ -221,45 +221,45 @@
                 new Person(),
                 new Person()
             };
-            var target = new ReadOnlyCollection<Person>(source);
+            var sut = new ReadOnlyCollection<Person>(source);
 
-            var actual = target.SetEach(
+            var actual = sut.SetEach(
                 x =>
                 {
                     index++;
                     x.Priority = index;
                 });
 
-            actual.Should().BeSameAs(target);
+            actual.Should().BeSameAs(sut);
             actual.Count.Should().Be(2);
             actual.First().Priority.Should().Be(1);
             actual.Skip(1).First().Priority.Should().Be(2);
         }
 
         [Fact]
-        public void SetRunsActionAgainstInstanceTest()
+        public void SetRunsActionAgainstInstance()
         {
             var value = Guid.NewGuid();
-            var target = new Person();
+            var sut = new Person();
 
-            var actual = target.Set(x => x.Id = value);
+            var actual = sut.Set(x => x.Id = value);
 
-            actual.Should().BeSameAs(target);
+            actual.Should().BeSameAs(sut);
             actual.Id.Should().Be(value);
         }
 
         [Fact]
-        public void SetThrowsExceptionWithNullActionTest()
+        public void SetThrowsExceptionWithNullAction()
         {
-            var target = new Person();
+            var sut = new Person();
 
-            Action action = () => target.Set(null);
+            Action action = () => sut.Set(null);
 
             action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
-        public void SetThrowsExceptionWithNullInstanceTest()
+        public void SetThrowsExceptionWithNullInstance()
         {
             Action action = () => ((object) null).Set(x => { });
 

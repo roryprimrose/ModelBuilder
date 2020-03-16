@@ -8,19 +8,19 @@
     public class BuildExceptionTests
     {
         [Fact]
-        public void CanCreatesWithDefaultValuesTest()
+        public void CanCreatesWithDefaultValues()
         {
-            var target = new BuildException();
+            var sut = new BuildException();
 
-            target.BuildLog.Should().BeNull();
-            target.Message.Should().NotBeNullOrWhiteSpace();
-            target.InnerException.Should().BeNull();
-            target.TargetType.Should().BeNull();
-            target.Context.Should().BeNull();
+            sut.BuildLog.Should().BeNull();
+            sut.Message.Should().NotBeNullOrWhiteSpace();
+            sut.InnerException.Should().BeNull();
+            sut.TargetType.Should().BeNull();
+            sut.Context.Should().BeNull();
         }
 
         [Fact]
-        public void CanCreateWithBuildInformationAndInnerExceptionTest()
+        public void CanCreateWithBuildInformationAndInnerException()
         {
             var message = Guid.NewGuid().ToString();
             var targetType = typeof(Person);
@@ -29,18 +29,18 @@
             var buildLog = Guid.NewGuid().ToString();
             var inner = new TimeoutException();
 
-            var target = new BuildException(message, targetType, referenceName, context, buildLog, inner);
+            var sut = new BuildException(message, targetType, referenceName, context, buildLog, inner);
 
-            target.Message.Should().Be(message);
-            target.TargetType.Should().Be(targetType);
-            target.ReferenceName.Should().Be(referenceName);
-            target.Context.Should().Be(context);
-            target.BuildLog.Should().Be(buildLog);
-            target.InnerException.Should().Be(inner);
+            sut.Message.Should().Be(message);
+            sut.TargetType.Should().Be(targetType);
+            sut.ReferenceName.Should().Be(referenceName);
+            sut.Context.Should().Be(context);
+            sut.BuildLog.Should().Be(buildLog);
+            sut.InnerException.Should().Be(inner);
         }
 
         [Fact]
-        public void CanCreateWithBuildInformationTest()
+        public void CanCreateWithBuildInformation()
         {
             var message = Guid.NewGuid().ToString();
             var targetType = typeof(Person);
@@ -48,36 +48,36 @@
             var context = new Company();
             var buildLog = Guid.NewGuid().ToString();
 
-            var target = new BuildException(message, targetType, referenceName, context, buildLog);
+            var sut = new BuildException(message, targetType, referenceName, context, buildLog);
 
-            target.Message.Should().Be(message);
-            target.TargetType.Should().Be(targetType);
-            target.ReferenceName.Should().Be(referenceName);
-            target.Context.Should().Be(context);
-            target.BuildLog.Should().Be(buildLog);
-            target.InnerException.Should().BeNull();
+            sut.Message.Should().Be(message);
+            sut.TargetType.Should().Be(targetType);
+            sut.ReferenceName.Should().Be(referenceName);
+            sut.Context.Should().Be(context);
+            sut.BuildLog.Should().Be(buildLog);
+            sut.InnerException.Should().BeNull();
         }
 
         [Fact]
-        public void CanCreateWithMessageAndExceptionTest()
+        public void CanCreateWithMessageAndException()
         {
             var message = Guid.NewGuid().ToString();
             var inner = new TimeoutException();
 
-            var target = new BuildException(message, inner);
+            var sut = new BuildException(message, inner);
 
-            target.Message.Should().Be(message);
-            target.InnerException.Should().Be(inner);
+            sut.Message.Should().Be(message);
+            sut.InnerException.Should().Be(inner);
         }
 
         [Fact]
-        public void CanCreateWithMessageTest()
+        public void CanCreateWithMessage()
         {
             var message = Guid.NewGuid().ToString();
 
-            var target = new BuildException(message);
+            var sut = new BuildException(message);
 
-            target.Message.Should().Be(message);
+            sut.Message.Should().Be(message);
         }
     }
 }

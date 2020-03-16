@@ -14,7 +14,7 @@
             throw new NotImplementedException();
         }
 
-        public void Initialize(IBuildConfiguration configuration, IBuildLog buildLog)
+        public void Initialize(IBuildConfiguration configuration)
         {
         }
 

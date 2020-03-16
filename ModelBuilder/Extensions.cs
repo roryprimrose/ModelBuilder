@@ -16,7 +16,7 @@
         /// </summary>
         /// <param name="type">The type to validate.</param>
         /// <returns><c>true</c> if the type is nullable; otherwise <c>false</c>.</returns>
-        /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
         public static bool IsNullable(this Type type)
         {
             if (type == null)
@@ -68,8 +68,8 @@
         /// <param name="instance">The instance to update.</param>
         /// <param name="action">The action to run against the instance.</param>
         /// <returns>The updated instance.</returns>
-        /// <exception cref="ArgumentNullException">The <paramref name="instance" /> parameter is null.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="action" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="instance" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="action" /> parameter is <c>null</c>.</exception>
         public static T Set<T>(this T instance, Action<T> action)
         {
             if (instance == null)
@@ -94,8 +94,8 @@
         /// <param name="instances">The instances.</param>
         /// <param name="action">The configuration action.</param>
         /// <returns>A list of the instances.</returns>
-        /// <exception cref="ArgumentNullException">The <paramref name="instances" /> parameter is null.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="action" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="instances" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="action" /> parameter is <c>null</c>.</exception>
         [SuppressMessage(
             "Microsoft.Design",
             "CA1002:DoNotExposeGenericLists",
@@ -131,8 +131,8 @@
         /// <param name="instances">The instances.</param>
         /// <param name="action">The configuration action.</param>
         /// <returns>A list of the instances.</returns>
-        /// <exception cref="ArgumentNullException">The <paramref name="instances" /> parameter is null.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="action" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="instances" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="action" /> parameter is <c>null</c>.</exception>
         [SuppressMessage(
             "Microsoft.Design",
             "CA1002:DoNotExposeGenericLists",
@@ -162,8 +162,8 @@
         /// <param name="instances">The instances to update.</param>
         /// <param name="action">The action to run against the instance.</param>
         /// <returns>The updated instances.</returns>
-        /// <exception cref="ArgumentNullException">The <paramref name="instances" /> parameter is null.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="action" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="instances" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="action" /> parameter is <c>null</c>.</exception>
         public static ICollection<T> SetEach<T>(this ICollection<T> instances, Action<T> action)
         {
             if (instances == null)

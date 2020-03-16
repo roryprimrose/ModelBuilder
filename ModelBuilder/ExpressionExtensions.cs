@@ -19,7 +19,7 @@
         /// <typeparam name="T">The type that holds the property.</typeparam>
         /// <param name="expression">The expression that identifies a property on <typeparamref name="T" /></param>
         /// <returns>The property in the expression.</returns>
-        /// <exception cref="ArgumentNullException">The <paramref name="expression" /> parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="expression" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentException">The <paramref name="expression" /> parameter does not represent a property.</exception>
         /// <exception cref="ArgumentException">
         ///     The <paramref name="expression" /> parameter does not match a property on the type

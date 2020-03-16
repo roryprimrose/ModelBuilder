@@ -9,7 +9,7 @@
     public class TypeMappingRuleTests
     {
         [Fact]
-        public void ReturnsConstructorParametersAsPropertiesTest()
+        public void ReturnsConstructorParametersAsProperties()
         {
             var sourceType = typeof(Stream);
             var targetType = typeof(MemoryStream);
@@ -21,7 +21,7 @@
         }
 
         [Fact]
-        public void ThrowsExceptionWhenCreatedWithNullSourceTypeTest()
+        public void ThrowsExceptionWhenCreatedWithNullSourceType()
         {
             var targetType = typeof(MemoryStream);
 
@@ -32,7 +32,7 @@
         }
 
         [Fact]
-        public void ThrowsExceptionWhenCreatedWithNullTargetTypeTest()
+        public void ThrowsExceptionWhenCreatedWithNullTargetType()
         {
             var sourceType = typeof(Stream);
 

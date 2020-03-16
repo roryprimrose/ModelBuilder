@@ -1,16 +1,15 @@
 ﻿namespace ModelBuilder.UnitTests
 {
-    using System;
-    using ModelBuilder.UnitTests.Models;
+    using System.Reflection;
+    using ModelBuilder.ExecuteOrderRules;
 
-    public class DummyExecuteOrderRule : ExecuteOrderRule
+    public class DummyExecuteOrderRule : IExecuteOrderRule
     {
-        public DummyExecuteOrderRule() : base(
-            typeof(Person),
-            typeof(string),
-            "SomeRandomPropertyWhichDoesNotExist",
-            Environment.TickCount)
+        public bool IsMatch(PropertyInfo property)
         {
+            return false;
         }
+
+        public int Priority { get; } = 100;
     }
 }

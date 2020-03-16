@@ -1,15 +1,16 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
+    using ModelBuilder.ValueGenerators;
 
     public class DummyValueGenerator : ValueGeneratorBase
     {
-        public override bool IsSupported(Type type, string referenceName, IBuildChain buildChain)
+        protected override bool IsMatch(IBuildChain buildChain, Type type, string referenceName)
         {
             return false;
         }
 
-        protected override object GenerateValue(Type type, string referenceName, IExecuteStrategy executeStrategy)
+        protected override object Generate(IExecuteStrategy executeStrategy, Type type, string referenceName)
         {
             throw new NotImplementedException();
         }

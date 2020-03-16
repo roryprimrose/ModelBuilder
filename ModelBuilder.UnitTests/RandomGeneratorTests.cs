@@ -17,6 +17,19 @@
             _output = output;
         }
 
+        [Fact]
+        public void GetMaxDecimal()
+        {
+            var sut = new RandomGenerator();
+
+            var actual = sut.GetMax(typeof(decimal));
+
+            var converted = Convert.ToDecimal(actual, CultureInfo.InvariantCulture);
+
+            converted.Should().Be(decimal.MaxValue);
+            converted.Should().NotBe(decimal.MinValue);
+        }
+
         [Theory]
         [ClassData(typeof(NumericTypeRangeDataSource))]
         public void GetMaxEvaluatesRequestedTypeTest(Type type, bool typeSupported, double min, double max)
@@ -26,9 +39,9 @@
                 return;
             }
 
-            var target = new RandomGenerator();
+            var sut = new RandomGenerator();
 
-            var actual = target.GetMax(type);
+            var actual = sut.GetMax(type);
 
             var converted = Convert.ToDouble(actual, CultureInfo.InvariantCulture);
 
@@ -37,13 +50,26 @@
         }
 
         [Fact]
-        public void GetMaxThrowsExceptionWithNullTypeTest()
+        public void GetMaxThrowsExceptionWithNullType()
         {
-            var target = new RandomGenerator();
+            var sut = new RandomGenerator();
 
-            Action action = () => target.GetMax(null);
+            Action action = () => sut.GetMax(null);
 
             action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void GetMinDecimal()
+        {
+            var sut = new RandomGenerator();
+
+            var actual = sut.GetMin(typeof(decimal));
+
+            var converted = Convert.ToDecimal(actual, CultureInfo.InvariantCulture);
+
+            converted.Should().Be(decimal.MinValue);
+            converted.Should().NotBe(decimal.MaxValue);
         }
 
         [Theory]
@@ -55,9 +81,9 @@
                 return;
             }
 
-            var target = new RandomGenerator();
+            var sut = new RandomGenerator();
 
-            var actual = target.GetMin(type);
+            var actual = sut.GetMin(type);
 
             var converted = Convert.ToDouble(actual, CultureInfo.InvariantCulture);
 
@@ -66,11 +92,11 @@
         }
 
         [Fact]
-        public void GetMinThrowsExceptionWithNullTypeTest()
+        public void GetMinThrowsExceptionWithNullType()
         {
-            var target = new RandomGenerator();
+            var sut = new RandomGenerator();
 
-            Action action = () => target.GetMin(null);
+            Action action = () => sut.GetMin(null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -84,41 +110,51 @@
                 return;
             }
 
-            var target = new RandomGenerator();
+            var sut = new RandomGenerator();
 
-            var actual = target.IsSupported(type);
+            var actual = sut.IsSupported(type);
 
             actual.Should().BeTrue();
         }
 
         [Fact]
-        public void IsSupportedThrowsExceptionWithNullTypeTest()
+        public void IsSupportedReturnsTrueForDecimal()
         {
-            var target = new RandomGenerator();
+            var sut = new RandomGenerator();
 
-            Action action = () => target.IsSupported(null);
+            var actual = sut.IsSupported(typeof(decimal));
+
+            actual.Should().BeTrue();
+        }
+
+        [Fact]
+        public void IsSupportedThrowsExceptionWithNullType()
+        {
+            var sut = new RandomGenerator();
+
+            Action action = () => sut.IsSupported(null);
 
             action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
-        public void NextValueByteArrayPopulatesBufferTest()
+        public void NextValueByteArrayPopulatesBuffer()
         {
             var buffer = new byte[10240];
 
-            var target = new RandomGenerator();
+            var sut = new RandomGenerator();
 
-            target.NextValue(buffer);
+            sut.NextValue(buffer);
 
             buffer.Any(x => x != default(byte)).Should().BeTrue();
         }
 
         [Fact]
-        public void NextValueForByteArrayThrowsExceptionWithNullBufferTest()
+        public void NextValueForByteArrayThrowsExceptionWithNullBuffer()
         {
-            var target = new RandomGenerator();
+            var sut = new RandomGenerator();
 
-            Action action = () => target.NextValue(null);
+            Action action = () => sut.NextValue(null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -154,6 +190,46 @@
             tracker.Count.Should().BeGreaterThan(9000);
         }
 
+        [Fact]
+        public void NextValueWithDecimalCanEvaluateManyTimes()
+        {
+            var sut = new RandomGenerator();
+
+            for (var index = 0; index < 1000; index++)
+            {
+                var value = sut.NextValue(typeof(decimal), decimal.MinValue, decimal.MaxValue);
+
+                value.Should().NotBeNull();
+                value.Should().BeOfType<decimal>();
+            }
+        }
+
+        [Fact]
+        public void NextValueWithDecimalReturnsDecimalMaxWhenGeneratedValueIsGreater()
+        {
+            var sut = new RandomGenerator();
+
+            for (var index = 0; index < 1000; index++)
+            {
+                var value = (decimal) sut.NextValue(typeof(decimal), double.MaxValue, double.MaxValue);
+
+                value.Should().Be(decimal.MaxValue);
+            }
+        }
+
+        [Fact]
+        public void NextValueWithDecimalReturnsDecimalMinWhenGeneratedValueIsLower()
+        {
+            var sut = new RandomGenerator();
+
+            for (var index = 0; index < 1000; index++)
+            {
+                var value = (decimal) sut.NextValue(typeof(decimal), double.MinValue, double.MinValue);
+
+                value.Should().Be(decimal.MinValue);
+            }
+        }
+
         [Theory]
         [ClassData(typeof(NumericTypeRangeDataSource))]
         public void NextValueWithTypeCanEvaluateManyTimesTest(Type type, bool typeSupported, object min, object max)
@@ -164,11 +240,11 @@
                 return;
             }
 
-            var target = new RandomGenerator();
+            var sut = new RandomGenerator();
 
             for (var index = 0; index < 1000; index++)
             {
-                var value = target.NextValue(type, min, max);
+                var value = sut.NextValue(type, min, max);
 
                 value.Should().NotBeNull();
 
@@ -199,9 +275,9 @@
                 return;
             }
 
-            var target = new RandomGenerator();
+            var sut = new RandomGenerator();
 
-            var value = target.NextValue(type, max, max);
+            var value = sut.NextValue(type, max, max);
 
             // There are some special scenarios where the conversion of max values to and from double cause an exception
             if (type == typeof(decimal))
@@ -241,9 +317,9 @@
                 return;
             }
 
-            var target = new RandomGenerator();
+            var sut = new RandomGenerator();
 
-            var value = target.NextValue(type, min, min);
+            var value = sut.NextValue(type, min, min);
 
             if (type == typeof(decimal))
             {
@@ -260,15 +336,15 @@
         }
 
         [Fact]
-        public void NextValueWithTypeCanReturnNonMaxValuesTest()
+        public void NextValueWithTypeCanReturnNonMaxValues()
         {
             var valueFound = false;
 
-            var target = new RandomGenerator();
+            var sut = new RandomGenerator();
 
             for (var index = 0; index < 1000; index++)
             {
-                var value = target.NextValue(typeof(double), double.MinValue, double.MaxValue);
+                var value = sut.NextValue(typeof(double), double.MinValue, double.MaxValue);
 
                 var actual = Convert.ToDouble(value, CultureInfo.InvariantCulture);
 
@@ -284,15 +360,15 @@
         }
 
         [Fact]
-        public void NextValueWithTypeCanReturnNonMinValuesTest()
+        public void NextValueWithTypeCanReturnNonMinValues()
         {
             var valueFound = false;
 
-            var target = new RandomGenerator();
+            var sut = new RandomGenerator();
 
             for (var index = 0; index < 1000; index++)
             {
-                var value = target.NextValue(typeof(double), double.MinValue, double.MaxValue);
+                var value = sut.NextValue(typeof(double), double.MinValue, double.MaxValue);
 
                 var actual = Convert.ToDouble(value, CultureInfo.InvariantCulture);
 
@@ -308,11 +384,11 @@
         }
 
         [Fact]
-        public void NextValueWithTypeDoesNotReturnInfinityForDoubleTest()
+        public void NextValueWithTypeDoesNotReturnInfinityForDouble()
         {
-            var target = new RandomGenerator();
+            var sut = new RandomGenerator();
 
-            var value = target.NextValue(typeof(double), double.MinValue, double.MaxValue);
+            var value = sut.NextValue(typeof(double), double.MinValue, double.MaxValue);
 
             var actual = Convert.ToDouble(value, CultureInfo.InvariantCulture);
 
@@ -326,14 +402,14 @@
         {
             var decimalFound = false;
 
-            var target = new RandomGenerator();
+            var sut = new RandomGenerator();
 
             for (var index = 0; index < 1000; index++)
             {
-                var min = target.GetMin(type);
-                var max = target.GetMax(type);
+                var min = sut.GetMin(type);
+                var max = sut.GetMax(type);
 
-                var value = target.NextValue(type, min, max);
+                var value = sut.NextValue(type, min, max);
 
                 var actual = Convert.ToDouble(value, CultureInfo.InvariantCulture);
 
@@ -358,9 +434,9 @@
                 return;
             }
 
-            var target = new RandomGenerator();
+            var sut = new RandomGenerator();
 
-            var value = target.NextValue(type, min, max);
+            var value = sut.NextValue(type, min, max);
 
             value.Should().NotBeNull();
 
@@ -383,9 +459,9 @@
                 return;
             }
 
-            var target = new RandomGenerator();
+            var sut = new RandomGenerator();
 
-            var actual = target.NextValue(type, min, max);
+            var actual = sut.NextValue(type, min, max);
 
             var converted = Convert.ToDouble(actual, CultureInfo.InvariantCulture);
 
@@ -394,61 +470,61 @@
         }
 
         [Fact]
-        public void NextValueWithTypeThrowsExceptionWhenMinimumGreaterThanMaximumTest()
+        public void NextValueWithTypeThrowsExceptionWhenMinimumGreaterThanMaximum()
         {
-            var target = new RandomGenerator();
+            var sut = new RandomGenerator();
 
-            Action action = () => target.NextValue(typeof(double), 1, 0);
+            Action action = () => sut.NextValue(typeof(double), 1, 0);
 
             action.Should().Throw<ArgumentOutOfRangeException>();
         }
 
         [Fact]
-        public void NextValueWithTypeThrowsExceptionWithNonNumericMaximumTest()
+        public void NextValueWithTypeThrowsExceptionWithNonNumericMaximum()
         {
-            var target = new RandomGenerator();
+            var sut = new RandomGenerator();
 
-            Action action = () => target.NextValue(typeof(int), 0, Guid.NewGuid().ToString());
+            Action action = () => sut.NextValue(typeof(int), 0, Guid.NewGuid().ToString());
 
             action.Should().Throw<FormatException>();
         }
 
         [Fact]
-        public void NextValueWithTypeThrowsExceptionWithNonNumericMinimumTest()
+        public void NextValueWithTypeThrowsExceptionWithNonNumericMinimum()
         {
-            var target = new RandomGenerator();
+            var sut = new RandomGenerator();
 
-            Action action = () => target.NextValue(typeof(int), Guid.NewGuid().ToString(), 0);
+            Action action = () => sut.NextValue(typeof(int), Guid.NewGuid().ToString(), 0);
 
             action.Should().Throw<FormatException>();
         }
 
         [Fact]
-        public void NextValueWithTypeThrowsExceptionWithNullMaximumTest()
+        public void NextValueWithTypeThrowsExceptionWithNullMaximum()
         {
-            var target = new RandomGenerator();
+            var sut = new RandomGenerator();
 
-            Action action = () => target.NextValue(typeof(int), 0, null);
+            Action action = () => sut.NextValue(typeof(int), 0, null);
 
             action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
-        public void NextValueWithTypeThrowsExceptionWithNullMinimumTest()
+        public void NextValueWithTypeThrowsExceptionWithNullMinimum()
         {
-            var target = new RandomGenerator();
+            var sut = new RandomGenerator();
 
-            Action action = () => target.NextValue(typeof(int), null, 0);
+            Action action = () => sut.NextValue(typeof(int), null, 0);
 
             action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
-        public void NextValueWithTypeThrowsExceptionWithNullTypeTest()
+        public void NextValueWithTypeThrowsExceptionWithNullType()
         {
-            var target = new RandomGenerator();
+            var sut = new RandomGenerator();
 
-            Action action = () => target.NextValue(null, 0, 0);
+            Action action = () => sut.NextValue(null, 0, 0);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -457,9 +533,9 @@
         [ClassData(typeof(NumericTypeRangeDataSource))]
         public void NextValueWithTypeValidatesRequestedTypeTest(Type type, bool typeSupported, double min, double max)
         {
-            var target = new RandomGenerator();
+            var sut = new RandomGenerator();
 
-            Action action = () => target.NextValue(type, min, max);
+            Action action = () => sut.NextValue(type, min, max);
 
             if (typeSupported)
             {

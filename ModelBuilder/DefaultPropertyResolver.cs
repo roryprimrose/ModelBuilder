@@ -8,7 +8,7 @@ namespace ModelBuilder
 
     /// <summary>
     ///     The <see cref="DefaultPropertyResolver" />
-    ///     class is used to provie default logic for resolving property information.
+    ///     class is used to provide default logic for resolving property information.
     /// </summary>
     public class DefaultPropertyResolver : IPropertyResolver
     {
@@ -33,7 +33,7 @@ namespace ModelBuilder
                     return false;
                 }
 
-                // This is a publically settable instance property
+                // This is a publicly settable instance property
                 // Against this we can assign both value and reference types
                 return true;
             }
@@ -94,7 +94,7 @@ namespace ModelBuilder
 
             // Check if there is a matching ignore rule
             var ignoreRule = configuration.IgnoreRules?.FirstOrDefault(
-                x => x.TargetType.IsAssignableFrom(type) && x.PropertyName == propertyInfo.Name);
+                x => x.IsMatch(propertyInfo));
 
             if (ignoreRule != null)
             {
@@ -190,9 +190,7 @@ namespace ModelBuilder
 
         private static bool AreEqual(object first, object second)
         {
-            var comparer = first as IComparable;
-
-            if (comparer != null)
+            if (first is IComparable comparer)
             {
                 if (comparer.CompareTo(second) == 0)
                 {

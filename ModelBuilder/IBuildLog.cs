@@ -1,6 +1,7 @@
 ﻿namespace ModelBuilder
 {
     using System;
+    using System.Reflection;
 
     /// <summary>
     ///     The <see cref="IBuildLog" />
@@ -28,19 +29,16 @@
         /// <summary>
         ///     Logs that a parameter has been created for a constructor.
         /// </summary>
-        /// <param name="instanceType">The type of instance to create.</param>
-        /// <param name="parameterType">The parameter type being created.</param>
-        /// <param name="parameterName">The name of the constructor parameter.</param>
+        /// <param name="parameterInfo">The parameter that was created.</param>
         /// <param name="context">The possible context object the value is being created for.</param>
-        void CreatedParameter(Type instanceType, Type parameterType, string parameterName, object context);
+        void CreatedParameter(ParameterInfo parameterInfo, object context);
 
         /// <summary>
         ///     Logs that a property has been created for an instance.
         /// </summary>
-        /// <param name="propertyType">The property type being created.</param>
-        /// <param name="propertyName">The name of the property.</param>
+        /// <param name="propertyInfo">The property that was created.</param>
         /// <param name="context">The possible context object the value is being created for.</param>
-        void CreatedProperty(Type propertyType, string propertyName, object context);
+        void CreatedProperty(PropertyInfo propertyInfo, object context);
 
         /// <summary>
         ///     Logs that a type has been created.
@@ -52,19 +50,16 @@
         /// <summary>
         ///     Logs that a parameter is being created for a constructor.
         /// </summary>
-        /// <param name="instanceType">The type of instance to create.</param>
-        /// <param name="parameterType">The parameter type being created.</param>
-        /// <param name="parameterName">The name of the constructor parameter.</param>
+        /// <param name="parameterInfo">The parameter being created.</param>
         /// <param name="context">The possible context object the value is being created for.</param>
-        void CreatingParameter(Type instanceType, Type parameterType, string parameterName, object context);
+        void CreatingParameter(ParameterInfo parameterInfo, object context);
 
         /// <summary>
         ///     Logs that a property is being created for an instance.
         /// </summary>
-        /// <param name="propertyType">The property type being created.</param>
-        /// <param name="propertyName">The name of the property.</param>
+        /// <param name="propertyInfo">The property being created.</param>
         /// <param name="context">The possible context object the value is being created for.</param>
-        void CreatingProperty(Type propertyType, string propertyName, object context);
+        void CreatingProperty(PropertyInfo propertyInfo, object context);
 
         /// <summary>
         ///     Logs that a type is being created.
@@ -85,10 +80,9 @@
         /// <summary>
         ///     Logs that a property is being ignored for an instance.
         /// </summary>
-        /// <param name="propertyType">The property type being ignored.</param>
-        /// <param name="propertyName">The name of the property.</param>
+        /// <param name="propertyInfo">The property that was ignored.</param>
         /// <param name="context">The possible context object the value is being created for.</param>
-        void IgnoringProperty(Type propertyType, string propertyName, object context);
+        void IgnoringProperty(PropertyInfo propertyInfo, object context);
 
         /// <summary>
         ///     Logs that a type mapping has occurred.

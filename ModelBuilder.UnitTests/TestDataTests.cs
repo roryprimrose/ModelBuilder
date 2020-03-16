@@ -7,59 +7,59 @@
     public class TestDataTests
     {
         [Fact]
-        public void CompaniesReturnsTestDataTest()
+        public void CompaniesReturnsTestData()
         {
-            var target = TestData.Companies;
+            var sut = TestData.Companies;
 
-            target.Should().NotBeEmpty();
+            sut.Should().NotBeEmpty();
         }
 
         [Fact]
-        public void DomainsReturnsTestDataTest()
+        public void DomainsReturnsTestData()
         {
-            var target = TestData.Domains;
+            var sut = TestData.Domains;
 
-            target.Should().NotBeEmpty();
+            sut.Should().NotBeEmpty();
         }
 
         [Fact]
-        public void FemaleNamesReturnsTestDataTest()
+        public void FemaleNamesReturnsTestData()
         {
-            var target = TestData.FemaleNames;
+            var sut = TestData.FemaleNames;
 
-            target.Should().NotBeEmpty();
+            sut.Should().NotBeEmpty();
         }
 
         [Fact]
-        public void LastNamesReturnsTestDataTest()
+        public void LastNamesReturnsTestData()
         {
-            var target = TestData.LastNames;
+            var sut = TestData.LastNames;
 
-            target.Should().NotBeEmpty();
+            sut.Should().NotBeEmpty();
         }
 
         [Fact]
-        public void LocationsReturnsTestDataTest()
+        public void LocationsReturnsTestData()
         {
-            var target = TestData.Locations;
+            var sut = TestData.Locations;
 
-            target.Should().NotBeEmpty();
+            sut.Should().NotBeEmpty();
         }
 
         [Fact]
-        public void MaleNamesReturnsTestDataTest()
+        public void MaleNamesReturnsTestData()
         {
-            var target = TestData.MaleNames;
+            var sut = TestData.MaleNames;
 
-            target.Should().NotBeEmpty();
+            sut.Should().NotBeEmpty();
         }
 
         [Fact]
-        public void TimeZonesReturnsTestDataTest()
+        public void TimeZonesReturnsTestData()
         {
-            var target = TestData.TimeZones;
+            var sut = TestData.TimeZones;
 
-            target.Should().NotBeEmpty();
+            sut.Should().NotBeEmpty();
         }
     }
 }

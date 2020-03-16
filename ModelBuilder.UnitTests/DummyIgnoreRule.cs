@@ -1,9 +1,13 @@
 ﻿namespace ModelBuilder.UnitTests
 {
-    public class DummyIgnoreRule : IgnoreRule
+    using System.Reflection;
+    using ModelBuilder.IgnoreRules;
+
+    public class DummyIgnoreRule : IIgnoreRule
     {
-        public DummyIgnoreRule() : base(typeof(string), "SomeRandomPropertyWhichDoesNotExist")
+        public bool IsMatch(PropertyInfo property)
         {
+            return false;
         }
     }
 }

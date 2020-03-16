@@ -1,289 +1,69 @@
 namespace ModelBuilder.Synchronous.UnitTests
 {
     using System;
-    using System.Collections.Generic;
-    using System.Reflection;
     using FluentAssertions;
-    using ModelBuilder.UnitTests;
     using ModelBuilder.UnitTests.Models;
-    using NSubstitute;
     using Xunit;
 
     public class ScenarioTests
     {
         [Fact]
-        public void BuildStrategyThrowsExceptionWithNullStrategyTest()
+        public void CanCreateEnumValue()
         {
-            Action action = () => Model.BuildStrategy = null;
+            var actual = Model.Create<SimpleEnum>();
 
-            action.Should().Throw<ArgumentNullException>();
+            Enum.IsDefined(typeof(SimpleEnum), actual).Should().BeTrue();
         }
 
         [Fact]
-        public void CanAssignBuildStrategyTest()
+        public void CanCreateGuidValue()
         {
-            var strategy = Substitute.For<IBuildStrategy>();
+            var actual = Model.Create<Guid>();
 
-            try
-            {
-                Model.BuildStrategy = strategy;
-
-                var actual = Model.BuildStrategy;
-
-                actual.Should().BeSameAs(strategy);
-            }
-            finally
-            {
-                Model.BuildStrategy = Model.DefaultBuildStrategy;
-            }
+            actual.Should().NotBeEmpty();
         }
 
         [Fact]
-        public void CanAssignNewBuildStrategyTest()
+        public void CanCreateInstance()
         {
-            var buildStrategy = Substitute.For<IBuildStrategy>();
+            var actual = Model.Create<Address>();
 
-            try
-            {
-                Model.BuildStrategy = buildStrategy;
-
-                var actual = Model.BuildStrategy;
-
-                actual.Should().BeSameAs(buildStrategy);
-            }
-            finally
-            {
-                Model.BuildStrategy = Model.DefaultBuildStrategy;
-            }
+            actual.AddressLine1.Should().NotBeNullOrWhiteSpace();
+            actual.City.Should().NotBeNullOrWhiteSpace();
+            actual.Country.Should().NotBeNullOrWhiteSpace();
+            actual.Postcode.Should().NotBeNullOrWhiteSpace();
+            actual.State.Should().NotBeNullOrWhiteSpace();
+            actual.Suburb.Should().NotBeNullOrWhiteSpace();
+            actual.TimeZone.Should().NotBeNullOrWhiteSpace();
         }
 
         [Fact]
-        public void CreateTUsesBuildStrategyToCreateInstanceTest()
+        public void CanCreateInstanceWithEnumerableProperty()
         {
-            var value = Guid.NewGuid();
+            var actual = Model.Create<Company>();
 
-            var build = Substitute.For<IBuildStrategy>();
-            var generator = Substitute.For<IValueGenerator>();
-            var generators = new List<IValueGenerator>
-            {
-                generator
-            }.AsReadOnly();
-
-            build.ValueGenerators.Returns(generators);
-            generator.IsSupported(typeof(Guid), null, Arg.Any<IBuildChain>()).Returns(true);
-            generator.Generate(typeof(Guid), null, Arg.Any<IExecuteStrategy>()).Returns(value);
-
-            try
-            {
-                Model.BuildStrategy = build;
-
-                var actual = Model.Create<Guid>();
-
-                actual.Should().Be(value);
-            }
-            finally
-            {
-                Model.BuildStrategy = Model.DefaultBuildStrategy;
-            }
+            actual.Address.Should().NotBeNullOrWhiteSpace();
+            actual.Name.Should().NotBeNullOrWhiteSpace();
+            actual.Staff.Should().NotBeEmpty();
         }
 
         [Fact]
-        public void CreateTUsesBuildStrategyToCreateInstanceWithParametersTest()
+        public void CanCreateInstanceWithParameters()
         {
-            var value = Guid.NewGuid();
-            var expected = new ReadOnlyModel(value);
+            var actual = Model.Create<ReadOnlyModel>();
 
-            var build = Substitute.For<IBuildStrategy>();
-            var creator = Substitute.For<ITypeCreator>();
-            var creators = new List<ITypeCreator>
-            {
-                creator
-            }.AsReadOnly();
-
-            build.TypeCreators.Returns(creators);
-            creator.CanCreate(typeof(ReadOnlyModel), null, Arg.Any<IBuildChain>()).Returns(true);
-            creator.CanPopulate(typeof(ReadOnlyModel), null, Arg.Any<IBuildChain>()).Returns(true);
-            creator.Create(typeof(ReadOnlyModel), null, Arg.Any<IExecuteStrategy>(), value).Returns(expected);
-            creator.Populate(expected, Arg.Any<IExecuteStrategy>()).Returns(expected);
-
-            try
-            {
-                Model.BuildStrategy = build;
-
-                var actual = Model.Create<ReadOnlyModel>(value);
-
-                actual.Value.Should().Be(value);
-            }
-            finally
-            {
-                Model.BuildStrategy = Model.DefaultBuildStrategy;
-            }
+            actual.Value.Should().NotBeEmpty();
         }
 
         [Fact]
-        public void CreateUsesBuildStrategyToCreateInstanceTest()
+        public void CanPopulateExistingInstance()
         {
-            var value = Guid.NewGuid();
-
-            var build = Substitute.For<IBuildStrategy>();
-            var generator = Substitute.For<IValueGenerator>();
-            var generators = new List<IValueGenerator>
-            {
-                generator
-            }.AsReadOnly();
-
-            build.ValueGenerators.Returns(generators);
-            generator.IsSupported(typeof(Guid), null, Arg.Any<IBuildChain>()).Returns(true);
-            generator.Generate(typeof(Guid), null, Arg.Any<IExecuteStrategy>()).Returns(value);
-
-            try
-            {
-                Model.BuildStrategy = build;
-
-                var actual = Model.Create(typeof(Guid));
-
-                actual.Should().Be(value);
-            }
-            finally
-            {
-                Model.BuildStrategy = Model.DefaultBuildStrategy;
-            }
-        }
-
-        [Fact]
-        public void CreateUsesBuildStrategyToCreateInstanceWithParametersTest()
-        {
-            var value = Guid.NewGuid();
-            var expected = new ReadOnlyModel(value);
-
-            var build = Substitute.For<IBuildStrategy>();
-            var creator = Substitute.For<ITypeCreator>();
-            var creators = new List<ITypeCreator>
-            {
-                creator
-            }.AsReadOnly();
-
-            build.TypeCreators.Returns(creators);
-            creator.CanCreate(typeof(ReadOnlyModel), null, Arg.Any<IBuildChain>()).Returns(true);
-            creator.Create(typeof(ReadOnlyModel), null, Arg.Any<IExecuteStrategy>(), value).Returns(expected);
-            creator.Populate(expected, Arg.Any<IExecuteStrategy>()).Returns(expected);
-
-            try
-            {
-                Model.BuildStrategy = build;
-
-                var actual = (ReadOnlyModel) Model.Create(typeof(ReadOnlyModel), value);
-
-                actual.Value.Should().Be(value);
-            }
-            finally
-            {
-                Model.BuildStrategy = Model.DefaultBuildStrategy;
-            }
-        }
-
-        [Fact]
-        public void ForReturnsDefaultExecuteStrategyWithDefaultBuildStrategyConfigurationTest()
-        {
-            var build = Substitute.For<IBuildStrategy>();
-            var generator = Substitute.For<IValueGenerator>();
-            var generators = new List<IValueGenerator>
-            {
-                generator
-            }.AsReadOnly();
-            var creator = Substitute.For<ITypeCreator>();
-            var creators = new List<ITypeCreator>
-            {
-                creator
-            }.AsReadOnly();
-            var ignoreRules = new List<IgnoreRule>().AsReadOnly();
-            var resolver = Substitute.For<IConstructorResolver>();
-
-            build.ValueGenerators.Returns(generators);
-            build.TypeCreators.Returns(creators);
-            build.IgnoreRules.Returns(ignoreRules);
-            build.ConstructorResolver.Returns(resolver);
-
-            try
-            {
-                Model.BuildStrategy = build;
-
-                var actual = Model.UsingExecuteStrategy<DefaultExecuteStrategy<ReadOnlyModel>>();
-
-                actual.Configuration.Should().Be(build);
-            }
-            finally
-            {
-                Model.BuildStrategy = Model.DefaultBuildStrategy;
-            }
-        }
-
-        [Fact]
-        public void PopulateUsesBuildStrategyToPopulateInstanceTest()
-        {
-            var value = Guid.NewGuid();
             var expected = new SlimModel();
 
-            var build = Substitute.For<IBuildStrategy>();
-            var creator = Substitute.For<ITypeCreator>();
-            var propertyResolver = Substitute.For<IPropertyResolver>();
+            var actual = Model.Populate(expected);
 
-            var creators = new List<ITypeCreator>
-            {
-                creator
-            }.AsReadOnly();
-            var generator = Substitute.For<IValueGenerator>();
-            var generators = new List<IValueGenerator>
-            {
-                generator
-            }.AsReadOnly();
-
-            build.PropertyResolver.Returns(propertyResolver);
-            build.TypeCreators.Returns(creators);
-            build.ValueGenerators.Returns(generators);
-            propertyResolver.CanPopulate(Arg.Any<PropertyInfo>()).Returns(true);
-            propertyResolver.ShouldPopulateProperty(
-                Arg.Any<IBuildConfiguration>(),
-                Arg.Any<object>(),
-                Arg.Any<PropertyInfo>(),
-                Arg.Any<object[]>()).Returns(true);
-            creator.CanPopulate(typeof(SlimModel), null, Arg.Any<IBuildChain>()).Returns(true);
-            creator.Populate(expected, Arg.Any<IExecuteStrategy>()).Returns(expected);
-            creator.AutoPopulate.Returns(true);
-            generator.IsSupported(typeof(Guid), "Value", Arg.Any<IBuildChain>()).Returns(true);
-            generator.Generate(typeof(Guid), "Value", Arg.Any<IExecuteStrategy>()).Returns(value);
-
-            try
-            {
-                Model.BuildStrategy = build;
-
-                var actual = Model.Populate(expected);
-
-                actual.Should().Be(expected);
-            }
-            finally
-            {
-                Model.BuildStrategy = Model.DefaultBuildStrategy;
-            }
-        }
-
-        [Fact]
-        public void WithReturnsNewExecuteStrategyUsingBuilderStrategyTest()
-        {
-            var buildStrategy = Substitute.For<IBuildStrategy>();
-
-            try
-            {
-                Model.BuildStrategy = buildStrategy;
-
-                var actual = Model.UsingExecuteStrategy<NullExecuteStrategy>();
-
-                actual.Should().BeOfType<NullExecuteStrategy>();
-            }
-            finally
-            {
-                Model.BuildStrategy = Model.DefaultBuildStrategy;
-            }
+            actual.Should().BeSameAs(expected);
+            actual.Value.Should().NotBeEmpty();
         }
     }
 }
