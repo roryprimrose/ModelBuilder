@@ -212,13 +212,6 @@
                 return null;
             }
 
-            var matchFound = isMatch(rule);
-
-            if (matchFound == false)
-            {
-                return null;
-            }
-
             return new BuildCapability
             {
                 SupportsCreate = true,

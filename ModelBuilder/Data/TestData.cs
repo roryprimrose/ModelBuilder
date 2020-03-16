@@ -37,16 +37,20 @@
             {
                 index++;
 
+#if DEBUG
                 try
                 {
+#endif
                     var location = Location.Parse(line);
 
                     parsedLines.Add(location);
+#if DEBUG
                 }
                 catch (IndexOutOfRangeException e)
                 {
                     throw new InvalidOperationException("Failed to process line '" + line + "' at index" + index, e);
                 }
+#endif
             }
 
             return parsedLines;
