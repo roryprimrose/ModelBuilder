@@ -2,6 +2,7 @@ namespace ModelBuilder
 {
     using System;
     using System.Collections.Concurrent;
+    using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Reflection;
@@ -16,60 +17,28 @@ namespace ModelBuilder
             new ConcurrentDictionary<Type, object>();
 
         /// <inheritdoc />
-        public virtual bool CanPopulate(PropertyInfo propertyInfo)
+        /// <exception cref="ArgumentNullException">The <paramref name="configuration" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="targetType" /> parameter is <c>null</c>.</exception>
+        public IEnumerable<PropertyInfo> GetOrderedProperties(IBuildConfiguration configuration, Type targetType)
         {
-            if (propertyInfo == null)
+            if (configuration == null)
             {
-                throw new ArgumentNullException(nameof(propertyInfo));
+                throw new ArgumentNullException(nameof(configuration));
             }
 
-            var setMethod = propertyInfo.GetSetMethod();
-
-            if (setMethod != null)
+            if (targetType == null)
             {
-                if (setMethod.IsStatic)
-                {
-                    // Static properties are not supported
-                    return false;
-                }
-
-                // This is a publicly settable instance property
-                // Against this we can assign both value and reference types
-                return true;
+                throw new ArgumentNullException(nameof(targetType));
             }
 
-            // There is no set method. This is a read-only property
-            var getMethod = propertyInfo.GetGetMethod();
-
-            if (getMethod == null)
-            {
-                // With no public setter or getter, this must be a private property
-                return false;
-            }
-
-            if (getMethod.IsStatic)
-            {
-                // Static methods are not supported
-                return false;
-            }
-
-            if (getMethod.ReturnType.IsValueType)
-            {
-                // We can't populate a value type via a get method
-                return false;
-            }
-
-            if (getMethod.ReturnType == typeof(string))
-            {
-                // We can't populate a string type via a get method because strings are immutable
-                return false;
-            }
-
-            return true;
+            return from x in targetType.GetProperties(BindingFlags.Instance | BindingFlags.Public)
+                where CanPopulate(x)
+                orderby GetMaximumOrderPriority(configuration, x) descending
+                select x;
         }
 
         /// <inheritdoc />
-        public virtual bool ShouldPopulateProperty(
+        public virtual bool IsIgnored(
             IBuildConfiguration configuration,
             object instance,
             PropertyInfo propertyInfo,
@@ -209,6 +178,41 @@ namespace ModelBuilder
             return false;
         }
 
+        /// <summary>
+        ///     Determines whether the specified property can be populated.
+        /// </summary>
+        /// <param name="propertyInfo">The property to evaluate.</param>
+        /// <returns><c>true</c> if the property can be populated; otherwise <c>false</c>.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="propertyInfo" /> parameter is <c>null</c>.</exception>
+        private static bool CanPopulate(PropertyInfo propertyInfo)
+        {
+            var setMethod = propertyInfo.GetSetMethod();
+
+            if (setMethod != null)
+            {
+                // This is a publicly settable instance property
+                // Against this we can assign both value and reference types
+                return true;
+            }
+
+            // There is no set method. This is a read-only property
+            var getMethod = propertyInfo.GetGetMethod();
+
+            if (getMethod.ReturnType.IsValueType)
+            {
+                // We can't populate a value type via a get method
+                return false;
+            }
+
+            if (getMethod.ReturnType == typeof(string))
+            {
+                // We can't populate a string type via a get method because strings are immutable
+                return false;
+            }
+
+            return true;
+        }
+
         [SuppressMessage(
             "Microsoft.Design",
             "CA1031:DoNotCatchGeneralExceptionTypes",
@@ -223,6 +227,28 @@ namespace ModelBuilder
             {
                 return null;
             }
+        }
+
+        private static int GetMaximumOrderPriority(IBuildConfiguration configuration, PropertyInfo property)
+        {
+            if (configuration.ExecuteOrderRules == null)
+            {
+                return 0;
+            }
+
+            var matchingRules = from x in configuration.ExecuteOrderRules
+                where x.IsMatch(property)
+                orderby x.Priority descending
+                select x;
+
+            var matchingRule = matchingRules.FirstOrDefault();
+
+            if (matchingRule == null)
+            {
+                return 0;
+            }
+
+            return matchingRule.Priority;
         }
     }
 }

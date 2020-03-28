@@ -202,9 +202,9 @@
                     typeof(SlimModel))
                 .Returns(typeCapability);
             buildConfiguration.PropertyResolver.Returns(propertyResolver);
-            propertyResolver.CanPopulate(Arg.Is<PropertyInfo>(x => x.Name == nameof(SlimModel.Value)))
-                .Returns(true);
-            propertyResolver.ShouldPopulateProperty(
+            propertyResolver.GetOrderedProperties(buildConfiguration, typeof(SlimModel))
+                .Returns(typeof(SlimModel).GetProperties());
+            propertyResolver.IsIgnored(
                 buildConfiguration,
                 model,
                 Arg.Is<PropertyInfo>(x => x.Name == nameof(SlimModel.Value)),

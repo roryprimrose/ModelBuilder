@@ -1,15 +1,11 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
-    using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
     using FluentAssertions;
     using ModelBuilder.BuildActions;
-    using ModelBuilder.ExecuteOrderRules;
-    using ModelBuilder.TypeCreators;
     using ModelBuilder.UnitTests.Models;
-    using ModelBuilder.ValueGenerators;
     using NSubstitute;
     using Xunit;
     using Xunit.Abstractions;
@@ -191,11 +187,9 @@
                 Arg.Any<object[]>()).Returns(age);
             processor.Populate(sut, expected).Returns(expected);
             buildConfiguration.PropertyResolver.Returns(propertyResolver);
-            propertyResolver.CanPopulate(Arg.Is<PropertyInfo>(x => x.Name == nameof(SimpleConstructor.Model)))
-                .Returns(false);
-            propertyResolver.CanPopulate(Arg.Is<PropertyInfo>(x => x.Name == nameof(SimpleConstructor.Age)))
-                .Returns(true);
-            propertyResolver.ShouldPopulateProperty(
+            propertyResolver.GetOrderedProperties(buildConfiguration, typeof(SimpleConstructor))
+                .Returns(typeof(SimpleConstructor).GetProperties());
+            propertyResolver.IsIgnored(
                 Arg.Any<IBuildConfiguration>(),
                 expected,
                 Arg.Is<PropertyInfo>(x => x.Name == nameof(SimpleConstructor.Age)),
@@ -209,7 +203,7 @@
             actual.Model.Should().Be(model);
             actual.Age.Should().Be(age);
 
-            propertyResolver.Received(1).ShouldPopulateProperty(
+            propertyResolver.Received(1).IsIgnored(
                 buildConfiguration,
                 Arg.Is<object>(x => x.GetType() == typeof(SimpleConstructor)),
                 Arg.Is<PropertyInfo>(x => x.Name == nameof(SimpleConstructor.Age)),
@@ -365,43 +359,6 @@
         }
 
         [Fact]
-        public void CreatePopulatesPropertiesWhenExecuteOrderRulesIsNull()
-        {
-            var expected = new SlimModel();
-            var value = Guid.NewGuid();
-
-            var creator = Substitute.For<ITypeCreator>();
-            var generator = Substitute.For<IValueGenerator>();
-            var resolver = Substitute.For<IPropertyResolver>();
-            var buildConfiguration = Substitute.For<IBuildConfiguration>();
-
-            creator.CanCreate(buildConfiguration, Arg.Any<IBuildChain>(), typeof(SlimModel)).Returns(true);
-            creator.CanPopulate(buildConfiguration, Arg.Any<IBuildChain>(), typeof(SlimModel)).Returns(true);
-            creator.Create(Arg.Any<IExecuteStrategy>(), typeof(SlimModel), null).Returns(expected);
-            creator.Populate(Arg.Any<IExecuteStrategy>(), expected).Returns(expected);
-            creator.AutoPopulate.Returns(true);
-            resolver.CanPopulate(Arg.Any<PropertyInfo>()).Returns(true);
-            resolver.ShouldPopulateProperty(buildConfiguration, expected, Arg.Any<PropertyInfo>(),
-                Array.Empty<object>()).Returns(true);
-            generator.IsMatch(Arg.Any<IBuildChain>(), Arg.Any<PropertyInfo>()).Returns(true);
-            generator.Generate(Arg.Any<IExecuteStrategy>(), Arg.Any<PropertyInfo>()).Returns(value);
-            buildConfiguration.PropertyResolver.Returns(resolver);
-            buildConfiguration.ExecuteOrderRules.Returns((ICollection<IExecuteOrderRule>) null);
-            buildConfiguration.TypeCreators.Returns(new List<ITypeCreator> {creator});
-            buildConfiguration.ValueGenerators.Returns(new List<IValueGenerator> {generator});
-
-            var sut = new DefaultExecuteStrategy();
-
-            sut.Initialize(buildConfiguration);
-
-            var actual = (SlimModel) sut.Create(typeof(SlimModel));
-
-            actual.Should().Be(expected);
-            resolver.Received().CanPopulate(Arg.Any<PropertyInfo>());
-            actual.Value.Should().Be(value);
-        }
-
-        [Fact]
         public void CreatePopulatesWithProcessorWhenAutoPopulateDisabled()
         {
             var buildHistory = new BuildHistory();
@@ -489,8 +446,9 @@
                 });
             processor.Populate(sut, expected).Returns(expected);
             buildConfiguration.PropertyResolver.Returns(propertyResolver);
-            propertyResolver.CanPopulate(Arg.Any<PropertyInfo>()).Returns(true);
-            propertyResolver.ShouldPopulateProperty(
+            propertyResolver.GetOrderedProperties(buildConfiguration, typeof(SlimModel))
+                .Returns(typeof(SlimModel).GetProperties());
+            propertyResolver.IsIgnored(
                 Arg.Any<IBuildConfiguration>(),
                 Arg.Any<object>(),
                 Arg.Any<PropertyInfo>(),
@@ -620,8 +578,9 @@
             processor.Build(sut, Arg.Any<PropertyInfo>(), Arg.Any<object[]>()).Returns(value);
             processor.Populate(sut, expected).Returns(expected);
             buildConfiguration.PropertyResolver.Returns(propertyResolver);
-            propertyResolver.CanPopulate(Arg.Any<PropertyInfo>()).Returns(true);
-            propertyResolver.ShouldPopulateProperty(
+            propertyResolver.GetOrderedProperties(buildConfiguration, typeof(SlimModel))
+                .Returns(typeof(SlimModel).GetProperties());
+            propertyResolver.IsIgnored(
                 Arg.Any<IBuildConfiguration>(),
                 Arg.Any<object>(),
                 Arg.Any<PropertyInfo>(),
@@ -830,9 +789,9 @@
             processor.Build(sut, typeof(SlimModel), null).Returns(expected);
             processor.Populate(sut, expected).Returns(expected);
             buildConfiguration.PropertyResolver.Returns(propertyResolver);
-            propertyResolver.CanPopulate(Arg.Is<PropertyInfo>(x => x.Name == nameof(SlimModel.Value)))
-                .Returns(true);
-            propertyResolver.ShouldPopulateProperty(
+            propertyResolver.GetOrderedProperties(buildConfiguration, typeof(SlimModel))
+                .Returns(typeof(SlimModel).GetProperties());
+            propertyResolver.IsIgnored(
                 Arg.Any<IBuildConfiguration>(),
                 expected,
                 Arg.Is<PropertyInfo>(x => x.Name == nameof(SlimModel.Value)),
@@ -959,9 +918,9 @@
                     typeof(SlimModel))
                 .Returns(typeCapability);
             buildConfiguration.PropertyResolver.Returns(propertyResolver);
-            propertyResolver.CanPopulate(Arg.Is<PropertyInfo>(x => x.Name == nameof(SlimModel.Value)))
-                .Returns(true);
-            propertyResolver.ShouldPopulateProperty(
+            propertyResolver.GetOrderedProperties(buildConfiguration, typeof(SlimModel))
+                .Returns(typeof(SlimModel).GetProperties());
+            propertyResolver.IsIgnored(
                 buildConfiguration,
                 model,
                 Arg.Is<PropertyInfo>(x => x.Name == nameof(SlimModel.Value)),
