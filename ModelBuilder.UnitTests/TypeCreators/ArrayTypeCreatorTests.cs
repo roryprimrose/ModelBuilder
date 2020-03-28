@@ -187,6 +187,32 @@
             action.Should().Throw<ArgumentNullException>();
         }
 
+        [Fact]
+        public void CreateReturnsBetweenMinAndMaxCountItems()
+        {
+            var buildChain = new BuildHistory();
+
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+            var typeResolver = Substitute.For<ITypeResolver>();
+            var configuration = Substitute.For<IBuildConfiguration>();
+
+            configuration.TypeResolver.Returns(typeResolver);
+            typeResolver.GetBuildType(configuration, Arg.Any<Type>()).Returns(x => x.Arg<Type>());
+            executeStrategy.BuildChain.Returns(buildChain);
+            executeStrategy.Configuration.Returns(configuration);
+
+            var sut = new ArrayTypeCreator
+            {
+                MinCount = 5,
+                MaxCount = 15
+            };
+
+            var actual = (Person[]) sut.Create(executeStrategy, typeof(Person[]));
+
+            actual.Length.Should().BeGreaterOrEqualTo(sut.MinCount);
+            actual.Length.Should().BeLessOrEqualTo(sut.MaxCount);
+        }
+
         [Theory]
         [InlineData(typeof(byte[]))]
         [InlineData(typeof(int[]))]
@@ -259,12 +285,6 @@
             {
                 action.Should().Throw<NotSupportedException>();
             }
-        }
-
-        [Fact]
-        public void DefaultMaxCountIsPositive()
-        {
-            ArrayTypeCreator.DefaultMaxCount.Should().BeGreaterThan(0);
         }
 
         [Fact]
@@ -477,39 +497,6 @@
             var other = new DefaultTypeCreator();
 
             sut.Priority.Should().BeGreaterThan(other.Priority);
-        }
-
-        [Fact]
-        public void SettingDefaultMaxCountOnlyAffectsNewInstances()
-        {
-            var expected = ArrayTypeCreator.DefaultMaxCount;
-
-            try
-            {
-                var first = new ArrayTypeCreator();
-
-                ArrayTypeCreator.DefaultMaxCount = 11;
-
-                var second = new ArrayTypeCreator();
-
-                first.MaxCount.Should().Be(expected);
-                second.MaxCount.Should().Be(11);
-            }
-            finally
-            {
-                ArrayTypeCreator.DefaultMaxCount = expected;
-            }
-        }
-
-        [Fact]
-        public void SettingMaxCountShouldNotChangeDefaultMaxCount()
-        {
-            var sut = new ArrayTypeCreator
-            {
-                MaxCount = Environment.TickCount
-            };
-
-            ArrayTypeCreator.DefaultMaxCount.Should().NotBe(sut.MaxCount);
         }
 
         private class ArrayTypeCreatorWrapper : ArrayTypeCreator
