@@ -381,7 +381,8 @@
 
             var sut = new EnumerableTypeCreator
             {
-                AutoPopulateCount = 15
+                MinCount = 5,
+                MaxCount = 15
             };
 
             var actual = sut.Populate(executeStrategy, expected);
@@ -390,7 +391,8 @@
 
             var set = (Collection<Guid>) actual;
 
-            set.Should().HaveCount(sut.AutoPopulateCount);
+            set.Count.Should().BeGreaterOrEqualTo(sut.MinCount);
+            set.Count.Should().BeLessOrEqualTo(sut.MaxCount);
             set.All(x => x != Guid.Empty).Should().BeTrue();
         }
 
@@ -438,10 +440,7 @@
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Create(typeof(Guid)).Returns(Guid.NewGuid());
 
-            var sut = new EnumerableTypeCreator
-            {
-                AutoPopulateCount = 15
-            };
+            var sut = new EnumerableTypeCreator();
 
             var actual = sut.Populate(executeStrategy, expected);
 
@@ -449,7 +448,8 @@
 
             var set = (List<Guid>) actual;
 
-            set.Should().HaveCount(sut.AutoPopulateCount);
+            set.Count.Should().BeGreaterOrEqualTo(sut.MinCount);
+            set.Count.Should().BeLessOrEqualTo(sut.MaxCount);
             set.All(x => x != Guid.Empty).Should().BeTrue();
         }
 
@@ -465,9 +465,9 @@
             var result = (List<int>) sut.Populate(executeStrategy, actual);
 
             var baseValue = result[0];
-            var expected = new List<int>(sut.AutoPopulateCount);
+            var expected = new List<int>(result.Count);
 
-            for (var index = 0; index < sut.AutoPopulateCount; index++)
+            for (var index = 0; index < result.Count; index++)
             {
                 expected.Add(baseValue + index);
             }
@@ -504,39 +504,6 @@
             var other = new DefaultTypeCreator();
 
             sut.Priority.Should().BeGreaterThan(other.Priority);
-        }
-
-        [Fact]
-        public void SettingAutoPopulateCountShouldNotChangeDefaultAutoPopulateCount()
-        {
-            var sut = new EnumerableTypeCreator
-            {
-                AutoPopulateCount = Environment.TickCount
-            };
-
-            EnumerableTypeCreator.DefaultAutoPopulateCount.Should().NotBe(sut.AutoPopulateCount);
-        }
-
-        [Fact]
-        public void SettingDefaultAutoPopulateCountOnlyAffectsNewInstances()
-        {
-            var expected = EnumerableTypeCreator.DefaultAutoPopulateCount;
-
-            try
-            {
-                var first = new EnumerableTypeCreator();
-
-                EnumerableTypeCreator.DefaultAutoPopulateCount = 11;
-
-                var second = new EnumerableTypeCreator();
-
-                first.AutoPopulateCount.Should().Be(expected);
-                second.AutoPopulateCount.Should().Be(11);
-            }
-            finally
-            {
-                EnumerableTypeCreator.DefaultAutoPopulateCount = expected;
-            }
         }
 
         private class EnumerableTypeCreatorWrapper : EnumerableTypeCreator
