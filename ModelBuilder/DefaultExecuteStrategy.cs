@@ -211,13 +211,11 @@
             var propertyResolver = Configuration.PropertyResolver;
             var type = instance.GetType();
 
-            var propertyInfos = from x in propertyResolver.GetProperties(type)
-                orderby GetMaximumOrderPriority(x) descending
-                select x;
+            var propertyInfos = propertyResolver.GetOrderedProperties(Configuration, type);
 
             foreach (var propertyInfo in propertyInfos)
             {
-                if (propertyResolver.ShouldPopulateProperty(Configuration, instance, propertyInfo, args))
+                if (propertyResolver.IsIgnored(Configuration, instance, propertyInfo, args))
                 {
                     PopulateProperty(propertyInfo, instance);
                 }
@@ -350,27 +348,6 @@
 
                 throw new InvalidOperationException(message);
             }
-        }
-
-        private int GetMaximumOrderPriority(PropertyInfo property)
-        {
-            if (Configuration.ExecuteOrderRules == null)
-            {
-                return 0;
-            }
-
-            var matchingRules = from x in Configuration.ExecuteOrderRules
-                where x.IsMatch(property)
-                orderby x.Priority descending
-                select x;
-            var matchingRule = matchingRules.FirstOrDefault();
-
-            if (matchingRule == null)
-            {
-                return 0;
-            }
-
-            return matchingRule.Priority;
         }
 
         private object Populate(BuildCapability capability, object instance, params object[] args)

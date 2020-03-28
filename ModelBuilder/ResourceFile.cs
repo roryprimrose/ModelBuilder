@@ -12,7 +12,7 @@
             var resourceName = "ModelBuilder.Resources." + name + ".txt";
 
             using var stream = assembly.GetManifestResourceStream(resourceName);
-            
+#if DEBUG
             if (stream == null)
             {
                 var resourceNames = assembly.GetManifestResourceNames();
@@ -21,7 +21,7 @@
 
                 throw new InvalidOperationException(message);
             }
-
+#endif
             using var reader = new StreamReader(stream);
 
             return reader.ReadToEnd();
