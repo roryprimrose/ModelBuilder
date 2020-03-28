@@ -292,20 +292,22 @@
         }
 
         [Fact]
-        public void CreateReadOnlyCollectionWithAutoPopulatedItems()
+        public void CreateReadOnlyCollectionWithItemCountBetweenMinAndMax()
         {
             var actual = Model.Create<ReadOnlyCollection<int>>();
 
-            actual.Should().HaveCount(EnumerableTypeCreator.DefaultAutoPopulateCount);
+            actual.Count.Should().BeGreaterOrEqualTo(10);
+            actual.Count.Should().BeLessOrEqualTo(30);
             actual.All(x => x == 0).Should().BeFalse();
         }
 
         [Fact]
-        public void CreateReturnsCollectionWithAutoPopulatedItemsInstance()
+        public void CreateReturnsCollectionWithItemCountBetweenMinAndMax()
         {
             var actual = Model.Create<ICollection<int>>();
 
-            actual.Should().HaveCount(EnumerableTypeCreator.DefaultAutoPopulateCount);
+            actual.Count.Should().BeGreaterOrEqualTo(10);
+            actual.Count.Should().BeLessOrEqualTo(30);
             actual.All(x => x == 0).Should().BeFalse();
         }
 
@@ -320,11 +322,12 @@
         }
 
         [Fact]
-        public void CreateReturnsEnumerableWithAutoPopulatedItemsInstance()
+        public void CreateReturnsEnumerableWithItemCountBetweenMinAndMax()
         {
             var actual = Model.Create<IEnumerable<int>>().ToList();
 
-            actual.Should().HaveCount(EnumerableTypeCreator.DefaultAutoPopulateCount);
+            actual.Count.Should().BeGreaterOrEqualTo(10);
+            actual.Count.Should().BeLessOrEqualTo(30);
             actual.All(x => x == 0).Should().BeFalse();
         }
 
@@ -337,11 +340,12 @@
         }
 
         [Fact]
-        public void CreateReturnsListWithAutoPopulatedItemsInstance()
+        public void CreateReturnsListWithItemCountBetweenMinAndMax()
         {
             var actual = Model.Create<IList<int>>();
 
-            actual.Should().HaveCount(EnumerableTypeCreator.DefaultAutoPopulateCount);
+            actual.Count.Should().BeGreaterOrEqualTo(10);
+            actual.Count.Should().BeLessOrEqualTo(30);
             actual.All(x => x == 0).Should().BeFalse();
         }
 
@@ -607,7 +611,8 @@
             actual = Model.Populate(actual);
 
             actual.Should().NotBeEmpty();
-            actual.Count.Should().Be(EnumerableTypeCreator.DefaultAutoPopulateCount);
+            actual.Count.Should().BeGreaterOrEqualTo(10);
+            actual.Count.Should().BeLessOrEqualTo(30);
         }
 
         [Fact]
