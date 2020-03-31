@@ -1,6 +1,9 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
     using System.IO;
     using FluentAssertions;
     using ModelBuilder.UnitTests.Models;
@@ -10,11 +13,74 @@
 
     public class DefaultTypeResolverTests
     {
-        private readonly OutputBuildLog _buildLog;
+        private readonly ITestOutputHelper _output;
 
         public DefaultTypeResolverTests(ITestOutputHelper output)
         {
-            _buildLog = new OutputBuildLog(output);
+            _output = output;
+        }
+
+        [Theory]
+        [InlineData(typeof(ICollection), typeof(ArrayList))]
+        [InlineData(typeof(IList), typeof(ArrayList))]
+        [InlineData(typeof(ICollection<Person>), typeof(Collection<Person>))]
+        [InlineData(typeof(IList<Person>), typeof(List<Person>))]
+        [InlineData(typeof(IReadOnlyCollection<Person>), typeof(ReadOnlyCollection<Person>))]
+        [InlineData(typeof(IDictionary<Guid, Person>), typeof(Dictionary<Guid, Person>))]
+        public void CanCreateEnumerableTypesFromInterfacesWithExpectedResolutionPriority(Type requestedType,
+            Type expectedType)
+        {
+            var configuration = new BuildConfiguration();
+
+            var sut = new DefaultTypeResolver();
+
+            var actual = sut.GetBuildType(configuration, requestedType);
+
+            _output.WriteLine(actual.FullName);
+
+            actual.Should().Be(expectedType);
+        }
+
+        [Fact]
+        public void GetBuildTypeReturnsDerivedTypeMatchingOnAbstractBaseName()
+        {
+            var configuration = new BuildConfiguration();
+
+            var sut = new DefaultTypeResolver();
+
+            var actual = sut.GetBuildType(configuration, typeof(SomeClassBase));
+
+            _output.WriteLine(actual.FullName);
+
+            actual.Should().Be<SomeClass>();
+        }
+
+        [Fact]
+        public void GetBuildTypeReturnsOriginalTypeWhenNoBetterTypeFound()
+        {
+            var configuration = new BuildConfiguration();
+
+            var sut = new DefaultTypeResolver();
+
+            var actual = sut.GetBuildType(configuration, typeof(INoMatch));
+
+            _output.WriteLine(actual.FullName);
+
+            actual.Should().Be<INoMatch>();
+        }
+
+        [Fact]
+        public void GetBuildTypeReturnsPossibleTypeFromInterface()
+        {
+            var configuration = new BuildConfiguration();
+
+            var sut = new DefaultTypeResolver();
+
+            var actual = sut.GetBuildType(configuration, typeof(ITestInterface));
+
+            _output.WriteLine(actual.FullName);
+
+            actual.Should().Implement<ITestInterface>();
         }
 
         [Fact]
@@ -123,5 +189,33 @@
 
             action.Should().Throw<ArgumentNullException>();
         }
+    }
+
+    public interface INoMatch
+    {
+    }
+
+    public abstract class SomeClassBase
+    {
+    }
+
+    public class SomeClass : SomeClassBase
+    {
+    }
+
+    public class NotThisClass : SomeClassBase
+    {
+    }
+
+    public interface ITestInterface
+    {
+    }
+
+    public class FirstClass : ITestInterface
+    {
+    }
+
+    public class SecondClass : ITestInterface
+    {
     }
 }
