@@ -81,8 +81,10 @@
         }
 
         [Theory]
+        [InlineData(typeof(IEnumerable))]
         [InlineData(typeof(ICollection))]
         [InlineData(typeof(IList))]
+        [InlineData(typeof(IEnumerable<Person>))]
         [InlineData(typeof(ICollection<Person>))]
         [InlineData(typeof(IList<Person>))]
         [InlineData(typeof(IReadOnlyCollection<Person>))]

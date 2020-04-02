@@ -111,20 +111,44 @@
                     return interfaceNameMatchingType;
                 }
 
+                var arrayListType = typeof(List<object>);
+
                 if (requestedType.IsGenericType == false
-                    && requestedType.IsAssignableFrom(typeof(ArrayList)))
+                    && requestedType.IsAssignableFrom(arrayListType))
                 {
                     // This is an enumerable type that supports ArrayList
                     // At this point we will just take ArrayList
                     // The reason for checking compatibility for ArrayList is that there are many IEnumerable types other than ArrayList which are
                     // a little to specific in their purpose whereas ArrayList is generic
-                    return typeof(ArrayList);
+                    return arrayListType;
+                }
+
+                if (requestedType.IsGenericType)
+                {
+                    try
+                    {
+                        var genericParameters = requestedType.GetGenericArguments();
+                        var genericListDefinition = typeof(List<>);
+                        var listType = genericListDefinition.MakeGenericType(genericParameters);
+
+                        if (requestedType.IsAssignableFrom(listType))
+                        {
+                            // This is an enumerable type that supports List<T>
+                            // We will use List<T> in preference of other types for the same reason as ArrayList above
+                            return listType;
+                        }
+                    }
+                    catch (ArgumentException)
+                    {
+                        // We couldn't create a type with the generic parameters
+                        // This is not a matching type
+                    }
                 }
             }
-
-            // Next give priority to a derived class name that has the same name as the requested type (without "Base" suffix for abstract classes)
-            if (requestedType.IsAbstract)
+            // else if instead of if in a discrete block because interfaces are also abstract 
+            else if (requestedType.IsAbstract)
             {
+                // Next give priority to a derived class name that has the same name as the requested type (without "Base" suffix for abstract classes)
                 var abstractNameToMatch = requestedType.Name;
 
                 abstractNameToMatch = abstractNameToMatch.Replace("Base", string.Empty);

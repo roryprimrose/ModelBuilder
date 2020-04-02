@@ -21,8 +21,10 @@
         }
 
         [Theory]
-        [InlineData(typeof(ICollection), typeof(ArrayList))]
-        [InlineData(typeof(IList), typeof(ArrayList))]
+        [InlineData(typeof(IEnumerable), typeof(List<object>))]
+        [InlineData(typeof(ICollection), typeof(List<object>))]
+        [InlineData(typeof(IList), typeof(List<object>))]
+        [InlineData(typeof(IEnumerable<Person>), typeof(List<Person>))]
         [InlineData(typeof(ICollection<Person>), typeof(Collection<Person>))]
         [InlineData(typeof(IList<Person>), typeof(List<Person>))]
         [InlineData(typeof(IReadOnlyCollection<Person>), typeof(ReadOnlyCollection<Person>))]

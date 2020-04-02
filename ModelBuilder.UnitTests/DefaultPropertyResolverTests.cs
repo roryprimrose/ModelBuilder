@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Collections.ObjectModel;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using FluentAssertions;
@@ -158,6 +159,22 @@
             Action action = () => sut.GetOrderedProperties(configuration, null);
 
             action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void IsIgnoredReturnsFalseForIndexerProperty()
+        {
+            var configuration = Substitute.For<IBuildConfiguration>();
+            var items = new List<int>();
+            var instance = new ReadOnlyCollection<int>(items);
+            var type = typeof(ReadOnlyCollection<int>);
+            var propertyInfo = type.GetProperties().First(x => x.GetIndexParameters().Length > 0);
+
+            var sut = new DefaultPropertyResolver();
+
+            var actual = sut.IsIgnored(configuration, instance, propertyInfo, null);
+
+            actual.Should().BeFalse();
         }
 
         [Fact]
