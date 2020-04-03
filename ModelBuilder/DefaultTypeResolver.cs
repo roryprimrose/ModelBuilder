@@ -1,7 +1,6 @@
 ﻿namespace ModelBuilder
 {
     using System;
-    using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
@@ -12,6 +11,8 @@
     /// </summary>
     public class DefaultTypeResolver : ITypeResolver
     {
+        private Dictionary<Type, Type> _typeCache = new Dictionary<Type, Type>();
+
         /// <inheritdoc />
         public Type GetBuildType(IBuildConfiguration configuration, Type requestedType)
         {
@@ -37,7 +38,16 @@
             if (requestedType.IsInterface
                 || requestedType.IsAbstract)
             {
-                return AutoResolveBuildType(requestedType);
+                if (_typeCache.ContainsKey(requestedType))
+                {
+                    return _typeCache[requestedType];
+                }
+
+                var resolvedType =  AutoResolveBuildType(requestedType);
+
+                _typeCache[requestedType] = resolvedType;
+
+                return resolvedType;
             }
 
             return requestedType;
@@ -151,8 +161,11 @@
                 // Next give priority to a derived class name that has the same name as the requested type (without "Base" suffix for abstract classes)
                 var abstractNameToMatch = requestedType.Name;
 
+#if NETSTANDARD2_0
                 abstractNameToMatch = abstractNameToMatch.Replace("Base", string.Empty);
-
+#else
+                abstractNameToMatch = abstractNameToMatch.Replace("Base", string.Empty, StringComparison.CurrentCulture);
+#endif
                 var abstractNameMatchingType = matchingTypes.FirstOrDefault(x => x.Name == abstractNameToMatch);
 
                 if (abstractNameMatchingType != null)
