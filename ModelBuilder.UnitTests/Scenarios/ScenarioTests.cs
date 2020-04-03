@@ -1,6 +1,7 @@
 ﻿namespace ModelBuilder.UnitTests.Scenarios
 {
     using System;
+    using System.Collections;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Diagnostics.CodeAnalysis;
@@ -79,12 +80,37 @@
             actual.List.Should().NotBeEmpty();
         }
 
+        [Theory]
+        [InlineData(typeof(IEnumerable))]
+        [InlineData(typeof(ICollection))]
+        [InlineData(typeof(IList))]
+        [InlineData(typeof(IEnumerable<Person>))]
+        [InlineData(typeof(ICollection<Person>))]
+        [InlineData(typeof(IList<Person>))]
+        [InlineData(typeof(IReadOnlyCollection<Person>))]
+        [InlineData(typeof(IDictionary<Guid, Person>))]
+        public void CanCreateEnumerableTypesFromInterfaces(Type type)
+        {
+            var actual = Model.Create(type);
+
+            actual.As<IEnumerable>().Should().NotBeEmpty();
+        }
+
         [Fact]
         public void CanCreateInstanceWithoutProperties()
         {
             var actual = Model.Create<Empty>();
 
             actual.Should().NotBeNull();
+        }
+
+        [Fact]
+        public void CanCreateReadOnlyCollection()
+        {
+            var actual = Model.Create<IReadOnlyCollection<Person>>();
+
+            actual.Should().BeOfType<ReadOnlyCollection<Person>>();
+            actual.Should().NotBeEmpty();
         }
 
         [Fact]
@@ -466,11 +492,15 @@
         {
             var typeCreator = Substitute.For<ITypeCreator>();
 
-            typeCreator.CanCreate(Arg.Any<IBuildConfiguration>(), Arg.Any<IBuildChain>(), Arg.Is<PropertyInfo>(x => x.DeclaringType == typeof(Office) && x.Name == nameof(Office.Address))).Returns(true);
+            typeCreator.CanCreate(Arg.Any<IBuildConfiguration>(), Arg.Any<IBuildChain>(),
+                    Arg.Is<PropertyInfo>(x => x.DeclaringType == typeof(Office) && x.Name == nameof(Office.Address)))
+                .Returns(true);
             typeCreator.Priority.Returns(int.MaxValue);
             typeCreator.AutoDetectConstructor.Returns(true);
             typeCreator.AutoPopulate.Returns(true);
-            typeCreator.Create(Arg.Any<IExecuteStrategy>(), Arg.Is<PropertyInfo>(x => x.DeclaringType == typeof(Office ) && x.Name == nameof(Office.Address)), null)
+            typeCreator.Create(Arg.Any<IExecuteStrategy>(),
+                    Arg.Is<PropertyInfo>(x => x.DeclaringType == typeof(Office) && x.Name == nameof(Office.Address)),
+                    null)
                 .Throws(new InvalidOperationException());
 
             var configuration = Model.UsingDefaultConfiguration().Add(typeCreator);
@@ -500,17 +530,6 @@
         }
 
         [Fact]
-        public void IgnoringSkipsPropertyAssignmentOfNestedObjects()
-        {
-            var actual = Model.Ignoring<Person>(x => x.FirstName).Ignoring<Address>(x => x.AddressLine1)
-                .Create<Person>();
-
-            actual.Should().NotBeNull();
-            actual.FirstName.Should().BeNull();
-            actual.Address.AddressLine1.Should().BeNull();
-        }
-
-        [Fact]
         public void IgnoringSkipsPropertyAssignment()
         {
             var entity = Model.Create<Person>();
@@ -523,6 +542,17 @@
             actual.Priority.Should().NotBe(0);
             actual.Id.Should().Be(entity.Id);
             actual.IsActive.Should().Be(entity.IsActive);
+        }
+
+        [Fact]
+        public void IgnoringSkipsPropertyAssignmentOfNestedObjects()
+        {
+            var actual = Model.Ignoring<Person>(x => x.FirstName).Ignoring<Address>(x => x.AddressLine1)
+                .Create<Person>();
+
+            actual.Should().NotBeNull();
+            actual.FirstName.Should().BeNull();
+            actual.Address.AddressLine1.Should().BeNull();
         }
 
         [Fact]

@@ -53,8 +53,6 @@
                 generateType = type.GetGenericArguments()[0];
             }
 
-            var isFlags = generateType.GetCustomAttributes(typeof(FlagsAttribute), true).Any();
-
             var values = Enum.GetValues(generateType);
 
             if (values.Length == 0)
@@ -67,6 +65,8 @@
             {
                 return values.GetValue(0);
             }
+
+            var isFlags = generateType.GetCustomAttributes(typeof(FlagsAttribute), true).Any();
 
             if (isFlags)
             {

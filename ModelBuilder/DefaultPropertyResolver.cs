@@ -71,6 +71,12 @@ namespace ModelBuilder
                 return false;
             }
 
+            if (propertyInfo.GetIndexParameters().Any())
+            {
+                // We can't do anything with index parameters
+                return false;
+            }
+
             var propertyValue = propertyInfo.GetValue(instance, null);
             var defaultValue = GetDefaultValue(propertyInfo.PropertyType);
 
