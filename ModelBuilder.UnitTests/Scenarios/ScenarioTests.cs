@@ -13,6 +13,7 @@
     using ModelBuilder.Data;
     using ModelBuilder.TypeCreators;
     using ModelBuilder.UnitTests.Models;
+    using ModelBuilder.UnitTests.ValueGenerators;
     using ModelBuilder.ValueGenerators;
     using NSubstitute;
     using NSubstitute.ExceptionExtensions;
@@ -409,6 +410,17 @@
             var actual = Model.Create<string>();
 
             actual.Should().NotBeNullOrWhiteSpace();
+        }
+
+        [Fact]
+        public void CreatesAgeFromDob()
+        {
+            var actual = Model.Create<AgeFromDob>();
+
+            var span = DateTime.Now.Subtract(actual.DateOfBirth);
+            var years = Convert.ToInt32(Math.Floor(span.TotalDays / 365));
+
+            actual.Age.Should().Be(years);
         }
 
         [Fact]
