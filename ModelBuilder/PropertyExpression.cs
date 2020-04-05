@@ -9,6 +9,11 @@
     public static class PropertyExpression
     {
         /// <summary>
+        ///     Defines the expression for matching age properties.
+        /// </summary>
+        public static readonly Regex Age = new Regex("Age", RegexOptions.IgnoreCase);
+
+        /// <summary>
         ///     Defines the expression for matching city properties.
         /// </summary>
         public static readonly Regex City = new Regex("City", RegexOptions.IgnoreCase);
@@ -17,6 +22,11 @@
         ///     Defines the expression for matching country properties.
         /// </summary>
         public static readonly Regex Country = new Regex("Country", RegexOptions.IgnoreCase);
+
+        /// <summary>
+        ///     Defines the expression for matching DOB properties.
+        /// </summary>
+        public static readonly Regex DateOfBirth = new Regex("dob|dateofbirth|born", RegexOptions.IgnoreCase);
 
         /// <summary>
         ///     Defines the expression for matching domain properties.

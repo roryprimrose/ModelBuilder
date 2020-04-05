@@ -6,16 +6,81 @@
     ///     The <see cref="AgeValueGenerator" />
     ///     class is used to generate numbers that should represent a persons age.
     /// </summary>
-    public class AgeValueGenerator : NumericValueGenerator
+    public class AgeValueGenerator : RelativeValueGenerator
     {
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="AddressValueGenerator" /> class.
+        /// </summary>
+        public AgeValueGenerator() : base(PropertyExpression.Age)
+        {
+        }
+
+        /// <inheritdoc />
+        protected override object Generate(IExecuteStrategy executeStrategy, Type type, string referenceName)
+        {
+            if (type == null)
+            {
+                throw new ArgumentNullException(nameof(type));
+            }
+
+            if (executeStrategy == null)
+            {
+                throw new ArgumentNullException(nameof(executeStrategy));
+            }
+
+            var generateType = type;
+
+            if (generateType.IsNullable())
+            {
+                // Allow for a 10% the chance that this might be null
+                var range = Generator.NextValue(0, 100000);
+
+                if (range < 10000)
+                {
+                    return null;
+                }
+
+                // Hijack the type to generator so we can continue with the normal code pointed at the correct type to generate
+                generateType = type.GetGenericArguments()[0];
+            }
+
+            var context = executeStrategy?.BuildChain?.Last;
+
+            if (context == null)
+            {
+                return Generator.NextValue(generateType, MinAge, MaxAge);
+            }
+
+            // Check if there is a DOB value
+            var dob = GetValue<DateTime>(PropertyExpression.DateOfBirth, context);
+
+            if (dob == default)
+            {
+                return Generator.NextValue(generateType, MinAge, MaxAge);
+            }
+
+            // Calculate the age from this DOB
+            var totalDays = DateTime.Now.Subtract(dob).TotalDays;
+
+            if (totalDays > 0)
+            {
+                return Convert.ChangeType(Math.Floor(totalDays / 365), type);
+            }
+
+            return Generator.NextValue(generateType, MinAge, MaxAge);
+        }
+
         /// <inheritdoc />
         protected override bool IsMatch(IBuildChain buildChain, Type type, string referenceName)
         {
-            var baseSupported = base.IsMatch(buildChain, type, referenceName);
-
-            if (baseSupported == false)
+            if (type == null)
             {
-                return false;
+                throw new ArgumentNullException(nameof(type));
+            }
+
+            if (buildChain == null)
+            {
+                throw new ArgumentNullException(nameof(buildChain));
             }
 
             if (string.IsNullOrEmpty(referenceName))
@@ -24,24 +89,20 @@
                 return false;
             }
 
-            if (referenceName.IndexOf("age", StringComparison.OrdinalIgnoreCase) > -1)
+            if (PropertyExpression.Age.IsMatch(referenceName) == false)
             {
-                return true;
+                return false;
             }
 
-            return false;
-        }
+            if (type.IsNullable())
+            {
+                // Get the internal type
+                var internalType = type.GetGenericArguments()[0];
 
-        /// <inheritdoc />
-        protected override object GetMaximum(Type type, string referenceName, object context)
-        {
-            return MaxAge;
-        }
+                return Generator.IsSupported(internalType);
+            }
 
-        /// <inheritdoc />
-        protected override object GetMinimum(Type type, string referenceName, object context)
-        {
-            return MinAge;
+            return Generator.IsSupported(type);
         }
 
         /// <summary>

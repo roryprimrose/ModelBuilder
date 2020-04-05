@@ -1,7 +1,6 @@
 namespace ModelBuilder.ValueGenerators
 {
     using System;
-    using System.Text.RegularExpressions;
 
     /// <summary>
     ///     The <see cref="DateOfBirthValueGenerator" />
@@ -9,13 +8,11 @@ namespace ModelBuilder.ValueGenerators
     /// </summary>
     public class DateOfBirthValueGenerator : ValueGeneratorMatcher
     {
-        private static readonly Regex _matchNameExpression = new Regex("dob|dateofbirth|born", RegexOptions.IgnoreCase);
-
         /// <summary>
         ///     Initializes a new instance of the <see cref="DateTimeValueGenerator" /> class.
         /// </summary>
         public DateOfBirthValueGenerator() : base(
-            _matchNameExpression,
+            PropertyExpression.DateOfBirth,
             typeof(DateTime),
             typeof(DateTime?),
             typeof(DateTimeOffset),
