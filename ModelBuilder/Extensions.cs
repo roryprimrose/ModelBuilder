@@ -2,8 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Linq;
 
     /// <summary>
     ///     The <see cref="Extensions" />
@@ -85,103 +83,6 @@
             action(instance);
 
             return instance;
-        }
-
-        /// <summary>
-        ///     Sets values on each instance in a set.
-        /// </summary>
-        /// <typeparam name="T">The type of instance to configure.</typeparam>
-        /// <param name="instances">The instances.</param>
-        /// <param name="action">The configuration action.</param>
-        /// <returns>A list of the instances.</returns>
-        /// <exception cref="ArgumentNullException">The <paramref name="instances" /> parameter is <c>null</c>.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="action" /> parameter is <c>null</c>.</exception>
-        [SuppressMessage(
-            "Microsoft.Design",
-            "CA1002:DoNotExposeGenericLists",
-            Justification =
-                "For usability in the calling code, the return type reflects the actual type to avoid unnecessary conversion or casting.")]
-        public static List<T> SetEach<T>(this IEnumerable<T> instances, Action<T> action) where T : class
-        {
-            if (instances == null)
-            {
-                throw new ArgumentNullException(nameof(instances));
-            }
-
-            if (action == null)
-            {
-                throw new ArgumentNullException(nameof(action));
-            }
-
-            var items = instances as List<T>;
-
-            if (items == null)
-            {
-                // It is not already a list so we need to convert it first
-                items = instances.ToList();
-            }
-
-            return SetEach(items, action);
-        }
-
-        /// <summary>
-        ///     Sets values on each instance in a set.
-        /// </summary>
-        /// <typeparam name="T">The type of instance to configure.</typeparam>
-        /// <param name="instances">The instances.</param>
-        /// <param name="action">The configuration action.</param>
-        /// <returns>A list of the instances.</returns>
-        /// <exception cref="ArgumentNullException">The <paramref name="instances" /> parameter is <c>null</c>.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="action" /> parameter is <c>null</c>.</exception>
-        [SuppressMessage(
-            "Microsoft.Design",
-            "CA1002:DoNotExposeGenericLists",
-            Justification =
-                "For usability in the calling code, the return type reflects the actual type to avoid unnecessary conversion or casting.")]
-        public static List<T> SetEach<T>(this List<T> instances, Action<T> action) where T : class
-        {
-            if (instances == null)
-            {
-                throw new ArgumentNullException(nameof(instances));
-            }
-
-            if (action == null)
-            {
-                throw new ArgumentNullException(nameof(action));
-            }
-
-            instances.ForEach(action);
-
-            return instances;
-        }
-
-        /// <summary>
-        ///     Makes a change to each instance using the specified action.
-        /// </summary>
-        /// <typeparam name="T">The type of instance being changed.</typeparam>
-        /// <param name="instances">The instances to update.</param>
-        /// <param name="action">The action to run against the instance.</param>
-        /// <returns>The updated instances.</returns>
-        /// <exception cref="ArgumentNullException">The <paramref name="instances" /> parameter is <c>null</c>.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="action" /> parameter is <c>null</c>.</exception>
-        public static ICollection<T> SetEach<T>(this ICollection<T> instances, Action<T> action)
-        {
-            if (instances == null)
-            {
-                throw new ArgumentNullException(nameof(instances));
-            }
-
-            if (action == null)
-            {
-                throw new ArgumentNullException(nameof(action));
-            }
-
-            foreach (var instance in instances)
-            {
-                action(instance);
-            }
-
-            return instances;
         }
     }
 }
