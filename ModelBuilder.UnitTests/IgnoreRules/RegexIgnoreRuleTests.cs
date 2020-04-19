@@ -13,7 +13,7 @@
         {
             var property = typeof(Person).GetProperty(nameof(Person.FirstName));
 
-            var sut = new RegexIgnoreRule(PropertyExpression.LastName);
+            var sut = new RegexIgnoreRule(NameExpression.LastName);
 
             var actual = sut.IsMatch(property);
 
@@ -25,7 +25,7 @@
         {
             var property = typeof(Person).GetProperty(nameof(Person.FirstName));
 
-            var sut = new RegexIgnoreRule(PropertyExpression.FirstName);
+            var sut = new RegexIgnoreRule(NameExpression.FirstName);
 
             var actual = sut.IsMatch(property);
 
@@ -35,7 +35,7 @@
         [Fact]
         public void IsMatchThrowsExceptionWithNullProperty()
         {
-            var sut = new RegexIgnoreRule(PropertyExpression.FirstName);
+            var sut = new RegexIgnoreRule(NameExpression.FirstName);
 
             Action action = () => sut.IsMatch(null);
 

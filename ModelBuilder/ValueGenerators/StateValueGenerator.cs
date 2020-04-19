@@ -13,7 +13,7 @@
         /// <summary>
         ///     Initializes a new instance of the <see cref="StateValueGenerator" /> class.
         /// </summary>
-        public StateValueGenerator() : base(PropertyExpression.State, typeof(string))
+        public StateValueGenerator() : base(NameExpression.State, typeof(string))
         {
         }
 
@@ -21,7 +21,7 @@
         protected override object Generate(IExecuteStrategy executeStrategy, Type type, string referenceName)
         {
             var context = executeStrategy?.BuildChain?.Last;
-            var country = GetValue<string>(PropertyExpression.Country, context);
+            var country = GetValue<string>(NameExpression.Country, context);
             Location location = null;
 
             if (string.IsNullOrWhiteSpace(country) == false)

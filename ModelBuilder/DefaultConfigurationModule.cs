@@ -29,18 +29,18 @@
         private static void AddExecuteOrderRules(IBuildConfiguration configuration)
         {
             // Populate personal properties in a specific order for scenarios where a value generator may use the values in order to set other values
-            configuration.AddExecuteOrderRule(PropertyExpression.Gender, 9600);
-            configuration.AddExecuteOrderRule(PropertyExpression.FirstName, 9580);
-            configuration.AddExecuteOrderRule(PropertyExpression.LastName, 9560);
-            configuration.AddExecuteOrderRule(PropertyExpression.Domain, 9550);
-            configuration.AddExecuteOrderRule(PropertyExpression.Email, 9540);
-            configuration.AddExecuteOrderRule(PropertyExpression.Country, 9400);
-            configuration.AddExecuteOrderRule(PropertyExpression.State, 9390);
-            configuration.AddExecuteOrderRule(PropertyExpression.City, 9380);
-            configuration.AddExecuteOrderRule(PropertyExpression.PostCode, 9370);
-            configuration.AddExecuteOrderRule(PropertyExpression.TimeZone, 9360);
-            configuration.AddExecuteOrderRule(PropertyExpression.DateOfBirth, 9340);
-            configuration.AddExecuteOrderRule(PropertyExpression.Age, 9320);
+            configuration.AddExecuteOrderRule(NameExpression.Gender, 9600);
+            configuration.AddExecuteOrderRule(NameExpression.FirstName, 9580);
+            configuration.AddExecuteOrderRule(NameExpression.LastName, 9560);
+            configuration.AddExecuteOrderRule(NameExpression.Domain, 9550);
+            configuration.AddExecuteOrderRule(NameExpression.Email, 9540);
+            configuration.AddExecuteOrderRule(NameExpression.Country, 9400);
+            configuration.AddExecuteOrderRule(NameExpression.State, 9390);
+            configuration.AddExecuteOrderRule(NameExpression.City, 9380);
+            configuration.AddExecuteOrderRule(NameExpression.PostCode, 9370);
+            configuration.AddExecuteOrderRule(NameExpression.TimeZone, 9360);
+            configuration.AddExecuteOrderRule(NameExpression.DateOfBirth, 9340);
+            configuration.AddExecuteOrderRule(NameExpression.Age, 9320);
 
             configuration.AddExecuteOrderRule(x => x.PropertyType.IsEnum, 4000);
             configuration.AddExecuteOrderRule(x => x.PropertyType.IsValueType, 3000);

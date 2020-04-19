@@ -12,7 +12,7 @@ namespace ModelBuilder.ValueGenerators
         /// <summary>
         ///     Initializes a new instance of the <see cref="DomainNameValueGenerator" /> class.
         /// </summary>
-        public DomainNameValueGenerator() : base(PropertyExpression.Domain, typeof(string))
+        public DomainNameValueGenerator() : base(NameExpression.Domain, typeof(string))
         {
         }
 

@@ -11,7 +11,7 @@
         /// <summary>
         ///     Initializes a new instance of the <see cref="AddressValueGenerator" /> class.
         /// </summary>
-        public AgeValueGenerator() : base(PropertyExpression.Age)
+        public AgeValueGenerator() : base(NameExpression.Age)
         {
         }
 
@@ -52,7 +52,7 @@
             }
 
             // Check if there is a DOB value
-            var dob = GetValue<DateTime>(PropertyExpression.DateOfBirth, context);
+            var dob = GetValue<DateTime>(NameExpression.DateOfBirth, context);
 
             if (dob == default)
             {
@@ -89,7 +89,7 @@
                 return false;
             }
 
-            if (PropertyExpression.Age.IsMatch(referenceName) == false)
+            if (NameExpression.Age.IsMatch(referenceName) == false)
             {
                 return false;
             }

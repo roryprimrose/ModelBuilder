@@ -179,7 +179,7 @@
 
             if (context != null)
             {
-                gender = GetValue<string>(PropertyExpression.Gender, context);
+                gender = GetValue<string>(NameExpression.Gender, context);
             }
 
             if (gender == null)

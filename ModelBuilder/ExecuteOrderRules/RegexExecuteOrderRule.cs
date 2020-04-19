@@ -26,6 +26,18 @@
         }
 
         /// <inheritdoc />
+        /// <exception cref="System.ArgumentNullException">The <paramref name="parameterInfo" /> is <c>null</c>.</exception>
+        public bool IsMatch(ParameterInfo parameterInfo)
+        {
+            if (parameterInfo == null)
+            {
+                throw new ArgumentNullException(nameof(parameterInfo));
+            }
+
+            return _expression.IsMatch(parameterInfo.Name);
+        }
+
+        /// <inheritdoc />
         /// <exception cref="System.ArgumentNullException">The <paramref name="propertyInfo" /> is <c>null</c>.</exception>
         public bool IsMatch(PropertyInfo propertyInfo)
         {

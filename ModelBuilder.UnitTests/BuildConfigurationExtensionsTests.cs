@@ -220,7 +220,7 @@
 
             var sut = new BuildConfiguration();
 
-            var actual = sut.AddExecuteOrderRule(PropertyExpression.FirstName, priority);
+            var actual = sut.AddExecuteOrderRule(NameExpression.FirstName, priority);
 
             actual.Should().Be(sut);
 
@@ -235,7 +235,7 @@
             var priority = Environment.TickCount;
 
             Action action = () =>
-                BuildConfigurationExtensions.AddExecuteOrderRule(null, PropertyExpression.LastName, priority);
+                BuildConfigurationExtensions.AddExecuteOrderRule(null, NameExpression.LastName, priority);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -342,7 +342,7 @@
         {
             var sut = new BuildConfiguration();
 
-            var actual = sut.AddIgnoreRule(PropertyExpression.FirstName);
+            var actual = sut.AddIgnoreRule(NameExpression.FirstName);
 
             actual.Should().Be(sut);
 
@@ -354,7 +354,7 @@
         [Fact]
         public void AddIgnoreRuleWithRegexThrowsExceptionWithNullCompiler()
         {
-            Action action = () => BuildConfigurationExtensions.AddIgnoreRule(null, PropertyExpression.LastName);
+            Action action = () => BuildConfigurationExtensions.AddIgnoreRule(null, NameExpression.LastName);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -516,7 +516,7 @@
         [Fact]
         public void AddWithExecuteOrderRuleAddsRuleToCompiler()
         {
-            var rule = new PredicateExecuteOrderRule(x => x.Name == "FirstName", Environment.TickCount);
+            var rule = new PropertyPredicateExecuteOrderRule(x => x.Name == "FirstName", Environment.TickCount);
 
             var sut = new BuildConfiguration();
 
@@ -528,7 +528,7 @@
         [Fact]
         public void AddWithExecuteOrderRuleThrowsExceptionWithNullCompiler()
         {
-            var rule = new PredicateExecuteOrderRule(x => x.Name == "FirstName", Environment.TickCount);
+            var rule = new PropertyPredicateExecuteOrderRule(x => x.Name == "FirstName", Environment.TickCount);
 
             Action action = () => BuildConfigurationExtensions.Add(null, rule);
 
@@ -540,7 +540,7 @@
         {
             var sut = Substitute.For<IBuildConfiguration>();
 
-            Action action = () => sut.Add((PredicateExecuteOrderRule) null);
+            Action action = () => sut.Add((PropertyPredicateExecuteOrderRule) null);
 
             action.Should().Throw<ArgumentNullException>();
         }

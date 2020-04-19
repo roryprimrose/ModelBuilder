@@ -3,10 +3,10 @@
     using System.Text.RegularExpressions;
 
     /// <summary>
-    ///     The <see cref="PropertyExpression" />
+    ///     The <see cref="NameExpression" />
     ///     class defines regular expressions for matching values.
     /// </summary>
-    public static class PropertyExpression
+    public static class NameExpression
     {
         /// <summary>
         ///     Defines the expression for matching age properties.
@@ -26,7 +26,7 @@
         /// <summary>
         ///     Defines the expression for matching DOB properties.
         /// </summary>
-        public static readonly Regex DateOfBirth = new Regex("dob|dateofbirth|born", RegexOptions.IgnoreCase);
+        public static readonly Regex DateOfBirth = new Regex("dob|date[_]?of[_]?birth|born", RegexOptions.IgnoreCase);
 
         /// <summary>
         ///     Defines the expression for matching domain properties.
@@ -66,6 +66,6 @@
         /// <summary>
         ///     Defines the expression for matching timezone properties.
         /// </summary>
-        public static readonly Regex TimeZone = new Regex("TimeZone", RegexOptions.IgnoreCase);
+        public static readonly Regex TimeZone = new Regex("Time[_]?Zone", RegexOptions.IgnoreCase);
     }
 }

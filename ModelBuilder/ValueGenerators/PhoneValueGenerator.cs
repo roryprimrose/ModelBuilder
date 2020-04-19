@@ -22,7 +22,7 @@
         protected override object Generate(IExecuteStrategy executeStrategy, Type type, string referenceName)
         {
             var context = executeStrategy?.BuildChain?.Last;
-            var country = GetValue<string>(PropertyExpression.Country, context);
+            var country = GetValue<string>(NameExpression.Country, context);
             Location location = null;
 
             if (string.IsNullOrWhiteSpace(country) == false)

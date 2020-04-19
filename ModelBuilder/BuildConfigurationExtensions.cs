@@ -395,7 +395,7 @@
         }
 
         /// <summary>
-        ///     Adds a new <see cref="PredicateExecuteOrderRule" /> to the configuration.
+        ///     Adds a new <see cref="PropertyPredicateExecuteOrderRule" /> to the configuration.
         /// </summary>
         /// <param name="configuration">The configuration.</param>
         /// <param name="predicate">The predicate that matches on a property.</param>
@@ -418,7 +418,7 @@
                 throw new ArgumentNullException(nameof(predicate));
             }
 
-            var rule = new PredicateExecuteOrderRule(predicate, priority);
+            var rule = new PropertyPredicateExecuteOrderRule(predicate, priority);
 
             configuration.ExecuteOrderRules.Add(rule);
 

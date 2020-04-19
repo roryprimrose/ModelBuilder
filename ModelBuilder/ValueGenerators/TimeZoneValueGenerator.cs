@@ -13,7 +13,7 @@
         /// <summary>
         ///     Initializes a new instance of the <see cref="TimeZoneValueGenerator" /> class.
         /// </summary>
-        public TimeZoneValueGenerator() : base(PropertyExpression.TimeZone, typeof(string))
+        public TimeZoneValueGenerator() : base(NameExpression.TimeZone, typeof(string))
         {
         }
 
@@ -61,8 +61,8 @@
 
         private Location GetRelativeLocation(object context)
         {
-            var city = GetValue<string>(PropertyExpression.City, context) ?? "";
-            var country = GetValue<string>(PropertyExpression.Country, context) ?? "";
+            var city = GetValue<string>(NameExpression.City, context) ?? "";
+            var country = GetValue<string>(NameExpression.Country, context) ?? "";
 
             var allPossibleMatches = TestData.Locations.Where(
                 x => x.City.Equals(city, StringComparison.OrdinalIgnoreCase) ||
