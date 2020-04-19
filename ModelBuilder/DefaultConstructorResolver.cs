@@ -15,6 +15,27 @@
     public class DefaultConstructorResolver : IConstructorResolver
     {
         /// <inheritdoc />
+        /// <exception cref="ArgumentNullException">The <paramref name="configuration" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="constructor" /> parameter is <c>null</c>.</exception>
+        public IEnumerable<ParameterInfo> GetOrderedParameters(IBuildConfiguration configuration,
+            ConstructorInfo constructor)
+        {
+            if (configuration == null)
+            {
+                throw new ArgumentNullException(nameof(configuration));
+            }
+
+            if (constructor == null)
+            {
+                throw new ArgumentNullException(nameof(constructor));
+            }
+
+            return from x in constructor.GetParameters()
+                orderby GetMaximumOrderPriority(configuration, x) descending
+                select x;
+        }
+
+        /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
         /// <exception cref="MissingMemberException">
         ///     The <paramref name="type" /> parameter does not have a public constructor and
@@ -51,7 +72,7 @@
 
         private static ConstructorInfo FindConstructorMatchingArguments(Type type, IList<object> args)
         {
-            // Parameters are consulsted a lot here so get it into a dictionary first
+            // Parameters are consulted a lot here so get it into a dictionary first
             var availableConstructors = type.GetConstructors().ToDictionary(x => x, x => x.GetParameters());
             var possibleConstructors = availableConstructors.Where(x => x.Value.Length >= args.Count)
                 .OrderBy(x => x.Value.Length);
@@ -128,6 +149,28 @@
             }
 
             throw new MissingMemberException(message);
+        }
+
+        private static int GetMaximumOrderPriority(IBuildConfiguration configuration, ParameterInfo parameter)
+        {
+            if (configuration.ExecuteOrderRules == null)
+            {
+                return 0;
+            }
+
+            var matchingRules = from x in configuration.ExecuteOrderRules
+                where x.IsMatch(parameter)
+                orderby x.Priority descending
+                select x;
+
+            var matchingRule = matchingRules.FirstOrDefault();
+
+            if (matchingRule == null)
+            {
+                return 0;
+            }
+
+            return matchingRule.Priority;
         }
 
         private static bool ParametersMatchArguments(IList<ParameterInfo> parameters, IList<object> args)

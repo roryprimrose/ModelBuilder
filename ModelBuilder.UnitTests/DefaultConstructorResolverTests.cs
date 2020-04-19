@@ -1,8 +1,12 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using FluentAssertions;
+    using ModelBuilder.ExecuteOrderRules;
     using ModelBuilder.UnitTests.Models;
+    using NSubstitute;
     using Xunit;
     using Xunit.Abstractions;
 
@@ -13,6 +17,97 @@
         public DefaultConstructorResolverTests(ITestOutputHelper output)
         {
             _output = output;
+        }
+
+        [Fact]
+        public void GetOrderedParametersReturnsEmptyWhenConstructorHasNoParameters()
+        {
+            var configuration = Substitute.For<IBuildConfiguration>();
+            var constructor = typeof(Numbers).GetConstructors().First();
+
+            var sut = new DefaultConstructorResolver();
+
+            var actual = sut.GetOrderedParameters(configuration, constructor).ToList();
+
+            actual.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void GetOrderedParametersReturnsParametersInDeclaredOrderWhenNoExecuteOrderRulesMatch()
+        {
+            var configuration = new BuildConfiguration();
+            var constructor = typeof(OrderedConstructorParameters).GetConstructors().First();
+
+            var sut = new DefaultConstructorResolver();
+
+            var actual = sut.GetOrderedParameters(configuration, constructor).ToList();
+
+            actual[0].Name.Should().Be("email");
+            actual[1].Name.Should().Be("domain");
+            actual[2].Name.Should().Be("lastName");
+            actual[3].Name.Should().Be("firstName");
+            actual[4].Name.Should().Be("gender");
+        }
+
+        [Fact]
+        public void GetOrderedParametersReturnsParametersWhenExecuteOrderRulesIsNull()
+        {
+            var configuration = Substitute.For<IBuildConfiguration>();
+            var constructor = typeof(OrderedConstructorParameters).GetConstructors().First();
+
+            configuration.ExecuteOrderRules.Returns((ICollection<IExecuteOrderRule>) null);
+
+            var sut = new DefaultConstructorResolver();
+
+            var actual = sut.GetOrderedParameters(configuration, constructor).ToList();
+
+            actual.Should().HaveCount(5);
+        }
+
+        [Fact]
+        public void GetOrderedParametersReturnsPropertiesInDescendingOrder()
+        {
+            var configuration = new BuildConfiguration()
+                .AddExecuteOrderRule(NameExpression.Gender, 50)
+                .AddExecuteOrderRule(NameExpression.FirstName, 40)
+                .AddExecuteOrderRule(NameExpression.LastName, 30)
+                .AddExecuteOrderRule(NameExpression.Domain, 20)
+                .AddExecuteOrderRule(NameExpression.Email, 10);
+            var constructor = typeof(OrderedConstructorParameters).GetConstructors().First();
+
+            var sut = new DefaultConstructorResolver();
+
+            var actual = sut.GetOrderedParameters(configuration, constructor).ToList();
+
+            actual[0].Name.Should().Be("gender");
+            actual[1].Name.Should().Be("firstName");
+            actual[2].Name.Should().Be("lastName");
+            actual[3].Name.Should().Be("domain");
+            actual[4].Name.Should().Be("email");
+        }
+
+        [Fact]
+        public void GetOrderedParametersThrowsExceptionWithNullConfiguration()
+        {
+            var constructor = typeof(Person).GetConstructors().First();
+
+            var sut = new DefaultConstructorResolver();
+
+            Action action = () => sut.GetOrderedParameters(null, constructor);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void GetOrderedParametersThrowsExceptionWithNullConstructor()
+        {
+            var configuration = Substitute.For<IBuildConfiguration>();
+
+            var sut = new DefaultConstructorResolver();
+
+            Action action = () => sut.GetOrderedParameters(configuration, null);
+
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -120,6 +215,16 @@
         }
 
         [Fact]
+        public void ResolveReturnsConstructorWithLeastParameters()
+        {
+            var sut = new DefaultConstructorResolver();
+
+            var constructor = sut.Resolve(typeof(WithInterfaceAndAbstractParameters));
+
+            constructor.GetParameters().Should().HaveCount(1);
+        }
+
+        [Fact]
         public void ResolveReturnsConstructorWithLeastParametersExcludingConstructorsWithSameType()
         {
             var sut = new DefaultConstructorResolver();
@@ -128,16 +233,6 @@
 
             constructor.GetParameters().Should().HaveCount(3);
             constructor.GetParameters().Should().NotContain(x => x.ParameterType == typeof(Other));
-        }
-
-        [Fact]
-        public void ResolveReturnsConstructorWithLeastParameters()
-        {
-            var sut = new DefaultConstructorResolver();
-
-            var constructor = sut.Resolve(typeof(WithInterfaceAndAbstractParameters));
-
-            constructor.GetParameters().Should().HaveCount(1);
         }
 
         [Fact]
