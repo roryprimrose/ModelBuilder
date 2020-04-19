@@ -616,6 +616,7 @@
                 AutoPopulate = false,
                 SupportsCreate = true
             };
+            var constructorInfo = typeof(ReadOnlyModel).GetConstructors().Single();
 
             var processor = Substitute.For<IBuildProcessor>();
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
@@ -641,8 +642,8 @@
             buildConfiguration.ConstructorResolver.Returns(constructorResolver);
             buildConfiguration.TypeResolver.Returns(typeResolver);
             typeResolver.GetBuildType(buildConfiguration, Arg.Any<Type>()).Returns(x => x.Arg<Type>());
-            constructorResolver.Resolve(typeof(ReadOnlyModel))
-                .Returns(typeof(ReadOnlyModel).GetConstructors().Single());
+            constructorResolver.Resolve(typeof(ReadOnlyModel)).Returns(constructorInfo);
+            constructorResolver.GetOrderedParameters(buildConfiguration, constructorInfo).Returns(constructorInfo.GetParameters());
 
             sut.Initialize(buildConfiguration);
 
@@ -665,6 +666,7 @@
                 AutoPopulate = false,
                 SupportsCreate = true
             };
+            var constructorInfo = typeof(Person).GetConstructors().Single(x => x.GetParameters().Length == 0);
 
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
             var constructorResolver = Substitute.For<IConstructorResolver>();
@@ -680,8 +682,8 @@
             processor.GetBuildCapability(buildConfiguration, buildHistory, Arg.Any<BuildRequirement>(),
                     typeof(Person))
                 .Returns(typeCapability);
-            constructorResolver.Resolve(typeof(Person))
-                .Returns(typeof(Person).GetConstructors().Single(x => x.GetParameters().Length == 0));
+            constructorResolver.Resolve(typeof(Person)).Returns(constructorInfo);
+            constructorResolver.GetOrderedParameters(buildConfiguration, constructorInfo).Returns(constructorInfo.GetParameters());
             processor.Build(sut, typeof(Person), null).Returns(expected);
             processor.Populate(sut, expected).Returns(expected);
 

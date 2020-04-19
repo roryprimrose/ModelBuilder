@@ -271,9 +271,9 @@
                         throw new BuildException(message);
                     }
 
-                    var parameterInfos = constructor.GetParameters();
+                    var parameterInfos = Configuration.ConstructorResolver.GetOrderedParameters(Configuration, constructor).ToList();
 
-                    if (parameterInfos.Length == 0)
+                    if (parameterInfos.Count == 0)
                     {
                         instance = buildInstance(null);
                     }
