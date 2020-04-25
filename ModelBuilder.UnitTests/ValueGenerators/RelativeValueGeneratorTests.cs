@@ -15,136 +15,9 @@ namespace ModelBuilder.UnitTests.ValueGenerators
     public class RelativeValueGeneratorTests
     {
         [Fact]
-        public void GetSourceValueReturnsNullFromSourceNullableIntProperty()
-        {
-            var context = new RelativeNullableInt
-            {
-                YearStarted = null
-            };
-
-            var sut = new Wrapper<int?>(NameExpression.FirstName, new Regex("YearStarted"));
-
-            var actual = sut.ReadSourceValue(context);
-
-            actual.Should().NotHaveValue();
-        }
-
-        [Fact]
-        public void GetSourceValueReturnsNullFromSourceProperty()
-        {
-            var context = new Person();
-
-            var sut = new Wrapper<string>(NameExpression.FirstName, NameExpression.LastName);
-
-            var actual = sut.ReadSourceValue(context);
-
-            actual.Should().BeNull();
-        }
-
-        [Fact]
-        public void GetSourceValueReturnsNullWhenPropertyNotFound()
-        {
-            var context = new SlimModel();
-
-            var sut = new Wrapper<string>(NameExpression.FirstName, NameExpression.LastName);
-
-            var actual = sut.ReadSourceValue(context);
-
-            actual.Should().BeNull();
-        }
-
-        [Fact]
-        public void GetSourceValueReturnsValueFromSourceIntProperty()
-        {
-            var context = new Person
-            {
-                Priority = Environment.TickCount
-            };
-
-            var sut = new Wrapper<int>(NameExpression.FirstName, new Regex("Priority"));
-
-            var actual = sut.ReadSourceValue(context);
-
-            actual.Should().Be(context.Priority);
-        }
-
-        [Fact]
-        public void GetSourceValueReturnsValueFromSourceNullableIntProperty()
-        {
-            var context = new RelativeNullableInt
-            {
-                YearStarted = Environment.TickCount
-            };
-
-            var sut = new Wrapper<int?>(NameExpression.FirstName, new Regex("YearStarted"));
-
-            var actual = sut.ReadSourceValue(context);
-
-            actual.Should().Be(context.YearStarted);
-        }
-
-        [Theory]
-        [InlineData(Gender.Unknown, "Unknown")]
-        [InlineData(Gender.Male, "Male")]
-        [InlineData(Gender.Female, "Female")]
-        public void GetSourceValueReturnsValueFromSourcePropertyTest(Gender gender, string expected)
-        {
-            var context = new Person
-            {
-                Gender = gender
-            };
-
-            var sut = new Wrapper<string>(NameExpression.FirstName, NameExpression.Gender);
-
-            var actual = sut.ReadSourceValue(context);
-
-            actual.Should().Be(expected);
-        }
-
-        [Fact]
-        public void GetSourceValueReturnsValueFromSourceStringProperty()
-        {
-            var context = new Person
-            {
-                LastName = Guid.NewGuid().ToString()
-            };
-
-            var sut = new Wrapper<string>(NameExpression.FirstName, NameExpression.LastName);
-
-            var actual = sut.ReadSourceValue(context);
-
-            actual.Should().Be(context.LastName);
-        }
-
-        [Fact]
-        public void GetSourceValueThrowsExceptionWhenNoSourceExpressionProvided()
-        {
-            var context = new Person();
-
-            var sut = new Wrapper<string>(NameExpression.FirstName, (Regex) null, (Type) null);
-
-            Action action = () => sut.ReadSourceValue(context);
-
-            action.Should().Throw<InvalidOperationException>();
-        }
-
-        [Fact]
-        public void GetSourceValueThrowsExceptionWithNullContext()
-        {
-            var sut = new Wrapper<string>(NameExpression.FirstName, NameExpression.LastName);
-
-#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-            Action action = () => sut.ReadSourceValue(null);
-#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
-
-            action.Should().Throw<ArgumentNullException>();
-        }
-
-        [Fact]
         public void GetValueThrowsExceptionWithNullContext()
         {
             var sut = new Wrapper<string>(
-                NameExpression.FirstName,
                 NameExpression.FirstName,
                 (Type) null);
 
@@ -162,7 +35,6 @@ namespace ModelBuilder.UnitTests.ValueGenerators
 
             var sut = new Wrapper<string>(
                 NameExpression.FirstName,
-                NameExpression.FirstName,
                 (Type) null);
 
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
@@ -179,7 +51,6 @@ namespace ModelBuilder.UnitTests.ValueGenerators
 
             var sut = new Wrapper<string>(
                 NameExpression.FirstName,
-                NameExpression.Email,
                 typeof(string));
 
             var maleFound = false;
@@ -222,7 +93,6 @@ namespace ModelBuilder.UnitTests.ValueGenerators
 
             var sut = new Wrapper<string>(
                 NameExpression.FirstName,
-                NameExpression.Email,
                 typeof(string));
 
             var maleFound = false;
@@ -271,7 +141,6 @@ namespace ModelBuilder.UnitTests.ValueGenerators
 
             var sut = new Wrapper<string>(
                 NameExpression.FirstName,
-                NameExpression.Email,
                 typeof(string));
 
             var actual = sut.GetIsMale(executeStrategy);
@@ -284,7 +153,6 @@ namespace ModelBuilder.UnitTests.ValueGenerators
         {
             var sut = new Wrapper<string>(
                 NameExpression.FirstName,
-                NameExpression.Email,
                 typeof(string));
 
             Action action = () => sut.GetIsMale(null);
@@ -293,13 +161,15 @@ namespace ModelBuilder.UnitTests.ValueGenerators
         }
 
         [Theory]
-        [InlineData(typeof(bool), null, null, false)]
-        [InlineData(typeof(string), null, null, false)]
-        [InlineData(typeof(string), "FirstName", null, false)]
-        [InlineData(typeof(string), "FirstName", typeof(List<string>), false)]
-        [InlineData(typeof(string), "stuff", typeof(Person), false)]
+        [InlineData(typeof(bool), null, null, false)] // Type and name doesn't match
+        [InlineData(typeof(string), null, null, false)] // Name is null
+        [InlineData(typeof(string), "FirstName", null, false)] // No build context
+        [InlineData(typeof(string), "stuff", typeof(Person), false)] // Name doesn't match but we have an object to check for properties
+        [InlineData(typeof(string), "FirstName", typeof(Guid), false)] // Name matches but we don't have an object type to check for properties
+        [InlineData(typeof(string), "FirstName", typeof(int), false)] // Name matches but we don't have an object type to check for properties
+        [InlineData(typeof(string), "FirstName", typeof(string), false)] // Name matches but we don't have an object type to check for properties
         [InlineData(typeof(string), "FirstName", typeof(Person), true)]
-        public void IsMatchReturnsFalseForUnsupportedScenariosTest(
+        public void IsMatchReturnsWhetherScenarioSupported(
             Type type,
             string referenceName,
             Type contextType,
@@ -309,33 +179,25 @@ namespace ModelBuilder.UnitTests.ValueGenerators
 
             if (contextType != null)
             {
-                var context = Activator.CreateInstance(contextType);
+                object context;
+
+                if (contextType == typeof(string))
+                {
+                    context = Guid.NewGuid().ToString();
+                }
+                else
+                {
+                    context = Activator.CreateInstance(contextType);
+                }
 
                 buildChain.Push(context);
             }
 
-            var sut = new Wrapper<string>(NameExpression.FirstName, NameExpression.Gender);
+            var sut = new Wrapper<string>(NameExpression.FirstName);
 
             var actual = sut.RunIsMatch(type, referenceName, buildChain);
 
             actual.Should().Be(expected);
-        }
-
-        [Fact]
-        public void IsMatchReturnsTrueWhenSourceExpressionIsNullAndTargetExpressionMatchesReferenceName()
-        {
-            var context = new SlimModel();
-            var buildChain = new BuildHistory();
-
-            buildChain.Push(context);
-
-#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-            var sut = new Wrapper<string>(NameExpression.FirstName, (Regex) null);
-#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
-
-            var actual = sut.RunIsMatch(typeof(string), "FirstName", buildChain);
-
-            actual.Should().BeTrue();
         }
 
         [Fact]
@@ -387,7 +249,7 @@ namespace ModelBuilder.UnitTests.ValueGenerators
         {
             // ReSharper disable once ObjectCreationAsStatement
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-            Action action = () => new Wrapper<string>(null, NameExpression.FirstName, typeof(string));
+            Action action = () => new Wrapper<string>(null, typeof(string));
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
             action.Should().Throw<ArgumentException>();
@@ -398,7 +260,7 @@ namespace ModelBuilder.UnitTests.ValueGenerators
         {
             // ReSharper disable once ObjectCreationAsStatement
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-            Action action = () => new Wrapper<string>(null, NameExpression.Gender);
+            Action action = () => new Wrapper<string>(null);
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
             action.Should().Throw<ArgumentException>();
@@ -410,28 +272,9 @@ namespace ModelBuilder.UnitTests.ValueGenerators
             {
             }
 
-            public Wrapper(Regex targetNameExpression, Regex sourceNameExpression, params Type[] types) : base(
-                targetNameExpression,
-                sourceNameExpression,
-                types)
-            {
-            }
-
-            public Wrapper(Regex targetNameExpression, Regex sourceNameExpression) : base(
-                targetNameExpression,
-                sourceNameExpression,
-                typeof(string))
-            {
-            }
-
             public bool GetIsMale(IExecuteStrategy executeStrategy)
             {
                 return IsMale(executeStrategy);
-            }
-
-            public T ReadSourceValue(object context)
-            {
-                return GetSourceValue<T>(context);
             }
 
             public T ReadValue(Regex expression, object context)
