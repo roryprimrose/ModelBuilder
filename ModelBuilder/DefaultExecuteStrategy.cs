@@ -1,8 +1,10 @@
 ﻿namespace ModelBuilder
 {
     using System;
+    using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Diagnostics;
+    using System.Dynamic;
     using System.Globalization;
     using System.Linq;
     using System.Reflection;
@@ -240,9 +242,7 @@
                 throw new BuildException(message, type, referenceName, null, Log.Output);
             }
 
-            var buildChain = BuildChain;
-
-            var context = BuildChain.Last;
+            var context = _buildHistory.Last;
 
             Log.CreatingType(type, capability.ImplementedByType, context);
 
@@ -257,49 +257,9 @@
                 }
                 else if (capability.AutoDetectConstructor)
                 {
-                    // Resolve the type being created
-                    var typeToCreate = Configuration.TypeResolver.GetBuildType(Configuration, type);
+                    var parameters = CreateParameterValues(type);
 
-                    // Use constructor detection to figure out how to create this instance
-                    var constructor = Configuration.ConstructorResolver.Resolve(typeToCreate);
-
-                    if (constructor == null)
-                    {
-                        var message = string.Format(CultureInfo.CurrentCulture,
-                            "Failed to resolve constructor for type {0}.", type.FullName);
-
-                        throw new BuildException(message);
-                    }
-
-                    var parameterInfos = Configuration.ConstructorResolver.GetOrderedParameters(Configuration, constructor).ToList();
-
-                    if (parameterInfos.Count == 0)
-                    {
-                        instance = buildInstance(null);
-                    }
-                    else
-                    {
-                        // Get values for each of the constructor parameters
-                        var parameters = new Collection<object>();
-
-                        foreach (var parameterInfo in parameterInfos)
-                        {
-                            var lastContext = buildChain.Last;
-
-                            Log.CreatingParameter(parameterInfo, lastContext);
-
-                            // Recurse to build this parameter value
-                            var parameterValue = Build(parameterInfo);
-
-                            parameters.Add(parameterValue);
-
-                            Log.CreatedParameter(parameterInfo, lastContext);
-                        }
-
-                        args = parameters.ToArray();
-
-                        instance = buildInstance(args);
-                    }
+                    instance = buildInstance(parameters);
                 }
                 else
                 {
@@ -334,6 +294,75 @@
             {
                 Log.CreatedType(type, context);
             }
+        }
+
+        private object[] CreateParameterValues(Type type)
+        {
+            // Resolve the type being created
+            var typeToCreate = Configuration.TypeResolver.GetBuildType(Configuration, type);
+
+            // Use constructor detection to figure out how to create this instance
+            var constructorResolver = Configuration.ConstructorResolver;
+
+            var constructor = constructorResolver.Resolve(typeToCreate);
+
+            if (constructor == null)
+            {
+                var message = string.Format(CultureInfo.CurrentCulture,
+                    "Failed to resolve constructor for type {0}.", type.FullName);
+
+                throw new BuildException(message);
+            }
+
+            var parameterInfos = constructorResolver.GetOrderedParameters(Configuration, constructor).ToList();
+
+            if (parameterInfos.Count <= 0)
+            {
+                return null;
+            }
+
+            // Create an ExpandoObject to hold the parameter values as we build them
+            // ValueGenerators can use these parameters (expressed as properties) to assist in 
+            // building values that are dependent on other values
+            IDictionary<string, object> propertyWrapper = new ExpandoObject();
+
+            _buildHistory.Push(propertyWrapper);
+
+            try
+            {
+                foreach (var parameterInfo in parameterInfos)
+                {
+                    var lastContext = _buildHistory.Last;
+
+                    Log.CreatingParameter(parameterInfo, lastContext);
+
+                    // Recurse to build this parameter value
+                    var parameterValue = Build(parameterInfo);
+
+                    propertyWrapper[parameterInfo.Name] = parameterValue;
+
+                    Log.CreatedParameter(parameterInfo, lastContext);
+                }
+            }
+            finally
+            {
+                _buildHistory.Pop();
+            }
+
+            var originalParameters = constructor.GetParameters();
+            var parameterValues = new Collection<object>();
+
+            // Re-order the parameters back into the order expected by the constructor
+            foreach (var parameterInfo in originalParameters)
+            {
+                var parameterValue = propertyWrapper[parameterInfo.Name];
+
+                parameterValues.Add(parameterValue);
+            }
+
+            var parameters = parameterValues.ToArray();
+
+            return parameters;
         }
 
         private void EnsureInitialized()

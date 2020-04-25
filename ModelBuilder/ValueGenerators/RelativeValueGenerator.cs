@@ -1,6 +1,8 @@
 ﻿namespace ModelBuilder.ValueGenerators
 {
     using System;
+    using System.Collections.Generic;
+    using System.Dynamic;
     using System.Globalization;
     using System.Linq;
     using System.Reflection;
@@ -24,47 +26,6 @@
         {
         }
 
-        /// <inheritdoc />
-        protected override bool IsMatch(IBuildChain buildChain, Type type, string referenceName)
-        {
-            var baseSupported = base.IsMatch(buildChain, type, referenceName);
-
-            if (baseSupported == false)
-            {
-                // The type and name do not match what we are looking for   
-                return false;
-            }
-
-            var context = buildChain?.Last;
-
-            if (context == null)
-            {
-                // This is a top level item being generated and probably a primitive type
-                // There will not be other relative values to read
-                return false;
-            }
-
-            if (context is string)
-            {
-                // We can't look at properties on a string
-                return false;
-            }
-            
-            if (context.GetType().IsPrimitive)
-            {
-                // We can't look at properties on a primitive type
-                return false;
-            }
-
-            if (HasProperties(context) == false)
-            {
-                // There are no properties on this type
-                return false;
-            }
-
-            return true;
-        }
-
         /// <summary>
         ///     Gets the property value using the specified expression and context.
         /// </summary>
@@ -86,14 +47,7 @@
                 throw new ArgumentNullException(nameof(context));
             }
 
-            var property = GetMatchingProperty(expression, context);
-
-            if (property == null)
-            {
-                return default;
-            }
-
-            var value = property.GetValue(context, null);
+            var value = GetPropertyValue(expression, context);
 
             if (value == null)
             {
@@ -108,7 +62,7 @@
                 expectedType = expectedType.GetGenericArguments()[0];
             }
 
-            return (T)Convert.ChangeType(value, expectedType, CultureInfo.CurrentCulture);
+            return (T) Convert.ChangeType(value, expectedType, CultureInfo.CurrentCulture);
         }
 
         /// <summary>
@@ -153,21 +107,103 @@
             return false;
         }
 
-        private static bool HasProperties(object context)
+        /// <inheritdoc />
+        protected override bool IsMatch(IBuildChain buildChain, Type type, string referenceName)
         {
-            var contextType = context.GetType();
-            var properties = contextType.GetProperties(BindingFlags.Instance | BindingFlags.Public);
+            var baseSupported = base.IsMatch(buildChain, type, referenceName);
 
-            return properties.Any();
+            if (baseSupported == false)
+            {
+                // The type and name do not match what we are looking for   
+                return false;
+            }
+
+            var context = buildChain?.Last;
+
+            if (context == null)
+            {
+                // This is a top level item being generated and probably a primitive type
+                // There will not be other relative values to read
+                return false;
+            }
+
+            if (context is string)
+            {
+                // We can't look at properties on a string
+                return false;
+            }
+
+            if (context.GetType().IsPrimitive)
+            {
+                // We can't look at properties on a primitive type
+                return false;
+            }
+
+            var propertyNames = GetPropertyNames(context);
+
+            if (propertyNames.Any())
+            {
+                return true;
+            }
+
+            // There are no properties on this type
+            return false;
         }
 
-        private static PropertyInfo GetMatchingProperty(Regex expression, object context)
+        private static IEnumerable<PropertyInfo> GetDeclaredProperties(object context)
         {
             var contextType = context.GetType();
-            var properties = contextType.GetProperties(BindingFlags.Instance | BindingFlags.Public);
-            var matchingProperty = properties.FirstOrDefault(x => expression.IsMatch(x.Name));
 
-            return matchingProperty;
+            return contextType.GetProperties(BindingFlags.Instance | BindingFlags.Public);
+        }
+
+        private static IEnumerable<string> GetDynamicProperties(ExpandoObject context)
+        {
+            return context.Select(x => x.Key);
+        }
+
+        private static IEnumerable<string> GetPropertyNames(object context)
+        {
+            if (context is ExpandoObject dynamicObject)
+            {
+                return GetDynamicProperties(dynamicObject);
+            }
+
+            var declaredProperties = GetDeclaredProperties(context);
+
+            return from x in declaredProperties
+                select x.Name;
+        }
+
+        private static object GetPropertyValue(Regex expression, object context)
+        {
+            if (context is ExpandoObject dynamicObject)
+            {
+                var properties = GetDynamicProperties(dynamicObject);
+
+                var matchingName = properties.FirstOrDefault(expression.IsMatch);
+
+                if (matchingName == null)
+                {
+                    // There is no property matching the expression
+                    return null;
+                }
+
+                var keyedProperties = (IDictionary<string, object>) dynamicObject;
+
+                return keyedProperties[matchingName];
+            }
+
+            // This is not an ExpandoObject so we are expecting declared properties
+            var declaredProperties = GetDeclaredProperties(context);
+            var property = declaredProperties.FirstOrDefault(x => expression.IsMatch(x.Name));
+
+            if (property == null)
+            {
+                return null;
+            }
+
+            return property.GetValue(context);
         }
     }
 }
