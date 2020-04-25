@@ -12,7 +12,7 @@
         /// <summary>
         ///     Initializes a new instance of the <see cref="CountryValueGenerator" /> class.
         /// </summary>
-        public CountryValueGenerator() : base(PropertyExpression.Country, typeof(string))
+        public CountryValueGenerator() : base(NameExpression.Country, typeof(string))
         {
         }
 

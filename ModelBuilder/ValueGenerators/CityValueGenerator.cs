@@ -15,7 +15,7 @@
         /// <summary>
         ///     Initializes a new instance of the <see cref="CityValueGenerator" /> class.
         /// </summary>
-        public CityValueGenerator() : base(PropertyExpression.City, typeof(string))
+        public CityValueGenerator() : base(NameExpression.City, typeof(string))
         {
         }
 
@@ -27,13 +27,13 @@
 
             locations = FilterLocations(
                 locations,
-                PropertyExpression.Country,
+                NameExpression.Country,
                 (item, value) => item.Country.Equals(value, StringComparison.OrdinalIgnoreCase),
                 context);
 
             locations = FilterLocations(
                 locations,
-                PropertyExpression.State,
+                NameExpression.State,
                 (item, value) => item.State.Equals(value, StringComparison.OrdinalIgnoreCase),
                 context);
 

@@ -1,11 +1,12 @@
 ﻿namespace ModelBuilder.ValueGenerators
 {
     using System;
+    using System.Collections.Generic;
+    using System.Dynamic;
     using System.Globalization;
     using System.Linq;
     using System.Reflection;
     using System.Text.RegularExpressions;
-    using ModelBuilder.Properties;
 
     /// <summary>
     ///     The <see cref="RelativeValueGenerator" />
@@ -13,9 +14,6 @@
     /// </summary>
     public abstract class RelativeValueGenerator : ValueGeneratorMatcher
     {
-        private readonly Regex _sourceExpression;
-        private readonly Regex _targetExpression;
-
         /// <summary>
         ///     Initializes a new instance of the <see cref="RelativeValueGenerator" /> class.
         /// </summary>
@@ -23,96 +21,9 @@
         /// <param name="types">The types the generator can match.</param>
         /// <exception cref="ArgumentNullException">The <paramref name="targetNameExpression" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="types" /> parameter is <c>null</c>.</exception>
-        protected RelativeValueGenerator(Regex targetNameExpression, params Type[] types) : this(
-            targetNameExpression,
-            null,
-            types)
+        protected RelativeValueGenerator(Regex targetNameExpression, params Type[] types)
+            : base(targetNameExpression, types)
         {
-        }
-
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="RelativeValueGenerator" /> class.
-        /// </summary>
-        /// <param name="targetNameExpression">The expression to match the target property or parameter.</param>
-        /// <param name="sourceNameExpression">The expression to match the source property.</param>
-        /// <param name="types">The types the generator can match.</param>
-        /// <exception cref="ArgumentNullException">The <paramref name="targetNameExpression" /> parameter is <c>null</c>.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="types" /> parameter is <c>null</c>.</exception>
-        protected RelativeValueGenerator(Regex targetNameExpression, Regex sourceNameExpression, params Type[] types)
-            : base(types)
-        {
-            _targetExpression = targetNameExpression ?? throw new ArgumentNullException(nameof(targetNameExpression));
-            _sourceExpression = sourceNameExpression;
-        }
-
-        /// <inheritdoc />
-        protected override bool IsMatch(IBuildChain buildChain, Type type, string referenceName)
-        {
-            var baseSupported = base.IsMatch(buildChain, type, referenceName);
-
-            if (baseSupported == false)
-            {
-                return false;
-            }
-
-            if (referenceName == null)
-            {
-                // This not a constructor parameter nor a property
-                return false;
-            }
-
-            if (buildChain?.Last == null)
-            {
-                // This is either a top level item being generated or a constructor parameter
-                return false;
-            }
-
-            if (_targetExpression.IsMatch(referenceName) == false)
-            {
-                return false;
-            }
-
-            if (_sourceExpression == null)
-            {
-                // There is no source expression to validate against the model
-                return true;
-            }
-
-            var context = buildChain.Last;
-
-            // Check if the context has a property matching the source expression
-            var matchingProperty = GetMatchingProperty(_sourceExpression, context);
-
-            if (matchingProperty == null)
-            {
-                return false;
-            }
-
-            // The context object has properties that match the source and target expressions for the relative generator
-            return true;
-        }
-
-        /// <summary>
-        ///     Gets the source property value for the specified context.
-        /// </summary>
-        /// <typeparam name="T">The type of value to return.</typeparam>
-        /// <param name="context">The context to use for reference information.</param>
-        /// <returns>The string value of the source property.</returns>
-        /// <exception cref="InvalidOperationException">The generator was not created with a source expression.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="context" /> parameter is <c>null</c>.</exception>
-        protected virtual T GetSourceValue<T>(object context)
-        {
-            if (_sourceExpression == null)
-            {
-                throw new InvalidOperationException(Resources.RelativeValueGenerator_NoSourceExpression);
-            }
-
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
-
-            return GetValue<T>(_sourceExpression, context);
         }
 
         /// <summary>
@@ -136,14 +47,7 @@
                 throw new ArgumentNullException(nameof(context));
             }
 
-            var property = GetMatchingProperty(expression, context);
-
-            if (property == null)
-            {
-                return default;
-            }
-
-            var value = property.GetValue(context, null);
+            var value = GetPropertyValue(expression, context);
 
             if (value == null)
             {
@@ -158,7 +62,7 @@
                 expectedType = expectedType.GetGenericArguments()[0];
             }
 
-            return (T)Convert.ChangeType(value, expectedType, CultureInfo.CurrentCulture);
+            return (T) Convert.ChangeType(value, expectedType, CultureInfo.CurrentCulture);
         }
 
         /// <summary>
@@ -179,7 +83,7 @@
 
             if (context != null)
             {
-                gender = GetValue<string>(PropertyExpression.Gender, context);
+                gender = GetValue<string>(NameExpression.Gender, context);
             }
 
             if (gender == null)
@@ -203,13 +107,103 @@
             return false;
         }
 
-        private static PropertyInfo GetMatchingProperty(Regex expression, object context)
+        /// <inheritdoc />
+        protected override bool IsMatch(IBuildChain buildChain, Type type, string referenceName)
+        {
+            var baseSupported = base.IsMatch(buildChain, type, referenceName);
+
+            if (baseSupported == false)
+            {
+                // The type and name do not match what we are looking for   
+                return false;
+            }
+
+            var context = buildChain?.Last;
+
+            if (context == null)
+            {
+                // This is a top level item being generated and probably a primitive type
+                // There will not be other relative values to read
+                return false;
+            }
+
+            if (context is string)
+            {
+                // We can't look at properties on a string
+                return false;
+            }
+
+            if (context.GetType().IsPrimitive)
+            {
+                // We can't look at properties on a primitive type
+                return false;
+            }
+
+            var propertyNames = GetPropertyNames(context);
+
+            if (propertyNames.Any())
+            {
+                return true;
+            }
+
+            // There are no properties on this type
+            return false;
+        }
+
+        private static IEnumerable<PropertyInfo> GetDeclaredProperties(object context)
         {
             var contextType = context.GetType();
-            var properties = contextType.GetProperties(BindingFlags.Instance | BindingFlags.Public);
-            var matchingProperty = properties.FirstOrDefault(x => expression.IsMatch(x.Name));
 
-            return matchingProperty;
+            return contextType.GetProperties(BindingFlags.Instance | BindingFlags.Public);
+        }
+
+        private static IEnumerable<string> GetDynamicProperties(ExpandoObject context)
+        {
+            return context.Select(x => x.Key);
+        }
+
+        private static IEnumerable<string> GetPropertyNames(object context)
+        {
+            if (context is ExpandoObject dynamicObject)
+            {
+                return GetDynamicProperties(dynamicObject);
+            }
+
+            var declaredProperties = GetDeclaredProperties(context);
+
+            return from x in declaredProperties
+                select x.Name;
+        }
+
+        private static object GetPropertyValue(Regex expression, object context)
+        {
+            if (context is ExpandoObject dynamicObject)
+            {
+                var properties = GetDynamicProperties(dynamicObject);
+
+                var matchingName = properties.FirstOrDefault(expression.IsMatch);
+
+                if (matchingName == null)
+                {
+                    // There is no property matching the expression
+                    return null;
+                }
+
+                var keyedProperties = (IDictionary<string, object>) dynamicObject;
+
+                return keyedProperties[matchingName];
+            }
+
+            // This is not an ExpandoObject so we are expecting declared properties
+            var declaredProperties = GetDeclaredProperties(context);
+            var property = declaredProperties.FirstOrDefault(x => expression.IsMatch(x.Name));
+
+            if (property == null)
+            {
+                return null;
+            }
+
+            return property.GetValue(context);
         }
     }
 }

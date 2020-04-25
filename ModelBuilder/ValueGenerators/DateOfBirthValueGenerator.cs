@@ -12,7 +12,7 @@ namespace ModelBuilder.ValueGenerators
         ///     Initializes a new instance of the <see cref="DateTimeValueGenerator" /> class.
         /// </summary>
         public DateOfBirthValueGenerator() : base(
-            PropertyExpression.DateOfBirth,
+            NameExpression.DateOfBirth,
             typeof(DateTime),
             typeof(DateTime?),
             typeof(DateTimeOffset),

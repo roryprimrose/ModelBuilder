@@ -49,7 +49,7 @@
         [InlineData("  ")]
         public void IsMatchReturnsFalseForUnsupportedReferenceName(string referenceName)
         {
-            var nameRegex = PropertyExpression.FirstName;
+            var nameRegex = NameExpression.FirstName;
             var value = Guid.NewGuid().ToString();
 
             var buildChain = Substitute.For<IBuildChain>();
@@ -78,7 +78,7 @@
             var value = Guid.NewGuid().ToString();
 
             // ReSharper disable once ObjectCreationAsStatement
-            Action action = () => new Wrapper(PropertyExpression.FirstName, null, value);
+            Action action = () => new Wrapper(NameExpression.FirstName, null, value);
 
             action.Should().Throw<ArgumentNullException>();
         }

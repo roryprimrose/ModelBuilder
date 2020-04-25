@@ -1,6 +1,8 @@
 ﻿namespace ModelBuilder.UnitTests.ExecuteOrderRules
 {
     using System;
+    using System.Linq;
+    using System.Reflection;
     using FluentAssertions;
     using ModelBuilder.ExecuteOrderRules;
     using ModelBuilder.UnitTests.Models;
@@ -8,6 +10,20 @@
 
     public class ExpressionExecuteOrderRuleTests
     {
+        [Fact]
+        public void IsMatchReturnsFalseForParameter()
+        {
+            var priority = Environment.TickCount;
+            var parameterInfo = typeof(Person).GetConstructors()
+                .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
+
+            var sut = new ExpressionExecuteOrderRule<Simple>(x => x.LastName, priority);
+
+            var actual = sut.IsMatch(parameterInfo);
+
+            actual.Should().BeFalse();
+        }
+
         [Fact]
         public void IsMatchReturnsFalseWhenPropertyDeclaringTypeDoesNotMatch()
         {
@@ -106,7 +122,7 @@
 
             var sut = new ExpressionExecuteOrderRule<Person>(x => x.FirstName, priority);
 
-            Action action = () => sut.IsMatch(null);
+            Action action = () => sut.IsMatch((PropertyInfo) null);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -132,7 +148,7 @@
         }
 
         [Fact]
-        public void ToStringReturnsExpressionDisplay()
+        public void ToStringDoesNotReturnTypeName()
         {
             var sut = new ExpressionExecuteOrderRule<Person>(x => x.FirstName, Environment.TickCount);
 

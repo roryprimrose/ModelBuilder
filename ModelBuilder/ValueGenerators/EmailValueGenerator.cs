@@ -13,7 +13,7 @@
         /// <summary>
         ///     Initializes a new instance of the <see cref="EmailValueGenerator" /> class.
         /// </summary>
-        public EmailValueGenerator() : base(PropertyExpression.Email, typeof(string))
+        public EmailValueGenerator() : base(NameExpression.Email, typeof(string))
         {
         }
 
@@ -25,8 +25,8 @@
         protected override object Generate(IExecuteStrategy executeStrategy, Type type, string referenceName)
         {
             var context = executeStrategy?.BuildChain?.Last;
-            var firstName = GetValue<string>(PropertyExpression.FirstName, context);
-            var lastName = GetValue<string>(PropertyExpression.LastName, context);
+            var firstName = GetValue<string>(NameExpression.FirstName, context);
+            var lastName = GetValue<string>(NameExpression.LastName, context);
 
             if (firstName == null)
             {
@@ -49,7 +49,7 @@
 
             if (string.IsNullOrWhiteSpace(domain))
             {
-                domain = GetValue<string>(PropertyExpression.Domain, context);
+                domain = GetValue<string>(NameExpression.Domain, context);
             }
 
             if (string.IsNullOrWhiteSpace(domain))

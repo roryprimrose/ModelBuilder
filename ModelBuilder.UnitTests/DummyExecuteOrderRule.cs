@@ -5,6 +5,11 @@
 
     public class DummyExecuteOrderRule : IExecuteOrderRule
     {
+        public bool IsMatch(ParameterInfo parameter)
+        {
+            return false;
+        }
+
         public bool IsMatch(PropertyInfo property)
         {
             return false;

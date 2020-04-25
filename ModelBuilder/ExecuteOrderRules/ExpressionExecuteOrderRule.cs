@@ -27,6 +27,13 @@
         }
 
         /// <inheritdoc />
+        /// <exception cref="ArgumentNullException">The <paramref name="parameterInfo" /> parameter is <c>null</c>.</exception>
+        public bool IsMatch(ParameterInfo parameterInfo)
+        {
+            return false;
+        }
+
+        /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="propertyInfo" /> parameter is <c>null</c>.</exception>
         public bool IsMatch(PropertyInfo propertyInfo)
         {

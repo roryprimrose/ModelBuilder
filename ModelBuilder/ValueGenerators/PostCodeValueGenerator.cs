@@ -15,7 +15,7 @@
         /// <summary>
         ///     Initializes a new instance of the <see cref="PostCodeValueGenerator" /> class.
         /// </summary>
-        public PostCodeValueGenerator() : base(PropertyExpression.PostCode, typeof(string))
+        public PostCodeValueGenerator() : base(NameExpression.PostCode, typeof(string))
         {
         }
 
@@ -28,19 +28,19 @@
 
             locations = FilterLocations(
                 locations,
-                PropertyExpression.Country,
+                NameExpression.Country,
                 (item, value) => item.Country.Equals(value, StringComparison.OrdinalIgnoreCase),
                 context);
 
             locations = FilterLocations(
                 locations,
-                PropertyExpression.State,
+                NameExpression.State,
                 (item, value) => item.State.Equals(value, StringComparison.OrdinalIgnoreCase),
                 context);
 
             locations = FilterLocations(
                 locations,
-                PropertyExpression.City,
+                NameExpression.City,
                 (item, value) => item.City.Equals(value, StringComparison.OrdinalIgnoreCase),
                 context);
 
