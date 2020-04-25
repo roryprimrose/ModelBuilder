@@ -1,5 +1,6 @@
 ﻿namespace ModelBuilder.UnitTests.Scenarios
 {
+    using System;
     using System.Diagnostics.CodeAnalysis;
     using FluentAssertions;
     using ModelBuilder.Data;
@@ -32,13 +33,13 @@
             {
                 TestData.FemaleNames.Should().Contain(actual.FirstName);
             }
-            else
+            else if (actual.Gender == Gender.Male)
             {
                 TestData.MaleNames.Should().Contain(actual.FirstName);
             }
 
-            var expectedEmail = (actual.FirstName + "." + actual.LastName + "@" + actual.Domain).ToLowerInvariant();
-
+            var expectedEmail = (actual.FirstName + "." + actual.LastName + "@" + actual.Domain).ToLowerInvariant().Replace(" ", "", StringComparison.CurrentCulture);
+            
             actual.Email.Should().StartWith(expectedEmail);
         }
     }
