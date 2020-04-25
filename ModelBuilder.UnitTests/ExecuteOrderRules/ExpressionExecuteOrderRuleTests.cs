@@ -148,7 +148,7 @@
         }
 
         [Fact]
-        public void ToStringReturnsExpressionDisplay()
+        public void ToStringDoesNotReturnTypeName()
         {
             var sut = new ExpressionExecuteOrderRule<Person>(x => x.FirstName, Environment.TickCount);
 

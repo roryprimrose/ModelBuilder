@@ -107,5 +107,17 @@
 
             action.Should().Throw<ArgumentNullException>();
         }
+
+        [Fact]
+        public void ToStringDoesNotReturnTypeName()
+        {
+            var priority = Environment.TickCount;
+
+            var sut = new RegexExecuteOrderRule(NameExpression.FirstName, priority);
+
+            var actual = sut.ToString();
+
+            actual.Should().NotBe(sut.GetType().ToString());
+        }
     }
 }

@@ -1,6 +1,7 @@
 ﻿namespace ModelBuilder.UnitTests.ExecuteOrderRules
 {
     using System;
+    using System.Globalization;
     using System.Linq;
     using System.Reflection;
     using FluentAssertions;
@@ -129,6 +130,16 @@
         }
 
         [Fact]
+        public void PriorityReturnsConstructorValue()
+        {
+            var priority = Environment.TickCount;
+
+            var sut = new PropertyPredicateExecuteOrderRule(x => x.DeclaringType == typeof(string), priority);
+
+            sut.Priority.Should().Be(priority);
+        }
+
+        [Fact]
         public void ThrowsExceptionWhenCreatedWithNullExpression()
         {
             var priority = Environment.TickCount;
@@ -137,6 +148,18 @@
             Action action = () => new PropertyPredicateExecuteOrderRule(null, priority);
 
             action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void ToStringDoesNotReturnTypeName()
+        {
+            var priority = Environment.TickCount;
+
+            var sut = new PropertyPredicateExecuteOrderRule(x => x.DeclaringType == typeof(string), priority);
+
+            var actual = sut.ToString();
+
+            actual.ToString(CultureInfo.CurrentCulture).Should().NotBe(sut.GetType().FullName);
         }
     }
 }
