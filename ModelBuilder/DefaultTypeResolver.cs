@@ -1,6 +1,7 @@
 ﻿namespace ModelBuilder
 {
     using System;
+    using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
@@ -11,7 +12,7 @@
     /// </summary>
     public class DefaultTypeResolver : ITypeResolver
     {
-        private Dictionary<Type, Type> _typeCache = new Dictionary<Type, Type>();
+        private readonly Dictionary<Type, Type> _typeCache = new Dictionary<Type, Type>();
 
         /// <inheritdoc />
         public Type GetBuildType(IBuildConfiguration configuration, Type requestedType)
@@ -43,7 +44,7 @@
                     return _typeCache[requestedType];
                 }
 
-                var resolvedType =  AutoResolveBuildType(requestedType);
+                var resolvedType = AutoResolveBuildType(requestedType);
 
                 _typeCache[requestedType] = resolvedType;
 
@@ -55,6 +56,45 @@
 
         private static Type AutoResolveBuildType(Type requestedType)
         {
+            // Before search for matching types and finding a good match, check if this is an IEnumerable that would support a list type
+            if (requestedType.IsInterface
+                && typeof(IEnumerable).IsAssignableFrom(requestedType))
+            {
+                var objectListType = typeof(List<object>);
+
+                if (requestedType.IsGenericType == false
+                    && requestedType.IsAssignableFrom(objectListType))
+                {
+                    // This is an enumerable type that supports List<object> (like ICollection and IList)
+                    // At this point we will just take ArrayList
+                    // The reason for checking compatibility for List is that there are many IEnumerable types other than List which are
+                    // a little too specific in their purpose whereas List is generic
+                    return objectListType;
+                }
+
+                if (requestedType.IsGenericType)
+                {
+                    try
+                    {
+                        var genericParameters = requestedType.GetGenericArguments();
+                        var genericListDefinition = typeof(List<>);
+                        var listType = genericListDefinition.MakeGenericType(genericParameters);
+
+                        if (requestedType.IsAssignableFrom(listType))
+                        {
+                            // This is an enumerable type that supports List<T>
+                            // We will use List<T> in preference of other types for the same reason as List above
+                            return listType;
+                        }
+                    }
+                    catch (ArgumentException)
+                    {
+                        // We couldn't create a type with the generic parameters
+                        // This is not a matching type
+                    }
+                }
+            }
+
             // Automatically resolve a derived type within the same assembly
             var assemblyTypes = requestedType.GetTypeInfo().Assembly.GetTypes();
             var possibleTypes = from x in assemblyTypes
@@ -119,40 +159,6 @@
                 if (interfaceNameMatchingType != null)
                 {
                     return interfaceNameMatchingType;
-                }
-
-                var arrayListType = typeof(List<object>);
-
-                if (requestedType.IsGenericType == false
-                    && requestedType.IsAssignableFrom(arrayListType))
-                {
-                    // This is an enumerable type that supports ArrayList
-                    // At this point we will just take ArrayList
-                    // The reason for checking compatibility for ArrayList is that there are many IEnumerable types other than ArrayList which are
-                    // a little to specific in their purpose whereas ArrayList is generic
-                    return arrayListType;
-                }
-
-                if (requestedType.IsGenericType)
-                {
-                    try
-                    {
-                        var genericParameters = requestedType.GetGenericArguments();
-                        var genericListDefinition = typeof(List<>);
-                        var listType = genericListDefinition.MakeGenericType(genericParameters);
-
-                        if (requestedType.IsAssignableFrom(listType))
-                        {
-                            // This is an enumerable type that supports List<T>
-                            // We will use List<T> in preference of other types for the same reason as ArrayList above
-                            return listType;
-                        }
-                    }
-                    catch (ArgumentException)
-                    {
-                        // We couldn't create a type with the generic parameters
-                        // This is not a matching type
-                    }
                 }
             }
             // else if instead of if in a discrete block because interfaces are also abstract 

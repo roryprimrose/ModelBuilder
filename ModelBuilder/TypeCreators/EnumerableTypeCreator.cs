@@ -2,10 +2,10 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Collections.ObjectModel;
     using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
     using System.Net.NetworkInformation;
-    using System.Reflection;
 
     /// <summary>
     ///     The <see cref="EnumerableTypeCreator" />
@@ -37,44 +37,28 @@
                 throw new ArgumentNullException(nameof(type));
             }
 
-            var targetType = ResolveBuildType(configuration, type);
-
-            if (targetType.IsClass
-                && targetType.IsAbstract)
+            if (type.IsClass
+                && type.IsAbstract)
             {
                 // This is an abstract class so we can't create it
                 return false;
             }
 
-            if (IsReadOnlyType(targetType) == false)
+            var typeToCreate = DetermineTypeToCreate(type);
+
+            if (typeToCreate == null)
             {
+                // We don't know how to create this type
                 return false;
             }
 
-            var internalType = FindEnumerableTypeArgument(targetType);
-
-            if (internalType == null)
+            if (typeToCreate.IsInterface)
             {
-                // The type does not implement IEnumerable<T>
+                // We couldn't identify that the type could be created as either List<> or Dictionary<,>
                 return false;
             }
 
-            if (targetType.IsInterface)
-            {
-                var listGenericType = typeof(List<string>).GetGenericTypeDefinition();
-                var listType = listGenericType.MakeGenericType(internalType);
-
-                if (targetType.IsAssignableFrom(listType))
-                {
-                    // The instance is assignable from List<T> and therefore can be both created and populated by this type creator
-                    return true;
-                }
-
-                return false;
-            }
-
-            // This is a class that we can presumably create so we need to check if it can be populated
-            if (CanPopulate(configuration, buildChain, targetType, referenceName) == false)
+            if (CanPopulate(configuration, buildChain, typeToCreate, referenceName) == false)
             {
                 // There is no point trying to create something that we can't populate
                 return false;
@@ -98,30 +82,30 @@
                 throw new ArgumentNullException(nameof(configuration));
             }
 
-            var targetType = ResolveBuildType(configuration, type);
+            if (IsReadOnlyType(type))
+            {
+                // We can't populate read-only types here
+                // We can however let DefaultTypeCreator handle it because the type should have a constructor parameter that it can support
+                return false;
+            }
 
-            if (IsReadOnlyType(targetType) == false)
+            if (IsUnsupportedType(type))
             {
                 return false;
             }
 
-            var internalType = FindEnumerableTypeArgument(targetType);
+            var genericParameterType = FindEnumerableTypeArgument(type);
 
-            if (internalType == null)
+            if (genericParameterType == null)
             {
                 // The type does not implement IEnumerable<T>
                 return false;
             }
 
-            if (IsUnsupportedType(targetType))
-            {
-                return false;
-            }
+            var genericTypeDefinition = typeof(ICollection<>);
+            var genericType = genericTypeDefinition.MakeGenericType(genericParameterType);
 
-            var genericTypeDefinition = typeof(ICollection<string>).GetGenericTypeDefinition();
-            var genericType = genericTypeDefinition.MakeGenericType(internalType);
-
-            if (genericType.IsAssignableFrom(targetType))
+            if (genericType.IsAssignableFrom(type))
             {
                 // The instance is ICollection<T> and therefore can be populated by this type creator
                 return true;
@@ -149,25 +133,39 @@
         }
 
         /// <inheritdoc />
-        [SuppressMessage(
-            "Microsoft.Design",
-            "CA1062:Validate arguments of public methods",
-            MessageId = "0",
-            Justification = "Type is validated by the base class")]
+        /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
+        protected override object Create(IExecuteStrategy executeStrategy, Type type, string referenceName, params object[] args)
+        {
+            if (executeStrategy == null)
+            {
+                throw new ArgumentNullException(nameof(executeStrategy));
+            }
+
+            if (type == null)
+            {
+                throw new ArgumentNullException(nameof(type));
+            }
+
+            if (type.IsInterface)
+            {
+                var typeToCreate = DetermineTypeToCreate(type);
+
+                return CreateInstance(executeStrategy, typeToCreate, referenceName, args);
+            }
+
+            return CreateInstance(executeStrategy, type, referenceName, args);
+        }
+
+        /// <inheritdoc />
         protected override object CreateInstance(IExecuteStrategy executeStrategy,
             Type type,
             string referenceName,
             params object[] args)
         {
-            Debug.Assert(type != null, "type != null");
-
-            if (type.IsInterface)
+            if (type == null)
             {
-                var internalType = FindEnumerableTypeArgument(type);
-                var genericTypeDefinition = typeof(List<string>).GetGenericTypeDefinition();
-                var genericType = genericTypeDefinition.MakeGenericType(internalType);
-
-                return Activator.CreateInstance(genericType);
+                throw new ArgumentNullException(nameof(type));
             }
 
             return Activator.CreateInstance(type, args);
@@ -186,7 +184,7 @@
             var type = instance.GetType();
 
             var internalType = FindEnumerableTypeArgument(type);
-            var collectionGenericTypeDefinition = typeof(ICollection<string>).GetGenericTypeDefinition();
+            var collectionGenericTypeDefinition = typeof(ICollection<>);
             var collectionType = collectionGenericTypeDefinition.MakeGenericType(internalType);
 
             // Get the Add method
@@ -213,6 +211,56 @@
             }
 
             return instance;
+        }
+
+        private static Type DetermineTypeToCreate(Type type)
+        {
+            if (type.IsInterface == false)
+            {
+                return type;
+            }
+
+            // We need to check if the type is compatible with either List<T> or Dictionary<K,V> so we can use those types to create the instance
+            var genericParameterType = FindEnumerableTypeArgument(type);
+
+            if (genericParameterType == null)
+            {
+                // The type does not implement IEnumerable<T>
+                return null;
+            }
+
+            // Check if the generic parameter type is a KeyValuePair<K,V>
+            if (genericParameterType.IsGenericType)
+            {
+                // The T in IEnumerable<T> is also a generic type itself
+                // We need to try to match this against KeyValuePair<K,V>
+                var nestedGenericTypeDefinition = genericParameterType.GetGenericTypeDefinition();
+
+                if (nestedGenericTypeDefinition == typeof(KeyValuePair<,>))
+                {
+                    // Looks like this may be a dictionary
+                    var typeArguments = genericParameterType.GenericTypeArguments;
+
+                    var dictionaryType = GetSupportedGenericType(type, typeof(Dictionary<,>), typeArguments);
+
+                    if (dictionaryType != null)
+                    {
+                        // This is a Dictionary<K,V> type
+                        return dictionaryType;
+                    }
+                }
+            }
+
+            // At this point we have a type that we can check to see if it will be supported by List<T>
+            var listType = GetSupportedGenericType(type, typeof(List<>), genericParameterType);
+
+            if (listType != null)
+            {
+                // This is an interface that can't be satisfied by either List or Dictionary
+                return listType;
+            }
+
+            return type;
         }
 
         private static Type FindEnumerableTypeArgument(Type type)
@@ -251,7 +299,7 @@
 
             var genericInternalType = type.GetGenericTypeDefinition();
 
-            var enumerableType = typeof(IEnumerable<string>).GetGenericTypeDefinition();
+            var enumerableType = typeof(IEnumerable<>);
 
             if (genericInternalType != enumerableType)
             {
@@ -262,24 +310,41 @@
             return type.GetGenericArguments()[0];
         }
 
-        private static bool IsReadOnlyType(MemberInfo type)
+        private static Type GetSupportedGenericType(Type type, Type genericTypeDefinition,
+            params Type[] genericParameterTypes)
         {
-            // Check if the type is a ReadOnly type
-            // We can't check for the implementation of IReadOnlyCollection<T> because this was introduced in .Net 4.5 
-            // however this library targets 4.0
-#if NETSTANDARD2_0
-            if (type.Name.Contains("ReadOnly"))
-#else
-            if (type.Name.Contains("ReadOnly", StringComparison.OrdinalIgnoreCase))
-#endif
+            var potentialType = genericTypeDefinition.MakeGenericType(genericParameterTypes);
+
+            if (type.IsAssignableFrom(potentialType))
             {
-                // Looks like this is read only type
-                // This covers ReadOnlyCollection in .Net 4.0 and above
-                // and also covers IReadOnlyCollection<T> and IReadOnlyList<T> in .net 4.5 and above
+                // The instance is assignable from the generic type and therefore can be both created and populated by this type creator
+                return potentialType;
+            }
+
+            return null;
+        }
+
+        private static bool IsReadOnlyType(Type type)
+        {
+            if (type.IsGenericType == false)
+            {
+                // The readonly types we are looking for are generic types
                 return false;
             }
 
-            return true;
+            var definition = type.GetGenericTypeDefinition();
+
+            if (definition == typeof(ReadOnlyCollection<>))
+            {
+                return true;
+            }
+
+            if (definition == typeof(ReadOnlyDictionary<,>))
+            {
+                return true;
+            }
+
+            return false;
         }
 
         private static bool IsUnsupportedType(Type type)

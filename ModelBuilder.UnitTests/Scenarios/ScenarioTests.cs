@@ -69,8 +69,34 @@
             Guid.Parse(actual.Address.AddressLine1).Should().NotBeEmpty();
         }
 
+        [Theory]
+        [InlineData(typeof(IEnumerable<string>))]
+        [InlineData(typeof(ICollection<string>))]
+        [InlineData(typeof(Collection<string>))]
+        [InlineData(typeof(IList<string>))]
+        [InlineData(typeof(List<string>))]
+        [InlineData(typeof(LinkedList<string>))]
+        [InlineData(typeof(InheritedGenericCollection))]
+        [InlineData(typeof(HashSet<string>))]
+        [InlineData(typeof(IList<KeyValuePair<string, Guid>>))]
+        [InlineData(typeof(List<KeyValuePair<string, Guid>>))]
+        [InlineData(typeof(List<MultipleGenericArguments<string, Guid>>))]
+        [InlineData(typeof(IList<MultipleGenericArguments<string, Guid>>))]
+        [InlineData(typeof(Collection<KeyValuePair<string, Guid>>))]
+        [InlineData(typeof(ICollection<KeyValuePair<string, Guid>>))]
+        [InlineData(typeof(IReadOnlyCollection<int>))]
+        [InlineData(typeof(IReadOnlyList<int>))]
+        [InlineData(typeof(IDictionary<string, Person>))]
+        [InlineData(typeof(Dictionary<string, Person>))]
+        public void CanCreateEnumerableTypes(Type type)
+        {
+            var actual = Model.Create(type);
+
+            actual.As<IEnumerable>().Should().NotBeEmpty();
+        }
+
         [Fact]
-        public void CanCreateEnumerableTypes()
+        public void CanCreateInstanceWithEnumerablePropertyTypes()
         {
             var actual = Model.Create<EnumerableParent>();
 
@@ -79,22 +105,6 @@
             actual.InterfaceCollection.Should().NotBeEmpty();
             actual.InterfaceList.Should().NotBeEmpty();
             actual.List.Should().NotBeEmpty();
-        }
-
-        [Theory]
-        [InlineData(typeof(IEnumerable))]
-        [InlineData(typeof(ICollection))]
-        [InlineData(typeof(IList))]
-        [InlineData(typeof(IEnumerable<Person>))]
-        [InlineData(typeof(ICollection<Person>))]
-        [InlineData(typeof(IList<Person>))]
-        [InlineData(typeof(IReadOnlyCollection<Person>))]
-        [InlineData(typeof(IDictionary<Guid, Person>))]
-        public void CanCreateEnumerableTypesFromInterfaces(Type type)
-        {
-            var actual = Model.Create(type);
-
-            actual.As<IEnumerable>().Should().NotBeEmpty();
         }
 
         [Fact]
@@ -110,7 +120,7 @@
         {
             var actual = Model.Create<IReadOnlyCollection<Person>>();
 
-            actual.Should().BeOfType<ReadOnlyCollection<Person>>();
+            actual.Should().BeOfType<List<Person>>();
             actual.Should().NotBeEmpty();
         }
 
