@@ -230,7 +230,7 @@ namespace ModelBuilder.TypeCreators
 
             var buildType = ResolveBuildType(executeStrategy.Configuration, type);
 
-            if (CanCreate(executeStrategy.Configuration, executeStrategy.BuildChain, type, referenceName) == false)
+            if (CanCreate(executeStrategy.Configuration, executeStrategy.BuildChain, buildType, referenceName) == false)
             {
                 var message = string.Format(
                     CultureInfo.CurrentCulture,

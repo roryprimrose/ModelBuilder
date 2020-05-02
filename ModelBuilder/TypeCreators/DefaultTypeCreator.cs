@@ -24,9 +24,6 @@
         {
             Debug.Assert(type != null, "type != null");
 
-            // TODO: Resolve the type to build
-            // buildLog.MappedType(requestedType, typeMappingRule.TargetType);
-
             if (args == null)
             {
                 return Activator.CreateInstance(type);

@@ -3,7 +3,6 @@
     using System;
     using System.Collections;
     using System.Collections.Generic;
-    using System.Collections.ObjectModel;
     using System.IO;
     using FluentAssertions;
     using ModelBuilder.UnitTests.Models;
@@ -25,9 +24,9 @@
         [InlineData(typeof(ICollection), typeof(List<object>))]
         [InlineData(typeof(IList), typeof(List<object>))]
         [InlineData(typeof(IEnumerable<Person>), typeof(List<Person>))]
-        [InlineData(typeof(ICollection<Person>), typeof(Collection<Person>))]
+        [InlineData(typeof(ICollection<Person>), typeof(List<Person>))]
         [InlineData(typeof(IList<Person>), typeof(List<Person>))]
-        [InlineData(typeof(IReadOnlyCollection<Person>), typeof(ReadOnlyCollection<Person>))]
+        [InlineData(typeof(IReadOnlyCollection<Person>), typeof(List<Person>))]
         [InlineData(typeof(IDictionary<Guid, Person>), typeof(Dictionary<Guid, Person>))]
         public void CanCreateEnumerableTypesFromInterfacesWithExpectedResolutionPriority(Type requestedType,
             Type expectedType)
