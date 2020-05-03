@@ -29,5 +29,7 @@
         {
             throw new NotImplementedException();
         }
+
+        public Guid Value { get; set; }
     }
 }

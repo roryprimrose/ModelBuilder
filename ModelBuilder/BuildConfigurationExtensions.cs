@@ -627,6 +627,33 @@
         }
 
         /// <summary>
+        ///     Adds a new type mapping rule to the configuration.
+        /// </summary>
+        /// <typeparam name="TSource">The source type to match.</typeparam>
+        /// <typeparam name="TTarget">The target type to create.</typeparam>
+        /// <param name="configuration">The configuration.</param>
+        /// <returns>The configuration.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="configuration" /> parameter is <c>null</c>.</exception>
+        [SuppressMessage(
+            "Microsoft.Design",
+            "CA1004:GenericMethodsShouldProvideTypeParameter",
+            Justification =
+                "This signature is designed for ease of use rather than requiring that T is either a parameter or return type.")]
+        public static IBuildConfiguration AddTypeMappingRule<TSource, TTarget>(this IBuildConfiguration configuration)
+        {
+            if (configuration == null)
+            {
+                throw new ArgumentNullException(nameof(configuration));
+            }
+
+            var rule = new TypeMappingRule(typeof(TSource), typeof(TTarget));
+
+            configuration.TypeMappingRules.Add(rule);
+
+            return configuration;
+        }
+
+        /// <summary>
         ///     Adds a new value generator to the configuration.
         /// </summary>
         /// <typeparam name="T">The type of value generator to add.</typeparam>
@@ -984,6 +1011,246 @@
             {
                 configuration.ValueGenerators.Remove(rule);
             }
+
+            return configuration;
+        }
+
+        /// <summary>
+        ///     Updates a creation rule.
+        /// </summary>
+        /// <typeparam name="T">The type of creation rule being updated.</typeparam>
+        /// <param name="configuration">The configuration.</param>
+        /// <param name="action">The action to run against the rule.</param>
+        /// <returns>The build configuration.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="configuration" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="action" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="InvalidOperationException">
+        ///     The <typeparamref name="T" /> creation rule was not found in the build
+        ///     configuration.
+        /// </exception>
+        public static IBuildConfiguration UpdateCreationRule<T>(this IBuildConfiguration configuration,
+            Action<T> action)
+            where T : ICreationRule
+        {
+            if (configuration == null)
+            {
+                throw new ArgumentNullException(nameof(configuration));
+            }
+
+            if (action == null)
+            {
+                throw new ArgumentNullException(nameof(action));
+            }
+
+            var rule = configuration.CreationRules.OfType<T>().FirstOrDefault();
+
+            if (rule == null)
+            {
+                throw new InvalidOperationException(
+                    $"CreationRule {typeof(T).FullName} does not exist in the BuildConfiguration");
+            }
+
+            action(rule);
+
+            return configuration;
+        }
+
+        /// <summary>
+        ///     Updates an execute order rule.
+        /// </summary>
+        /// <typeparam name="T">The type of execute order rule being updated.</typeparam>
+        /// <param name="configuration">The configuration.</param>
+        /// <param name="action">The action to run against the rule.</param>
+        /// <returns>The build configuration.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="configuration" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="action" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="InvalidOperationException">
+        ///     The <typeparamref name="T" /> execute order rule was not found in the build
+        ///     configuration.
+        /// </exception>
+        public static IBuildConfiguration UpdateExecuteOrderRule<T>(this IBuildConfiguration configuration,
+            Action<T> action)
+            where T : IExecuteOrderRule
+        {
+            if (configuration == null)
+            {
+                throw new ArgumentNullException(nameof(configuration));
+            }
+
+            if (action == null)
+            {
+                throw new ArgumentNullException(nameof(action));
+            }
+
+            var rule = configuration.ExecuteOrderRules.OfType<T>().FirstOrDefault();
+
+            if (rule == null)
+            {
+                throw new InvalidOperationException(
+                    $"ExecuteOrderRule {typeof(T).FullName} does not exist in the BuildConfiguration");
+            }
+
+            action(rule);
+
+            return configuration;
+        }
+
+        /// <summary>
+        ///     Updates an ignore rule.
+        /// </summary>
+        /// <typeparam name="T">The type of ignore rule being updated.</typeparam>
+        /// <param name="configuration">The configuration.</param>
+        /// <param name="action">The action to run against the rule.</param>
+        /// <returns>The build configuration.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="configuration" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="action" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="InvalidOperationException">
+        ///     The <typeparamref name="T" /> ignore rule was not found in the build
+        ///     configuration.
+        /// </exception>
+        public static IBuildConfiguration UpdateIgnoreRule<T>(this IBuildConfiguration configuration,
+            Action<T> action)
+            where T : IIgnoreRule
+        {
+            if (configuration == null)
+            {
+                throw new ArgumentNullException(nameof(configuration));
+            }
+
+            if (action == null)
+            {
+                throw new ArgumentNullException(nameof(action));
+            }
+
+            var rule = configuration.IgnoreRules.OfType<T>().FirstOrDefault();
+
+            if (rule == null)
+            {
+                throw new InvalidOperationException(
+                    $"IgnoreRule {typeof(T).FullName} does not exist in the BuildConfiguration");
+            }
+
+            action(rule);
+
+            return configuration;
+        }
+
+        /// <summary>
+        ///     Updates a post-build action.
+        /// </summary>
+        /// <typeparam name="T">The type of post-build action being updated.</typeparam>
+        /// <param name="configuration">The configuration.</param>
+        /// <param name="action">The action to run against the post-build action.</param>
+        /// <returns>The build configuration.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="configuration" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="action" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="InvalidOperationException">
+        ///     The <typeparamref name="T" /> post-build action was not found in the build
+        ///     configuration.
+        /// </exception>
+        public static IBuildConfiguration UpdatePostBuildAction<T>(this IBuildConfiguration configuration,
+            Action<T> action)
+            where T : IPostBuildAction
+        {
+            if (configuration == null)
+            {
+                throw new ArgumentNullException(nameof(configuration));
+            }
+
+            if (action == null)
+            {
+                throw new ArgumentNullException(nameof(action));
+            }
+
+            var postBuildAction = configuration.PostBuildActions.OfType<T>().FirstOrDefault();
+
+            if (postBuildAction == null)
+            {
+                throw new InvalidOperationException(
+                    $"PostBuildAction {typeof(T).FullName} does not exist in the BuildConfiguration");
+            }
+
+            action(postBuildAction);
+
+            return configuration;
+        }
+
+        /// <summary>
+        ///     Updates a type creator.
+        /// </summary>
+        /// <typeparam name="T">The type of type creator being updated.</typeparam>
+        /// <param name="configuration">The configuration.</param>
+        /// <param name="action">The action to run against the type creator.</param>
+        /// <returns>The build configuration.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="configuration" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="action" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="InvalidOperationException">
+        ///     The <typeparamref name="T" /> type creator was not found in the build
+        ///     configuration.
+        /// </exception>
+        public static IBuildConfiguration UpdateTypeCreator<T>(this IBuildConfiguration configuration,
+            Action<T> action)
+            where T : ITypeCreator
+        {
+            if (configuration == null)
+            {
+                throw new ArgumentNullException(nameof(configuration));
+            }
+
+            if (action == null)
+            {
+                throw new ArgumentNullException(nameof(action));
+            }
+
+            var typeCreator = configuration.TypeCreators.OfType<T>().FirstOrDefault();
+
+            if (typeCreator == null)
+            {
+                throw new InvalidOperationException(
+                    $"TypeCreator {typeof(T).FullName} does not exist in the BuildConfiguration");
+            }
+
+            action(typeCreator);
+
+            return configuration;
+        }
+
+        /// <summary>
+        ///     Updates a value generator.
+        /// </summary>
+        /// <typeparam name="T">The type of value generator being updated.</typeparam>
+        /// <param name="configuration">The configuration.</param>
+        /// <param name="action">The action to run against the value generator.</param>
+        /// <returns>The build configuration.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="configuration" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="action" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="InvalidOperationException">
+        ///     The <typeparamref name="T" /> value generator was not found in the build
+        ///     configuration.
+        /// </exception>
+        public static IBuildConfiguration UpdateValueGenerator<T>(this IBuildConfiguration configuration,
+            Action<T> action)
+            where T : IValueGenerator
+        {
+            if (configuration == null)
+            {
+                throw new ArgumentNullException(nameof(configuration));
+            }
+
+            if (action == null)
+            {
+                throw new ArgumentNullException(nameof(action));
+            }
+
+            var valueGenerator = configuration.ValueGenerators.OfType<T>().FirstOrDefault();
+
+            if (valueGenerator == null)
+            {
+                throw new InvalidOperationException(
+                    $"ValueGenerator {typeof(T).FullName} does not exist in the BuildConfiguration");
+            }
+
+            action(valueGenerator);
 
             return configuration;
         }

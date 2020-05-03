@@ -34,6 +34,22 @@
         }
 
         [Fact]
+        public void AddTypeMappingRuleCreatesRuleWithGenericTypes()
+        {
+            var configuration = new BuildConfiguration();
+
+            var actual = configuration.AddTypeMappingRule<Stream, MemoryStream>();
+
+            actual.Should().Be(configuration);
+            actual.TypeMappingRules.Should().HaveCount(1);
+
+            var item = actual.TypeMappingRules.First();
+
+            item.SourceType.Should().Be<Stream>();
+            item.TargetType.Should().Be<MemoryStream>();
+        }
+
+        [Fact]
         public void AddConfigurationModuleThrowsExceptionWithNullCompiler()
         {
             Action action = () => BuildConfigurationExtensions.UsingModule<TestConfigurationModule>(null);
@@ -496,7 +512,7 @@
         [Fact]
         public void AddWithCreationRuleThrowsExceptionWithNullCompiler()
         {
-            var rule = new ExpressionCreationRule<Person>(x => x.FirstName, (object)null, Environment.TickCount);
+            var rule = new ExpressionCreationRule<Person>(x => x.FirstName, (object) null, Environment.TickCount);
 
             Action action = () => BuildConfigurationExtensions.Add(null, rule);
 
@@ -1088,6 +1104,312 @@
             Action action = () => BuildConfigurationExtensions.RemoveValueGenerator<StringValueGenerator>(null);
 
             action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void UpdateCreationRuleThrowsExceptionWhenRuleNotFound()
+        {
+            var sut = new BuildConfiguration();
+
+            Action action = () => sut.UpdateCreationRule<RegexCreationRule>(x =>
+            {
+                // Do nothing
+            });
+
+            action.Should().Throw<InvalidOperationException>();
+        }
+
+        [Fact]
+        public void UpdateCreationRuleThrowsExceptionWithNullAction()
+        {
+            var sut = Substitute.For<IBuildConfiguration>();
+
+            Action action = () => sut.UpdateCreationRule<RegexCreationRule>(null);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void UpdateCreationRuleThrowsExceptionWithNullConfiguration()
+        {
+            Action action = () => BuildConfigurationExtensions.UpdateCreationRule<RegexCreationRule>(null, x =>
+            {
+                // Do nothing
+            });
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void UpdateCreationRuleUpdateMatchingRule()
+        {
+            var expected = Guid.NewGuid();
+            var sut = new BuildConfiguration();
+            var rule = new DummyCreationRule
+            {
+                Value = expected
+            };
+
+            sut.CreationRules.Add(rule);
+
+            sut.UpdateCreationRule<DummyCreationRule>(x => { x.Value = expected; });
+
+            rule.Value.Should().Be(expected);
+        }
+
+        [Fact]
+        public void UpdateExecuteOrderRuleThrowsExceptionWhenRuleNotFound()
+        {
+            var sut = new BuildConfiguration();
+
+            Action action = () => sut.UpdateExecuteOrderRule<RegexExecuteOrderRule>(x =>
+            {
+                // Do nothing
+            });
+
+            action.Should().Throw<InvalidOperationException>();
+        }
+
+        [Fact]
+        public void UpdateExecuteOrderRuleThrowsExceptionWithNullAction()
+        {
+            var sut = Substitute.For<IBuildConfiguration>();
+
+            Action action = () => sut.UpdateExecuteOrderRule<RegexExecuteOrderRule>(null);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void UpdateExecuteOrderRuleThrowsExceptionWithNullConfiguration()
+        {
+            Action action = () => BuildConfigurationExtensions.UpdateExecuteOrderRule<RegexExecuteOrderRule>(null, x =>
+            {
+                // Do nothing
+            });
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void UpdateExecuteOrderRuleUpdateMatchingRule()
+        {
+            var expected = Guid.NewGuid();
+            var sut = new BuildConfiguration();
+            var rule = new DummyExecuteOrderRule
+            {
+                Value = expected
+            };
+
+            sut.ExecuteOrderRules.Add(rule);
+
+            sut.UpdateExecuteOrderRule<DummyExecuteOrderRule>(x => { x.Value = expected; });
+
+            rule.Value.Should().Be(expected);
+        }
+
+        [Fact]
+        public void UpdateIgnoreRuleThrowsExceptionWhenRuleNotFound()
+        {
+            var sut = new BuildConfiguration();
+
+            Action action = () => sut.UpdateIgnoreRule<RegexIgnoreRule>(x =>
+            {
+                // Do nothing
+            });
+
+            action.Should().Throw<InvalidOperationException>();
+        }
+
+        [Fact]
+        public void UpdateIgnoreRuleThrowsExceptionWithNullAction()
+        {
+            var sut = Substitute.For<IBuildConfiguration>();
+
+            Action action = () => sut.UpdateIgnoreRule<RegexIgnoreRule>(null);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void UpdateIgnoreRuleThrowsExceptionWithNullConfiguration()
+        {
+            Action action = () => BuildConfigurationExtensions.UpdateIgnoreRule<RegexIgnoreRule>(null, x =>
+            {
+                // Do nothing
+            });
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void UpdateIgnoreRuleUpdateMatchingRule()
+        {
+            var expected = Guid.NewGuid();
+            var sut = new BuildConfiguration();
+            var rule = new DummyIgnoreRule
+            {
+                Value = expected
+            };
+
+            sut.IgnoreRules.Add(rule);
+
+            sut.UpdateIgnoreRule<DummyIgnoreRule>(x => { x.Value = expected; });
+
+            rule.Value.Should().Be(expected);
+        }
+
+        [Fact]
+        public void UpdatePostBuildActionThrowsExceptionWhenRuleNotFound()
+        {
+            var sut = new BuildConfiguration();
+
+            Action action = () => sut.UpdatePostBuildAction<DummyPostBuildAction>(x =>
+            {
+                // Do nothing
+            });
+
+            action.Should().Throw<InvalidOperationException>();
+        }
+
+        [Fact]
+        public void UpdatePostBuildActionThrowsExceptionWithNullAction()
+        {
+            var sut = Substitute.For<IBuildConfiguration>();
+
+            Action action = () => sut.UpdatePostBuildAction<DummyPostBuildAction>(null);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void UpdatePostBuildActionThrowsExceptionWithNullConfiguration()
+        {
+            Action action = () => BuildConfigurationExtensions.UpdatePostBuildAction<DummyPostBuildAction>(null, x =>
+            {
+                // Do nothing
+            });
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void UpdatePostBuildActionUpdateMatchingRule()
+        {
+            var expected = Guid.NewGuid();
+            var sut = new BuildConfiguration();
+            var rule = new DummyPostBuildAction
+            {
+                Value = expected
+            };
+
+            sut.PostBuildActions.Add(rule);
+
+            sut.UpdatePostBuildAction<DummyPostBuildAction>(x => { x.Value = expected; });
+
+            rule.Value.Should().Be(expected);
+        }
+
+        [Fact]
+        public void UpdateTypeCreatorThrowsExceptionWhenRuleNotFound()
+        {
+            var sut = new BuildConfiguration();
+
+            Action action = () => sut.UpdateTypeCreator<DummyTypeCreator>(x =>
+            {
+                // Do nothing
+            });
+
+            action.Should().Throw<InvalidOperationException>();
+        }
+
+        [Fact]
+        public void UpdateTypeCreatorThrowsExceptionWithNullAction()
+        {
+            var sut = Substitute.For<IBuildConfiguration>();
+
+            Action action = () => sut.UpdateTypeCreator<DummyTypeCreator>(null);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void UpdateTypeCreatorThrowsExceptionWithNullConfiguration()
+        {
+            Action action = () => BuildConfigurationExtensions.UpdateTypeCreator<DummyTypeCreator>(null, x =>
+            {
+                // Do nothing
+            });
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void UpdateTypeCreatorUpdateMatchingRule()
+        {
+            var expected = Guid.NewGuid();
+            var sut = new BuildConfiguration();
+            var rule = new DummyTypeCreator
+            {
+                Value = expected
+            };
+
+            sut.TypeCreators.Add(rule);
+
+            sut.UpdateTypeCreator<DummyTypeCreator>(x => { x.Value = expected; });
+
+            rule.Value.Should().Be(expected);
+        }
+
+        [Fact]
+        public void UpdateValueGeneratorThrowsExceptionWhenRuleNotFound()
+        {
+            var sut = new BuildConfiguration();
+
+            Action action = () => sut.UpdateValueGenerator<DummyValueGenerator>(x =>
+            {
+                // Do nothing
+            });
+
+            action.Should().Throw<InvalidOperationException>();
+        }
+
+        [Fact]
+        public void UpdateValueGeneratorThrowsExceptionWithNullAction()
+        {
+            var sut = Substitute.For<IBuildConfiguration>();
+
+            Action action = () => sut.UpdateValueGenerator<DummyValueGenerator>(null);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void UpdateValueGeneratorThrowsExceptionWithNullConfiguration()
+        {
+            Action action = () => BuildConfigurationExtensions.UpdateValueGenerator<DummyValueGenerator>(null, x =>
+            {
+                // Do nothing
+            });
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void UpdateValueGeneratorUpdateMatchingRule()
+        {
+            var expected = Guid.NewGuid();
+            var sut = new BuildConfiguration();
+            var rule = new DummyValueGenerator
+            {
+                Value = expected
+            };
+
+            sut.ValueGenerators.Add(rule);
+
+            sut.UpdateValueGenerator<DummyValueGenerator>(x => { x.Value = expected; });
+            
+            rule.Value.Should().Be(expected);
         }
 
         [Fact]

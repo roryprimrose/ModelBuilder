@@ -39,5 +39,7 @@ namespace ModelBuilder.UnitTests
         }
 
         public int Priority { get; }
+
+        public Guid Value { get; set; }
     }
 }

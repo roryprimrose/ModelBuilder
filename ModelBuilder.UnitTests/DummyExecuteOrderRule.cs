@@ -1,5 +1,6 @@
 ﻿namespace ModelBuilder.UnitTests
 {
+    using System;
     using System.Reflection;
     using ModelBuilder.ExecuteOrderRules;
 
@@ -16,5 +17,7 @@
         }
 
         public int Priority { get; } = 100;
+
+        public Guid Value { get; set; }
     }
 }
