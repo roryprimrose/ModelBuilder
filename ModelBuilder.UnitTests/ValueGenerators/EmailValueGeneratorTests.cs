@@ -18,6 +18,32 @@
         Justification = "Email addresses are lower case by convention.")]
     public class EmailValueGeneratorTests
     {
+        [Theory]
+        [InlineData("Sam", "De'Vere - Hunt", "sam.deverehunt@")]
+        [InlineData("D'Onisi", "Von Tropp", "donisi.vontropp@")]
+        [InlineData("Anne-corinne", "O'Carrol", "annecorinne.ocarrol@")]
+        [InlineData("D'arcy", "Jones", "darcy.jones")]
+        public void GenerateHandlesNonAlphaCharacters(string firstName, string lastName, string expected)
+        {
+            var person = new Person
+            {
+                FirstName = firstName,
+                LastName = lastName
+            };
+            var buildChain = new BuildHistory();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            buildChain.Push(person);
+
+            var sut = new Wrapper();
+
+            var actual = (string) sut.RunGenerate(typeof(string), "email", executeStrategy);
+
+            actual.Should().StartWith(expected.ToLowerInvariant());
+        }
+
         [Fact]
         public void GenerateReturnsDomainFromDerivedClass()
         {

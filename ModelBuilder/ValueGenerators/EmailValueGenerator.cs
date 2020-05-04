@@ -2,6 +2,7 @@
 {
     using System;
     using System.Diagnostics.CodeAnalysis;
+    using System.Text.RegularExpressions;
     using ModelBuilder.Data;
 
     /// <summary>
@@ -10,6 +11,7 @@
     /// </summary>
     public class EmailValueGenerator : RelativeValueGenerator
     {
+        private static readonly Regex _alphaNumeric = new Regex("[^A-Za-z0-9]");
         /// <summary>
         ///     Initializes a new instance of the <see cref="EmailValueGenerator" /> class.
         /// </summary>
@@ -57,13 +59,13 @@
                 domain = TestData.Domains.Next();
             }
 
+            // Remove any whitespace or special characters
+            firstName = _alphaNumeric.Replace(firstName, string.Empty);
+            lastName = _alphaNumeric.Replace(lastName, string.Empty);
+
             var email = firstName + "." + lastName + "@" + domain;
 
-#if NETSTANDARD2_0
-            return email.Replace(" ", string.Empty).ToLowerInvariant();
-#else
-            return email.Replace(" ", string.Empty, StringComparison.CurrentCulture).ToLowerInvariant();
-#endif
+            return email.ToLowerInvariant();
         }
 
         /// <inheritdoc />
