@@ -36,13 +36,13 @@
 
             var sut = new Wrapper();
 
-            var first = (CultureInfo) sut.RunGenerate(typeof(CultureInfo), "culture", executeStrategy);
+            var first = (CultureInfo)sut.RunGenerate(typeof(CultureInfo), "culture", executeStrategy);
 
             var second = first;
 
             for (var index = 0; index < 1000; index++)
             {
-                second = (CultureInfo) sut.RunGenerate(typeof(CultureInfo), "culture", executeStrategy);
+                second = (CultureInfo)sut.RunGenerate(typeof(CultureInfo), "culture", executeStrategy);
 
                 if (string.Equals(first.Name, second.Name, StringComparison.OrdinalIgnoreCase) == false)
                 {
@@ -63,13 +63,13 @@
 
             var sut = new Wrapper();
 
-            var first = (string) sut.RunGenerate(typeof(string), "culture", executeStrategy);
+            var first = (string)sut.RunGenerate(typeof(string), "culture", executeStrategy);
 
             var second = first;
 
             for (var index = 0; index < 1000; index++)
             {
-                second = (string) sut.RunGenerate(typeof(string), "culture", executeStrategy);
+                second = (string)sut.RunGenerate(typeof(string), "culture", executeStrategy);
 
                 if (string.Equals(first, second, StringComparison.OrdinalIgnoreCase) == false)
                 {

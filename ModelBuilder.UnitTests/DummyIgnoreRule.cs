@@ -1,5 +1,6 @@
 ﻿namespace ModelBuilder.UnitTests
 {
+    using System;
     using System.Reflection;
     using ModelBuilder.IgnoreRules;
 
@@ -9,5 +10,7 @@
         {
             return false;
         }
+
+        public Guid Value { get; set; }
     }
 }
