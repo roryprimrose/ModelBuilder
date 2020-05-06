@@ -68,13 +68,13 @@ namespace ModelBuilder
             if (ignoreRule != null)
             {
                 // We need to ignore this property
-                return false;
+                return true;
             }
 
             if (propertyInfo.GetIndexParameters().Any())
             {
                 // We can't do anything with index parameters
-                return false;
+                return true;
             }
 
             var propertyValue = propertyInfo.GetValue(instance, null);
@@ -86,21 +86,21 @@ namespace ModelBuilder
                 // A constructor parameter could have assigned the default type value or no constructor parameter
                 // was assigned to the property
                 // In either case we want to build a value for this property
-                return true;
+                return false;
             }
 
             if (args == null)
             {
                 // No constructor arguments
                 // Assume that constructor has not defined a value for this property
-                return true;
+                return false;
             }
 
             if (args.Length == 0)
             {
                 // No constructor arguments
                 // Assume that constructor has not defined a value for this property
-                return true;
+                return false;
             }
 
             var matchingParameters =
@@ -110,7 +110,7 @@ namespace ModelBuilder
             {
                 // There are no constructor types that match the property type
                 // Assume that no constructor parameter has defined this value
-                return true;
+                return false;
             }
 
             // Check for instance types (ignoring strings)
@@ -121,16 +121,24 @@ namespace ModelBuilder
                 // Look for a matching instance
                 if (matchingParameters.Any(x => ReferenceEquals(x, propertyValue)))
                 {
-                    // This is a direct between the property value and a constructor parameter
-                    return false;
+                    // This is a direct link between the property value and a constructor parameter
+                    return true;
                 }
 
                 // There is no instance match between this property value and a constructor parameter
-                return true;
+                return false;
             }
 
             // Get the constructor matching the arguments so that we can try to match constructor parameter names against the property name
             var constructor = configuration.ConstructorResolver.Resolve(type, args);
+
+            if (constructor == null)
+            {
+                // There was no constructor found. This should be a struct with no defined constructor
+                // There are no parameters to check
+                return false;
+            }
+
             var parameters = constructor.GetParameters();
             var maxLength = Math.Min(parameters.Length, args.Length);
 
@@ -156,11 +164,11 @@ namespace ModelBuilder
                 {
                     // We have found that the property type, name and value are equivalent
                     // This is good enough to assume that the property value came from the constructor and we should not overwrite it
-                    return false;
+                    return true;
                 }
             }
 
-            return true;
+            return false;
         }
 
         private static bool AreEqual(object first, object second)

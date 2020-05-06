@@ -151,6 +151,17 @@
         }
 
         [Fact]
+        public void ResolveReturnsConstructorForStructThatHasConstructors()
+        {
+            var sut = new DefaultConstructorResolver();
+
+            var constructor = sut.Resolve(typeof(KeyValuePair<Guid, Person>));
+
+            constructor.Should().NotBeNull();
+            constructor.GetParameters().Should().HaveCount(2);
+        }
+
+        [Fact]
         public void ResolveReturnsConstructorThatMatchesAgainstNullParameters()
         {
             var sut = new DefaultConstructorResolver();
@@ -266,6 +277,16 @@
         }
 
         [Fact]
+        public void ResolveReturnsNullForStructThatHasNoConstructors()
+        {
+            var sut = new DefaultConstructorResolver();
+
+            var constructor = sut.Resolve(typeof(StructModel));
+
+            constructor.Should().BeNull();
+        }
+
+        [Fact]
         public void ResolveReturnsParameterConstructor()
         {
             var sut = new DefaultConstructorResolver();
@@ -273,6 +294,16 @@
             var constructor = sut.Resolve(typeof(WithValueParameters));
 
             constructor.GetParameters().Should().NotBeEmpty();
+        }
+
+        [Fact]
+        public void ResolveThrowsExceptionForEnum()
+        {
+            var sut = new DefaultConstructorResolver();
+
+            Action action = () => sut.Resolve(typeof(Gender));
+
+            _output.WriteLine(action.Should().Throw<MissingMemberException>().And.Message);
         }
 
         [Fact]

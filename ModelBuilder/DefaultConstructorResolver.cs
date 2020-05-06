@@ -31,8 +31,8 @@
             }
 
             return from x in constructor.GetParameters()
-                orderby GetMaximumOrderPriority(configuration, x) descending
-                select x;
+                   orderby GetMaximumOrderPriority(configuration, x) descending
+                   select x;
         }
 
         /// <inheritdoc />
@@ -119,6 +119,16 @@
         {
             var availableConstructors = type.GetConstructors().ToList();
 
+            if (availableConstructors.Count == 0)
+            {
+                if (type.IsValueType
+                    && type.IsEnum == false)
+                {
+                    // This must be a struct where there will not be a constructor
+                    return null;
+                }
+            }
+
             // Ignore any constructors that have a parameter with the type being created (a copy constructor)
             var validConstructors = availableConstructors
                 .Where(x => x.GetParameters().Any(y => y.ParameterType == type) == false)
@@ -159,9 +169,9 @@
             }
 
             var matchingRules = from x in configuration.ExecuteOrderRules
-                where x.IsMatch(parameter)
-                orderby x.Priority descending
-                select x;
+                                where x.IsMatch(parameter)
+                                orderby x.Priority descending
+                                select x;
 
             var matchingRule = matchingRules.FirstOrDefault();
 

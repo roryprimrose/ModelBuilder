@@ -162,75 +162,7 @@
         }
 
         [Fact]
-        public void IsIgnoredReturnsFalseForIndexerProperty()
-        {
-            var configuration = Substitute.For<IBuildConfiguration>();
-            var items = new List<int>();
-            var instance = new ReadOnlyCollection<int>(items);
-            var type = typeof(ReadOnlyCollection<int>);
-            var propertyInfo = type.GetProperties().First(x => x.GetIndexParameters().Length > 0);
-
-            var sut = new DefaultPropertyResolver();
-
-            var actual = sut.IsIgnored(configuration, instance, propertyInfo, null);
-
-            actual.Should().BeFalse();
-        }
-
-        [Fact]
-        public void IsIgnoredReturnsFalseWhenIgnoreRuleMatched()
-        {
-            var configuration = Model.UsingDefaultConfiguration().AddIgnoreRule<Person>(x => x.Address);
-            var instance = new Person();
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.Address));
-
-            var sut = new DefaultPropertyResolver();
-
-            var actual = sut.IsIgnored(configuration, instance, propertyInfo, null);
-
-            actual.Should().BeFalse();
-        }
-
-        [Fact]
-        public void IsIgnoredReturnsFalseWhenParametersMatchPropertyReferenceType()
-        {
-            var configuration = Model.UsingDefaultConfiguration();
-            var instance = Model.Create<WithConstructorParameters>();
-            var args = new object[]
-            {
-                instance.First, instance.Id, instance.RefNumber, instance.Number, instance.Value
-            };
-
-            var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.First));
-
-            var sut = new DefaultPropertyResolver();
-
-            var actual = sut.IsIgnored(configuration, instance, propertyInfo, args);
-
-            actual.Should().BeFalse();
-        }
-
-        [Fact]
-        public void IsIgnoredReturnsFalseWhenParametersMatchPropertyValueType()
-        {
-            var configuration = Model.UsingDefaultConfiguration();
-            var instance = Model.Create<WithConstructorParameters>();
-            var args = new object[]
-            {
-                instance.First, instance.Id, instance.RefNumber, instance.Number, instance.Value
-            };
-
-            var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.Number));
-
-            var sut = new DefaultPropertyResolver();
-
-            var actual = sut.IsIgnored(configuration, instance, propertyInfo, args);
-
-            actual.Should().BeFalse();
-        }
-
-        [Fact]
-        public void IsIgnoredReturnsTrueWhenNoParameterMatchesArgumentList()
+        public void IsIgnoredReturnsFalseWhenParametersDoNotMatchArgumentList()
         {
             var configuration = Model.UsingDefaultConfiguration();
             var instance = Model.Create<WithConstructorParameters>();
@@ -245,11 +177,30 @@
 
             var actual = sut.IsIgnored(configuration, instance, propertyInfo, args);
 
-            actual.Should().BeTrue();
+            actual.Should().BeFalse();
         }
 
         [Fact]
-        public void IsIgnoredReturnsTrueWhenNoParametersMatchPropertyValueType()
+        public void IsIgnoredReturnsFalseWhenParametersDoNotMatchPropertyReferenceType()
+        {
+            var configuration = Model.UsingDefaultConfiguration();
+            var instance = Model.Create<WithConstructorParameters>();
+            var args = new object[]
+            {
+                new Company(), instance.Id, instance.RefNumber, instance.Number, instance.Value
+            };
+
+            var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.First));
+
+            var sut = new DefaultPropertyResolver();
+
+            var actual = sut.IsIgnored(configuration, instance, propertyInfo, args);
+
+            actual.Should().BeFalse();
+        }
+
+        [Fact]
+        public void IsIgnoredReturnsFalseWhenParametersDoNotMatchPropertyValueType()
         {
             var configuration = Model.UsingDefaultConfiguration();
             var instance = Model.Create<WithConstructorParameters>();
@@ -264,11 +215,11 @@
 
             var actual = sut.IsIgnored(configuration, instance, propertyInfo, args);
 
-            actual.Should().BeTrue();
+            actual.Should().BeFalse();
         }
 
         [Fact]
-        public void IsIgnoredReturnsTrueWhenNoParameterTypesMatchPropertyType()
+        public void IsIgnoredReturnsFalseWhenParameterTypesDoNotMatchPropertyType()
         {
             var configuration = Model.UsingDefaultConfiguration();
             var instance = Model.Create<WithConstructorParameters>();
@@ -283,30 +234,11 @@
 
             var actual = sut.IsIgnored(configuration, instance, propertyInfo, args);
 
-            actual.Should().BeTrue();
+            actual.Should().BeFalse();
         }
 
         [Fact]
-        public void IsIgnoredReturnsTrueWhenParametersDoNotMatchPropertyReferenceType()
-        {
-            var configuration = Model.UsingDefaultConfiguration();
-            var instance = Model.Create<WithConstructorParameters>();
-            var args = new object[]
-            {
-                new Company(), instance.Id, instance.RefNumber, instance.Number, instance.Value
-            };
-
-            var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.First));
-
-            var sut = new DefaultPropertyResolver();
-
-            var actual = sut.IsIgnored(configuration, instance, propertyInfo, args);
-
-            actual.Should().BeTrue();
-        }
-
-        [Fact]
-        public void IsIgnoredReturnsTrueWhenPropertyContainsDefaultValueTypeValue()
+        public void IsIgnoredReturnsFalseWhenPropertyContainsDefaultValueTypeValue()
         {
             var configuration = Model.UsingDefaultConfiguration();
             var instance = Model.Create<WithConstructorParameters>().Set(x => x.Id = Guid.Empty);
@@ -321,12 +253,12 @@
 
             var actual = sut.IsIgnored(configuration, instance, propertyInfo, args);
 
-            actual.Should().BeTrue();
+            actual.Should().BeFalse();
         }
 
         [Fact]
         public void
-            IsIgnoredReturnsTrueWhenPropertyContainsNullAndPropertyTypeCannotBeCreatedForEqualityChecking()
+            IsIgnoredReturnsFalseWhenPropertyContainsNullAndPropertyTypeCannotBeCreatedForEqualityChecking()
         {
             var configuration = Model.UsingDefaultConfiguration();
             var instance = Model.Create<ReadOnlyModelParent>().Set(x => x.Child = null);
@@ -341,11 +273,11 @@
 
             var actual = sut.IsIgnored(configuration, instance, propertyInfo, args);
 
-            actual.Should().BeTrue();
+            actual.Should().BeFalse();
         }
 
         [Fact]
-        public void IsIgnoredReturnsTrueWhenPropertyContainsNullReferenceTypeValue()
+        public void IsIgnoredReturnsFalseWhenPropertyContainsNullReferenceTypeValue()
         {
             var configuration = Model.UsingDefaultConfiguration();
             var instance = Model.Create<WithConstructorParameters>().Set(x => x.First = null);
@@ -360,11 +292,11 @@
 
             var actual = sut.IsIgnored(configuration, instance, propertyInfo, args);
 
-            actual.Should().BeTrue();
+            actual.Should().BeFalse();
         }
 
         [Fact]
-        public void IsIgnoredReturnsTrueWhenPropertyContainsValueTypeValueNotMatchingConstructor()
+        public void IsIgnoredReturnsFalseWhenPropertyContainsValueTypeValueNotMatchingConstructor()
         {
             var configuration = Model.UsingDefaultConfiguration();
             var instance = Model.Create<WithConstructorParameters>();
@@ -379,7 +311,7 @@
 
             var actual = sut.IsIgnored(configuration, instance, propertyInfo, args);
 
-            actual.Should().BeTrue();
+            actual.Should().BeFalse();
         }
 
         [Fact]
@@ -387,7 +319,7 @@
             "Microsoft.Design",
             "CA1825",
             Justification = "The Array.Empty<T> is not available on net452.")]
-        public void IsIgnoredReturnsTrueWhenPropertyNotIgnoredAndEmptyArgumentsProvided()
+        public void IsIgnoredReturnsFalseWhenPropertyNotIgnoredAndEmptyArgumentsProvided()
         {
             var configuration = Model.UsingDefaultConfiguration();
             var instance = new Person();
@@ -397,11 +329,11 @@
 
             var actual = sut.IsIgnored(configuration, instance, propertyInfo, new object[0]);
 
-            actual.Should().BeTrue();
+            actual.Should().BeFalse();
         }
 
         [Fact]
-        public void IsIgnoredReturnsTrueWhenPropertyNotIgnoredAndNullArgumentsProvided()
+        public void IsIgnoredReturnsFalseWhenPropertyNotIgnoredAndNullArgumentsProvided()
         {
             var configuration = Model.UsingDefaultConfiguration();
             var instance = new Person();
@@ -410,6 +342,93 @@
             var sut = new DefaultPropertyResolver();
 
             var actual = sut.IsIgnored(configuration, instance, propertyInfo, null);
+
+            actual.Should().BeFalse();
+        }
+
+        [Fact]
+        public void IsIgnoredReturnsFalseWhenPropertyRelatesToNullParameter()
+        {
+            var configuration = Model.UsingDefaultConfiguration();
+            var instance = Model.Create<WithConstructorParameters>();
+            var args = new object[]
+            {
+                null, new Company(), instance.Id, instance.RefNumber, instance.Number, instance.Value
+            };
+
+            var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.First));
+
+            var sut = new DefaultPropertyResolver();
+
+            var actual = sut.IsIgnored(configuration, instance, propertyInfo, args);
+
+            actual.Should().BeFalse();
+        }
+
+        [Fact]
+        public void IsIgnoredReturnsTrueForIndexerProperty()
+        {
+            var configuration = Substitute.For<IBuildConfiguration>();
+            var items = new List<int>();
+            var instance = new ReadOnlyCollection<int>(items);
+            var type = typeof(ReadOnlyCollection<int>);
+            var propertyInfo = type.GetProperties().First(x => x.GetIndexParameters().Length > 0);
+
+            var sut = new DefaultPropertyResolver();
+
+            var actual = sut.IsIgnored(configuration, instance, propertyInfo, null);
+
+            actual.Should().BeTrue();
+        }
+
+        [Fact]
+        public void IsIgnoredReturnsTrueWhenIgnoreRuleMatched()
+        {
+            var configuration = Model.UsingDefaultConfiguration().AddIgnoreRule<Person>(x => x.Address);
+            var instance = new Person();
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.Address));
+
+            var sut = new DefaultPropertyResolver();
+
+            var actual = sut.IsIgnored(configuration, instance, propertyInfo, null);
+
+            actual.Should().BeTrue();
+        }
+
+        [Fact]
+        public void IsIgnoredReturnsTrueWhenParametersMatchPropertyReferenceType()
+        {
+            var configuration = Model.UsingDefaultConfiguration();
+            var instance = Model.Create<WithConstructorParameters>();
+            var args = new object[]
+            {
+                instance.First, instance.Id, instance.RefNumber, instance.Number, instance.Value
+            };
+
+            var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.First));
+
+            var sut = new DefaultPropertyResolver();
+
+            var actual = sut.IsIgnored(configuration, instance, propertyInfo, args);
+
+            actual.Should().BeTrue();
+        }
+
+        [Fact]
+        public void IsIgnoredReturnsTrueWhenParametersMatchPropertyValueType()
+        {
+            var configuration = Model.UsingDefaultConfiguration();
+            var instance = Model.Create<WithConstructorParameters>();
+            var args = new object[]
+            {
+                instance.First, instance.Id, instance.RefNumber, instance.Number, instance.Value
+            };
+
+            var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.Number));
+
+            var sut = new DefaultPropertyResolver();
+
+            var actual = sut.IsIgnored(configuration, instance, propertyInfo, args);
 
             actual.Should().BeTrue();
         }
@@ -451,25 +470,6 @@
             Action action = () => sut.IsIgnored(configuration, instance, null, null);
 
             action.Should().Throw<ArgumentNullException>();
-        }
-
-        [Fact]
-        public void ShouldPopulatePropertiesSkipsNullValues()
-        {
-            var configuration = Model.UsingDefaultConfiguration();
-            var instance = Model.Create<WithConstructorParameters>();
-            var args = new object[]
-            {
-                null, new Company(), instance.Id, instance.RefNumber, instance.Number, instance.Value
-            };
-
-            var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.First));
-
-            var sut = new DefaultPropertyResolver();
-
-            var actual = sut.IsIgnored(configuration, instance, propertyInfo, args);
-
-            actual.Should().BeTrue();
         }
 
         private class PrivateProp

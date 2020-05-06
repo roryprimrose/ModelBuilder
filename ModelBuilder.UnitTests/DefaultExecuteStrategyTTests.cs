@@ -204,11 +204,6 @@
             buildConfiguration.PropertyResolver.Returns(propertyResolver);
             propertyResolver.GetOrderedProperties(buildConfiguration, typeof(SlimModel))
                 .Returns(typeof(SlimModel).GetProperties());
-            propertyResolver.IsIgnored(
-                buildConfiguration,
-                model,
-                Arg.Is<PropertyInfo>(x => x.Name == nameof(SlimModel.Value)),
-                Arg.Any<object[]>()).Returns(true);
             processor.GetBuildCapability(buildConfiguration, buildHistory, BuildRequirement.Create,
                     Arg.Is<PropertyInfo>(x => x.Name == nameof(SlimModel.Value)))
                 .Returns(valueCapability);

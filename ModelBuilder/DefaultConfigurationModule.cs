@@ -54,6 +54,7 @@
         {
             configuration.AddTypeCreator<ArrayTypeCreator>();
             configuration.AddTypeCreator<EnumerableTypeCreator>();
+            configuration.AddTypeCreator<StructTypeCreator>();
             configuration.AddTypeCreator<DefaultTypeCreator>();
         }
 

@@ -219,11 +219,11 @@
             {
                 if (propertyResolver.IsIgnored(Configuration, instance, propertyInfo, args))
                 {
-                    PopulateProperty(propertyInfo, instance);
+                    Log.IgnoringProperty(propertyInfo, instance);
                 }
                 else
                 {
-                    Log.IgnoringProperty(propertyInfo, instance);
+                    PopulateProperty(propertyInfo, instance);
                 }
             }
         }
@@ -308,10 +308,10 @@
 
             if (constructor == null)
             {
-                var message = string.Format(CultureInfo.CurrentCulture,
-                    "Failed to resolve constructor for type {0}.", type.FullName);
-
-                throw new BuildException(message);
+                // This should be a struct that only has a default constructor
+                // In this case the type does not have any registered constructor (no default)
+                // There are no parameters for the default creation of a struct
+                return null;
             }
 
             var parameterInfos = constructorResolver.GetOrderedParameters(Configuration, constructor).ToList();
