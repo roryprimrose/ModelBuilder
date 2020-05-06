@@ -13,6 +13,26 @@
         [Fact]
         [SuppressMessage("Globalization", "CA1308:Normalize strings to uppercase",
             Justification = "Email addresses are lowercase")]
+        public void CanCreateStructProperty()
+        {
+            var actual = Model.Create<StructParent>();
+
+            actual.Child.Id.Should().NotBeEmpty();
+            actual.Child.FirstName.Should().NotBeNullOrWhiteSpace();
+            actual.Child.LastName.Should().NotBeNullOrWhiteSpace();
+            actual.Child.Email.Should().NotBeNullOrWhiteSpace();
+
+            var expression = new Regex("[^a-zA-Z0-9]");
+
+            var expectedFirstName = expression.Replace(actual.Child.FirstName, string.Empty).ToLowerInvariant();
+            var expectedLastName = expression.Replace(actual.Child.LastName, string.Empty).ToLowerInvariant();
+
+            actual.Child.Email.Should().StartWith(expectedFirstName + "." + expectedLastName + "@");
+        }
+
+        [Fact]
+        [SuppressMessage("Globalization", "CA1308:Normalize strings to uppercase",
+            Justification = "Email addresses are lowercase")]
         public void CanCreateStructThatHasNoConstructor()
         {
             var actual = Model.Create<StructModel>();
@@ -84,6 +104,11 @@
             var expectedLastName = expression.Replace(actual.LastName, string.Empty).ToLowerInvariant();
 
             actual.Email.Should().StartWith(expectedFirstName + "." + expectedLastName + "@");
+        }
+
+        private class StructParent
+        {
+            public StructModel Child { get; set; }
         }
     }
 }
