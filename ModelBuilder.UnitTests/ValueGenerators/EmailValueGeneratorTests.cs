@@ -193,9 +193,12 @@
 
             var actual = (string) sut.RunGenerate(typeof(string), "email", executeStrategy);
 
-            var expected = parts.FirstName + "." + parts.LastName;
+            var firstName = EmailValueGenerator.SpecialCharacters.Replace(parts.FirstName, string.Empty);
+            var lastName = EmailValueGenerator.SpecialCharacters.Replace(parts.LastName, string.Empty);
 
-            actual.Should().StartWith(expected.ToLowerInvariant());
+            var expected = (firstName + "." + lastName + "@").ToLowerInvariant();
+
+            actual.Should().StartWith(expected);
         }
 
         [Fact]
@@ -218,9 +221,12 @@
 
             var actual = (string) sut.RunGenerate(typeof(string), "email", executeStrategy);
 
-            var expected = parts.FirstName + "." + parts.LastName + "@" + parts.Domain;
+            var firstName = EmailValueGenerator.SpecialCharacters.Replace(parts.FirstName, string.Empty);
+            var lastName = EmailValueGenerator.SpecialCharacters.Replace(parts.LastName, string.Empty);
 
-            actual.Should().Be(expected.ToLowerInvariant());
+            var expected = (firstName + "." + lastName + "@" + parts.Domain).ToLowerInvariant();
+
+            actual.Should().Be(expected);
         }
 
         [Fact]

@@ -3,9 +3,9 @@
     using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
-    using System.Text.RegularExpressions;
     using FluentAssertions;
     using ModelBuilder.UnitTests.Models;
+    using ModelBuilder.ValueGenerators;
     using Xunit;
 
     public class StructTests
@@ -22,10 +22,8 @@
             actual.Child.LastName.Should().NotBeNullOrWhiteSpace();
             actual.Child.Email.Should().NotBeNullOrWhiteSpace();
 
-            var expression = new Regex("[^a-zA-Z0-9]");
-
-            var expectedFirstName = expression.Replace(actual.Child.FirstName, string.Empty).ToLowerInvariant();
-            var expectedLastName = expression.Replace(actual.Child.LastName, string.Empty).ToLowerInvariant();
+            var expectedFirstName = EmailValueGenerator.SpecialCharacters.Replace(actual.Child.FirstName, string.Empty).ToLowerInvariant();
+            var expectedLastName = EmailValueGenerator.SpecialCharacters.Replace(actual.Child.LastName, string.Empty).ToLowerInvariant();
 
             actual.Child.Email.Should().StartWith(expectedFirstName + "." + expectedLastName + "@");
         }
@@ -42,10 +40,8 @@
             actual.LastName.Should().NotBeNullOrWhiteSpace();
             actual.Email.Should().NotBeNullOrWhiteSpace();
 
-            var expression = new Regex("[^a-zA-Z0-9]");
-
-            var expectedFirstName = expression.Replace(actual.FirstName, string.Empty).ToLowerInvariant();
-            var expectedLastName = expression.Replace(actual.LastName, string.Empty).ToLowerInvariant();
+            var expectedFirstName = EmailValueGenerator.SpecialCharacters.Replace(actual.FirstName, string.Empty).ToLowerInvariant();
+            var expectedLastName = EmailValueGenerator.SpecialCharacters.Replace(actual.LastName, string.Empty).ToLowerInvariant();
 
             actual.Email.Should().StartWith(expectedFirstName + "." + expectedLastName + "@");
         }
@@ -76,10 +72,8 @@
             actual.Value.LastName.Should().NotBeNullOrWhiteSpace();
             actual.Value.PersonalEmail.Should().NotBeNullOrWhiteSpace();
 
-            var expression = new Regex("[^a-zA-Z0-9]");
-
-            var expectedFirstName = expression.Replace(actual.Value.FirstName, string.Empty).ToLowerInvariant();
-            var expectedLastName = expression.Replace(actual.Value.LastName, string.Empty).ToLowerInvariant();
+            var expectedFirstName = EmailValueGenerator.SpecialCharacters.Replace(actual.Value.FirstName, string.Empty).ToLowerInvariant();
+            var expectedLastName = EmailValueGenerator.SpecialCharacters.Replace(actual.Value.LastName, string.Empty).ToLowerInvariant();
 
             actual.Value.PersonalEmail.Should().StartWith(expectedFirstName + "." + expectedLastName + "@");
         }
@@ -98,10 +92,8 @@
             actual.LastName.Should().NotBeNullOrWhiteSpace();
             actual.Email.Should().NotBeNullOrWhiteSpace();
 
-            var expression = new Regex("[^a-zA-Z0-9]");
-
-            var expectedFirstName = expression.Replace(actual.FirstName, string.Empty).ToLowerInvariant();
-            var expectedLastName = expression.Replace(actual.LastName, string.Empty).ToLowerInvariant();
+            var expectedFirstName = EmailValueGenerator.SpecialCharacters.Replace(actual.FirstName, string.Empty).ToLowerInvariant();
+            var expectedLastName = EmailValueGenerator.SpecialCharacters.Replace(actual.LastName, string.Empty).ToLowerInvariant();
 
             actual.Email.Should().StartWith(expectedFirstName + "." + expectedLastName + "@");
         }

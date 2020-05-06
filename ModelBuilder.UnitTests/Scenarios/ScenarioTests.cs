@@ -155,9 +155,10 @@
         {
             var actual = Model.Create<EmailParts>();
 
-            var expected = actual.FirstName + "." + actual.LastName + "@" + actual.Domain;
+            var firstName = EmailValueGenerator.SpecialCharacters.Replace(actual.FirstName, string.Empty);
+            var lastName = EmailValueGenerator.SpecialCharacters.Replace(actual.LastName, string.Empty);
 
-            expected = expected.Replace(" ", "", StringComparison.OrdinalIgnoreCase).ToLowerInvariant();
+            var expected = (firstName + "." + lastName + "@" + actual.Domain).ToLowerInvariant();
 
             actual.Email.Should().Be(expected);
         }

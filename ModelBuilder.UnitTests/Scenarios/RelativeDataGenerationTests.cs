@@ -1,10 +1,10 @@
 ﻿namespace ModelBuilder.UnitTests.Scenarios
 {
-    using System;
     using System.Diagnostics.CodeAnalysis;
     using FluentAssertions;
     using ModelBuilder.Data;
     using ModelBuilder.UnitTests.Models;
+    using ModelBuilder.ValueGenerators;
     using Xunit;
 
     public class RelativeDataGenerationTests
@@ -16,7 +16,10 @@
         {
             var actual = Model.Create<Person>();
 
-            var expected = (actual.FirstName + "." + actual.LastName + "@").ToLowerInvariant();
+            var firstName = EmailValueGenerator.SpecialCharacters.Replace(actual.FirstName, string.Empty);
+            var lastName = EmailValueGenerator.SpecialCharacters.Replace(actual.LastName, string.Empty);
+
+            var expected = (firstName + "." + lastName + "@").ToLowerInvariant();
 
             actual.PersonalEmail.Should()
                 .StartWith(expected);
@@ -38,8 +41,11 @@
                 TestData.MaleNames.Should().Contain(actual.FirstName);
             }
 
-            var expectedEmail = (actual.FirstName + "." + actual.LastName + "@" + actual.Domain).ToLowerInvariant().Replace(" ", "", StringComparison.CurrentCulture);
-            
+            var firstName = EmailValueGenerator.SpecialCharacters.Replace(actual.FirstName, string.Empty);
+            var lastName = EmailValueGenerator.SpecialCharacters.Replace(actual.LastName, string.Empty);
+
+            var expectedEmail = (firstName + "." + lastName + "@" + actual.Domain).ToLowerInvariant();
+
             actual.Email.Should().StartWith(expectedEmail);
         }
     }
