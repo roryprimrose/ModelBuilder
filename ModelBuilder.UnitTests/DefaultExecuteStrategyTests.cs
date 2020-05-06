@@ -189,11 +189,6 @@
             buildConfiguration.PropertyResolver.Returns(propertyResolver);
             propertyResolver.GetOrderedProperties(buildConfiguration, typeof(SimpleConstructor))
                 .Returns(typeof(SimpleConstructor).GetProperties());
-            propertyResolver.IsIgnored(
-                Arg.Any<IBuildConfiguration>(),
-                expected,
-                Arg.Is<PropertyInfo>(x => x.Name == nameof(SimpleConstructor.Age)),
-                Arg.Any<object[]>()).Returns(true);
 
             sut.Initialize(buildConfiguration);
 
@@ -202,12 +197,6 @@
             actual.Should().Be(expected);
             actual.Model.Should().Be(model);
             actual.Age.Should().Be(age);
-
-            propertyResolver.Received(1).IsIgnored(
-                buildConfiguration,
-                Arg.Is<object>(x => x.GetType() == typeof(SimpleConstructor)),
-                Arg.Is<PropertyInfo>(x => x.Name == nameof(SimpleConstructor.Age)),
-                Arg.Is<object[]>(x => x[0] == model));
         }
 
         [Fact]
@@ -448,11 +437,6 @@
             buildConfiguration.PropertyResolver.Returns(propertyResolver);
             propertyResolver.GetOrderedProperties(buildConfiguration, typeof(SlimModel))
                 .Returns(typeof(SlimModel).GetProperties());
-            propertyResolver.IsIgnored(
-                Arg.Any<IBuildConfiguration>(),
-                Arg.Any<object>(),
-                Arg.Any<PropertyInfo>(),
-                Arg.Any<object[]>()).Returns(true);
 
             sut.Initialize(buildConfiguration);
 
@@ -580,11 +564,6 @@
             buildConfiguration.PropertyResolver.Returns(propertyResolver);
             propertyResolver.GetOrderedProperties(buildConfiguration, typeof(SlimModel))
                 .Returns(typeof(SlimModel).GetProperties());
-            propertyResolver.IsIgnored(
-                Arg.Any<IBuildConfiguration>(),
-                Arg.Any<object>(),
-                Arg.Any<PropertyInfo>(),
-                Arg.Any<object[]>()).Returns(true);
 
             sut.Initialize(buildConfiguration);
 
@@ -643,7 +622,8 @@
             buildConfiguration.TypeResolver.Returns(typeResolver);
             typeResolver.GetBuildType(buildConfiguration, Arg.Any<Type>()).Returns(x => x.Arg<Type>());
             constructorResolver.Resolve(typeof(ReadOnlyModel)).Returns(constructorInfo);
-            constructorResolver.GetOrderedParameters(buildConfiguration, constructorInfo).Returns(constructorInfo.GetParameters());
+            constructorResolver.GetOrderedParameters(buildConfiguration, constructorInfo)
+                .Returns(constructorInfo.GetParameters());
 
             sut.Initialize(buildConfiguration);
 
@@ -683,7 +663,8 @@
                     typeof(Person))
                 .Returns(typeCapability);
             constructorResolver.Resolve(typeof(Person)).Returns(constructorInfo);
-            constructorResolver.GetOrderedParameters(buildConfiguration, constructorInfo).Returns(constructorInfo.GetParameters());
+            constructorResolver.GetOrderedParameters(buildConfiguration, constructorInfo)
+                .Returns(constructorInfo.GetParameters());
             processor.Build(sut, typeof(Person), null).Returns(expected);
             processor.Populate(sut, expected).Returns(expected);
 
@@ -734,6 +715,7 @@
                 AutoPopulate = false,
                 SupportsCreate = true
             };
+            var constructor = typeof(ReadOnlyModel).GetConstructors().Single();
 
             var processor = Substitute.For<IBuildProcessor>();
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
@@ -747,8 +729,10 @@
                 .Returns(typeCapability);
             buildConfiguration.TypeResolver.Returns(typeResolver);
             typeResolver.GetBuildType(buildConfiguration, Arg.Any<Type>()).Returns(x => x.Arg<Type>());
-            constructorResolver.Resolve(typeof(ReadOnlyModel), null)
-                .Returns(typeof(ReadOnlyModel).GetConstructors().Single());
+            constructorResolver.Resolve(typeof(ReadOnlyModel))
+                .Returns(constructor);
+            constructorResolver.GetOrderedParameters(buildConfiguration, constructor)
+                .Returns(constructor.GetParameters());
             buildConfiguration.ConstructorResolver.Returns(constructorResolver);
 
             sut.Initialize(buildConfiguration);
@@ -793,11 +777,6 @@
             buildConfiguration.PropertyResolver.Returns(propertyResolver);
             propertyResolver.GetOrderedProperties(buildConfiguration, typeof(SlimModel))
                 .Returns(typeof(SlimModel).GetProperties());
-            propertyResolver.IsIgnored(
-                Arg.Any<IBuildConfiguration>(),
-                expected,
-                Arg.Is<PropertyInfo>(x => x.Name == nameof(SlimModel.Value)),
-                Arg.Any<object[]>()).Returns(true);
 
             sut.Initialize(buildConfiguration);
 
@@ -922,11 +901,6 @@
             buildConfiguration.PropertyResolver.Returns(propertyResolver);
             propertyResolver.GetOrderedProperties(buildConfiguration, typeof(SlimModel))
                 .Returns(typeof(SlimModel).GetProperties());
-            propertyResolver.IsIgnored(
-                buildConfiguration,
-                model,
-                Arg.Is<PropertyInfo>(x => x.Name == nameof(SlimModel.Value)),
-                Arg.Any<object[]>()).Returns(true);
             processor.GetBuildCapability(buildConfiguration, buildHistory, BuildRequirement.Create,
                     Arg.Is<PropertyInfo>(x => x.Name == nameof(SlimModel.Value)))
                 .Returns(valueCapability);
@@ -942,6 +916,63 @@
             var actual = (SlimModel) sut.Populate(model);
 
             actual.Value.Should().Be(expected);
+        }
+
+        [Fact]
+        public void PopulateDoesNotAssignIgnoredProperty()
+        {
+            var buildHistory = new BuildHistory();
+            var model = new SlimModel();
+            var expected = Guid.NewGuid();
+            var typeCapability = new BuildCapability
+            {
+                SupportsPopulate = true,
+                ImplementedByType = GetType(),
+                AutoDetectConstructor = false,
+                AutoPopulate = true,
+                SupportsCreate = true
+            };
+            var valueCapability = new BuildCapability
+            {
+                SupportsPopulate = false,
+                ImplementedByType = GetType(),
+                AutoDetectConstructor = false,
+                AutoPopulate = false,
+                SupportsCreate = true
+            };
+
+            var processor = Substitute.For<IBuildProcessor>();
+            var buildConfiguration = Substitute.For<IBuildConfiguration>();
+            var propertyResolver = Substitute.For<IPropertyResolver>();
+
+            var sut = new DefaultExecuteStrategy(buildHistory, _buildLog, processor);
+
+            processor.GetBuildCapability(buildConfiguration, buildHistory, BuildRequirement.Populate,
+                    typeof(SlimModel))
+                .Returns(typeCapability);
+            buildConfiguration.PropertyResolver.Returns(propertyResolver);
+            propertyResolver.GetOrderedProperties(buildConfiguration, typeof(SlimModel))
+                .Returns(typeof(SlimModel).GetProperties());
+            processor.GetBuildCapability(buildConfiguration, buildHistory, BuildRequirement.Create,
+                    Arg.Is<PropertyInfo>(x => x.Name == nameof(SlimModel.Value)))
+                .Returns(valueCapability);
+            processor.GetBuildCapability(buildConfiguration, buildHistory, BuildRequirement.Populate,
+                    typeof(Guid))
+                .Returns(valueCapability);
+            processor.Populate(sut, model).Returns(model);
+            propertyResolver.IsIgnored(
+                Arg.Any<IBuildConfiguration>(),
+                Arg.Any<object>(),
+                Arg.Any<PropertyInfo>(),
+                Arg.Any<object[]>()).Returns(true);
+
+            sut.Initialize(buildConfiguration);
+
+            var actual = (SlimModel) sut.Populate(model);
+
+            actual.Value.Should().BeEmpty();
+
+            processor.DidNotReceive().Build(sut, Arg.Is<PropertyInfo>(x => x.Name == nameof(SlimModel.Value)), null);
         }
 
         [Fact]

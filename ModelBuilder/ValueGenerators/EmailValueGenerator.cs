@@ -11,7 +11,11 @@
     /// </summary>
     public class EmailValueGenerator : RelativeValueGenerator
     {
-        private static readonly Regex _alphaNumeric = new Regex("[^A-Za-z0-9]");
+        /// <summary>
+        ///     Gets the expression to identify special characters.
+        /// </summary>
+        public static readonly Regex SpecialCharacters = new Regex("[^A-Za-z0-9]");
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="EmailValueGenerator" /> class.
         /// </summary>
@@ -60,8 +64,8 @@
             }
 
             // Remove any whitespace or special characters
-            firstName = _alphaNumeric.Replace(firstName, string.Empty);
-            lastName = _alphaNumeric.Replace(lastName, string.Empty);
+            firstName = SpecialCharacters.Replace(firstName, string.Empty);
+            lastName = SpecialCharacters.Replace(lastName, string.Empty);
 
             var email = firstName + "." + lastName + "@" + domain;
 
