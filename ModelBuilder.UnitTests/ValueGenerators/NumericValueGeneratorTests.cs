@@ -9,9 +9,8 @@
     public class NumericValueGeneratorTests
     {
         [Theory]
-        [ClassData(typeof(NumericTypeRangeDataSource))]
-        public void GenerateForTypeReturnsNullAndNonNullValues(Type type, bool typeSupported, double min,
-            double max)
+        [ClassData(typeof(NumericTypeDataSource))]
+        public void GenerateForTypeReturnsNullAndNonNullValues(Type type, bool typeSupported)
         {
             if (typeSupported == false)
             {
@@ -56,8 +55,8 @@
         }
 
         [Theory]
-        [ClassData(typeof(NumericTypeRangeDataSource))]
-        public void GenerateForTypeReturnsRandomValues(Type type, bool typeSupported, double min, double max)
+        [ClassData(typeof(NumericTypeDataSource))]
+        public void GenerateForTypeReturnsRandomValues(Type type, bool typeSupported)
         {
             if (typeSupported == false)
             {

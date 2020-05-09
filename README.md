@@ -433,3 +433,4 @@ The package had some large design changes that introduce breaking changes to the
 - ICreationRule, ITypeCreator, IValueGenerator, IPostBuildAction and IBuildLog now have overloads for ParameterInfo, PropertyInfo and Type rather than (Type, string)
 - IExecuteOrderRule and IIgnoreRule now have overloads for PropertyInfo rather than (Type, string)
 - RelativeValueGenerator no longer supports targeting a specific property as defined by the constructor. Getting a value from another property is now only available with an explicit call to `GetPropertyValue`.
+- Added caching support to DefaultPropertyResolver and DefaultConstructorResolver

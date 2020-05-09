@@ -66,8 +66,8 @@
         }
 
         [Theory]
-        [ClassData(typeof(NumericTypeRangeDataSource))]
-        public void GenerateReturnsValuesBetweenMinAndMaxTest(Type type, bool typeSupported, double min, double max)
+        [ClassData(typeof(NumericTypeDataSource))]
+        public void GenerateReturnsValuesBetweenMinAndMaxTest(Type type, bool typeSupported)
         {
             if (typeSupported == false)
             {

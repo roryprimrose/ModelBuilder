@@ -57,7 +57,7 @@
         public void CreateReturnsInstanceCreatedWithMatchingParameterConstructor()
         {
             var buildChain = new BuildHistory();
-            var constructorResolver = new DefaultConstructorResolver();
+            var constructorResolver = new DefaultConstructorResolver(CacheLevel.PerInstance);
 
             var executeStrategy = Substitute.For<IExecuteStrategy>();
             var typeResolver = Substitute.For<ITypeResolver>();
@@ -147,7 +147,7 @@
         {
             var expected = Model.Create<Simple>();
             var buildChain = new BuildHistory();
-            var constructorResolver = new DefaultConstructorResolver();
+            var constructorResolver = new DefaultConstructorResolver(CacheLevel.PerInstance);
 
             var executeStrategy = Substitute.For<IExecuteStrategy>();
             var typeResolver = Substitute.For<ITypeResolver>();

@@ -16,6 +16,21 @@ namespace ModelBuilder
         private static readonly ConcurrentDictionary<Type, object> _defaultValues =
             new ConcurrentDictionary<Type, object>();
 
+        private static readonly ConcurrentDictionary<Type, IList<PropertyInfo>> _globalCache =
+            new ConcurrentDictionary<Type, IList<PropertyInfo>>();
+
+        private readonly ConcurrentDictionary<Type, IList<PropertyInfo>> _perInstanceCache =
+            new ConcurrentDictionary<Type, IList<PropertyInfo>>();
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DefaultPropertyResolver"/> class.
+        /// </summary>
+        /// <param name="cacheLevel">The cache level to use for resolved properties.</param>
+        public DefaultPropertyResolver(CacheLevel cacheLevel)
+        {
+            CacheLevel = cacheLevel;
+        }
+
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="configuration" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="targetType" /> parameter is <c>null</c>.</exception>
@@ -31,10 +46,19 @@ namespace ModelBuilder
                 throw new ArgumentNullException(nameof(targetType));
             }
 
-            return from x in targetType.GetProperties(BindingFlags.Instance | BindingFlags.Public)
-                where CanPopulate(x)
-                orderby GetMaximumOrderPriority(configuration, x) descending
-                select x;
+            if (CacheLevel == CacheLevel.Global)
+            {
+                return _globalCache.GetOrAdd(targetType,
+                    x => CalculateOrderedProperties(configuration, targetType).ToList());
+            }
+
+            if (CacheLevel == CacheLevel.PerInstance)
+            {
+                return _perInstanceCache.GetOrAdd(targetType,
+                    x => CalculateOrderedProperties(configuration, targetType).ToList());
+            }
+
+            return CalculateOrderedProperties(configuration, targetType);
         }
 
         /// <inheritdoc />
@@ -192,6 +216,15 @@ namespace ModelBuilder
             return false;
         }
 
+        private static IEnumerable<PropertyInfo> CalculateOrderedProperties(IBuildConfiguration configuration,
+            Type targetType)
+        {
+            return from x in targetType.GetProperties(BindingFlags.Instance | BindingFlags.Public)
+                where CanPopulate(x)
+                orderby GetMaximumOrderPriority(configuration, x) descending
+                select x;
+        }
+
         /// <summary>
         ///     Determines whether the specified property can be populated.
         /// </summary>
@@ -264,5 +297,11 @@ namespace ModelBuilder
 
             return matchingRule.Priority;
         }
+
+        /// <summary>
+        ///     Gets or sets whether properties identified by <see cref="GetOrderedProperties" /> are cached.
+        /// </summary>
+        /// <returns>Returns the cache level to apply to properties.</returns>
+        public CacheLevel CacheLevel { get; set; }
     }
 }

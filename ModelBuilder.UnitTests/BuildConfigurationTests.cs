@@ -54,9 +54,11 @@
             sut.ExecuteOrderRules.Should().BeEmpty();
             sut.CreationRules.Should().BeEmpty();
             sut.PostBuildActions.Should().BeEmpty();
-            sut.ConstructorResolver.Should().NotBeNull();
-            sut.PropertyResolver.Should().NotBeNull();
-            sut.TypeResolver.Should().NotBeNull();
+            sut.ConstructorResolver.Should().BeOfType<DefaultConstructorResolver>();
+            sut.ConstructorResolver.As<DefaultConstructorResolver>().CacheLevel.Should().Be(CacheLevel.PerInstance);
+            sut.PropertyResolver.Should().BeOfType<DefaultPropertyResolver>();
+            sut.PropertyResolver.As<DefaultPropertyResolver>().CacheLevel.Should().Be(CacheLevel.PerInstance);
+            sut.TypeResolver.Should().BeOfType<DefaultTypeResolver>();
         }
     }
 }
