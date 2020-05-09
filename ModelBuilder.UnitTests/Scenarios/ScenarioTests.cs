@@ -51,11 +51,49 @@
         }
 
         [Fact]
+        public void CanCreateEnumValue()
+        {
+            var actual = Model.Create<SimpleEnum>();
+
+            Enum.IsDefined(typeof(SimpleEnum), actual).Should().BeTrue();
+        }
+
+        [Fact]
+        public void CanCreateGuidValue()
+        {
+            var actual = Model.Create<Guid>();
+
+            actual.Should().NotBeEmpty();
+        }
+
+        [Fact]
+        public void CanCreateInstance()
+        {
+            var actual = Model.Create<Address>();
+
+            actual.AddressLine1.Should().NotBeNullOrWhiteSpace();
+            actual.City.Should().NotBeNullOrWhiteSpace();
+            actual.Country.Should().NotBeNullOrWhiteSpace();
+            actual.Postcode.Should().NotBeNullOrWhiteSpace();
+            actual.State.Should().NotBeNullOrWhiteSpace();
+            actual.Suburb.Should().NotBeNullOrWhiteSpace();
+            actual.TimeZone.Should().NotBeNullOrWhiteSpace();
+        }
+
+        [Fact]
         public void CanCreateInstanceWithoutProperties()
         {
             var actual = Model.Create<Empty>();
 
             actual.Should().NotBeNull();
+        }
+
+        [Fact]
+        public void CanCreateInstanceWithParameters()
+        {
+            var actual = Model.Create<ReadOnlyModel>();
+
+            actual.Value.Should().NotBeEmpty();
         }
 
         [Fact]
@@ -77,6 +115,17 @@
 
             actual.Culture.Should().NotBeNull();
             actual.CultureName.Should().NotBeNullOrWhiteSpace();
+        }
+
+        [Fact]
+        public void CanPopulateExistingInstance()
+        {
+            var expected = new SlimModel();
+
+            var actual = Model.Populate(expected);
+
+            actual.Should().BeSameAs(expected);
+            actual.Value.Should().NotBeEmpty();
         }
 
         [Fact]

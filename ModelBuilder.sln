@@ -21,8 +21,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentat
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModelBuilder.Synchronous.UnitTests", "ModelBuilder.Synchronous.UnitTests\ModelBuilder.Synchronous.UnitTests.csproj", "{BD0AE434-FB52-40C8-800E-49E77E6515EA}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{CD7163B6-B29A-4FCE-9009-8A49770ECAEA}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{1DA8BF66-DCF1-4714-99DC-BCA206758D9C}"
@@ -64,18 +62,6 @@ Global
 		{CF3897C3-F068-4C11-8207-C9255A30E3DF}.Release|x64.Build.0 = Release|Any CPU
 		{CF3897C3-F068-4C11-8207-C9255A30E3DF}.Release|x86.ActiveCfg = Release|Any CPU
 		{CF3897C3-F068-4C11-8207-C9255A30E3DF}.Release|x86.Build.0 = Release|Any CPU
-		{BD0AE434-FB52-40C8-800E-49E77E6515EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BD0AE434-FB52-40C8-800E-49E77E6515EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BD0AE434-FB52-40C8-800E-49E77E6515EA}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{BD0AE434-FB52-40C8-800E-49E77E6515EA}.Debug|x64.Build.0 = Debug|Any CPU
-		{BD0AE434-FB52-40C8-800E-49E77E6515EA}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{BD0AE434-FB52-40C8-800E-49E77E6515EA}.Debug|x86.Build.0 = Debug|Any CPU
-		{BD0AE434-FB52-40C8-800E-49E77E6515EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BD0AE434-FB52-40C8-800E-49E77E6515EA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BD0AE434-FB52-40C8-800E-49E77E6515EA}.Release|x64.ActiveCfg = Release|Any CPU
-		{BD0AE434-FB52-40C8-800E-49E77E6515EA}.Release|x64.Build.0 = Release|Any CPU
-		{BD0AE434-FB52-40C8-800E-49E77E6515EA}.Release|x86.ActiveCfg = Release|Any CPU
-		{BD0AE434-FB52-40C8-800E-49E77E6515EA}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

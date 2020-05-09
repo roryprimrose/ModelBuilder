@@ -39,6 +39,16 @@
         }
 
         [Fact]
+        public void CanCreateInstanceWithEnumerableProperty()
+        {
+            var actual = Model.Create<Company>();
+
+            actual.Address.Should().NotBeNullOrWhiteSpace();
+            actual.Name.Should().NotBeNullOrWhiteSpace();
+            actual.Staff.Should().NotBeEmpty();
+        }
+
+        [Fact]
         public void CanCreateInstanceWithEnumerablePropertyTypes()
         {
             var actual = Model.Create<EnumerableParent>();
