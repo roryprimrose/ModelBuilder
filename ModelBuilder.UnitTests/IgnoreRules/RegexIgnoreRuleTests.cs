@@ -35,7 +35,7 @@
 
         [Theory]
         [InlineData("First", true)]
-        [InlineData("Last", true)]
+        [InlineData("Last", false)]
         public void IsMatchReturnsWhenPropertyMatchesExpression(string expression, bool expected)
         {
             var property = typeof(Person).GetProperty(nameof(Person.FirstName));

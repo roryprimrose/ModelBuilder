@@ -10,7 +10,7 @@
     public partial class BuildConfigurationExtensionsTests
     {
         [Fact]
-        public void AddValueGeneratorAddsRuleToCompiler()
+        public void AddValueGeneratorAddsRuleToConfiguration()
         {
             var sut = new BuildConfiguration();
 
@@ -22,7 +22,7 @@
         }
 
         [Fact]
-        public void AddValueGeneratorThrowsExceptionWithNullCompiler()
+        public void AddValueGeneratorThrowsExceptionWithNullConfiguration()
         {
             Action action = () => BuildConfigurationExtensions.AddValueGenerator<StringValueGenerator>(null);
 
@@ -30,7 +30,7 @@
         }
 
         [Fact]
-        public void AddWithValueGeneratorAddsRuleToCompiler()
+        public void AddWithValueGeneratorAddsRuleToConfiguration()
         {
             var rule = new StringValueGenerator();
 
@@ -42,7 +42,7 @@
         }
 
         [Fact]
-        public void AddWithValueGeneratorThrowsExceptionWithNullCompiler()
+        public void AddWithValueGeneratorThrowsExceptionWithNullConfiguration()
         {
             var rule = new StringValueGenerator();
 
@@ -62,7 +62,7 @@
         }
 
         [Fact]
-        public void RemoveValueGeneratorRemovesMultipleMatchingRulesFromCompiler()
+        public void RemoveValueGeneratorRemovesMultipleMatchingRulesFromConfiguration()
         {
             var sut = new BuildConfiguration();
 
@@ -75,7 +75,7 @@
         }
 
         [Fact]
-        public void RemoveValueGeneratorRemovesRulesFromCompiler()
+        public void RemoveValueGeneratorRemovesRulesFromConfiguration()
         {
             var sut = new BuildConfiguration();
 
@@ -86,7 +86,7 @@
         }
 
         [Fact]
-        public void RemoveValueGeneratorThrowsExceptionWithNullCompiler()
+        public void RemoveValueGeneratorThrowsExceptionWithNullConfiguration()
         {
             Action action = () => BuildConfigurationExtensions.RemoveValueGenerator<StringValueGenerator>(null);
 

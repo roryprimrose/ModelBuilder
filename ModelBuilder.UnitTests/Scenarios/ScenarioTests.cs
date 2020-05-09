@@ -462,7 +462,7 @@
         {
             var expected = Guid.NewGuid();
 
-            var strategy = Model.UsingDefaultConfiguration().AddCreationRule<Person>(x => x.Id, 100, expected);
+            var strategy = Model.UsingDefaultConfiguration().AddCreationRule<Person>(x => x.Id, expected, 100);
 
             var actual = strategy.Create<List<Person>>();
 

@@ -129,22 +129,22 @@ public class MyCustomModule : IConfigurationModule
 {
     public void Configure(IBuildConfiguration configuration)
     {
-        compiler.AddCreationRule<MyCreationRule>();
-        compiler.AddExecuteOrderRule<MyExecuteOrderRule>();
-        compiler.AddIgnoreRule<MyIgnoreRule>();
-        compiler.AddPostBuildAction<MyPostBuildAction>();
-        compiler.AddTypeCreator<MyTypeCreator>();
-        compiler.AddTypeMappingRule<MyTypeMappingRule>();
-        compiler.AddValueGenerator<MyValueGenerator>();
+        configuration.AddCreationRule<MyCreationRule>();
+        configuration.AddExecuteOrderRule<MyExecuteOrderRule>();
+        configuration.AddIgnoreRule<MyIgnoreRule>();
+        configuration.AddPostBuildAction<MyPostBuildAction>();
+        configuration.AddTypeCreator<MyTypeCreator>();
+        configuration.AddTypeMappingRule<MyTypeMappingRule>();
+        configuration.AddValueGenerator<MyValueGenerator>();
 		
         // Or
-        compiler.Add(new MyCreationRule());
-        compiler.Add(new MyExecuteOrderRule());
-        compiler.Add(new MyIgnoreRule());
-        compiler.Add(new MyPostBuildAction());
-        compiler.Add(new MyTypeCreator());
-        compiler.Add(new MyTypeMappingRule());
-        compiler.Add(new MyValueGenerator());
+        configuration.Add(new MyCreationRule());
+        configuration.Add(new MyExecuteOrderRule());
+        configuration.Add(new MyIgnoreRule());
+        configuration.Add(new MyPostBuildAction());
+        configuration.Add(new MyTypeCreator());
+        configuration.Add(new MyTypeMappingRule());
+        configuration.Add(new MyValueGenerator());
     }
 }
 ```
@@ -153,7 +153,7 @@ public class MyCustomModule : IConfigurationModule
 var model = Model.UsingModule<MyCustomModule>().Create<Person>();
 ```
 
-You may want to create multiple compiler modules that support different model construction designs. 
+You may want to create multiple configuration modules that support different model construction designs. 
 
 ```
 var model = Model.UsingModule<MyUnitTestModule>().Create<Person>();
@@ -402,7 +402,7 @@ An `IValueGenerator` is used to create value types. There are many value generat
 - GuidValueGenerator
 - IPAddressValueGenerator
 - LastNameValueGenerator
-- MailinatorEmailValueGenerator **(NOTE: This generator is not included in DefaultBuildStrategy by default)**
+- MailinatorEmailValueGenerator **(NOTE: This generator is not included in DefaultBuildConfiguration by default)**
 - NumericValueGenerator
 - PhoneValueGenerator
 - PostCodeValueGenerator

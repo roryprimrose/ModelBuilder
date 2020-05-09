@@ -65,7 +65,7 @@
         }
 
         [Fact]
-        public void IgnoringUsesBuildStrategyToCreateInstance()
+        public void IgnoringUsesConfigurationToCreateInstance()
         {
             var actual = Model.Ignoring<Person>(x => x.FirstName).Create<Person>();
 
@@ -73,7 +73,7 @@
         }
 
         [Fact]
-        public void MappingUsesBuildStrategyToCreateInstance()
+        public void MappingUsesConfigurationToCreateInstance()
         {
             var actual = Model.Mapping<ITestItem, TestItem>().Create<ITestItem>();
 

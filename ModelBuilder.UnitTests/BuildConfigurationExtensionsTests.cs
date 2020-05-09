@@ -12,7 +12,7 @@
     public partial class BuildConfigurationExtensionsTests
     {
         [Fact]
-        public void AddConfigurationModuleAddsRuleToCompiler()
+        public void AddConfigurationModuleAddsRuleToConfiguration()
         {
             var sut = new BuildConfiguration();
 
@@ -26,7 +26,7 @@
         }
 
         [Fact]
-        public void AddConfigurationModuleThrowsExceptionWithNullCompiler()
+        public void AddConfigurationModuleThrowsExceptionWithNullConfiguration()
         {
             Action action = () => BuildConfigurationExtensions.UsingModule<TestConfigurationModule>(null);
 
@@ -34,7 +34,7 @@
         }
 
         [Fact]
-        public void AddWithCompilerModuleThrowsExceptionWithNullCompiler()
+        public void AddWithConfigurationModuleThrowsExceptionWithNullConfiguration()
         {
             var module = new TestConfigurationModule();
 
@@ -44,7 +44,7 @@
         }
 
         [Fact]
-        public void AddWithCompilerModuleThrowsExceptionWithNullRule()
+        public void AddWithConfigurationModuleThrowsExceptionWithNullRule()
         {
             var sut = Substitute.For<IBuildConfiguration>();
 
@@ -54,7 +54,7 @@
         }
 
         [Fact]
-        public void AddWithConfigurationModuleAddsRuleToCompiler()
+        public void AddWithConfigurationModuleAddsRuleToConfiguration()
         {
             var module = Substitute.For<IConfigurationModule>();
 

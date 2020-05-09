@@ -167,6 +167,23 @@
             actual.Should().Be(expected);
         }
 
+        [Theory]
+        [InlineData("^First", true)]
+        [InlineData("FirstName", true)]
+        [InlineData("LastName", false)]
+        public void IsMatchForPropertyReturnsWhetherPropertyMatchesStringExpression(string expression,
+            bool expected)
+        {
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var priority = Environment.TickCount;
+
+            var sut = new RegexCreationRule(typeof(string), expression, expected, priority);
+
+            var actual = sut.IsMatch(propertyInfo);
+
+            actual.Should().Be(expected);
+        }
+
         [Fact]
         public void IsMatchForTypeReturnsFalse()
         {
@@ -221,6 +238,20 @@
             sut.Priority.Should().Be(priority);
         }
 
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        public void ThrowsExceptionWhenCreatedWithInvalidStringExpression(string expression)
+        {
+            var value = Guid.NewGuid().ToString();
+            var priority = Environment.TickCount;
+
+            // ReSharper disable once ObjectCreationAsStatement
+            Action action = () => new RegexCreationRule(typeof(string), expression, value, priority);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
         [Fact]
         public void ThrowsExceptionWhenCreatedWithNullExpression()
         {
@@ -228,7 +259,7 @@
             var priority = Environment.TickCount;
 
             // ReSharper disable once ObjectCreationAsStatement
-            Action action = () => new RegexCreationRule(typeof(string), null, value, priority);
+            Action action = () => new RegexCreationRule(typeof(string), (Regex) null, value, priority);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -250,6 +281,31 @@
         public void ThrowsExceptionWhenCreatedWithNullValueGenerator()
         {
             var expression = new Regex("FirstName");
+            var priority = Environment.TickCount;
+
+            // ReSharper disable once ObjectCreationAsStatement
+            Action action = () => new RegexCreationRule(typeof(string), expression, null, priority);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void ThrowsExceptionWhenStringExpressionCreatedWithNullType()
+        {
+            const string expression = "FirstName";
+            var value = Guid.NewGuid().ToString();
+            var priority = Environment.TickCount;
+
+            // ReSharper disable once ObjectCreationAsStatement
+            Action action = () => new RegexCreationRule(null, expression, value, priority);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void ThrowsExceptionWhenStringExpressionCreatedWithNullValueGenerator()
+        {
+            const string expression = "FirstName";
             var priority = Environment.TickCount;
 
             // ReSharper disable once ObjectCreationAsStatement

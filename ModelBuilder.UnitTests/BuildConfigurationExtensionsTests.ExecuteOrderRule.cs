@@ -14,7 +14,7 @@
     public partial class BuildConfigurationExtensionsTests
     {
         [Fact]
-        public void AddExecuteOrderRuleAddsRuleToCompiler()
+        public void AddExecuteOrderRuleAddsRuleToConfiguration()
         {
             var sut = new BuildConfiguration();
 
@@ -26,7 +26,7 @@
         }
 
         [Fact]
-        public void AddExecuteOrderRuleThrowsExceptionWithNullCompiler()
+        public void AddExecuteOrderRuleThrowsExceptionWithNullConfiguration()
         {
             Action action = () => BuildConfigurationExtensions.AddExecuteOrderRule<DummyExecuteOrderRule>(null);
 
@@ -34,7 +34,7 @@
         }
 
         [Fact]
-        public void AddExecuteOrderRuleWithExpressionAddsRuleToCompiler()
+        public void AddExecuteOrderRuleWithExpressionAddsRuleToConfiguration()
         {
             var priority = Environment.TickCount;
 
@@ -54,7 +54,7 @@
         }
 
         [Fact]
-        public void AddExecuteOrderRuleWithExpressionThrowsExceptionWithNullCompiler()
+        public void AddExecuteOrderRuleWithExpressionThrowsExceptionWithNullConfiguration()
         {
             var priority = Environment.TickCount;
 
@@ -77,7 +77,7 @@
         }
 
         [Fact]
-        public void AddExecuteOrderRuleWithPredicateAddsRuleToCompiler()
+        public void AddExecuteOrderRuleWithPredicateAddsRuleToConfiguration()
         {
             var priority = Environment.TickCount;
 
@@ -97,7 +97,7 @@
         }
 
         [Fact]
-        public void AddExecuteOrderRuleWithPredicateThrowsExceptionWithNullCompiler()
+        public void AddExecuteOrderRuleWithPredicateThrowsExceptionWithNullConfiguration()
         {
             var priority = Environment.TickCount;
 
@@ -121,7 +121,7 @@
         }
 
         [Fact]
-        public void AddExecuteOrderRuleWithRegexAddsRuleToCompiler()
+        public void AddExecuteOrderRuleWithRegexAddsRuleToConfiguration()
         {
             var priority = Environment.TickCount;
 
@@ -137,7 +137,7 @@
         }
 
         [Fact]
-        public void AddExecuteOrderRuleWithRegexThrowsExceptionWithNullCompiler()
+        public void AddExecuteOrderRuleWithRegexThrowsExceptionWithNullConfiguration()
         {
             var priority = Environment.TickCount;
 
@@ -160,7 +160,7 @@
         }
 
         [Fact]
-        public void AddWithExecuteOrderRuleAddsRuleToCompiler()
+        public void AddWithExecuteOrderRuleAddsRuleToConfiguration()
         {
             var rule = new PropertyPredicateExecuteOrderRule(x => x.Name == "FirstName", Environment.TickCount);
 
@@ -172,7 +172,7 @@
         }
 
         [Fact]
-        public void AddWithExecuteOrderRuleThrowsExceptionWithNullCompiler()
+        public void AddWithExecuteOrderRuleThrowsExceptionWithNullConfiguration()
         {
             var rule = new PropertyPredicateExecuteOrderRule(x => x.Name == "FirstName", Environment.TickCount);
 
@@ -192,7 +192,7 @@
         }
 
         [Fact]
-        public void RemoveExecuteOrderRuleRemovesMultipleMatchingRulesFromCompiler()
+        public void RemoveExecuteOrderRuleRemovesMultipleMatchingRulesFromConfiguration()
         {
             var sut = new BuildConfiguration();
 
@@ -205,7 +205,7 @@
         }
 
         [Fact]
-        public void RemoveExecuteOrderRuleRemovesRulesFromCompiler()
+        public void RemoveExecuteOrderRuleRemovesRulesFromConfiguration()
         {
             var sut = new BuildConfiguration();
 
@@ -216,7 +216,7 @@
         }
 
         [Fact]
-        public void RemoveExecuteOrderRuleThrowsExceptionWithNullCompiler()
+        public void RemoveExecuteOrderRuleThrowsExceptionWithNullConfiguration()
         {
             Action action = () => BuildConfigurationExtensions.RemoveExecuteOrderRule<DummyExecuteOrderRule>(null);
 
