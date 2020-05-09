@@ -4,10 +4,10 @@
     using System.Collections.Generic;
 
     /// <summary>
-    ///     The <see cref="Extensions" />
+    ///     The <see cref="CommonExtensions" />
     ///     class provides common extension methods.
     /// </summary>
-    public static class Extensions
+    public static class CommonExtensions
     {
         /// <summary>
         ///     Gets whether the specified type is a nullable type.

@@ -30,7 +30,9 @@
 
             configuration.IgnoreRules.Should().BeEmpty();
             configuration.ConstructorResolver.Should().BeOfType<DefaultConstructorResolver>();
+            configuration.ConstructorResolver.As<DefaultConstructorResolver>().CacheLevel.Should().Be(CacheLevel.Global);
             configuration.PropertyResolver.Should().BeOfType<DefaultPropertyResolver>();
+            configuration.PropertyResolver.As<DefaultPropertyResolver>().CacheLevel.Should().Be(CacheLevel.Global);
             configuration.CreationRules.Should().BeEmpty();
             configuration.TypeMappingRules.Should().BeEmpty();
             configuration.TypeCreators.Should().NotBeEmpty();

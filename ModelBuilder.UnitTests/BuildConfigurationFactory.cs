@@ -6,8 +6,8 @@
         {
             return new BuildConfiguration
             {
-                ConstructorResolver = new DefaultConstructorResolver(),
-                PropertyResolver = new DefaultPropertyResolver()
+                ConstructorResolver = new DefaultConstructorResolver(CacheLevel.PerInstance),
+                PropertyResolver = new DefaultPropertyResolver(CacheLevel.PerInstance)
             };
         }
     }

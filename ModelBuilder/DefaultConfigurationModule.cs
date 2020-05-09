@@ -11,6 +11,7 @@
     public class DefaultConfigurationModule : IConfigurationModule
     {
         /// <inheritdoc />
+        /// <exception cref="ArgumentNullException">The <paramref name="configuration"/> is <c>null</c>.</exception>
         public void Configure(IBuildConfiguration configuration)
         {
             if (configuration == null)
@@ -18,8 +19,8 @@
                 throw new ArgumentNullException(nameof(configuration));
             }
 
-            configuration.ConstructorResolver = new DefaultConstructorResolver();
-            configuration.PropertyResolver = new DefaultPropertyResolver();
+            configuration.ConstructorResolver = new DefaultConstructorResolver(CacheLevel.Global);
+            configuration.PropertyResolver = new DefaultPropertyResolver(CacheLevel.Global);
 
             AddExecuteOrderRules(configuration);
             AddTypeCreators(configuration);

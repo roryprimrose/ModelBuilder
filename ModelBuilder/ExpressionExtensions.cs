@@ -8,7 +8,7 @@
     using ModelBuilder.Properties;
 
     /// <summary>
-    ///     The <see cref="Extensions" />
+    ///     The <see cref="CommonExtensions" />
     ///     class provides extension methods for the <see cref="Expression{TDelegate}" /> class.
     /// </summary>
     public static class ExpressionExtensions

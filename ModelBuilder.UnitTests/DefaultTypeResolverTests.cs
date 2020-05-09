@@ -3,6 +3,7 @@
     using System;
     using System.Collections;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using FluentAssertions;
     using ModelBuilder.UnitTests.Models;
@@ -192,6 +193,7 @@
         }
     }
 
+    [SuppressMessage("Design", "CA1040:Avoid empty interfaces", Justification = "The interface is used for testing")]
     public interface INoMatch
     {
     }
@@ -208,6 +210,7 @@
     {
     }
 
+    [SuppressMessage("Design", "CA1040:Avoid empty interfaces", Justification = "The interface is used for testing")]
     public interface ITestInterface
     {
     }

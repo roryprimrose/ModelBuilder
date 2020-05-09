@@ -1,6 +1,7 @@
 ﻿namespace ModelBuilder
 {
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Globalization;
@@ -14,6 +15,27 @@
     /// </summary>
     public class DefaultConstructorResolver : IConstructorResolver
     {
+        private static readonly ConcurrentDictionary<Type, ConstructorInfo> _globalConstructorCache =
+            new ConcurrentDictionary<Type, ConstructorInfo>();
+
+        private static readonly ConcurrentDictionary<ConstructorInfo, IList<ParameterInfo>> _globalParametersCache =
+            new ConcurrentDictionary<ConstructorInfo, IList<ParameterInfo>>();
+
+        private readonly ConcurrentDictionary<Type, ConstructorInfo> _perInstanceConstructorCache =
+            new ConcurrentDictionary<Type, ConstructorInfo>();
+
+        private readonly ConcurrentDictionary<ConstructorInfo, IList<ParameterInfo>> _perInstanceParametersCache =
+            new ConcurrentDictionary<ConstructorInfo, IList<ParameterInfo>>();
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DefaultConstructorResolver"/> class.
+        /// </summary>
+        /// <param name="cacheLevel">The cache level to use for resolved constructors and parameters.</param>
+        public DefaultConstructorResolver(CacheLevel cacheLevel)
+        {
+            CacheLevel = cacheLevel;
+        }
+
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="configuration" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="constructor" /> parameter is <c>null</c>.</exception>
@@ -30,9 +52,19 @@
                 throw new ArgumentNullException(nameof(constructor));
             }
 
-            return from x in constructor.GetParameters()
-                   orderby GetMaximumOrderPriority(configuration, x) descending
-                   select x;
+            if (CacheLevel == CacheLevel.Global)
+            {
+                return _globalParametersCache.GetOrAdd(constructor,
+                    x => CalculateOrderedParameters(configuration, constructor).ToList());
+            }
+
+            if (CacheLevel == CacheLevel.PerInstance)
+            {
+                return _perInstanceParametersCache.GetOrAdd(constructor,
+                    x => CalculateOrderedParameters(configuration, constructor).ToList());
+            }
+
+            return CalculateOrderedParameters(configuration, constructor);
         }
 
         /// <inheritdoc />
@@ -68,6 +100,60 @@
             }
 
             return FindConstructorMatchingTypes(type, args);
+        }
+
+        private static IOrderedEnumerable<ParameterInfo> CalculateOrderedParameters(IBuildConfiguration configuration,
+            ConstructorInfo constructor)
+        {
+            return from x in constructor.GetParameters()
+                orderby GetMaximumOrderPriority(configuration, x) descending
+                select x;
+        }
+
+        private static ConstructorInfo CalculateSmallestConstructor(Type type)
+        {
+            var availableConstructors = type.GetConstructors().ToList();
+
+            if (availableConstructors.Count == 0)
+            {
+                if (type.IsValueType
+                    && type.IsEnum == false)
+                {
+                    // This must be a struct where there will not be a constructor
+                    return null;
+                }
+            }
+
+            // Ignore any constructors that have a parameter with the type being created (a copy constructor)
+            var validConstructors = availableConstructors
+                .Where(x => x.GetParameters().Any(y => y.ParameterType == type) == false)
+                .OrderBy(x => x.GetParameters().Length).ToList();
+
+            var bestConstructor = validConstructors.FirstOrDefault();
+
+            if (bestConstructor != null)
+            {
+                return bestConstructor;
+            }
+
+            string message;
+
+            if (availableConstructors.Count > validConstructors.Count)
+            {
+                message = string.Format(
+                    CultureInfo.CurrentCulture,
+                    Resources.ConstructorResolver_NoValidConstructorFound,
+                    type.FullName);
+            }
+            else
+            {
+                message = string.Format(
+                    CultureInfo.CurrentCulture,
+                    Resources.ConstructorResolver_NoPublicConstructorFound,
+                    type.FullName);
+            }
+
+            throw new MissingMemberException(message);
         }
 
         private static ConstructorInfo FindConstructorMatchingArguments(Type type, IList<object> args)
@@ -115,52 +201,6 @@
             return constructor;
         }
 
-        private static ConstructorInfo FindSmallestConstructor(Type type)
-        {
-            var availableConstructors = type.GetConstructors().ToList();
-
-            if (availableConstructors.Count == 0)
-            {
-                if (type.IsValueType
-                    && type.IsEnum == false)
-                {
-                    // This must be a struct where there will not be a constructor
-                    return null;
-                }
-            }
-
-            // Ignore any constructors that have a parameter with the type being created (a copy constructor)
-            var validConstructors = availableConstructors
-                .Where(x => x.GetParameters().Any(y => y.ParameterType == type) == false)
-                .OrderBy(x => x.GetParameters().Length).ToList();
-
-            var bestConstructor = validConstructors.FirstOrDefault();
-
-            if (bestConstructor != null)
-            {
-                return bestConstructor;
-            }
-
-            string message;
-
-            if (availableConstructors.Count > validConstructors.Count)
-            {
-                message = string.Format(
-                    CultureInfo.CurrentCulture,
-                    Resources.ConstructorResolver_NoValidConstructorFound,
-                    type.FullName);
-            }
-            else
-            {
-                message = string.Format(
-                    CultureInfo.CurrentCulture,
-                    Resources.ConstructorResolver_NoPublicConstructorFound,
-                    type.FullName);
-            }
-
-            throw new MissingMemberException(message);
-        }
-
         private static int GetMaximumOrderPriority(IBuildConfiguration configuration, ParameterInfo parameter)
         {
             if (configuration.ExecuteOrderRules == null)
@@ -169,9 +209,9 @@
             }
 
             var matchingRules = from x in configuration.ExecuteOrderRules
-                                where x.IsMatch(parameter)
-                                orderby x.Priority descending
-                                select x;
+                where x.IsMatch(parameter)
+                orderby x.Priority descending
+                select x;
 
             var matchingRule = matchingRules.FirstOrDefault();
 
@@ -241,5 +281,28 @@
             // All the parameters match the arguments supplied, this looks like a good constructor
             return true;
         }
+
+        private ConstructorInfo FindSmallestConstructor(Type type)
+        {
+            if (CacheLevel == CacheLevel.Global)
+            {
+                return _globalConstructorCache.GetOrAdd(type,
+                    x => CalculateSmallestConstructor(type));
+            }
+
+            if (CacheLevel == CacheLevel.PerInstance)
+            {
+                return _perInstanceConstructorCache.GetOrAdd(type,
+                    x => CalculateSmallestConstructor(type));
+            }
+
+            return CalculateSmallestConstructor(type);
+        }
+
+        /// <summary>
+        ///     Gets or sets whether parameters identified by <see cref="GetOrderedParameters" /> are cached.
+        /// </summary>
+        /// <returns>Returns the cache level to apply to parameters.</returns>
+        public CacheLevel CacheLevel { get; set; }
     }
 }

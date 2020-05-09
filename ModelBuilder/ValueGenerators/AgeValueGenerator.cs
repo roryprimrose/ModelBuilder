@@ -1,6 +1,7 @@
 ﻿namespace ModelBuilder.ValueGenerators
 {
     using System;
+    using System.Globalization;
 
     /// <summary>
     ///     The <see cref="AgeValueGenerator" />
@@ -64,7 +65,7 @@
 
             if (totalDays > 0)
             {
-                return Convert.ChangeType(Math.Floor(totalDays / 365), type);
+                return Convert.ChangeType(Math.Floor(totalDays / 365), type, CultureInfo.CurrentCulture);
             }
 
             return Generator.NextValue(generateType, MinAge, MaxAge);

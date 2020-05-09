@@ -19,17 +19,59 @@
             _output = output;
         }
 
+        [Theory]
+        [InlineData(CacheLevel.Global)]
+        [InlineData(CacheLevel.PerInstance)]
+        [InlineData(CacheLevel.None)]
+        public void CacheLevelReturnsConstructorValue(CacheLevel cacheLevel)
+        {
+            var sut = new DefaultConstructorResolver(cacheLevel);
+
+            sut.CacheLevel.Should().Be(cacheLevel);
+        }
+
+        [Theory]
+        [InlineData(CacheLevel.Global)]
+        [InlineData(CacheLevel.PerInstance)]
+        public void GetOrderedParametersReturnsCachedParameters(CacheLevel cacheLevel)
+        {
+            var configuration = new BuildConfiguration();
+            var constructor = typeof(SimpleConstructor).GetConstructors().First();
+
+            var sut = new DefaultConstructorResolver(cacheLevel);
+
+            var first = sut.GetOrderedParameters(configuration, constructor);
+            var second = sut.GetOrderedParameters(configuration, constructor);
+
+            first.Should().BeSameAs(second);
+        }
+
         [Fact]
         public void GetOrderedParametersReturnsEmptyWhenConstructorHasNoParameters()
         {
             var configuration = Substitute.For<IBuildConfiguration>();
             var constructor = typeof(Numbers).GetConstructors().First();
 
-            var sut = new DefaultConstructorResolver();
+            var sut = new DefaultConstructorResolver(CacheLevel.PerInstance);
 
             var actual = sut.GetOrderedParameters(configuration, constructor).ToList();
 
             actual.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void GetOrderedParametersReturnsNewInstanceWhenCachedDisabled()
+        {
+            var configuration = new BuildConfiguration();
+            var constructor = typeof(OrderedConstructorParameters).GetConstructors().First();
+
+            var sut = new DefaultConstructorResolver(CacheLevel.None);
+
+            var first = sut.GetOrderedParameters(configuration, constructor).ToList();
+            var second = sut.GetOrderedParameters(configuration, constructor).ToList();
+
+            first.Should().NotBeSameAs(second);
+            first.Should().BeEquivalentTo(second);
         }
 
         [Fact]
@@ -38,7 +80,7 @@
             var configuration = new BuildConfiguration();
             var constructor = typeof(OrderedConstructorParameters).GetConstructors().First();
 
-            var sut = new DefaultConstructorResolver();
+            var sut = new DefaultConstructorResolver(CacheLevel.None);
 
             var actual = sut.GetOrderedParameters(configuration, constructor).ToList();
 
@@ -57,7 +99,7 @@
 
             configuration.ExecuteOrderRules.Returns((ICollection<IExecuteOrderRule>) null);
 
-            var sut = new DefaultConstructorResolver();
+            var sut = new DefaultConstructorResolver(CacheLevel.PerInstance);
 
             var actual = sut.GetOrderedParameters(configuration, constructor).ToList();
 
@@ -75,7 +117,7 @@
                 .AddExecuteOrderRule(NameExpression.Email, 10);
             var constructor = typeof(OrderedConstructorParameters).GetConstructors().First();
 
-            var sut = new DefaultConstructorResolver();
+            var sut = new DefaultConstructorResolver(CacheLevel.PerInstance);
 
             var actual = sut.GetOrderedParameters(configuration, constructor).ToList();
 
@@ -91,7 +133,7 @@
         {
             var constructor = typeof(Person).GetConstructors().First();
 
-            var sut = new DefaultConstructorResolver();
+            var sut = new DefaultConstructorResolver(CacheLevel.PerInstance);
 
             Action action = () => sut.GetOrderedParameters(null, constructor);
 
@@ -103,7 +145,7 @@
         {
             var configuration = Substitute.For<IBuildConfiguration>();
 
-            var sut = new DefaultConstructorResolver();
+            var sut = new DefaultConstructorResolver(CacheLevel.PerInstance);
 
             Action action = () => sut.GetOrderedParameters(configuration, null);
 
@@ -113,7 +155,7 @@
         [Fact]
         public void ResolveMatchesConstructorMatchingParameterLengthWhereParameterValueIsNull()
         {
-            var sut = new DefaultConstructorResolver();
+            var sut = new DefaultConstructorResolver(CacheLevel.PerInstance);
 
             var constructor = sut.Resolve(typeof(Person), (Person) null);
 
@@ -128,7 +170,7 @@
                 Id = Guid.NewGuid()
             };
 
-            var sut = new DefaultConstructorResolver();
+            var sut = new DefaultConstructorResolver(CacheLevel.PerInstance);
 
             var constructor = sut.Resolve(typeof(Person), person);
 
@@ -143,17 +185,30 @@
                 "first", "last", DateTime.UtcNow, true, Guid.NewGuid(), Environment.TickCount
             };
 
-            var sut = new DefaultConstructorResolver();
+            var sut = new DefaultConstructorResolver(CacheLevel.PerInstance);
 
             var constructor = sut.Resolve(typeof(WithValueParameters), args);
 
             constructor.GetParameters().Length.Should().Be(6);
         }
 
+        [Theory]
+        [InlineData(CacheLevel.Global)]
+        [InlineData(CacheLevel.PerInstance)]
+        public void ResolveReturnsCachedConstructor(CacheLevel cacheLevel)
+        {
+            var sut = new DefaultConstructorResolver(cacheLevel);
+
+            var first = sut.Resolve(typeof(Other));
+            var second = sut.Resolve(typeof(Other));
+
+            first.Should().BeSameAs(second);
+        }
+
         [Fact]
         public void ResolveReturnsConstructorForStructThatHasConstructors()
         {
-            var sut = new DefaultConstructorResolver();
+            var sut = new DefaultConstructorResolver(CacheLevel.PerInstance);
 
             var constructor = sut.Resolve(typeof(KeyValuePair<Guid, Person>));
 
@@ -164,7 +219,7 @@
         [Fact]
         public void ResolveReturnsConstructorThatMatchesAgainstNullParameters()
         {
-            var sut = new DefaultConstructorResolver();
+            var sut = new DefaultConstructorResolver(CacheLevel.PerInstance);
 
             var actual = sut.Resolve(typeof(Other), Guid.NewGuid(), null, 123, null);
 
@@ -174,7 +229,7 @@
         [Fact]
         public void ResolveReturnsConstructorWhenArgsContainsNullableParameterWithNullValue()
         {
-            var sut = new DefaultConstructorResolver();
+            var sut = new DefaultConstructorResolver(CacheLevel.PerInstance);
 
             var actual = sut.Resolve(typeof(WithConstructorParameters), null, Guid.NewGuid(), null, 123, true);
 
@@ -184,7 +239,7 @@
         [Fact]
         public void ResolveReturnsConstructorWhenArgsContainsNullAndArgCountFillsNonOptionalParam()
         {
-            var sut = new DefaultConstructorResolver();
+            var sut = new DefaultConstructorResolver(CacheLevel.PerInstance);
 
             var actual = sut.Resolve(typeof(Optionals), null, 10, "third");
 
@@ -196,7 +251,7 @@
         {
             var company = new SpecificCompany();
 
-            var sut = new DefaultConstructorResolver();
+            var sut = new DefaultConstructorResolver(CacheLevel.PerInstance);
 
             var actual = sut.Resolve(typeof(Derived), null, company);
 
@@ -208,7 +263,7 @@
         {
             var source = Clone.Create();
 
-            var sut = new DefaultConstructorResolver();
+            var sut = new DefaultConstructorResolver(CacheLevel.PerInstance);
 
             var actual = sut.Resolve(typeof(Clone), source, null);
 
@@ -218,7 +273,7 @@
         [Fact]
         public void ResolveReturnsConstructorWhenArgsContainsNullAndNullArgIsCopyConstructor()
         {
-            var sut = new DefaultConstructorResolver();
+            var sut = new DefaultConstructorResolver(CacheLevel.PerInstance);
 
             var actual = sut.Resolve(typeof(Clone), null, "second");
 
@@ -228,7 +283,7 @@
         [Fact]
         public void ResolveReturnsConstructorWithLeastParameters()
         {
-            var sut = new DefaultConstructorResolver();
+            var sut = new DefaultConstructorResolver(CacheLevel.PerInstance);
 
             var constructor = sut.Resolve(typeof(WithInterfaceAndAbstractParameters));
 
@@ -238,7 +293,7 @@
         [Fact]
         public void ResolveReturnsConstructorWithLeastParametersExcludingConstructorsWithSameType()
         {
-            var sut = new DefaultConstructorResolver();
+            var sut = new DefaultConstructorResolver(CacheLevel.PerInstance);
 
             var constructor = sut.Resolve(typeof(Other));
 
@@ -249,7 +304,7 @@
         [Fact]
         public void ResolveReturnsConstructorWithLeastParametersWhenArgsIsNull()
         {
-            var sut = new DefaultConstructorResolver();
+            var sut = new DefaultConstructorResolver(CacheLevel.PerInstance);
 
             var constructor = sut.Resolve(typeof(WithInterfaceAndAbstractParameters), null);
 
@@ -259,7 +314,7 @@
         [Fact]
         public void ResolveReturnsDefaultConstructorOnSimpleModel()
         {
-            var sut = new DefaultConstructorResolver();
+            var sut = new DefaultConstructorResolver(CacheLevel.PerInstance);
 
             var constructor = sut.Resolve(typeof(Simple));
 
@@ -269,7 +324,7 @@
         [Fact]
         public void ResolveReturnsDefaultConstructorWhenManyConstructorsAvailable()
         {
-            var sut = new DefaultConstructorResolver();
+            var sut = new DefaultConstructorResolver(CacheLevel.PerInstance);
 
             var constructor = sut.Resolve(typeof(WithMixedValueParameters));
 
@@ -279,7 +334,7 @@
         [Fact]
         public void ResolveReturnsNullForStructThatHasNoConstructors()
         {
-            var sut = new DefaultConstructorResolver();
+            var sut = new DefaultConstructorResolver(CacheLevel.PerInstance);
 
             var constructor = sut.Resolve(typeof(StructModel));
 
@@ -289,7 +344,7 @@
         [Fact]
         public void ResolveReturnsParameterConstructor()
         {
-            var sut = new DefaultConstructorResolver();
+            var sut = new DefaultConstructorResolver(CacheLevel.PerInstance);
 
             var constructor = sut.Resolve(typeof(WithValueParameters));
 
@@ -299,7 +354,7 @@
         [Fact]
         public void ResolveThrowsExceptionForEnum()
         {
-            var sut = new DefaultConstructorResolver();
+            var sut = new DefaultConstructorResolver(CacheLevel.PerInstance);
 
             Action action = () => sut.Resolve(typeof(Gender));
 
@@ -309,7 +364,7 @@
         [Fact]
         public void ResolveThrowsExceptionWhenArgsContainsNullAndArgCountLessThanOptionalParam()
         {
-            var sut = new DefaultConstructorResolver();
+            var sut = new DefaultConstructorResolver(CacheLevel.PerInstance);
 
             Action action = () => sut.Resolve(typeof(Optionals), "first", null);
 
@@ -319,7 +374,7 @@
         [Fact]
         public void ResolveThrowsExceptionWhenArgsContainsNullAndHasArgParamTypeMismatch()
         {
-            var sut = new DefaultConstructorResolver();
+            var sut = new DefaultConstructorResolver(CacheLevel.PerInstance);
 
             Action action = () => sut.Resolve(typeof(Optionals), "first", "stuff", null);
 
@@ -329,7 +384,7 @@
         [Fact]
         public void ResolveThrowsExceptionWhenArgsContainsNullAndNoMatchFoundOnTypes()
         {
-            var sut = new DefaultConstructorResolver();
+            var sut = new DefaultConstructorResolver(CacheLevel.PerInstance);
 
             Action action = () => sut.Resolve(typeof(Other), Guid.NewGuid(), null, "NotAMatchingParameter", null);
 
@@ -341,7 +396,7 @@
         {
             var company = new Company();
 
-            var sut = new DefaultConstructorResolver();
+            var sut = new DefaultConstructorResolver(CacheLevel.PerInstance);
 
             Action action = () => sut.Resolve(typeof(Derived), null, company, "third");
 
@@ -351,7 +406,7 @@
         [Fact]
         public void ResolveThrowsExceptionWhenArgsContainsNullAndTooManyArgumentsProvided()
         {
-            var sut = new DefaultConstructorResolver();
+            var sut = new DefaultConstructorResolver(CacheLevel.PerInstance);
 
             Action action = () => sut.Resolve(
                 typeof(Other),
@@ -367,7 +422,7 @@
         [Fact]
         public void ResolveThrowsExceptionWhenArgsContainsNullMatchingValueTypeParameter()
         {
-            var sut = new DefaultConstructorResolver();
+            var sut = new DefaultConstructorResolver(CacheLevel.PerInstance);
 
             Action action = () => sut.Resolve(typeof(Other), Guid.NewGuid(), "NextParameterIsInt", null, null);
 
@@ -377,7 +432,7 @@
         [Fact]
         public void ResolveThrowsExceptionWhenArgsContainsNullNoOptionalParamsAndArgumentCountMismatch()
         {
-            var sut = new DefaultConstructorResolver();
+            var sut = new DefaultConstructorResolver(CacheLevel.PerInstance);
 
             Action action = () => sut.Resolve(typeof(WithMixedValueParameters), "first", null, "this doesn't exist");
 
@@ -387,7 +442,7 @@
         [Fact]
         public void ResolveThrowsExceptionWhenClassOnlyContainsConstructorsThatReferenceTheSameType()
         {
-            var sut = new DefaultConstructorResolver();
+            var sut = new DefaultConstructorResolver(CacheLevel.PerInstance);
 
             Action action = () => sut.Resolve(typeof(Clone));
 
@@ -397,7 +452,7 @@
         [Fact]
         public void ResolveThrowsExceptionWhenClassOnlyContainsCopyConstructor()
         {
-            var sut = new DefaultConstructorResolver();
+            var sut = new DefaultConstructorResolver(CacheLevel.PerInstance);
 
             Action action = () => sut.Resolve(typeof(Copy));
 
@@ -407,7 +462,7 @@
         [Fact]
         public void ResolveThrowsExceptionWhenNoConstructorMatchingSpecifiedParameters()
         {
-            var sut = new DefaultConstructorResolver();
+            var sut = new DefaultConstructorResolver(CacheLevel.PerInstance);
 
             Action action = () => sut.Resolve(typeof(Simple), Guid.NewGuid().ToString(), true, 123);
 
@@ -417,7 +472,7 @@
         [Fact]
         public void ResolveThrowsExceptionWhenNoPublicConstructorFound()
         {
-            var sut = new DefaultConstructorResolver();
+            var sut = new DefaultConstructorResolver(CacheLevel.PerInstance);
 
             Action action = () => sut.Resolve(typeof(Singleton));
 
@@ -427,7 +482,7 @@
         [Fact]
         public void ResolveThrowsExceptionWhenParameterValuesDoNotMatchParameterTypes()
         {
-            var sut = new DefaultConstructorResolver();
+            var sut = new DefaultConstructorResolver(CacheLevel.PerInstance);
 
             var priority = Convert.ToDouble(Environment.TickCount);
 
@@ -446,7 +501,7 @@
         [Fact]
         public void ResolveThrowsExceptionWhenWhenOnlyPrivateConstructorAvailable()
         {
-            var sut = new DefaultConstructorResolver();
+            var sut = new DefaultConstructorResolver(CacheLevel.PerInstance);
 
             Action action = () => sut.Resolve(typeof(Singleton));
 
@@ -456,7 +511,7 @@
         [Fact]
         public void ResolveThrowsExceptionWithNullType()
         {
-            var sut = new DefaultConstructorResolver();
+            var sut = new DefaultConstructorResolver(CacheLevel.PerInstance);
 
             Action action = () => sut.Resolve(null);
 

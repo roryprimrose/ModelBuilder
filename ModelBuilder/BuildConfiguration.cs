@@ -14,7 +14,7 @@
     public class BuildConfiguration : IBuildConfiguration
     {
         /// <inheritdoc />
-        public IConstructorResolver ConstructorResolver { get; set; } = new DefaultConstructorResolver();
+        public IConstructorResolver ConstructorResolver { get; set; } = new DefaultConstructorResolver(CacheLevel.PerInstance);
 
         /// <inheritdoc />
         public ICollection<ICreationRule> CreationRules { get; } = new List<ICreationRule>();
@@ -29,7 +29,7 @@
         public ICollection<IPostBuildAction> PostBuildActions { get; } = new List<IPostBuildAction>();
 
         /// <inheritdoc />
-        public IPropertyResolver PropertyResolver { get; set; } = new DefaultPropertyResolver();
+        public IPropertyResolver PropertyResolver { get; set; } = new DefaultPropertyResolver(CacheLevel.PerInstance);
 
         /// <inheritdoc />
         public ICollection<ITypeCreator> TypeCreators { get; } = new List<ITypeCreator>();

@@ -404,8 +404,8 @@
 
             actual.Should().BeSameAs(sut);
             actual.Count.Should().Be(2);
-            actual.First().Priority.Should().Be(1);
-            actual.Skip(1).First().Priority.Should().Be(2);
+            actual[0].Priority.Should().Be(1);
+            actual[1].Priority.Should().Be(2);
         }
 
         [Fact]

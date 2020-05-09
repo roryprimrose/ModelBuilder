@@ -13,13 +13,24 @@
 
     public class DefaultPropertyResolverTests
     {
+        [Theory]
+        [InlineData(CacheLevel.Global)]
+        [InlineData(CacheLevel.PerInstance)]
+        [InlineData(CacheLevel.None)]
+        public void CacheLevelReturnsConstructorValue(CacheLevel cacheLevel)
+        {
+            var sut = new DefaultPropertyResolver(cacheLevel);
+
+            sut.CacheLevel.Should().Be(cacheLevel);
+        }
+
         [Fact]
         public void GetOrderedPropertiesDoesNotReturnPrivateProperty()
         {
             var configuration = Substitute.For<IBuildConfiguration>();
             var type = typeof(PrivateProp);
 
-            var sut = new DefaultPropertyResolver();
+            var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
 
             var actual = sut.GetOrderedProperties(configuration, type);
 
@@ -32,7 +43,7 @@
             var configuration = Substitute.For<IBuildConfiguration>();
             var type = typeof(PrivateString);
 
-            var sut = new DefaultPropertyResolver();
+            var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
 
             var actual = sut.GetOrderedProperties(configuration, type);
 
@@ -45,7 +56,7 @@
             var configuration = Substitute.For<IBuildConfiguration>();
             var type = typeof(PrivateValue);
 
-            var sut = new DefaultPropertyResolver();
+            var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
 
             var actual = sut.GetOrderedProperties(configuration, type);
 
@@ -58,7 +69,7 @@
             var configuration = Substitute.For<IBuildConfiguration>();
             var type = typeof(StaticGetter);
 
-            var sut = new DefaultPropertyResolver();
+            var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
 
             var actual = sut.GetOrderedProperties(configuration, type);
 
@@ -71,11 +82,42 @@
             var configuration = Substitute.For<IBuildConfiguration>();
             var type = typeof(StaticSetter);
 
-            var sut = new DefaultPropertyResolver();
+            var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
 
             var actual = sut.GetOrderedProperties(configuration, type);
 
             actual.Should().NotContain(x => x.Name == nameof(StaticSetter.Person));
+        }
+
+        [Theory]
+        [InlineData(CacheLevel.Global)]
+        [InlineData(CacheLevel.PerInstance)]
+        public void GetOrderedPropertiesReturnsCachedValueWhenCacheEnabled(CacheLevel cacheLevel)
+        {
+            var configuration = Substitute.For<IBuildConfiguration>();
+            var type = typeof(SlimModel);
+
+            var sut = new DefaultPropertyResolver(cacheLevel);
+
+            var first = sut.GetOrderedProperties(configuration, type);
+            var second = sut.GetOrderedProperties(configuration, type);
+
+            first.Should().BeSameAs(second);
+        }
+
+        [Fact]
+        public void GetOrderedPropertiesReturnsNewInstanceWhenCacheDisabled()
+        {
+            var configuration = Substitute.For<IBuildConfiguration>();
+            var type = typeof(Person);
+
+            var sut = new DefaultPropertyResolver(CacheLevel.None);
+
+            var first = sut.GetOrderedProperties(configuration, type).ToList();
+            var second = sut.GetOrderedProperties(configuration, type).ToList();
+
+            first.Should().NotBeSameAs(second);
+            first.Should().BeEquivalentTo(second);
         }
 
         [Fact]
@@ -88,7 +130,7 @@
                 .AddExecuteOrderRule<EmailParts>(x => x.Email, 10);
             var type = typeof(EmailParts);
 
-            var sut = new DefaultPropertyResolver();
+            var sut = new DefaultPropertyResolver(CacheLevel.None);
 
             var actual = sut.GetOrderedProperties(configuration, type).ToList();
 
@@ -106,7 +148,7 @@
 
             configuration.ExecuteOrderRules.Returns((ICollection<IExecuteOrderRule>) null);
 
-            var sut = new DefaultPropertyResolver();
+            var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
 
             var actual = sut.GetOrderedProperties(configuration, type).ToList();
 
@@ -119,7 +161,7 @@
             var configuration = Substitute.For<IBuildConfiguration>();
             var type = typeof(Address);
 
-            var sut = new DefaultPropertyResolver();
+            var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
 
             var actual = sut.GetOrderedProperties(configuration, type);
 
@@ -132,7 +174,7 @@
             var configuration = Substitute.For<IBuildConfiguration>();
             var type = typeof(ReadOnlyParent);
 
-            var sut = new DefaultPropertyResolver();
+            var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
 
             var actual = sut.GetOrderedProperties(configuration, type);
 
@@ -142,7 +184,7 @@
         [Fact]
         public void GetOrderedPropertiesThrowsExceptionWithNullConfiguration()
         {
-            var sut = new DefaultPropertyResolver();
+            var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
 
             Action action = () => sut.GetOrderedProperties(null, typeof(Person));
 
@@ -154,7 +196,7 @@
         {
             var configuration = Substitute.For<IBuildConfiguration>();
 
-            var sut = new DefaultPropertyResolver();
+            var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
 
             Action action = () => sut.GetOrderedProperties(configuration, null);
 
@@ -173,7 +215,7 @@
 
             var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.First));
 
-            var sut = new DefaultPropertyResolver();
+            var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
 
             var actual = sut.IsIgnored(configuration, instance, propertyInfo, args);
 
@@ -192,7 +234,7 @@
 
             var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.First));
 
-            var sut = new DefaultPropertyResolver();
+            var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
 
             var actual = sut.IsIgnored(configuration, instance, propertyInfo, args);
 
@@ -211,7 +253,7 @@
 
             var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.Number));
 
-            var sut = new DefaultPropertyResolver();
+            var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
 
             var actual = sut.IsIgnored(configuration, instance, propertyInfo, args);
 
@@ -230,7 +272,7 @@
 
             var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.First));
 
-            var sut = new DefaultPropertyResolver();
+            var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
 
             var actual = sut.IsIgnored(configuration, instance, propertyInfo, args);
 
@@ -249,7 +291,7 @@
 
             var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.Id));
 
-            var sut = new DefaultPropertyResolver();
+            var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
 
             var actual = sut.IsIgnored(configuration, instance, propertyInfo, args);
 
@@ -269,7 +311,7 @@
 
             var propertyInfo = typeof(ReadOnlyModelParent).GetProperty(nameof(ReadOnlyModelParent.Child));
 
-            var sut = new DefaultPropertyResolver();
+            var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
 
             var actual = sut.IsIgnored(configuration, instance, propertyInfo, args);
 
@@ -288,7 +330,7 @@
 
             var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.First));
 
-            var sut = new DefaultPropertyResolver();
+            var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
 
             var actual = sut.IsIgnored(configuration, instance, propertyInfo, args);
 
@@ -307,7 +349,7 @@
 
             var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.Id));
 
-            var sut = new DefaultPropertyResolver();
+            var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
 
             var actual = sut.IsIgnored(configuration, instance, propertyInfo, args);
 
@@ -325,7 +367,7 @@
             var instance = new Person();
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.Address));
 
-            var sut = new DefaultPropertyResolver();
+            var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
 
             var actual = sut.IsIgnored(configuration, instance, propertyInfo, new object[0]);
 
@@ -339,7 +381,7 @@
             var instance = new Person();
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.Address));
 
-            var sut = new DefaultPropertyResolver();
+            var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
 
             var actual = sut.IsIgnored(configuration, instance, propertyInfo, null);
 
@@ -358,7 +400,7 @@
 
             var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.First));
 
-            var sut = new DefaultPropertyResolver();
+            var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
 
             var actual = sut.IsIgnored(configuration, instance, propertyInfo, args);
 
@@ -374,7 +416,7 @@
             var type = typeof(ReadOnlyCollection<int>);
             var propertyInfo = type.GetProperties().First(x => x.GetIndexParameters().Length > 0);
 
-            var sut = new DefaultPropertyResolver();
+            var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
 
             var actual = sut.IsIgnored(configuration, instance, propertyInfo, null);
 
@@ -388,7 +430,7 @@
             var instance = new Person();
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.Address));
 
-            var sut = new DefaultPropertyResolver();
+            var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
 
             var actual = sut.IsIgnored(configuration, instance, propertyInfo, null);
 
@@ -407,7 +449,7 @@
 
             var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.First));
 
-            var sut = new DefaultPropertyResolver();
+            var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
 
             var actual = sut.IsIgnored(configuration, instance, propertyInfo, args);
 
@@ -426,7 +468,7 @@
 
             var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.Number));
 
-            var sut = new DefaultPropertyResolver();
+            var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
 
             var actual = sut.IsIgnored(configuration, instance, propertyInfo, args);
 
@@ -439,7 +481,7 @@
             var instance = new Person();
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.Address));
 
-            var sut = new DefaultPropertyResolver();
+            var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
 
             Action action = () => sut.IsIgnored(null, instance, propertyInfo, null);
 
@@ -452,7 +494,7 @@
             var configuration = Model.UsingDefaultConfiguration();
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.Address));
 
-            var sut = new DefaultPropertyResolver();
+            var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
 
             Action action = () => sut.IsIgnored(configuration, null, propertyInfo, null);
 
@@ -465,7 +507,7 @@
             var configuration = Model.UsingDefaultConfiguration();
             var instance = new Person();
 
-            var sut = new DefaultPropertyResolver();
+            var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
 
             Action action = () => sut.IsIgnored(configuration, instance, null, null);
 
