@@ -132,6 +132,40 @@
         }
 
         [Fact]
+        public void AddIgnoreRuleWithStringExpressionAddsRuleToCompiler()
+        {
+            var sut = new BuildConfiguration();
+
+            var actual = sut.AddIgnoreRule("First");
+
+            actual.Should().Be(sut);
+
+            var rule = sut.IgnoreRules.Single();
+
+            rule.Should().BeOfType<RegexIgnoreRule>();
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        public void AddIgnoreRuleWithStringExpressionThrowsExceptionWithInvalidExpression(string expression)
+        {
+            var sut = new BuildConfiguration();
+
+            Action action = () => sut.AddIgnoreRule(expression);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void AddIgnoreRuleWithStringExpressionThrowsExceptionWithNullCompiler()
+        {
+            Action action = () => BuildConfigurationExtensions.AddIgnoreRule(null, NameExpression.LastName);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
         public void AddWithIgnoreRuleAddsRuleToCompiler()
         {
             var rule = new ExpressionIgnoreRule<Person>(x => x.FirstName);
