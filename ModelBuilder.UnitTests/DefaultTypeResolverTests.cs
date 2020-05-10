@@ -72,6 +72,32 @@
         }
 
         [Fact]
+        public void GetBuildTypeReturnsOriginalTypeWhenNoBetterTypeFoundWithNullTypeMappingRules()
+        {
+            var defaultConfiguration = Model.UsingDefaultConfiguration();
+            var configuration = Substitute.For<IBuildConfiguration>();
+
+            configuration.PropertyResolver.Returns(defaultConfiguration.PropertyResolver);
+            configuration.ConstructorResolver.Returns(defaultConfiguration.ConstructorResolver);
+            configuration.CreationRules.Returns(defaultConfiguration.CreationRules);
+            configuration.ExecuteOrderRules.Returns(defaultConfiguration.ExecuteOrderRules);
+            configuration.IgnoreRules.Returns(defaultConfiguration.IgnoreRules);
+            configuration.PostBuildActions.Returns(defaultConfiguration.PostBuildActions);
+            configuration.TypeCreators.Returns(defaultConfiguration.TypeCreators);
+            configuration.TypeMappingRules.Returns((ICollection<TypeMappingRule>) null);
+            configuration.TypeResolver.Returns(defaultConfiguration.TypeResolver);
+            configuration.ValueGenerators.Returns(defaultConfiguration.ValueGenerators);
+
+            var sut = new DefaultTypeResolver();
+
+            var actual = sut.GetBuildType(configuration, typeof(INoMatch));
+
+            _output.WriteLine(actual.FullName);
+
+            actual.Should().Be<INoMatch>();
+        }
+
+        [Fact]
         public void GetBuildTypeReturnsPossibleTypeFromInterface()
         {
             var configuration = new BuildConfiguration();
