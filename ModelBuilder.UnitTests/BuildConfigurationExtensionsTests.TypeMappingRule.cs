@@ -47,6 +47,14 @@
         }
 
         [Fact]
+        public void AddTypeMappingRuleWithGenericTypesThrowsExceptionWithNullConfiguration()
+        {
+            Action action = () => BuildConfigurationExtensions.AddTypeMappingRule<Stream, MemoryStream>(null);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
         public void AddWithTypeMappingRuleAddsRuleToConfiguration()
         {
             var rule = new TypeMappingRule(typeof(Stream), typeof(MemoryStream));

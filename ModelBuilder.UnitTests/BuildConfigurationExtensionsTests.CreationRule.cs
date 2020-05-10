@@ -81,7 +81,8 @@
         [Fact]
         public void AddCreationRuleWithParameterPredicateAddsRuleToConfiguration()
         {
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var parameterInfo = typeof(Person).GetConstructors()
+                .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
             var value = Guid.NewGuid().ToString();
             var priority = Environment.TickCount;
 
@@ -93,7 +94,7 @@
 
             rule.Priority.Should().Be(priority);
 
-            var actual = rule.Create(null, propertyInfo);
+            var actual = rule.Create(null, parameterInfo);
 
             actual.Should().Be(value);
         }
@@ -101,7 +102,8 @@
         [Fact]
         public void AddCreationRuleWithParameterPredicateGeneratorAddsRuleToConfiguration()
         {
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var parameterInfo = typeof(Person).GetConstructors()
+                .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
             var value = Guid.NewGuid().ToString();
             var priority = Environment.TickCount;
 
@@ -113,7 +115,7 @@
 
             rule.Priority.Should().Be(priority);
 
-            var actual = rule.Create(null, propertyInfo);
+            var actual = rule.Create(null, parameterInfo);
 
             actual.Should().Be(value);
         }
@@ -420,7 +422,7 @@
         [Fact]
         public void AddCreationRuleWithTypePredicateAddsRuleToConfiguration()
         {
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var type = typeof(string);
             var value = Guid.NewGuid().ToString();
             var priority = Environment.TickCount;
 
@@ -432,7 +434,7 @@
 
             rule.Priority.Should().Be(priority);
 
-            var actual = rule.Create(null, propertyInfo);
+            var actual = rule.Create(null, type);
 
             actual.Should().Be(value);
         }
@@ -440,7 +442,7 @@
         [Fact]
         public void AddCreationRuleWithTypePredicateGeneratorAddsRuleToConfiguration()
         {
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var type = typeof(string);
             var value = Guid.NewGuid().ToString();
             var priority = Environment.TickCount;
 
@@ -452,7 +454,7 @@
 
             rule.Priority.Should().Be(priority);
 
-            var actual = rule.Create(null, propertyInfo);
+            var actual = rule.Create(null, type);
 
             actual.Should().Be(value);
         }

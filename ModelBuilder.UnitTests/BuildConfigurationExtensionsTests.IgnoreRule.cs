@@ -114,6 +114,14 @@
         }
 
         [Fact]
+        public void AddIgnoreRuleWithRegexExpressionThrowsExceptionWithNullConfiguration()
+        {
+            Action action = () => BuildConfigurationExtensions.AddIgnoreRule(null, NameExpression.LastName);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
         public void AddIgnoreRuleWithRegexThrowsExceptionWithNullConfiguration()
         {
             Action action = () => BuildConfigurationExtensions.AddIgnoreRule(null, NameExpression.LastName);
@@ -160,7 +168,7 @@
         [Fact]
         public void AddIgnoreRuleWithStringExpressionThrowsExceptionWithNullConfiguration()
         {
-            Action action = () => BuildConfigurationExtensions.AddIgnoreRule(null, NameExpression.LastName);
+            Action action = () => BuildConfigurationExtensions.AddIgnoreRule(null, "First");
 
             action.Should().Throw<ArgumentNullException>();
         }

@@ -110,7 +110,7 @@
         }
 
         /// <summary>
-        ///     Adds a new <see cref="PredicateCreationRule" /> to the configuration.
+        ///     Adds a new <see cref="PropertyPredicateCreationRule" /> to the configuration.
         /// </summary>
         /// <param name="configuration">The configuration.</param>
         /// <param name="predicate">The predicate that matches on a target type.</param>
@@ -134,7 +134,7 @@
                 throw new ArgumentNullException(nameof(predicate));
             }
 
-            var rule = new PredicateCreationRule(predicate, value, priority);
+            var rule = new TypePredicateCreationRule(predicate, value, priority);
 
             configuration.CreationRules.Add(rule);
 
@@ -142,7 +142,7 @@
         }
 
         /// <summary>
-        ///     Adds a new <see cref="PredicateCreationRule" /> to the configuration.
+        ///     Adds a new <see cref="PropertyPredicateCreationRule" /> to the configuration.
         /// </summary>
         /// <param name="configuration">The configuration.</param>
         /// <param name="predicate">The predicate that matches on a target type.</param>
@@ -171,7 +171,7 @@
                 throw new ArgumentNullException(nameof(valueGenerator));
             }
 
-            var rule = new PredicateCreationRule(predicate, valueGenerator, priority);
+            var rule = new TypePredicateCreationRule(predicate, valueGenerator, priority);
 
             configuration.CreationRules.Add(rule);
 
@@ -179,7 +179,7 @@
         }
 
         /// <summary>
-        ///     Adds a new <see cref="PredicateCreationRule" /> to the configuration.
+        ///     Adds a new <see cref="PropertyPredicateCreationRule" /> to the configuration.
         /// </summary>
         /// <param name="configuration">The configuration.</param>
         /// <param name="predicate">The predicate that matches on a property.</param>
@@ -203,7 +203,7 @@
                 throw new ArgumentNullException(nameof(predicate));
             }
 
-            var rule = new PredicateCreationRule(predicate, value, priority);
+            var rule = new PropertyPredicateCreationRule(predicate, value, priority);
 
             configuration.CreationRules.Add(rule);
 
@@ -211,7 +211,7 @@
         }
 
         /// <summary>
-        ///     Adds a new <see cref="PredicateCreationRule" /> to the configuration.
+        ///     Adds a new <see cref="PropertyPredicateCreationRule" /> to the configuration.
         /// </summary>
         /// <param name="configuration">The configuration.</param>
         /// <param name="predicate">The predicate that matches on a property.</param>
@@ -240,7 +240,7 @@
                 throw new ArgumentNullException(nameof(valueGenerator));
             }
 
-            var rule = new PredicateCreationRule(predicate, valueGenerator, priority);
+            var rule = new PropertyPredicateCreationRule(predicate, valueGenerator, priority);
 
             configuration.CreationRules.Add(rule);
 
@@ -248,7 +248,7 @@
         }
 
         /// <summary>
-        ///     Adds a new <see cref="PredicateCreationRule" /> to the configuration.
+        ///     Adds a new <see cref="PropertyPredicateCreationRule" /> to the configuration.
         /// </summary>
         /// <param name="configuration">The configuration.</param>
         /// <param name="predicate">The predicate that matches on a parameter.</param>
@@ -272,7 +272,7 @@
                 throw new ArgumentNullException(nameof(predicate));
             }
 
-            var rule = new PredicateCreationRule(predicate, value, priority);
+            var rule = new ParameterPredicateCreationRule(predicate, value, priority);
 
             configuration.CreationRules.Add(rule);
 
@@ -280,7 +280,7 @@
         }
 
         /// <summary>
-        ///     Adds a new <see cref="PredicateCreationRule" /> to the configuration.
+        ///     Adds a new <see cref="PropertyPredicateCreationRule" /> to the configuration.
         /// </summary>
         /// <param name="configuration">The configuration.</param>
         /// <param name="predicate">The predicate that matches on a parameter.</param>
@@ -309,7 +309,7 @@
                 throw new ArgumentNullException(nameof(valueGenerator));
             }
 
-            var rule = new PredicateCreationRule(predicate, valueGenerator, priority);
+            var rule = new ParameterPredicateCreationRule(predicate, valueGenerator, priority);
 
             configuration.CreationRules.Add(rule);
 
