@@ -1,6 +1,7 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
     using FluentAssertions;
@@ -231,6 +232,46 @@
             actual.Value.Should().BeEmpty();
 
             processor.DidNotReceive().Populate(sut, expected);
+        }
+
+        [Fact]
+        public void CreateDoesNotEvaluatesEmptyPostBuildActions()
+        {
+            var buildConfiguration = Model.UsingDefaultConfiguration();
+
+            var sut = new DefaultExecuteStrategy();
+
+            sut.Initialize(buildConfiguration);
+
+            var actual = sut.Create(typeof(SimpleConstructor));
+
+            actual.Should().NotBeNull();
+        }
+
+        [Fact]
+        public void CreateDoesNotEvaluatesNullPostBuildActions()
+        {
+            var defaultConfiguration = Model.UsingDefaultConfiguration();
+            var configuration = Substitute.For<IBuildConfiguration>();
+
+            configuration.PropertyResolver.Returns(defaultConfiguration.PropertyResolver);
+            configuration.ConstructorResolver.Returns(defaultConfiguration.ConstructorResolver);
+            configuration.CreationRules.Returns(defaultConfiguration.CreationRules);
+            configuration.ExecuteOrderRules.Returns(defaultConfiguration.ExecuteOrderRules);
+            configuration.IgnoreRules.Returns(defaultConfiguration.IgnoreRules);
+            configuration.PostBuildActions.Returns((ICollection<IPostBuildAction>) null);
+            configuration.TypeCreators.Returns(defaultConfiguration.TypeCreators);
+            configuration.TypeMappingRules.Returns(defaultConfiguration.TypeMappingRules);
+            configuration.TypeResolver.Returns(defaultConfiguration.TypeResolver);
+            configuration.ValueGenerators.Returns(defaultConfiguration.ValueGenerators);
+
+            var sut = new DefaultExecuteStrategy();
+
+            sut.Initialize(configuration);
+
+            var actual = sut.Create(typeof(SimpleConstructor));
+
+            actual.Should().NotBeNull();
         }
 
         [Fact]
@@ -1035,6 +1076,39 @@
             var sut = new DefaultExecuteStrategy();
 
             Action action = () => sut.Populate(null);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void ThrowsExceptionWithNullBuildHistory()
+        {
+            var buildLog = Substitute.For<IBuildLog>();
+            var buildProcessor = Substitute.For<IBuildProcessor>();
+
+            Action action = () => new DefaultExecuteStrategy(null, buildLog, buildProcessor);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void ThrowsExceptionWithNullBuildLog()
+        {
+            var buildHistory = Substitute.For<IBuildHistory>();
+            var buildProcessor = Substitute.For<IBuildProcessor>();
+
+            Action action = () => new DefaultExecuteStrategy(buildHistory, null, buildProcessor);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void ThrowsExceptionWithNullBuildProcessor()
+        {
+            var buildHistory = Substitute.For<IBuildHistory>();
+            var buildLog = Substitute.For<IBuildLog>();
+
+            Action action = () => new DefaultExecuteStrategy(buildHistory, buildLog, null);
 
             action.Should().Throw<ArgumentNullException>();
         }
