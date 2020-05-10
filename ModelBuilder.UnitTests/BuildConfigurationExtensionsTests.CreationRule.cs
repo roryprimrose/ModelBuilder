@@ -99,6 +99,65 @@
         }
 
         [Fact]
+        public void AddCreationRuleWithParameterPredicateGeneratorAddsRuleToConfiguration()
+        {
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var value = Guid.NewGuid().ToString();
+            var priority = Environment.TickCount;
+
+            var sut = new BuildConfiguration();
+
+            sut.AddCreationRule(x => x.ParameterType == typeof(string), () => value, priority);
+
+            var rule = sut.CreationRules.Single();
+
+            rule.Priority.Should().Be(priority);
+
+            var actual = rule.Create(null, propertyInfo);
+
+            actual.Should().Be(value);
+        }
+
+        [Fact]
+        public void AddCreationRuleWithParameterPredicateGeneratorThrowsExceptionWithNullConfiguration()
+        {
+            var priority = Environment.TickCount;
+            var value = Guid.NewGuid().ToString();
+
+            Action action = () =>
+                BuildConfigurationExtensions.AddCreationRule(null, x => x.ParameterType == typeof(string), () => value,
+                    priority);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void AddCreationRuleWithParameterPredicateGeneratorThrowsExceptionWithNullPredicate()
+        {
+            var priority = Environment.TickCount;
+            var value = Guid.NewGuid().ToString();
+
+            var sut = new BuildConfiguration();
+
+            Action action = () => sut.AddCreationRule((Predicate<ParameterInfo>) null, () => value, priority);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void AddCreationRuleWithParameterPredicateGeneratorThrowsExceptionWithNullValueGenerator()
+        {
+            var priority = Environment.TickCount;
+            var value = Guid.NewGuid().ToString();
+
+            var sut = new BuildConfiguration();
+
+            Action action = () => sut.AddCreationRule(x => x.ParameterType == typeof(string), null, priority);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
         public void AddCreationRuleWithParameterPredicateThrowsExceptionWithNullConfiguration()
         {
             var priority = Environment.TickCount;
@@ -142,6 +201,64 @@
             var actual = rule.Create(null, propertyInfo);
 
             actual.Should().Be(value);
+        }
+
+        [Fact]
+        public void AddCreationRuleWithPropertyPredicateGeneratorAddsRuleToConfiguration()
+        {
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var value = Guid.NewGuid().ToString();
+            var priority = Environment.TickCount;
+
+            var sut = new BuildConfiguration();
+
+            sut.AddCreationRule(x => x.PropertyType == typeof(string), () => value, priority);
+
+            var rule = sut.CreationRules.Single();
+
+            rule.Priority.Should().Be(priority);
+
+            var actual = rule.Create(null, propertyInfo);
+
+            actual.Should().Be(value);
+        }
+
+        [Fact]
+        public void AddCreationRuleWithPropertyPredicateGeneratorThrowsExceptionWithNullConfiguration()
+        {
+            var priority = Environment.TickCount;
+            var value = Guid.NewGuid().ToString();
+
+            Action action = () =>
+                BuildConfigurationExtensions.AddCreationRule(null, x => x.PropertyType == typeof(string), () => value,
+                    priority);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void AddCreationRuleWithPropertyPredicateGeneratorThrowsExceptionWithNullPredicate()
+        {
+            var priority = Environment.TickCount;
+            var value = Guid.NewGuid().ToString();
+
+            var sut = new BuildConfiguration();
+
+            Action action = () => sut.AddCreationRule((Predicate<PropertyInfo>) null, () => value, priority);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void AddCreationRuleWithPropertyPredicateGeneratorThrowsExceptionWithNullValueGenerator()
+        {
+            var priority = Environment.TickCount;
+
+            var sut = new BuildConfiguration();
+
+            Action action = () => sut.AddCreationRule(x => x.PropertyType == typeof(string), null, priority);
+
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -318,6 +435,65 @@
             var actual = rule.Create(null, propertyInfo);
 
             actual.Should().Be(value);
+        }
+
+        [Fact]
+        public void AddCreationRuleWithTypePredicateGeneratorAddsRuleToConfiguration()
+        {
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var value = Guid.NewGuid().ToString();
+            var priority = Environment.TickCount;
+
+            var sut = new BuildConfiguration();
+
+            sut.AddCreationRule((Type x) => x == typeof(string), () => value, priority);
+
+            var rule = sut.CreationRules.Single();
+
+            rule.Priority.Should().Be(priority);
+
+            var actual = rule.Create(null, propertyInfo);
+
+            actual.Should().Be(value);
+        }
+
+        [Fact]
+        public void AddCreationRuleWithTypePredicateGeneratorThrowsExceptionWithNullConfiguration()
+        {
+            var priority = Environment.TickCount;
+            var value = Guid.NewGuid().ToString();
+
+            Action action = () =>
+                BuildConfigurationExtensions.AddCreationRule(null, (Type x) => x == typeof(string), () => value,
+                    priority);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void AddCreationRuleWithTypePredicateGeneratorThrowsExceptionWithNullPredicate()
+        {
+            var priority = Environment.TickCount;
+            var value = Guid.NewGuid().ToString();
+
+            var sut = new BuildConfiguration();
+
+            Action action = () => sut.AddCreationRule((Predicate<Type>) null, () => value, priority);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void AddCreationRuleWithTypePredicateGeneratorThrowsExceptionWithNullValueGenerator()
+        {
+            var priority = Environment.TickCount;
+            var value = Guid.NewGuid().ToString();
+
+            var sut = new BuildConfiguration();
+
+            Action action = () => sut.AddCreationRule((Type x) => x == typeof(string), null, priority);
+
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]

@@ -126,29 +126,11 @@
   <data name="Error_TypeNotSupportedFormat" xml:space="preserve">
     <value>{0} does not support the {1} type</value>
   </data>
-  <data name="NoMatchingBuildActionFound" xml:space="preserve">
-    <value>No supporting ICreationRule, ITypeCreator or IValueGenerator was found to build the type '{0}'</value>
-  </data>
-  <data name="NoMatchingBuildActionFoundWithName" xml:space="preserve">
-    <value>No supporting ICreationRule, ITypeCreator or IValueGenerator was found to build the type '{0}' for '{1}'</value>
-  </data>
-  <data name="NoMatchingBuildActionFoundWithNameAndContext" xml:space="preserve">
-    <value>No supporting ICreationRule, ITypeCreator or IValueGenerator was found to build the type '{0}' for '{1}' on type '{2}'</value>
-  </data>
-  <data name="NoTargetTypeOrPropertyName" xml:space="preserve">
-    <value>Either targetType or propertyName must be supplied</value>
-  </data>
   <data name="Error_ExpressionTargetsWrongType" xml:space="preserve">
     <value>The expression returned a property {0} that was not defined on type '{1}'</value>
   </data>
-  <data name="NoTargetTypeOrPropertyExpression" xml:space="preserve">
-    <value>Either targetType or propertyExpression must be supplied</value>
-  </data>
   <data name="ArgumentException_NullOrWhiteSpace" xml:space="preserve">
     <value>The value cannot be null, white space or empty</value>
-  </data>
-  <data name="BuildStrategyCompiler_NullConstructorResolver" xml:space="preserve">
-    <value>The ConstructorResolver is null. A constructor resolver must be provided in order to create a build strategy</value>
   </data>
   <data name="DefaultBuildLog_CreatedType" xml:space="preserve">
     <value>End creating type {0}</value>
@@ -171,20 +153,11 @@
   <data name="DefaultBuildLog_PopulatingInstance" xml:space="preserve">
     <value>Start populating instance {0}</value>
   </data>
-  <data name="Rule_InvalidMatch" xml:space="preserve">
-    <value>The rule {0} does not support type '{1}' for '{2}'</value>
-  </data>
-  <data name="RelativeValueGenerator_NoSourceExpression" xml:space="preserve">
-    <value>This generator was not created with a source expression. Call GetValue&lt;T&gt;(expression, context) instead</value>
-  </data>
   <data name="DefaultBuildLog_CircularReferenceDetected" xml:space="preserve">
     <value>Detected circular reference building type {0}, using previously created instance</value>
   </data>
   <data name="ConstructorResolver_NoValidConstructorFound" xml:space="preserve">
     <value>No valid constructors are available for type {0}</value>
-  </data>
-  <data name="BuildStrategy_BuildLogRequired" xml:space="preserve">
-    <value>{0} did not return an {1} instance. A build log is required to create an {2} instance</value>
   </data>
   <data name="DefaultBuildLog_PostBuild" xml:space="preserve">
     <value>Running PostBuild on {0} using {1}</value>
@@ -204,21 +177,6 @@
   <data name="Error_GenerationNotSupportedFormat" xml:space="preserve">
     <value>{0} does not support the {1} type and reference name {2} in the context of the current build chain</value>
   </data>
-  <data name="BuildStrategyCompiler_NullPropertyResolver" xml:space="preserve">
-    <value>The PropertyResolver is null. A property resolver must be provided in order to create a build strategy</value>
-  </data>
-  <data name="NoPropertyTypeOrPropertyExpression" xml:space="preserve">
-    <value>Either propertyType or propertyExpression must be supplied</value>
-  </data>
-  <data name="NoPropertyTypeOrPropertyName" xml:space="preserve">
-    <value>Either propertyType or propertyName must be supplied</value>
-  </data>
-  <data name="NoOwnerTypePropertyTypeOrPropertyExpression" xml:space="preserve">
-    <value>Either declaringType, propertyType or propertyExpression must be supplied</value>
-  </data>
-  <data name="NoOwnerTypePropertyTypeOrPropertyName" xml:space="preserve">
-    <value>Either declaringType, propertyType or propertyName must be supplied</value>
-  </data>
   <data name="DefaultBuildLog_MappingType" xml:space="preserve">
     <value>Mapped type requested from {0} to {1}</value>
   </data>
@@ -227,9 +185,6 @@
   </data>
   <data name="DefaultTypeCreator_NoMatchingConstructor" xml:space="preserve">
     <value>No constructor found matching type.</value>
-  </data>
-  <data name="DefaultBuildStrategy_UndeterminedTargetType" xml:space="preserve">
-    <value>Failed to determine type to build.</value>
   </data>
   <data name="ExpressionCreationRule_CreateWithTypeNotSupported" xml:space="preserve">
     <value>The class does not support creating values for types.</value>

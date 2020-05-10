@@ -145,6 +145,43 @@
         ///     Adds a new <see cref="PredicateCreationRule" /> to the configuration.
         /// </summary>
         /// <param name="configuration">The configuration.</param>
+        /// <param name="predicate">The predicate that matches on a target type.</param>
+        /// <param name="valueGenerator">The value generator used by the rule to return a value.</param>
+        /// <param name="priority">The priority of the rule.</param>
+        /// <returns>The configuration.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="configuration" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="predicate" /> parameter is <c>null</c>.</exception>
+        public static IBuildConfiguration AddCreationRule(this IBuildConfiguration configuration,
+            Predicate<Type> predicate,
+            Func<object> valueGenerator,
+            int priority)
+        {
+            if (configuration == null)
+            {
+                throw new ArgumentNullException(nameof(configuration));
+            }
+
+            if (predicate == null)
+            {
+                throw new ArgumentNullException(nameof(predicate));
+            }
+
+            if (valueGenerator == null)
+            {
+                throw new ArgumentNullException(nameof(valueGenerator));
+            }
+
+            var rule = new PredicateCreationRule(predicate, valueGenerator, priority);
+
+            configuration.CreationRules.Add(rule);
+
+            return configuration;
+        }
+
+        /// <summary>
+        ///     Adds a new <see cref="PredicateCreationRule" /> to the configuration.
+        /// </summary>
+        /// <param name="configuration">The configuration.</param>
         /// <param name="predicate">The predicate that matches on a property.</param>
         /// <param name="value">The static value returned by the rule.</param>
         /// <param name="priority">The priority of the rule.</param>
@@ -177,6 +214,43 @@
         ///     Adds a new <see cref="PredicateCreationRule" /> to the configuration.
         /// </summary>
         /// <param name="configuration">The configuration.</param>
+        /// <param name="predicate">The predicate that matches on a property.</param>
+        /// <param name="valueGenerator">The value generator used by the rule to return a value.</param>
+        /// <param name="priority">The priority of the rule.</param>
+        /// <returns>The configuration.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="configuration" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="predicate" /> parameter is <c>null</c>.</exception>
+        public static IBuildConfiguration AddCreationRule(this IBuildConfiguration configuration,
+            Predicate<PropertyInfo> predicate,
+            Func<object> valueGenerator,
+            int priority)
+        {
+            if (configuration == null)
+            {
+                throw new ArgumentNullException(nameof(configuration));
+            }
+
+            if (predicate == null)
+            {
+                throw new ArgumentNullException(nameof(predicate));
+            }
+
+            if (valueGenerator == null)
+            {
+                throw new ArgumentNullException(nameof(valueGenerator));
+            }
+
+            var rule = new PredicateCreationRule(predicate, valueGenerator, priority);
+
+            configuration.CreationRules.Add(rule);
+
+            return configuration;
+        }
+
+        /// <summary>
+        ///     Adds a new <see cref="PredicateCreationRule" /> to the configuration.
+        /// </summary>
+        /// <param name="configuration">The configuration.</param>
         /// <param name="predicate">The predicate that matches on a parameter.</param>
         /// <param name="value">The static value returned by the rule.</param>
         /// <param name="priority">The priority of the rule.</param>
@@ -199,6 +273,43 @@
             }
 
             var rule = new PredicateCreationRule(predicate, value, priority);
+
+            configuration.CreationRules.Add(rule);
+
+            return configuration;
+        }
+
+        /// <summary>
+        ///     Adds a new <see cref="PredicateCreationRule" /> to the configuration.
+        /// </summary>
+        /// <param name="configuration">The configuration.</param>
+        /// <param name="predicate">The predicate that matches on a parameter.</param>
+        /// <param name="valueGenerator">The value generator used by the rule to return a value.</param>
+        /// <param name="priority">The priority of the rule.</param>
+        /// <returns>The configuration.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="configuration" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="predicate" /> parameter is <c>null</c>.</exception>
+        public static IBuildConfiguration AddCreationRule(this IBuildConfiguration configuration,
+            Predicate<ParameterInfo> predicate,
+            Func<object> valueGenerator,
+            int priority)
+        {
+            if (configuration == null)
+            {
+                throw new ArgumentNullException(nameof(configuration));
+            }
+
+            if (predicate == null)
+            {
+                throw new ArgumentNullException(nameof(predicate));
+            }
+
+            if (valueGenerator == null)
+            {
+                throw new ArgumentNullException(nameof(valueGenerator));
+            }
+
+            var rule = new PredicateCreationRule(predicate, valueGenerator, priority);
 
             configuration.CreationRules.Add(rule);
 
