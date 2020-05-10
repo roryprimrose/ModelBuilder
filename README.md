@@ -403,6 +403,7 @@ An `IValueGenerator` is used to create value types. There are many value generat
 - IPAddressValueGenerator
 - LastNameValueGenerator
 - MailinatorEmailValueGenerator **(NOTE: This generator is not included in DefaultBuildConfiguration by default)**
+- MiddleNameValueGenerator
 - NumericValueGenerator
 - PhoneValueGenerator
 - PostCodeValueGenerator

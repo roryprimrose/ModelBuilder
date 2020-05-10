@@ -54,6 +54,11 @@
         public static readonly Regex LastName = new Regex("Surname|(Last[_]?Name)", RegexOptions.IgnoreCase);
 
         /// <summary>
+        ///     Defines the expression for matching middle name properties.
+        /// </summary>
+        public static readonly Regex MiddleName = new Regex("(Middle|Second)[_]?Name", RegexOptions.IgnoreCase);
+
+        /// <summary>
         ///     Defines the expression for matching postcode properties.
         /// </summary>
         public static readonly Regex PostCode = new Regex("PostCode|Zip(Code)?", RegexOptions.IgnoreCase);

@@ -32,6 +32,7 @@
             // Populate personal properties in a specific order for scenarios where a value generator may use the values in order to set other values
             configuration.AddExecuteOrderRule(NameExpression.Gender, 9600);
             configuration.AddExecuteOrderRule(NameExpression.FirstName, 9580);
+            configuration.AddExecuteOrderRule(NameExpression.MiddleName, 9570);
             configuration.AddExecuteOrderRule(NameExpression.LastName, 9560);
             configuration.AddExecuteOrderRule(NameExpression.Domain, 9550);
             configuration.AddExecuteOrderRule(NameExpression.Email, 9540);
@@ -79,6 +80,7 @@
             configuration.AddValueGenerator<GuidValueGenerator>();
             configuration.AddValueGenerator<IPAddressValueGenerator>();
             configuration.AddValueGenerator<LastNameValueGenerator>();
+            configuration.AddValueGenerator<MiddleNameValueGenerator>();
             configuration.AddValueGenerator<NumericValueGenerator>();
             configuration.AddValueGenerator<PhoneValueGenerator>();
             configuration.AddValueGenerator<PostCodeValueGenerator>();

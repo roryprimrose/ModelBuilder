@@ -187,6 +187,33 @@
 
         [Theory]
         [InlineData("stuff", false)]
+        [InlineData("secondname", true)]
+        [InlineData("Secondname", true)]
+        [InlineData("SecondName", true)]
+        [InlineData("secondName", true)]
+        [InlineData("second_name", true)]
+        [InlineData("Second_name", true)]
+        [InlineData("Second_Name", true)]
+        [InlineData("second_Name", true)]
+        [InlineData("middlename", true)]
+        [InlineData("Middlename", true)]
+        [InlineData("MiddleName", true)]
+        [InlineData("middleName", true)]
+        [InlineData("middle_name", true)]
+        [InlineData("Middle_name", true)]
+        [InlineData("Middle_Name", true)]
+        [InlineData("middle_Name", true)]
+        public void SecondNameEvaluatesValueTest(string value, bool expected)
+        {
+            var sut = NameExpression.MiddleName;
+
+            var actual = sut.IsMatch(value);
+
+            actual.Should().Be(expected);
+        }
+
+        [Theory]
+        [InlineData("stuff", false)]
         [InlineData("state", true)]
         [InlineData("State", true)]
         [InlineData("CurrentState", true)]
