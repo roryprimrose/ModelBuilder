@@ -251,10 +251,10 @@
         [Fact]
         public void PriorityReturnsMinimumValue()
         {
-            var buildStrategy = new BuildHistory();
+            var buildHistory = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
-            executeStrategy.BuildChain.Returns(buildStrategy);
+            executeStrategy.BuildChain.Returns(buildHistory);
 
             var sut = Substitute.ForPartsOf<ValueGeneratorBase>();
 

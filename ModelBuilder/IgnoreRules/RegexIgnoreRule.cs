@@ -19,6 +19,21 @@
         /// </summary>
         /// <param name="expression">The expression used to match on property name.</param>
         /// <exception cref="ArgumentNullException">The <paramref name="expression" /> parameter is <c>null</c>.</exception>
+        public RegexIgnoreRule(string expression)
+        {
+            if (string.IsNullOrEmpty(expression))
+            {
+                throw new ArgumentNullException(nameof(expression));
+            }
+
+            _expression = new Regex(expression);
+        }
+
+        /// <summary>
+        ///     Creates a new instance of the <see cref="RegexIgnoreRule" /> class.
+        /// </summary>
+        /// <param name="expression">The expression used to match on property name.</param>
+        /// <exception cref="ArgumentNullException">The <paramref name="expression" /> parameter is <c>null</c>.</exception>
         public RegexIgnoreRule(Regex expression)
         {
             _expression = expression ?? throw new ArgumentNullException(nameof(expression));

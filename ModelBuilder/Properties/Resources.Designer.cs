@@ -70,33 +70,6 @@ namespace ModelBuilder.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} did not return an {1} instance. A build log is required to create an {2} instance.
-        /// </summary>
-        internal static string BuildStrategy_BuildLogRequired {
-            get {
-                return ResourceManager.GetString("BuildStrategy_BuildLogRequired", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The ConstructorResolver is null. A constructor resolver must be provided in order to create a build strategy.
-        /// </summary>
-        internal static string BuildStrategyCompiler_NullConstructorResolver {
-            get {
-                return ResourceManager.GetString("BuildStrategyCompiler_NullConstructorResolver", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The PropertyResolver is null. A property resolver must be provided in order to create a build strategy.
-        /// </summary>
-        internal static string BuildStrategyCompiler_NullPropertyResolver {
-            get {
-                return ResourceManager.GetString("BuildStrategyCompiler_NullPropertyResolver", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to No public constructor is available for type {0}.
         /// </summary>
         internal static string ConstructorResolver_NoPublicConstructorFound {
@@ -232,15 +205,6 @@ namespace ModelBuilder.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Failed to determine type to build..
-        /// </summary>
-        internal static string DefaultBuildStrategy_UndeterminedTargetType {
-            get {
-                return ResourceManager.GetString("DefaultBuildStrategy_UndeterminedTargetType", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to No constructor found matching type..
         /// </summary>
         internal static string DefaultTypeCreator_NoMatchingConstructor {
@@ -309,105 +273,6 @@ namespace ModelBuilder.Properties {
         internal static string ExpressionCreationRule_CreateWithTypeNotSupported {
             get {
                 return ResourceManager.GetString("ExpressionCreationRule_CreateWithTypeNotSupported", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to No supporting ICreationRule, ITypeCreator or IValueGenerator was found to build the type &apos;{0}&apos;.
-        /// </summary>
-        internal static string NoMatchingBuildActionFound {
-            get {
-                return ResourceManager.GetString("NoMatchingBuildActionFound", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to No supporting ICreationRule, ITypeCreator or IValueGenerator was found to build the type &apos;{0}&apos; for &apos;{1}&apos;.
-        /// </summary>
-        internal static string NoMatchingBuildActionFoundWithName {
-            get {
-                return ResourceManager.GetString("NoMatchingBuildActionFoundWithName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to No supporting ICreationRule, ITypeCreator or IValueGenerator was found to build the type &apos;{0}&apos; for &apos;{1}&apos; on type &apos;{2}&apos;.
-        /// </summary>
-        internal static string NoMatchingBuildActionFoundWithNameAndContext {
-            get {
-                return ResourceManager.GetString("NoMatchingBuildActionFoundWithNameAndContext", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Either declaringType, propertyType or propertyExpression must be supplied.
-        /// </summary>
-        internal static string NoOwnerTypePropertyTypeOrPropertyExpression {
-            get {
-                return ResourceManager.GetString("NoOwnerTypePropertyTypeOrPropertyExpression", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Either declaringType, propertyType or propertyName must be supplied.
-        /// </summary>
-        internal static string NoOwnerTypePropertyTypeOrPropertyName {
-            get {
-                return ResourceManager.GetString("NoOwnerTypePropertyTypeOrPropertyName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Either propertyType or propertyExpression must be supplied.
-        /// </summary>
-        internal static string NoPropertyTypeOrPropertyExpression {
-            get {
-                return ResourceManager.GetString("NoPropertyTypeOrPropertyExpression", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Either propertyType or propertyName must be supplied.
-        /// </summary>
-        internal static string NoPropertyTypeOrPropertyName {
-            get {
-                return ResourceManager.GetString("NoPropertyTypeOrPropertyName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Either targetType or propertyExpression must be supplied.
-        /// </summary>
-        internal static string NoTargetTypeOrPropertyExpression {
-            get {
-                return ResourceManager.GetString("NoTargetTypeOrPropertyExpression", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Either targetType or propertyName must be supplied.
-        /// </summary>
-        internal static string NoTargetTypeOrPropertyName {
-            get {
-                return ResourceManager.GetString("NoTargetTypeOrPropertyName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to This generator was not created with a source expression. Call GetValue&lt;T&gt;(expression, context) instead.
-        /// </summary>
-        internal static string RelativeValueGenerator_NoSourceExpression {
-            get {
-                return ResourceManager.GetString("RelativeValueGenerator_NoSourceExpression", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The rule {0} does not support type &apos;{1}&apos; for &apos;{2}&apos;.
-        /// </summary>
-        internal static string Rule_InvalidMatch {
-            get {
-                return ResourceManager.GetString("Rule_InvalidMatch", resourceCulture);
             }
         }
         

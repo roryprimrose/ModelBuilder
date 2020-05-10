@@ -10,7 +10,7 @@
     public partial class BuildConfigurationExtensionsTests
     {
         [Fact]
-        public void AddTypeCreatorAddsRuleToCompiler()
+        public void AddTypeCreatorAddsRuleToConfiguration()
         {
             var sut = new BuildConfiguration();
 
@@ -22,7 +22,7 @@
         }
 
         [Fact]
-        public void AddTypeCreatorThrowsExceptionWithNullCompiler()
+        public void AddTypeCreatorThrowsExceptionWithNullConfiguration()
         {
             Action action = () => BuildConfigurationExtensions.AddTypeCreator<DefaultTypeCreator>(null);
 
@@ -30,7 +30,7 @@
         }
 
         [Fact]
-        public void AddWithTypeCreatorAddsRuleToCompiler()
+        public void AddWithTypeCreatorAddsRuleToConfiguration()
         {
             var rule = new DefaultTypeCreator();
 
@@ -42,7 +42,7 @@
         }
 
         [Fact]
-        public void AddWithTypeCreatorThrowsExceptionWithNullCompiler()
+        public void AddWithTypeCreatorThrowsExceptionWithNullConfiguration()
         {
             var rule = new DefaultTypeCreator();
 
@@ -62,7 +62,7 @@
         }
 
         [Fact]
-        public void RemoveTypeCreatorRemovesMultipleMatchingRulesFromCompiler()
+        public void RemoveTypeCreatorRemovesMultipleMatchingRulesFromConfiguration()
         {
             var sut = new BuildConfiguration();
 
@@ -75,7 +75,7 @@
         }
 
         [Fact]
-        public void RemoveTypeCreatorRemovesRulesFromCompiler()
+        public void RemoveTypeCreatorRemovesRulesFromConfiguration()
         {
             var sut = new BuildConfiguration();
 
@@ -86,7 +86,7 @@
         }
 
         [Fact]
-        public void RemoveTypeCreatorThrowsExceptionWithNullCompiler()
+        public void RemoveTypeCreatorThrowsExceptionWithNullConfiguration()
         {
             Action action = () => BuildConfigurationExtensions.RemoveTypeCreator<DefaultTypeCreator>(null);
 

@@ -9,7 +9,7 @@
     public partial class BuildConfigurationExtensionsTests
     {
         [Fact]
-        public void AddPostBuildActionAddsRuleToCompiler()
+        public void AddPostBuildActionAddsRuleToConfiguration()
         {
             var sut = new BuildConfiguration();
 
@@ -21,7 +21,7 @@
         }
 
         [Fact]
-        public void AddPostBuildActionThrowsExceptionWithNullCompiler()
+        public void AddPostBuildActionThrowsExceptionWithNullConfiguration()
         {
             Action action = () => BuildConfigurationExtensions.AddPostBuildAction<DummyPostBuildAction>(null);
 
@@ -29,7 +29,7 @@
         }
 
         [Fact]
-        public void AddWithPostBuildActionAddsRuleToCompiler()
+        public void AddWithPostBuildActionAddsRuleToConfiguration()
         {
             var postBuildAction = new DummyPostBuildAction();
 
@@ -41,7 +41,7 @@
         }
 
         [Fact]
-        public void AddWithPostBuildActionThrowsExceptionWithNullCompiler()
+        public void AddWithPostBuildActionThrowsExceptionWithNullConfiguration()
         {
             var postBuildAction = new DummyPostBuildAction();
 
@@ -61,7 +61,7 @@
         }
 
         [Fact]
-        public void RemovePostBuildActionRemovesMultipleMatchingRulesFromCompiler()
+        public void RemovePostBuildActionRemovesMultipleMatchingRulesFromConfiguration()
         {
             var sut = new BuildConfiguration();
 
@@ -74,7 +74,7 @@
         }
 
         [Fact]
-        public void RemovePostBuildActionRemovesRulesFromCompiler()
+        public void RemovePostBuildActionRemovesRulesFromConfiguration()
         {
             var sut = new BuildConfiguration();
 
@@ -85,7 +85,7 @@
         }
 
         [Fact]
-        public void RemovePostBuildActionThrowsExceptionWithNullCompiler()
+        public void RemovePostBuildActionThrowsExceptionWithNullConfiguration()
         {
             Action action = () => BuildConfigurationExtensions.RemovePostBuildAction<DummyPostBuildAction>(null);
 

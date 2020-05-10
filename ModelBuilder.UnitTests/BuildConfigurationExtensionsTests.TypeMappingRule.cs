@@ -11,7 +11,7 @@
     public partial class BuildConfigurationExtensionsTests
     {
         [Fact]
-        public void AddTypeMappingRuleAddsRuleToCompiler()
+        public void AddTypeMappingRuleAddsRuleToConfiguration()
         {
             var sut = new BuildConfiguration();
 
@@ -39,7 +39,7 @@
         }
 
         [Fact]
-        public void AddTypeMappingRuleThrowsExceptionWithNullCompiler()
+        public void AddTypeMappingRuleThrowsExceptionWithNullConfiguration()
         {
             Action action = () => BuildConfigurationExtensions.AddTypeMappingRule<DummyTypeMappingRule>(null);
 
@@ -47,7 +47,15 @@
         }
 
         [Fact]
-        public void AddWithTypeMappingRuleAddsRuleToCompiler()
+        public void AddTypeMappingRuleWithGenericTypesThrowsExceptionWithNullConfiguration()
+        {
+            Action action = () => BuildConfigurationExtensions.AddTypeMappingRule<Stream, MemoryStream>(null);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void AddWithTypeMappingRuleAddsRuleToConfiguration()
         {
             var rule = new TypeMappingRule(typeof(Stream), typeof(MemoryStream));
 
@@ -59,7 +67,7 @@
         }
 
         [Fact]
-        public void AddWithTypeMappingRuleThrowsExceptionWithNullCompiler()
+        public void AddWithTypeMappingRuleThrowsExceptionWithNullConfiguration()
         {
             var rule = new TypeMappingRule(typeof(Stream), typeof(MemoryStream));
 
@@ -106,7 +114,7 @@
         }
 
         [Fact]
-        public void RemoveTypeMappingRuleRemovesMultipleMatchingRulesFromCompiler()
+        public void RemoveTypeMappingRuleRemovesMultipleMatchingRulesFromConfiguration()
         {
             var sut = new BuildConfiguration();
 
@@ -119,7 +127,7 @@
         }
 
         [Fact]
-        public void RemoveTypeMappingRuleRemovesRulesFromCompiler()
+        public void RemoveTypeMappingRuleRemovesRulesFromConfiguration()
         {
             var sut = new BuildConfiguration();
 
@@ -130,7 +138,7 @@
         }
 
         [Fact]
-        public void RemoveTypeMappingRuleThrowsExceptionWithNullCompiler()
+        public void RemoveTypeMappingRuleThrowsExceptionWithNullConfiguration()
         {
             Action action = () => BuildConfigurationExtensions.RemoveTypeMappingRule<DummyTypeMappingRule>(null);
 

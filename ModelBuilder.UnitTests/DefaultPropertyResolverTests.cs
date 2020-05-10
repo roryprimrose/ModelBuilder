@@ -7,6 +7,7 @@
     using System.Linq;
     using FluentAssertions;
     using ModelBuilder.ExecuteOrderRules;
+    using ModelBuilder.IgnoreRules;
     using ModelBuilder.UnitTests.Models;
     using NSubstitute;
     using Xunit;
@@ -201,6 +202,47 @@
             Action action = () => sut.GetOrderedProperties(configuration, null);
 
             action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void IsIgnoredReturnsFalseWhenIgnoreRulesAreEmpty()
+        {
+            var configuration = Model.UsingDefaultConfiguration();
+            var instance = Model.Create<WithConstructorParameters>();
+
+            var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.Id));
+
+            var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
+
+            var actual = sut.IsIgnored(configuration, instance, propertyInfo, null);
+
+            actual.Should().BeFalse();
+        }
+
+        [Fact]
+        public void IsIgnoredReturnsFalseWhenIgnoreRulesAreNull()
+        {
+            var defaultConfiguration = Model.UsingDefaultConfiguration();
+            var configuration = Substitute.For<IBuildConfiguration>();
+
+            configuration.PropertyResolver.Returns(defaultConfiguration.PropertyResolver);
+            configuration.ConstructorResolver.Returns(defaultConfiguration.ConstructorResolver);
+            configuration.CreationRules.Returns(defaultConfiguration.CreationRules);
+            configuration.ExecuteOrderRules.Returns(defaultConfiguration.ExecuteOrderRules);
+            configuration.IgnoreRules.Returns((ICollection<IIgnoreRule>) null);
+            configuration.PostBuildActions.Returns(defaultConfiguration.PostBuildActions);
+            configuration.TypeCreators.Returns(defaultConfiguration.TypeCreators);
+            configuration.TypeMappingRules.Returns(defaultConfiguration.TypeMappingRules);
+            configuration.TypeResolver.Returns(defaultConfiguration.TypeResolver);
+            configuration.ValueGenerators.Returns(defaultConfiguration.ValueGenerators);
+
+            var sut = new DefaultExecuteStrategy();
+
+            sut.Initialize(configuration);
+
+            var actual = sut.Create(typeof(SimpleConstructor));
+
+            actual.Should().NotBeNull();
         }
 
         [Fact]

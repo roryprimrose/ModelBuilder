@@ -2542,8 +2542,8 @@ Spain,Extremadura,Badajoz,06005,Miller,Way,643-217-6211
 Spain,Extremadura,Badajoz,06005,Weeping Birch,Park,409-404-8867
 Spain,Extremadura,Badajoz,06010,Katie,Park,495-280-6290
 Spain,Extremadura,Badajoz,06010,Sauthoff,Street,677-802-6221
-Spain,Galicia,Coruñ,,15190,Brickson Park,Circle,475-150-4220
-Spain,Galicia,Coruñ,,15190,Sullivan,Circle,186-327-2996
+Spain,Galicia,Coruñ,15190,Brickson Park,Circle,475-150-4220
+Spain,Galicia,Coruñ,15190,Sullivan,Circle,186-327-2996
 Spain,Galicia,Ferrol,15490,Lakewood,Crossing,+34 952 904 9929
 Spain,Galicia,Ourense,32005,Crest Line,Point,835-727-1185
 Spain,Galicia,Pontevedra,36005,Park Meadow,Junction,143-269-1696

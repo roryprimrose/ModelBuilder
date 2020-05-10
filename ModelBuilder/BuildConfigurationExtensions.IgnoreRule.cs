@@ -160,6 +160,35 @@
         }
 
         /// <summary>
+        ///     Adds a new <see cref="RegexIgnoreRule" /> to the configuration.
+        /// </summary>
+        /// <param name="configuration">The configuration.</param>
+        /// <param name="expression">The expression that matches a property name.</param>
+        /// <returns>The configuration.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="configuration" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="expression" /> parameter is <c>null</c> or empty.</exception>
+        public static IBuildConfiguration AddIgnoreRule(
+            this IBuildConfiguration configuration,
+            string expression)
+        {
+            if (configuration == null)
+            {
+                throw new ArgumentNullException(nameof(configuration));
+            }
+
+            if (string.IsNullOrEmpty(expression))
+            {
+                throw new ArgumentNullException(nameof(expression));
+            }
+
+            var rule = new RegexIgnoreRule(expression);
+
+            configuration.IgnoreRules.Add(rule);
+
+            return configuration;
+        }
+
+        /// <summary>
         ///     Appends a new <see cref="IIgnoreRule" /> to the build configuration using the specified expression.
         /// </summary>
         /// <typeparam name="T">The type of instance that matches the rule.</typeparam>

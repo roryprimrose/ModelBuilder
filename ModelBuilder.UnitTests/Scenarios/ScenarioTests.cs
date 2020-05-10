@@ -428,6 +428,30 @@
         }
 
         [Fact]
+        public void CreatesUsesConfigurationToPopulateParameter()
+        {
+            var value = Guid.NewGuid().ToString();
+
+            var actual = Model.UsingDefaultConfiguration()
+                .AddCreationRule(typeof(string), "firstName", value, int.MaxValue)
+                .Create<OrderedConstructorParameters>();
+
+            actual.FirstName.Should().Be(value);
+        }
+
+        [Fact]
+        public void CreatesUsesConfigurationToPopulateProperty()
+        {
+            var value = Guid.NewGuid().ToString();
+
+            var actual = Model.UsingDefaultConfiguration()
+                .AddCreationRule(typeof(string), "FirstName", value, int.MaxValue)
+                .Create<Person>();
+
+            actual.FirstName.Should().Be(value);
+        }
+
+        [Fact]
         public void CreateThrowsExceptionWhenPropertyCannotBeCreated()
         {
             var typeCreator = Substitute.For<ITypeCreator>();
@@ -462,7 +486,7 @@
         {
             var expected = Guid.NewGuid();
 
-            var strategy = Model.UsingDefaultConfiguration().AddCreationRule<Person>(x => x.Id, 100, expected);
+            var strategy = Model.UsingDefaultConfiguration().AddCreationRule<Person>(x => x.Id, expected, 100);
 
             var actual = strategy.Create<List<Person>>();
 

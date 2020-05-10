@@ -4,6 +4,8 @@
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Linq.Expressions;
+    using System.Reflection;
+    using System.Text.RegularExpressions;
     using ModelBuilder.CreationRules;
 
     /// <summary>
@@ -68,10 +70,10 @@
         ///     Adds a new creation rule to the configuration.
         /// </summary>
         /// <param name="configuration">The configuration.</param>
-        /// <typeparam name="T">The type that holds the property.</typeparam>
         /// <param name="expression">The expression that identifies a property on <typeparamref name="T" /></param>
-        /// <param name="priority">The priority of the rule.</param>
         /// <param name="value">The static value returned by the rule.</param>
+        /// <param name="priority">The priority of the rule.</param>
+        /// <typeparam name="T">The type that holds the property.</typeparam>
         /// <returns>The configuration.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="configuration" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="expression" /> parameter is <c>null</c>.</exception>
@@ -85,11 +87,10 @@
             "CA1004:GenericMethodsShouldProvideTypeParameter",
             Justification =
                 "This signature is designed for ease of use rather than requiring that T is either a parameter or return type.")]
-        public static IBuildConfiguration AddCreationRule<T>(
-            this IBuildConfiguration configuration,
+        public static IBuildConfiguration AddCreationRule<T>(this IBuildConfiguration configuration,
             Expression<Func<T, object>> expression,
-            int priority,
-            object value)
+            object value,
+            int priority)
         {
             if (configuration == null)
             {
@@ -102,6 +103,286 @@
             }
 
             var rule = new ExpressionCreationRule<T>(expression, value, priority);
+
+            configuration.CreationRules.Add(rule);
+
+            return configuration;
+        }
+
+        /// <summary>
+        ///     Adds a new <see cref="PropertyPredicateCreationRule" /> to the configuration.
+        /// </summary>
+        /// <param name="configuration">The configuration.</param>
+        /// <param name="predicate">The predicate that matches on a target type.</param>
+        /// <param name="value">The static value returned by the rule.</param>
+        /// <param name="priority">The priority of the rule.</param>
+        /// <returns>The configuration.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="configuration" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="predicate" /> parameter is <c>null</c>.</exception>
+        public static IBuildConfiguration AddCreationRule(this IBuildConfiguration configuration,
+            Predicate<Type> predicate,
+            object value,
+            int priority)
+        {
+            if (configuration == null)
+            {
+                throw new ArgumentNullException(nameof(configuration));
+            }
+
+            if (predicate == null)
+            {
+                throw new ArgumentNullException(nameof(predicate));
+            }
+
+            var rule = new TypePredicateCreationRule(predicate, value, priority);
+
+            configuration.CreationRules.Add(rule);
+
+            return configuration;
+        }
+
+        /// <summary>
+        ///     Adds a new <see cref="PropertyPredicateCreationRule" /> to the configuration.
+        /// </summary>
+        /// <param name="configuration">The configuration.</param>
+        /// <param name="predicate">The predicate that matches on a target type.</param>
+        /// <param name="valueGenerator">The value generator used by the rule to return a value.</param>
+        /// <param name="priority">The priority of the rule.</param>
+        /// <returns>The configuration.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="configuration" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="predicate" /> parameter is <c>null</c>.</exception>
+        public static IBuildConfiguration AddCreationRule(this IBuildConfiguration configuration,
+            Predicate<Type> predicate,
+            Func<object> valueGenerator,
+            int priority)
+        {
+            if (configuration == null)
+            {
+                throw new ArgumentNullException(nameof(configuration));
+            }
+
+            if (predicate == null)
+            {
+                throw new ArgumentNullException(nameof(predicate));
+            }
+
+            if (valueGenerator == null)
+            {
+                throw new ArgumentNullException(nameof(valueGenerator));
+            }
+
+            var rule = new TypePredicateCreationRule(predicate, valueGenerator, priority);
+
+            configuration.CreationRules.Add(rule);
+
+            return configuration;
+        }
+
+        /// <summary>
+        ///     Adds a new <see cref="PropertyPredicateCreationRule" /> to the configuration.
+        /// </summary>
+        /// <param name="configuration">The configuration.</param>
+        /// <param name="predicate">The predicate that matches on a property.</param>
+        /// <param name="value">The static value returned by the rule.</param>
+        /// <param name="priority">The priority of the rule.</param>
+        /// <returns>The configuration.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="configuration" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="predicate" /> parameter is <c>null</c>.</exception>
+        public static IBuildConfiguration AddCreationRule(this IBuildConfiguration configuration,
+            Predicate<PropertyInfo> predicate,
+            object value,
+            int priority)
+        {
+            if (configuration == null)
+            {
+                throw new ArgumentNullException(nameof(configuration));
+            }
+
+            if (predicate == null)
+            {
+                throw new ArgumentNullException(nameof(predicate));
+            }
+
+            var rule = new PropertyPredicateCreationRule(predicate, value, priority);
+
+            configuration.CreationRules.Add(rule);
+
+            return configuration;
+        }
+
+        /// <summary>
+        ///     Adds a new <see cref="PropertyPredicateCreationRule" /> to the configuration.
+        /// </summary>
+        /// <param name="configuration">The configuration.</param>
+        /// <param name="predicate">The predicate that matches on a property.</param>
+        /// <param name="valueGenerator">The value generator used by the rule to return a value.</param>
+        /// <param name="priority">The priority of the rule.</param>
+        /// <returns>The configuration.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="configuration" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="predicate" /> parameter is <c>null</c>.</exception>
+        public static IBuildConfiguration AddCreationRule(this IBuildConfiguration configuration,
+            Predicate<PropertyInfo> predicate,
+            Func<object> valueGenerator,
+            int priority)
+        {
+            if (configuration == null)
+            {
+                throw new ArgumentNullException(nameof(configuration));
+            }
+
+            if (predicate == null)
+            {
+                throw new ArgumentNullException(nameof(predicate));
+            }
+
+            if (valueGenerator == null)
+            {
+                throw new ArgumentNullException(nameof(valueGenerator));
+            }
+
+            var rule = new PropertyPredicateCreationRule(predicate, valueGenerator, priority);
+
+            configuration.CreationRules.Add(rule);
+
+            return configuration;
+        }
+
+        /// <summary>
+        ///     Adds a new <see cref="PropertyPredicateCreationRule" /> to the configuration.
+        /// </summary>
+        /// <param name="configuration">The configuration.</param>
+        /// <param name="predicate">The predicate that matches on a parameter.</param>
+        /// <param name="value">The static value returned by the rule.</param>
+        /// <param name="priority">The priority of the rule.</param>
+        /// <returns>The configuration.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="configuration" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="predicate" /> parameter is <c>null</c>.</exception>
+        public static IBuildConfiguration AddCreationRule(this IBuildConfiguration configuration,
+            Predicate<ParameterInfo> predicate,
+            object value,
+            int priority)
+        {
+            if (configuration == null)
+            {
+                throw new ArgumentNullException(nameof(configuration));
+            }
+
+            if (predicate == null)
+            {
+                throw new ArgumentNullException(nameof(predicate));
+            }
+
+            var rule = new ParameterPredicateCreationRule(predicate, value, priority);
+
+            configuration.CreationRules.Add(rule);
+
+            return configuration;
+        }
+
+        /// <summary>
+        ///     Adds a new <see cref="PropertyPredicateCreationRule" /> to the configuration.
+        /// </summary>
+        /// <param name="configuration">The configuration.</param>
+        /// <param name="predicate">The predicate that matches on a parameter.</param>
+        /// <param name="valueGenerator">The value generator used by the rule to return a value.</param>
+        /// <param name="priority">The priority of the rule.</param>
+        /// <returns>The configuration.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="configuration" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="predicate" /> parameter is <c>null</c>.</exception>
+        public static IBuildConfiguration AddCreationRule(this IBuildConfiguration configuration,
+            Predicate<ParameterInfo> predicate,
+            Func<object> valueGenerator,
+            int priority)
+        {
+            if (configuration == null)
+            {
+                throw new ArgumentNullException(nameof(configuration));
+            }
+
+            if (predicate == null)
+            {
+                throw new ArgumentNullException(nameof(predicate));
+            }
+
+            if (valueGenerator == null)
+            {
+                throw new ArgumentNullException(nameof(valueGenerator));
+            }
+
+            var rule = new ParameterPredicateCreationRule(predicate, valueGenerator, priority);
+
+            configuration.CreationRules.Add(rule);
+
+            return configuration;
+        }
+
+        /// <summary>
+        ///     Adds a new <see cref="RegexCreationRule" /> to the configuration.
+        /// </summary>
+        /// <param name="configuration">The configuration.</param>
+        /// <param name="targetType">The target type that matches the rule.</param>
+        /// <param name="expression">The expression that matches a property name.</param>
+        /// <param name="value">The static value returned by the rule.</param>
+        /// <param name="priority">The priority of the rule.</param>
+        /// <returns>The configuration.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="configuration" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="expression" /> parameter is <c>null</c>.</exception>
+        public static IBuildConfiguration AddCreationRule(this IBuildConfiguration configuration,
+            Type targetType,
+            Regex expression,
+            object value,
+            int priority)
+        {
+            if (configuration == null)
+            {
+                throw new ArgumentNullException(nameof(configuration));
+            }
+
+            if (targetType == null)
+            {
+                throw new ArgumentNullException(nameof(targetType));
+            }
+
+            if (expression == null)
+            {
+                throw new ArgumentNullException(nameof(expression));
+            }
+
+            var rule = new RegexCreationRule(targetType, expression, value, priority);
+
+            configuration.CreationRules.Add(rule);
+
+            return configuration;
+        }
+
+        /// <summary>
+        ///     Adds a new <see cref="RegexCreationRule" /> to the configuration.
+        /// </summary>
+        /// <param name="configuration">The configuration.</param>
+        /// <param name="targetType">The target type that matches the rule.</param>
+        /// <param name="expression">The expression that matches a property name.</param>
+        /// <param name="value">The static value returned by the rule.</param>
+        /// <param name="priority">The priority of the rule.</param>
+        /// <returns>The configuration.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="configuration" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="expression" /> parameter is <c>null</c> or empty.</exception>
+        public static IBuildConfiguration AddCreationRule(this IBuildConfiguration configuration,
+            Type targetType,
+            string expression,
+            object value,
+            int priority)
+        {
+            if (configuration == null)
+            {
+                throw new ArgumentNullException(nameof(configuration));
+            }
+
+            if (string.IsNullOrEmpty(expression))
+            {
+                throw new ArgumentNullException(nameof(expression));
+            }
+
+            var rule = new RegexCreationRule(targetType, expression, value, priority);
 
             configuration.CreationRules.Add(rule);
 

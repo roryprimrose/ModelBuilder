@@ -195,7 +195,8 @@
         [Theory]
         [InlineData(CacheLevel.Global)]
         [InlineData(CacheLevel.PerInstance)]
-        public void ResolveReturnsCachedConstructor(CacheLevel cacheLevel)
+        [InlineData(CacheLevel.None)]
+        public void ResolveReturnsConstructorBasedOnCacheLevel(CacheLevel cacheLevel)
         {
             var sut = new DefaultConstructorResolver(cacheLevel);
 

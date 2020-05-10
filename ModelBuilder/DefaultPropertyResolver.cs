@@ -156,13 +156,6 @@ namespace ModelBuilder
             // Get the constructor matching the arguments so that we can try to match constructor parameter names against the property name
             var constructor = configuration.ConstructorResolver.Resolve(type, args);
 
-            if (constructor == null)
-            {
-                // There was no constructor found. This should be a struct with no defined constructor
-                // There are no parameters to check
-                return false;
-            }
-
             var parameters = constructor.GetParameters();
             var maxLength = Math.Min(parameters.Length, args.Length);
 

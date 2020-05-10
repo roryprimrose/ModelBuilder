@@ -105,9 +105,6 @@
 
             first.Should().BeOfType<BigValues>();
 
-            // Validate that the flags enum value has multiple values
-            first.ToString().Should().Contain(", ");
-
             var second = first;
 
             for (var index = 0; index < 1000; index++)
