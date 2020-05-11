@@ -161,46 +161,21 @@
         }
 
         [Fact]
+        public void MaxCountReturnsDefaultValue()
+        {
+            var sut = new CountValueGenerator();
+
+            sut.MaxCount.Should().Be(30);
+        }
+
+        [Fact]
         public void PriorityReturnsGreaterThanNumericValueGenerator()
         {
             var sut = new Wrapper();
-            
+
             var generator = new NumericValueGenerator();
 
             sut.Priority.Should().BeGreaterThan(generator.Priority);
-        }
-
-        [Fact]
-        public void SettingDefaultMaxCountOnlyAffectsNewInstances()
-        {
-            var expected = CountValueGenerator.DefaultMaxCount;
-
-            try
-            {
-                var first = new CountValueGenerator();
-
-                CountValueGenerator.DefaultMaxCount = 11;
-
-                var second = new CountValueGenerator();
-
-                first.MaxCount.Should().Be(expected);
-                second.MaxCount.Should().Be(11);
-            }
-            finally
-            {
-                CountValueGenerator.DefaultMaxCount = expected;
-            }
-        }
-
-        [Fact]
-        public void SettingMaxCountShouldNotChangeDefaultMaxCount()
-        {
-            var sut = new CountValueGenerator
-            {
-                MaxCount = Environment.TickCount
-            };
-
-            CountValueGenerator.DefaultMaxCount.Should().NotBe(sut.MaxCount);
         }
 
         private class Wrapper : CountValueGenerator

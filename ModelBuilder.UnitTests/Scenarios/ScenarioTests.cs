@@ -97,6 +97,16 @@
         }
 
         [Fact]
+        public void CanCreateWithMultipleNames()
+        {
+            var actual = Model.Create<Names>();
+
+            actual.FirstName.Should().NotBeNullOrWhiteSpace();
+            actual.MiddleName.Should().NotBeNullOrWhiteSpace();
+            actual.LastName.Should().NotBeNullOrWhiteSpace();
+        }
+
+        [Fact]
         public void CanGenerateUriData()
         {
             var actual = Model.Create<Location>();
