@@ -5,8 +5,28 @@ A library for easy generation of model classes
 
 [![Actions Status](https://github.com/roryprimrose/ModelBuilder/workflows/CI/badge.svg)](https://github.com/roryprimrose/ModelBuilder/actions)&nbsp;[![Coverage Status](https://coveralls.io/repos/github/roryprimrose/ModelBuilder/badge.svg?branch=master)](https://coveralls.io/github/roryprimrose/ModelBuilder?branch=master)
 
+- [Creating a model](#creating-a-model)
+  * [Constructor parameter matching](#constructor-parameter-matching)
+- [Populating a model](#populating-a-model)
+- [Changing the model after creation](#changing-the-model-after-creation)
+- [Customizing the process](#customizing-the-process)
+  * [IBuildConfiguration](#ibuildconfiguration)
+  * [IConfigurationModule](#iconfigurationmodule)
+  * [IExecuteStrategy](#iexecutestrategy)
+  * [IConstructorResolver](#iconstructorresolver)
+  * [ICreationRule](#icreationrule)
+  * [IExecuteOrderRule](#iexecuteorderrule)
+  * [IIgnoreRule](#iignorerule)
+  * [IPostBuildAction](#ipostbuildaction)
+  * [IPropertyResolver](#ipropertyresolver)
+  * [ITypeCreator](#itypecreator)
+  * [TypeMappingRule](#typemappingrule)
+  * [ITypeResolver](#ityperesolver)
+  * [IValueGenerator](#ivaluegenerator)
+- [Upgrading to 6.0.0](#upgrading-to-600)
+
 ## Creating a model
-The static `Model` class provides the entry point to generating models. It supports creating new instances of classes, nested classes and populating variables.
+The static `Model` class provides the entry point for generating models. It supports creating classes, structs and primitive types. It can also create complex object hierarchies.
 
 ```
 var model = Model.Create<Person>();
