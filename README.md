@@ -6,48 +6,33 @@ A library for easy generation of model classes
 [![Actions Status](https://github.com/roryprimrose/ModelBuilder/workflows/CI/badge.svg)](https://github.com/roryprimrose/ModelBuilder/actions)&nbsp;[![Coverage Status](https://coveralls.io/repos/github/roryprimrose/ModelBuilder/badge.svg?branch=master)](https://coveralls.io/github/roryprimrose/ModelBuilder?branch=master)
 
 ## Creating a model
-The Model class is a static class that is the easiest way to generator models
+The static `Model` class provides the entry point to generating models. It supports creating new instances of classes, nested classes and populating variables.
 
 ```
 var model = Model.Create<Person>();
 ```
 
-This supports creating new instances of classes, nested classes and populating variables out of the box. It will also support providing constructor arguments to the top level type being created.
-
-```
-var model = Model.Create<Person>("Fred", "Smith");
-```
-
-You may want to create a model that ignores setting a property for a specific construction.
+You may want to create a model that ignores setting a property value.
 
 ```
 var model = Model.Ignoring<Person>(x => x.FirstName).Create<Person>();
 ```
 
-Ignoring a property can also be configured for types that may exist deep in an inheritance hierarchy for the type being created.
+Ignoring a property can also be configured for types that may exist deep in an object hierarchy for the type being created.
 
 ```
 var model = Model.Ignoring<Address>(x => x.AddressLine1).Create<Person>();
 ```
 
-Do you already have an instance that perhaps you didn't create? That is ok too.
+It also supports providing constructor arguments to the top level type being created.
 
 ```
-var person = new Person
-{
-    FirstName = "Jane"
-};
-
-var model = Model.Ignoring<Person>(x => x.FirstName).Populate<Person>();
-
-var customer = new Person();
-
-var customerModel = Model.Populate(customer);
+var model = Model.Create<Person>("Fred", "Smith");
 ```
 
 ### Constructor parameter matching
 
-ModelBuilder will attempt to match constructor parameters to property values when building a new instance to avoid a new random value overwriting the constructor value.
+ModelBuilder will attempt to match constructor parameters to property values when building a new instance to avoid a new random value overwriting the property set by the constructor.
 
 The following rules define how a match is made between a constructor parameter and a property value:
 
@@ -56,12 +41,31 @@ The following rules define how a match is made between a constructor parameter a
 - Match reference types (except for strings) where the property value matches the same instance as the constructor parameter (using Object.ReferenceEquals)
 - Match value types and strings that have the same value and the constructor parameter name is a case insensitive match to the property name
 
-## Changing the model after creation
+## Populating a model
 
-Sometimes you need to tweak a model after it has been created. This can be done easily using the Set extension method on any object.
+You may have an object instance that was created somewhere else. The `Model` class can populate that for you.
 
 ```
-var person = Model.Create<Person>().Set(x => x.FirstName = "Joe").Set(x => x.Email = null);
+var person = new Person
+{
+    FirstName = "Jane"
+};
+
+var model = Model.Ignoring<Person>(x => x.FirstName).Populate(person);
+
+var customer = new Person();
+
+var customerModel = Model.Populate(customer);
+```
+
+## Changing the model after creation
+
+Sometimes you need to tweak a model after it has been created. This can be done easily using the `Set` extension method on any object.
+
+```
+var person = Model.Create<Person>()
+    .Set(x => x.FirstName = "Joe")
+    .Set(x => x.Email = null);
 
 var otherPerson = Model.Create<Person>().Set(x => 
     {
@@ -70,7 +74,7 @@ var otherPerson = Model.Create<Person>().Set(x =>
     });
 ```
 
-This is nice for simple properties, but assigning values across an enumerable set of data is important. We've got that covered too.
+The `SetEach` method does the same as `Set` but across enumerable objects.
 
 ```
 var organisation = Model.Create<Organisation>();
@@ -88,7 +92,7 @@ The extensibility points for customizing the build configuration are:
 - IConfigurationModule
 - IExecuteStrategy
 
-The extensibility points defined in `IBuildConfiguration` that are used to control how to create models are:
+The extensibility points defined in `IBuildConfiguration` that control how to create models are:
 
 - IConstructorResolver
 - ICreationRule
@@ -103,7 +107,7 @@ The extensibility points defined in `IBuildConfiguration` that are used to contr
 
 ### IBuildConfiguration
 
-An `IBuildConfiguration` instance provides access to all the configuration used to create values. The `Model` class uses a default configuration that is built using the `DefaultConfigurationModule`. You could however start with an empty `BuildConfiguration` and modify the configuration from there.   
+An `IBuildConfiguration` instance provides access to all the configuration for creating values. The `Model` class uses a default configuration that is built using the `DefaultConfigurationModule`. You could however start with an empty `BuildConfiguration` and modify the configuration from there.   
 
 ```
 var configuration = new BuildConfiguration();
@@ -113,16 +117,20 @@ configuration.Add(new MyCustomTypeCreator());
 var value = configuration.Create<MyType>();
 ```
 
-The items held by a build configuration can be modified for specific scenarios. For example, generating an Age value using the `AgeValueGeneartor` creates an age between 1 and 100. This value generation behavior can be modified.
+The items held by a build configuration can be modified for specific scenarios. For example, generating an Age value using the `AgeValueGenerator` creates an age between 1 and 100 and generating sets of items using `EnumerableTypeCreator` creates an enumerable set of data containing a random number of 10 and 30 between items. The logic of these can be modified before creating a value.
 
 ```
 var model = Model.UsingDefaultConfiguration()
     .UpdateValueGenerator<AgeValueGenerator>(x => x.MinAge = 18)
     .Create<Person>();
+
+var dataSet = Model.UsingDefaultConfiguration()
+    .UpdateTypeCreator<EnumerableTypeCreator>(x => x.MinCount = x.MaxCount = 10)
+    .Create<IEnumerable<Person>>();
 ```
 
 ### IConfigurationModule
-An `IConfigurationModule` defines a reusable configuration definition that is applied to `IBuildConfiguration`. You can use the `DefaultConfigurationModule` or write your own by creating a class that implements IConfigurationModule.
+An `IConfigurationModule` defines a reusable configuration definition that is applied to `IBuildConfiguration`. You can write your own by creating a class that implements IConfigurationModule.
 
 ```
 public class MyCustomModule : IConfigurationModule
@@ -169,7 +177,9 @@ var model = Model.UsingDefaultConfiguration
     .Create<Person>();
 ```
 
-The configuration modules are useful when you want to provide some consistent defaults for creating values. For example, you may have an Account entity with an IsActive boolean property and those should always be created with a value of `true` rather than a random value.
+**NOTE:** The `Model.UsingModule<T>()` method implicitly includes the `DefaultConfigurationModule` which provides the configuration that `Model.Create` and `Module.Populate` uses.
+
+Configuration modules are useful when you want to provide some consistent defaults for creating values. For example, you may have an Account entity with an IsActive boolean property and those should always be created with a value of `true` rather than a random value.
 
 ```
 public class TestModule : IConfigurationModule
@@ -182,7 +192,7 @@ public class TestModule : IConfigurationModule
             throw new ArgumentNullException(nameof(configuration));
         }
 
-        configuration.AddCreationRule<Account>(x => x.IsActive, 100, true)
+        configuration.AddCreationRule<Account>(x => x.IsActive, true, 100)
     }
 }
 ```
@@ -205,13 +215,13 @@ An `IExecuteStrategy` provides the logic that creates a model instance from the 
     
 ### IConstructorResolver
 
-An `IConstructorResolver` is used to assist in resolving the constructor to execute when creating instances of a model. 
+An `IConstructorResolver` assists in resolving the constructor to execute when creating instances of a model. 
 
 The `DefaultConstructorResolver` provides the logic for selecting the constructor with the least number of parameters unless constructor arguments have been supplied. In that case it selects a constructor that matches the argument list.
 
 ### ICreationRule
 
-An `ICreationRule` provides a simple implementation for returning a model value that bypasses the complexity of creating values using an IValueGenerator or an ITypeCreator. Most often they are used when creating a custom `IBuildConfiguration`. 
+An `ICreationRule` provides a simple implementation for returning a model value that bypasses the complexity of creating values using an `IValueGenerator` or an `ITypeCreator`. Most often they are used when creating a custom `IBuildConfiguration`. 
 
 For example:
 
@@ -233,13 +243,13 @@ public class TestModule : IConfigurationModule
 }
 ```
 
-Implementing a custom IValueGenerator or ITypeCreator is the preferred method if more complexity is required than assigning simple values.
+Implementing a custom `IValueGenerator` or `ITypeCreator` is the preferred method if generating values is more complex than assigning simple values.
 
 ### IExecuteOrderRule
 
-Generating random or pseudo-random data for a model dynamically is never going to be perfect. We can however provide better data when some context is available.  An `IExecuteOrderRule` helps here by defining the order in which a property or parameter value is created when the model is being created. This means that creating one value may then be dependent on another by controlling the order in which they are created.
+Generating random or pseudo-random data for a model dynamically is never going to be perfect. We can however provide better data when some context is available.  An `IExecuteOrderRule` helps here by defining the order in which a property or parameter value is generated when the model is being created. This means that creating one value may then be dependent on another by controlling the order in which they are created.
 
-For example, if a Person type exposes an Email, FirstName and LastName properties then the email value should include the first and last names. The `DefaultConfigurationModule` supports this by defining that the execute order for this scenario is FirstName, LastName, Domain, Email and then other string properties or parameters. 
+For example, if a Person type exposes an Email, FirstName and LastName properties then the email value should include the first and last names. The `DefaultConfigurationModule` supports this by defining that the execute order (descending integer priority) for this scenario is FirstName, LastName, Domain, Email and then other string properties or parameters. 
 
 ```
 configuration.AddExecuteOrderRule(NameExpression.FirstName, 9580);
@@ -251,7 +261,7 @@ configuration.AddExecuteOrderRule(x => x.PropertyType == typeof(string), 2000);
 configuration.AddExecuteOrderRule(x => x.PropertyType.IsClass, 1000);
 ```
 
-Another example of this is that the default configuration defines the enum properties will be assigned before other property types because they tend to be reference data that might define how other properties are assigned.
+Another example of ordering priority is that the default configuration defines the enum properties will be assigned before other property types because they tend to be reference data that might define how other properties are assigned.
 
 ```
 configuration.AddExecuteOrderRule(x => x.PropertyType.IsEnum, 4000);
@@ -282,25 +292,33 @@ public class TestModule : IConfigurationModule
 }
 ```
 
-If ignoring a property is specific to a test scenario that this could also be inlined in the create call.
+If a specific scenario needs to ignore a property then this can be inlined in the create call.
 
 ```
-var model = Model.Ignoring<PersonalDetails>(x => x.Age).Create<CreateAccountRequest>();
+var model = Model
+    .Ignoring<PersonalDetails>(x => x.Age)
+    .Create<CreateAccountRequest>();
 ```
 
 ### IPostBuildAction
 
-An `IPostBuildAction` are like the `Set` and `SetEach` extension methods. They provide the opportunity to tweak an instance after it has been created or populated. Suported post-build actions are evaluated in descending priority order after an instance has been created or populated.
+An `IPostBuildAction` is like the `Set` and `SetEach` extension methods. It provides the opportunity to tweak an instance after it has been created or populated and are evaluated in descending priority order.
 
 ### IPropertyResolver
 
-An `IPropertyResolver` is used to assist in resolving the properties on a type when populating instances of a model. 
+An `IPropertyResolver` is assists in resolving the properties on a type when populating instances of a model. 
 
-The `DefaultPropertyResolver` provides the logic for identifying the properties on a type that can be populated and the order in which they should be populated (using `IExecuteOrderRule` values). It also supports identifying whether a property should be populated even though it can be. The typcial scenario here is that a property that returns a value provided in a constructor parameter should not be overwritten with a new value.
+The `DefaultPropertyResolver` provides the logic for identifying the properties on a type that can be populated and using `IExecuteOrderRule` values to determine the priority order in which they should be populated. It also supports identifying whether a property should be populated even though it can be. The typcial scenario here is that a property that returns a value provided in a constructor parameter should not be overwritten with a new value.
 
 ### ITypeCreator
 
-An `ITypeCreator` is used to create instances of classes, or reference types with the exception of System.String. There are three type creators that ModelBuilder provides out of the box. EnumerableTypeCreator, ArrayTypeCreator and DefaultTypeCreator.
+An `ITypeCreator` creates instances of class or struct types. There are several type creators that ModelBuilder provides out of the box. These are:
+- StructTypeCreator
+- EnumerableTypeCreator
+- ArrayTypeCreator
+- DefaultTypeCreator
+
+`StructTypeCreator` provides the logic for creating `struct` values that either do not have a constructor defined or define a constructor with parameters.
 
 `ArrayTypeCreate` will create instances of Array types and populates the instance with data.
 
@@ -376,14 +394,14 @@ public class ShippingContainer
 }
 ```
 
-The ShippingContainer model here can then be created without an specific type mapping.
+The ShippingContainer model here can then be created without an specific type mapping as `DefaultTypeResolve` will automatically identify that a Manifest instance should be created when creating an IManifest.
 ```
-Model.Create<ShippingContainer>()
+var model = Model.Create<ShippingContainer>();
 ```
 
 ### IValueGenerator
 
-An `IValueGenerator` is used to create value types. There are many value generators that come out of the box. These are:
+An `IValueGenerator` typically creates values that do not require constructor parameters. There are many value generators that come out of the box. These are:
 
 - AddressValueGenerator
 - AgeValueGenerator
@@ -414,7 +432,9 @@ An `IValueGenerator` is used to create value types. There are many value generat
 - TimeZoneValueGenerator
 - UriValueGenerator
 
-Some of these generators create values using random data (string, guid, numbers etc). Entity type properties (names, addresses etc) use an embedded resource data to then pick pseudo-random information to provide better quality values.
+Value generators create values either using random data (string, guid, numbers etc) or use embedded resource data for entity type properties (names, addresses etc) to provide pseudo-random values that are appropriate for their purpose. 
+
+Some generators also use relative data on the object being created to determine more appropriate values to generate. For example, a Gender parameter or property will restrict the value created for FirstName which will then be used to populate EmailAddress.
 
 ## Upgrading to 6.0.0
 
@@ -422,11 +442,11 @@ The package had some large design changes that introduce breaking changes to the
 
 - All ValueGenerator types have been moved into a ValueGenerators namespace.
 - All TypeCreator types have been moved into a TypeCreators namespace.
-- CreationRule has been replaced with ExpressionCreationRule, PredicateCreationRule and RegexCreationRule which are in the CreationRules namespace.
+- CreationRule has been replaced with ExpressionCreationRule, ParameterPredicateCreationRule, PropertyPredicateCreationRule, TypePredicateCreationRule and RegexCreationRule which are in the CreationRules namespace.
 - The combination of build strategy, compiler and configuration have been replaced with just `IBuildConfiguration`.
-- IBuildConfiguration is now mutable. A new IBuildConfiguration is created for each call to a static method on the `Model` class however that some configuration is used for the entire creation process. Any mutations to the build configuration will apply until the entire build tree has completed.
+- IBuildConfiguration is now mutable. A new IBuildConfiguration instance is created for each call to a static method on the `Model` class and that configuration instance is used for that entire creation process. Any mutations to the build configuration will apply until the entire build tree has completed.
 - `ICompilerModule` has been renamed to `IConfigurationModule` and now configures `IBuildConfiguration`.
-- The `IgnoreRule` class has been replaced with the `IIgnoreRule` interface. The logic for processing rule matches moves from `DefaultPropertyResolver` to the rule itself.
+- The `IgnoreRule` class has been replaced with the `IIgnoreRule` interface in the IgnoreRules namespace. The ignore rules provided include ExpressionIgnoreRule, PredicateIgnoreRule and RegexIgnoreRule. The logic for processing rule matches moves from `DefaultPropertyResolver` to the rule itself.
 - Renamed IValueGenerator.IsSupported to IsMatch
 - Renamed IPostBuildAction.IsSupported to IsMatch
 - Added IBuildConfiguration.TypeResolver
