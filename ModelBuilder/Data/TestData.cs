@@ -61,7 +61,9 @@
             var items = values.Split(
                 new[]
                 {
-                    Environment.NewLine
+                    // The file uses CRLF to split the data across lines
+                    // We shouldn't use Environment.NewLine as this may be different across platforms
+                    "\r\n"
                 },
                 StringSplitOptions.RemoveEmptyEntries);
 
