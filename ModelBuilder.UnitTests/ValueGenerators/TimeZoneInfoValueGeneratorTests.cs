@@ -19,13 +19,13 @@
 
             var sut = new Wrapper();
 
-            var first = (TimeZoneInfo) sut.RunGenerate(typeof(TimeZoneInfo), null, executeStrategy);
+            var first = (TimeZoneInfo) sut.RunGenerate(typeof(TimeZoneInfo), null!, executeStrategy);
 
             var second = first;
 
             for (var index = 0; index < 1000; index++)
             {
-                second = (TimeZoneInfo) sut.RunGenerate(typeof(TimeZoneInfo), null, executeStrategy);
+                second = (TimeZoneInfo) sut.RunGenerate(typeof(TimeZoneInfo), null!, executeStrategy);
 
                 if (first.Equals(second) == false)
                 {
@@ -52,7 +52,7 @@
 
             var sut = new Wrapper();
 
-            var actual = sut.RunIsMatch(type, null, buildChain);
+            var actual = sut.RunIsMatch(type, null!, buildChain);
 
             actual.Should().Be(expected);
         }
@@ -61,7 +61,7 @@
         {
             public object RunGenerate(Type type, string referenceName, IExecuteStrategy executeStrategy)
             {
-                return Generate(executeStrategy, type, referenceName);
+                return Generate(executeStrategy, type, referenceName)!;
             }
 
             public bool RunIsMatch(Type type, string referenceName, IBuildChain buildChain)

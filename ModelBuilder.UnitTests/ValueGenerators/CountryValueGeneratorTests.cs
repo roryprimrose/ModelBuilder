@@ -19,13 +19,13 @@
 
             var sut = new Wrapper();
 
-            var first = (string) sut.RunGenerate(typeof(string), "country", executeStrategy);
+            var first = (string) sut.RunGenerate(typeof(string), "country", executeStrategy)!;
 
             var second = first;
 
             for (var index = 0; index < 1000; index++)
             {
-                second = (string) sut.RunGenerate(typeof(string), "country", executeStrategy);
+                second = (string) sut.RunGenerate(typeof(string), "country", executeStrategy)!;
 
                 if (string.Equals(first, second, StringComparison.OrdinalIgnoreCase) == false)
                 {
@@ -47,7 +47,7 @@
 
             var sut = new Wrapper();
 
-            var actual = (string) sut.RunGenerate(typeof(string), "country", executeStrategy);
+            var actual = (string) sut.RunGenerate(typeof(string), "country", executeStrategy)!;
 
             actual.Should().BeOfType<string>();
             actual.As<string>().Should().NotBeNullOrWhiteSpace();
@@ -65,7 +65,7 @@
 
             var sut = new Wrapper();
 
-            var actual = (string) sut.RunGenerate(type, referenceName, executeStrategy);
+            var actual = (string) sut.RunGenerate(type, referenceName, executeStrategy)!;
 
             actual.Should().NotBeNullOrEmpty();
         }
@@ -81,7 +81,7 @@
 
         [Theory]
         [InlineData(typeof(Stream), "country", false)]
-        [InlineData(typeof(string), null, false)]
+        [InlineData(typeof(string), null!, false)]
         [InlineData(typeof(string), "", false)]
         [InlineData(typeof(string), "Stuff", false)]
         [InlineData(typeof(string), "country", true)]
@@ -104,19 +104,19 @@
 
             var sut = new Wrapper();
 
-            Action action = () => sut.RunIsMatch(null, null, buildChain);
+            Action action = () => sut.RunIsMatch(null!, null!, buildChain);
 
             action.Should().Throw<ArgumentNullException>();
         }
 
         private class Wrapper : CountryValueGenerator
         {
-            public object RunGenerate(Type type, string referenceName, IExecuteStrategy executeStrategy)
+            public object? RunGenerate(Type type, string? referenceName, IExecuteStrategy executeStrategy)
             {
                 return Generate(executeStrategy, type, referenceName);
             }
 
-            public bool RunIsMatch(Type type, string referenceName, IBuildChain buildChain)
+            public bool RunIsMatch(Type type, string? referenceName, IBuildChain buildChain)
             {
                 return IsMatch(buildChain, type, referenceName);
             }

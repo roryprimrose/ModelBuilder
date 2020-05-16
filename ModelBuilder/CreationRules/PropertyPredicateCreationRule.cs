@@ -43,19 +43,19 @@
         }
 
         /// <inheritdoc />
-        public object Create(IExecuteStrategy executeStrategy, Type type)
+        public object? Create(IExecuteStrategy executeStrategy, Type type)
         {
             throw new NotSupportedException();
         }
 
         /// <inheritdoc />
-        public object Create(IExecuteStrategy executeStrategy, PropertyInfo propertyInfo)
+        public object? Create(IExecuteStrategy executeStrategy, PropertyInfo propertyInfo)
         {
             return _valueGenerator();
         }
 
         /// <inheritdoc />
-        public object Create(IExecuteStrategy executeStrategy, ParameterInfo parameterInfo)
+        public object? Create(IExecuteStrategy executeStrategy, ParameterInfo parameterInfo)
         {
             throw new NotSupportedException();
         }

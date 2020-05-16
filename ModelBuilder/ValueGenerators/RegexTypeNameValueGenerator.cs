@@ -24,7 +24,7 @@
         }
 
         /// <inheritdoc />
-        protected override bool IsMatch(IBuildChain buildChain, Type type, string referenceName)
+        protected override bool IsMatch(IBuildChain buildChain, Type type, string? referenceName)
         {
             if (_type.IsAssignableFrom(type) == false)
             {

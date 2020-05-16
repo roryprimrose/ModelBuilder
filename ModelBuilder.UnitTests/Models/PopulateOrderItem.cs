@@ -4,16 +4,16 @@
 
     public class PopulateOrderItem
     {
-        private Person _w;
-        private string _x;
+        private Person? _w;
+        private string? _x;
         private int _y = int.MinValue;
 
-        public Person W
+        public Person? W
         {
             get { return _w; }
             set
             {
-                if (_x == null)
+                if (_x == null!)
                 {
                     throw new InvalidOperationException(
                         "Execution order was not run as expected because the string was not assigned before the class");
@@ -23,7 +23,7 @@
             }
         }
 
-        public string X
+        public string? X
         {
             get { return _x; }
             set

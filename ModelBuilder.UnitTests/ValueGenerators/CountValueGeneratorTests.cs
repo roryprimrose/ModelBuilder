@@ -29,7 +29,7 @@
             var value = sut.RunGenerate(type, "Count", executeStrategy);
 
             if (type.IsNullable()
-                && value == null)
+                && value == null!)
             {
                 // We can't run the assertions because null is a valid outcome
                 return;
@@ -70,7 +70,7 @@
         }
 
         [Theory]
-        [InlineData(null, false)]
+        [InlineData(null!, false)]
         [InlineData("", false)]
         [InlineData("other", false)]
         [InlineData("someCount", false)]
@@ -117,7 +117,7 @@
 
             var sut = new Wrapper();
 
-            var actual = sut.RunIsMatch(type, null, buildChain);
+            var actual = sut.RunIsMatch(type, null!, buildChain);
 
             actual.Should().BeFalse();
         }
@@ -182,7 +182,7 @@
         {
             public object RunGenerate(Type type, string referenceName, IExecuteStrategy executeStrategy)
             {
-                return Generate(executeStrategy, type, referenceName);
+                return Generate(executeStrategy, type, referenceName)!;
             }
 
             public bool RunIsMatch(Type type, string referenceName, IBuildChain buildChain)

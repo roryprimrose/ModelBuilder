@@ -78,7 +78,7 @@ namespace ModelBuilder.TypeCreators
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is <c>null</c>.</exception>
-        public object Create(IExecuteStrategy executeStrategy, Type type, params object[] args)
+        public object? Create(IExecuteStrategy executeStrategy, Type type, params object?[]? args)
         {
             return Create(executeStrategy, type, null, args);
         }
@@ -86,7 +86,7 @@ namespace ModelBuilder.TypeCreators
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="parameterInfo" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is <c>null</c>.</exception>
-        public object Create(IExecuteStrategy executeStrategy, ParameterInfo parameterInfo, params object[] args)
+        public object? Create(IExecuteStrategy executeStrategy, ParameterInfo parameterInfo, params object?[]? args)
         {
             if (parameterInfo == null)
             {
@@ -99,7 +99,7 @@ namespace ModelBuilder.TypeCreators
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="propertyInfo" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is <c>null</c>.</exception>
-        public object Create(IExecuteStrategy executeStrategy, PropertyInfo propertyInfo, params object[] args)
+        public object? Create(IExecuteStrategy executeStrategy, PropertyInfo propertyInfo, params object?[]? args)
         {
             if (propertyInfo == null)
             {
@@ -156,7 +156,7 @@ namespace ModelBuilder.TypeCreators
         /// <returns><c>true</c> if this creator can create the type; otherwise <c>false</c>.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
         protected virtual bool CanCreate(IBuildConfiguration configuration,
-            IBuildChain buildChain, Type type, string referenceName)
+            IBuildChain buildChain, Type type, string? referenceName)
         {
             if (type == null)
             {
@@ -188,7 +188,7 @@ namespace ModelBuilder.TypeCreators
         /// <returns><c>true</c> if this creator can populate the type; otherwise <c>false</c>.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
         protected virtual bool CanPopulate(IBuildConfiguration configuration,
-            IBuildChain buildChain, Type type, string referenceName)
+            IBuildChain buildChain, Type type, string? referenceName)
         {
             if (type == null)
             {
@@ -208,10 +208,10 @@ namespace ModelBuilder.TypeCreators
         /// <returns>A new instance.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is <c>null</c>.</exception>
-        protected virtual object Create(IExecuteStrategy executeStrategy,
+        protected virtual object? Create(IExecuteStrategy executeStrategy,
             Type type,
-            string referenceName,
-            params object[] args)
+            string? referenceName,
+            params object?[]? args)
         {
             if (type == null)
             {
@@ -253,10 +253,10 @@ namespace ModelBuilder.TypeCreators
         /// <param name="referenceName">Identifies the possible parameter or property name the instance is intended for.</param>
         /// <param name="args">The constructor parameters to create the instance with.</param>
         /// <returns>A new instance.</returns>
-        protected abstract object CreateInstance(IExecuteStrategy executeStrategy,
+        protected abstract object? CreateInstance(IExecuteStrategy executeStrategy,
             Type type,
-            string referenceName,
-            params object[] args);
+            string? referenceName,
+            params object?[]? args);
 
         /// <summary>
         ///     Populates the specified instance using an execution strategy.

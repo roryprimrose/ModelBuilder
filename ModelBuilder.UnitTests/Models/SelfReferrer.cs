@@ -6,6 +6,6 @@
     {
         public Guid Id { get; set; }
 
-        public SelfReferrer Self { get; set; }
+        public SelfReferrer? Self { get; set; }
     }
 }

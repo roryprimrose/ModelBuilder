@@ -248,7 +248,7 @@
                 State = Guid.NewGuid().ToString()
             };
             var buildChain = new BuildHistory();
-            var property = address.GetProperty(x => x.City);
+            var property = address.GetProperty(x => x.City!);
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
@@ -319,7 +319,7 @@
 
         [Theory]
         [InlineData(typeof(Stream), "postcode", false)]
-        [InlineData(typeof(string), null, false)]
+        [InlineData(typeof(string), null!, false)]
         [InlineData(typeof(string), "", false)]
         [InlineData(typeof(string), "Stuff", false)]
         [InlineData(typeof(string), "postcode", true)]
@@ -348,7 +348,7 @@
         {
             public object RunGenerate(Type type, string referenceName, IExecuteStrategy executeStrategy)
             {
-                return Generate(executeStrategy, type, referenceName);
+                return Generate(executeStrategy, type, referenceName)!;
             }
 
             public bool RunIsMatch(Type type, string referenceName, IBuildChain buildChain)

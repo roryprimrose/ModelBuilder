@@ -15,7 +15,7 @@
         public void IsMatchReturnsFalseForProperty()
         {
             var priority = Environment.TickCount;
-            var property = typeof(Person).GetProperty(nameof(Person.LastName));
+            var property = typeof(Person).GetProperty(nameof(Person.LastName))!;
 
             var sut = new ParameterPredicateExecuteOrderRule(x => x.ParameterType == typeof(string), priority);
 
@@ -58,7 +58,7 @@
             var priority = Environment.TickCount;
             var sut = new ParameterPredicateExecuteOrderRule(x => x.Name == nameof(Person.FirstName), priority);
 
-            Action action = () => sut.IsMatch((ParameterInfo) null);
+            Action action = () => sut.IsMatch((ParameterInfo) null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -79,7 +79,7 @@
             var priority = Environment.TickCount;
 
             // ReSharper disable once ObjectCreationAsStatement
-            Action action = () => new ParameterPredicateExecuteOrderRule(null, priority);
+            Action action = () => new ParameterPredicateExecuteOrderRule(null!, priority);
 
             action.Should().Throw<ArgumentNullException>();
         }

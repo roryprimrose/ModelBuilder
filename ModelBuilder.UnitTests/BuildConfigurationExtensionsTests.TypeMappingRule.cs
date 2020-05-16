@@ -41,7 +41,7 @@
         [Fact]
         public void AddTypeMappingRuleThrowsExceptionWithNullConfiguration()
         {
-            Action action = () => BuildConfigurationExtensions.AddTypeMappingRule<DummyTypeMappingRule>(null);
+            Action action = () => BuildConfigurationExtensions.AddTypeMappingRule<DummyTypeMappingRule>(null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -49,7 +49,7 @@
         [Fact]
         public void AddTypeMappingRuleWithGenericTypesThrowsExceptionWithNullConfiguration()
         {
-            Action action = () => BuildConfigurationExtensions.AddTypeMappingRule<Stream, MemoryStream>(null);
+            Action action = () => BuildConfigurationExtensions.AddTypeMappingRule<Stream, MemoryStream>(null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -71,7 +71,7 @@
         {
             var rule = new TypeMappingRule(typeof(Stream), typeof(MemoryStream));
 
-            Action action = () => BuildConfigurationExtensions.Add(null, rule);
+            Action action = () => BuildConfigurationExtensions.Add(null!, rule);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -81,7 +81,7 @@
         {
             var sut = Substitute.For<IBuildConfiguration>();
 
-            Action action = () => sut.Add((TypeMappingRule) null);
+            Action action = () => sut.Add((TypeMappingRule) null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -108,7 +108,7 @@
         [Fact]
         public void MappingThrowsExceptionWithNullBuildConfiguration()
         {
-            Action action = () => ((IBuildConfiguration) null).Mapping<Stream, MemoryStream>();
+            Action action = () => ((IBuildConfiguration) null!).Mapping<Stream, MemoryStream>();
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -140,7 +140,7 @@
         [Fact]
         public void RemoveTypeMappingRuleThrowsExceptionWithNullConfiguration()
         {
-            Action action = () => BuildConfigurationExtensions.RemoveTypeMappingRule<DummyTypeMappingRule>(null);
+            Action action = () => BuildConfigurationExtensions.RemoveTypeMappingRule<DummyTypeMappingRule>(null!);
 
             action.Should().Throw<ArgumentNullException>();
         }

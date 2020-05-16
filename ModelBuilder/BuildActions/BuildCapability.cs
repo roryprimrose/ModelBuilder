@@ -10,6 +10,15 @@
     public class BuildCapability
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="BuildCapability"/> class.
+        /// </summary>
+        /// <param name="implementedByType">The type provide provides the implementation of the capability.</param>
+        public BuildCapability(Type implementedByType)
+        {
+            ImplementedByType = implementedByType ?? throw new ArgumentNullException(nameof(implementedByType));
+        }
+
+        /// <summary>
         ///     Gets or sets whether attempts to create the instance requires a constructor to be automatically resolved.
         /// </summary>
         /// <remarks>
@@ -26,7 +35,7 @@
         /// <summary>
         ///     Gets or sets the type that will be used to run a create or populate process.
         /// </summary>
-        public Type ImplementedByType { get; set; }
+        public Type ImplementedByType { get; }
 
         /// <summary>
         ///     Gets or sets whether there the <see cref="IBuildAction" /> supports the requested scenario.

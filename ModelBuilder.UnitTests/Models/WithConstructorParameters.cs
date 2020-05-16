@@ -13,9 +13,9 @@
             Value = value;
         }
 
-        public Person Customer { get; set; }
+        public Person? Customer { get; set; }
 
-        public Company First { get; set; }
+        public Company? First { get; set; }
 
         public Guid Id { get; set; }
 
@@ -25,7 +25,7 @@
 
         public int? RefNumber { get; set; }
 
-        public Company Second { get; set; }
+        public Company? Second { get; set; }
 
         public bool Value { get; set; }
     }

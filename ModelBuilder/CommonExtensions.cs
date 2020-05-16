@@ -49,7 +49,7 @@
 
             if (source.Count == 0)
             {
-                return default;
+                return default!;
             }
 
             var generator = new RandomGenerator();

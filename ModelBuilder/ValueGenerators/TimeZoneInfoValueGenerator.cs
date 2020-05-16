@@ -16,7 +16,7 @@
         }
 
         /// <inheritdoc />
-        protected override object Generate(IExecuteStrategy executeStrategy, Type type, string referenceName)
+        protected override object? Generate(IExecuteStrategy executeStrategy, Type type, string? referenceName)
         {
             var zones = TimeZoneInfo.GetSystemTimeZones();
             var zoneIndex = Generator.NextValue(0, zones.Count - 1);

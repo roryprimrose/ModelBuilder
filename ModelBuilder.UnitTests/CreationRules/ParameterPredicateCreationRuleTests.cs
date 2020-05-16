@@ -20,7 +20,7 @@
 
             var sut = new ParameterPredicateCreationRule(item => true, () => value, priority);
 
-            var actual = sut.Create(null, parameterInfo);
+            var actual = sut.Create(null!, parameterInfo);
 
             actual.Should().Be(value);
         }
@@ -35,7 +35,7 @@
 
             var sut = new ParameterPredicateCreationRule(item => true, value, priority);
 
-            var actual = sut.Create(null, parameterInfo);
+            var actual = sut.Create(null!, parameterInfo);
 
             actual.Should().Be(value);
         }
@@ -43,13 +43,13 @@
         [Fact]
         public void CreateForPropertyThrowsException()
         {
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
             var value = Guid.NewGuid().ToString();
             var priority = Environment.TickCount;
 
             var sut = new ParameterPredicateCreationRule(item => true, () => value, priority);
 
-            Action action = () => sut.Create(null, propertyInfo);
+            Action action = () => sut.Create(null!, propertyInfo);
 
             action.Should().Throw<NotSupportedException>();
         }
@@ -63,7 +63,7 @@
 
             var sut = new ParameterPredicateCreationRule(item => true, () => value, priority);
 
-            Action action = () => sut.Create(null, type);
+            Action action = () => sut.Create(null!, type);
 
             action.Should().Throw<NotSupportedException>();
         }
@@ -93,7 +93,7 @@
 
             var sut = new ParameterPredicateCreationRule(type => true, () => value, priority);
 
-            Action action = () => sut.IsMatch((ParameterInfo) null);
+            Action action = () => sut.IsMatch((ParameterInfo) null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -101,7 +101,7 @@
         [Fact]
         public void IsMatchForPropertyReturnsFalse()
         {
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
             var value = Guid.NewGuid().ToString();
             var priority = Environment.TickCount;
 
@@ -131,7 +131,7 @@
         {
             var priority = Environment.TickCount;
 
-            var sut = new ParameterPredicateCreationRule(item => true, () => null, priority);
+            var sut = new ParameterPredicateCreationRule(item => true, () => null!, priority);
 
             sut.Priority.Should().Be(priority);
         }
@@ -143,7 +143,7 @@
             var priority = Environment.TickCount;
 
             // ReSharper disable once ObjectCreationAsStatement
-            Action action = () => new ParameterPredicateCreationRule(null, value, priority);
+            Action action = () => new ParameterPredicateCreationRule(null!, value, priority);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -154,7 +154,7 @@
             var priority = Environment.TickCount;
 
             // ReSharper disable once ObjectCreationAsStatement
-            Action action = () => new ParameterPredicateCreationRule(item => true, null, priority);
+            Action action = () => new ParameterPredicateCreationRule(item => true, null!, priority);
 
             action.Should().Throw<ArgumentNullException>();
         }

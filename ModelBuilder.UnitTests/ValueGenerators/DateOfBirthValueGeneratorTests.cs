@@ -25,7 +25,7 @@
             {
                 var value = (DateTime?) sut.RunGenerate(typeof(DateTime?), "dob", executeStrategy);
 
-                if (value == null)
+                if (value == null!)
                 {
                     nullFound = true;
                 }
@@ -149,7 +149,7 @@
         [InlineData(typeof(TimeSpan), "dob", false)]
         [InlineData(typeof(TimeZoneInfo), "dob", false)]
         [InlineData(typeof(string), "dob", false)]
-        [InlineData(typeof(DateTime), null, false)]
+        [InlineData(typeof(DateTime), null!, false)]
         [InlineData(typeof(DateTime), "", false)]
         [InlineData(typeof(DateTime), "Stuff", false)]
         [InlineData(typeof(DateTime), "dob", true)]
@@ -180,7 +180,7 @@
 
             var sut = new Wrapper();
 
-            Action action = () => sut.RunIsMatch(null, null, buildChain);
+            Action action = () => sut.RunIsMatch(null!, null!, buildChain);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -189,7 +189,7 @@
         {
             public object RunGenerate(Type type, string referenceName, IExecuteStrategy executeStrategy)
             {
-                return Generate(executeStrategy, type, referenceName);
+                return Generate(executeStrategy, type, referenceName)!;
             }
 
             public bool RunIsMatch(Type type, string referenceName, IBuildChain buildChain)

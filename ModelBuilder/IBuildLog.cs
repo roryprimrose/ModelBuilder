@@ -31,7 +31,7 @@
         /// </summary>
         /// <param name="parameterInfo">The parameter that was created.</param>
         /// <param name="context">The possible context object the value is being created for.</param>
-        void CreatedParameter(ParameterInfo parameterInfo, object context);
+        void CreatedParameter(ParameterInfo parameterInfo, object? context);
 
         /// <summary>
         ///     Logs that a property has been created for an instance.
@@ -45,14 +45,14 @@
         /// </summary>
         /// <param name="type">The type created.</param>
         /// <param name="context">The possible context object the value is being created for.</param>
-        void CreatedType(Type type, object context);
+        void CreatedType(Type type, object? context);
 
         /// <summary>
         ///     Logs that a parameter is being created for a constructor.
         /// </summary>
         /// <param name="parameterInfo">The parameter being created.</param>
         /// <param name="context">The possible context object the value is being created for.</param>
-        void CreatingParameter(ParameterInfo parameterInfo, object context);
+        void CreatingParameter(ParameterInfo parameterInfo, object? context);
 
         /// <summary>
         ///     Logs that a property is being created for an instance.
@@ -67,7 +67,7 @@
         /// <param name="type">The type to create.</param>
         /// <param name="creatorType">The type of creator used to create the type.</param>
         /// <param name="context">The possible context object the value is being created for.</param>
-        void CreatingType(Type type, Type creatorType, object context);
+        void CreatingType(Type type, Type creatorType, object? context);
 
         /// <summary>
         ///     Logs that a value is being created.
@@ -75,7 +75,7 @@
         /// <param name="type">The type to create.</param>
         /// <param name="generatorType">The type of generator used to create the value.</param>
         /// <param name="context">The possible context object the value is being created for.</param>
-        void CreatingValue(Type type, Type generatorType, object context);
+        void CreatingValue(Type type, Type generatorType, object? context);
 
         /// <summary>
         ///     Logs that a property is being ignored for an instance.

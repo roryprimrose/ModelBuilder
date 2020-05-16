@@ -73,7 +73,7 @@
         /// <param name="type">The type of instance to create.</param>
         /// <param name="args">The constructor parameters to create the instance with.</param>
         /// <returns>A new instance.</returns>
-        object Create(IExecuteStrategy executeStrategy, Type type, params object[] args);
+        object? Create(IExecuteStrategy executeStrategy, Type type, params object?[]? args);
 
         /// <summary>
         ///     Creates an instance of the type with the specified arguments.
@@ -82,7 +82,7 @@
         /// <param name="parameterInfo">The parameter to evaluate.</param>
         /// <param name="args">The constructor parameters to create the instance with.</param>
         /// <returns>A new instance.</returns>
-        object Create(IExecuteStrategy executeStrategy, ParameterInfo parameterInfo, params object[] args);
+        object? Create(IExecuteStrategy executeStrategy, ParameterInfo parameterInfo, params object?[]? args);
 
         /// <summary>
         ///     Creates an instance of the type with the specified arguments.
@@ -91,7 +91,7 @@
         /// <param name="propertyInfo">The property to evaluate.</param>
         /// <param name="args">The constructor parameters to create the instance with.</param>
         /// <returns>A new instance.</returns>
-        object Create(IExecuteStrategy executeStrategy, PropertyInfo propertyInfo, params object[] args);
+        object? Create(IExecuteStrategy executeStrategy, PropertyInfo propertyInfo, params object?[]? args);
 
         /// <summary>
         ///     Populates the specified instance using an execution strategy.

@@ -1,7 +1,6 @@
 ﻿namespace ModelBuilder.TypeCreators
 {
     using System;
-    using System.Diagnostics;
 
     /// <summary>
     ///     The <see cref="ArrayTypeCreator" />
@@ -12,7 +11,7 @@
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
         protected override bool CanCreate(IBuildConfiguration configuration,
-            IBuildChain buildChain, Type type, string referenceName)
+            IBuildChain buildChain, Type type, string? referenceName)
         {
             // Creating using this creator has the same rules for populate as it does for create
             return CanPopulate(configuration, buildChain, type, referenceName);
@@ -21,7 +20,7 @@
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
         protected override bool CanPopulate(IBuildConfiguration configuration,
-            IBuildChain buildChain, Type type, string referenceName)
+            IBuildChain buildChain, Type type, string? referenceName)
         {
             if (type == null)
             {
@@ -44,7 +43,7 @@
         /// <param name="previousItem">The previous item generated, or <c>null</c>.</param>
         /// <returns>The new item generated.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is <c>null</c>.</exception>
-        protected virtual object CreateChildItem(Type type, IExecuteStrategy executeStrategy, object previousItem)
+        protected virtual object? CreateChildItem(Type type, IExecuteStrategy executeStrategy, object? previousItem)
         {
             if (executeStrategy == null)
             {
@@ -56,9 +55,9 @@
 
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
-        protected override object CreateInstance(IExecuteStrategy executeStrategy,
-            Type type, string referenceName,
-            params object[] args)
+        protected override object? CreateInstance(IExecuteStrategy executeStrategy,
+            Type type, string? referenceName,
+            params object?[]? args)
         {
             if (type == null)
             {
@@ -78,8 +77,6 @@
                 typeof(int)
             };
             var constructor = type.GetConstructor(parameterTypes);
-
-            Debug.Assert(constructor != null, "No constructor was found on the array");
 
             return constructor.Invoke(parameters);
         }
@@ -132,7 +129,7 @@
                 itemType = Type.GetType(typeName);
             }
 
-            object previousItem = null;
+            object? previousItem = null;
 
             for (var index = 0; index < target.Length; index++)
             {

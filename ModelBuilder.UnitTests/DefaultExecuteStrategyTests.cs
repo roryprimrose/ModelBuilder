@@ -25,10 +25,9 @@
         {
             var buildHistory = new BuildHistory();
             var expected = new SlimModel();
-            var typeCapability = new BuildCapability
+            var typeCapability = new BuildCapability(GetType())
             {
                 SupportsPopulate = false,
-                ImplementedByType = GetType(),
                 AutoDetectConstructor = false,
                 AutoPopulate = true,
                 SupportsCreate = true
@@ -79,7 +78,7 @@
         [Fact]
         public void BuildPropertyThrowsExceptionWhenNotInitialized()
         {
-            var property = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var property = typeof(Person).GetProperty(nameof(Person.FirstName))!;
 
             var sut = new BuildPropertyWrapper();
 
@@ -115,7 +114,7 @@
         {
             var sut = new BuildWrapper();
 
-            Action action = () => sut.RunTest(null);
+            Action action = () => sut.RunTest(null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -149,18 +148,16 @@
             var model = new SlimModel();
             var expected = new SimpleConstructor(model);
             var age = Environment.TickCount;
-            var typeCapability = new BuildCapability
+            var typeCapability = new BuildCapability(GetType())
             {
                 SupportsPopulate = true,
-                ImplementedByType = GetType(),
                 AutoDetectConstructor = false,
                 AutoPopulate = true,
                 SupportsCreate = true
             };
-            var valueCapability = new BuildCapability
+            var valueCapability = new BuildCapability(GetType())
             {
                 SupportsPopulate = false,
-                ImplementedByType = GetType(),
                 AutoDetectConstructor = false,
                 AutoPopulate = false,
                 SupportsCreate = true
@@ -193,7 +190,7 @@
 
             sut.Initialize(buildConfiguration);
 
-            var actual = (SimpleConstructor) sut.Create(typeof(SimpleConstructor), model);
+            var actual = (SimpleConstructor) sut.Create(typeof(SimpleConstructor), model)!;
 
             actual.Should().Be(expected);
             actual.Model.Should().Be(model);
@@ -205,10 +202,9 @@
         {
             var buildHistory = new BuildHistory();
             var expected = new SlimModel();
-            var typeCapability = new BuildCapability
+            var typeCapability = new BuildCapability(GetType())
             {
                 SupportsPopulate = false,
-                ImplementedByType = GetType(),
                 AutoDetectConstructor = false,
                 AutoPopulate = true,
                 SupportsCreate = true
@@ -226,7 +222,7 @@
 
             sut.Initialize(buildConfiguration);
 
-            var actual = (SlimModel) sut.Create(typeof(SlimModel));
+            var actual = (SlimModel) sut.Create(typeof(SlimModel))!;
 
             actual.Should().Be(expected);
             actual.Value.Should().BeEmpty();
@@ -259,7 +255,7 @@
             configuration.CreationRules.Returns(defaultConfiguration.CreationRules);
             configuration.ExecuteOrderRules.Returns(defaultConfiguration.ExecuteOrderRules);
             configuration.IgnoreRules.Returns(defaultConfiguration.IgnoreRules);
-            configuration.PostBuildActions.Returns((ICollection<IPostBuildAction>) null);
+            configuration.PostBuildActions.Returns((ICollection<IPostBuildAction>) null!);
             configuration.TypeCreators.Returns(defaultConfiguration.TypeCreators);
             configuration.TypeMappingRules.Returns(defaultConfiguration.TypeMappingRules);
             configuration.TypeResolver.Returns(defaultConfiguration.TypeResolver);
@@ -306,14 +302,14 @@
             firstAction.Priority.Returns(int.MaxValue);
             secondAction.IsMatch(Arg.Any<IBuildChain>(), typeof(Simple)).Returns(true);
             secondAction.Priority.Returns(int.MinValue);
-            firstAction.WhenForAnyArgs(x => x.Execute(null, null, (Type) null)).Do(
+            firstAction.WhenForAnyArgs(x => x.Execute(null!, null!, (Type) null!)).Do(
                 x =>
                 {
                     executeCount++;
 
                     executeCount.Should().Be(1);
                 });
-            secondAction.WhenForAnyArgs(x => x.Execute(null, null, (Type) null)).Do(
+            secondAction.WhenForAnyArgs(x => x.Execute(null!, null!, (Type) null!)).Do(
                 x =>
                 {
                     executeCount++;
@@ -336,7 +332,7 @@
         {
             var postBuildAction = Substitute.For<IPostBuildAction>();
             var buildConfiguration = Model.UsingDefaultConfiguration().Add(postBuildAction);
-            var propertyInfo = typeof(ReadOnlyParent).GetProperty(nameof(ReadOnlyParent.Company));
+            var propertyInfo = typeof(ReadOnlyParent).GetProperty(nameof(ReadOnlyParent.Company))!;
 
             postBuildAction.IsMatch(Arg.Any<IBuildChain>(), propertyInfo)
                 .Returns(true);
@@ -393,10 +389,9 @@
         {
             var buildHistory = new BuildHistory();
             var expected = new SlimModel();
-            var typeCapability = new BuildCapability
+            var typeCapability = new BuildCapability(GetType())
             {
                 SupportsPopulate = true,
-                ImplementedByType = GetType(),
                 AutoDetectConstructor = false,
                 AutoPopulate = false,
                 SupportsCreate = true
@@ -415,7 +410,7 @@
 
             sut.Initialize(buildConfiguration);
 
-            var actual = (SlimModel) sut.Create(typeof(SlimModel));
+            var actual = (SlimModel) sut.Create(typeof(SlimModel))!;
 
             actual.Should().Be(expected);
             actual.Value.Should().BeEmpty();
@@ -430,18 +425,16 @@
             var buildHistory = new BuildHistory();
             var expected = new SlimModel();
             var value = Guid.NewGuid();
-            var typeCapability = new BuildCapability
+            var typeCapability = new BuildCapability(GetType())
             {
                 SupportsPopulate = true,
-                ImplementedByType = GetType(),
                 AutoDetectConstructor = false,
                 AutoPopulate = true,
                 SupportsCreate = true
             };
-            var valueCapability = new BuildCapability
+            var valueCapability = new BuildCapability(GetType())
             {
                 SupportsPopulate = false,
-                ImplementedByType = GetType(),
                 AutoDetectConstructor = false,
                 AutoPopulate = false,
                 SupportsCreate = true
@@ -481,7 +474,7 @@
 
             sut.Initialize(buildConfiguration);
 
-            var actual = (SlimModel) sut.Create(typeof(SlimModel));
+            var actual = (SlimModel) sut.Create(typeof(SlimModel))!;
 
             actual.Should().Be(expected);
             actual.Value.Should().Be(value);
@@ -494,10 +487,9 @@
         public void CreateReturnsNullFromProcessor()
         {
             var buildHistory = new BuildHistory();
-            var typeCapability = new BuildCapability
+            var typeCapability = new BuildCapability(GetType())
             {
                 SupportsPopulate = true,
-                ImplementedByType = GetType(),
                 AutoDetectConstructor = false,
                 AutoPopulate = false,
                 SupportsCreate = true
@@ -533,10 +525,9 @@
                 Guid.NewGuid(),
                 Environment.TickCount
             };
-            var typeCapability = new BuildCapability
+            var typeCapability = new BuildCapability(GetType())
             {
                 SupportsPopulate = false,
-                ImplementedByType = GetType(),
                 AutoDetectConstructor = true,
                 AutoPopulate = false,
                 SupportsCreate = true
@@ -567,18 +558,16 @@
             var buildHistory = new BuildHistory();
             var expected = new SlimModel();
             var value = Guid.NewGuid();
-            var typeCapability = new BuildCapability
+            var typeCapability = new BuildCapability(GetType())
             {
                 SupportsPopulate = true,
-                ImplementedByType = GetType(),
                 AutoDetectConstructor = false,
                 AutoPopulate = true,
                 SupportsCreate = true
             };
-            var valueCapability = new BuildCapability
+            var valueCapability = new BuildCapability(GetType())
             {
                 SupportsPopulate = false,
-                ImplementedByType = GetType(),
                 AutoDetectConstructor = false,
                 AutoPopulate = false,
                 SupportsCreate = true
@@ -608,7 +597,7 @@
 
             sut.Initialize(buildConfiguration);
 
-            var actual = (SlimModel) sut.Create(typeof(SlimModel));
+            var actual = (SlimModel) sut.Create(typeof(SlimModel))!;
 
             actual.Should().Be(expected);
             actual.Value.Should().Be(value);
@@ -620,18 +609,16 @@
             var value = Guid.NewGuid();
             var expected = new ReadOnlyModel(value);
             var buildHistory = new BuildHistory();
-            var typeCapability = new BuildCapability
+            var typeCapability = new BuildCapability(GetType())
             {
                 SupportsPopulate = false,
-                ImplementedByType = GetType(),
                 AutoDetectConstructor = true,
                 AutoPopulate = false,
                 SupportsCreate = true
             };
-            var valueCapability = new BuildCapability
+            var valueCapability = new BuildCapability(GetType())
             {
                 SupportsPopulate = false,
-                ImplementedByType = GetType(),
                 AutoDetectConstructor = false,
                 AutoPopulate = false,
                 SupportsCreate = true
@@ -668,7 +655,7 @@
 
             sut.Initialize(buildConfiguration);
 
-            var actual = (ReadOnlyModel) sut.Create(typeof(ReadOnlyModel));
+            var actual = (ReadOnlyModel) sut.Create(typeof(ReadOnlyModel))!;
 
             actual.Should().Be(expected);
             actual.Value.Should().Be(value);
@@ -679,10 +666,9 @@
         {
             var buildHistory = new BuildHistory();
             var expected = new Person();
-            var typeCapability = new BuildCapability
+            var typeCapability = new BuildCapability(GetType())
             {
                 SupportsPopulate = false,
-                ImplementedByType = GetType(),
                 AutoDetectConstructor = true,
                 AutoPopulate = false,
                 SupportsCreate = true
@@ -706,7 +692,7 @@
             constructorResolver.Resolve(typeof(Person)).Returns(constructorInfo);
             constructorResolver.GetOrderedParameters(buildConfiguration, constructorInfo)
                 .Returns(constructorInfo.GetParameters());
-            processor.Build(sut, typeof(Person), null).Returns(expected);
+            processor.Build(sut, typeof(Person), null!).Returns(expected);
             processor.Populate(sut, expected).Returns(expected);
 
             sut.Initialize(buildConfiguration);
@@ -748,10 +734,9 @@
         public void CreateThrowsExceptionWhenNoCapabilityFoundForParameter()
         {
             var buildHistory = new BuildHistory();
-            var typeCapability = new BuildCapability
+            var typeCapability = new BuildCapability(GetType())
             {
                 SupportsPopulate = false,
-                ImplementedByType = GetType(),
                 AutoDetectConstructor = true,
                 AutoPopulate = false,
                 SupportsCreate = true
@@ -795,10 +780,9 @@
         {
             var buildHistory = new BuildHistory();
             var expected = new SlimModel();
-            var typeCapability = new BuildCapability
+            var typeCapability = new BuildCapability(GetType())
             {
                 SupportsPopulate = true,
-                ImplementedByType = GetType(),
                 AutoDetectConstructor = false,
                 AutoPopulate = true,
                 SupportsCreate = true
@@ -813,7 +797,7 @@
             processor.GetBuildCapability(buildConfiguration, buildHistory, Arg.Any<BuildRequirement>(),
                     typeof(SlimModel))
                 .Returns(typeCapability);
-            processor.Build(sut, typeof(SlimModel), null).Returns(expected);
+            processor.Build(sut, typeof(SlimModel), null!).Returns(expected);
             processor.Populate(sut, expected).Returns(expected);
             buildConfiguration.PropertyResolver.Returns(propertyResolver);
             propertyResolver.GetOrderedProperties(buildConfiguration, typeof(SlimModel))
@@ -862,7 +846,7 @@
 
             sut.Initialize(buildConfiguration);
 
-            Action action = () => sut.Create(null);
+            Action action = () => sut.Create(null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -884,7 +868,7 @@
         {
             var sut = new DefaultExecuteStrategy();
 
-            Action action = () => sut.Initialize(null);
+            Action action = () => sut.Initialize(null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -896,13 +880,26 @@
 
             sut.BuildChain.Should().NotBeNull();
         }
-
+        
         [Fact]
-        public void IsCreatedWithNullBuildConfigurationAndBuildLog()
+        public void ConfigurationThrowsExceptionWhenNotInitialized()
         {
             var sut = new DefaultExecuteStrategy();
 
-            sut.Configuration.Should().BeNull();
+            Action action = () =>
+            {
+                // ReSharper disable once UnusedVariable
+                var config = sut.Configuration;
+            };
+
+            action.Should().Throw<InvalidOperationException>();
+        }
+
+
+        [Fact] public void IsCreatedWithNullBuildChainAndBuildLog()
+        {
+            var sut = new DefaultExecuteStrategy();
+
             sut.Log.Should().NotBeNull();
             sut.BuildChain.Should().NotBeNull();
         }
@@ -913,18 +910,16 @@
             var buildHistory = new BuildHistory();
             var model = new SlimModel();
             var expected = Guid.NewGuid();
-            var typeCapability = new BuildCapability
+            var typeCapability = new BuildCapability(GetType())
             {
                 SupportsPopulate = true,
-                ImplementedByType = GetType(),
                 AutoDetectConstructor = false,
                 AutoPopulate = true,
                 SupportsCreate = true
             };
-            var valueCapability = new BuildCapability
+            var valueCapability = new BuildCapability(GetType())
             {
                 SupportsPopulate = false,
-                ImplementedByType = GetType(),
                 AutoDetectConstructor = false,
                 AutoPopulate = false,
                 SupportsCreate = true
@@ -945,7 +940,7 @@
             processor.GetBuildCapability(buildConfiguration, buildHistory, BuildRequirement.Create,
                     Arg.Is<PropertyInfo>(x => x.Name == nameof(SlimModel.Value)))
                 .Returns(valueCapability);
-            processor.Build(sut, Arg.Is<PropertyInfo>(x => x.Name == nameof(SlimModel.Value)), null)
+            processor.Build(sut, Arg.Is<PropertyInfo>(x => x.Name == nameof(SlimModel.Value)), null!)
                 .Returns(expected);
             processor.GetBuildCapability(buildConfiguration, buildHistory, BuildRequirement.Populate,
                     typeof(Guid))
@@ -964,19 +959,16 @@
         {
             var buildHistory = new BuildHistory();
             var model = new SlimModel();
-            var expected = Guid.NewGuid();
-            var typeCapability = new BuildCapability
+            var typeCapability = new BuildCapability(GetType())
             {
                 SupportsPopulate = true,
-                ImplementedByType = GetType(),
                 AutoDetectConstructor = false,
                 AutoPopulate = true,
                 SupportsCreate = true
             };
-            var valueCapability = new BuildCapability
+            var valueCapability = new BuildCapability(GetType())
             {
                 SupportsPopulate = false,
-                ImplementedByType = GetType(),
                 AutoDetectConstructor = false,
                 AutoPopulate = false,
                 SupportsCreate = true
@@ -1013,7 +1005,7 @@
 
             actual.Value.Should().BeEmpty();
 
-            processor.DidNotReceive().Build(sut, Arg.Is<PropertyInfo>(x => x.Name == nameof(SlimModel.Value)), null);
+            processor.DidNotReceive().Build(sut, Arg.Is<PropertyInfo>(x => x.Name == nameof(SlimModel.Value)), null!);
         }
 
         [Fact]
@@ -1021,7 +1013,7 @@
         {
             var sut = new PopulatePropertyWrapper();
 
-            var property = typeof(Person).GetProperty("FirstName");
+            var property = typeof(Person).GetProperty(nameof(Person.FirstName))!;
 
             Action action = () => sut.RunTest(property);
 
@@ -1035,7 +1027,7 @@
 
             var sut = new PopulatePropertyWrapper();
 
-            Action action = () => sut.RunTest(null, instance);
+            Action action = () => sut.RunTest(null!, instance);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -1075,7 +1067,7 @@
         {
             var sut = new DefaultExecuteStrategy();
 
-            Action action = () => sut.Populate(null);
+            Action action = () => sut.Populate(null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -1086,7 +1078,8 @@
             var buildLog = Substitute.For<IBuildLog>();
             var buildProcessor = Substitute.For<IBuildProcessor>();
 
-            Action action = () => new DefaultExecuteStrategy(null, buildLog, buildProcessor);
+            // ReSharper disable once ObjectCreationAsStatement
+            Action action = () => new DefaultExecuteStrategy(null!, buildLog, buildProcessor);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -1097,7 +1090,8 @@
             var buildHistory = Substitute.For<IBuildHistory>();
             var buildProcessor = Substitute.For<IBuildProcessor>();
 
-            Action action = () => new DefaultExecuteStrategy(buildHistory, null, buildProcessor);
+            // ReSharper disable once ObjectCreationAsStatement
+            Action action = () => new DefaultExecuteStrategy(buildHistory, null!, buildProcessor);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -1108,7 +1102,8 @@
             var buildHistory = Substitute.For<IBuildHistory>();
             var buildLog = Substitute.For<IBuildLog>();
 
-            Action action = () => new DefaultExecuteStrategy(buildHistory, buildLog, null);
+            // ReSharper disable once ObjectCreationAsStatement
+            Action action = () => new DefaultExecuteStrategy(buildHistory, buildLog, null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -1120,14 +1115,14 @@
                 Number = number;
             }
 
-            public ReadOnlyModelWrapper Child { get; set; }
+            public ReadOnlyModelWrapper? Child { get; set; } = null;
 
             public int Number { get; }
         }
 
         private class BuildParameterWrapper : DefaultExecuteStrategy
         {
-            public void RunTest(ParameterInfo parameterInfo = null)
+            public void RunTest(ParameterInfo parameterInfo = null!)
             {
                 Build(parameterInfo);
             }
@@ -1135,7 +1130,7 @@
 
         private class BuildPropertyWrapper : DefaultExecuteStrategy
         {
-            public void RunTest(PropertyInfo propertyInfo = null)
+            public void RunTest(PropertyInfo propertyInfo = null!)
             {
                 Build(propertyInfo);
             }
@@ -1143,7 +1138,7 @@
 
         private class BuildTypeWrapper : DefaultExecuteStrategy
         {
-            public void RunTest(Type type = null)
+            public void RunTest(Type type = null!)
             {
                 Build(type);
             }
@@ -1153,13 +1148,13 @@
         {
             public void RunTest(Type type)
             {
-                Build(type, null, null);
+                Build(type, null!, null!);
             }
         }
 
         private class PopulatePropertyWrapper : DefaultExecuteStrategy
         {
-            public void RunTest(PropertyInfo propertyInfo = null, object instance = null)
+            public void RunTest(PropertyInfo propertyInfo = null!, object instance = null!)
             {
                 PopulateProperty(propertyInfo, instance);
             }
@@ -1172,9 +1167,9 @@
                 Model = model;
             }
 
-            public ReadOnlyModel Model { get; }
+            public ReadOnlyModel? Model { get; } = null;
 
-            public ReadOnlyModel Other { get; set; }
+            public ReadOnlyModel? Other { get; set; } = null;
         }
 
         private class SimpleReadOnlyParent

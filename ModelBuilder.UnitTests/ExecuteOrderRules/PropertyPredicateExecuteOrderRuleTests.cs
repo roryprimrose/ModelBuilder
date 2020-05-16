@@ -29,7 +29,7 @@
         public void IsMatchReturnsFalseWhenPropertyDeclaringTypeDoesNotMatch()
         {
             var priority = Environment.TickCount;
-            var property = typeof(Person).GetProperty(nameof(Person.LastName));
+            var property = typeof(Person).GetProperty(nameof(Person.LastName))!;
 
             var sut = new PropertyPredicateExecuteOrderRule(x => x.DeclaringType == typeof(string), priority);
 
@@ -42,7 +42,7 @@
         public void IsMatchReturnsFalseWhenPropertyNameDoesNotMatch()
         {
             var priority = Environment.TickCount;
-            var property = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var property = typeof(Person).GetProperty(nameof(Person.FirstName))!;
 
             var sut = new PropertyPredicateExecuteOrderRule(x => x.Name == nameof(Person.LastName), priority);
 
@@ -55,7 +55,7 @@
         public void IsMatchReturnsFalseWhenPropertyTypeDoesNotMatch()
         {
             var priority = Environment.TickCount;
-            var property = typeof(Person).GetProperty(nameof(Person.LastName));
+            var property = typeof(Person).GetProperty(nameof(Person.LastName))!;
 
             var sut = new PropertyPredicateExecuteOrderRule(x => x.PropertyType == typeof(DateTimeOffset), priority);
 
@@ -68,7 +68,7 @@
         public void IsMatchReturnsTrueWhenInheritedPropertyMatchesPropertyOnDeclaredType()
         {
             var priority = Environment.TickCount;
-            var property = typeof(Person).GetProperty(nameof(Person.Id));
+            var property = typeof(Person).GetProperty(nameof(Person.Id))!;
 
             var sut = new PropertyPredicateExecuteOrderRule(x =>
                     x.ReflectedType == typeof(Person) && x.Name == nameof(Person.Id) && x.PropertyType == typeof(Guid),
@@ -83,7 +83,7 @@
         public void IsMatchReturnsTrueWhenPropertyMatches()
         {
             var priority = Environment.TickCount;
-            var property = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var property = typeof(Person).GetProperty(nameof(Person.FirstName))!;
 
             var sut = new PropertyPredicateExecuteOrderRule(x => x.Name == nameof(Person.FirstName), priority);
 
@@ -96,7 +96,7 @@
         public void IsMatchReturnsTrueWhenPropertyMatchesBaseTypeProperty()
         {
             var priority = Environment.TickCount;
-            var property = typeof(Person).GetProperty(nameof(Entity.Id));
+            var property = typeof(Person).GetProperty(nameof(Entity.Id))!;
 
             var sut = new PropertyPredicateExecuteOrderRule(x => x.ReflectedType == typeof(Person), priority);
 
@@ -109,7 +109,7 @@
         public void IsMatchReturnsTrueWhenPropertyMatchesDerivedTypeProperty()
         {
             var priority = Environment.TickCount;
-            var property = typeof(Person).GetProperty(nameof(Entity.Id));
+            var property = typeof(Person).GetProperty(nameof(Entity.Id))!;
 
             var sut = new PropertyPredicateExecuteOrderRule(x => x.DeclaringType == typeof(Entity), priority);
 
@@ -124,7 +124,7 @@
             var priority = Environment.TickCount;
             var sut = new PropertyPredicateExecuteOrderRule(x => x.Name == nameof(Person.FirstName), priority);
 
-            Action action = () => sut.IsMatch((PropertyInfo) null);
+            Action action = () => sut.IsMatch((PropertyInfo) null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -145,7 +145,7 @@
             var priority = Environment.TickCount;
 
             // ReSharper disable once ObjectCreationAsStatement
-            Action action = () => new PropertyPredicateExecuteOrderRule(null, priority);
+            Action action = () => new PropertyPredicateExecuteOrderRule(null!, priority);
 
             action.Should().Throw<ArgumentNullException>();
         }

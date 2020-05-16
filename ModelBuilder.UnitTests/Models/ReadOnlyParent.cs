@@ -32,6 +32,6 @@
 
         public IEnumerable<Person> RestrictedPeople { get; }
 
-        public Person Unassigned { get; private set; }
+        public Person? Unassigned { get; private set; }
     }
 }

@@ -6,21 +6,21 @@
     public class DummyTypeCreator : TypeCreatorBase
     {
         protected override bool CanCreate(IBuildConfiguration configuration,
-            IBuildChain buildChain, Type type, string referenceName)
+            IBuildChain buildChain, Type type, string? referenceName)
         {
             return false;
         }
 
         protected override bool CanPopulate(IBuildConfiguration configuration,
-            IBuildChain buildChain, Type type, string referenceName)
+            IBuildChain buildChain, Type type, string? referenceName)
         {
             return false;
         }
 
-        protected override object CreateInstance(IExecuteStrategy executeStrategy,
+        protected override object? CreateInstance(IExecuteStrategy executeStrategy,
             Type type,
-            string referenceName,
-            params object[] args)
+            string? referenceName,
+            params object?[]? args)
         {
             throw new NotImplementedException();
         }

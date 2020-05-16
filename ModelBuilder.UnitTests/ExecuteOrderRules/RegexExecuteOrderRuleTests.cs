@@ -28,7 +28,7 @@
         public void IsMatchReturnsFalseWhenPropertyDoesNotMatch()
         {
             var priority = Environment.TickCount;
-            var property = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var property = typeof(Person).GetProperty(nameof(Person.FirstName))!;
 
             var sut = new RegexExecuteOrderRule(NameExpression.LastName, priority);
 
@@ -55,7 +55,7 @@
         public void IsMatchReturnsTrueWhenPropertyMatches()
         {
             var priority = Environment.TickCount;
-            var property = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var property = typeof(Person).GetProperty(nameof(Person.FirstName))!;
 
             var sut = new RegexExecuteOrderRule(NameExpression.FirstName, priority);
 
@@ -71,7 +71,7 @@
 
             var sut = new RegexExecuteOrderRule(NameExpression.FirstName, priority);
 
-            Action action = () => sut.IsMatch((ParameterInfo) null);
+            Action action = () => sut.IsMatch((ParameterInfo) null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -83,7 +83,7 @@
 
             var sut = new RegexExecuteOrderRule(NameExpression.FirstName, priority);
 
-            Action action = () => sut.IsMatch((PropertyInfo) null);
+            Action action = () => sut.IsMatch((PropertyInfo) null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -103,7 +103,8 @@
         {
             var priority = Environment.TickCount;
 
-            Action action = () => new RegexExecuteOrderRule(null, priority);
+            // ReSharper disable once ObjectCreationAsStatement
+            Action action = () => new RegexExecuteOrderRule(null!, priority);
 
             action.Should().Throw<ArgumentNullException>();
         }

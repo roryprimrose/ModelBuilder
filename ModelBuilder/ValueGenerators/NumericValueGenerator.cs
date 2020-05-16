@@ -9,7 +9,7 @@
     public class NumericValueGenerator : ValueGeneratorBase
     {
         /// <inheritdoc />
-        protected override object Generate(IExecuteStrategy executeStrategy, Type type, string referenceName)
+        protected override object? Generate(IExecuteStrategy executeStrategy, Type type, string? referenceName)
         {
             if (type == null)
             {
@@ -47,7 +47,7 @@
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="buildChain" /> parameter is <c>null</c>.</exception>
-        protected override bool IsMatch(IBuildChain buildChain, Type type, string referenceName)
+        protected override bool IsMatch(IBuildChain buildChain, Type type, string? referenceName)
         {
             if (type == null)
             {
@@ -77,7 +77,7 @@
         /// <param name="referenceName">Identifies the possible parameter or property name the value is intended for.</param>
         /// <param name="context">The possible context object the value is being created for.</param>
         /// <returns>The maximum value allowed to be generated.</returns>
-        protected virtual object GetMaximum(Type type, string referenceName, object context)
+        protected virtual object GetMaximum(Type type, string? referenceName, object? context)
         {
             return Generator.GetMax(type);
         }
@@ -89,7 +89,7 @@
         /// <param name="referenceName">Identifies the possible parameter or property name the value is intended for.</param>
         /// <param name="context">The possible context object the value is being created for.</param>
         /// <returns>The minimum value allowed to be generated.</returns>
-        protected virtual object GetMinimum(Type type, string referenceName, object context)
+        protected virtual object GetMinimum(Type type, string? referenceName, object? context)
         {
             return Generator.GetMin(type);
         }

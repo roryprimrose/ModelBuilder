@@ -63,13 +63,11 @@
             return propInfo;
         }
 
-        private static PropertyInfo GetPropertyInfo<T>(Expression<Func<T, object>> expression)
+        private static PropertyInfo? GetPropertyInfo<T>(Expression<Func<T, object>> expression)
         {
-            PropertyInfo property = null;
+            PropertyInfo? property = null;
 
-            var unaryExpression = expression.Body as UnaryExpression;
-
-            if (unaryExpression != null)
+            if (expression.Body is UnaryExpression unaryExpression)
             {
                 property = ((MemberExpression) unaryExpression.Operand).Member as PropertyInfo;
             }
@@ -79,9 +77,7 @@
                 return property;
             }
 
-            var memberExpression = expression.Body as MemberExpression;
-
-            if (memberExpression != null)
+            if (expression.Body is MemberExpression memberExpression)
             {
                 return memberExpression.Member as PropertyInfo;
             }

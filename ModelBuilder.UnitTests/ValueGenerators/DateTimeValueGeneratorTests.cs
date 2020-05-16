@@ -21,9 +21,9 @@
 
             for (var index = 0; index < 1000; index++)
             {
-                var value = (DateTime?) sut.RunGenerate(typeof(DateTime?), null, executeStrategy);
+                var value = (DateTime?) sut.RunGenerate(typeof(DateTime?), null!, executeStrategy);
 
-                if (value == null)
+                if (value == null!)
                 {
                     continue;
                 }
@@ -51,9 +51,9 @@
 
             for (var index = 0; index < 1000; index++)
             {
-                var value = sut.RunGenerate(targetType, null, executeStrategy);
+                var value = sut.RunGenerate(targetType, null!, executeStrategy);
 
-                if (value == null)
+                if (value == null!)
                 {
                     nullFound = true;
                 }
@@ -82,7 +82,7 @@
 
             var sut = new Wrapper();
 
-            var actual = sut.RunGenerate(typeof(DateTimeOffset), null, executeStrategy);
+            var actual = sut.RunGenerate(typeof(DateTimeOffset), null!, executeStrategy);
 
             actual.Should().BeOfType<DateTimeOffset>();
         }
@@ -97,7 +97,7 @@
 
             var sut = new Wrapper();
 
-            var actual = sut.RunGenerate(typeof(DateTime), null, executeStrategy);
+            var actual = sut.RunGenerate(typeof(DateTime), null!, executeStrategy);
 
             actual.Should().BeOfType<DateTime>();
         }
@@ -112,7 +112,7 @@
 
             var sut = new Wrapper();
 
-            var first = (DateTimeOffset) sut.RunGenerate(typeof(DateTimeOffset), null, executeStrategy);
+            var first = (DateTimeOffset) sut.RunGenerate(typeof(DateTimeOffset), null!, executeStrategy);
 
             first.As<DateTimeOffset>().Offset.Should().Be(TimeSpan.Zero);
 
@@ -120,7 +120,7 @@
 
             for (var index = 0; index < 1000; index++)
             {
-                second = (DateTimeOffset) sut.RunGenerate(typeof(DateTimeOffset), null, executeStrategy);
+                second = (DateTimeOffset) sut.RunGenerate(typeof(DateTimeOffset), null!, executeStrategy);
 
                 if (first != second)
                 {
@@ -141,7 +141,7 @@
 
             var sut = new Wrapper();
 
-            var first = (DateTime) sut.RunGenerate(typeof(DateTime), null, executeStrategy);
+            var first = (DateTime) sut.RunGenerate(typeof(DateTime), null!, executeStrategy);
 
             first.As<DateTime>().Kind.Should().Be(DateTimeKind.Utc);
 
@@ -149,7 +149,7 @@
 
             for (var index = 0; index < 1000; index++)
             {
-                second = (DateTime) sut.RunGenerate(typeof(DateTime), null, executeStrategy);
+                second = (DateTime) sut.RunGenerate(typeof(DateTime), null!, executeStrategy);
 
                 if (first != second)
                 {
@@ -170,13 +170,13 @@
 
             var sut = new Wrapper();
 
-            var first = (TimeSpan) sut.RunGenerate(typeof(TimeSpan), null, executeStrategy);
+            var first = (TimeSpan) sut.RunGenerate(typeof(TimeSpan), null!, executeStrategy);
 
             var second = first;
 
             for (var index = 0; index < 1000; index++)
             {
-                second = (TimeSpan) sut.RunGenerate(typeof(TimeSpan), null, executeStrategy);
+                second = (TimeSpan) sut.RunGenerate(typeof(TimeSpan), null!, executeStrategy);
 
                 if (first != second)
                 {
@@ -203,7 +203,7 @@
 
             var sut = new Wrapper();
 
-            var actual = sut.RunIsMatch(type, null, buildChain);
+            var actual = sut.RunIsMatch(type, null!, buildChain);
 
             actual.Should().Be(expected);
         }
@@ -215,7 +215,7 @@
 
             var sut = new Wrapper();
 
-            Action action = () => sut.RunIsMatch(null, null, buildChain);
+            Action action = () => sut.RunIsMatch(null!, null!, buildChain);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -224,7 +224,7 @@
         {
             public object RunGenerate(Type type, string referenceName, IExecuteStrategy executeStrategy)
             {
-                return Generate(executeStrategy, type, referenceName);
+                return Generate(executeStrategy, type, referenceName)!;
             }
 
             public bool RunIsMatch(Type type, string referenceName, IBuildChain buildChain)

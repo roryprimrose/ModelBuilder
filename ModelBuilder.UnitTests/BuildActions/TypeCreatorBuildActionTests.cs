@@ -142,7 +142,7 @@
 
             var sut = new TypeCreatorBuildAction();
 
-            Action action = () => sut.Build(null, parameterInfo, arguments);
+            Action action = () => sut.Build(null!, parameterInfo, arguments);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -154,7 +154,7 @@
 
             var sut = new TypeCreatorBuildAction();
 
-            Action action = () => sut.Build(executeStrategy, (ParameterInfo) null);
+            Action action = () => sut.Build(executeStrategy, (ParameterInfo) null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -162,7 +162,7 @@
         [Fact]
         public void BuildForPropertyInfoReturnsCreatorValueWhenMatchingCreatorFound()
         {
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
             var arguments = new object[] {Guid.NewGuid().ToString()};
             var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
@@ -189,7 +189,7 @@
         [Fact]
         public void BuildForPropertyInfoReturnsNullWhenNoCreatorsExist()
         {
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
             var arguments = new object[] {Guid.NewGuid().ToString()};
             var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
@@ -210,7 +210,7 @@
         [Fact]
         public void BuildForPropertyInfoReturnsNullWhenNoMatchingCreatorFound()
         {
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
             var arguments = new object[] {Guid.NewGuid().ToString()};
             var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
@@ -234,7 +234,7 @@
         [Fact]
         public void BuildForPropertyInfoReturnsValueFromCreatorWithHighestPriority()
         {
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
             var arguments = new object[] {Guid.NewGuid().ToString()};
             var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
@@ -267,12 +267,12 @@
         [Fact]
         public void BuildForPropertyInfoThrowsExceptionWithNullExecuteStrategy()
         {
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
             var arguments = new object[] {Guid.NewGuid().ToString()};
 
             var sut = new TypeCreatorBuildAction();
 
-            Action action = () => sut.Build(null, propertyInfo, arguments);
+            Action action = () => sut.Build(null!, propertyInfo, arguments);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -284,7 +284,7 @@
 
             var sut = new TypeCreatorBuildAction();
 
-            Action action = () => sut.Build(executeStrategy, (PropertyInfo) null);
+            Action action = () => sut.Build(executeStrategy, (PropertyInfo) null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -395,7 +395,7 @@
 
             var sut = new TypeCreatorBuildAction();
 
-            Action action = () => sut.Build(null, type);
+            Action action = () => sut.Build(null!, type);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -407,7 +407,7 @@
 
             var sut = new TypeCreatorBuildAction();
 
-            Action action = () => sut.Build(executeStrategy, (Type) null);
+            Action action = () => sut.Build(executeStrategy, (Type) null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -445,7 +445,7 @@
         [Fact]
         public void BuildThrowsExceptionWhenCreatorFails()
         {
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
             var arguments = new object[] {Guid.NewGuid().ToString()};
             var buildConfiguration = new BuildConfiguration();
 
@@ -527,7 +527,7 @@
 
             var sut = new TypeCreatorBuildAction();
 
-            Action action = () => sut.GetBuildCapability(buildConfiguration, null, parameterInfo);
+            Action action = () => sut.GetBuildCapability(buildConfiguration, null!, parameterInfo);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -541,7 +541,7 @@
 
             var sut = new TypeCreatorBuildAction();
 
-            Action action = () => sut.GetBuildCapability(null, buildChain, parameterInfo);
+            Action action = () => sut.GetBuildCapability(null!, buildChain, parameterInfo);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -554,7 +554,7 @@
 
             var sut = new TypeCreatorBuildAction();
 
-            Action action = () => sut.GetBuildCapability(buildConfiguration, buildChain, (ParameterInfo) null);
+            Action action = () => sut.GetBuildCapability(buildConfiguration, buildChain, (ParameterInfo) null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -596,8 +596,9 @@
 
             var sut = new TypeCreatorBuildAction();
 
-            var actual = sut.GetBuildCapability(buildConfiguration, buildChain, parameterInfo);
+            var actual = sut.GetBuildCapability(buildConfiguration, buildChain, parameterInfo)!;
 
+            actual.Should().NotBeNull();
             actual.SupportsCreate.Should().BeTrue();
             actual.SupportsPopulate.Should().Be(canPopulate);
             actual.AutoDetectConstructor.Should().Be(autoDetectConstructor);
@@ -608,7 +609,7 @@
         [Fact]
         public void GetBuildCapabilityForPropertyInfoReturnsNullWhenNoCreatorsExist()
         {
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
             var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
 
@@ -628,7 +629,7 @@
         [Fact]
         public void GetBuildCapabilityForPropertyInfoReturnsNullWhenNoMatchingCreatorFound()
         {
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
             var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
 
@@ -651,12 +652,12 @@
         [Fact]
         public void GetBuildCapabilityForPropertyInfoThrowsExceptionWithNullBuildChain()
         {
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
             var buildConfiguration = new BuildConfiguration();
 
             var sut = new TypeCreatorBuildAction();
 
-            Action action = () => sut.GetBuildCapability(buildConfiguration, null, propertyInfo);
+            Action action = () => sut.GetBuildCapability(buildConfiguration, null!, propertyInfo);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -664,12 +665,12 @@
         [Fact]
         public void GetBuildCapabilityForPropertyInfoThrowsExceptionWithNullBuildConfiguration()
         {
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
             var buildChain = new BuildHistory();
 
             var sut = new TypeCreatorBuildAction();
 
-            Action action = () => sut.GetBuildCapability(null, buildChain, propertyInfo);
+            Action action = () => sut.GetBuildCapability(null!, buildChain, propertyInfo);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -682,7 +683,7 @@
 
             var sut = new TypeCreatorBuildAction();
 
-            Action action = () => sut.GetBuildCapability(buildConfiguration, buildChain, (PropertyInfo) null);
+            Action action = () => sut.GetBuildCapability(buildConfiguration, buildChain, (PropertyInfo) null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -700,7 +701,7 @@
             bool autoDetectConstructor,
             bool autoPopulate)
         {
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
             var arguments = new object[] {Guid.NewGuid().ToString()};
             var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
@@ -724,7 +725,8 @@
 
             var actual = sut.GetBuildCapability(buildConfiguration, buildChain, propertyInfo);
 
-            actual.SupportsCreate.Should().BeTrue();
+            actual.Should().NotBeNull();
+            actual!.SupportsCreate.Should().BeTrue();
             actual.SupportsPopulate.Should().Be(canPopulate);
             actual.AutoDetectConstructor.Should().Be(autoDetectConstructor);
             actual.AutoPopulate.Should().Be(autoPopulate);
@@ -767,7 +769,8 @@
 
             var actual = sut.GetBuildCapability(buildConfiguration, buildChain, type);
 
-            actual.SupportsCreate.Should().BeTrue();
+            actual.Should().NotBeNull();
+            actual!.SupportsCreate.Should().BeTrue();
             actual.SupportsPopulate.Should().Be(canPopulate);
             actual.AutoDetectConstructor.Should().Be(autoDetectConstructor);
             actual.AutoPopulate.Should().Be(autoPopulate);
@@ -824,7 +827,7 @@
 
             var sut = new TypeCreatorBuildAction();
 
-            Action action = () => sut.GetBuildCapability(buildConfiguration, null, type);
+            Action action = () => sut.GetBuildCapability(buildConfiguration, null!, type);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -837,7 +840,7 @@
 
             var sut = new TypeCreatorBuildAction();
 
-            Action action = () => sut.GetBuildCapability(null, buildChain, type);
+            Action action = () => sut.GetBuildCapability(null!, buildChain, type);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -850,7 +853,7 @@
 
             var sut = new TypeCreatorBuildAction();
 
-            Action action = () => sut.GetBuildCapability(buildConfiguration, buildChain, (Type) null);
+            Action action = () => sut.GetBuildCapability(buildConfiguration, buildChain, (Type) null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -941,7 +944,7 @@
 
             var sut = new TypeCreatorBuildAction();
 
-            Action action = () => sut.Populate(null, instance);
+            Action action = () => sut.Populate(null!, instance);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -953,7 +956,7 @@
 
             var sut = new TypeCreatorBuildAction();
 
-            Action action = () => sut.Populate(executeStrategy, null);
+            Action action = () => sut.Populate(executeStrategy, null!);
 
             action.Should().Throw<ArgumentNullException>();
         }

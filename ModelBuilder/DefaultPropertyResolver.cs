@@ -4,6 +4,7 @@ namespace ModelBuilder
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
+    using System.Globalization;
     using System.Linq;
     using System.Reflection;
 
@@ -66,7 +67,7 @@ namespace ModelBuilder
             IBuildConfiguration configuration,
             object instance,
             PropertyInfo propertyInfo,
-            object[] args)
+            object?[]? args)
         {
             if (configuration == null)
             {
@@ -156,7 +157,20 @@ namespace ModelBuilder
             // Get the constructor matching the arguments so that we can try to match constructor parameter names against the property name
             var constructor = configuration.ConstructorResolver.Resolve(type, args);
 
-            var parameters = constructor.GetParameters();
+            if (constructor == null)
+            {
+                var types = args.Select(x => x?.GetType().FullName ?? "<unknown>").ToArray();
+                var parameterTypes = types.Select(x => x).Aggregate((current, next) => current + ", " + next);
+                var message = string.Format(
+                    CultureInfo.CurrentCulture,
+                    "No constructor found matching type {0} with parameters[{1}].",
+                    type.FullName,
+                    parameterTypes);
+
+                throw new MissingMemberException(message);
+            }
+
+            var parameters = constructor!.GetParameters();
             var maxLength = Math.Min(parameters.Length, args.Length);
 
             for (var index = 0; index < maxLength; index++)
@@ -188,8 +202,21 @@ namespace ModelBuilder
             return false;
         }
 
-        private static bool AreEqual(object first, object second)
+        private static bool AreEqual(object? first, object? second)
         {
+            if (first == null
+                && second == null)
+            {
+                return true;
+            }
+
+            if (first == null
+                || second == null)
+            {
+                // Only one of the values is null
+                return false;
+            }
+
             if (first is IComparable comparer)
             {
                 if (comparer.CompareTo(second) == 0)
@@ -257,7 +284,7 @@ namespace ModelBuilder
             "Microsoft.Design",
             "CA1031:DoNotCatchGeneralExceptionTypes",
             Justification = "Any failure to create the value will default to null for value comparisons.")]
-        private static object GetDefaultValue(Type type)
+        private static object? GetDefaultValue(Type type)
         {
             try
             {

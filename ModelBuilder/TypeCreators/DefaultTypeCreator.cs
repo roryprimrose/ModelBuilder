@@ -1,7 +1,6 @@
 ﻿namespace ModelBuilder.TypeCreators
 {
     using System;
-    using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
     using ModelBuilder.Properties;
 
@@ -17,12 +16,15 @@
             "CA1062:Validate arguments of public methods",
             MessageId = "0",
             Justification = "Type is validated by the base class")]
-        protected override object CreateInstance(IExecuteStrategy executeStrategy,
+        protected override object? CreateInstance(IExecuteStrategy executeStrategy,
             Type type,
-            string referenceName,
-            params object[] args)
+            string? referenceName,
+            params object?[]? args)
         {
-            Debug.Assert(type != null, "type != null");
+            if (type == null)
+            {
+                throw new ArgumentNullException(nameof(type));
+            }
 
             if (args == null)
             {

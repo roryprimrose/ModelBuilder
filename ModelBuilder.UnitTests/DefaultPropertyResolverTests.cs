@@ -125,10 +125,10 @@
         public void GetOrderedPropertiesReturnsPropertiesInDescendingOrder()
         {
             var configuration = new BuildConfiguration()
-                .AddExecuteOrderRule<EmailParts>(x => x.FirstName, 40)
-                .AddExecuteOrderRule<EmailParts>(x => x.LastName, 30)
-                .AddExecuteOrderRule<EmailParts>(x => x.Domain, 20)
-                .AddExecuteOrderRule<EmailParts>(x => x.Email, 10);
+                .AddExecuteOrderRule<EmailParts>(x => x.FirstName!, 40)
+                .AddExecuteOrderRule<EmailParts>(x => x.LastName!, 30)
+                .AddExecuteOrderRule<EmailParts>(x => x.Domain!, 20)
+                .AddExecuteOrderRule<EmailParts>(x => x.Email!, 10);
             var type = typeof(EmailParts);
 
             var sut = new DefaultPropertyResolver(CacheLevel.None);
@@ -147,7 +147,7 @@
             var configuration = Substitute.For<IBuildConfiguration>();
             var type = typeof(EmailParts);
 
-            configuration.ExecuteOrderRules.Returns((ICollection<IExecuteOrderRule>) null);
+            configuration.ExecuteOrderRules.Returns((ICollection<IExecuteOrderRule>) null!);
 
             var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
 
@@ -187,7 +187,7 @@
         {
             var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
 
-            Action action = () => sut.GetOrderedProperties(null, typeof(Person));
+            Action action = () => sut.GetOrderedProperties(null!, typeof(Person));
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -199,7 +199,7 @@
 
             var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
 
-            Action action = () => sut.GetOrderedProperties(configuration, null);
+            Action action = () => sut.GetOrderedProperties(configuration, null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -208,13 +208,13 @@
         public void IsIgnoredReturnsFalseWhenIgnoreRulesAreEmpty()
         {
             var configuration = Model.UsingDefaultConfiguration();
-            var instance = Model.Create<WithConstructorParameters>();
+            var instance = Model.Create<WithConstructorParameters>()!;
 
-            var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.Id));
+            var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.Id))!;
 
             var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
 
-            var actual = sut.IsIgnored(configuration, instance, propertyInfo, null);
+            var actual = sut.IsIgnored(configuration, instance, propertyInfo, null!);
 
             actual.Should().BeFalse();
         }
@@ -229,7 +229,7 @@
             configuration.ConstructorResolver.Returns(defaultConfiguration.ConstructorResolver);
             configuration.CreationRules.Returns(defaultConfiguration.CreationRules);
             configuration.ExecuteOrderRules.Returns(defaultConfiguration.ExecuteOrderRules);
-            configuration.IgnoreRules.Returns((ICollection<IIgnoreRule>) null);
+            configuration.IgnoreRules.Returns((ICollection<IIgnoreRule>) null!);
             configuration.PostBuildActions.Returns(defaultConfiguration.PostBuildActions);
             configuration.TypeCreators.Returns(defaultConfiguration.TypeCreators);
             configuration.TypeMappingRules.Returns(defaultConfiguration.TypeMappingRules);
@@ -249,13 +249,13 @@
         public void IsIgnoredReturnsFalseWhenParametersDoNotMatchArgumentList()
         {
             var configuration = Model.UsingDefaultConfiguration();
-            var instance = Model.Create<WithConstructorParameters>();
-            var args = new object[]
+            var instance = Model.Create<WithConstructorParameters>()!;
+            var args = new object?[]
             {
                 new Company(), instance.Id, instance.RefNumber, instance.Number, instance.Value
             };
 
-            var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.First));
+            var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.First))!;
 
             var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
 
@@ -268,13 +268,13 @@
         public void IsIgnoredReturnsFalseWhenParametersDoNotMatchPropertyReferenceType()
         {
             var configuration = Model.UsingDefaultConfiguration();
-            var instance = Model.Create<WithConstructorParameters>();
-            var args = new object[]
+            var instance = Model.Create<WithConstructorParameters>()!;
+            var args = new object?[]
             {
                 new Company(), instance.Id, instance.RefNumber, instance.Number, instance.Value
             };
 
-            var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.First));
+            var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.First))!;
 
             var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
 
@@ -287,13 +287,13 @@
         public void IsIgnoredReturnsFalseWhenParametersDoNotMatchPropertyValueType()
         {
             var configuration = Model.UsingDefaultConfiguration();
-            var instance = Model.Create<WithConstructorParameters>();
-            var args = new object[]
+            var instance = Model.Create<WithConstructorParameters>()!;
+            var args = new object?[]
             {
-                instance.First, Guid.NewGuid(), null, int.MinValue, false
+                instance.First, Guid.NewGuid(), null!, int.MinValue, false
             };
 
-            var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.Number));
+            var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.Number))!;
 
             var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
 
@@ -306,13 +306,13 @@
         public void IsIgnoredReturnsFalseWhenParameterTypesDoNotMatchPropertyType()
         {
             var configuration = Model.UsingDefaultConfiguration();
-            var instance = Model.Create<WithConstructorParameters>();
-            var args = new object[]
+            var instance = Model.Create<WithConstructorParameters>()!;
+            var args = new object?[]
             {
                 new Person(), instance.Id, instance.RefNumber, instance.Number, instance.Value
             };
 
-            var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.First));
+            var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.First))!;
 
             var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
 
@@ -325,13 +325,13 @@
         public void IsIgnoredReturnsFalseWhenPropertyContainsDefaultValueTypeValue()
         {
             var configuration = Model.UsingDefaultConfiguration();
-            var instance = Model.Create<WithConstructorParameters>().Set(x => x.Id = Guid.Empty);
-            var args = new object[]
+            var instance = Model.Create<WithConstructorParameters>()!.Set(x => x.Id = Guid.Empty);
+            var args = new object?[]
             {
                 new Company(), instance.Id, instance.RefNumber, instance.Number, instance.Value
             };
 
-            var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.Id));
+            var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.Id))!;
 
             var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
 
@@ -345,13 +345,13 @@
             IsIgnoredReturnsFalseWhenPropertyContainsNullAndPropertyTypeCannotBeCreatedForEqualityChecking()
         {
             var configuration = Model.UsingDefaultConfiguration();
-            var instance = Model.Create<ReadOnlyModelParent>().Set(x => x.Child = null);
-            var args = new object[]
+            var instance = Model.Create<ReadOnlyModelParent>()!.Set(x => x.Child = null!);
+            var args = new object?[]
             {
                 Guid.NewGuid()
             };
 
-            var propertyInfo = typeof(ReadOnlyModelParent).GetProperty(nameof(ReadOnlyModelParent.Child));
+            var propertyInfo = typeof(ReadOnlyModelParent).GetProperty(nameof(ReadOnlyModelParent.Child))!;
 
             var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
 
@@ -364,13 +364,13 @@
         public void IsIgnoredReturnsFalseWhenPropertyContainsNullReferenceTypeValue()
         {
             var configuration = Model.UsingDefaultConfiguration();
-            var instance = Model.Create<WithConstructorParameters>().Set(x => x.First = null);
-            var args = new object[]
+            var instance = Model.Create<WithConstructorParameters>()!.Set(x => x.First = null!);
+            var args = new object?[]
             {
                 instance.Id, instance.RefNumber, instance.Number, instance.Value
             };
 
-            var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.First));
+            var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.First))!;
 
             var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
 
@@ -383,13 +383,13 @@
         public void IsIgnoredReturnsFalseWhenPropertyContainsValueTypeValueNotMatchingConstructor()
         {
             var configuration = Model.UsingDefaultConfiguration();
-            var instance = Model.Create<WithConstructorParameters>();
-            var args = new object[]
+            var instance = Model.Create<WithConstructorParameters>()!;
+            var args = new object?[]
             {
                 new Company(), Guid.NewGuid(), instance.RefNumber, instance.Number, instance.Value
             };
 
-            var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.Id));
+            var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.Id))!;
 
             var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
 
@@ -407,7 +407,7 @@
         {
             var configuration = Model.UsingDefaultConfiguration();
             var instance = new Person();
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.Address));
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.Address))!;
 
             var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
 
@@ -421,11 +421,11 @@
         {
             var configuration = Model.UsingDefaultConfiguration();
             var instance = new Person();
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.Address));
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.Address))!;
 
             var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
 
-            var actual = sut.IsIgnored(configuration, instance, propertyInfo, null);
+            var actual = sut.IsIgnored(configuration, instance, propertyInfo, null!);
 
             actual.Should().BeFalse();
         }
@@ -434,13 +434,13 @@
         public void IsIgnoredReturnsFalseWhenPropertyRelatesToNullParameter()
         {
             var configuration = Model.UsingDefaultConfiguration();
-            var instance = Model.Create<WithConstructorParameters>();
-            var args = new object[]
+            var instance = Model.Create<WithConstructorParameters>()!;
+            var args = new object?[]
             {
-                null, new Company(), instance.Id, instance.RefNumber, instance.Number, instance.Value
+                null!, new Company(), instance.Id, instance.RefNumber, instance.Number, instance.Value
             };
 
-            var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.First));
+            var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.First))!;
 
             var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
 
@@ -460,7 +460,7 @@
 
             var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
 
-            var actual = sut.IsIgnored(configuration, instance, propertyInfo, null);
+            var actual = sut.IsIgnored(configuration, instance, propertyInfo, null!);
 
             actual.Should().BeTrue();
         }
@@ -468,13 +468,13 @@
         [Fact]
         public void IsIgnoredReturnsTrueWhenIgnoreRuleMatched()
         {
-            var configuration = Model.UsingDefaultConfiguration().AddIgnoreRule<Person>(x => x.Address);
+            var configuration = Model.UsingDefaultConfiguration()!.AddIgnoreRule<Person>(x => x.Address!);
             var instance = new Person();
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.Address));
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.Address))!;
 
             var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
 
-            var actual = sut.IsIgnored(configuration, instance, propertyInfo, null);
+            var actual = sut.IsIgnored(configuration, instance, propertyInfo, null!);
 
             actual.Should().BeTrue();
         }
@@ -483,13 +483,13 @@
         public void IsIgnoredReturnsTrueWhenParametersMatchPropertyReferenceType()
         {
             var configuration = Model.UsingDefaultConfiguration();
-            var instance = Model.Create<WithConstructorParameters>();
-            var args = new object[]
+            var instance = Model.Create<WithConstructorParameters>()!;
+            var args = new object?[]
             {
                 instance.First, instance.Id, instance.RefNumber, instance.Number, instance.Value
             };
 
-            var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.First));
+            var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.First))!;
 
             var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
 
@@ -502,13 +502,13 @@
         public void IsIgnoredReturnsTrueWhenParametersMatchPropertyValueType()
         {
             var configuration = Model.UsingDefaultConfiguration();
-            var instance = Model.Create<WithConstructorParameters>();
-            var args = new object[]
+            var instance = Model.Create<WithConstructorParameters>()!;
+            var args = new object?[]
             {
                 instance.First, instance.Id, instance.RefNumber, instance.Number, instance.Value
             };
 
-            var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.Number));
+            var propertyInfo = typeof(WithConstructorParameters).GetProperty(nameof(WithConstructorParameters.Number))!;
 
             var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
 
@@ -521,11 +521,11 @@
         public void IsIgnoredThrowsExceptionWithNullConfiguration()
         {
             var instance = new Person();
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.Address));
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.Address))!;
 
             var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
 
-            Action action = () => sut.IsIgnored(null, instance, propertyInfo, null);
+            Action action = () => sut.IsIgnored(null!, instance, propertyInfo, null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -534,11 +534,11 @@
         public void IsIgnoredThrowsExceptionWithNullInstance()
         {
             var configuration = Model.UsingDefaultConfiguration();
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.Address));
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.Address))!;
 
             var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
 
-            Action action = () => sut.IsIgnored(configuration, null, propertyInfo, null);
+            Action action = () => sut.IsIgnored(configuration, null!, propertyInfo, null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -551,19 +551,19 @@
 
             var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
 
-            Action action = () => sut.IsIgnored(configuration, instance, null, null);
+            Action action = () => sut.IsIgnored(configuration, instance, null!, null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
 
         private class PrivateProp
         {
-            private Person Person { set; get; }
+            private Person? Person { set; get; }
         }
 
         private class PrivateString
         {
-            public string Name { get; }
+            public string? Name { get; }
         }
 
         private class PrivateValue
@@ -573,17 +573,17 @@
 
         private class ReadOnlyModelParent
         {
-            public ReadOnlyModel Child { get; set; }
+            public ReadOnlyModel? Child { get; set; }
         }
 
         private class StaticGetter
         {
-            public static Person Person { get; }
+            public static Person? Person { get; }
         }
 
         private class StaticSetter
         {
-            public static Person Person { set; get; }
+            public static Person? Person { set; get; }
         }
     }
 }

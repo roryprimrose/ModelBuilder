@@ -68,7 +68,7 @@
 
             var sut = new Wrapper();
 
-            Action action = () => sut.RunCanCreate(config, buildChain, null, referenceName);
+            Action action = () => sut.RunCanCreate(config, buildChain, null!, referenceName);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -117,7 +117,7 @@
 
             var sut = new Wrapper();
 
-            Action action = () => sut.RunCreateInstance(executeStrategy, null, referenceName);
+            Action action = () => sut.RunCreateInstance(executeStrategy, null!, referenceName);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -161,9 +161,9 @@
             }
 
             public object RunCreateInstance(IExecuteStrategy executeStrategy, Type type, string referenceName,
-                params object[] args)
+                params object?[]? args)
             {
-                return base.CreateInstance(executeStrategy, type, referenceName, args);
+                return base.CreateInstance(executeStrategy, type, referenceName, args)!;
             }
         }
     }

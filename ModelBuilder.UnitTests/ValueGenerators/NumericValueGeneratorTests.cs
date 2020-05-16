@@ -33,9 +33,9 @@
 
             for (var index = 0; index < 1000; index++)
             {
-                var nextValue = sut.RunGenerate(type, null, executeStrategy);
+                var nextValue = sut.RunGenerate(type, null!, executeStrategy);
 
-                if (nextValue == null)
+                if (nextValue == null!)
                 {
                     nullFound = true;
                 }
@@ -69,11 +69,11 @@
             var sut = new Wrapper();
 
             var randomValueFound = false;
-            var firstValue = sut.RunGenerate(type, null, executeStrategy);
+            var firstValue = sut.RunGenerate(type, null!, executeStrategy);
 
             for (var index = 0; index < 1000; index++)
             {
-                var nextValue = sut.RunGenerate(type, null, executeStrategy);
+                var nextValue = sut.RunGenerate(type, null!, executeStrategy);
 
                 if (firstValue != nextValue)
                 {
@@ -89,7 +89,7 @@
         {
             var sut = new Wrapper();
 
-            Action action = () => sut.RunGenerate(typeof(int), null, null);
+            Action action = () => sut.RunGenerate(typeof(int), null!, null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -101,7 +101,7 @@
 
             var sut = new Wrapper();
 
-            Action action = () => sut.RunGenerate(null, null, executeStrategy);
+            Action action = () => sut.RunGenerate(null!, null!, executeStrategy);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -114,7 +114,7 @@
 
             var sut = new Wrapper();
 
-            var actual = sut.RunIsMatch(type, null, buildChain);
+            var actual = sut.RunIsMatch(type, null!, buildChain);
 
             actual.Should().Be(typeSupported);
         }
@@ -124,7 +124,7 @@
         {
             var sut = new Wrapper();
 
-            Action action = () => sut.RunIsMatch(typeof(int), null, null);
+            Action action = () => sut.RunIsMatch(typeof(int), null!, null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -136,7 +136,7 @@
 
             var sut = new Wrapper();
 
-            Action action = () => sut.RunIsMatch(null, null, buildChain);
+            Action action = () => sut.RunIsMatch(null!, null!, buildChain);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -145,7 +145,7 @@
         {
             public object RunGenerate(Type type, string referenceName, IExecuteStrategy executeStrategy)
             {
-                return Generate(executeStrategy, type, referenceName);
+                return Generate(executeStrategy, type, referenceName)!;
             }
 
             public bool RunIsMatch(Type type, string referenceName, IBuildChain buildChain)

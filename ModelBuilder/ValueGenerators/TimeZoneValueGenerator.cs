@@ -18,7 +18,7 @@
         }
 
         /// <inheritdoc />
-        protected override object Generate(IExecuteStrategy executeStrategy, Type type, string referenceName)
+        protected override object? Generate(IExecuteStrategy executeStrategy, Type type, string? referenceName)
         {
             var context = executeStrategy?.BuildChain?.Last;
 
@@ -30,7 +30,7 @@
                 location = TestData.Locations.Next();
             }
 
-            string timeZone = null;
+            string? timeZone = null;
 
             if (location != null)
             {
@@ -59,8 +59,13 @@
             return timeZone;
         }
 
-        private Location GetRelativeLocation(object context)
+        private Location? GetRelativeLocation(object? context)
         {
+            if (context == null)
+            {
+                return null;
+            }
+
             var city = GetValue<string>(NameExpression.City, context) ?? "";
             var country = GetValue<string>(NameExpression.Country, context) ?? "";
 

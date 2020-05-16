@@ -3,6 +3,7 @@
     using System;
     using System.IO;
     using System.Linq;
+    using System.Reflection;
     using FluentAssertions;
     using ModelBuilder.TypeCreators;
     using ModelBuilder.UnitTests.Models;
@@ -28,7 +29,7 @@
         {
             var sut = new DefaultBuildLog();
 
-            Action action = () => sut.BuildFailure(null);
+            Action action = () => sut.BuildFailure(null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -48,7 +49,7 @@
         {
             var sut = new DefaultBuildLog();
 
-            Action action = () => sut.CircularReferenceDetected(null);
+            Action action = () => sut.CircularReferenceDetected(null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -61,7 +62,7 @@
 
             var sut = new DefaultBuildLog();
 
-            sut.CreatingValue(type, generatorType, null);
+            sut.CreatingValue(type, generatorType, null!);
 
             sut.Output.Should().NotBeNullOrWhiteSpace();
 
@@ -78,7 +79,7 @@
 
             var sut = new DefaultBuildLog();
 
-            sut.CreatedParameter(parameterInfo, null);
+            sut.CreatedParameter(parameterInfo, null!);
 
             sut.Output.Should().NotBeNullOrWhiteSpace();
         }
@@ -90,7 +91,7 @@
 
             var sut = new DefaultBuildLog();
 
-            Action action = () => sut.CreatedParameter(null, context);
+            Action action = () => sut.CreatedParameter(null!, context);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -98,7 +99,7 @@
         [Fact]
         public void CreatedPropertyAppendsLogEntry()
         {
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
             var context = new Person();
 
             var sut = new DefaultBuildLog();
@@ -111,11 +112,11 @@
         [Fact]
         public void CreatedPropertyThrowsExceptionWithNullContext()
         {
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
 
             var sut = new DefaultBuildLog();
 
-            Action action = () => sut.CreatedProperty(propertyInfo, null);
+            Action action = () => sut.CreatedProperty(propertyInfo, null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -127,7 +128,7 @@
 
             var sut = new DefaultBuildLog();
 
-            Action action = () => sut.CreatedProperty(null, context);
+            Action action = () => sut.CreatedProperty(null!, context);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -137,7 +138,7 @@
         {
             var sut = new DefaultBuildLog();
 
-            sut.CreatedType(typeof(string), null);
+            sut.CreatedType(typeof(string), null!);
 
             sut.Output.Should().NotBeNullOrWhiteSpace();
         }
@@ -147,7 +148,7 @@
         {
             var sut = new DefaultBuildLog();
 
-            Action action = () => sut.CreatedType(null, null);
+            Action action = () => sut.CreatedType(null!, null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -160,9 +161,9 @@
 
             var sut = new DefaultBuildLog();
 
-            sut.CreatingType(typeof(Person), creatorType, null);
-            sut.CreatingValue(typeof(string), generatorType, null);
-            sut.CreatedType(typeof(Person), null);
+            sut.CreatingType(typeof(Person), creatorType, null!);
+            sut.CreatingValue(typeof(string), generatorType, null!);
+            sut.CreatedType(typeof(Person), null!);
 
             var actual = sut.Output;
 
@@ -177,7 +178,7 @@
 
             var sut = new DefaultBuildLog();
 
-            sut.CreatingParameter(parameterInfo, null);
+            sut.CreatingParameter(parameterInfo, null!);
 
             sut.Output.Should().NotBeNullOrWhiteSpace();
         }
@@ -189,7 +190,7 @@
 
             var sut = new DefaultBuildLog();
 
-            Action action = () => sut.CreatingParameter(null, context);
+            Action action = () => sut.CreatingParameter(null!, context);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -197,7 +198,7 @@
         [Fact]
         public void CreatingPropertyAppendsLogEntry()
         {
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
             var context = new Person();
 
             var sut = new DefaultBuildLog();
@@ -210,11 +211,11 @@
         [Fact]
         public void CreatingPropertyThrowsExceptionWithNullContext()
         {
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
 
             var sut = new DefaultBuildLog();
 
-            Action action = () => sut.CreatingProperty(propertyInfo, null);
+            Action action = () => sut.CreatingProperty(propertyInfo, null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -226,7 +227,7 @@
 
             var sut = new DefaultBuildLog();
 
-            Action action = () => sut.CreatingProperty(null, context);
+            Action action = () => sut.CreatingProperty(null!, context);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -238,7 +239,7 @@
 
             var sut = new DefaultBuildLog();
 
-            sut.CreatingType(typeof(string), creatorType, null);
+            sut.CreatingType(typeof(string), creatorType, null!);
 
             sut.Output.Should().NotBeNullOrWhiteSpace();
         }
@@ -250,7 +251,7 @@
 
             var sut = new DefaultBuildLog();
 
-            Action action = () => sut.CreatingType(type, null, null);
+            Action action = () => sut.CreatingType(type, null!, null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -262,7 +263,7 @@
 
             var sut = new DefaultBuildLog();
 
-            Action action = () => sut.CreatingType(null, creatorType, null);
+            Action action = () => sut.CreatingType(null!, creatorType, null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -275,7 +276,7 @@
 
             var sut = new DefaultBuildLog();
 
-            sut.CreatingValue(type, generatorType, null);
+            sut.CreatingValue(type, generatorType, null!);
 
             sut.Output.Should().NotBeNullOrWhiteSpace();
         }
@@ -287,7 +288,7 @@
 
             var sut = new DefaultBuildLog();
 
-            Action action = () => sut.CreatingValue(type, null, null);
+            Action action = () => sut.CreatingValue(type, null!, null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -299,7 +300,7 @@
 
             var sut = new DefaultBuildLog();
 
-            Action action = () => sut.CreatingValue(null, generatorType, null);
+            Action action = () => sut.CreatingValue(null!, generatorType, null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -307,7 +308,7 @@
         [Fact]
         public void IgnoringPropertyAppendsLogEntry()
         {
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
             var context = new Person();
 
             var sut = new DefaultBuildLog();
@@ -324,7 +325,7 @@
 
             var sut = new DefaultBuildLog();
 
-            Action action = () => sut.IgnoringProperty(null, context);
+            Action action = () => sut.IgnoringProperty(null!, context);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -332,11 +333,11 @@
         [Fact]
         public void IgnoringPropertyThrowsExceptionWithNullContext()
         {
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
 
             var sut = new DefaultBuildLog();
 
-            Action action = () => sut.IgnoringProperty(propertyInfo, null);
+            Action action = () => sut.IgnoringProperty(propertyInfo, null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -356,7 +357,7 @@
         {
             var sut = new DefaultBuildLog();
 
-            Action action = () => sut.MappedType(null, typeof(MemoryStream));
+            Action action = () => sut.MappedType(null!, typeof(MemoryStream));
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -366,7 +367,7 @@
         {
             var sut = new DefaultBuildLog();
 
-            Action action = () => sut.MappedType(typeof(Stream), null);
+            Action action = () => sut.MappedType(typeof(Stream), null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -388,7 +389,7 @@
         {
             var sut = new DefaultBuildLog();
 
-            Action action = () => sut.PopulatedInstance(null);
+            Action action = () => sut.PopulatedInstance(null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -404,7 +405,7 @@
             var sut = new DefaultBuildLog();
 
             sut.PopulatingInstance(instance);
-            sut.CreatingValue(type, generatorType, null);
+            sut.CreatingValue(type, generatorType, null!);
             sut.PopulatedInstance(instance);
 
             var actual = sut.Output;
@@ -429,7 +430,7 @@
         {
             var sut = new DefaultBuildLog();
 
-            Action action = () => sut.PopulatingInstance(null);
+            Action action = () => sut.PopulatingInstance(null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -441,7 +442,7 @@
 
             var sut = new DefaultBuildLog();
 
-            sut.PostBuildAction(typeof(string), postBuildType, null);
+            sut.PostBuildAction(typeof(string), postBuildType, null!);
 
             sut.Output.Should().NotBeNullOrWhiteSpace();
         }
@@ -453,7 +454,7 @@
 
             var sut = new DefaultBuildLog();
 
-            Action action = () => sut.PostBuildAction(type, null, null);
+            Action action = () => sut.PostBuildAction(type, null!, null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -465,7 +466,7 @@
 
             var sut = new DefaultBuildLog();
 
-            Action action = () => sut.PostBuildAction(null, creatorType, null);
+            Action action = () => sut.PostBuildAction(null!, creatorType, null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -489,9 +490,9 @@
                 exception = ex;
             }
 
-            sut.CreatingType(typeof(Person), creatorType, null);
+            sut.CreatingType(typeof(Person), creatorType, null!);
             sut.BuildFailure(exception);
-            sut.CreatedType(typeof(Person), null);
+            sut.CreatedType(typeof(Person), null!);
 
             var lines = sut.Output.Split(
                 new[]

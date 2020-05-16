@@ -10,14 +10,14 @@
         Justification = "This base type is used specifically for testing scenarios for that data type.")]
     public class EnumerableParent
     {
-        public Collection<Person> Collection { get; set; }
+        public Collection<Person>? Collection { get; set; }
 
-        public IEnumerable<Person> Enumerable { get; set; }
+        public IEnumerable<Person>? Enumerable { get; set; }
 
-        public ICollection<Person> InterfaceCollection { get; set; }
+        public ICollection<Person>? InterfaceCollection { get; set; }
 
-        public IList<Person> InterfaceList { get; set; }
+        public IList<Person>? InterfaceList { get; set; }
 
-        public List<Person> List { get; set; }
+        public List<Person>? List { get; set; }
     }
 }

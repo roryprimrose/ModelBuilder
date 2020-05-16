@@ -13,7 +13,7 @@
         [InlineData(typeof(string), "Value|Other", "stuff", false)]
         [InlineData(typeof(bool), "Value|Other", "stuff", false)]
         [InlineData(typeof(string), "Value|Other", "Other", false)]
-        [InlineData(typeof(bool), "Value|Other", null, false)]
+        [InlineData(typeof(bool), "Value|Other", null!, false)]
         [InlineData(typeof(bool), "Value|Other", "Value", true)]
         [InlineData(typeof(bool), "Value|Other", "Other", true)]
         [InlineData(typeof(bool?), "Value|Other", "Value", true)]
@@ -75,7 +75,7 @@
 
         [Theory]
         [InlineData("stuff", false)]
-        [InlineData(null, false)]
+        [InlineData(null!, false)]
         [InlineData("Match", true)]
         [InlineData("match", true)]
         public void IsMatchEvaluatesSpecifiedNamesTest(string referenceName, bool expected)
@@ -99,7 +99,7 @@
 
             var sut = new Wrapper(typeof(bool), typeof(bool?));
 
-            var actual = sut.RunIsMatch(type, null, buildChain);
+            var actual = sut.RunIsMatch(type, null!, buildChain);
 
             actual.Should().Be(expected);
         }
@@ -112,7 +112,7 @@
             var sut = new Wrapper("Test");
 
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-            Action action = () => sut.RunIsMatch(type, "Test", null);
+            Action action = () => sut.RunIsMatch(type, "Test", null!);
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
             action.Should().Throw<ArgumentNullException>();
@@ -126,7 +126,7 @@
             var sut = new Wrapper("Test");
 
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-            Action action = () => sut.RunIsMatch(null, "Test", buildChain);
+            Action action = () => sut.RunIsMatch(null!, "Test", buildChain);
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
             action.Should().Throw<ArgumentNullException>();
@@ -137,7 +137,7 @@
         {
             // ReSharper disable once ObjectCreationAsStatement
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-            Action action = () => new Wrapper((Regex)null);
+            Action action = () => new Wrapper((Regex)null!);
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
             action.Should().Throw<ArgumentNullException>();
@@ -148,7 +148,7 @@
         {
             // ReSharper disable once ObjectCreationAsStatement
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-            Action action = () => new Wrapper((string)null);
+            Action action = () => new Wrapper((string)null!);
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
             action.Should().Throw<ArgumentNullException>();
@@ -159,7 +159,7 @@
         {
             // ReSharper disable once ObjectCreationAsStatement
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-            Action action = () => new Wrapper((Type[])null);
+            Action action = () => new Wrapper((Type[])null!);
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
             action.Should().Throw<ArgumentNullException>();
@@ -179,7 +179,7 @@
             {
             }
 
-            protected override object Generate(IExecuteStrategy executeStrategy, Type type, string referenceName)
+            protected override object? Generate(IExecuteStrategy executeStrategy, Type type, string? referenceName)
             {
                 throw new NotImplementedException();
             }

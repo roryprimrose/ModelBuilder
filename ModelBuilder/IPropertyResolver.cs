@@ -31,6 +31,6 @@
             IBuildConfiguration configuration,
             object instance,
             PropertyInfo propertyInfo,
-            object[] args);
+            object?[]? args);
     }
 }

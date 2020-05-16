@@ -17,7 +17,7 @@ namespace ModelBuilder.ValueGenerators
         }
 
         /// <inheritdoc />
-        protected override object Generate(IExecuteStrategy executeStrategy, Type type, string referenceName)
+        protected override object? Generate(IExecuteStrategy executeStrategy, Type type, string? referenceName)
         {
             return TestData.Domains.Next();
         }

@@ -31,7 +31,7 @@
         }
 
         [Theory]
-        [InlineData(null)]
+        [InlineData(null!)]
         [InlineData("")]
         [InlineData("  ")]
         public void ParseThrowsExceptionWithInvalidData(string data)

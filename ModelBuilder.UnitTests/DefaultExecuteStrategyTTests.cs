@@ -23,10 +23,9 @@
         public void CreateReturnsDefaultWhenNullReturnedByProcessor()
         {
             var buildHistory = new BuildHistory();
-            var typeCapability = new BuildCapability
+            var typeCapability = new BuildCapability(GetType())
             {
                 SupportsPopulate = false,
-                ImplementedByType = GetType(),
                 AutoDetectConstructor = false,
                 AutoPopulate = false,
                 SupportsCreate = true
@@ -40,7 +39,7 @@
             processor.GetBuildCapability(buildConfiguration, buildHistory, Arg.Any<BuildRequirement>(),
                     typeof(int))
                 .Returns(typeCapability);
-            processor.Build(sut, typeof(int), null).Returns((object) null);
+            processor.Build(sut, typeof(int), null!).Returns((object) null!);
 
             sut.Initialize(buildConfiguration);
 
@@ -53,10 +52,9 @@
         public void CreateReturnsNullCalculatedByProcessor()
         {
             var buildHistory = new BuildHistory();
-            var typeCapability = new BuildCapability
+            var typeCapability = new BuildCapability(GetType())
             {
                 SupportsPopulate = false,
-                ImplementedByType = GetType(),
                 AutoDetectConstructor = true,
                 AutoPopulate = false,
                 SupportsCreate = true
@@ -78,7 +76,7 @@
                 .Returns(typeCapability);
             constructorResolver.Resolve(typeof(Person))
                 .Returns(typeof(Person).GetConstructors().Single(x => x.GetParameters().Length == 0));
-            processor.Build(sut, typeof(Person), null).Returns((Person) null);
+            processor.Build(sut, typeof(Person), null!).Returns((Person) null!);
 
             sut.Initialize(buildConfiguration);
 
@@ -101,10 +99,9 @@
                 Guid.NewGuid(),
                 Environment.TickCount
             };
-            var typeCapability = new BuildCapability
+            var typeCapability = new BuildCapability(GetType())
             {
                 SupportsPopulate = false,
-                ImplementedByType = GetType(),
                 AutoDetectConstructor = true,
                 AutoPopulate = false,
                 SupportsCreate = true
@@ -134,10 +131,9 @@
         {
             var buildHistory = new BuildHistory();
             var expected = new Person();
-            var typeCapability = new BuildCapability
+            var typeCapability = new BuildCapability(GetType())
             {
                 SupportsPopulate = false,
-                ImplementedByType = GetType(),
                 AutoDetectConstructor = true,
                 AutoPopulate = false,
                 SupportsCreate = true
@@ -159,7 +155,7 @@
                 .Returns(typeCapability);
             constructorResolver.Resolve(typeof(Person))
                 .Returns(typeof(Person).GetConstructors().Single(x => x.GetParameters().Length == 0));
-            processor.Build(sut, typeof(Person), null).Returns(expected);
+            processor.Build(sut, typeof(Person), null!).Returns(expected);
             processor.Populate(sut, expected).Returns(expected);
 
             sut.Initialize(buildConfiguration);
@@ -175,18 +171,16 @@
             var buildHistory = new BuildHistory();
             var model = new SlimModel();
             var expected = Guid.NewGuid();
-            var typeCapability = new BuildCapability
+            var typeCapability = new BuildCapability(GetType())
             {
                 SupportsPopulate = true,
-                ImplementedByType = GetType(),
                 AutoDetectConstructor = false,
                 AutoPopulate = true,
                 SupportsCreate = true
             };
-            var valueCapability = new BuildCapability
+            var valueCapability = new BuildCapability(GetType())
             {
                 SupportsPopulate = false,
-                ImplementedByType = GetType(),
                 AutoDetectConstructor = false,
                 AutoPopulate = false,
                 SupportsCreate = true
@@ -207,7 +201,7 @@
             processor.GetBuildCapability(buildConfiguration, buildHistory, BuildRequirement.Create,
                     Arg.Is<PropertyInfo>(x => x.Name == nameof(SlimModel.Value)))
                 .Returns(valueCapability);
-            processor.Build(sut, Arg.Is<PropertyInfo>(x => x.Name == nameof(SlimModel.Value)), null)
+            processor.Build(sut, Arg.Is<PropertyInfo>(x => x.Name == nameof(SlimModel.Value)), null!)
                 .Returns(expected);
             processor.GetBuildCapability(buildConfiguration, buildHistory, BuildRequirement.Populate,
                     typeof(Guid))

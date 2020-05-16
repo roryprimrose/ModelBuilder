@@ -9,8 +9,8 @@ namespace ModelBuilder.TypeCreators
     public class StructTypeCreator : TypeCreatorBase
     {
         /// <inheritdoc />
-        protected override object CreateInstance(IExecuteStrategy executeStrategy, Type type, string referenceName,
-            params object[] args)
+        protected override object? CreateInstance(IExecuteStrategy executeStrategy, Type type, string? referenceName,
+            params object?[]? args)
         {
             if (type == null)
             {
@@ -21,7 +21,7 @@ namespace ModelBuilder.TypeCreators
         }
 
         /// <inheritdoc />
-        protected override bool CanCreate(IBuildConfiguration configuration, IBuildChain buildChain, Type type, string referenceName)
+        protected override bool CanCreate(IBuildConfiguration configuration, IBuildChain buildChain, Type type, string? referenceName)
         {
             if (type == null)
             {

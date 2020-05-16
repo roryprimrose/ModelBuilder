@@ -25,6 +25,6 @@
         /// <param name="type">The type to evaluate.</param>
         /// <param name="args">The optional argument list for the constructor.</param>
         /// <returns>The constructor matching the type and arguments; or <c>null</c> if no constructor is found.</returns>
-        ConstructorInfo Resolve(Type type, params object[] args);
+        ConstructorInfo? Resolve(Type type, params object?[]? args);
     }
 }

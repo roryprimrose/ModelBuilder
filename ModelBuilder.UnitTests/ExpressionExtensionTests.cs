@@ -22,7 +22,7 @@
         [Fact]
         public void GetPropertyThrowsExceptionForStaticProperty()
         {
-            Action action = () => Wrapper<WithStatic>(x => WithStatic.Second);
+            Action action = () => Wrapper<WithStatic>(x => WithStatic.Second!);
 
             action.Should().Throw<ArgumentException>();
         }
@@ -54,7 +54,7 @@
         [Fact]
         public void GetPropertyThrowsExceptionWithMethodExpression()
         {
-            Action action = () => Wrapper<Person>(x => x.DoSomething());
+            Action action = () => Wrapper<Person>(x => x.DoSomething()!);
 
             action.Should().Throw<ArgumentException>();
         }
@@ -62,7 +62,7 @@
         [Fact]
         public void GetPropertyThrowsExceptionWithNullExpression()
         {
-            Action action = () => Wrapper<Person>(null);
+            Action action = () => Wrapper<Person>(null!);
 
             action.Should().Throw<ArgumentNullException>();
         }

@@ -81,7 +81,7 @@ namespace ModelBuilder.UnitTests.ValueGenerators
         }
 
         [Theory]
-        [InlineData(null)]
+        [InlineData(null!)]
         [InlineData(123)]
         public void GetValueReturnsValueFromNullableDeclaredProperty(int? expected)
         {
@@ -101,13 +101,13 @@ namespace ModelBuilder.UnitTests.ValueGenerators
         }
 
         [Theory]
-        [InlineData(null)]
+        [InlineData(null!)]
         [InlineData(123)]
         public void GetValueReturnsValueFromNullableDynamicProperty(int? expected)
         {
             dynamic context = new ExpandoObject();
 
-            context.YearLastUsed = expected;
+            context.YearLastUsed = expected!;
 
             var expression = new Regex("YearLastUsed");
 
@@ -125,10 +125,10 @@ namespace ModelBuilder.UnitTests.ValueGenerators
         {
             var sut = new Wrapper<string>(
                 NameExpression.FirstName,
-                (Type) null);
+                (Type) null!);
 
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-            Action action = () => sut.ReadValue(NameExpression.LastName, null);
+            Action action = () => sut.ReadValue(NameExpression.LastName, null!);
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
             action.Should().Throw<ArgumentNullException>();
@@ -141,10 +141,10 @@ namespace ModelBuilder.UnitTests.ValueGenerators
 
             var sut = new Wrapper<string>(
                 NameExpression.FirstName,
-                (Type) null);
+                (Type) null!);
 
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-            Action action = () => sut.ReadValue(null, context);
+            Action action = () => sut.ReadValue(null!, context);
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
             action.Should().Throw<ArgumentNullException>();
@@ -261,7 +261,7 @@ namespace ModelBuilder.UnitTests.ValueGenerators
                 NameExpression.FirstName,
                 typeof(string));
 
-            Action action = () => sut.GetIsMale(null);
+            Action action = () => sut.GetIsMale(null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -285,9 +285,9 @@ namespace ModelBuilder.UnitTests.ValueGenerators
         }
 
         [Theory]
-        [InlineData(typeof(bool), null, null, false)] // Type and name doesn't match
-        [InlineData(typeof(string), null, null, false)] // Name is null
-        [InlineData(typeof(string), "FirstName", null, false)] // No build context
+        [InlineData(typeof(bool), null!, null!, false)] // Type and name doesn't match
+        [InlineData(typeof(string), null!, null!, false)] // Name is null
+        [InlineData(typeof(string), "FirstName", null!, false)] // No build context
         [InlineData(typeof(string), "stuff", typeof(Person),
             false)] // Name doesn't match but we have an object to check for properties
         [InlineData(typeof(string), "FirstName", typeof(Guid),
@@ -305,7 +305,7 @@ namespace ModelBuilder.UnitTests.ValueGenerators
         {
             var buildChain = new BuildHistory();
 
-            if (contextType != null)
+            if (contextType != null!)
             {
                 object context;
 
@@ -315,7 +315,7 @@ namespace ModelBuilder.UnitTests.ValueGenerators
                 }
                 else
                 {
-                    context = Activator.CreateInstance(contextType);
+                    context = Activator.CreateInstance(contextType)!;
                 }
 
                 buildChain.Push(context);
@@ -334,7 +334,7 @@ namespace ModelBuilder.UnitTests.ValueGenerators
             var sut = new Wrapper<string>(NameExpression.FirstName, typeof(string));
 
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-            Action action = () => sut.RunIsMatch(typeof(string), "FirstName", null);
+            Action action = () => sut.RunIsMatch(typeof(string), "FirstName", null!);
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
             action.Should().Throw<ArgumentNullException>();
@@ -351,7 +351,7 @@ namespace ModelBuilder.UnitTests.ValueGenerators
             var sut = new Wrapper<string>(NameExpression.FirstName, typeof(string));
 
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-            Action action = () => sut.RunIsMatch(null, "FirstName", buildChain);
+            Action action = () => sut.RunIsMatch(null!, "FirstName", buildChain);
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
             action.Should().Throw<ArgumentNullException>();
@@ -362,7 +362,7 @@ namespace ModelBuilder.UnitTests.ValueGenerators
         {
             // ReSharper disable once ObjectCreationAsStatement
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-            Action action = () => new Wrapper<string>(null);
+            Action action = () => new Wrapper<string>(null!);
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
             action.Should().Throw<ArgumentException>();
@@ -373,7 +373,7 @@ namespace ModelBuilder.UnitTests.ValueGenerators
         {
             // ReSharper disable once ObjectCreationAsStatement
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-            Action action = () => new Wrapper<string>(null, typeof(string));
+            Action action = () => new Wrapper<string>(null!, typeof(string));
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
             action.Should().Throw<ArgumentException>();
@@ -400,7 +400,7 @@ namespace ModelBuilder.UnitTests.ValueGenerators
                 return IsMatch(buildChain, type, referenceName);
             }
 
-            protected override object Generate(IExecuteStrategy executeStrategy, Type type, string referenceName)
+            protected override object? Generate(IExecuteStrategy executeStrategy, Type type, string? referenceName)
             {
                 throw new NotImplementedException();
             }

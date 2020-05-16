@@ -21,11 +21,11 @@
         /// <summary>
         ///     Get the first item added to the build chain.
         /// </summary>
-        object First { get; }
+        object? First { get; }
 
         /// <summary>
         ///     Gets the last item added to the build chain.
         /// </summary>
-        object Last { get; }
+        object? Last { get; }
     }
 }

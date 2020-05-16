@@ -124,13 +124,13 @@
 
             var sut = new Wrapper();
 
-            var first = (string) sut.RunGenerate(typeof(string), "Timezone",executeStrategy);
+            var first = (string?) sut.RunGenerate(typeof(string), "Timezone",executeStrategy);
 
             var second = first;
 
             for (var index = 0; index < 1000; index++)
             {
-                second = (string) sut.RunGenerate(typeof(string), "Timezone",executeStrategy);
+                second = (string?) sut.RunGenerate(typeof(string), "Timezone",executeStrategy);
 
                 if (string.Equals(first, second, StringComparison.OrdinalIgnoreCase) == false)
                 {
@@ -188,7 +188,7 @@
         [InlineData("Australia", "Canberra")]
         [InlineData("Other", "Canberra")] // Matches on city first then country
         [InlineData("", "Canberra")]
-        [InlineData(null, "Canberra")]
+        [InlineData(null!, "Canberra")]
         public void GenerateReturnsValueMatchingCityValuesTest(string country, string city)
         {
             var address = new Address
@@ -228,7 +228,7 @@
 
             var sut = new Wrapper();
 
-            var actual = (string) sut.RunGenerate(type, referenceName, executeStrategy);
+            var actual = (string?) sut.RunGenerate(type, referenceName, executeStrategy);
 
             actual.Should().NotBeNullOrEmpty();
         }
@@ -244,7 +244,7 @@
 
         [Theory]
         [InlineData(typeof(Stream), "timezone", false)]
-        [InlineData(typeof(string), null, false)]
+        [InlineData(typeof(string), null!, false)]
         [InlineData(typeof(string), "", false)]
         [InlineData(typeof(string), "Stuff", false)]
         [InlineData(typeof(string), "timezone", true)]
@@ -266,7 +266,7 @@
 
         private class Wrapper : TimeZoneValueGenerator
         {
-            public object RunGenerate(Type type, string referenceName, IExecuteStrategy executeStrategy)
+            public object? RunGenerate(Type type, string? referenceName, IExecuteStrategy executeStrategy)
             {
                 return Generate(executeStrategy, type, referenceName);
             }

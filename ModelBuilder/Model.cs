@@ -18,7 +18,7 @@
         /// <param name="args">The constructor arguments to create the type with.</param>
         /// <returns>The new instance.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="instanceType" /> parameter is <c>null</c>.</exception>
-        public static object Create(Type instanceType, params object[] args)
+        public static object? Create(Type instanceType, params object[] args)
         {
             if (instanceType == null)
             {
@@ -36,7 +36,10 @@
         /// <typeparam name="T">The type of instance to create.</typeparam>
         /// <param name="args">The constructor arguments to create the type with.</param>
         /// <returns>The new instance.</returns>
-        public static T Create<T>(params object[] args)
+#if NETSTANDARD2_1
+        [return: System.Diagnostics.CodeAnalysis.MaybeNull]
+#endif
+        public static T Create<T>(params object?[]? args)
         {
             return ResolveDefault<T>().Create(args);
         }

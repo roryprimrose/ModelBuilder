@@ -15,7 +15,7 @@
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
-        public object Build(IExecuteStrategy executeStrategy, Type type, params object[] arguments)
+        public object? Build(IExecuteStrategy executeStrategy, Type type, params object?[]? arguments)
         {
             if (executeStrategy == null)
             {
@@ -37,7 +37,7 @@
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="parameterInfo" /> parameter is <c>null</c>.</exception>
-        public object Build(IExecuteStrategy executeStrategy, ParameterInfo parameterInfo, params object[] arguments)
+        public object? Build(IExecuteStrategy executeStrategy, ParameterInfo parameterInfo, params object?[]? arguments)
         {
             if (executeStrategy == null)
             {
@@ -59,7 +59,7 @@
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="propertyInfo" /> parameter is <c>null</c>.</exception>
-        public object Build(IExecuteStrategy executeStrategy, PropertyInfo propertyInfo, params object[] arguments)
+        public object? Build(IExecuteStrategy executeStrategy, PropertyInfo propertyInfo, params object?[]? arguments)
         {
             if (executeStrategy == null)
             {
@@ -82,7 +82,7 @@
         /// <exception cref="ArgumentNullException">The <paramref name="buildChain" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="buildConfiguration" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
-        public BuildCapability GetBuildCapability(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
+        public BuildCapability? GetBuildCapability(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
             Type type)
         {
             if (buildConfiguration == null)
@@ -107,7 +107,7 @@
         /// <exception cref="ArgumentNullException">The <paramref name="buildChain" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="buildConfiguration" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="parameterInfo" /> parameter is <c>null</c>.</exception>
-        public BuildCapability GetBuildCapability(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
+        public BuildCapability? GetBuildCapability(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
             ParameterInfo parameterInfo)
         {
             if (buildConfiguration == null)
@@ -132,7 +132,7 @@
         /// <exception cref="ArgumentNullException">The <paramref name="buildChain" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="buildConfiguration" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="propertyInfo" /> parameter is <c>null</c>.</exception>
-        public BuildCapability GetBuildCapability(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
+        public BuildCapability? GetBuildCapability(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
             PropertyInfo propertyInfo)
         {
             if (buildConfiguration == null)
@@ -160,9 +160,9 @@
             throw new NotSupportedException();
         }
 
-        private static object Build(IValueGenerator generator, Type typeToBuild, string referenceName,
+        private static object? Build(IValueGenerator? generator, Type typeToBuild, string? referenceName,
             IBuildChain buildChain,
-            Func<object> createAction, IBuildLog buildLog)
+            Func<object?> createAction, IBuildLog buildLog)
         {
             if (generator == null)
             {
@@ -203,7 +203,7 @@
             }
         }
 
-        private static BuildCapability GetBuildCapability(IBuildConfiguration buildConfiguration,
+        private static BuildCapability? GetBuildCapability(IBuildConfiguration buildConfiguration,
             Func<IValueGenerator, bool> isMatch)
         {
             var generator = GetMatchingGenerator(buildConfiguration, isMatch);
@@ -213,14 +213,13 @@
                 return null;
             }
 
-            return new BuildCapability
+            return new BuildCapability(generator.GetType())
             {
-                SupportsCreate = true,
-                ImplementedByType = generator.GetType()
+                SupportsCreate = true
             };
         }
 
-        private static IValueGenerator GetMatchingGenerator(IBuildConfiguration buildConfiguration,
+        private static IValueGenerator? GetMatchingGenerator(IBuildConfiguration buildConfiguration,
             Func<IValueGenerator, bool> isMatch)
         {
             return buildConfiguration.ValueGenerators?.Where(isMatch)

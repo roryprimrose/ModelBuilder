@@ -4,10 +4,10 @@
 
     public class Company
     {
-        public string Address { get; set; }
+        public string? Address { get; set; }
 
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
-        public IEnumerable<Person> Staff { get; set; }
+        public IEnumerable<Person>? Staff { get; set; }
     }
 }

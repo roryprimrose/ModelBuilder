@@ -47,7 +47,7 @@
         [Fact]
         public void GenerateReturnsDomainFromDerivedClass()
         {
-            var property = typeof(Person).GetProperty(nameof(Person.PersonalEmail));
+            var property = typeof(Person).GetProperty(nameof(Person.PersonalEmail))!;
             var person = new Person();
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -58,7 +58,7 @@
 
             var sut = new MailinatorEmailValueGenerator();
 
-            var actual = (string) sut.Generate(executeStrategy, property);
+            var actual = (string) sut.Generate(executeStrategy, property)!;
 
             actual.Should().EndWith("mailinator.com");
         }
@@ -374,7 +374,7 @@
 
         [Theory]
         [InlineData(typeof(Stream), "email", false)]
-        [InlineData(typeof(string), null, false)]
+        [InlineData(typeof(string), null!, false)]
         [InlineData(typeof(string), "", false)]
         [InlineData(typeof(string), "Stuff", false)]
         [InlineData(typeof(string), "email", true)]
@@ -394,9 +394,9 @@
 
         private class Wrapper : EmailValueGenerator
         {
-            public object RunGenerate(Type type, string referenceName, IExecuteStrategy executeStrategy)
+            public object RunGenerate(Type type, string? referenceName, IExecuteStrategy executeStrategy)
             {
-                return Generate(executeStrategy, type, referenceName);
+                return Generate(executeStrategy, type, referenceName)!;
             }
 
             public bool RunIsMatch(Type type, string referenceName, IBuildChain buildChain)

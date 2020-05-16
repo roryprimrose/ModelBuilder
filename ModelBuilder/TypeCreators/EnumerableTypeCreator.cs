@@ -3,8 +3,8 @@
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
-    using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
+    using System.Globalization;
     using System.Net.NetworkInformation;
 
     /// <summary>
@@ -30,7 +30,7 @@
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
         protected override bool CanCreate(IBuildConfiguration configuration,
-            IBuildChain buildChain, Type type, string referenceName)
+            IBuildChain buildChain, Type type, string? referenceName)
         {
             if (type == null)
             {
@@ -70,7 +70,7 @@
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
         protected override bool CanPopulate(IBuildConfiguration configuration,
-            IBuildChain buildChain, Type type, string referenceName)
+            IBuildChain buildChain, Type type, string? referenceName)
         {
             if (type == null)
             {
@@ -122,7 +122,7 @@
         /// <param name="previousItem">The previous item generated, or <c>null</c>.</param>
         /// <returns>The new item generated.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is <c>null</c>.</exception>
-        protected virtual object CreateChildItem(Type type, IExecuteStrategy executeStrategy, object previousItem)
+        protected virtual object? CreateChildItem(Type type, IExecuteStrategy executeStrategy, object? previousItem)
         {
             if (executeStrategy == null)
             {
@@ -135,7 +135,8 @@
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
-        protected override object Create(IExecuteStrategy executeStrategy, Type type, string referenceName, params object[] args)
+        protected override object? Create(IExecuteStrategy executeStrategy, Type type, string? referenceName,
+            params object?[]? args)
         {
             if (executeStrategy == null)
             {
@@ -147,21 +148,33 @@
                 throw new ArgumentNullException(nameof(type));
             }
 
-            if (type.IsInterface)
+            if (type.IsInterface == false)
             {
-                var typeToCreate = DetermineTypeToCreate(type);
-
-                return CreateInstance(executeStrategy, typeToCreate, referenceName, args);
+                return CreateInstance(executeStrategy, type, referenceName, args);
             }
 
-            return CreateInstance(executeStrategy, type, referenceName, args);
+            var typeToCreate = DetermineTypeToCreate(type);
+
+            if (typeToCreate == null)
+            {
+                var format = "Unable to create type {0} using {1} because it is not compatible with {2}";
+                var message = string.Format(CultureInfo.CurrentCulture, format, type.FullName,
+                    nameof(EnumerableTypeCreator), "IEnumerable<T>");
+                var context = executeStrategy.BuildChain.Last;
+                var buildLog = executeStrategy.Log.Output;
+
+                throw new BuildException(message, type, referenceName, context, buildLog);
+            }
+
+            return CreateInstance(executeStrategy, typeToCreate, referenceName, args);
+
         }
 
         /// <inheritdoc />
-        protected override object CreateInstance(IExecuteStrategy executeStrategy,
+        protected override object? CreateInstance(IExecuteStrategy executeStrategy,
             Type type,
-            string referenceName,
-            params object[] args)
+            string? referenceName,
+            params object?[]? args)
         {
             if (type == null)
             {
@@ -179,20 +192,27 @@
             Justification = "Instance is validated by the base class")]
         protected override object PopulateInstance(IExecuteStrategy executeStrategy, object instance)
         {
-            Debug.Assert(instance != null, "instance != null");
-
             var type = instance.GetType();
 
             var internalType = FindEnumerableTypeArgument(type);
+
+            if (internalType == null)
+            {
+                var format = "Unable to populate type {0} using {1} because it is not compatible with {2}";
+                var message = string.Format(CultureInfo.CurrentCulture, format, type.FullName,
+                    nameof(EnumerableTypeCreator), "IEnumerable<T>");
+                var buildLog = executeStrategy.Log.Output;
+
+                throw new BuildException(message, type, null, instance, buildLog);
+            }
+
             var collectionGenericTypeDefinition = typeof(ICollection<>);
             var collectionType = collectionGenericTypeDefinition.MakeGenericType(internalType);
 
             // Get the Add method
             var addMethod = collectionType.GetMethod("Add");
 
-            Debug.Assert(addMethod != null, nameof(addMethod) + " != null");
-
-            object previousItem = null;
+            object? previousItem = null;
 
             var count = Generator.NextValue(MinCount, MaxCount);
 
@@ -213,7 +233,7 @@
             return instance;
         }
 
-        private static Type DetermineTypeToCreate(Type type)
+        private static Type? DetermineTypeToCreate(Type type)
         {
             if (type.IsInterface == false)
             {
@@ -263,7 +283,7 @@
             return type;
         }
 
-        private static Type FindEnumerableTypeArgument(Type type)
+        private static Type? FindEnumerableTypeArgument(Type type)
         {
             // The type may implement multiple interfaces including IEnumerable<T> where the type generic definition of the type itself is not the same as the IEnumerable<T> definition
             // Dictionary<TKey, TValue> is an example of this where it implements IEnumerable<KeyValuePair<TKey, TValue>>
@@ -290,7 +310,7 @@
             return null;
         }
 
-        private static Type GetEnumerableTypeArgument(Type type)
+        private static Type? GetEnumerableTypeArgument(Type type)
         {
             if (type.IsGenericType == false)
             {
@@ -310,7 +330,7 @@
             return type.GetGenericArguments()[0];
         }
 
-        private static Type GetSupportedGenericType(Type type, Type genericTypeDefinition,
+        private static Type? GetSupportedGenericType(Type type, Type genericTypeDefinition,
             params Type[] genericParameterTypes)
         {
             var potentialType = genericTypeDefinition.MakeGenericType(genericParameterTypes);

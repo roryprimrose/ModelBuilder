@@ -28,7 +28,7 @@
         [Fact]
         public void AddConfigurationModuleThrowsExceptionWithNullConfiguration()
         {
-            Action action = () => BuildConfigurationExtensions.UsingModule<TestConfigurationModule>(null);
+            Action action = () => BuildConfigurationExtensions.UsingModule<TestConfigurationModule>(null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -38,7 +38,7 @@
         {
             var module = new TestConfigurationModule();
 
-            Action action = () => BuildConfigurationExtensions.Add(null, module);
+            Action action = () => BuildConfigurationExtensions.Add(null!, module);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -48,7 +48,7 @@
         {
             var sut = Substitute.For<IBuildConfiguration>();
 
-            Action action = () => sut.Add((IConfigurationModule) null);
+            Action action = () => sut.Add((IConfigurationModule) null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -89,7 +89,7 @@
         [Fact]
         public void CreateThrowsExceptionWithNullBuildConfiguration()
         {
-            Action action = () => ((IBuildConfiguration) null).Create(typeof(Guid));
+            Action action = () => ((IBuildConfiguration) null!).Create(typeof(Guid));
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -99,7 +99,7 @@
         {
             var sut = Substitute.For<IBuildConfiguration>();
 
-            Action action = () => sut.Create(null);
+            Action action = () => sut.Create(null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -128,7 +128,7 @@
         [Fact]
         public void CreateTThrowsExceptionWithNullBuildConfiguration()
         {
-            Action action = () => ((IBuildConfiguration) null).Create<Guid>();
+            Action action = () => ((IBuildConfiguration) null!).Create<Guid>();
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -136,7 +136,7 @@
         [Fact]
         public void IgnoringThrowsExceptionWithNullBuildConfiguration()
         {
-            Action action = () => ((IBuildConfiguration) null).Ignoring<Person>(x => x.Priority);
+            Action action = () => ((IBuildConfiguration) null!).Ignoring<Person>(x => x.Priority);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -146,7 +146,7 @@
         {
             var sut = Substitute.For<IBuildConfiguration>();
 
-            Action action = () => sut.Ignoring<Person>(null);
+            Action action = () => sut.Ignoring<Person>(null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -156,7 +156,7 @@
         {
             var model = new Person();
 
-            Action action = () => ((IBuildConfiguration) null).Populate(model);
+            Action action = () => BuildConfigurationExtensions.Populate(null!, model);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -166,7 +166,7 @@
         {
             var sut = Substitute.For<IBuildConfiguration>();
 
-            Action action = () => sut.Populate<Person>(null);
+            Action action = () => sut.Populate<Person>(null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -198,7 +198,7 @@
         [Fact]
         public void UsingExecuteStrategyThrowsExceptionWithNullConfiguration()
         {
-            Action action = () => ((IBuildConfiguration) null).UsingExecuteStrategy<NullExecuteStrategy>();
+            Action action = () => ((IBuildConfiguration) null!).UsingExecuteStrategy<NullExecuteStrategy>();
 
             action.Should().Throw<ArgumentNullException>();
         }

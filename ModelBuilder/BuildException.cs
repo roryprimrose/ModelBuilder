@@ -40,7 +40,7 @@
         /// <param name="referenceName">Identifies the possible parameter or property name the instance is intended for.</param>
         /// <param name="context">The possible context object the instance is being created for.</param>
         /// <param name="buildLog">The build log.</param>
-        public BuildException(string message, Type targetType, string referenceName, object context, string buildLog) :
+        public BuildException(string message, Type? targetType, string? referenceName, object? context, string? buildLog) :
             this(message, targetType, referenceName, context, buildLog, null)
         {
         }
@@ -56,11 +56,11 @@
         /// <param name="inner">The inner exception.</param>
         public BuildException(
             string message,
-            Type targetType,
-            string referenceName,
-            object context,
-            string buildLog,
-            Exception inner) : base(message, inner)
+            Type? targetType,
+            string? referenceName,
+            object? context,
+            string? buildLog,
+            Exception? inner) : base(message, inner)
         {
             TargetType = targetType;
             Context = context;
@@ -71,21 +71,21 @@
         /// <summary>
         ///     Gets or sets the build log.
         /// </summary>
-        public string BuildLog { get; set; }
+        public string? BuildLog { get; set; }
 
         /// <summary>
         ///     Gets or sets the context of the build action.
         /// </summary>
-        public object Context { get; set; }
+        public object? Context { get; set; }
 
         /// <summary>
         ///     Gets or sets the reference name of the build action.
         /// </summary>
-        public string ReferenceName { get; set; }
+        public string? ReferenceName { get; set; }
 
         /// <summary>
         ///     Gets or sets the target type of the build action.
         /// </summary>
-        public Type TargetType { get; set; }
+        public Type? TargetType { get; set; }
     }
 }
