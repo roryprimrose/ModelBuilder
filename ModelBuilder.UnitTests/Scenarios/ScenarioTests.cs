@@ -59,6 +59,17 @@
         }
 
         [Fact]
+        public void CanCreateGenericType()
+        {
+            var actual = Model.Create<GenericContainer<Office>>()!;
+
+            actual.FirstName.Should().NotBeNullOrWhiteSpace();
+            actual.LastName.Should().NotBeNullOrWhiteSpace();
+            actual.Email.Should().NotBeNullOrWhiteSpace();
+            actual.Value.Should().NotBeNull();
+        }
+
+        [Fact]
         public void CanCreateGuidValue()
         {
             var actual = Model.Create<Guid>();

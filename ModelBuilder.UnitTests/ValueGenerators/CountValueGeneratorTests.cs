@@ -9,6 +9,14 @@
 
     public class CountValueGeneratorTests
     {
+        [Fact]
+        public void CreatesWithDefaultMaxCount()
+        {
+            var sut = new Wrapper();
+
+            sut.MaxCount.Should().BeGreaterThan(0);
+        }
+
         [Theory]
         [ClassData(typeof(NumericTypeDataSource))]
         public void GenerateReturnsNewValueTest(Type type, bool isSupported)
@@ -51,7 +59,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsValueBetweenDefinedMinAndMaxValues()
+        public void GenerateReturnsValueBetweenDefaultMinAndMaxValues()
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -59,6 +67,25 @@
             executeStrategy.BuildChain.Returns(buildChain);
 
             var sut = new Wrapper();
+
+            for (var index = 0; index < 1000; index++)
+            {
+                var value = (int) sut.RunGenerate(typeof(int), "Count", executeStrategy);
+
+                value.Should().BeGreaterOrEqualTo(1);
+                value.Should().BeLessOrEqualTo(sut.MaxCount);
+            }
+        }
+
+        [Fact]
+        public void GenerateReturnsValueBetweenDefinedMinAndMaxValues()
+        {
+            var buildChain = new BuildHistory();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            var sut = new Wrapper {MaxCount = 10};
 
             for (var index = 0; index < 1000; index++)
             {

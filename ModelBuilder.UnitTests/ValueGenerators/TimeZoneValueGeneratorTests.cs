@@ -29,7 +29,7 @@
 
             var sut = new Wrapper();
 
-            var actual = sut.RunGenerate(typeof(string), "Timezone",executeStrategy) as string;
+            var actual = sut.RunGenerate(typeof(string), "Timezone", executeStrategy) as string;
 
             actual.Should().NotBeNullOrWhiteSpace();
 
@@ -37,6 +37,21 @@
 
             TestData.TimeZones.Where(x => x.StartsWith(valueToMatch, StringComparison.OrdinalIgnoreCase)).Should()
                 .Contain(actual);
+        }
+
+        [Fact]
+        public void GenerateReturnsRandomTimeZoneMatchingCaseInsensitiveCountryWithNoContext()
+        {
+            var buildChain = new BuildHistory();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            var sut = new Wrapper();
+
+            var actual = sut.RunGenerate(typeof(string), "Timezone", executeStrategy) as string;
+
+            actual.Should().NotBeNullOrWhiteSpace();
         }
 
         [Fact]
@@ -55,7 +70,7 @@
 
             var sut = new Wrapper();
 
-            var actual = sut.RunGenerate(typeof(string), "Timezone",executeStrategy) as string;
+            var actual = sut.RunGenerate(typeof(string), "Timezone", executeStrategy) as string;
 
             actual.Should().NotBeNullOrWhiteSpace();
 
@@ -80,7 +95,7 @@
 
             var sut = new Wrapper();
 
-            var actual = sut.RunGenerate(typeof(string), "Timezone",executeStrategy) as string;
+            var actual = sut.RunGenerate(typeof(string), "Timezone", executeStrategy) as string;
 
             actual.Should().NotBeNullOrWhiteSpace();
 
@@ -105,7 +120,7 @@
 
             var sut = new Wrapper();
 
-            var actual = sut.RunGenerate(typeof(string), "Timezone",executeStrategy) as string;
+            var actual = sut.RunGenerate(typeof(string), "Timezone", executeStrategy) as string;
 
             TestData.TimeZones.Should().Contain(actual);
         }
@@ -124,13 +139,13 @@
 
             var sut = new Wrapper();
 
-            var first = (string?) sut.RunGenerate(typeof(string), "Timezone",executeStrategy);
+            var first = (string?) sut.RunGenerate(typeof(string), "Timezone", executeStrategy);
 
             var second = first;
 
             for (var index = 0; index < 1000; index++)
             {
-                second = (string?) sut.RunGenerate(typeof(string), "Timezone",executeStrategy);
+                second = (string?) sut.RunGenerate(typeof(string), "Timezone", executeStrategy);
 
                 if (string.Equals(first, second, StringComparison.OrdinalIgnoreCase) == false)
                 {
@@ -154,7 +169,7 @@
 
             var sut = new Wrapper();
 
-            var actual = sut.RunGenerate(typeof(string), "Timezone",executeStrategy);
+            var actual = sut.RunGenerate(typeof(string), "Timezone", executeStrategy);
 
             actual.Should().BeOfType<string>();
             actual.As<string>().Should().NotBeNullOrWhiteSpace();
@@ -177,7 +192,7 @@
 
             for (var index = 0; index < 1000; index++)
             {
-                var actual = sut.RunGenerate(typeof(string), "Timezone",executeStrategy) as string;
+                var actual = sut.RunGenerate(typeof(string), "Timezone", executeStrategy) as string;
 
                 ids.Should().Contain(actual);
             }
@@ -205,7 +220,7 @@
 
             var sut = new Wrapper();
 
-            var actual = sut.RunGenerate(typeof(string), "Timezone",executeStrategy) as string;
+            var actual = sut.RunGenerate(typeof(string), "Timezone", executeStrategy) as string;
 
             actual.Should().Be("Australia/Canberra");
         }

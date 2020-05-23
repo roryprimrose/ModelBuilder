@@ -99,10 +99,7 @@
                 return FindConstructorMatchingArguments(type, args);
             }
 
-            // The contents of args here cannot be null given the if statement above
-#pragma warning disable 8620
-            return FindConstructorMatchingTypes(type, args);
-#pragma warning restore 8620
+            return FindConstructorMatchingTypes(type, args!);
         }
 
         private static IOrderedEnumerable<ParameterInfo> CalculateOrderedParameters(IBuildConfiguration configuration,
@@ -184,16 +181,6 @@
         
         private static ConstructorInfo FindConstructorMatchingTypes(Type type, object[] args)
         {
-            if (args == null)
-            {
-                throw new ArgumentNullException(nameof(args));
-            }
-
-            if (args == null)
-            {
-                throw new ArgumentNullException(nameof(args));
-            }
-
             // Search for a matching constructor
             var types = args.Select(x => x.GetType()).ToArray();
 

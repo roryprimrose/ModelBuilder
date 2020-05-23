@@ -1,6 +1,5 @@
 ﻿namespace ModelBuilder
 {
-    using System;
     using System.IO;
     using System.Reflection;
 
@@ -12,16 +11,6 @@
             var resourceName = "ModelBuilder.Resources." + name + ".txt";
 
             using var stream = assembly.GetManifestResourceStream(resourceName);
-#if DEBUG
-            if (stream == null)
-            {
-                var resourceNames = assembly.GetManifestResourceNames();
-                var message =
-                    $"Resource {name} not found in {assembly.FullName}.  Valid resources are: {string.Join(", ", resourceNames)}.";
-
-                throw new InvalidOperationException(message);
-            }
-#endif
             using var reader = new StreamReader(stream);
 
             return reader.ReadToEnd();

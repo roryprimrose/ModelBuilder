@@ -214,5 +214,19 @@
 
             actual.Value.Should().Be(expected);
         }
+
+        [Fact]
+        public void PopulateThrowsExceptionWithNullInstance()
+        {
+            var buildHistory = new BuildHistory();
+
+            var processor = Substitute.For<IBuildProcessor>();
+
+            var sut = new DefaultExecuteStrategy<int>(buildHistory, _buildLog, processor);
+
+            Action action = () => sut.Populate(null!);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
     }
 }

@@ -44,6 +44,43 @@
         }
 
         [Fact]
+        public void GetBuildTypeReturnsCachedType()
+        {
+            var configuration = new BuildConfiguration();
+
+            var sut = new DefaultTypeResolver();
+
+            var first = sut.GetBuildType(configuration, typeof(INoMatch));
+            var second = sut.GetBuildType(configuration, typeof(INoMatch));
+
+            first.Should().BeSameAs(second);
+        }
+
+        [Fact]
+        public void GetBuildTypeReturnsClassBasedOnGenericEnumerableNonListInterface()
+        {
+            var configuration = new BuildConfiguration();
+
+            var sut = new DefaultTypeResolver();
+
+            var actual = sut.GetBuildType(configuration, typeof(ICustomCollection<string>));
+
+            actual.Should().Be<CustomCollection<string>>();
+        }
+
+        [Fact]
+        public void GetBuildTypeReturnsClassBasedOnGenericNonListInterface()
+        {
+            var configuration = new BuildConfiguration();
+
+            var sut = new DefaultTypeResolver();
+
+            var actual = sut.GetBuildType(configuration, typeof(IGenericContainer<Office>));
+
+            actual.Should().Be<GenericContainer<Office>>();
+        }
+
+        [Fact]
         public void GetBuildTypeReturnsDerivedTypeMatchingOnAbstractBaseName()
         {
             var configuration = new BuildConfiguration();
