@@ -142,6 +142,72 @@
         }
 
         [Fact]
+        public void ConfigurationThrowsExceptionWhenNotInitialized()
+        {
+            var sut = new DefaultExecuteStrategy();
+
+            Action action = () =>
+            {
+                // ReSharper disable once UnusedVariable
+                var config = sut.Configuration;
+            };
+
+            action.Should().Throw<InvalidOperationException>();
+        }
+
+        [Fact]
+        public void CreateCanProvideNullParameterValueToConstructor()
+        {
+            var buildHistory = new BuildHistory();
+            var typeCapability = new BuildCapability(GetType())
+            {
+                SupportsPopulate = false,
+                AutoDetectConstructor = true,
+                AutoPopulate = false,
+                SupportsCreate = true
+            };
+            var valueCapability = new BuildCapability(GetType())
+            {
+                SupportsPopulate = false,
+                AutoDetectConstructor = false,
+                AutoPopulate = false,
+                SupportsCreate = true
+            };
+
+            var processor = Substitute.For<IBuildProcessor>();
+            var buildConfiguration = Substitute.For<IBuildConfiguration>();
+            var typeResolver = Substitute.For<ITypeResolver>();
+            var constructorResolver = Substitute.For<IConstructorResolver>();
+
+            var sut = new DefaultExecuteStrategy(buildHistory, _buildLog, processor);
+
+            processor.GetBuildCapability(buildConfiguration, buildHistory, Arg.Any<BuildRequirement>(),
+                    typeof(SimpleConstructor))
+                .Returns(typeCapability);
+            processor.GetBuildCapability(buildConfiguration, buildHistory, Arg.Any<BuildRequirement>(),
+                    Arg.Any<ParameterInfo>())
+                .Returns(valueCapability);
+            processor.Build(sut, typeof(SimpleConstructor), Arg.Any<object[]>())
+                .Returns(x => new SimpleConstructor(x.Arg<object[]>()[0].As<SlimModel?>()));
+            processor.Build(sut, Arg.Is<ParameterInfo>(x => x.Name == "model"),
+                Arg.Any<object[]>()).Returns(null);
+            typeResolver.GetBuildType(buildConfiguration, Arg.Any<Type>()).Returns(x => x.Arg<Type>());
+            buildConfiguration.TypeResolver.Returns(typeResolver);
+            constructorResolver.Resolve(Arg.Any<Type>()).Returns(x => x.Arg<Type>().GetConstructors().First());
+            constructorResolver
+                .GetOrderedParameters(buildConfiguration, typeof(SimpleConstructor).GetConstructors().First())
+                .Returns(typeof(SimpleConstructor).GetConstructors().First().GetParameters());
+            buildConfiguration.ConstructorResolver.Returns(constructorResolver);
+
+            sut.Initialize(buildConfiguration);
+
+            var actual = (SimpleConstructor) sut.Create(typeof(SimpleConstructor))!;
+
+            actual.Should().NotBeNull();
+            actual.Model.Should().BeNull();
+        }
+
+        [Fact]
         public void CreateDeterminesPropertiesToCreateByProvidingConstructorArgsForNestedType()
         {
             var buildHistory = new BuildHistory();
@@ -880,23 +946,9 @@
 
             sut.BuildChain.Should().NotBeNull();
         }
-        
+
         [Fact]
-        public void ConfigurationThrowsExceptionWhenNotInitialized()
-        {
-            var sut = new DefaultExecuteStrategy();
-
-            Action action = () =>
-            {
-                // ReSharper disable once UnusedVariable
-                var config = sut.Configuration;
-            };
-
-            action.Should().Throw<InvalidOperationException>();
-        }
-
-
-        [Fact] public void IsCreatedWithNullBuildChainAndBuildLog()
+        public void IsCreatedWithNullBuildChainAndBuildLog()
         {
             var sut = new DefaultExecuteStrategy();
 
@@ -1167,7 +1219,7 @@
                 Model = model;
             }
 
-            public ReadOnlyModel? Model { get; } = null;
+            public ReadOnlyModel? Model { get; }
 
             public ReadOnlyModel? Other { get; set; } = null;
         }

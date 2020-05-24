@@ -217,18 +217,7 @@ namespace ModelBuilder
                 return false;
             }
 
-            if (first is IComparable comparer)
-            {
-                if (comparer.CompareTo(second) == 0)
-                {
-                    return true;
-                }
-
-                // This constructor parameter does not match property value, keep looking
-                return false;
-            }
-
-            if (first == second)
+            if (first.Equals(second))
             {
                 return true;
             }

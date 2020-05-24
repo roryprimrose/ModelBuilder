@@ -4,9 +4,9 @@
 
     public class WithConstructorParameters
     {
-        public WithConstructorParameters(Company firstCompany, Guid id, int? refNumber, int number, bool value)
+        public WithConstructorParameters(Company first, Guid id, int? refNumber, int number, bool value)
         {
-            First = firstCompany;
+            First = first;
             Id = id;
             RefNumber = refNumber;
             Number = number;

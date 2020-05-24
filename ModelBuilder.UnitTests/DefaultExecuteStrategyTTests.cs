@@ -222,7 +222,7 @@
 
             var processor = Substitute.For<IBuildProcessor>();
 
-            var sut = new DefaultExecuteStrategy<int>(buildHistory, _buildLog, processor);
+            var sut = new DefaultExecuteStrategy<Person>(buildHistory, _buildLog, processor);
 
             Action action = () => sut.Populate(null!);
 

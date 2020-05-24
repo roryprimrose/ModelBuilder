@@ -246,6 +246,284 @@
         }
 
         [Fact]
+        public void IsIgnoredReturnsFalseWhenMatchOnConstructorArgumentValueButNotName()
+        {
+            var configuration = Substitute.For<IBuildConfiguration>();
+            var constructorResolver = Substitute.For<IConstructorResolver>();
+
+            var value = Guid.NewGuid().ToString();
+            var instance = new Optionals(value);
+            var propertyInfo = instance.GetType().GetProperty(nameof(Optionals.Value))!;
+            var args = new object?[]
+            {
+                value
+            };
+            var constructor = instance.GetType().GetConstructor(new[] {typeof(string)});
+
+            configuration.ConstructorResolver.Returns(constructorResolver);
+            constructorResolver.Resolve(typeof(Optionals), args).Returns(constructor);
+
+            var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
+
+            var actual = sut.IsIgnored(configuration, instance, propertyInfo, args);
+
+            actual.Should().BeFalse();
+        }
+
+        [Fact]
+        public void IsIgnoredReturnsFalseWhenNoMatchOnConstructorArguments()
+        {
+            var configuration = Substitute.For<IBuildConfiguration>();
+            var constructorResolver = Substitute.For<IConstructorResolver>();
+
+            var instance = new Optionals(Guid.NewGuid().ToString())
+            {
+                Value = Guid.NewGuid().ToString()
+            };
+            var propertyInfo = instance.GetType().GetProperty(nameof(Optionals.Value))!;
+            var args = new object?[]
+            {
+                Guid.NewGuid().ToString()
+            };
+            var constructor = instance.GetType().GetConstructor(new[] {typeof(string)});
+
+            configuration.ConstructorResolver.Returns(constructorResolver);
+            constructorResolver.Resolve(typeof(Optionals), args).Returns(constructor);
+
+            var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
+
+            var actual = sut.IsIgnored(configuration, instance, propertyInfo, args);
+
+            actual.Should().BeFalse();
+        }
+
+        [Fact]
+        public void IsIgnoredReturnsFalseWhenParameterDoesNotMatchReferencePropertyWithNameMatch()
+        {
+            var configuration = Model.UsingDefaultConfiguration();
+            var value = new Person();
+            var model = new ClassMatchingNameWrapper<Person>(value);
+            var propertyInfo =
+                typeof(ClassMatchingNameWrapper<Person>).GetProperty(nameof(ClassMatchingNameWrapper<Person>.Value))!;
+            var args = new object?[]
+            {
+                new Person()
+            };
+
+            var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
+
+            var actual = sut.IsIgnored(configuration, model, propertyInfo, args);
+
+            actual.Should().BeFalse();
+        }
+
+        [Fact]
+        public void IsIgnoredReturnsFalseWhenParameterDoesNotMatchReferencePropertyWithNameMismatch()
+        {
+            var configuration = Model.UsingDefaultConfiguration();
+            var item = new Person();
+            var model = new ClassMismatchingNameWrapper<Person>(item);
+            var propertyInfo =
+                typeof(ClassMismatchingNameWrapper<Person>).GetProperty(
+                    nameof(ClassMismatchingNameWrapper<Person>.Value))!;
+            var args = new object?[]
+            {
+                new Person()
+            };
+
+            var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
+
+            var actual = sut.IsIgnored(configuration, model, propertyInfo, args);
+
+            actual.Should().BeFalse();
+        }
+
+        [Fact]
+        public void IsIgnoredReturnsFalseWhenParameterDoesNotMatchStringPropertyWithNameMatch()
+        {
+            var configuration = Model.UsingDefaultConfiguration();
+            var value = Guid.NewGuid().ToString();
+            var model = new ClassMatchingNameWrapper<string>(value);
+            var propertyInfo =
+                typeof(ClassMatchingNameWrapper<string>).GetProperty(nameof(ClassMatchingNameWrapper<string>.Value))!;
+            var args = new object?[]
+            {
+                Guid.NewGuid().ToString()
+            };
+
+            var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
+
+            var actual = sut.IsIgnored(configuration, model, propertyInfo, args);
+
+            actual.Should().BeFalse();
+        }
+
+        [Fact]
+        public void IsIgnoredReturnsFalseWhenParameterDoesNotMatchStringPropertyWithNameMismatch()
+        {
+            var configuration = Model.UsingDefaultConfiguration();
+            var item = Guid.NewGuid().ToString();
+            var model = new ClassMismatchingNameWrapper<string>(item);
+            var propertyInfo =
+                typeof(ClassMismatchingNameWrapper<string>).GetProperty(
+                    nameof(ClassMismatchingNameWrapper<string>.Value))!;
+            var args = new object?[]
+            {
+                Guid.NewGuid().ToString()
+            };
+
+            var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
+
+            var actual = sut.IsIgnored(configuration, model, propertyInfo, args);
+
+            actual.Should().BeFalse();
+        }
+
+        [Fact]
+        public void IsIgnoredReturnsFalseWhenParameterDoesNotMatchStructPropertyWithNameMatch()
+        {
+            var configuration = Model.UsingDefaultConfiguration();
+            var value = new StructModel {FirstName = Guid.NewGuid().ToString()};
+            var model = new StructMatchingNameWrapper<StructModel>(value);
+            var propertyInfo =
+                typeof(StructMatchingNameWrapper<StructModel>).GetProperty(nameof(StructMatchingNameWrapper<StructModel>
+                    .Value))!;
+            var args = new object?[]
+            {
+                new StructModel {FirstName = Guid.NewGuid().ToString()}
+            };
+
+            var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
+
+            var actual = sut.IsIgnored(configuration, model, propertyInfo, args);
+
+            actual.Should().BeFalse();
+        }
+
+        [Fact]
+        public void IsIgnoredReturnsFalseWhenParameterDoesNotMatchStructPropertyWithNameMismatch()
+        {
+            var configuration = Model.UsingDefaultConfiguration();
+            var item = new StructModel {FirstName = Guid.NewGuid().ToString()};
+            var model = new StructMismatchingNameWrapper<StructModel>(item);
+            var propertyInfo =
+                typeof(StructMismatchingNameWrapper<StructModel>).GetProperty(
+                    nameof(StructMismatchingNameWrapper<StructModel>.Value))!;
+            var args = new object?[]
+            {
+                new StructModel {FirstName = Guid.NewGuid().ToString()}
+            };
+
+            var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
+
+            var actual = sut.IsIgnored(configuration, model, propertyInfo, args);
+
+            actual.Should().BeFalse();
+        }
+
+        [Fact]
+        public void IsIgnoredReturnsFalseWhenParameterDoesNotMatchValueTypePropertyWithNameMatch()
+        {
+            var configuration = Model.UsingDefaultConfiguration();
+            var value = Environment.TickCount;
+            var model = new StructMatchingNameWrapper<int>(value);
+            var propertyInfo =
+                typeof(StructMatchingNameWrapper<int>).GetProperty(nameof(StructMatchingNameWrapper<int>.Value))!;
+            var args = new object?[]
+            {
+                Guid.NewGuid().ToString()
+            };
+
+            var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
+
+            var actual = sut.IsIgnored(configuration, model, propertyInfo, args);
+
+            actual.Should().BeFalse();
+        }
+
+        [Fact]
+        public void IsIgnoredReturnsFalseWhenParameterDoesNotMatchValueTypePropertyWithNameMismatch()
+        {
+            var configuration = Model.UsingDefaultConfiguration();
+            var item = Environment.TickCount;
+            var model = new StructMismatchingNameWrapper<int>(item);
+            var propertyInfo =
+                typeof(StructMismatchingNameWrapper<int>).GetProperty(nameof(StructMismatchingNameWrapper<int>.Value))!;
+            var args = new object?[]
+            {
+                Guid.NewGuid().ToString()
+            };
+
+            var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
+
+            var actual = sut.IsIgnored(configuration, model, propertyInfo, args);
+
+            actual.Should().BeFalse();
+        }
+
+        [Fact]
+        public void IsIgnoredReturnsFalseWhenParameterMatchesStringPropertyWithNameMismatch()
+        {
+            var configuration = Model.UsingDefaultConfiguration();
+            var item = Guid.NewGuid().ToString();
+            var model = new ClassMismatchingNameWrapper<string>(item);
+            var propertyInfo =
+                typeof(ClassMismatchingNameWrapper<string>).GetProperty(
+                    nameof(ClassMismatchingNameWrapper<string>.Value))!;
+            var args = new object?[]
+            {
+                item
+            };
+
+            var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
+
+            var actual = sut.IsIgnored(configuration, model, propertyInfo, args);
+
+            actual.Should().BeFalse();
+        }
+
+        [Fact]
+        public void IsIgnoredReturnsFalseWhenParameterMatchesStructPropertyWithNameMismatch()
+        {
+            var configuration = Model.UsingDefaultConfiguration();
+            var item = new StructModel {FirstName = Guid.NewGuid().ToString()};
+            var model = new StructMismatchingNameWrapper<StructModel>(item);
+            var propertyInfo =
+                typeof(StructMismatchingNameWrapper<StructModel>).GetProperty(
+                    nameof(StructMismatchingNameWrapper<StructModel>.Value))!;
+            var args = new object?[]
+            {
+                item
+            };
+
+            var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
+
+            var actual = sut.IsIgnored(configuration, model, propertyInfo, args);
+
+            actual.Should().BeFalse();
+        }
+
+        [Fact]
+        public void IsIgnoredReturnsFalseWhenParameterMatchesValueTypePropertyWithNameMismatch()
+        {
+            var configuration = Model.UsingDefaultConfiguration();
+            var item = Environment.TickCount;
+            var model = new StructMismatchingNameWrapper<int>(item);
+            var propertyInfo =
+                typeof(StructMismatchingNameWrapper<int>).GetProperty(nameof(StructMismatchingNameWrapper<int>.Value))!;
+            var args = new object?[]
+            {
+                item
+            };
+
+            var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
+
+            var actual = sut.IsIgnored(configuration, model, propertyInfo, args);
+
+            actual.Should().BeFalse();
+        }
+
+        [Fact]
         public void IsIgnoredReturnsFalseWhenParametersDoNotMatchArgumentList()
         {
             var configuration = Model.UsingDefaultConfiguration();
@@ -480,6 +758,108 @@
         }
 
         [Fact]
+        public void IsIgnoredReturnsTrueWhenParameterMatchesReferencePropertyWithNameMatch()
+        {
+            var configuration = Model.UsingDefaultConfiguration();
+            var value = new Person();
+            var model = new ClassMatchingNameWrapper<Person>(value);
+            var propertyInfo =
+                typeof(ClassMatchingNameWrapper<Person>).GetProperty(nameof(ClassMatchingNameWrapper<Person>.Value))!;
+            var args = new object?[]
+            {
+                value
+            };
+
+            var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
+
+            var actual = sut.IsIgnored(configuration, model, propertyInfo, args);
+
+            actual.Should().BeTrue();
+        }
+
+        [Fact]
+        public void IsIgnoredReturnsTrueWhenParameterMatchesReferencePropertyWithNameMismatch()
+        {
+            var configuration = Model.UsingDefaultConfiguration();
+            var item = new Person();
+            var model = new ClassMismatchingNameWrapper<Person>(item);
+            var propertyInfo =
+                typeof(ClassMismatchingNameWrapper<Person>).GetProperty(
+                    nameof(ClassMismatchingNameWrapper<Person>.Value))!;
+            var args = new object?[]
+            {
+                item
+            };
+
+            var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
+
+            var actual = sut.IsIgnored(configuration, model, propertyInfo, args);
+
+            actual.Should().BeTrue();
+        }
+
+        [Fact]
+        public void IsIgnoredReturnsTrueWhenParameterMatchesStringPropertyWithNameMatch()
+        {
+            var configuration = Model.UsingDefaultConfiguration();
+            var value = Guid.NewGuid().ToString();
+            var model = new ClassMatchingNameWrapper<string>(value);
+            var propertyInfo =
+                typeof(ClassMatchingNameWrapper<string>).GetProperty(nameof(ClassMatchingNameWrapper<string>.Value))!;
+            var args = new object?[]
+            {
+                value
+            };
+
+            var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
+
+            var actual = sut.IsIgnored(configuration, model, propertyInfo, args);
+
+            actual.Should().BeTrue();
+        }
+
+        [Fact]
+        public void IsIgnoredReturnsTrueWhenParameterMatchesStructPropertyWithNameMatch()
+        {
+            var configuration = Model.UsingDefaultConfiguration();
+            var value = new StructModel {FirstName = Guid.NewGuid().ToString()};
+            var model = new StructMatchingNameWrapper<StructModel>(value);
+            var propertyInfo =
+                typeof(StructMatchingNameWrapper<StructModel>).GetProperty(nameof(StructMatchingNameWrapper<StructModel>
+                    .Value))!;
+            var args = new object?[]
+            {
+                value
+            };
+
+            var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
+
+            var actual = sut.IsIgnored(configuration, model, propertyInfo, args);
+
+            actual.Should().BeTrue();
+        }
+
+        [Fact]
+        public void IsIgnoredReturnsTrueWhenParameterMatchesValueTypePropertyWithNameMatch()
+        {
+            var configuration = Model.UsingDefaultConfiguration();
+            var value = Environment.TickCount;
+            var model = new StructMatchingNameWrapper<int>(value);
+            var propertyInfo =
+                typeof(StructMatchingNameWrapper<int>).GetProperty(nameof(StructMatchingNameWrapper<int>.Value))!;
+            var args = new object?[]
+            {
+                value
+            };
+
+            var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
+
+            var actual = sut.IsIgnored(configuration, model, propertyInfo, args);
+
+            actual.Should().BeTrue();
+        }
+
+        [Fact]
         public void IsIgnoredReturnsTrueWhenParametersMatchPropertyReferenceType()
         {
             var configuration = Model.UsingDefaultConfiguration();
@@ -515,6 +895,28 @@
             var actual = sut.IsIgnored(configuration, instance, propertyInfo, args);
 
             actual.Should().BeTrue();
+        }
+
+        [Fact]
+        public void IsIgnoredThrowsExceptionWhenConstructorNotFound()
+        {
+            var configuration = Substitute.For<IBuildConfiguration>();
+            var instance = new Optionals(Guid.NewGuid().ToString())
+            {
+                Value = Guid.NewGuid().ToString()
+            };
+            var propertyInfo = instance.GetType().GetProperty(nameof(Optionals.Value))!;
+            var args = new object?[]
+            {
+                Guid.NewGuid().ToString(),
+                Guid.NewGuid().ToString()
+            };
+
+            var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
+
+            Action action = () => sut.IsIgnored(configuration, instance, propertyInfo, args);
+
+            action.Should().Throw<MissingMemberException>();
         }
 
         [Fact]
@@ -556,6 +958,26 @@
             action.Should().Throw<ArgumentNullException>();
         }
 
+        private class ClassMatchingNameWrapper<T> where T : class
+        {
+            public ClassMatchingNameWrapper(T value)
+            {
+                Value = value;
+            }
+
+            public T Value { get; set; }
+        }
+
+        private class ClassMismatchingNameWrapper<T> where T : class
+        {
+            public ClassMismatchingNameWrapper(T item)
+            {
+                Value = item;
+            }
+
+            public T Value { get; set; }
+        }
+
         private class PrivateProp
         {
             private Person? Person { set; get; }
@@ -584,6 +1006,26 @@
         private class StaticSetter
         {
             public static Person? Person { set; get; }
+        }
+
+        private class StructMatchingNameWrapper<T> where T : struct
+        {
+            public StructMatchingNameWrapper(T value)
+            {
+                Value = value;
+            }
+
+            public T Value { get; set; }
+        }
+
+        private class StructMismatchingNameWrapper<T> where T : struct
+        {
+            public StructMismatchingNameWrapper(T item)
+            {
+                Value = item;
+            }
+
+            public T Value { get; set; }
         }
     }
 }

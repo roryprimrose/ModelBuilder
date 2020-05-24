@@ -307,6 +307,21 @@
         }
 
         [Fact]
+        public void CreateThrowExceptionWhenTypeNotEnumerable()
+        {
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+            var configuration = Substitute.For<IBuildConfiguration>();
+
+            executeStrategy.Configuration.Returns(configuration);
+
+            var sut = new EnumerableTypeCreator();
+
+            Action action = () => sut.Create(executeStrategy, typeof(ICantCreate));
+
+            action.Should().Throw<BuildException>();
+        }
+
+        [Fact]
         public void PopulateAddsItemsToCollectionFromExecuteStrategy()
         {
             var expected = new Collection<Guid>();
@@ -414,6 +429,23 @@
         }
 
         [Fact]
+        public void PopulateInstanceThrowExceptionWhenTypeNotEnumerable()
+        {
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+            var configuration = Substitute.For<IBuildConfiguration>();
+
+            var item = new object();
+
+            executeStrategy.Configuration.Returns(configuration);
+
+            var sut = new EnumerableTypeCreatorWrapper();
+
+            Action action = () => sut.PopulateItem(executeStrategy, item);
+
+            action.Should().Throw<BuildException>();
+        }
+
+        [Fact]
         public void PopulateThrowsExceptionWithUnsupportedType()
         {
             var instance = new Lazy<bool>(() => true);
@@ -458,6 +490,11 @@
                 params object?[]? args)
             {
                 return CreateInstance(executeStrategy, type, referenceName, args);
+            }
+
+            public object PopulateItem(IExecuteStrategy executeStrategy, object instance)
+            {
+                return PopulateInstance(executeStrategy, instance);
             }
         }
     }

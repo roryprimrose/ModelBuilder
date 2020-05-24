@@ -21,11 +21,6 @@
             string? referenceName,
             params object?[]? args)
         {
-            if (type == null)
-            {
-                throw new ArgumentNullException(nameof(type));
-            }
-
             if (args == null)
             {
                 return Activator.CreateInstance(type);
@@ -36,7 +31,7 @@
                 return Activator.CreateInstance(type);
             }
 
-            var constructor = executeStrategy?.Configuration?.ConstructorResolver?.Resolve(type, args);
+            var constructor = executeStrategy.Configuration?.ConstructorResolver?.Resolve(type, args);
 
             if (constructor == null)
             {
