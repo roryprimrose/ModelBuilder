@@ -22,7 +22,7 @@
         /// <param name="executeStrategy">The execution strategy.</param>
         /// <param name="type">The type of value to generate.</param>
         /// <returns>A new value of the type.</returns>
-        object Generate(IExecuteStrategy executeStrategy, Type type);
+        object? Generate(IExecuteStrategy executeStrategy, Type type);
 
         /// <summary>
         ///     Generates a new value of the specified type.
@@ -30,7 +30,7 @@
         /// <param name="executeStrategy">The execution strategy.</param>
         /// <param name="propertyInfo">The property to generate the value for.</param>
         /// <returns>A new value of the type.</returns>
-        object Generate(IExecuteStrategy executeStrategy, PropertyInfo propertyInfo);
+        object? Generate(IExecuteStrategy executeStrategy, PropertyInfo propertyInfo);
 
         /// <summary>
         ///     Generates a new value of the specified type.
@@ -38,7 +38,7 @@
         /// <param name="executeStrategy">The execution strategy.</param>
         /// <param name="parameterInfo">The parameter to generate the value for.</param>
         /// <returns>A new value of the type.</returns>
-        object Generate(IExecuteStrategy executeStrategy, ParameterInfo parameterInfo);
+        object? Generate(IExecuteStrategy executeStrategy, ParameterInfo parameterInfo);
 
         /// <summary>
         ///     Returns whether the specified type matches this generator.

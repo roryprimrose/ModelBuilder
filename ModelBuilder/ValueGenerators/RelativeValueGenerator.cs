@@ -51,7 +51,7 @@
 
             if (value == null)
             {
-                return default;
+                return default!;
             }
 
             var expectedType = typeof(T);
@@ -78,7 +78,7 @@
                 throw new ArgumentNullException(nameof(executeStrategy));
             }
 
-            string gender = null;
+            string? gender = null;
             var context = executeStrategy.BuildChain?.Last;
 
             if (context != null)
@@ -108,7 +108,7 @@
         }
 
         /// <inheritdoc />
-        protected override bool IsMatch(IBuildChain buildChain, Type type, string referenceName)
+        protected override bool IsMatch(IBuildChain buildChain, Type type, string? referenceName)
         {
             var baseSupported = base.IsMatch(buildChain, type, referenceName);
 
@@ -175,7 +175,7 @@
                 select x.Name;
         }
 
-        private static object GetPropertyValue(Regex expression, object context)
+        private static object? GetPropertyValue(Regex expression, object context)
         {
             if (context is ExpandoObject dynamicObject)
             {

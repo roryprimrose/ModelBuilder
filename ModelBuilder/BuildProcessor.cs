@@ -41,7 +41,7 @@
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
-        public object Build(IExecuteStrategy executeStrategy, Type type, params object[] arguments)
+        public object? Build(IExecuteStrategy executeStrategy, Type type, params object?[]? arguments)
         {
             if (executeStrategy == null)
             {
@@ -68,7 +68,7 @@
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="parameterInfo" /> parameter is <c>null</c>.</exception>
-        public object Build(IExecuteStrategy executeStrategy, ParameterInfo parameterInfo, params object[] arguments)
+        public object? Build(IExecuteStrategy executeStrategy, ParameterInfo parameterInfo, params object?[]? arguments)
         {
             if (executeStrategy == null)
             {
@@ -94,7 +94,7 @@
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="propertyInfo" /> parameter is <c>null</c>.</exception>
-        public object Build(IExecuteStrategy executeStrategy, PropertyInfo propertyInfo, params object[] arguments)
+        public object? Build(IExecuteStrategy executeStrategy, PropertyInfo propertyInfo, params object?[]? arguments)
         {
             if (executeStrategy == null)
             {
@@ -121,7 +121,7 @@
         /// <exception cref="ArgumentNullException">The <paramref name="buildConfiguration" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="buildChain" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
-        public BuildCapability GetBuildCapability(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
+        public BuildCapability? GetBuildCapability(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
             BuildRequirement buildRequirement, Type type)
         {
             if (buildConfiguration == null)
@@ -143,19 +143,14 @@
                 buildChain,
                 type));
 
-            if (match == null)
-            {
-                return null;
-            }
-
-            return match.Capability;
+            return match?.Capability;
         }
 
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="buildConfiguration" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="buildChain" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="parameterInfo" /> parameter is <c>null</c>.</exception>
-        public BuildCapability GetBuildCapability(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
+        public BuildCapability? GetBuildCapability(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
             BuildRequirement buildRequirement,
             ParameterInfo parameterInfo)
         {
@@ -178,19 +173,14 @@
                 buildChain,
                 parameterInfo));
 
-            if (match == null)
-            {
-                return null;
-            }
-
-            return match.Capability;
+            return match?.Capability;
         }
 
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="buildConfiguration" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="buildChain" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="propertyInfo" /> parameter is <c>null</c>.</exception>
-        public BuildCapability GetBuildCapability(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
+        public BuildCapability? GetBuildCapability(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
             BuildRequirement buildRequirement,
             PropertyInfo propertyInfo)
         {
@@ -213,12 +203,7 @@
                 buildChain,
                 propertyInfo));
 
-            if (match == null)
-            {
-                return null;
-            }
-
-            return match.Capability;
+            return match?.Capability;
         }
 
         /// <inheritdoc />
@@ -247,13 +232,12 @@
             return match.Action.Populate(executeStrategy, instance);
         }
 
-        private Match GetMatch(BuildRequirement buildRequirement, Func<IBuildAction, BuildCapability> evaluator)
+        private Match? GetMatch(BuildRequirement buildRequirement, Func<IBuildAction, BuildCapability?> evaluator)
         {
             var capabilities = from x in _actions
                 orderby x.Priority descending
-                select new Match
+                select new Match(x)
                 {
-                    Action = x,
                     Capability = evaluator(x)
                 };
 
@@ -268,8 +252,13 @@
 
         private class Match
         {
-            public IBuildAction Action { get; set; }
-            public BuildCapability Capability { get; set; }
+            public Match(IBuildAction action)
+            {
+                Action = action;
+            }
+
+            public IBuildAction Action { get; }
+            public BuildCapability? Capability { get; set; }
         }
     }
 }

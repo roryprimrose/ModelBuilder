@@ -24,7 +24,7 @@
         [Fact]
         public void AddTypeCreatorThrowsExceptionWithNullConfiguration()
         {
-            Action action = () => BuildConfigurationExtensions.AddTypeCreator<DefaultTypeCreator>(null);
+            Action action = () => BuildConfigurationExtensions.AddTypeCreator<DefaultTypeCreator>(null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -46,7 +46,7 @@
         {
             var rule = new DefaultTypeCreator();
 
-            Action action = () => BuildConfigurationExtensions.Add(null, rule);
+            Action action = () => BuildConfigurationExtensions.Add(null!, rule);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -56,7 +56,7 @@
         {
             var sut = Substitute.For<IBuildConfiguration>();
 
-            Action action = () => sut.Add((ITypeCreator) null);
+            Action action = () => sut.Add((ITypeCreator) null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -88,7 +88,7 @@
         [Fact]
         public void RemoveTypeCreatorThrowsExceptionWithNullConfiguration()
         {
-            Action action = () => BuildConfigurationExtensions.RemoveTypeCreator<DefaultTypeCreator>(null);
+            Action action = () => BuildConfigurationExtensions.RemoveTypeCreator<DefaultTypeCreator>(null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -111,7 +111,7 @@
         {
             var sut = Substitute.For<IBuildConfiguration>();
 
-            Action action = () => sut.UpdateTypeCreator<DummyTypeCreator>(null);
+            Action action = () => sut.UpdateTypeCreator<DummyTypeCreator>(null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -119,7 +119,7 @@
         [Fact]
         public void UpdateTypeCreatorThrowsExceptionWithNullConfiguration()
         {
-            Action action = () => BuildConfigurationExtensions.UpdateTypeCreator<DummyTypeCreator>(null, x =>
+            Action action = () => BuildConfigurationExtensions.UpdateTypeCreator<DummyTypeCreator>(null!, x =>
             {
                 // Do nothing
             });

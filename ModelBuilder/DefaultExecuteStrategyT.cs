@@ -34,7 +34,10 @@
         ///     generate a requested type.
         /// </exception>
         /// <exception cref="BuildException">Failed to generate a requested type.</exception>
-        public virtual T Create(params object[] args)
+#if NETSTANDARD2_1
+        [return: System.Diagnostics.CodeAnalysis.MaybeNull]
+#endif
+        public virtual T Create(params object?[]? args)
         {
             var requestedType = typeof(T);
 
@@ -42,7 +45,7 @@
 
             if (instance == null)
             {
-                return default;
+                return default!;
             }
 
             return (T) instance;
@@ -57,6 +60,11 @@
         /// <exception cref="BuildException">Failed to generate a requested type.</exception>
         public virtual T Populate(T instance)
         {
+            if (instance == null)
+            {
+                throw new ArgumentNullException(nameof(instance));
+            }
+
             return (T) Populate((object) instance);
         }
     }

@@ -20,7 +20,7 @@
 
             var sut = new Wrapper(true, value);
 
-            Action action = () => sut.Generate(null, parameterInfo);
+            Action action = () => sut.Generate(null!, parameterInfo);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -29,11 +29,11 @@
         public void GenerateForPropertyThrowsExceptionWithNullExecuteStrategy()
         {
             var value = Guid.NewGuid().ToString();
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
 
             var sut = new Wrapper(true, value);
 
-            Action action = () => sut.Generate(null, propertyInfo);
+            Action action = () => sut.Generate(null!, propertyInfo);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -45,7 +45,7 @@
 
             var sut = new Wrapper(true, value);
 
-            Action action = () => sut.Generate(null, typeof(Person));
+            Action action = () => sut.Generate(null!, typeof(Person));
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -91,7 +91,7 @@
 
             var sut = new Wrapper(true, value);
 
-            Action action = () => sut.Generate(executeStrategy, (ParameterInfo) null);
+            Action action = () => sut.Generate(executeStrategy, (ParameterInfo) null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -105,7 +105,7 @@
 
             var sut = new Wrapper(true, value);
 
-            Action action = () => sut.Generate(executeStrategy, (PropertyInfo) null);
+            Action action = () => sut.Generate(executeStrategy, (PropertyInfo) null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -119,7 +119,7 @@
 
             var sut = new Wrapper(true, value);
 
-            Action action = () => sut.Generate(executeStrategy, (Type) null);
+            Action action = () => sut.Generate(executeStrategy, (Type) null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -127,7 +127,7 @@
         [Fact]
         public void GeneratorReturnsCachedInstance()
         {
-            var sut = new Wrapper(true, null);
+            var sut = new Wrapper(true, null!);
 
             var first = sut.RandomGenerator;
             var second = sut.RandomGenerator;
@@ -144,7 +144,7 @@
 
             var sut = new Wrapper(true, value);
 
-            Action action = () => sut.IsMatch(null, parameterInfo);
+            Action action = () => sut.IsMatch(null!, parameterInfo);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -153,11 +153,11 @@
         public void IsMatchForPropertyThrowsExceptionWithNullBuildChain()
         {
             var value = Guid.NewGuid().ToString();
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
 
             var sut = new Wrapper(true, value);
 
-            Action action = () => sut.IsMatch(null, propertyInfo);
+            Action action = () => sut.IsMatch(null!, propertyInfo);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -169,7 +169,7 @@
 
             var sut = new Wrapper(true, value);
 
-            Action action = () => sut.IsMatch(null, typeof(string));
+            Action action = () => sut.IsMatch(null!, typeof(string));
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -215,7 +215,7 @@
 
             var sut = new Wrapper(true, value);
 
-            Action action = () => sut.IsMatch(buildChain, (ParameterInfo) null);
+            Action action = () => sut.IsMatch(buildChain, (ParameterInfo) null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -229,7 +229,7 @@
 
             var sut = new Wrapper(true, value);
 
-            Action action = () => sut.IsMatch(buildChain, (PropertyInfo) null);
+            Action action = () => sut.IsMatch(buildChain, (PropertyInfo) null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -243,7 +243,7 @@
 
             var sut = new Wrapper(true, value);
 
-            Action action = () => sut.IsMatch(buildChain, (Type) null);
+            Action action = () => sut.IsMatch(buildChain, (Type) null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -274,7 +274,7 @@
                 _value = value;
             }
 
-            protected override object Generate(IExecuteStrategy executeStrategy, Type type, string referenceName)
+            protected override object? Generate(IExecuteStrategy executeStrategy, Type type, string? referenceName)
             {
                 TypeUsed = type;
                 ReferenceNameUsed = referenceName;
@@ -282,7 +282,7 @@
                 return _value;
             }
 
-            protected override bool IsMatch(IBuildChain buildChain, Type type, string referenceName)
+            protected override bool IsMatch(IBuildChain buildChain, Type type, string? referenceName)
             {
                 TypeUsed = type;
                 ReferenceNameUsed = referenceName;
@@ -292,9 +292,9 @@
 
             public IRandomGenerator RandomGenerator => Generator;
 
-            public string ReferenceNameUsed { get; private set; }
+            public string? ReferenceNameUsed { get; private set; }
 
-            public Type TypeUsed { get; private set; }
+            public Type? TypeUsed { get; private set; }
         }
     }
 }

@@ -8,6 +8,6 @@
 
         public static Singleton Instance { get; } = new Singleton();
 
-        public string Value { get; set; }
+        public string? Value { get; set; }
     }
 }

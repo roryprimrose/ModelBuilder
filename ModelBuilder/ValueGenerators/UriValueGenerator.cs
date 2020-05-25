@@ -11,7 +11,7 @@
     {
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
-        protected override bool IsMatch(IBuildChain buildChain, Type type, string referenceName)
+        protected override bool IsMatch(IBuildChain buildChain, Type type, string? referenceName)
         {
             if (type == null)
             {
@@ -33,7 +33,7 @@
                 return false;
             }
 
-            if (referenceName.IndexOf("url", StringComparison.OrdinalIgnoreCase) > -1)
+            if (referenceName!.IndexOf("url", StringComparison.OrdinalIgnoreCase) > -1)
             {
                 return true;
             }
@@ -47,7 +47,7 @@
         }
 
         /// <inheritdoc />
-        protected override object Generate(IExecuteStrategy executeStrategy, Type type, string referenceName)
+        protected override object? Generate(IExecuteStrategy executeStrategy, Type type, string? referenceName)
         {
             var domain = TestData.Domains.Next();
             var value = "https://www." + domain;

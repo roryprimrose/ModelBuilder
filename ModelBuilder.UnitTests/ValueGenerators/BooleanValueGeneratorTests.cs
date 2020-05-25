@@ -23,7 +23,7 @@
 
             for (var index = 0; index < 1000; index++)
             {
-                var actual = (bool) sut.Generate(executeStrategy, typeof(bool));
+                var actual = (bool) sut.Generate(executeStrategy, typeof(bool))!;
 
                 if (actual)
                 {
@@ -62,7 +62,7 @@
             {
                 var actual = (bool?) sut.Generate(executeStrategy, typeof(bool?));
 
-                if (actual == null)
+                if (actual == null!)
                 {
                     nullFound = true;
                 }

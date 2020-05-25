@@ -29,7 +29,7 @@
         [Fact]
         public void AddIgnoreRuleThrowsExceptionWithNullConfiguration()
         {
-            Action action = () => BuildConfigurationExtensions.AddIgnoreRule<DummyIgnoreRule>(null);
+            Action action = () => BuildConfigurationExtensions.AddIgnoreRule<DummyIgnoreRule>(null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -39,7 +39,7 @@
         {
             var sut = new BuildConfiguration();
 
-            var actual = sut.AddIgnoreRule<Person>(x => x.FirstName);
+            var actual = sut.AddIgnoreRule<Person>(x => x.FirstName!);
 
             actual.Should().Be(sut);
 
@@ -51,7 +51,7 @@
         [Fact]
         public void AddIgnoreRuleWithExpressionThrowsExceptionWithNullConfiguration()
         {
-            Action action = () => BuildConfigurationExtensions.AddIgnoreRule<Person>(null, x => x.FirstName);
+            Action action = () => BuildConfigurationExtensions.AddIgnoreRule<Person>(null!, x => x.FirstName!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -61,7 +61,7 @@
         {
             var sut = new BuildConfiguration();
 
-            Action action = () => sut.AddIgnoreRule((Expression<Func<Person, object>>) null);
+            Action action = () => sut.AddIgnoreRule((Expression<Func<Person, object>>) null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -84,7 +84,7 @@
         public void AddIgnoreRuleWithPredicateThrowsExceptionWithNullConfiguration()
         {
             Action action = () =>
-                BuildConfigurationExtensions.AddIgnoreRule(null, info => info.PropertyType == typeof(string));
+                BuildConfigurationExtensions.AddIgnoreRule(null!, info => info.PropertyType == typeof(string));
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -94,7 +94,7 @@
         {
             var sut = new BuildConfiguration();
 
-            Action action = () => sut.AddIgnoreRule((Predicate<PropertyInfo>) null);
+            Action action = () => sut.AddIgnoreRule((Predicate<PropertyInfo>) null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -116,7 +116,7 @@
         [Fact]
         public void AddIgnoreRuleWithRegexExpressionThrowsExceptionWithNullConfiguration()
         {
-            Action action = () => BuildConfigurationExtensions.AddIgnoreRule(null, NameExpression.LastName);
+            Action action = () => BuildConfigurationExtensions.AddIgnoreRule(null!, NameExpression.LastName);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -124,7 +124,7 @@
         [Fact]
         public void AddIgnoreRuleWithRegexThrowsExceptionWithNullConfiguration()
         {
-            Action action = () => BuildConfigurationExtensions.AddIgnoreRule(null, NameExpression.LastName);
+            Action action = () => BuildConfigurationExtensions.AddIgnoreRule(null!, NameExpression.LastName);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -134,7 +134,7 @@
         {
             var sut = new BuildConfiguration();
 
-            Action action = () => sut.AddIgnoreRule((Regex) null);
+            Action action = () => sut.AddIgnoreRule((Regex) null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -154,7 +154,7 @@
         }
 
         [Theory]
-        [InlineData(null)]
+        [InlineData(null!)]
         [InlineData("")]
         public void AddIgnoreRuleWithStringExpressionThrowsExceptionWithInvalidExpression(string expression)
         {
@@ -168,7 +168,7 @@
         [Fact]
         public void AddIgnoreRuleWithStringExpressionThrowsExceptionWithNullConfiguration()
         {
-            Action action = () => BuildConfigurationExtensions.AddIgnoreRule(null, "First");
+            Action action = () => BuildConfigurationExtensions.AddIgnoreRule(null!, "First");
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -176,7 +176,7 @@
         [Fact]
         public void AddWithIgnoreRuleAddsRuleToConfiguration()
         {
-            var rule = new ExpressionIgnoreRule<Person>(x => x.FirstName);
+            var rule = new ExpressionIgnoreRule<Person>(x => x.FirstName!);
 
             var sut = new BuildConfiguration();
 
@@ -188,9 +188,9 @@
         [Fact]
         public void AddWithIgnoreRuleThrowsExceptionWithNullConfiguration()
         {
-            var rule = new ExpressionIgnoreRule<Person>(x => x.FirstName);
+            var rule = new ExpressionIgnoreRule<Person>(x => x.FirstName!);
 
-            Action action = () => BuildConfigurationExtensions.Add(null, rule);
+            Action action = () => BuildConfigurationExtensions.Add(null!, rule);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -200,7 +200,7 @@
         {
             var sut = Substitute.For<IBuildConfiguration>();
 
-            Action action = () => sut.Add((IIgnoreRule) null);
+            Action action = () => sut.Add((IIgnoreRule) null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -247,7 +247,7 @@
         [Fact]
         public void RemoveIgnoreRuleThrowsExceptionWithNullConfiguration()
         {
-            Action action = () => BuildConfigurationExtensions.RemoveIgnoreRule<DummyIgnoreRule>(null);
+            Action action = () => BuildConfigurationExtensions.RemoveIgnoreRule<DummyIgnoreRule>(null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -270,7 +270,7 @@
         {
             var sut = Substitute.For<IBuildConfiguration>();
 
-            Action action = () => sut.UpdateIgnoreRule<RegexIgnoreRule>(null);
+            Action action = () => sut.UpdateIgnoreRule<RegexIgnoreRule>(null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -278,7 +278,7 @@
         [Fact]
         public void UpdateIgnoreRuleThrowsExceptionWithNullConfiguration()
         {
-            Action action = () => BuildConfigurationExtensions.UpdateIgnoreRule<RegexIgnoreRule>(null, x =>
+            Action action = () => BuildConfigurationExtensions.UpdateIgnoreRule<RegexIgnoreRule>(null!, x =>
             {
                 // Do nothing
             });

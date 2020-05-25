@@ -6,6 +6,7 @@
     using System.Reflection;
     using FluentAssertions;
     using ModelBuilder.BuildActions;
+    using ModelBuilder.TypeCreators;
     using ModelBuilder.UnitTests.Models;
     using NSubstitute;
     using Xunit;
@@ -19,7 +20,7 @@
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
             var arguments = new object[] {Guid.NewGuid().ToString()};
             var expected = new Person();
-            var match = new BuildCapability {SupportsCreate = true};
+            var match = new BuildCapability(typeof(DefaultTypeCreator)) {SupportsCreate = true};
 
             var action = Substitute.For<IBuildAction>();
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
@@ -50,7 +51,7 @@
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
             var arguments = new object[] {Guid.NewGuid().ToString()};
             var expected = new Person();
-            var match = new BuildCapability {SupportsCreate = true};
+            var match = new BuildCapability(typeof(DefaultTypeCreator)) {SupportsCreate = true};
 
             var firstAction = Substitute.For<IBuildAction>();
             var secondAction = Substitute.For<IBuildAction>();
@@ -86,7 +87,7 @@
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
             var arguments = new object[] {Guid.NewGuid().ToString()};
             var expected = new Person();
-            var match = new BuildCapability {SupportsCreate = true};
+            var match = new BuildCapability(typeof(DefaultTypeCreator)) {SupportsCreate = true};
 
             var firstAction = Substitute.For<IBuildAction>();
             var secondAction = Substitute.For<IBuildAction>();
@@ -139,7 +140,7 @@
 
             var sut = new BuildProcessor(actions);
 
-            Action action = () => sut.Build(null, parameterInfo);
+            Action action = () => sut.Build(null!, parameterInfo);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -153,7 +154,7 @@
 
             var sut = new BuildProcessor(actions);
 
-            Action action = () => sut.Build(executeStrategy, (ParameterInfo) null);
+            Action action = () => sut.Build(executeStrategy, (ParameterInfo) null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -161,10 +162,10 @@
         [Fact]
         public void BuildForPropertyReturnsActionValue()
         {
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
             var arguments = new object[] {Guid.NewGuid().ToString()};
             var expected = new Person();
-            var match = new BuildCapability {SupportsCreate = true};
+            var match = new BuildCapability(typeof(DefaultTypeCreator)) {SupportsCreate = true};
 
             var action = Substitute.For<IBuildAction>();
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
@@ -191,10 +192,10 @@
         [Fact]
         public void BuildForPropertyReturnsValueFromActionWithHighestPriority()
         {
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
             var arguments = new object[] {Guid.NewGuid().ToString()};
             var expected = new Person();
-            var match = new BuildCapability {SupportsCreate = true};
+            var match = new BuildCapability(typeof(DefaultTypeCreator)) {SupportsCreate = true};
 
             var firstAction = Substitute.For<IBuildAction>();
             var secondAction = Substitute.For<IBuildAction>();
@@ -226,10 +227,10 @@
         [Fact]
         public void BuildForPropertyReturnsValueFromMatchingAction()
         {
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
             var arguments = new object[] {Guid.NewGuid().ToString()};
             var expected = new Person();
-            var match = new BuildCapability {SupportsCreate = true};
+            var match = new BuildCapability(typeof(DefaultTypeCreator)) {SupportsCreate = true};
 
             var firstAction = Substitute.For<IBuildAction>();
             var secondAction = Substitute.For<IBuildAction>();
@@ -262,7 +263,7 @@
         {
             var context = new Person();
             var actions = Array.Empty<IBuildAction>();
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
             var buildChain = new BuildHistory();
 
             buildChain.Push(context);
@@ -282,11 +283,11 @@
         public void BuildForPropertyThrowsExceptionWithNullExecuteStrategy()
         {
             var actions = Array.Empty<IBuildAction>();
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
 
             var sut = new BuildProcessor(actions);
 
-            Action action = () => sut.Build(null, propertyInfo);
+            Action action = () => sut.Build(null!, propertyInfo);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -300,7 +301,7 @@
 
             var sut = new BuildProcessor(actions);
 
-            Action action = () => sut.Build(executeStrategy, (PropertyInfo) null);
+            Action action = () => sut.Build(executeStrategy, (PropertyInfo) null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -310,7 +311,7 @@
         {
             var type = typeof(Person);
             var expected = new Person();
-            var match = new BuildCapability {SupportsCreate = true};
+            var match = new BuildCapability(typeof(DefaultTypeCreator)) {SupportsCreate = true};
 
             var action = Substitute.For<IBuildAction>();
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
@@ -339,7 +340,7 @@
         {
             var type = typeof(Person);
             var expected = new Person();
-            var match = new BuildCapability {SupportsCreate = true};
+            var match = new BuildCapability(typeof(DefaultTypeCreator)) {SupportsCreate = true};
 
             var firstAction = Substitute.For<IBuildAction>();
             var secondAction = Substitute.For<IBuildAction>();
@@ -373,7 +374,7 @@
         {
             var type = typeof(Person);
             var expected = new Person();
-            var match = new BuildCapability {SupportsCreate = true};
+            var match = new BuildCapability(typeof(DefaultTypeCreator)) {SupportsCreate = true};
 
             var firstAction = Substitute.For<IBuildAction>();
             var secondAction = Substitute.For<IBuildAction>();
@@ -424,7 +425,7 @@
 
             var sut = new BuildProcessor(actions);
 
-            Action action = () => sut.Build(null, type);
+            Action action = () => sut.Build(null!, type);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -438,7 +439,7 @@
 
             var sut = new BuildProcessor(actions);
 
-            Action action = () => sut.Build(executeStrategy, (Type) null);
+            Action action = () => sut.Build(executeStrategy, (Type) null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -446,6 +447,7 @@
         [Fact]
         public void CanCreateInstance()
         {
+            // ReSharper disable once ObjectCreationAsStatement
             Action action = () => new BuildProcessor();
 
             action.Should().NotThrow();
@@ -465,7 +467,7 @@
         {
             var parameterInfo = typeof(Person).GetConstructors()
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
-            var capability = new BuildCapability {SupportsCreate = canCreate, SupportsPopulate = canPopulate};
+            var capability = new BuildCapability(typeof(DefaultTypeCreator)) {SupportsCreate = canCreate, SupportsPopulate = canPopulate};
 
             var action = Substitute.For<IBuildAction>();
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
@@ -497,8 +499,8 @@
         {
             var parameterInfo = typeof(Person).GetConstructors()
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
-            var firstMatch = new BuildCapability {SupportsCreate = true};
-            var secondMatch = new BuildCapability
+            var firstMatch = new BuildCapability(typeof(DefaultTypeCreator)) {SupportsCreate = true};
+            var secondMatch = new BuildCapability(typeof(DefaultTypeCreator))
                 {SupportsCreate = true, SupportsPopulate = true, AutoPopulate = true, AutoDetectConstructor = true};
 
             var firstAction = Substitute.For<IBuildAction>();
@@ -532,8 +534,8 @@
         {
             var parameterInfo = typeof(Person).GetConstructors()
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
-            var firstMatch = new BuildCapability {SupportsCreate = false};
-            var secondMatch = new BuildCapability
+            var firstMatch = new BuildCapability(typeof(DefaultTypeCreator)) {SupportsCreate = false};
+            var secondMatch = new BuildCapability(typeof(DefaultTypeCreator))
                 {SupportsCreate = true, SupportsPopulate = true, AutoPopulate = true, AutoDetectConstructor = true};
 
             var firstAction = Substitute.For<IBuildAction>();
@@ -574,7 +576,7 @@
             var sut = new BuildProcessor(actions);
 
             Action action = () =>
-                sut.GetBuildCapability(buildConfiguration, null, BuildRequirement.Create, parameterInfo);
+                sut.GetBuildCapability(buildConfiguration, null!, BuildRequirement.Create, parameterInfo);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -590,7 +592,7 @@
 
             var sut = new BuildProcessor(actions);
 
-            Action action = () => sut.GetBuildCapability(null, buildChain, BuildRequirement.Create, parameterInfo);
+            Action action = () => sut.GetBuildCapability(null!, buildChain, BuildRequirement.Create, parameterInfo);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -606,7 +608,7 @@
             var sut = new BuildProcessor(actions);
 
             Action action = () =>
-                sut.GetBuildCapability(buildConfiguration, buildChain, BuildRequirement.Create, (ParameterInfo) null);
+                sut.GetBuildCapability(buildConfiguration, buildChain, BuildRequirement.Create, (ParameterInfo) null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -623,8 +625,8 @@
         public void GetBuildCapabilityForPropertyReturnsBuildPlan(BuildRequirement requirement, bool canCreate,
             bool canPopulate, bool planExists)
         {
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
-            var capability = new BuildCapability {SupportsCreate = canCreate, SupportsPopulate = canPopulate};
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
+            var capability = new BuildCapability(typeof(DefaultTypeCreator)) {SupportsCreate = canCreate, SupportsPopulate = canPopulate};
 
             var action = Substitute.For<IBuildAction>();
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
@@ -654,9 +656,9 @@
         [Fact]
         public void GetBuildCapabilityForPropertyReturnsPlanFromActionWithHighestPriority()
         {
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
-            var firstMatch = new BuildCapability {SupportsCreate = true};
-            var secondMatch = new BuildCapability
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
+            var firstMatch = new BuildCapability(typeof(DefaultTypeCreator)) {SupportsCreate = true};
+            var secondMatch = new BuildCapability(typeof(DefaultTypeCreator))
                 {SupportsCreate = true, SupportsPopulate = true, AutoPopulate = true, AutoDetectConstructor = true};
 
             var firstAction = Substitute.For<IBuildAction>();
@@ -688,9 +690,9 @@
         [Fact]
         public void GetBuildCapabilityForPropertyReturnsValueFromMatchingAction()
         {
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
-            var firstMatch = new BuildCapability {SupportsCreate = false};
-            var secondMatch = new BuildCapability
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
+            var firstMatch = new BuildCapability(typeof(DefaultTypeCreator)) {SupportsCreate = false};
+            var secondMatch = new BuildCapability(typeof(DefaultTypeCreator))
                 {SupportsCreate = true, SupportsPopulate = true, AutoPopulate = true, AutoDetectConstructor = true};
 
             var firstAction = Substitute.For<IBuildAction>();
@@ -723,14 +725,14 @@
         public void GetBuildCapabilityForPropertyThrowsExceptionWithNullBuildChain()
         {
             var actions = Array.Empty<IBuildAction>();
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
 
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
 
             var sut = new BuildProcessor(actions);
 
             Action action = () =>
-                sut.GetBuildCapability(buildConfiguration, null, BuildRequirement.Create, propertyInfo);
+                sut.GetBuildCapability(buildConfiguration, null!, BuildRequirement.Create, propertyInfo);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -739,13 +741,13 @@
         public void GetBuildCapabilityForPropertyThrowsExceptionWithNullBuildConfiguration()
         {
             var actions = Array.Empty<IBuildAction>();
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
 
             var buildChain = Substitute.For<IBuildChain>();
 
             var sut = new BuildProcessor(actions);
 
-            Action action = () => sut.GetBuildCapability(null, buildChain, BuildRequirement.Create, propertyInfo);
+            Action action = () => sut.GetBuildCapability(null!, buildChain, BuildRequirement.Create, propertyInfo);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -761,7 +763,7 @@
             var sut = new BuildProcessor(actions);
 
             Action action = () =>
-                sut.GetBuildCapability(buildConfiguration, buildChain, BuildRequirement.Create, (PropertyInfo) null);
+                sut.GetBuildCapability(buildConfiguration, buildChain, BuildRequirement.Create, (PropertyInfo) null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -779,7 +781,7 @@
             bool canPopulate, bool planExists)
         {
             var type = typeof(Person);
-            var capability = new BuildCapability {SupportsCreate = canCreate, SupportsPopulate = canPopulate};
+            var capability = new BuildCapability(typeof(DefaultTypeCreator)) {SupportsCreate = canCreate, SupportsPopulate = canPopulate};
 
             var action = Substitute.For<IBuildAction>();
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
@@ -810,8 +812,8 @@
         public void GetBuildCapabilityForTypeReturnsPlanFromActionWithHighestPriority()
         {
             var type = typeof(Person);
-            var firstMatch = new BuildCapability {SupportsCreate = true};
-            var secondMatch = new BuildCapability
+            var firstMatch = new BuildCapability(typeof(DefaultTypeCreator)) {SupportsCreate = true};
+            var secondMatch = new BuildCapability(typeof(DefaultTypeCreator))
                 {SupportsCreate = true, SupportsPopulate = true, AutoPopulate = true, AutoDetectConstructor = true};
 
             var firstAction = Substitute.For<IBuildAction>();
@@ -844,8 +846,8 @@
         public void GetBuildCapabilityForTypeReturnsValueFromMatchingAction()
         {
             var type = typeof(Person);
-            var firstMatch = new BuildCapability {SupportsCreate = false};
-            var secondMatch = new BuildCapability
+            var firstMatch = new BuildCapability(typeof(DefaultTypeCreator)) {SupportsCreate = false};
+            var secondMatch = new BuildCapability(typeof(DefaultTypeCreator))
                 {SupportsCreate = true, SupportsPopulate = true, AutoPopulate = true, AutoDetectConstructor = true};
 
             var firstAction = Substitute.For<IBuildAction>();
@@ -884,7 +886,7 @@
 
             var sut = new BuildProcessor(actions);
 
-            Action action = () => sut.GetBuildCapability(buildConfiguration, null, BuildRequirement.Create, type);
+            Action action = () => sut.GetBuildCapability(buildConfiguration, null!, BuildRequirement.Create, type);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -899,7 +901,7 @@
 
             var sut = new BuildProcessor(actions);
 
-            Action action = () => sut.GetBuildCapability(null, buildChain, BuildRequirement.Create, type);
+            Action action = () => sut.GetBuildCapability(null!, buildChain, BuildRequirement.Create, type);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -915,7 +917,7 @@
             var sut = new BuildProcessor(actions);
 
             Action action = () =>
-                sut.GetBuildCapability(buildConfiguration, buildChain, BuildRequirement.Create, (Type) null);
+                sut.GetBuildCapability(buildConfiguration, buildChain, BuildRequirement.Create, (Type) null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -924,7 +926,7 @@
         public void PopulateReturnsActionValue()
         {
             var expected = new Person();
-            var match = new BuildCapability {SupportsPopulate = true};
+            var match = new BuildCapability(typeof(DefaultTypeCreator)) {SupportsPopulate = true};
 
             var action = Substitute.For<IBuildAction>();
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
@@ -952,7 +954,7 @@
         public void PopulateReturnsValueFromActionWithHighestPriority()
         {
             var expected = new Person();
-            var match = new BuildCapability {SupportsPopulate = true};
+            var match = new BuildCapability(typeof(DefaultTypeCreator)) {SupportsPopulate = true};
 
             var firstAction = Substitute.For<IBuildAction>();
             var secondAction = Substitute.For<IBuildAction>();
@@ -985,7 +987,7 @@
         public void PopulateReturnsValueFromMatchingAction()
         {
             var expected = new Person();
-            var match = new BuildCapability {SupportsPopulate = true};
+            var match = new BuildCapability(typeof(DefaultTypeCreator)) {SupportsPopulate = true};
 
             var firstAction = Substitute.For<IBuildAction>();
             var secondAction = Substitute.For<IBuildAction>();
@@ -997,7 +999,7 @@
             executeStrategy.Configuration.Returns(buildConfiguration);
             firstAction.Priority.Returns(int.MaxValue);
             firstAction.GetBuildCapability(buildConfiguration, buildChain, expected.GetType())
-                .Returns((BuildCapability) null);
+                .Returns((BuildCapability) null!);
             secondAction.Priority.Returns(int.MinValue);
             secondAction.GetBuildCapability(buildConfiguration, buildChain, expected.GetType()).Returns(match);
             secondAction.Populate(executeStrategy, expected).Returns(expected);
@@ -1038,7 +1040,7 @@
 
             var sut = new BuildProcessor(actions);
 
-            Action action = () => sut.Populate(null, instance);
+            Action action = () => sut.Populate(null!, instance);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -1052,7 +1054,7 @@
 
             var sut = new BuildProcessor(actions);
 
-            Action action = () => sut.Populate(executeStrategy, null);
+            Action action = () => sut.Populate(executeStrategy, null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -1060,7 +1062,8 @@
         [Fact]
         public void ThrowsExceptionWithNullActions()
         {
-            Action action = () => new BuildProcessor(null);
+            // ReSharper disable once ObjectCreationAsStatement
+            Action action = () => new BuildProcessor(null!);
 
             action.Should().Throw<ArgumentNullException>();
         }

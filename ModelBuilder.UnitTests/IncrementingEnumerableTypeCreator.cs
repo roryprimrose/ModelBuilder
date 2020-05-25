@@ -7,7 +7,7 @@
     public class IncrementingEnumerableTypeCreator : EnumerableTypeCreator
     {
         protected override bool CanCreate(IBuildConfiguration configuration,
-            IBuildChain buildChain, Type type, string referenceName)
+            IBuildChain buildChain, Type type, string? referenceName)
         {
             if (base.CanCreate(configuration, buildChain, type, referenceName) == false)
             {
@@ -27,7 +27,7 @@
         }
 
         protected override bool CanPopulate(IBuildConfiguration configuration,
-            IBuildChain buildChain, Type type, string referenceName)
+            IBuildChain buildChain, Type type, string? referenceName)
         {
             if (base.CanPopulate(configuration, buildChain, type, referenceName) == false)
             {
@@ -46,11 +46,11 @@
             return generator.IsSupported(baseType);
         }
 
-        protected override object CreateChildItem(Type type, IExecuteStrategy executeStrategy, object previousItem)
+        protected override object? CreateChildItem(Type type, IExecuteStrategy executeStrategy, object? previousItem)
         {
-            if (previousItem == null)
+            if (previousItem == null!)
             {
-                return base.CreateChildItem(type, executeStrategy, null);
+                return base.CreateChildItem(type, executeStrategy, null!);
             }
 
             // Use a double as the base type then convert later

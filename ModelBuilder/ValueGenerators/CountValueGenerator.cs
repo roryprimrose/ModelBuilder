@@ -9,7 +9,7 @@ namespace ModelBuilder.ValueGenerators
     public class CountValueGenerator : NumericValueGenerator
     {
         /// <inheritdoc />
-        protected override bool IsMatch(IBuildChain buildChain, Type type, string referenceName)
+        protected override bool IsMatch(IBuildChain buildChain, Type type, string? referenceName)
         {
             var baseSupported = base.IsMatch(buildChain, type, referenceName);
 
@@ -18,7 +18,7 @@ namespace ModelBuilder.ValueGenerators
                 return false;
             }
 
-            if (string.IsNullOrWhiteSpace(referenceName))
+            if (referenceName == null)
             {
                 return false;
             }
@@ -37,13 +37,13 @@ namespace ModelBuilder.ValueGenerators
         }
 
         /// <inheritdoc />
-        protected override object GetMaximum(Type type, string referenceName, object context)
+        protected override object GetMaximum(Type type, string? referenceName, object? context)
         {
             return MaxCount;
         }
 
         /// <inheritdoc />
-        protected override object GetMinimum(Type type, string referenceName, object context)
+        protected override object GetMinimum(Type type, string? referenceName, object? context)
         {
             return 1;
         }

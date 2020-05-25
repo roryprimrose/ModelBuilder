@@ -15,7 +15,7 @@
             Justification = "Email addresses are lowercase")]
         public void CanCreateStructProperty()
         {
-            var actual = Model.Create<StructParent>();
+            var actual = Model.Create<StructParent>()!;
 
             actual.Child.Id.Should().NotBeEmpty();
             actual.Child.FirstName.Should().NotBeNullOrWhiteSpace();

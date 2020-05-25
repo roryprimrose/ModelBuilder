@@ -63,7 +63,7 @@
 
             var sut = new CircularReferenceBuildAction();
 
-            Action action = () => sut.Build(null, parameterInfo);
+            Action action = () => sut.Build(null!, parameterInfo);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -75,7 +75,7 @@
 
             var sut = new CircularReferenceBuildAction();
 
-            Action action = () => sut.Build(executeStrategy, (ParameterInfo) null);
+            Action action = () => sut.Build(executeStrategy, (ParameterInfo) null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -84,7 +84,7 @@
         public void BuildForPropertyReturnsNullWhenNoMatchingTypeFound()
         {
             var buildChain = new BuildHistory();
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
 
             buildChain.Push(Guid.NewGuid());
             buildChain.Push(DateTimeOffset.UtcNow);
@@ -104,7 +104,7 @@
         public void BuildForPropertyReturnsValueMatchingType()
         {
             var buildChain = new BuildHistory();
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
             var expected = Guid.NewGuid().ToString();
 
             buildChain.Push(Guid.NewGuid());
@@ -125,11 +125,11 @@
         [Fact]
         public void BuildForPropertyThrowsExceptionWithNullExecuteStrategy()
         {
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
 
             var sut = new CircularReferenceBuildAction();
 
-            Action action = () => sut.Build(null, propertyInfo);
+            Action action = () => sut.Build(null!, propertyInfo);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -141,7 +141,7 @@
 
             var sut = new CircularReferenceBuildAction();
 
-            Action action = () => sut.Build(executeStrategy, (PropertyInfo) null);
+            Action action = () => sut.Build(executeStrategy, (PropertyInfo) null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -195,7 +195,7 @@
 
             var sut = new CircularReferenceBuildAction();
 
-            Action action = () => sut.Build(null, type);
+            Action action = () => sut.Build(null!, type);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -207,7 +207,7 @@
 
             var sut = new CircularReferenceBuildAction();
 
-            Action action = () => sut.Build(executeStrategy, (Type) null);
+            Action action = () => sut.Build(executeStrategy, (Type) null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -258,8 +258,9 @@
 
             var sut = new CircularReferenceBuildAction();
 
-            var actual = sut.GetBuildCapability(buildConfiguration, buildChain, parameterInfo);
+            var actual = sut.GetBuildCapability(buildConfiguration, buildChain, parameterInfo)!;
 
+            actual.Should().NotBeNull();
             actual.SupportsCreate.Should().BeTrue();
             actual.SupportsPopulate.Should().BeFalse();
             actual.AutoDetectConstructor.Should().BeFalse();
@@ -276,7 +277,7 @@
 
             var sut = new CircularReferenceBuildAction();
 
-            Action action = () => sut.GetBuildCapability(buildConfiguration, null, parameterInfo);
+            Action action = () => sut.GetBuildCapability(buildConfiguration, null!, parameterInfo);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -289,7 +290,7 @@
 
             var sut = new CircularReferenceBuildAction();
 
-            Action action = () => sut.GetBuildCapability(buildConfiguration, buildChain, (ParameterInfo) null);
+            Action action = () => sut.GetBuildCapability(buildConfiguration, buildChain, (ParameterInfo) null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -299,7 +300,7 @@
         {
             var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
 
             buildChain.Push(Guid.NewGuid());
 
@@ -315,7 +316,7 @@
         {
             var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
 
             var sut = new CircularReferenceBuildAction();
 
@@ -329,7 +330,7 @@
         {
             var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
 
             buildChain.Push(Guid.NewGuid());
             buildChain.Push(Guid.NewGuid().ToString());
@@ -339,7 +340,8 @@
 
             var actual = sut.GetBuildCapability(buildConfiguration, buildChain, propertyInfo);
 
-            actual.SupportsCreate.Should().BeTrue();
+            actual.Should().NotBeNull();
+            actual!.SupportsCreate.Should().BeTrue();
             actual.SupportsPopulate.Should().BeFalse();
             actual.AutoDetectConstructor.Should().BeFalse();
             actual.AutoPopulate.Should().BeFalse();
@@ -349,12 +351,12 @@
         [Fact]
         public void GetBuildCapabilityForPropertyThrowsExceptionWithNullBuildChain()
         {
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
             var buildConfiguration = new BuildConfiguration();
 
             var sut = new CircularReferenceBuildAction();
 
-            Action action = () => sut.GetBuildCapability(buildConfiguration, null, propertyInfo);
+            Action action = () => sut.GetBuildCapability(buildConfiguration, null!, propertyInfo);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -367,7 +369,7 @@
 
             var sut = new CircularReferenceBuildAction();
 
-            Action action = () => sut.GetBuildCapability(buildConfiguration, buildChain, (PropertyInfo) null);
+            Action action = () => sut.GetBuildCapability(buildConfiguration, buildChain, (PropertyInfo) null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -417,7 +419,8 @@
 
             var actual = sut.GetBuildCapability(buildConfiguration, buildChain, type);
 
-            actual.SupportsCreate.Should().BeTrue();
+            actual.Should().NotBeNull();
+            actual!.SupportsCreate.Should().BeTrue();
             actual.SupportsPopulate.Should().BeFalse();
             actual.AutoDetectConstructor.Should().BeFalse();
             actual.AutoPopulate.Should().BeFalse();
@@ -432,7 +435,7 @@
 
             var sut = new CircularReferenceBuildAction();
 
-            Action action = () => sut.GetBuildCapability(buildConfiguration, null, type);
+            Action action = () => sut.GetBuildCapability(buildConfiguration, null!, type);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -445,7 +448,7 @@
 
             var sut = new CircularReferenceBuildAction();
 
-            Action action = () => sut.GetBuildCapability(buildConfiguration, buildChain, (Type) null);
+            Action action = () => sut.GetBuildCapability(buildConfiguration, buildChain, (Type) null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -455,7 +458,7 @@
         {
             var sut = new CircularReferenceBuildAction();
 
-            Action action = () => sut.Populate(null, null);
+            Action action = () => sut.Populate(null!, null!);
 
             action.Should().Throw<NotSupportedException>();
         }

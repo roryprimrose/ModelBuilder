@@ -42,36 +42,36 @@
         /// <summary>
         ///     Gets or sets the city.
         /// </summary>
-        public string City { get; set; }
+        public string City { get; set; } = string.Empty;
 
         /// <summary>
         ///     Gets or sets the country.
         /// </summary>
-        public string Country { get; set; }
+        public string Country { get; set; } = string.Empty;
 
         /// <summary>
         ///     Gets or sets the phone.
         /// </summary>
-        public string Phone { get; set; }
+        public string Phone { get; set; } = string.Empty;
 
         /// <summary>
         ///     Gets or sets the post code.
         /// </summary>
-        public string PostCode { get; set; }
+        public string PostCode { get; set; } = string.Empty;
 
         /// <summary>
         ///     Gets or sets the state.
         /// </summary>
-        public string State { get; set; }
+        public string State { get; set; } = string.Empty;
 
         /// <summary>
         ///     Gets or sets the street name.
         /// </summary>
-        public string StreetName { get; set; }
+        public string StreetName { get; set; } = string.Empty;
 
         /// <summary>
         ///     Gets or sets the street suffix.
         /// </summary>
-        public string StreetSuffix { get; set; }
+        public string StreetSuffix { get; set; } = string.Empty;
     }
 }

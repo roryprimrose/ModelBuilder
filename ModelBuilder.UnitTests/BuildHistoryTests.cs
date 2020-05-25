@@ -22,7 +22,7 @@
 
             for (var index = 0; index < itemCount; index++)
             {
-                var item = Model.Create<Person>();
+                var item = Model.Create<Person>()!;
 
                 sut.Push(item);
             }
@@ -39,7 +39,7 @@
 
             for (var index = 0; index < 10; index++)
             {
-                var item = Model.Create<Person>();
+                var item = Model.Create<Person>()!;
 
                 items.Add(item);
 
@@ -50,7 +50,7 @@
 
             foreach (var item in sut)
             {
-                items.Should().Contain(item);
+                items.Should().Contain(item!);
             }
         }
 
@@ -67,7 +67,7 @@
 
             for (var index = 0; index < itemCount; index++)
             {
-                var item = Model.Create<Person>();
+                var item = Model.Create<Person>()!;
 
                 items.Add(item);
 
@@ -93,7 +93,7 @@
 
             for (var index = 0; index < itemCount; index++)
             {
-                var item = Model.Create<Person>();
+                var item = Model.Create<Person>()!;
 
                 items.Add(item);
 
@@ -118,7 +118,7 @@
 
             for (var index = 0; index < 5; index++)
             {
-                var item = Model.Create<Person>();
+                var item = Model.Create<Person>()!;
 
                 items.Add(item);
 
@@ -140,7 +140,7 @@
         {
             var sut = new BuildHistory();
 
-            var item = Model.Create<Person>();
+            var item = Model.Create<Person>()!;
 
             sut.Push(item);
 
@@ -164,7 +164,7 @@
         {
             var sut = new BuildHistory();
 
-            var item = Model.Create<Person>();
+            var item = Model.Create<Person>()!;
 
             sut.Push(item);
 
@@ -185,7 +185,7 @@
 
             for (var index = 0; index < itemCount; index++)
             {
-                var item = Model.Create<Person>();
+                var item = Model.Create<Person>()!;
 
                 items.Add(item);
 
@@ -209,7 +209,7 @@
 
             for (var index = 0; index < 5; index++)
             {
-                var item = Model.Create<Person>();
+                var item = Model.Create<Person>()!;
 
                 items.Add(item);
 
@@ -233,7 +233,7 @@
         {
             var sut = new BuildHistory();
 
-            var item = Model.Create<Person>();
+            var item = Model.Create<Person>()!;
 
             sut.Push(item);
 
@@ -257,7 +257,7 @@
         {
             var sut = new BuildHistory();
 
-            var item = Model.Create<Person>();
+            var item = Model.Create<Person>()!;
 
             sut.Push(item);
 
@@ -279,7 +279,7 @@
         {
             var sut = new BuildHistory();
 
-            Action action = () => sut.Push(null);
+            Action action = () => sut.Push(null!);
 
             action.Should().Throw<ArgumentNullException>();
         }

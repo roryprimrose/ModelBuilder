@@ -99,7 +99,7 @@
         {
             var sut = new DefaultConfigurationModule();
 
-            Action action = () => sut.Configure(null);
+            Action action = () => sut.Configure(null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -119,7 +119,7 @@
 
             foreach (var rule in rules)
             {
-                var property = typeof(Person).GetProperty(nameof(Person.FirstName));
+                var property = typeof(Person).GetProperty(nameof(Person.FirstName))!;
 
                 Action action = () => rule.IsMatch(property);
 

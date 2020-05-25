@@ -38,7 +38,7 @@
         {
             var sut = new Collection<string>();
 
-            Action action = () => sut.SetEach(null);
+            Action action = () => sut.SetEach(null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -46,7 +46,7 @@
         [Fact]
         public void SetEachCollectionThrowsExceptionWithNullInstance()
         {
-            Action action = () => ((Collection<string>) null).SetEach(x => { });
+            Action action = () => ((Collection<string>) null!).SetEach(x => { });
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -77,7 +77,7 @@
         {
             var sut = new Dictionary<Guid, Person>();
 
-            Action action = () => sut.SetEach(null);
+            Action action = () => sut.SetEach(null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -85,7 +85,7 @@
         [Fact]
         public void SetEachDictionaryThrowsExceptionWithNullInstance()
         {
-            Action action = () => ((Dictionary<Guid, Person>)null).SetEach(x => { });
+            Action action = () => ((Dictionary<Guid, Person>)null!).SetEach(x => { });
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -116,7 +116,7 @@
         {
             IDictionary<Guid, Person> sut = new Dictionary<Guid, Person>();
 
-            Action action = () => sut.SetEach(null);
+            Action action = () => sut.SetEach(null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -124,7 +124,7 @@
         [Fact]
         public void SetEachIDictionaryThrowsExceptionWithNullInstance()
         {
-            Action action = () => ((IDictionary<Guid, Person>)null).SetEach(x => { });
+            Action action = () => ((IDictionary<Guid, Person>)null!).SetEach(x => { });
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -155,7 +155,7 @@
         {
             IReadOnlyDictionary<Guid, Person> sut = new Dictionary<Guid, Person>();
 
-            Action action = () => sut.SetEach(null);
+            Action action = () => sut.SetEach(null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -163,7 +163,7 @@
         [Fact]
         public void SetEachIReadOnlyDictionaryThrowsExceptionWithNullInstance()
         {
-            Action action = () => ((IReadOnlyDictionary<Guid, Person>)null).SetEach(x => { });
+            Action action = () => ((IReadOnlyDictionary<Guid, Person>)null!).SetEach(x => { });
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -206,7 +206,7 @@
 
             var sut = new ReadOnlyDictionary<Guid, Person>(data);
 
-            Action action = () => sut.SetEach(null);
+            Action action = () => sut.SetEach(null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -214,7 +214,7 @@
         [Fact]
         public void SetEachReadOnlyDictionaryThrowsExceptionWithNullInstance()
         {
-            Action action = () => ((ReadOnlyDictionary<Guid, Person>)null).SetEach(x => { });
+            Action action = () => ((ReadOnlyDictionary<Guid, Person>)null!).SetEach(x => { });
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -250,7 +250,7 @@
 
             ICollection<Person> sut = new Collection<Person>(data);
 
-            Action action = () => sut.SetEach(null);
+            Action action = () => sut.SetEach(null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -258,7 +258,7 @@
         [Fact]
         public void SetEachICollectionThrowsExceptionWithNullInstance()
         {
-            Action action = () => ((ICollection<Person>) null).SetEach(x => { });
+            Action action = () => ((ICollection<Person>) null!).SetEach(x => { });
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -286,7 +286,7 @@
         {
             IEnumerable<string> sut = new Collection<string>();
 
-            Action action = () => sut.SetEach(null);
+            Action action = () => sut.SetEach(null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -294,7 +294,7 @@
         [Fact]
         public void SetEachIEnumerableThrowsExceptionWithNullInstance()
         {
-            Action action = () => ((IEnumerable<string>) null).SetEach(x => { });
+            Action action = () => ((IEnumerable<string>) null!).SetEach(x => { });
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -327,7 +327,7 @@
         {
             IList<string> sut = new List<string>();
 
-            Action action = () => sut.SetEach(null);
+            Action action = () => sut.SetEach(null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -335,7 +335,7 @@
         [Fact]
         public void SetEachIListThrowsExceptionWithNullInstance()
         {
-            Action action = () => ((IList<string>) null).SetEach(x => { });
+            Action action = () => ((IList<string>) null!).SetEach(x => { });
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -371,7 +371,7 @@
 
             IReadOnlyCollection<Person> sut = new ReadOnlyCollection<Person>(data);
 
-            Action action = () => sut.SetEach(null);
+            Action action = () => sut.SetEach(null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -379,7 +379,7 @@
         [Fact]
         public void SetEachIReadOnlyCollectionThrowsExceptionWithNullInstance()
         {
-            Action action = () => ((IReadOnlyCollection<Person>) null).SetEach(x => { });
+            Action action = () => ((IReadOnlyCollection<Person>) null!).SetEach(x => { });
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -415,7 +415,7 @@
 
             IReadOnlyList<Person> sut = new ReadOnlyCollection<Person>(data);
 
-            Action action = () => sut.SetEach(null);
+            Action action = () => sut.SetEach(null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -423,7 +423,7 @@
         [Fact]
         public void SetEachIReadOnlyListThrowsExceptionWithNullInstance()
         {
-            Action action = () => ((IReadOnlyList<Person>) null).SetEach(x => { });
+            Action action = () => ((IReadOnlyList<Person>) null!).SetEach(x => { });
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -456,7 +456,7 @@
         {
             var sut = new List<string>();
 
-            Action action = () => sut.SetEach(null);
+            Action action = () => sut.SetEach(null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -464,7 +464,7 @@
         [Fact]
         public void SetEachListThrowsExceptionWithNullInstance()
         {
-            Action action = () => ((List<Person>) null).SetEach(x => { });
+            Action action = () => ((List<Person>) null!).SetEach(x => { });
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -500,7 +500,7 @@
 
             var sut = new ReadOnlyCollection<Person>(data);
 
-            Action action = () => sut.SetEach(null);
+            Action action = () => sut.SetEach(null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -508,7 +508,7 @@
         [Fact]
         public void SetEachReadOnlyCollectionThrowsExceptionWithNullInstance()
         {
-            Action action = () => ((ReadOnlyCollection<Person>) null).SetEach(x => { });
+            Action action = () => ((ReadOnlyCollection<Person>) null!).SetEach(x => { });
 
             action.Should().Throw<ArgumentNullException>();
         }

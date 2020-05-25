@@ -20,22 +20,25 @@
         }
 
         /// <inheritdoc />
-        protected override object Generate(IExecuteStrategy executeStrategy, Type type, string referenceName)
+        protected override object? Generate(IExecuteStrategy executeStrategy, Type type, string? referenceName)
         {
             var context = executeStrategy?.BuildChain?.Last;
             IEnumerable<Location> locations = TestData.Locations;
 
-            locations = FilterLocations(
-                locations,
-                NameExpression.Country,
-                (item, value) => item.Country.Equals(value, StringComparison.OrdinalIgnoreCase),
-                context);
+            if (context != null)
+            {
+                locations = FilterLocations(
+                    locations,
+                    NameExpression.Country,
+                    (item, value) => item.Country.Equals(value, StringComparison.OrdinalIgnoreCase),
+                    context);
 
-            locations = FilterLocations(
-                locations,
-                NameExpression.State,
-                (item, value) => item.State.Equals(value, StringComparison.OrdinalIgnoreCase),
-                context);
+                locations = FilterLocations(
+                    locations,
+                    NameExpression.State,
+                    (item, value) => item.State.Equals(value, StringComparison.OrdinalIgnoreCase),
+                    context);
+            }
 
             var availableLocations = locations.ToList();
 
@@ -48,7 +51,6 @@
 
             // There was either no country or no match on the country
             var location = TestData.Locations.Next();
-
 
             return location.City;
         }

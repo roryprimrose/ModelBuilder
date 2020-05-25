@@ -44,7 +44,7 @@
         }
 
         [Theory]
-        [InlineData(null)]
+        [InlineData(null!)]
         [InlineData("")]
         [InlineData("  ")]
         public void IsMatchReturnsFalseForUnsupportedReferenceName(string referenceName)
@@ -67,7 +67,7 @@
             var value = Guid.NewGuid().ToString();
 
             // ReSharper disable once ObjectCreationAsStatement
-            Action action = () => new Wrapper(null, typeof(string), value);
+            Action action = () => new Wrapper(null!, typeof(string), value);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -78,7 +78,7 @@
             var value = Guid.NewGuid().ToString();
 
             // ReSharper disable once ObjectCreationAsStatement
-            Action action = () => new Wrapper(NameExpression.FirstName, null, value);
+            Action action = () => new Wrapper(NameExpression.FirstName, null!, value);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -97,7 +97,7 @@
                 return IsMatch(buildChain, type, referenceName);
             }
 
-            protected override object Generate(IExecuteStrategy executeStrategy, Type type, string referenceName)
+            protected override object? Generate(IExecuteStrategy executeStrategy, Type type, string? referenceName)
             {
                 return _value;
             }

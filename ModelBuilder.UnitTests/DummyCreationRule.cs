@@ -6,17 +6,17 @@
 
     public class DummyCreationRule : ICreationRule
     {
-        public object Create(IExecuteStrategy executeStrategy, Type type)
+        public object? Create(IExecuteStrategy executeStrategy, Type type)
         {
             throw new NotImplementedException();
         }
 
-        public object Create(IExecuteStrategy executeStrategy, PropertyInfo propertyInfo)
+        public object? Create(IExecuteStrategy executeStrategy, PropertyInfo propertyInfo)
         {
             throw new NotImplementedException();
         }
 
-        public object Create(IExecuteStrategy executeStrategy, ParameterInfo parameterInfo)
+        public object? Create(IExecuteStrategy executeStrategy, ParameterInfo parameterInfo)
         {
             throw new NotImplementedException();
         }

@@ -4,7 +4,7 @@
 
     public class NullExecuteStrategy : IExecuteStrategy
     {
-        public object Create(Type type, params object[] args)
+        public object Create(Type type, params object?[]? args)
         {
             throw new NotImplementedException();
         }
@@ -18,10 +18,10 @@
             throw new NotImplementedException();
         }
 
-        public IBuildChain BuildChain { get; }
+        public IBuildChain BuildChain { get; } = new BuildHistory();
 
-        public IBuildConfiguration Configuration { get; }
+        public IBuildConfiguration Configuration { get; } = new BuildConfiguration();
 
-        public IBuildLog Log { get; }
+        public IBuildLog Log { get; } = new DefaultBuildLog();
     }
 }

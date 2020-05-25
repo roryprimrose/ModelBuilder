@@ -36,7 +36,7 @@ namespace ModelBuilder
         /// <param name="max">The maximum value.</param>
         /// <returns>A new random value.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="generator" /> parameter is <c>null</c>.</exception>
-        public static T NextValue<T>(this IRandomGenerator generator, T max)
+        public static T NextValue<T>(this IRandomGenerator generator, T max) where T : struct
         {
             if (generator == null)
             {
@@ -57,7 +57,7 @@ namespace ModelBuilder
         /// <param name="max">The maximum value.</param>
         /// <returns>A new random value.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="generator" /> parameter is <c>null</c>.</exception>
-        public static T NextValue<T>(this IRandomGenerator generator, T min, T max)
+        public static T NextValue<T>(this IRandomGenerator generator, T min, T max) where T : struct
         {
             if (generator == null)
             {

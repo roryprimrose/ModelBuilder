@@ -23,7 +23,7 @@
         [Fact]
         public void AddPostBuildActionThrowsExceptionWithNullConfiguration()
         {
-            Action action = () => BuildConfigurationExtensions.AddPostBuildAction<DummyPostBuildAction>(null);
+            Action action = () => BuildConfigurationExtensions.AddPostBuildAction<DummyPostBuildAction>(null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -45,7 +45,7 @@
         {
             var postBuildAction = new DummyPostBuildAction();
 
-            Action action = () => BuildConfigurationExtensions.Add(null, postBuildAction);
+            Action action = () => BuildConfigurationExtensions.Add(null!, postBuildAction);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -55,7 +55,7 @@
         {
             var sut = Substitute.For<IBuildConfiguration>();
 
-            Action action = () => sut.Add((IPostBuildAction) null);
+            Action action = () => sut.Add((IPostBuildAction) null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -87,7 +87,7 @@
         [Fact]
         public void RemovePostBuildActionThrowsExceptionWithNullConfiguration()
         {
-            Action action = () => BuildConfigurationExtensions.RemovePostBuildAction<DummyPostBuildAction>(null);
+            Action action = () => BuildConfigurationExtensions.RemovePostBuildAction<DummyPostBuildAction>(null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -110,7 +110,7 @@
         {
             var sut = Substitute.For<IBuildConfiguration>();
 
-            Action action = () => sut.UpdatePostBuildAction<DummyPostBuildAction>(null);
+            Action action = () => sut.UpdatePostBuildAction<DummyPostBuildAction>(null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -118,7 +118,7 @@
         [Fact]
         public void UpdatePostBuildActionThrowsExceptionWithNullConfiguration()
         {
-            Action action = () => BuildConfigurationExtensions.UpdatePostBuildAction<DummyPostBuildAction>(null, x =>
+            Action action = () => BuildConfigurationExtensions.UpdatePostBuildAction<DummyPostBuildAction>(null!, x =>
             {
                 // Do nothing
             });

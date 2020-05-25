@@ -2,11 +2,11 @@
 {
     public interface ITestItem
     {
-        string FirstName { get; }
+        string? FirstName { get; }
     }
 
     public class TestItem : ITestItem
     {
-        public string FirstName { get; set; }
+        public string? FirstName { get; set; }
     }
 }

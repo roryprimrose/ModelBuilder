@@ -54,7 +54,7 @@
         {
             var sut = new RandomGenerator();
 
-            Action action = () => sut.GetMax(null);
+            Action action = () => sut.GetMax(null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -96,7 +96,7 @@
         {
             var sut = new RandomGenerator();
 
-            Action action = () => sut.GetMin(null);
+            Action action = () => sut.GetMin(null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -132,7 +132,7 @@
         {
             var sut = new RandomGenerator();
 
-            Action action = () => sut.IsSupported(null);
+            Action action = () => sut.IsSupported(null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -154,7 +154,7 @@
         {
             var sut = new RandomGenerator();
 
-            Action action = () => sut.NextValue(null);
+            Action action = () => sut.NextValue(null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -504,7 +504,7 @@
         {
             var sut = new RandomGenerator();
 
-            Action action = () => sut.NextValue(typeof(int), 0, null);
+            Action action = () => sut.NextValue(typeof(int), 0, null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -514,7 +514,7 @@
         {
             var sut = new RandomGenerator();
 
-            Action action = () => sut.NextValue(typeof(int), null, 0);
+            Action action = () => sut.NextValue(typeof(int), null!, 0);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -524,7 +524,7 @@
         {
             var sut = new RandomGenerator();
 
-            Action action = () => sut.NextValue(null, 0, 0);
+            Action action = () => sut.NextValue(null!, 0, 0);
 
             action.Should().Throw<ArgumentNullException>();
         }

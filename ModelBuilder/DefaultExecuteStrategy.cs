@@ -3,7 +3,6 @@
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
-    using System.Diagnostics;
     using System.Dynamic;
     using System.Globalization;
     using System.Linq;
@@ -20,6 +19,7 @@
     {
         private readonly IBuildHistory _buildHistory;
         private readonly IBuildProcessor _buildProcessor;
+        private IBuildConfiguration? _configuration;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="DefaultExecuteStrategy" /> class.
@@ -48,7 +48,7 @@
         ///     generate a requested type.
         /// </exception>
         /// <exception cref="BuildException">Failed to generate a requested type.</exception>
-        public object Create(Type type, params object[] args)
+        public object? Create(Type type, params object?[]? args)
         {
             return Build(type, args);
         }
@@ -57,7 +57,7 @@
         /// <exception cref="ArgumentNullException">The <paramref name="configuration" /> parameter is <c>null</c>.</exception>
         public void Initialize(IBuildConfiguration configuration)
         {
-            Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         }
 
         /// <inheritdoc />
@@ -74,8 +74,6 @@
                 throw new ArgumentNullException(nameof(instance));
             }
 
-            EnsureInitialized();
-
             var capability = _buildProcessor.GetBuildCapability(Configuration, _buildHistory, BuildRequirement.Populate,
                 instance.GetType());
 
@@ -88,7 +86,7 @@
         /// <param name="type">The type of value to build.</param>
         /// <param name="args">The arguments used to create the value.</param>
         /// <returns>The value created.</returns>
-        protected virtual object Build(Type type, params object[] args)
+        protected virtual object? Build(Type type, params object?[]? args)
         {
             if (type == null)
             {
@@ -98,6 +96,11 @@
             var instance = Build(
                 () => _buildProcessor.GetBuildCapability(Configuration, BuildChain, BuildRequirement.Create, type),
                 items => _buildProcessor.Build(this, type, items), type, null, args);
+
+            if (instance == null)
+            {
+                return instance;
+            }
 
             RunPostBuildActions(instance, type);
 
@@ -109,7 +112,7 @@
         /// </summary>
         /// <param name="parameterInfo">The parameter to build a value for.</param>
         /// <returns>The value created for the parameter.</returns>
-        protected virtual object Build(ParameterInfo parameterInfo)
+        protected virtual object? Build(ParameterInfo parameterInfo)
         {
             if (parameterInfo == null)
             {
@@ -122,6 +125,11 @@
                 items => _buildProcessor.Build(this, parameterInfo, items), parameterInfo.ParameterType,
                 parameterInfo.Name, null);
 
+            if (instance == null)
+            {
+                return instance;
+            }
+
             RunPostBuildActions(instance, parameterInfo);
 
             return instance;
@@ -133,7 +141,7 @@
         /// <param name="propertyInfo">The property to build a value for.</param>
         /// <param name="args">The arguments used to create the parent instance.</param>
         /// <returns>The value created for the property.</returns>
-        protected virtual object Build(PropertyInfo propertyInfo, params object[] args)
+        protected virtual object? Build(PropertyInfo propertyInfo, params object?[]? args)
         {
             if (propertyInfo == null)
             {
@@ -145,6 +153,11 @@
                     propertyInfo),
                 items => _buildProcessor.Build(this, propertyInfo, items), propertyInfo.PropertyType, propertyInfo.Name,
                 args);
+
+            if (instance == null)
+            {
+                return instance;
+            }
 
             RunPostBuildActions(instance, propertyInfo);
 
@@ -169,8 +182,6 @@
             {
                 throw new ArgumentNullException(nameof(instance));
             }
-
-            EnsureInitialized();
 
             if (propertyInfo.GetSetMethod() != null)
             {
@@ -206,10 +217,8 @@
             RunPostBuildActions(existingValue, propertyInfo);
         }
 
-        private void AutoPopulateInstance(object instance, object[] args)
+        private void AutoPopulateInstance(object instance, object?[]? args)
         {
-            EnsureInitialized();
-
             var propertyResolver = Configuration.PropertyResolver;
             var type = instance.GetType();
 
@@ -228,11 +237,9 @@
             }
         }
 
-        private object Build(Func<BuildCapability> getCapability, Func<object[], object> buildInstance, Type type,
-            string referenceName, params object[] args)
+        private object? Build(Func<BuildCapability?> getCapability, Func<object?[]?, object?> buildInstance, Type type,
+            string? referenceName, params object?[]? args)
         {
-            EnsureInitialized();
-
             var capability = getCapability();
 
             if (capability == null)
@@ -248,7 +255,7 @@
 
             try
             {
-                object instance;
+                object? instance;
 
                 if (args?.Length > 0)
                 {
@@ -296,7 +303,7 @@
             }
         }
 
-        private object[] CreateParameterValues(Type type)
+        private object?[]? CreateParameterValues(Type type)
         {
             // Resolve the type being created
             var typeToCreate = Configuration.TypeResolver.GetBuildType(Configuration, type);
@@ -324,7 +331,7 @@
             // Create an ExpandoObject to hold the parameter values as we build them
             // ValueGenerators can use these parameters (expressed as properties) to assist in 
             // building values that are dependent on other values
-            IDictionary<string, object> propertyWrapper = new ExpandoObject();
+            IDictionary<string, object?> propertyWrapper = new ExpandoObject();
 
             _buildHistory.Push(propertyWrapper);
 
@@ -350,7 +357,7 @@
             }
 
             var originalParameters = constructor.GetParameters();
-            var parameterValues = new Collection<object>();
+            var parameterValues = new Collection<object?>();
 
             // Re-order the parameters back into the order expected by the constructor
             foreach (var parameterInfo in originalParameters)
@@ -365,21 +372,7 @@
             return parameters;
         }
 
-        private void EnsureInitialized()
-        {
-            if (Configuration == null)
-            {
-                var message = string.Format(
-                    CultureInfo.CurrentCulture,
-                    "The {0} has not be initialized. You must invoke {1} first to provide the build configuration and the build _buildLog.",
-                    GetType().FullName,
-                    nameof(EnsureInitialized));
-
-                throw new InvalidOperationException(message);
-            }
-        }
-
-        private object Populate(BuildCapability capability, object instance, params object[] args)
+        private object Populate(BuildCapability? capability, object instance, params object?[]? args)
         {
             if (capability == null
                 || capability.SupportsPopulate == false)
@@ -396,8 +389,6 @@
                 {
                     // The type creator has indicated that this type should be auto populated by the execute strategy
                     AutoPopulateInstance(instance, args);
-
-                    Debug.Assert(instance != null, "Populating the instance did not return the original instance");
                 }
 
                 // Allow the type creator to do its own population of the instance
@@ -464,7 +455,24 @@
         public IBuildChain BuildChain => _buildHistory;
 
         /// <inheritdoc />
-        public IBuildConfiguration Configuration { get; private set; }
+        public IBuildConfiguration Configuration
+        {
+            get
+            {
+                if (_configuration == null)
+                {
+                    var message = string.Format(
+                        CultureInfo.CurrentCulture,
+                        "The {0} has not be initialized. You must invoke {1} first to provide the build configuration.",
+                        GetType().FullName,
+                        nameof(Initialize));
+
+                    throw new InvalidOperationException(message);
+                }
+
+                return _configuration;
+            }
+        }
 
         /// <inheritdoc />
         public IBuildLog Log { get; }

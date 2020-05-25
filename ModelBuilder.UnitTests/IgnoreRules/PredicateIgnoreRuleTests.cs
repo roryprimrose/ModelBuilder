@@ -11,7 +11,7 @@
         [Fact]
         public void IsMatchReturnsFalseWhenPropertyDeclaringTypeDoesNotMatch()
         {
-            var property = typeof(Person).GetProperty(nameof(Person.LastName));
+            var property = typeof(Person).GetProperty(nameof(Person.LastName))!;
 
             var sut = new PredicateIgnoreRule(x => x.DeclaringType == typeof(string));
 
@@ -23,7 +23,7 @@
         [Fact]
         public void IsMatchReturnsFalseWhenPropertyNameDoesNotMatch()
         {
-            var property = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var property = typeof(Person).GetProperty(nameof(Person.FirstName))!;
 
             var sut = new PredicateIgnoreRule(x => x.Name == nameof(Person.LastName));
 
@@ -35,7 +35,7 @@
         [Fact]
         public void IsMatchReturnsFalseWhenPropertyTypeDoesNotMatch()
         {
-            var property = typeof(Person).GetProperty(nameof(Person.LastName));
+            var property = typeof(Person).GetProperty(nameof(Person.LastName))!;
 
             var sut = new PredicateIgnoreRule(x => x.PropertyType == typeof(DateTimeOffset));
 
@@ -47,7 +47,7 @@
         [Fact]
         public void IsMatchReturnsTrueWhenInheritedPropertyMatchesPropertyOnDeclaredType()
         {
-            var property = typeof(Person).GetProperty(nameof(Entity.Id));
+            var property = typeof(Person).GetProperty(nameof(Entity.Id))!;
 
             var sut = new PredicateIgnoreRule(x =>
                 x.ReflectedType == typeof(Person) && x.Name == nameof(Entity.Id) && x.PropertyType == typeof(Guid));
@@ -60,7 +60,7 @@
         [Fact]
         public void IsMatchReturnsTrueWhenPropertyMatches()
         {
-            var property = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var property = typeof(Person).GetProperty(nameof(Person.FirstName))!;
 
             var sut = new PredicateIgnoreRule(x => x.Name == nameof(Person.FirstName));
 
@@ -72,7 +72,7 @@
         [Fact]
         public void IsMatchReturnsTrueWhenPropertyMatchesBaseTypeProperty()
         {
-            var property = typeof(Person).GetProperty(nameof(Entity.Id));
+            var property = typeof(Person).GetProperty(nameof(Entity.Id))!;
 
             var sut = new PredicateIgnoreRule(x => x.ReflectedType == typeof(Person));
 
@@ -84,7 +84,7 @@
         [Fact]
         public void IsMatchReturnsTrueWhenPropertyMatchesDerivedTypeProperty()
         {
-            var property = typeof(Person).GetProperty(nameof(Entity.Id));
+            var property = typeof(Person).GetProperty(nameof(Entity.Id))!;
 
             var sut = new PredicateIgnoreRule(x => x.DeclaringType == typeof(Entity));
 
@@ -98,7 +98,7 @@
         {
             var sut = new PredicateIgnoreRule(x => x.Name == nameof(Person.FirstName));
 
-            Action action = () => sut.IsMatch(null);
+            Action action = () => sut.IsMatch(null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -107,7 +107,7 @@
         public void ThrowsExceptionWhenCreatedWithNullExpression()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Action action = () => new PredicateIgnoreRule(null);
+            Action action = () => new PredicateIgnoreRule(null!);
 
             action.Should().Throw<ArgumentNullException>();
         }

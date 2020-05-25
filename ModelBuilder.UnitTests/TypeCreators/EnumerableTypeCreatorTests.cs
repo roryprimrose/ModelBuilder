@@ -81,7 +81,7 @@
 
             var sut = new EnumerableTypeCreator();
 
-            var actual = sut.CanCreate(configuration, null, type);
+            var actual = sut.CanCreate(configuration, null!, type);
 
             actual.Should().Be(supported);
         }
@@ -96,7 +96,7 @@
 
             var sut = new EnumerableTypeCreator();
 
-            Action action = () => sut.CanCreate(configuration, null, (ParameterInfo) null);
+            Action action = () => sut.CanCreate(configuration, null!, (ParameterInfo) null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -111,7 +111,7 @@
 
             var sut = new EnumerableTypeCreator();
 
-            Action action = () => sut.CanCreate(configuration, null, (PropertyInfo) null);
+            Action action = () => sut.CanCreate(configuration, null!, (PropertyInfo) null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -126,7 +126,7 @@
 
             var sut = new EnumerableTypeCreator();
 
-            Action action = () => sut.CanCreate(configuration, null, (Type) null);
+            Action action = () => sut.CanCreate(configuration, null!, (Type) null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -171,7 +171,7 @@
 
             var sut = new EnumerableTypeCreator();
 
-            var actual = sut.CanPopulate(configuration, null, type);
+            var actual = sut.CanPopulate(configuration, null!, type);
 
             actual.Should().Be(supported);
         }
@@ -181,7 +181,7 @@
         {
             var sut = new EnumerableTypeCreator();
 
-            Action action = () => sut.CanPopulate(null, null, typeof(string));
+            Action action = () => sut.CanPopulate(null!, null!, typeof(string));
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -192,7 +192,7 @@
             var sut = new EnumerableTypeCreator();
             var configuration = Substitute.For<IBuildConfiguration>();
 
-            Action action = () => sut.CanPopulate(configuration, null, (ParameterInfo) null);
+            Action action = () => sut.CanPopulate(configuration, null!, (ParameterInfo) null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -203,7 +203,7 @@
             var sut = new EnumerableTypeCreator();
             var configuration = Substitute.For<IBuildConfiguration>();
 
-            Action action = () => sut.CanPopulate(configuration, null, (PropertyInfo) null);
+            Action action = () => sut.CanPopulate(configuration, null!, (PropertyInfo) null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -214,7 +214,7 @@
             var sut = new EnumerableTypeCreator();
             var configuration = Substitute.For<IBuildConfiguration>();
 
-            Action action = () => sut.CanPopulate(configuration, null, (Type) null);
+            Action action = () => sut.CanPopulate(configuration, null!, (Type) null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -224,7 +224,7 @@
         {
             var sut = new EnumerableTypeCreatorWrapper();
 
-            Action action = () => sut.CreateByName(null, typeof(string), null, null);
+            Action action = () => sut.CreateByName(null!, typeof(string), null!, null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -236,7 +236,7 @@
 
             var sut = new EnumerableTypeCreatorWrapper();
 
-            Action action = () => sut.CreateByName(executeStrategy, null, null, null);
+            Action action = () => sut.CreateByName(executeStrategy, null!, null!, null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -248,7 +248,7 @@
 
             var sut = new EnumerableTypeCreatorWrapper();
 
-            Action action = () => sut.CreateItem(typeof(Person), null, person);
+            Action action = () => sut.CreateItem(typeof(Person), null!, person);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -260,7 +260,7 @@
 
             var sut = new EnumerableTypeCreatorWrapper();
 
-            Action action = () => sut.CreateValue(executeStrategy, null, null, null);
+            Action action = () => sut.CreateValue(executeStrategy, null!, null!, null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -304,6 +304,21 @@
             actual.Should().BeOfType(expectedType);
             actual.Should().BeAssignableTo(requestedType);
             actual.As<IEnumerable>().Should().BeEmpty();
+        }
+
+        [Fact]
+        public void CreateThrowExceptionWhenTypeNotEnumerable()
+        {
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+            var configuration = Substitute.For<IBuildConfiguration>();
+
+            executeStrategy.Configuration.Returns(configuration);
+
+            var sut = new EnumerableTypeCreator();
+
+            Action action = () => sut.Create(executeStrategy, typeof(ICantCreate));
+
+            action.Should().Throw<BuildException>();
         }
 
         [Fact]
@@ -356,7 +371,7 @@
 
             executeStrategy.Initialize(configuration);
 
-            var actual = sut.Create(executeStrategy, type);
+            var actual = sut.Create(executeStrategy, type)!;
 
             sut.Populate(executeStrategy, actual);
 
@@ -414,6 +429,23 @@
         }
 
         [Fact]
+        public void PopulateInstanceThrowExceptionWhenTypeNotEnumerable()
+        {
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+            var configuration = Substitute.For<IBuildConfiguration>();
+
+            var item = new object();
+
+            executeStrategy.Configuration.Returns(configuration);
+
+            var sut = new EnumerableTypeCreatorWrapper();
+
+            Action action = () => sut.PopulateItem(executeStrategy, item);
+
+            action.Should().Throw<BuildException>();
+        }
+
+        [Fact]
         public void PopulateThrowsExceptionWithUnsupportedType()
         {
             var instance = new Lazy<bool>(() => true);
@@ -443,8 +475,8 @@
 
         private class EnumerableTypeCreatorWrapper : EnumerableTypeCreator
         {
-            public object CreateByName(IExecuteStrategy executeStrategy, Type type, string referenceName,
-                params object[] args)
+            public object? CreateByName(IExecuteStrategy executeStrategy, Type type, string? referenceName,
+                params object?[]? args)
             {
                 return Create(executeStrategy, type, referenceName, args);
             }
@@ -454,10 +486,15 @@
                 CreateChildItem(type, executeStrategy, item);
             }
 
-            public object CreateValue(IExecuteStrategy executeStrategy, Type type, string referenceName,
-                params object[] args)
+            public object? CreateValue(IExecuteStrategy executeStrategy, Type type, string? referenceName,
+                params object?[]? args)
             {
                 return CreateInstance(executeStrategy, type, referenceName, args);
+            }
+
+            public object PopulateItem(IExecuteStrategy executeStrategy, object instance)
+            {
+                return PopulateInstance(executeStrategy, instance);
             }
         }
     }

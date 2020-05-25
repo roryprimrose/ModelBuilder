@@ -31,7 +31,7 @@
         [Fact]
         public void CreateThrowsExceptionWithNullInstanceType()
         {
-            Action action = () => Model.Create(null);
+            Action action = () => Model.Create(null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -39,7 +39,7 @@
         [Fact]
         public void CreateTReturnsInstance()
         {
-            var actual = Model.Create<SlimModel>();
+            var actual = Model.Create<SlimModel>()!;
 
             actual.Should().NotBeNull();
             actual.Value.Should().NotBeEmpty();
@@ -50,7 +50,7 @@
         {
             var value = Guid.NewGuid();
 
-            var actual = Model.Create<ReadOnlyModel>(value);
+            var actual = Model.Create<ReadOnlyModel>(value)!;
 
             actual.Should().NotBeNull();
             actual.Value.Should().Be(value);
@@ -59,7 +59,7 @@
         [Fact]
         public void IgnoringThrowsExceptionWithNullExpression()
         {
-            Action action = () => Model.Ignoring<Person>(null);
+            Action action = () => Model.Ignoring<Person>(null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -67,7 +67,7 @@
         [Fact]
         public void IgnoringUsesConfigurationToCreateInstance()
         {
-            var actual = Model.Ignoring<Person>(x => x.FirstName).Create<Person>();
+            var actual = Model.Ignoring<Person>(x => x.FirstName!).Create<Person>()!;
 
             actual.FirstName.Should().BeNull();
         }
@@ -75,7 +75,7 @@
         [Fact]
         public void MappingUsesConfigurationToCreateInstance()
         {
-            var actual = Model.Mapping<ITestItem, TestItem>().Create<ITestItem>();
+            var actual = Model.Mapping<ITestItem, TestItem>().Create<ITestItem>()!;
 
             actual.Should().BeOfType<TestItem>();
             actual.FirstName.Should().NotBeNullOrWhiteSpace();

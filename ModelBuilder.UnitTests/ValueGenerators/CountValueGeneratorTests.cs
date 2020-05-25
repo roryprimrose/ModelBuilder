@@ -9,6 +9,14 @@
 
     public class CountValueGeneratorTests
     {
+        [Fact]
+        public void CreatesWithDefaultMaxCount()
+        {
+            var sut = new Wrapper();
+
+            sut.MaxCount.Should().BeGreaterThan(0);
+        }
+
         [Theory]
         [ClassData(typeof(NumericTypeDataSource))]
         public void GenerateReturnsNewValueTest(Type type, bool isSupported)
@@ -29,7 +37,7 @@
             var value = sut.RunGenerate(type, "Count", executeStrategy);
 
             if (type.IsNullable()
-                && value == null)
+                && value == null!)
             {
                 // We can't run the assertions because null is a valid outcome
                 return;
@@ -51,7 +59,7 @@
         }
 
         [Fact]
-        public void GenerateReturnsValueBetweenDefinedMinAndMaxValues()
+        public void GenerateReturnsValueBetweenDefaultMinAndMaxValues()
         {
             var buildChain = new BuildHistory();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -69,8 +77,27 @@
             }
         }
 
+        [Fact]
+        public void GenerateReturnsValueBetweenDefinedMinAndMaxValues()
+        {
+            var buildChain = new BuildHistory();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            var sut = new Wrapper {MaxCount = 10};
+
+            for (var index = 0; index < 1000; index++)
+            {
+                var value = (int) sut.RunGenerate(typeof(int), "Count", executeStrategy);
+
+                value.Should().BeGreaterOrEqualTo(1);
+                value.Should().BeLessOrEqualTo(sut.MaxCount);
+            }
+        }
+
         [Theory]
-        [InlineData(null, false)]
+        [InlineData(null!, false)]
         [InlineData("", false)]
         [InlineData("other", false)]
         [InlineData("someCount", false)]
@@ -117,7 +144,7 @@
 
             var sut = new Wrapper();
 
-            var actual = sut.RunIsMatch(type, null, buildChain);
+            var actual = sut.RunIsMatch(type, null!, buildChain);
 
             actual.Should().BeFalse();
         }
@@ -182,7 +209,7 @@
         {
             public object RunGenerate(Type type, string referenceName, IExecuteStrategy executeStrategy)
             {
-                return Generate(executeStrategy, type, referenceName);
+                return Generate(executeStrategy, type, referenceName)!;
             }
 
             public bool RunIsMatch(Type type, string referenceName, IBuildChain buildChain)

@@ -14,7 +14,7 @@
             Justification = "Emails are lower-case by convention")]
         public void AssignsPropertyValuesRelativeToOtherPropertyValues()
         {
-            var actual = Model.Create<Person>();
+            var actual = Model.Create<Person>()!;
 
             var firstName = EmailValueGenerator.SpecialCharacters.Replace(actual.FirstName, string.Empty);
             var lastName = EmailValueGenerator.SpecialCharacters.Replace(actual.LastName, string.Empty);
@@ -30,7 +30,7 @@
             Justification = "Emails are lower-case by convention")]
         public void CreatesParameterValuesRelativeToOtherParameterValues()
         {
-            var actual = Model.Create<OrderedConstructorParameters>();
+            var actual = Model.Create<OrderedConstructorParameters>()!;
 
             if (actual.Gender == Gender.Female)
             {

@@ -15,14 +15,14 @@
     /// </summary>
     public class DefaultConstructorResolver : IConstructorResolver
     {
-        private static readonly ConcurrentDictionary<Type, ConstructorInfo> _globalConstructorCache =
-            new ConcurrentDictionary<Type, ConstructorInfo>();
+        private static readonly ConcurrentDictionary<Type, ConstructorInfo?> _globalConstructorCache =
+            new ConcurrentDictionary<Type, ConstructorInfo?>();
 
         private static readonly ConcurrentDictionary<ConstructorInfo, IList<ParameterInfo>> _globalParametersCache =
             new ConcurrentDictionary<ConstructorInfo, IList<ParameterInfo>>();
 
-        private readonly ConcurrentDictionary<Type, ConstructorInfo> _perInstanceConstructorCache =
-            new ConcurrentDictionary<Type, ConstructorInfo>();
+        private readonly ConcurrentDictionary<Type, ConstructorInfo?> _perInstanceConstructorCache =
+            new ConcurrentDictionary<Type, ConstructorInfo?>();
 
         private readonly ConcurrentDictionary<ConstructorInfo, IList<ParameterInfo>> _perInstanceParametersCache =
             new ConcurrentDictionary<ConstructorInfo, IList<ParameterInfo>>();
@@ -77,7 +77,7 @@
         ///     The <paramref name="type" /> parameter does not have a constructor that
         ///     matches the supplied arguments.
         /// </exception>
-        public ConstructorInfo Resolve(Type type, params object[] args)
+        public ConstructorInfo? Resolve(Type type, params object?[]? args)
         {
             if (type == null)
             {
@@ -99,7 +99,7 @@
                 return FindConstructorMatchingArguments(type, args);
             }
 
-            return FindConstructorMatchingTypes(type, args);
+            return FindConstructorMatchingTypes(type, args!);
         }
 
         private static IOrderedEnumerable<ParameterInfo> CalculateOrderedParameters(IBuildConfiguration configuration,
@@ -110,7 +110,7 @@
                 select x;
         }
 
-        private static ConstructorInfo CalculateSmallestConstructor(Type type)
+        private static ConstructorInfo? CalculateSmallestConstructor(Type type)
         {
             var availableConstructors = type.GetConstructors().ToList();
 
@@ -156,7 +156,7 @@
             throw new MissingMemberException(message);
         }
 
-        private static ConstructorInfo FindConstructorMatchingArguments(Type type, IList<object> args)
+        private static ConstructorInfo FindConstructorMatchingArguments(Type type, IList<object?> args)
         {
             // Parameters are consulted a lot here so get it into a dictionary first
             var availableConstructors = type.GetConstructors().ToDictionary(x => x, x => x.GetParameters());
@@ -178,7 +178,7 @@
 
             throw new MissingMemberException(message);
         }
-
+        
         private static ConstructorInfo FindConstructorMatchingTypes(Type type, object[] args)
         {
             // Search for a matching constructor
@@ -223,7 +223,7 @@
             return matchingRule.Priority;
         }
 
-        private static bool ParametersMatchArguments(IList<ParameterInfo> parameters, IList<object> args)
+        private static bool ParametersMatchArguments(IList<ParameterInfo> parameters, IList<object?> args)
         {
             Debug.Assert(
                 args.Count <= parameters.Count,
@@ -282,7 +282,7 @@
             return true;
         }
 
-        private ConstructorInfo FindSmallestConstructor(Type type)
+        private ConstructorInfo? FindSmallestConstructor(Type type)
         {
             if (CacheLevel == CacheLevel.Global)
             {

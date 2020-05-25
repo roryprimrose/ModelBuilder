@@ -2,6 +2,6 @@
 {
     public class SpecificCompany : Company
     {
-        public string Email { get; set; }
+        public string? Email { get; set; }
     }
 }

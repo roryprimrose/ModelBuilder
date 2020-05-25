@@ -44,6 +44,43 @@
         }
 
         [Fact]
+        public void GetBuildTypeReturnsCachedType()
+        {
+            var configuration = new BuildConfiguration();
+
+            var sut = new DefaultTypeResolver();
+
+            var first = sut.GetBuildType(configuration, typeof(INoMatch));
+            var second = sut.GetBuildType(configuration, typeof(INoMatch));
+
+            first.Should().BeSameAs(second);
+        }
+
+        [Fact]
+        public void GetBuildTypeReturnsClassBasedOnGenericEnumerableNonListInterface()
+        {
+            var configuration = new BuildConfiguration();
+
+            var sut = new DefaultTypeResolver();
+
+            var actual = sut.GetBuildType(configuration, typeof(ICustomCollection<string>));
+
+            actual.Should().Be<CustomCollection<string>>();
+        }
+
+        [Fact]
+        public void GetBuildTypeReturnsClassBasedOnGenericNonListInterface()
+        {
+            var configuration = new BuildConfiguration();
+
+            var sut = new DefaultTypeResolver();
+
+            var actual = sut.GetBuildType(configuration, typeof(IGenericContainer<Office>));
+
+            actual.Should().Be<GenericContainer<Office>>();
+        }
+
+        [Fact]
         public void GetBuildTypeReturnsDerivedTypeMatchingOnAbstractBaseName()
         {
             var configuration = new BuildConfiguration();
@@ -84,7 +121,7 @@
             configuration.IgnoreRules.Returns(defaultConfiguration.IgnoreRules);
             configuration.PostBuildActions.Returns(defaultConfiguration.PostBuildActions);
             configuration.TypeCreators.Returns(defaultConfiguration.TypeCreators);
-            configuration.TypeMappingRules.Returns((ICollection<TypeMappingRule>) null);
+            configuration.TypeMappingRules.Returns((ICollection<TypeMappingRule>) null!);
             configuration.TypeResolver.Returns(defaultConfiguration.TypeResolver);
             configuration.ValueGenerators.Returns(defaultConfiguration.ValueGenerators);
 
@@ -201,7 +238,7 @@
 
             var sut = new DefaultTypeResolver();
 
-            Action action = () => sut.GetBuildType(null, source);
+            Action action = () => sut.GetBuildType(null!, source);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -213,7 +250,7 @@
 
             var sut = new DefaultTypeResolver();
 
-            Action action = () => sut.GetBuildType(configuration, null);
+            Action action = () => sut.GetBuildType(configuration, null!);
 
             action.Should().Throw<ArgumentNullException>();
         }

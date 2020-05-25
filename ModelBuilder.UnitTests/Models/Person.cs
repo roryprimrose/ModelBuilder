@@ -31,35 +31,35 @@
             Priority = priority;
         }
 
-        public object DoSomething()
+        public object? DoSomething()
         {
             return FirstName;
         }
 
-        public Address Address { get; set; }
+        public Address? Address { get; set; }
 
         public int Age => DateTime.UtcNow.Subtract(DOB).Days / 365;
 
         public DateTime DOB { get; set; }
 
-        public string FirstName { get; set; }
+        public string? FirstName { get; set; }
 
         public Gender Gender { get; set; }
 
-        public string LastName { get; set; }
+        public string? LastName { get; set; }
 
-        public string Mobile { get; set; }
+        public string? Mobile { get; set; }
 
         public SimpleEnum Order { get; set; }
 
-        public string PersonalEmail { get; set; }
+        public string? PersonalEmail { get; set; }
 
-        public string Phone { get; set; }
+        public string? Phone { get; set; }
 
         public int Priority { get; set; }
 
-        public string TimeZone { get; set; }
+        public string? TimeZone { get; set; }
 
-        public string WorkEmail { get; set; }
+        public string? WorkEmail { get; set; }
     }
 }

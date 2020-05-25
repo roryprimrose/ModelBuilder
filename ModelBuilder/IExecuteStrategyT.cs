@@ -12,7 +12,10 @@
         /// </summary>
         /// <param name="args">The constructor arguments of the type.</param>
         /// <returns>A new instance of <typeparamref name="T" /></returns>
-        T Create(params object[] args);
+#if NETSTANDARD2_1
+        [return: System.Diagnostics.CodeAnalysis.MaybeNull]
+#endif
+        T Create(params object?[]? args);
 
         /// <summary>
         ///     Populates values onto settable properties of the specified instance.

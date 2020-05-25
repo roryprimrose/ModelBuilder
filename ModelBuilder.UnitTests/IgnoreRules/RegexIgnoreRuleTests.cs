@@ -12,7 +12,7 @@
         [Fact]
         public void IsMatchReturnsFalseWhenPropertyDoesNotMatch()
         {
-            var property = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var property = typeof(Person).GetProperty(nameof(Person.FirstName))!;
 
             var sut = new RegexIgnoreRule(NameExpression.LastName);
 
@@ -24,7 +24,7 @@
         [Fact]
         public void IsMatchReturnsTrueWhenPropertyMatches()
         {
-            var property = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var property = typeof(Person).GetProperty(nameof(Person.FirstName))!;
 
             var sut = new RegexIgnoreRule(NameExpression.FirstName);
 
@@ -38,7 +38,7 @@
         [InlineData("Last", false)]
         public void IsMatchReturnsWhenPropertyMatchesExpression(string expression, bool expected)
         {
-            var property = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var property = typeof(Person).GetProperty(nameof(Person.FirstName))!;
 
             var sut = new RegexIgnoreRule(expression);
 
@@ -52,16 +52,17 @@
         {
             var sut = new RegexIgnoreRule(NameExpression.FirstName);
 
-            Action action = () => sut.IsMatch(null);
+            Action action = () => sut.IsMatch(null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
 
         [Theory]
-        [InlineData(null)]
+        [InlineData(null!)]
         [InlineData("")]
         public void ThrowsExceptionWhenCreatedWithInvalidExpression(string expression)
         {
+            // ReSharper disable once ObjectCreationAsStatement
             Action action = () => new RegexIgnoreRule(expression);
 
             action.Should().Throw<ArgumentNullException>();
@@ -70,7 +71,8 @@
         [Fact]
         public void ThrowsExceptionWhenCreatedWithNullExpression()
         {
-            Action action = () => new RegexIgnoreRule((Regex) null);
+            // ReSharper disable once ObjectCreationAsStatement
+            Action action = () => new RegexIgnoreRule((Regex) null!);
 
             action.Should().Throw<ArgumentNullException>();
         }

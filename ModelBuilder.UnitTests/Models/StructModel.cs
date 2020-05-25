@@ -9,7 +9,7 @@
             return Id.Equals(other.Id) && FirstName == other.FirstName && LastName == other.LastName && Email == other.Email;
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return obj is StructModel other && Equals(other);
         }
@@ -38,10 +38,10 @@
 
         public Guid Id { get; set; }
 
-        public string FirstName { get; set; }
+        public string? FirstName { get; set; }
 
-        public string LastName { get; set; }
+        public string? LastName { get; set; }
 
-        public string Email { get; set; }
+        public string? Email { get; set; }
     }
 }

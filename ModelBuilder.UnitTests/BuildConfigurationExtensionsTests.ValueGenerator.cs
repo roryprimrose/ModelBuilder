@@ -24,7 +24,7 @@
         [Fact]
         public void AddValueGeneratorThrowsExceptionWithNullConfiguration()
         {
-            Action action = () => BuildConfigurationExtensions.AddValueGenerator<StringValueGenerator>(null);
+            Action action = () => BuildConfigurationExtensions.AddValueGenerator<StringValueGenerator>(null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -46,7 +46,7 @@
         {
             var rule = new StringValueGenerator();
 
-            Action action = () => BuildConfigurationExtensions.Add(null, rule);
+            Action action = () => BuildConfigurationExtensions.Add(null!, rule);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -56,7 +56,7 @@
         {
             var sut = Substitute.For<IBuildConfiguration>();
 
-            Action action = () => sut.Add((IValueGenerator) null);
+            Action action = () => sut.Add((IValueGenerator) null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -88,7 +88,7 @@
         [Fact]
         public void RemoveValueGeneratorThrowsExceptionWithNullConfiguration()
         {
-            Action action = () => BuildConfigurationExtensions.RemoveValueGenerator<StringValueGenerator>(null);
+            Action action = () => BuildConfigurationExtensions.RemoveValueGenerator<StringValueGenerator>(null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -111,7 +111,7 @@
         {
             var sut = Substitute.For<IBuildConfiguration>();
 
-            Action action = () => sut.UpdateValueGenerator<DummyValueGenerator>(null);
+            Action action = () => sut.UpdateValueGenerator<DummyValueGenerator>(null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -119,7 +119,7 @@
         [Fact]
         public void UpdateValueGeneratorThrowsExceptionWithNullConfiguration()
         {
-            Action action = () => BuildConfigurationExtensions.UpdateValueGenerator<DummyValueGenerator>(null, x =>
+            Action action = () => BuildConfigurationExtensions.UpdateValueGenerator<DummyValueGenerator>(null!, x =>
             {
                 // Do nothing
             });

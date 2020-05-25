@@ -1,7 +1,6 @@
 ﻿namespace ModelBuilder
 {
     using System;
-    using System.Diagnostics;
     using System.Globalization;
     using System.Linq;
     using System.Reflection;
@@ -49,7 +48,7 @@
 
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="parameterInfo" /> parameter is <c>null</c>.</exception>
-        public void CreatedParameter(ParameterInfo parameterInfo, object context)
+        public void CreatedParameter(ParameterInfo parameterInfo, object? context)
         {
             if (parameterInfo == null)
             {
@@ -62,7 +61,7 @@
                 Resources.DefaultBuildLog_CreatedParameter,
                 parameterInfo.Name,
                 parameterInfo.ParameterType.FullName,
-                parameterInfo.Member.DeclaringType?.FullName);
+                parameterInfo.Member.DeclaringType?.FullName ?? "<unknown>");
         }
 
         /// <inheritdoc />
@@ -91,7 +90,7 @@
 
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
-        public void CreatedType(Type type, object context)
+        public void CreatedType(Type type, object? context)
         {
             if (type == null)
             {
@@ -105,7 +104,7 @@
 
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="parameterInfo" /> parameter is <c>null</c>.</exception>
-        public void CreatingParameter(ParameterInfo parameterInfo, object context)
+        public void CreatingParameter(ParameterInfo parameterInfo, object? context)
         {
             if (parameterInfo == null)
             {
@@ -116,7 +115,7 @@
                 Resources.DefaultBuildLog_CreatingParameter,
                 parameterInfo.Name,
                 parameterInfo.ParameterType.FullName,
-                parameterInfo.Member.DeclaringType?.FullName);
+                parameterInfo.Member.DeclaringType?.FullName ?? "<unknown>");
 
             _indent++;
         }
@@ -148,7 +147,7 @@
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="creatorType" /> parameter is <c>null</c>.</exception>
-        public void CreatingType(Type type, Type creatorType, object context)
+        public void CreatingType(Type type, Type creatorType, object? context)
         {
             if (type == null)
             {
@@ -168,7 +167,7 @@
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="generatorType" /> parameter is <c>null</c>.</exception>
-        public void CreatingValue(Type type, Type generatorType, object context)
+        public void CreatingValue(Type type, Type generatorType, object? context)
         {
             if (type == null)
             {
@@ -281,8 +280,6 @@
 
         private void FormatAndWriteMessage(string message, params object[] args)
         {
-            Debug.Assert(message != null, "No message has been provided");
-
             var messageToWrite = message;
 
             if (args.Length > 0)

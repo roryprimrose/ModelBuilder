@@ -11,9 +11,9 @@
         [Fact]
         public void IsMatchReturnsFalseWhenPropertyDeclaringTypeDoesNotMatch()
         {
-            var property = typeof(Person).GetProperty(nameof(Person.LastName));
+            var property = typeof(Person).GetProperty(nameof(Person.LastName))!;
 
-            var sut = new ExpressionIgnoreRule<Simple>(x => x.LastName);
+            var sut = new ExpressionIgnoreRule<Simple>(x => x.LastName!);
 
             var actual = sut.IsMatch(property);
 
@@ -23,9 +23,9 @@
         [Fact]
         public void IsMatchReturnsFalseWhenPropertyDoesNotMatch()
         {
-            var property = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var property = typeof(Person).GetProperty(nameof(Person.FirstName))!;
 
-            var sut = new ExpressionIgnoreRule<Person>(x => x.LastName);
+            var sut = new ExpressionIgnoreRule<Person>(x => x.LastName!);
 
             var actual = sut.IsMatch(property);
 
@@ -35,9 +35,9 @@
         [Fact]
         public void IsMatchReturnsFalseWhenPropertyNameDoesNotMatch()
         {
-            var property = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var property = typeof(Person).GetProperty(nameof(Person.FirstName))!;
 
-            var sut = new ExpressionIgnoreRule<Person>(x => x.LastName);
+            var sut = new ExpressionIgnoreRule<Person>(x => x.LastName!);
 
             var actual = sut.IsMatch(property);
 
@@ -47,7 +47,7 @@
         [Fact]
         public void IsMatchReturnsTrueWhenInheritedPropertyMatchesPropertyOnDeclaredType()
         {
-            var property = typeof(Person).GetProperty(nameof(Person.Id));
+            var property = typeof(Person).GetProperty(nameof(Person.Id))!;
 
             var sut = new ExpressionIgnoreRule<Person>(x => x.Id);
 
@@ -59,9 +59,9 @@
         [Fact]
         public void IsMatchReturnsTrueWhenPropertyMatches()
         {
-            var property = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var property = typeof(Person).GetProperty(nameof(Person.FirstName))!;
 
-            var sut = new ExpressionIgnoreRule<Person>(x => x.FirstName);
+            var sut = new ExpressionIgnoreRule<Person>(x => x.FirstName!);
 
             var actual = sut.IsMatch(property);
 
@@ -71,7 +71,7 @@
         [Fact]
         public void IsMatchReturnsTrueWhenPropertyMatchesBaseTypeProperty()
         {
-            var property = typeof(Entity).GetProperty(nameof(Entity.Id));
+            var property = typeof(Entity).GetProperty(nameof(Entity.Id))!;
 
             var sut = new ExpressionIgnoreRule<Person>(x => x.Id);
 
@@ -83,7 +83,7 @@
         [Fact]
         public void IsMatchReturnsTrueWhenPropertyMatchesDerivedTypeProperty()
         {
-            var property = typeof(Person).GetProperty(nameof(Person.Id));
+            var property = typeof(Person).GetProperty(nameof(Person.Id))!;
 
             var sut = new ExpressionIgnoreRule<Entity>(x => x.Id);
 
@@ -95,9 +95,9 @@
         [Fact]
         public void IsMatchThrowsExceptionWithNullProperty()
         {
-            var sut = new ExpressionIgnoreRule<Person>(x => x.FirstName);
+            var sut = new ExpressionIgnoreRule<Person>(x => x.FirstName!);
 
-            Action action = () => sut.IsMatch(null);
+            Action action = () => sut.IsMatch(null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -105,7 +105,8 @@
         [Fact]
         public void ThrowsExceptionWhenCreatedWithNullExpression()
         {
-            Action action = () => new ExpressionIgnoreRule<Person>(null);
+            // ReSharper disable once ObjectCreationAsStatement
+            Action action = () => new ExpressionIgnoreRule<Person>(null!);
 
             action.Should().Throw<ArgumentNullException>();
         }

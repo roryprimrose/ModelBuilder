@@ -17,7 +17,7 @@
         /// <param name="type">The type of value to build.</param>
         /// <param name="arguments">The constructor parameters to create the instance with.</param>
         /// <returns>The new value.</returns>
-        object Build(IExecuteStrategy executeStrategy, Type type, params object[] arguments);
+        object? Build(IExecuteStrategy executeStrategy, Type type, params object?[]? arguments);
 
         /// <summary>
         ///     Builds a value of the specified type.
@@ -26,7 +26,7 @@
         /// <param name="parameterInfo">The parameter of value to build.</param>
         /// <param name="arguments">The constructor parameters to create the instance with.</param>
         /// <returns>The new value.</returns>
-        object Build(IExecuteStrategy executeStrategy, ParameterInfo parameterInfo, params object[] arguments);
+        object? Build(IExecuteStrategy executeStrategy, ParameterInfo parameterInfo, params object?[]? arguments);
 
         /// <summary>
         ///     Builds a value of the specified type.
@@ -35,7 +35,7 @@
         /// <param name="propertyInfo">The property of value to build.</param>
         /// <param name="arguments">The constructor parameters to create the instance with.</param>
         /// <returns>The new value.</returns>
-        object Build(IExecuteStrategy executeStrategy, PropertyInfo propertyInfo, params object[] arguments);
+        object? Build(IExecuteStrategy executeStrategy, PropertyInfo propertyInfo, params object?[]? arguments);
 
         /// <summary>
         ///     Gets the build capability for the specified type.
@@ -45,7 +45,7 @@
         /// <param name="buildRequirement">The build capability.</param>
         /// <param name="type">The type to evaluate.</param>
         /// <returns>A <see cref="BuildCapability" /> indicating instance creation support via a <see cref="IBuildAction" />.</returns>
-        BuildCapability GetBuildCapability(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
+        BuildCapability? GetBuildCapability(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
             BuildRequirement buildRequirement, Type type);
 
         /// <summary>
@@ -56,7 +56,7 @@
         /// <param name="buildRequirement">The build capability.</param>
         /// <param name="parameterInfo">The parameter to evaluate.</param>
         /// <returns>A <see cref="BuildCapability" /> indicating instance creation support via a <see cref="IBuildAction" />.</returns>
-        BuildCapability GetBuildCapability(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
+        BuildCapability? GetBuildCapability(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
             BuildRequirement buildRequirement,
             ParameterInfo parameterInfo);
 
@@ -68,7 +68,7 @@
         /// <param name="buildRequirement">The build capability.</param>
         /// <param name="propertyInfo">The property to evaluate.</param>
         /// <returns>A <see cref="BuildCapability" /> indicating instance creation support via a <see cref="IBuildAction" />.</returns>
-        BuildCapability GetBuildCapability(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
+        BuildCapability? GetBuildCapability(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
             BuildRequirement buildRequirement,
             PropertyInfo propertyInfo);
 

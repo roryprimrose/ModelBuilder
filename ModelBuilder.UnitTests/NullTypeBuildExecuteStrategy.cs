@@ -4,9 +4,9 @@
 
     public class NullTypeBuildExecuteStrategy : DefaultExecuteStrategy
     {
-        protected override object Build(Type type, params object[] args)
+        protected override object? Build(Type type, params object?[]? args)
         {
-            return base.Build((Type)null, args);
+            return base.Build((Type)null!, args);
         }
     }
 }

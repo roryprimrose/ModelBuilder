@@ -31,7 +31,7 @@
         [Fact]
         public void CanCreateCultureData()
         {
-            var actual = Model.Create<CultureData>();
+            var actual = Model.Create<CultureData>()!;
 
             actual.Culture.Should().NotBeNull();
             actual.CultureName.Should().NotBeNullOrWhiteSpace();
@@ -45,9 +45,9 @@
                 .AddValueGenerator<BooleanValueGenerator>().AddValueGenerator<GuidValueGenerator>()
                 .AddValueGenerator<DateTimeValueGenerator>().AddValueGenerator<EnumValueGenerator>();
 
-            var actual = strategy.Create<Person>();
+            var actual = strategy.Create<Person>()!;
 
-            Guid.Parse(actual.Address.AddressLine1).Should().NotBeEmpty();
+            Guid.Parse(actual.Address!.AddressLine1!).Should().NotBeEmpty();
         }
 
         [Fact]
@@ -56,6 +56,17 @@
             var actual = Model.Create<SimpleEnum>();
 
             Enum.IsDefined(typeof(SimpleEnum), actual).Should().BeTrue();
+        }
+
+        [Fact]
+        public void CanCreateGenericType()
+        {
+            var actual = Model.Create<GenericContainer<Office>>()!;
+
+            actual.FirstName.Should().NotBeNullOrWhiteSpace();
+            actual.LastName.Should().NotBeNullOrWhiteSpace();
+            actual.Email.Should().NotBeNullOrWhiteSpace();
+            actual.Value.Should().NotBeNull();
         }
 
         [Fact]
@@ -69,7 +80,7 @@
         [Fact]
         public void CanCreateInstance()
         {
-            var actual = Model.Create<Address>();
+            var actual = Model.Create<Address>()!;
 
             actual.AddressLine1.Should().NotBeNullOrWhiteSpace();
             actual.City.Should().NotBeNullOrWhiteSpace();
@@ -91,7 +102,7 @@
         [Fact]
         public void CanCreateInstanceWithParameters()
         {
-            var actual = Model.Create<ReadOnlyModel>();
+            var actual = Model.Create<ReadOnlyModel>()!;
 
             actual.Value.Should().NotBeEmpty();
         }
@@ -99,7 +110,7 @@
         [Fact]
         public void CanCreateWithMultipleNames()
         {
-            var actual = Model.Create<Names>();
+            var actual = Model.Create<Names>()!;
 
             actual.FirstName.Should().NotBeNullOrWhiteSpace();
             actual.MiddleName.Should().NotBeNullOrWhiteSpace();
@@ -109,7 +120,7 @@
         [Fact]
         public void CanGenerateUriData()
         {
-            var actual = Model.Create<Location>();
+            var actual = Model.Create<Location>()!;
 
             actual.First.Should().NotBeNull();
             actual.SecondUrl.Should().NotBeNullOrWhiteSpace();
@@ -141,7 +152,7 @@
         [Fact]
         public void CreateBuildLogOfIgnoreRule()
         {
-            var strategy = Model.Ignoring<Company>(x => x.Address)
+            var strategy = Model.Ignoring<Company>(x => x.Address!)
                 .UsingExecuteStrategy<DefaultExecuteStrategy<Company>>();
 
             strategy.Create();
@@ -171,7 +182,7 @@
         [Fact]
         public void CreateBuildsAddressUsingValidCombinationOfValues()
         {
-            var actual = Model.Create<Address>();
+            var actual = Model.Create<Address>()!;
 
             var matchingCountries = TestData.Locations.Where(x => x.Country == actual.Country).ToList();
 
@@ -193,10 +204,10 @@
         [Fact]
         public void CreateBuildsAndPopulatesNestedInstances()
         {
-            var actual = Model.Create<Person>();
+            var actual = Model.Create<Person>()!;
 
             actual.Address.Should().NotBeNull();
-            actual.Address.AddressLine1.Should().NotBeNullOrEmpty();
+            actual.Address!.AddressLine1.Should().NotBeNullOrEmpty();
             actual.Address.AddressLine2.Should().NotBeNullOrEmpty();
             actual.Address.AddressLine3.Should().BeNullOrEmpty();
             actual.Address.City.Should().NotBeNullOrEmpty();
@@ -212,7 +223,7 @@
             Justification = "Email addresses are lower case by convention.")]
         public void CreateBuildsEmailUsingValidCombinationOfValues()
         {
-            var actual = Model.Create<EmailParts>();
+            var actual = Model.Create<EmailParts>()!;
 
             var firstName = EmailValueGenerator.SpecialCharacters.Replace(actual.FirstName, string.Empty);
             var lastName = EmailValueGenerator.SpecialCharacters.Replace(actual.LastName, string.Empty);
@@ -253,7 +264,7 @@
         [Fact]
         public void CreateDoesNotPopulateReadOnlyValueTypeProperties()
         {
-            var actual = Model.Create<ReadOnlyParent>();
+            var actual = Model.Create<ReadOnlyParent>()!;
 
             actual.PrivateValue.Should().Be(0);
         }
@@ -261,7 +272,7 @@
         [Fact]
         public void CreateDoesNotPopulateStaticProperties()
         {
-            var actual = Model.Create<WithStatic>();
+            var actual = Model.Create<WithStatic>()!;
 
             actual.First.Should().NotBeNullOrWhiteSpace();
             WithStatic.Second.Should().BeNullOrWhiteSpace();
@@ -275,7 +286,7 @@
                 new Company(), Guid.NewGuid(), 123, 456, true
             };
 
-            var actual = Model.Create<WithConstructorParameters>(args);
+            var actual = Model.Create<WithConstructorParameters>(args)!;
 
             actual.First.Should().BeSameAs(args[0]);
             actual.Id.Should().Be((Guid) args[1]);
@@ -287,7 +298,7 @@
         [Fact]
         public void CreatePopulatesBaseClassProperties()
         {
-            var actual = Model.Create<SpecificCompany>();
+            var actual = Model.Create<SpecificCompany>()!;
 
             actual.Email.Should().NotBeNullOrWhiteSpace();
             actual.Address.Should().NotBeNullOrWhiteSpace();
@@ -296,7 +307,7 @@
         [Fact]
         public void CreatePopulatesReadOnlyReferenceTypeProperties()
         {
-            var actual = Model.Create<ReadOnlyParent>();
+            var actual = Model.Create<ReadOnlyParent>()!;
 
             actual.Company.Address.Should().NotBeNullOrWhiteSpace();
             actual.ReadOnlyPerson.FirstName.Should().NotBeNullOrWhiteSpace();
@@ -317,8 +328,8 @@
         [Fact]
         public void CreateReturnsPersonCreatedWithArguments()
         {
-            var entity = Model.Create<Person>();
-            var actual = Model.Create<Person>(entity);
+            var entity = Model.Create<Person>()!;
+            var actual = Model.Create<Person>(entity)!;
 
             actual.Should().NotBeNull();
             actual.DOB.Should().NotBe(default);
@@ -332,7 +343,7 @@
         [Fact]
         public void CreateReturnsSimpleInstance()
         {
-            var actual = Model.Create<Simple>();
+            var actual = Model.Create<Simple>()!;
 
             actual.Should().NotBeNull();
             actual.DOB.Should().NotBe(default);
@@ -353,7 +364,7 @@
         [Fact]
         public void CreatesAgeFromDob()
         {
-            var actual = Model.Create<AgeFromDob>();
+            var actual = Model.Create<AgeFromDob>()!;
 
             var span = DateTime.Now.Subtract(actual.DateOfBirth);
             var years = Convert.ToInt32(Math.Floor(span.TotalDays / 365));
@@ -364,21 +375,21 @@
         [Fact]
         public void CreatesCircularReferenceWithInstanceFromBuildChain()
         {
-            var actual = Model.Create<Top>();
+            var actual = Model.Create<Top>()!;
 
             actual.Should().NotBeNull();
             actual.Value.Should().NotBeNullOrWhiteSpace();
             actual.Next.Should().NotBeNull();
-            actual.Next.Value.Should().NotBeNullOrWhiteSpace();
+            actual.Next!.Value.Should().NotBeNullOrWhiteSpace();
             actual.Next.End.Should().NotBeNull();
-            actual.Next.End.Value.Should().NotBeNullOrWhiteSpace();
+            actual.Next.End!.Value.Should().NotBeNullOrWhiteSpace();
             actual.Next.End.Root.Should().BeSameAs(actual);
         }
 
         [Fact]
         public void CreatesDirectCircularReferenceWithInstanceFromBuildChain()
         {
-            var actual = Model.Create<SelfReferrer>();
+            var actual = Model.Create<SelfReferrer>()!;
 
             actual.Should().NotBeNull();
             actual.Id.Should().NotBeEmpty();
@@ -396,10 +407,10 @@
 
             var args = new object[]
             {
-                null, Guid.Empty, null, 0, false
+                null!, Guid.Empty, null!, 0, false
             };
 
-            var actual = Model.Create<WithConstructorParameters>(args);
+            var actual = Model.Create<WithConstructorParameters>(args)!;
 
             actual.First.Should().NotBeNull();
             actual.Id.Should().NotBeEmpty();
@@ -421,7 +432,7 @@
                 Guid.NewGuid().ToString()
             };
 
-            var actual = Model.Create<WithMixedValueParameters>(args);
+            var actual = Model.Create<WithMixedValueParameters>(args)!;
 
             actual.FirstName.Should().NotBe((string) args[0]);
             actual.LastName.Should().NotBe((string) args[0]);
@@ -430,7 +441,7 @@
         [Fact]
         public void CreatesPropertyOfSameTypeWithCreatedInstance()
         {
-            var actual = Model.Create<Looper>();
+            var actual = Model.Create<Looper>()!;
 
             actual.Should().NotBeNull();
             actual.Stuff.Should().NotBeNullOrWhiteSpace();
@@ -444,7 +455,7 @@
 
             var actual = Model.UsingDefaultConfiguration()
                 .AddCreationRule(typeof(string), "firstName", value, int.MaxValue)
-                .Create<OrderedConstructorParameters>();
+                .Create<OrderedConstructorParameters>()!;
 
             actual.FirstName.Should().Be(value);
         }
@@ -456,7 +467,7 @@
 
             var actual = Model.UsingDefaultConfiguration()
                 .AddCreationRule(typeof(string), "FirstName", value, int.MaxValue)
-                .Create<Person>();
+                .Create<Person>()!;
 
             actual.FirstName.Should().Be(value);
         }
@@ -474,7 +485,7 @@
             typeCreator.AutoPopulate.Returns(true);
             typeCreator.Create(Arg.Any<IExecuteStrategy>(),
                     Arg.Is<PropertyInfo>(x => x.DeclaringType == typeof(Office) && x.Name == nameof(Office.Address)),
-                    null)
+                    null!)
                 .Throws(new InvalidOperationException());
 
             var configuration = Model.UsingDefaultConfiguration().Add(typeCreator);
@@ -485,8 +496,8 @@
 
             Action action = () => sut.Create();
 
-            var exception = action.Should().Throw<BuildException>().Where(x => x.Message != null)
-                .Where(x => x.BuildLog != null).Which;
+            var exception = action.Should().Throw<BuildException>().Where(x => x.Message != null!)
+                .Where(x => x.BuildLog != null!).Which;
 
             _output.WriteLine(exception.Message);
         }
@@ -506,8 +517,8 @@
         [Fact]
         public void IgnoringSkipsPropertyAssignment()
         {
-            var entity = Model.Create<Person>();
-            var actual = Model.Ignoring<Person>(x => x.Id).Ignoring<Person>(x => x.IsActive).Create<Person>(entity);
+            var entity = Model.Create<Person>()!;
+            var actual = Model.Ignoring<Person>(x => x.Id).Ignoring<Person>(x => x.IsActive).Create<Person>(entity)!;
 
             actual.Should().NotBeNull();
             actual.DOB.Should().NotBe(default);
@@ -521,12 +532,12 @@
         [Fact]
         public void IgnoringSkipsPropertyAssignmentOfNestedObjects()
         {
-            var actual = Model.Ignoring<Person>(x => x.FirstName).Ignoring<Address>(x => x.AddressLine1)
-                .Create<Person>();
+            var actual = Model.Ignoring<Person>(x => x.FirstName!).Ignoring<Address>(x => x.AddressLine1!)
+                .Create<Person>()!;
 
             actual.Should().NotBeNull();
             actual.FirstName.Should().BeNull();
-            actual.Address.AddressLine1.Should().BeNull();
+            actual.Address!.AddressLine1.Should().BeNull();
         }
 
         [Fact]
@@ -537,9 +548,9 @@
 
             var actual = configuration.Create<List<Person>>();
 
-            actual.All(x => x.PersonalEmail.EndsWith("@mailinator.com", StringComparison.OrdinalIgnoreCase)).Should()
+            actual.All(x => x.PersonalEmail!.EndsWith("@mailinator.com", StringComparison.OrdinalIgnoreCase)).Should()
                 .BeTrue();
-            actual.All(x => x.WorkEmail.EndsWith("@mailinator.com", StringComparison.OrdinalIgnoreCase)).Should()
+            actual.All(x => x.WorkEmail!.EndsWith("@mailinator.com", StringComparison.OrdinalIgnoreCase)).Should()
                 .BeTrue();
         }
 
@@ -654,30 +665,30 @@
 
         private class Bottom
         {
-            public Top Root { get; set; }
+            public Top? Root { get; set; }
 
-            public string Value { get; set; }
+            public string? Value { get; set; }
         }
 
         private class Child
         {
-            public Bottom End { get; set; }
+            public Bottom? End { get; set; }
 
-            public string Value { get; set; }
+            public string? Value { get; set; }
         }
 
         private class Looper
         {
-            public Looper Other { get; set; }
+            public Looper? Other { get; set; }
 
-            public string Stuff { get; set; }
+            public string? Stuff { get; set; }
         }
 
         private class Top
         {
-            public Child Next { get; set; }
+            public Child? Next { get; set; }
 
-            public string Value { get; set; }
+            public string? Value { get; set; }
         }
     }
 }

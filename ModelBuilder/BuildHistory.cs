@@ -61,10 +61,10 @@
         public int Count => _buildHistory.Count;
 
         /// <inheritdoc />
-        public object First { get; private set; }
+        public object? First { get; private set; }
 
         /// <inheritdoc />
-        public object Last
+        public object? Last
         {
             get
             {

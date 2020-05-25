@@ -1,6 +1,7 @@
 ﻿namespace ModelBuilder.ValueGenerators
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using ModelBuilder.Data;
 
@@ -18,25 +19,33 @@
         }
 
         /// <inheritdoc />
-        protected override object Generate(IExecuteStrategy executeStrategy, Type type, string referenceName)
+        protected override object? Generate(IExecuteStrategy executeStrategy, Type type, string? referenceName)
         {
             var context = executeStrategy?.BuildChain?.Last;
-            var country = GetValue<string>(NameExpression.Country, context);
-            Location location = null;
+            IEnumerable<Location> locations = TestData.Locations;
 
-            if (string.IsNullOrWhiteSpace(country) == false)
+            if (context != null)
             {
-                var locationMatches = TestData.Locations
-                    .Where(x => x.Country.Equals(country, StringComparison.OrdinalIgnoreCase)).ToList();
+                var country = GetValue<string>(NameExpression.Country, context);
 
-                location = locationMatches.Next();
+                if (string.IsNullOrWhiteSpace(country) == false)
+                {
+                    locations = locations
+                        .Where(x => x.Country.Equals(country, StringComparison.OrdinalIgnoreCase)).ToList();
+                }
             }
 
-            if (location == null)
+            var availableLocations = locations.ToList();
+
+            if (availableLocations.Count > 0)
             {
-                // There was either no country or no match on the country
-                location = TestData.Locations.Next();
+                var matchingLocation = availableLocations.Next();
+
+                return matchingLocation.State;
             }
+
+            // There was either no country or no match on the country
+            var location = TestData.Locations.Next();
 
             return location.State;
         }

@@ -51,7 +51,7 @@
 
             var sut = new ArrayTypeCreator();
 
-            var actual = sut.CanCreate(configuration, null, type);
+            var actual = sut.CanCreate(configuration, null!, type);
 
             actual.Should().Be(supported);
         }
@@ -63,7 +63,7 @@
 
             var sut = new ArrayTypeCreator();
 
-            Action action = () => sut.CanCreate(configuration, null, (ParameterInfo) null);
+            Action action = () => sut.CanCreate(configuration, null!, (ParameterInfo) null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -75,7 +75,7 @@
 
             var sut = new ArrayTypeCreator();
 
-            Action action = () => sut.CanCreate(configuration, null, (PropertyInfo) null);
+            Action action = () => sut.CanCreate(configuration, null!, (PropertyInfo) null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -87,7 +87,7 @@
 
             var sut = new ArrayTypeCreator();
 
-            Action action = () => sut.CanCreate(configuration, null, (Type) null);
+            Action action = () => sut.CanCreate(configuration, null!, (Type) null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -122,7 +122,7 @@
 
             var sut = new ArrayTypeCreator();
 
-            var actual = sut.CanPopulate(configuration, null, type);
+            var actual = sut.CanPopulate(configuration, null!, type);
 
             actual.Should().Be(supported);
         }
@@ -134,7 +134,7 @@
 
             var sut = new ArrayTypeCreator();
 
-            Action action = () => sut.CanPopulate(configuration, null, (ParameterInfo) null);
+            Action action = () => sut.CanPopulate(configuration, null!, (ParameterInfo) null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -146,7 +146,7 @@
 
             var sut = new ArrayTypeCreator();
 
-            Action action = () => sut.CanPopulate(configuration, null, (PropertyInfo) null);
+            Action action = () => sut.CanPopulate(configuration, null!, (PropertyInfo) null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -158,7 +158,7 @@
 
             var sut = new ArrayTypeCreator();
 
-            Action action = () => sut.CanPopulate(configuration, null, (Type) null);
+            Action action = () => sut.CanPopulate(configuration, null!, (Type) null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -170,7 +170,7 @@
 
             var sut = new ArrayTypeCreatorWrapper();
 
-            Action action = () => sut.CreateItem(typeof(Person[]), null, person);
+            Action action = () => sut.CreateItem(typeof(Person[]), null!, person);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -182,7 +182,7 @@
 
             var sut = new ArrayTypeCreatorWrapper();
 
-            Action action = () => sut.RunCreateInstance(null, null, executeStrategy);
+            Action action = () => sut.RunCreateInstance(null!, null!, executeStrategy);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -207,7 +207,7 @@
                 MaxCount = 15
             };
 
-            var actual = (Person[]) sut.Create(executeStrategy, typeof(Person[]));
+            var actual = (Person[]) sut.Create(executeStrategy, typeof(Person[]))!;
 
             actual.Length.Should().BeGreaterOrEqualTo(sut.MinCount);
             actual.Length.Should().BeLessOrEqualTo(sut.MaxCount);
@@ -393,7 +393,7 @@
 
             var result = (Person[]) sut.Populate(executeStrategy, actual);
 
-            result.All(x => x != null).Should().BeTrue();
+            result.All(x => x != null!).Should().BeTrue();
         }
 
         [Fact]
@@ -403,7 +403,7 @@
 
             var sut = new ArrayTypeCreatorWrapper();
 
-            Action action = () => sut.RunPopulateInstance(value, null);
+            Action action = () => sut.RunPopulateInstance(value, null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -415,7 +415,7 @@
 
             var sut = new ArrayTypeCreatorWrapper();
 
-            Action action = () => sut.RunPopulateInstance(null, executeStrategy);
+            Action action = () => sut.RunPopulateInstance(null!, executeStrategy);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -456,7 +456,7 @@
 
             var sut = new ArrayTypeCreator();
 
-            Action action = () => sut.Populate(strategy, null);
+            Action action = () => sut.Populate(strategy, null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -468,7 +468,7 @@
 
             var sut = new ArrayTypeCreator();
 
-            Action action = () => sut.Populate(null, instance);
+            Action action = () => sut.Populate(null!, instance);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -507,7 +507,7 @@
             }
 
             public void RunCreateInstance(Type type, string referenceName, IExecuteStrategy executeStrategy,
-                params object[] args)
+                params object?[]? args)
             {
                 base.CreateInstance(executeStrategy, type, referenceName, args);
             }

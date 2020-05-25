@@ -14,7 +14,7 @@
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is <c>null</c>.</exception>
-        public object Generate(IExecuteStrategy executeStrategy, Type type)
+        public object? Generate(IExecuteStrategy executeStrategy, Type type)
         {
             if (type == null)
             {
@@ -32,7 +32,7 @@
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="propertyInfo" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is <c>null</c>.</exception>
-        public virtual object Generate(IExecuteStrategy executeStrategy, PropertyInfo propertyInfo)
+        public virtual object? Generate(IExecuteStrategy executeStrategy, PropertyInfo propertyInfo)
         {
             if (propertyInfo == null)
             {
@@ -53,7 +53,7 @@
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="parameterInfo" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is <c>null</c>.</exception>
-        public virtual object Generate(IExecuteStrategy executeStrategy, ParameterInfo parameterInfo)
+        public virtual object? Generate(IExecuteStrategy executeStrategy, ParameterInfo parameterInfo)
         {
             if (parameterInfo == null)
             {
@@ -130,7 +130,7 @@
         /// <param name="type">The type of value to generate.</param>
         /// <param name="referenceName">The name of the item to generate.</param>
         /// <returns>A new value of the type.</returns>
-        protected abstract object Generate(IExecuteStrategy executeStrategy, Type type, string referenceName);
+        protected abstract object? Generate(IExecuteStrategy executeStrategy, Type type, string? referenceName);
 
         /// <summary>
         ///     Returns whether the specified type and name matches this generator.
@@ -139,7 +139,7 @@
         /// <param name="type">The type of value to generate.</param>
         /// <param name="referenceName">The name of the item to generate.</param>
         /// <returns><c>true</c> if the type matches this generator; otherwise <c>false</c>.</returns>
-        protected abstract bool IsMatch(IBuildChain buildChain, Type type, string referenceName);
+        protected abstract bool IsMatch(IBuildChain buildChain, Type type, string? referenceName);
 
         /// <inheritdoc />
         public virtual int Priority { get; } = int.MinValue;

@@ -20,7 +20,7 @@
 
             var sut = new PropertyPredicateCreationRule(item => true, () => value, priority);
 
-            Action action = () => sut.Create(null, parameterInfo);
+            Action action = () => sut.Create(null!, parameterInfo);
 
             action.Should().Throw<NotSupportedException>();
         }
@@ -28,13 +28,13 @@
         [Fact]
         public void CreateForPropertyReturnsExpressionValue()
         {
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
             var value = Guid.NewGuid().ToString();
             var priority = Environment.TickCount;
 
             var sut = new PropertyPredicateCreationRule(item => true, () => value, priority);
 
-            var actual = sut.Create(null, propertyInfo);
+            var actual = sut.Create(null!, propertyInfo);
 
             actual.Should().Be(value);
         }
@@ -42,13 +42,13 @@
         [Fact]
         public void CreateForPropertyReturnsLiteralValue()
         {
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
             var value = Guid.NewGuid().ToString();
             var priority = Environment.TickCount;
 
             var sut = new PropertyPredicateCreationRule(item => true, value, priority);
 
-            var actual = sut.Create(null, propertyInfo);
+            var actual = sut.Create(null!, propertyInfo);
 
             actual.Should().Be(value);
         }
@@ -61,7 +61,7 @@
 
             var sut = new PropertyPredicateCreationRule(item => true, () => value, priority);
 
-            Action action = () => sut.Create(null, typeof(string));
+            Action action = () => sut.Create(null!, typeof(string));
 
             action.Should().Throw<NotSupportedException>();
         }
@@ -86,7 +86,7 @@
         [InlineData(false)]
         public void IsMatchForPropertyReturnsPredicateResult(bool isMatch)
         {
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
             var value = Guid.NewGuid().ToString();
             var priority = Environment.TickCount;
 
@@ -105,7 +105,7 @@
 
             var sut = new PropertyPredicateCreationRule(type => true, () => value, priority);
 
-            Action action = () => sut.IsMatch((PropertyInfo) null);
+            Action action = () => sut.IsMatch((PropertyInfo) null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -128,7 +128,7 @@
         {
             var priority = Environment.TickCount;
 
-            var sut = new PropertyPredicateCreationRule((item) => true, () => null, priority);
+            var sut = new PropertyPredicateCreationRule((item) => true, () => null!, priority);
 
             sut.Priority.Should().Be(priority);
         }
@@ -140,7 +140,7 @@
             var priority = Environment.TickCount;
 
             // ReSharper disable once ObjectCreationAsStatement
-            Action action = () => new PropertyPredicateCreationRule(null, value, priority);
+            Action action = () => new PropertyPredicateCreationRule(null!, value, priority);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -151,7 +151,7 @@
             var priority = Environment.TickCount;
 
             // ReSharper disable once ObjectCreationAsStatement
-            Action action = () => new PropertyPredicateCreationRule(item => true, null, priority);
+            Action action = () => new PropertyPredicateCreationRule(item => true, null!, priority);
 
             action.Should().Throw<ArgumentNullException>();
         }

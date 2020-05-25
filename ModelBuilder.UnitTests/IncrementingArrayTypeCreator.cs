@@ -6,11 +6,11 @@
 
     public class IncrementingArrayTypeCreator : ArrayTypeCreator
     {
-        protected override object CreateChildItem(Type type, IExecuteStrategy executeStrategy, object previousItem)
+        protected override object? CreateChildItem(Type type, IExecuteStrategy executeStrategy, object? previousItem)
         {
-            if (previousItem == null)
+            if (previousItem == null!)
             {
-                return base.CreateChildItem(type, executeStrategy, null);
+                return base.CreateChildItem(type, executeStrategy, null!);
             }
 
             // Use a double as the base type then convert later

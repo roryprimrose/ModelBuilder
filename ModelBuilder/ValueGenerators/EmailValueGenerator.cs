@@ -28,11 +28,18 @@
             "Microsoft.Globalization",
             "CA1308:NormalizeStringsToUppercase",
             Justification = "Email addresses are lower case by convention.")]
-        protected override object Generate(IExecuteStrategy executeStrategy, Type type, string referenceName)
+        protected override object? Generate(IExecuteStrategy executeStrategy, Type type, string? referenceName)
         {
-            var context = executeStrategy?.BuildChain?.Last;
-            var firstName = GetValue<string>(NameExpression.FirstName, context);
-            var lastName = GetValue<string>(NameExpression.LastName, context);
+            var context = executeStrategy.BuildChain?.Last;
+
+            string? firstName = null;
+            string? lastName = null;
+
+            if (context != null)
+            {
+                firstName = GetValue<string>(NameExpression.FirstName, context);
+                lastName = GetValue<string>(NameExpression.LastName, context);
+            }
 
             if (firstName == null)
             {
@@ -53,7 +60,8 @@
 
             var domain = Domain;
 
-            if (string.IsNullOrWhiteSpace(domain))
+            if (context != null
+                && string.IsNullOrWhiteSpace(domain))
             {
                 domain = GetValue<string>(NameExpression.Domain, context);
             }
@@ -79,6 +87,6 @@
         ///     Gets the domain for the email address.
         /// </summary>
         /// <value>The domain part of the email address.</value>
-        protected virtual string Domain => null;
+        protected virtual string? Domain => null;
     }
 }

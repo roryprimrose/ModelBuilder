@@ -239,7 +239,7 @@
 
         [Theory]
         [InlineData(typeof(Stream), "city", false)]
-        [InlineData(typeof(string), null, false)]
+        [InlineData(typeof(string), null!, false)]
         [InlineData(typeof(string), "", false)]
         [InlineData(typeof(string), "Stuff", false)]
         [InlineData(typeof(string), "city", true)]
@@ -266,7 +266,7 @@
             var sut = new Wrapper();
 
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-            Action action = () => sut.RunIsMatch(type, null, null);
+            Action action = () => sut.RunIsMatch(type, null!, null!);
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
             action.Should().Throw<ArgumentNullException>();
@@ -280,7 +280,7 @@
             var sut = new Wrapper();
 
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-            Action action = () => sut.RunIsMatch(null, null, buildChain);
+            Action action = () => sut.RunIsMatch(null!, null!, buildChain);
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
             action.Should().Throw<ArgumentNullException>();
@@ -290,7 +290,7 @@
         {
             public object RunGenerate(Type type, string referenceName, IExecuteStrategy executeStrategy)
             {
-                return Generate(executeStrategy, type, referenceName);
+                return Generate(executeStrategy, type, referenceName)!;
             }
 
             public bool RunIsMatch(Type type, string referenceName, IBuildChain buildChain)

@@ -136,7 +136,7 @@
 
             var sut = new ValueGeneratorBuildAction();
 
-            Action action = () => sut.Build(null, parameterInfo);
+            Action action = () => sut.Build(null!, parameterInfo);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -148,7 +148,7 @@
 
             var sut = new ValueGeneratorBuildAction();
 
-            Action action = () => sut.Build(executeStrategy, (ParameterInfo) null);
+            Action action = () => sut.Build(executeStrategy, (ParameterInfo) null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -156,7 +156,7 @@
         [Fact]
         public void BuildForPropertyInfoReturnsGeneratorValueWhenMatchingGeneratorFound()
         {
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
             var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
             var expected = new Person();
@@ -182,7 +182,7 @@
         [Fact]
         public void BuildForPropertyInfoReturnsNullWhenNoGeneratorsExist()
         {
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
             var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
 
@@ -202,7 +202,7 @@
         [Fact]
         public void BuildForPropertyInfoReturnsNullWhenNoMatchingGeneratorFound()
         {
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
             var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
 
@@ -225,7 +225,7 @@
         [Fact]
         public void BuildForPropertyInfoReturnsValueFromGeneratorWithHighestPriority()
         {
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
             var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
             var expected = new Person();
@@ -256,11 +256,11 @@
         [Fact]
         public void BuildForPropertyInfoThrowsExceptionWithNullExecuteStrategy()
         {
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
 
             var sut = new ValueGeneratorBuildAction();
 
-            Action action = () => sut.Build(null, propertyInfo);
+            Action action = () => sut.Build(null!, propertyInfo);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -272,7 +272,7 @@
 
             var sut = new ValueGeneratorBuildAction();
 
-            Action action = () => sut.Build(executeStrategy, (PropertyInfo) null);
+            Action action = () => sut.Build(executeStrategy, (PropertyInfo) null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -379,7 +379,7 @@
 
             var sut = new ValueGeneratorBuildAction();
 
-            Action action = () => sut.Build(null, type);
+            Action action = () => sut.Build(null!, type);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -391,7 +391,7 @@
 
             var sut = new ValueGeneratorBuildAction();
 
-            Action action = () => sut.Build(executeStrategy, (Type) null);
+            Action action = () => sut.Build(executeStrategy, (Type) null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -420,7 +420,7 @@
 
             sut.Build(executeStrategy, type);
 
-            buildLog.Received().CreatingValue(type, generator.GetType(), null);
+            buildLog.Received().CreatingValue(type, generator.GetType(), null!);
         }
 
         [Fact]
@@ -455,7 +455,7 @@
         [Fact]
         public void BuildThrowsExceptionWhenGeneratorFails()
         {
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
             var buildConfiguration = new BuildConfiguration();
 
             var buildChain = Substitute.For<IBuildChain>();
@@ -504,8 +504,9 @@
 
             var sut = new ValueGeneratorBuildAction();
 
-            var actual = sut.GetBuildCapability(buildConfiguration, buildChain, parameterInfo);
+            var actual = sut.GetBuildCapability(buildConfiguration, buildChain, parameterInfo)!;
 
+            actual.Should().NotBeNull();
             actual.SupportsCreate.Should().BeTrue();
             actual.SupportsPopulate.Should().BeFalse();
             actual.AutoDetectConstructor.Should().BeFalse();
@@ -567,7 +568,7 @@
 
             var sut = new ValueGeneratorBuildAction();
 
-            Action action = () => sut.GetBuildCapability(buildConfiguration, null, parameterInfo);
+            Action action = () => sut.GetBuildCapability(buildConfiguration, null!, parameterInfo);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -581,7 +582,7 @@
 
             var sut = new ValueGeneratorBuildAction();
 
-            Action action = () => sut.GetBuildCapability(null, buildChain, parameterInfo);
+            Action action = () => sut.GetBuildCapability(null!, buildChain, parameterInfo);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -594,7 +595,7 @@
 
             var sut = new ValueGeneratorBuildAction();
 
-            Action action = () => sut.GetBuildCapability(buildConfiguration, buildChain, (ParameterInfo) null);
+            Action action = () => sut.GetBuildCapability(buildConfiguration, buildChain, (ParameterInfo) null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -602,7 +603,7 @@
         [Fact]
         public void GetBuildCapabilityForPropertyInfoReturnsCapabilityWhenMatchingGeneratorFound()
         {
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
             var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
             var expected = new Person();
@@ -620,8 +621,9 @@
 
             var sut = new ValueGeneratorBuildAction();
 
-            var actual = sut.GetBuildCapability(buildConfiguration, buildChain, propertyInfo);
+            var actual = sut.GetBuildCapability(buildConfiguration, buildChain, propertyInfo)!;
 
+            actual.Should().NotBeNull();
             actual.SupportsCreate.Should().BeTrue();
             actual.SupportsPopulate.Should().BeFalse();
             actual.AutoDetectConstructor.Should().BeFalse();
@@ -632,7 +634,7 @@
         [Fact]
         public void GetBuildCapabilityForPropertyInfoReturnsNullWhenNoGeneratorsExist()
         {
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
             var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
 
@@ -652,7 +654,7 @@
         [Fact]
         public void GetBuildCapabilityForPropertyInfoReturnsNullWhenNoMatchingGeneratorFound()
         {
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
             var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
 
@@ -675,12 +677,12 @@
         [Fact]
         public void GetBuildCapabilityForPropertyInfoThrowsExceptionWithNullBuildChain()
         {
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
             var buildConfiguration = new BuildConfiguration();
 
             var sut = new ValueGeneratorBuildAction();
 
-            Action action = () => sut.GetBuildCapability(buildConfiguration, null, propertyInfo);
+            Action action = () => sut.GetBuildCapability(buildConfiguration, null!, propertyInfo);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -688,12 +690,12 @@
         [Fact]
         public void GetBuildCapabilityForPropertyInfoThrowsExceptionWithNullBuildConfiguration()
         {
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
             var buildChain = new BuildHistory();
 
             var sut = new ValueGeneratorBuildAction();
 
-            Action action = () => sut.GetBuildCapability(null, buildChain, propertyInfo);
+            Action action = () => sut.GetBuildCapability(null!, buildChain, propertyInfo);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -706,7 +708,7 @@
 
             var sut = new ValueGeneratorBuildAction();
 
-            Action action = () => sut.GetBuildCapability(buildConfiguration, buildChain, (PropertyInfo) null);
+            Action action = () => sut.GetBuildCapability(buildConfiguration, buildChain, (PropertyInfo) null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -732,8 +734,9 @@
 
             var sut = new ValueGeneratorBuildAction();
 
-            var actual = sut.GetBuildCapability(buildConfiguration, buildChain, type);
+            var actual = sut.GetBuildCapability(buildConfiguration, buildChain, type)!;
 
+            actual.Should().NotBeNull();
             actual.SupportsCreate.Should().BeTrue();
             actual.SupportsPopulate.Should().BeFalse();
             actual.AutoDetectConstructor.Should().BeFalse();
@@ -791,7 +794,7 @@
 
             var sut = new ValueGeneratorBuildAction();
 
-            Action action = () => sut.GetBuildCapability(buildConfiguration, null, type);
+            Action action = () => sut.GetBuildCapability(buildConfiguration, null!, type);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -804,7 +807,7 @@
 
             var sut = new ValueGeneratorBuildAction();
 
-            Action action = () => sut.GetBuildCapability(null, buildChain, type);
+            Action action = () => sut.GetBuildCapability(null!, buildChain, type);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -817,7 +820,7 @@
 
             var sut = new ValueGeneratorBuildAction();
 
-            Action action = () => sut.GetBuildCapability(buildConfiguration, buildChain, (Type) null);
+            Action action = () => sut.GetBuildCapability(buildConfiguration, buildChain, (Type) null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -827,7 +830,7 @@
         {
             var sut = new ValueGeneratorBuildAction();
 
-            Action action = () => sut.Populate(null, null);
+            Action action = () => sut.Populate(null!, null!);
 
             action.Should().Throw<NotSupportedException>();
         }

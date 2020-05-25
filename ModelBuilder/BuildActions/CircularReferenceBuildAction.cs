@@ -13,7 +13,7 @@
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
-        public object Build(IExecuteStrategy executeStrategy, Type type, params object[] arguments)
+        public object? Build(IExecuteStrategy executeStrategy, Type type, params object?[]? arguments)
         {
             if (executeStrategy == null)
             {
@@ -31,7 +31,7 @@
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="parameterInfo" /> parameter is <c>null</c>.</exception>
-        public object Build(IExecuteStrategy executeStrategy, ParameterInfo parameterInfo, params object[] arguments)
+        public object? Build(IExecuteStrategy executeStrategy, ParameterInfo parameterInfo, params object?[]? arguments)
         {
             if (executeStrategy == null)
             {
@@ -49,7 +49,7 @@
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="propertyInfo" /> parameter is <c>null</c>.</exception>
-        public object Build(IExecuteStrategy executeStrategy, PropertyInfo propertyInfo, params object[] arguments)
+        public object? Build(IExecuteStrategy executeStrategy, PropertyInfo propertyInfo, params object?[]? arguments)
         {
             if (executeStrategy == null)
             {
@@ -67,7 +67,7 @@
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="buildChain" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
-        public BuildCapability GetBuildCapability(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
+        public BuildCapability? GetBuildCapability(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
             Type type)
         {
             if (buildChain == null)
@@ -86,7 +86,7 @@
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="buildChain" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="parameterInfo" /> parameter is <c>null</c>.</exception>
-        public BuildCapability GetBuildCapability(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
+        public BuildCapability? GetBuildCapability(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
             ParameterInfo parameterInfo)
         {
             if (buildChain == null)
@@ -105,7 +105,7 @@
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="buildChain" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="propertyInfo" /> parameter is <c>null</c>.</exception>
-        public BuildCapability GetBuildCapability(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
+        public BuildCapability? GetBuildCapability(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
             PropertyInfo propertyInfo)
         {
             if (buildChain == null)
@@ -133,7 +133,7 @@
             return buildChain.FirstOrDefault(x => x.GetType() == type);
         }
 
-        private static object GetCircularReference(IExecuteStrategy executeStrategy, Type type)
+        private static object? GetCircularReference(IExecuteStrategy executeStrategy, Type type)
         {
             var item = FindItemByType(executeStrategy.BuildChain, type);
 
@@ -147,7 +147,7 @@
             return item;
         }
 
-        private BuildCapability GetCapability(IBuildChain buildChain, Type type)
+        private BuildCapability? GetCapability(IBuildChain buildChain, Type type)
         {
             var circularReference = FindItemByType(buildChain, type);
 
@@ -156,8 +156,8 @@
                 return null;
             }
 
-            return new BuildCapability
-                {SupportsCreate = true, ImplementedByType = GetType()};
+            return new BuildCapability(GetType())
+                {SupportsCreate = true};
         }
 
         /// <inheritdoc />

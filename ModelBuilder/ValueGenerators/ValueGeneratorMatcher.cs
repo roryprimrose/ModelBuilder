@@ -10,7 +10,7 @@
     /// </summary>
     public abstract class ValueGeneratorMatcher : ValueGeneratorBase
     {
-        private readonly Func<Type, string, IBuildChain, bool> _matcher;
+        private readonly Func<Type, string?, IBuildChain, bool> _matcher;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="ValueGeneratorMatcher" /> class.
@@ -100,7 +100,7 @@
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="buildChain" /> parameter is <c>null</c>.</exception>
-        protected override bool IsMatch(IBuildChain buildChain, Type type, string referenceName)
+        protected override bool IsMatch(IBuildChain buildChain, Type type, string? referenceName)
         {
             if (type == null)
             {

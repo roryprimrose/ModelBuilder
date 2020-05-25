@@ -11,7 +11,7 @@
         [Fact]
         public void CanCreateAllNumberTypes()
         {
-            var actual = Model.Create<Numbers>();
+            var actual = Model.Create<Numbers>()!;
 
             actual.First.Should().NotBe(0);
             actual.Second.Should().NotBe(0);

@@ -19,7 +19,7 @@ namespace ModelBuilder.ValueGenerators
         }
 
         /// <inheritdoc />
-        protected override object Generate(IExecuteStrategy executeStrategy, Type type, string referenceName)
+        protected override object? Generate(IExecuteStrategy executeStrategy, Type type, string? referenceName)
         {
             var index = Generator.NextValue(0, 1);
 

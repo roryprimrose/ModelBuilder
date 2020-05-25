@@ -1,10 +1,7 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
-    using System.Collections;
     using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.Linq;
     using FluentAssertions;
     using ModelBuilder.UnitTests.Models;
     using Xunit;
@@ -30,7 +27,7 @@
         [Fact]
         public void IsNullableThrowsExceptionWithNullType()
         {
-            Action action = () => ((Type) null).IsNullable();
+            Action action = () => ((Type) null!).IsNullable();
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -48,7 +45,7 @@
         [Fact]
         public void NextReturnsRandomValue()
         {
-            var values = Model.Create<List<int>>();
+            var values = Model.Create<List<int>>()!;
 
             var first = values.Next();
             var second = first;
@@ -69,7 +66,7 @@
         [Fact]
         public void NextThrowsExceptionWithNullSource()
         {
-            Action action = () => ModelBuilder.CommonExtensions.Next<int>(null);
+            Action action = () => CommonExtensions.Next<int>(null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -91,7 +88,7 @@
         {
             var sut = new Person();
 
-            Action action = () => sut.Set(null);
+            Action action = () => sut.Set(null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -99,7 +96,7 @@
         [Fact]
         public void SetThrowsExceptionWithNullInstance()
         {
-            Action action = () => ((object) null).Set(x => { });
+            Action action = () => ((object) null!).Set(x => { });
 
             action.Should().Throw<ArgumentNullException>();
         }

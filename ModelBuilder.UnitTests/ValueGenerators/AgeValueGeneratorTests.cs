@@ -34,7 +34,7 @@
 
             var sut = new Wrapper {MinAge = 15, MaxAge = 30};
 
-            var actual = (int) sut.RunGenerate(typeof(int), "age", executeStrategy);
+            var actual = (int) sut.RunGenerate(typeof(int), "age", executeStrategy)!;
 
             actual.Should().Be(expectedYears);
         }
@@ -59,7 +59,7 @@
 
             var sut = new Wrapper {MinAge = 15, MaxAge = 30};
 
-            var actual = (int) sut.RunGenerate(typeof(int), "age", executeStrategy);
+            var actual = (int) sut.RunGenerate(typeof(int), "age", executeStrategy)!;
 
             actual.Should().BeGreaterOrEqualTo(15);
             actual.Should().BeLessOrEqualTo(30);
@@ -88,7 +88,7 @@
                 var value = sut.RunGenerate(type, "Age", executeStrategy);
 
                 if (type.IsNullable()
-                    && value == null)
+                    && value == null!)
                 {
                     // Nullable values could be returned so nothing more to assert
                     return;
@@ -115,7 +115,7 @@
         {
             var sut = new Wrapper();
 
-            Action action = () => sut.RunGenerate(typeof(string), "Age", null);
+            Action action = () => sut.RunGenerate(typeof(string), "Age", null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -127,7 +127,7 @@
 
             var sut = new Wrapper();
 
-            Action action = () => sut.RunGenerate(null, "Age", executeStrategy);
+            Action action = () => sut.RunGenerate(null!, "Age", executeStrategy);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -159,7 +159,7 @@
 
             var sut = new Wrapper();
 
-            var actual = sut.RunIsMatch(type, null, buildChain);
+            var actual = sut.RunIsMatch(type, null!, buildChain);
 
             actual.Should().BeFalse();
         }
@@ -207,7 +207,7 @@
         {
             var sut = new Wrapper();
 
-            Action action = () => sut.RunIsMatch(typeof(string), "Age", null);
+            Action action = () => sut.RunIsMatch(typeof(string), "Age", null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -219,7 +219,7 @@
 
             var sut = new Wrapper();
 
-            Action action = () => sut.RunIsMatch(null, "Age", buildChain);
+            Action action = () => sut.RunIsMatch(null!, "Age", buildChain);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -251,7 +251,7 @@
 
         private class Wrapper : AgeValueGenerator
         {
-            public object RunGenerate(Type type, string referenceName, IExecuteStrategy executeStrategy)
+            public object? RunGenerate(Type type, string referenceName, IExecuteStrategy executeStrategy)
             {
                 return Generate(executeStrategy, type, referenceName);
             }

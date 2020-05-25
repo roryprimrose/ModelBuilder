@@ -28,7 +28,7 @@
         [Fact]
         public void AddExecuteOrderRuleThrowsExceptionWithNullConfiguration()
         {
-            Action action = () => BuildConfigurationExtensions.AddExecuteOrderRule<DummyExecuteOrderRule>(null);
+            Action action = () => BuildConfigurationExtensions.AddExecuteOrderRule<DummyExecuteOrderRule>(null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -40,13 +40,13 @@
 
             var sut = new BuildConfiguration();
 
-            sut.AddExecuteOrderRule<Person>(x => x.FirstName, priority);
+            sut.AddExecuteOrderRule<Person>(x => x.FirstName!, priority);
 
             var rule = sut.ExecuteOrderRules.Single();
 
             rule.Priority.Should().Be(priority);
 
-            var property = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var property = typeof(Person).GetProperty(nameof(Person.FirstName))!;
 
             var actual = rule.IsMatch(property);
 
@@ -59,7 +59,7 @@
             var priority = Environment.TickCount;
 
             Action action = () =>
-                BuildConfigurationExtensions.AddExecuteOrderRule<Person>(null, x => x.FirstName, priority);
+                BuildConfigurationExtensions.AddExecuteOrderRule<Person>(null!, x => x.FirstName!, priority);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -71,7 +71,7 @@
 
             var sut = new BuildConfiguration();
 
-            Action action = () => sut.AddExecuteOrderRule((Expression<Func<Person, object>>) null, priority);
+            Action action = () => sut.AddExecuteOrderRule((Expression<Func<Person, object>>) null!, priority);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -89,7 +89,7 @@
 
             rule.Priority.Should().Be(priority);
 
-            var property = typeof(Person).GetProperty(nameof(Person.FirstName));
+            var property = typeof(Person).GetProperty(nameof(Person.FirstName))!;
 
             var actual = rule.IsMatch(property);
 
@@ -102,7 +102,7 @@
             var priority = Environment.TickCount;
 
             Action action = () =>
-                BuildConfigurationExtensions.AddExecuteOrderRule(null, x => x.Name == nameof(Person.FirstName),
+                BuildConfigurationExtensions.AddExecuteOrderRule(null!, x => x.Name == nameof(Person.FirstName),
                     priority);
 
             action.Should().Throw<ArgumentNullException>();
@@ -115,7 +115,7 @@
 
             var sut = new BuildConfiguration();
 
-            Action action = () => sut.AddExecuteOrderRule((Predicate<PropertyInfo>) null, priority);
+            Action action = () => sut.AddExecuteOrderRule((Predicate<PropertyInfo>) null!, priority);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -142,7 +142,7 @@
             var priority = Environment.TickCount;
 
             Action action = () =>
-                BuildConfigurationExtensions.AddExecuteOrderRule(null, NameExpression.LastName, priority);
+                BuildConfigurationExtensions.AddExecuteOrderRule(null!, NameExpression.LastName, priority);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -154,7 +154,7 @@
 
             var sut = new BuildConfiguration();
 
-            Action action = () => sut.AddExecuteOrderRule((Regex) null, priority);
+            Action action = () => sut.AddExecuteOrderRule((Regex) null!, priority);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -176,7 +176,7 @@
         {
             var rule = new PropertyPredicateExecuteOrderRule(x => x.Name == "FirstName", Environment.TickCount);
 
-            Action action = () => BuildConfigurationExtensions.Add(null, rule);
+            Action action = () => BuildConfigurationExtensions.Add(null!, rule);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -186,7 +186,7 @@
         {
             var sut = Substitute.For<IBuildConfiguration>();
 
-            Action action = () => sut.Add((PropertyPredicateExecuteOrderRule) null);
+            Action action = () => sut.Add((PropertyPredicateExecuteOrderRule) null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -218,7 +218,7 @@
         [Fact]
         public void RemoveExecuteOrderRuleThrowsExceptionWithNullConfiguration()
         {
-            Action action = () => BuildConfigurationExtensions.RemoveExecuteOrderRule<DummyExecuteOrderRule>(null);
+            Action action = () => BuildConfigurationExtensions.RemoveExecuteOrderRule<DummyExecuteOrderRule>(null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -241,7 +241,7 @@
         {
             var sut = Substitute.For<IBuildConfiguration>();
 
-            Action action = () => sut.UpdateExecuteOrderRule<RegexExecuteOrderRule>(null);
+            Action action = () => sut.UpdateExecuteOrderRule<RegexExecuteOrderRule>(null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -249,7 +249,7 @@
         [Fact]
         public void UpdateExecuteOrderRuleThrowsExceptionWithNullConfiguration()
         {
-            Action action = () => BuildConfigurationExtensions.UpdateExecuteOrderRule<RegexExecuteOrderRule>(null, x =>
+            Action action = () => BuildConfigurationExtensions.UpdateExecuteOrderRule<RegexExecuteOrderRule>(null!, x =>
             {
                 // Do nothing
             });

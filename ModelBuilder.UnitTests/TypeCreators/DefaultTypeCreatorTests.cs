@@ -48,7 +48,7 @@
 
             var sut = new DefaultTypeCreator();
 
-            var actual = sut.Create(executeStrategy, typeof(Person), null);
+            var actual = sut.Create(executeStrategy, typeof(Person), null!);
 
             actual.Should().NotBeNull();
         }
@@ -85,7 +85,7 @@
 
             actual.Should().BeOfType<Person>();
 
-            var person = (Person) actual;
+            var person = (Person) actual!;
 
             person.FirstName.Should().Be((string) args[0]);
             person.LastName.Should().Be((string) args[1]);
@@ -145,7 +145,7 @@
         [Fact]
         public void PopulateReturnsProvidedInstance()
         {
-            var expected = Model.Create<Simple>();
+            var expected = Model.Create<Simple>()!;
             var buildChain = new BuildHistory();
             var constructorResolver = new DefaultConstructorResolver(CacheLevel.PerInstance);
 

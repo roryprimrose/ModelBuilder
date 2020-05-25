@@ -44,6 +44,9 @@
         /// <returns>The new instance.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="buildConfiguration" /> parameter is <c>null</c>.</exception>
         /// <remarks>This method uses <see cref="DefaultExecuteStrategy{T}" /> to create the instance.</remarks>
+#if NETSTANDARD2_1
+        [return: MaybeNull]
+#endif
         public static T Create<T>(this IBuildConfiguration buildConfiguration, params object[] args)
         {
             if (buildConfiguration == null)
@@ -64,7 +67,7 @@
         /// <exception cref="ArgumentNullException">The <paramref name="buildConfiguration" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="instanceType" /> parameter is <c>null</c>.</exception>
         /// <remarks>This method uses <see cref="DefaultExecuteStrategy" /> to create the instance.</remarks>
-        public static object Create(this IBuildConfiguration buildConfiguration, Type instanceType,
+        public static object? Create(this IBuildConfiguration buildConfiguration, Type instanceType,
             params object[] args)
         {
             if (buildConfiguration == null)
@@ -93,6 +96,11 @@
             if (buildConfiguration == null)
             {
                 throw new ArgumentNullException(nameof(buildConfiguration));
+            }
+
+            if (instance == null)
+            {
+                throw new ArgumentNullException(nameof(instance));
             }
 
             return buildConfiguration.UsingExecuteStrategy<DefaultExecuteStrategy<T>>().Populate(instance);
