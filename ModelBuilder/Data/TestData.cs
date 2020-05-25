@@ -3,7 +3,8 @@
     using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
-    using System.Linq;
+    using System.IO;
+    using System.Reflection;
 
     /// <summary>
     ///     The <see cref="TestData" />
@@ -18,18 +19,18 @@
                 "This is done in the constructor for the better performance of splitting males an females in a single iteration.")]
         static TestData()
         {
-            Companies = ParseValues(ResourceFile.Companies);
-            Locations = ParseLocations(ResourceFile.Locations);
-            FemaleNames = ParseValues(ResourceFile.FemaleNames);
-            MaleNames = ParseValues(ResourceFile.MaleNames);
-            LastNames = ParseValues(ResourceFile.LastNames);
-            TimeZones = ParseValues(ResourceFile.TimeZones);
-            Domains = ParseValues(ResourceFile.Domains);
+            Companies = ReadResource("Companies");
+            Locations = ParseLocations("Locations");
+            FemaleNames = ReadResource("FemaleNames");
+            MaleNames = ReadResource("MaleNames");
+            LastNames = ReadResource("LastNames");
+            TimeZones = ReadResource("TimeZones");
+            Domains = ReadResource("Domains");
         }
 
-        private static List<Location> ParseLocations(string locations)
+        private static List<Location> ParseLocations(string name)
         {
-            var lines = ParseValues(locations);
+            var lines = ReadResource(name);
             var parsedLines = new List<Location>(lines.Count);
             var index = 0;
 
@@ -56,16 +57,24 @@
             return parsedLines;
         }
 
-        private static List<string> ParseValues(string values)
+        private static IReadOnlyList<string> ReadResource(string name)
         {
-            var items = values.Split(
-                new[]
-                {
-                    Environment.NewLine
-                },
-                StringSplitOptions.RemoveEmptyEntries);
+            var assembly = typeof(TestData).GetTypeInfo().Assembly;
+            var resourceName = "ModelBuilder.Resources." + name + ".txt";
 
-            return items.ToList();
+            using var stream = assembly.GetManifestResourceStream(resourceName);
+            using var reader = new StreamReader(stream);
+
+            var values = new List<string>();
+
+            while (reader.EndOfStream == false)
+            {
+                var line = reader.ReadLine();
+
+                values.Add(line);
+            }
+
+            return values;
         }
 
         /// <summary>
