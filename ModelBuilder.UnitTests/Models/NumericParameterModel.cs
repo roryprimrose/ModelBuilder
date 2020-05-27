@@ -1,8 +1,8 @@
 ﻿namespace ModelBuilder.UnitTests.Models
 {
-    public class NumericParameterTest
+    public class NumericParameterModel
     {
-        public NumericParameterTest(
+        public NumericParameterModel(
             sbyte paramSbyte,
             byte paramByte,
             short paramShort,

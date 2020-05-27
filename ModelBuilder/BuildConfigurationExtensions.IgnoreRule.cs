@@ -278,12 +278,13 @@
                 throw new ArgumentNullException(nameof(action));
             }
 
-            var rule = configuration.IgnoreRules.OfType<T>().FirstOrDefault();
+            var targetType = typeof(T);
+            var rule = configuration.IgnoreRules.OfType<T>().FirstOrDefault(x => x.GetType() == targetType);
 
             if (rule == null)
             {
                 throw new InvalidOperationException(
-                    $"IgnoreRule {typeof(T).FullName} does not exist in the BuildConfiguration");
+                    $"IgnoreRule {targetType.FullName} does not exist in the BuildConfiguration");
             }
 
             action(rule);

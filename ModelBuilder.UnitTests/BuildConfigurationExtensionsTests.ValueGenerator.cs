@@ -32,21 +32,21 @@
         [Fact]
         public void AddWithValueGeneratorAddsRuleToConfiguration()
         {
-            var rule = new StringValueGenerator();
+            var generator = new StringValueGenerator();
 
             var sut = new BuildConfiguration();
 
-            sut.Add(rule);
+            sut.Add(generator);
 
-            sut.ValueGenerators.Should().Contain(rule);
+            sut.ValueGenerators.Should().Contain(generator);
         }
 
         [Fact]
         public void AddWithValueGeneratorThrowsExceptionWithNullConfiguration()
         {
-            var rule = new StringValueGenerator();
+            var generator = new StringValueGenerator();
 
-            Action action = () => BuildConfigurationExtensions.Add(null!, rule);
+            Action action = () => BuildConfigurationExtensions.Add(null!, generator);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -94,7 +94,39 @@
         }
 
         [Fact]
-        public void UpdateValueGeneratorThrowsExceptionWhenRuleNotFound()
+        public void UpdateValueGeneratorThrowsExceptionWhenOnlyBaseClassFound()
+        {
+            var sut = new BuildConfiguration();
+            var generator = new NumericValueGenerator();
+
+            sut.ValueGenerators.Add(generator);
+
+            Action action = () => sut.UpdateValueGenerator<CountValueGenerator>(x =>
+            {
+                // Do nothing
+            });
+
+            action.Should().Throw<InvalidOperationException>();
+        }
+
+        [Fact]
+        public void UpdateValueGeneratorThrowsExceptionWhenOnlyDerivedClassFound()
+        {
+            var sut = new BuildConfiguration();
+            var generator = new CountValueGenerator();
+
+            sut.ValueGenerators.Add(generator);
+
+            Action action = () => sut.UpdateValueGenerator<NumericValueGenerator>(x =>
+            {
+                // Do nothing
+            });
+
+            action.Should().Throw<InvalidOperationException>();
+        }
+
+        [Fact]
+        public void UpdateValueGeneratorThrowsExceptionWhenGeneratorNotFound()
         {
             var sut = new BuildConfiguration();
 
@@ -132,16 +164,32 @@
         {
             var expected = Guid.NewGuid();
             var sut = new BuildConfiguration();
-            var rule = new DummyValueGenerator
+            var generator = new DummyValueGenerator
             {
                 Value = expected
             };
 
-            sut.ValueGenerators.Add(rule);
+            sut.ValueGenerators.Add(generator);
 
             sut.UpdateValueGenerator<DummyValueGenerator>(x => { x.Value = expected; });
 
-            rule.Value.Should().Be(expected);
+            generator.Value.Should().Be(expected);
+        }
+
+        [Fact]
+        public void UpdateValueGeneratorUpdateMatchingRuleMatchingExplicitType()
+        {
+            var sut = new BuildConfiguration();
+            var first = new CountValueGenerator();
+            var second = new NumericValueGenerator();
+
+            sut.ValueGenerators.Add(first);
+            sut.ValueGenerators.Add(second);
+
+            sut.UpdateValueGenerator<NumericValueGenerator>(x => { x.AllowNull = true; });
+
+            first.AllowNull.Should().BeFalse();
+            second.AllowNull.Should().BeTrue();
         }
     }
 }

@@ -10,7 +10,7 @@
     public partial class BuildConfigurationExtensionsTests
     {
         [Fact]
-        public void AddTypeCreatorAddsRuleToConfiguration()
+        public void AddTypeCreatorAddsTypeCreatorToConfiguration()
         {
             var sut = new BuildConfiguration();
 
@@ -30,29 +30,29 @@
         }
 
         [Fact]
-        public void AddWithTypeCreatorAddsRuleToConfiguration()
+        public void AddWithTypeCreatorAddsTypeCreatorToConfiguration()
         {
-            var rule = new DefaultTypeCreator();
+            var typeCreator = new DefaultTypeCreator();
 
             var sut = new BuildConfiguration();
 
-            sut.Add(rule);
+            sut.Add(typeCreator);
 
-            sut.TypeCreators.Should().Contain(rule);
+            sut.TypeCreators.Should().Contain(typeCreator);
         }
 
         [Fact]
         public void AddWithTypeCreatorThrowsExceptionWithNullConfiguration()
         {
-            var rule = new DefaultTypeCreator();
+            var typeCreator = new DefaultTypeCreator();
 
-            Action action = () => BuildConfigurationExtensions.Add(null!, rule);
+            Action action = () => BuildConfigurationExtensions.Add(null!, typeCreator);
 
             action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
-        public void AddWithTypeCreatorThrowsExceptionWithNullRule()
+        public void AddWithTypeCreatorThrowsExceptionWithNullTypeCreator()
         {
             var sut = Substitute.For<IBuildConfiguration>();
 
@@ -62,7 +62,7 @@
         }
 
         [Fact]
-        public void RemoveTypeCreatorRemovesMultipleMatchingRulesFromConfiguration()
+        public void RemoveTypeCreatorRemovesMultipleMatchingTypeCreatorsFromConfiguration()
         {
             var sut = new BuildConfiguration();
 
@@ -75,7 +75,7 @@
         }
 
         [Fact]
-        public void RemoveTypeCreatorRemovesRulesFromConfiguration()
+        public void RemoveTypeCreatorRemovesTypeCreatorsFromConfiguration()
         {
             var sut = new BuildConfiguration();
 
@@ -94,7 +94,39 @@
         }
 
         [Fact]
-        public void UpdateTypeCreatorThrowsExceptionWhenRuleNotFound()
+        public void UpdateTypeCreatorThrowsExceptionWhenOnlyBaseClassFound()
+        {
+            var sut = new BuildConfiguration();
+            var typeCreator = new DefaultTypeCreator();
+
+            sut.TypeCreators.Add(typeCreator);
+
+            Action action = () => sut.UpdateTypeCreator<ArrayTypeCreator>(x =>
+            {
+                // Do nothing
+            });
+
+            action.Should().Throw<InvalidOperationException>();
+        }
+
+        [Fact]
+        public void UpdateTypeCreatorThrowsExceptionWhenOnlyDerivedClassFound()
+        {
+            var sut = new BuildConfiguration();
+            var typeCreator = new ArrayTypeCreator();
+
+            sut.TypeCreators.Add(typeCreator);
+
+            Action action = () => sut.UpdateTypeCreator<DefaultTypeCreator>(x =>
+            {
+                // Do nothing
+            });
+
+            action.Should().Throw<InvalidOperationException>();
+        }
+
+        [Fact]
+        public void UpdateTypeCreatorThrowsExceptionWhenTypeCreatorNotFound()
         {
             var sut = new BuildConfiguration();
 
@@ -128,20 +160,36 @@
         }
 
         [Fact]
-        public void UpdateTypeCreatorUpdateMatchingRule()
+        public void UpdateTypeCreatorUpdateMatchingTypeCreator()
         {
             var expected = Guid.NewGuid();
             var sut = new BuildConfiguration();
-            var rule = new DummyTypeCreator
+            var typeCreator = new DummyTypeCreator
             {
                 Value = expected
             };
 
-            sut.TypeCreators.Add(rule);
+            sut.TypeCreators.Add(typeCreator);
 
             sut.UpdateTypeCreator<DummyTypeCreator>(x => { x.Value = expected; });
 
-            rule.Value.Should().Be(expected);
+            typeCreator.Value.Should().Be(expected);
+        }
+
+        [Fact]
+        public void UpdateTypeCreatorUpdateMatchingTypeCreatorMatchingExplicitType()
+        {
+            var maxCount = Environment.TickCount;
+            var sut = new BuildConfiguration();
+            var first = new DefaultTypeCreator();
+            var second = new ArrayTypeCreator();
+
+            sut.TypeCreators.Add(first);
+            sut.TypeCreators.Add(second);
+
+            sut.UpdateTypeCreator<ArrayTypeCreator>(x => { x.MaxCount = maxCount; });
+
+            second.MaxCount.Should().Be(maxCount);
         }
     }
 }

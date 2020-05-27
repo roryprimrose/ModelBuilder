@@ -8,32 +8,8 @@
     ///     The <see cref="EnumValueGenerator" />
     ///     class is used to generate random enum values.
     /// </summary>
-    public class EnumValueGenerator : ValueGeneratorBase
+    public class EnumValueGenerator : ValueGeneratorBase, INullableBuilder
     {
-        /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
-        protected override bool IsMatch(IBuildChain buildChain, Type type, string? referenceName)
-        {
-            if (type == null)
-            {
-                throw new ArgumentNullException(nameof(type));
-            }
-
-            var generateType = type;
-
-            if (generateType.IsNullable())
-            {
-                generateType = type.GetGenericArguments()[0];
-            }
-
-            if (generateType.IsEnum)
-            {
-                return true;
-            }
-
-            return false;
-        }
-
         /// <inheritdoc />
         protected override object? Generate(IExecuteStrategy executeStrategy, Type type, string? referenceName)
         {
@@ -41,12 +17,15 @@
 
             if (generateType.IsNullable())
             {
-                // Allow for a 10% the chance that this might be null
-                var range = Generator.NextValue(0, 100);
-
-                if (range < 10)
+                if (AllowNull)
                 {
-                    return null;
+                    // Allow for a 10% the chance that this might be null
+                    var range = Generator.NextValue(0, 100000);
+
+                    if (range < 10000)
+                    {
+                        return null;
+                    }
                 }
 
                 // Hijack the type to generator so we can continue with the normal code pointed at the correct type to generate
@@ -93,5 +72,32 @@
 
             return values.GetValue(valueIndex);
         }
+
+        /// <inheritdoc />
+        /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
+        protected override bool IsMatch(IBuildChain buildChain, Type type, string? referenceName)
+        {
+            if (type == null)
+            {
+                throw new ArgumentNullException(nameof(type));
+            }
+
+            var generateType = type;
+
+            if (generateType.IsNullable())
+            {
+                generateType = type.GetGenericArguments()[0];
+            }
+
+            if (generateType.IsEnum)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <inheritdoc />
+        public bool AllowNull { get; set; } = false;
     }
 }

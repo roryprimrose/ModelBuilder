@@ -47,7 +47,7 @@
                 if (number > 2)
                 {
                     // This generator will only populate the first two address lines
-                    return null;
+                    return string.Empty;
                 }
             }
 

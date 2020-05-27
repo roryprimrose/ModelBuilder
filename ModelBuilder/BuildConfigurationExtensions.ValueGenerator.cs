@@ -121,12 +121,13 @@
                 throw new ArgumentNullException(nameof(action));
             }
 
-            var valueGenerator = configuration.ValueGenerators.OfType<T>().FirstOrDefault();
+            var targetType = typeof(T);
+            var valueGenerator = configuration.ValueGenerators.OfType<T>().FirstOrDefault(x => x.GetType() == targetType);
 
             if (valueGenerator == null)
             {
                 throw new InvalidOperationException(
-                    $"ValueGenerator {typeof(T).FullName} does not exist in the BuildConfiguration");
+                    $"ValueGenerator {targetType.FullName} does not exist in the BuildConfiguration");
             }
 
             action(valueGenerator);

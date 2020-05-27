@@ -9,49 +9,44 @@
     public class NumericValueGeneratorTests
     {
         [Theory]
-        [ClassData(typeof(NumericTypeDataSource))]
-        public void GenerateForTypeReturnsNullAndNonNullValues(Type type, bool typeSupported)
+        [InlineData(true)]
+        [InlineData(false)]
+        public void AllowNullDeterminesWhetherNullCanBeReturned(bool allowNull)
         {
-            if (typeSupported == false)
-            {
-                // Ignore this test
-                return;
-            }
-
-            if (type.IsNullable() == false)
-            {
-                // Ignore this test
-                return;
-            }
+            var nullFound = false;
 
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
-            var sut = new Wrapper();
+            var buildChain = new BuildHistory();
 
-            var nullFound = false;
-            var valueFound = false;
+            executeStrategy.BuildChain.Returns(buildChain);
 
-            for (var index = 0; index < 1000; index++)
+            var sut = new NumericValueGenerator
             {
-                var nextValue = sut.RunGenerate(type, null!, executeStrategy);
+                AllowNull = allowNull
+            };
 
-                if (nextValue == null!)
+            for (var index = 0; index < 10000; index++)
+            {
+                var value = sut.Generate(executeStrategy, typeof(int?));
+
+                if (value == null)
                 {
                     nullFound = true;
-                }
-                else
-                {
-                    valueFound = true;
-                }
 
-                if (nullFound && valueFound)
-                {
                     break;
                 }
             }
 
-            nullFound.Should().BeTrue();
-            valueFound.Should().BeTrue();
+            nullFound.Should().Be(allowNull);
+        }
+
+        [Fact]
+        public void AllowNullReturnsFalseByDefault()
+        {
+            var sut = new NumericValueGenerator();
+
+            sut.AllowNull.Should().BeFalse();
         }
 
         [Theory]

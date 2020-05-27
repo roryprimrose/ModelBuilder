@@ -8,40 +8,45 @@
 
     public class DateOfBirthValueGeneratorTests
     {
-        [Fact]
-        public void GenerateCanReturnNullAndRandomValues()
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void AllowNullDeterminesWhetherNullCanBeReturned(bool allowNull)
         {
             var nullFound = false;
-            var valueFound = false;
+
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             var buildChain = new BuildHistory();
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var sut = new Wrapper();
-
-            for (var index = 0; index < 1000; index++)
+            var sut = new DateOfBirthValueGenerator
             {
-                var value = (DateTime?) sut.RunGenerate(typeof(DateTime?), "dob", executeStrategy);
+                AllowNull = allowNull
+            };
 
-                if (value == null!)
+            for (var index = 0; index < 10000; index++)
+            {
+                var value = sut.Generate(executeStrategy, typeof(DateTime?));
+
+                if (value == null)
                 {
                     nullFound = true;
-                }
-                else
-                {
-                    valueFound = true;
-                }
 
-                if (nullFound && valueFound)
-                {
                     break;
                 }
             }
 
-            nullFound.Should().BeTrue();
-            valueFound.Should().BeTrue();
+            nullFound.Should().Be(allowNull);
+        }
+
+        [Fact]
+        public void AllowNullReturnsFalseByDefault()
+        {
+            var sut = new DateOfBirthValueGenerator();
+
+            sut.AllowNull.Should().BeFalse();
         }
 
         [Fact]
