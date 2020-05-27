@@ -10,40 +10,45 @@
 
     public class EnumValueGeneratorTests
     {
-        [Fact]
-        public void GenerateCanReturnNullAndRandomValues()
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void AllowNullDeterminesWhetherNullCanBeReturned(bool allowNull)
         {
-            var buildChain = new BuildHistory();
+            var nullFound = false;
+
             var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            var buildChain = new BuildHistory();
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var nullFound = false;
-            var valueFound = false;
-
-            var sut = new Wrapper();
-
-            for (var index = 0; index < 1000; index++)
+            var sut = new EnumValueGenerator
             {
-                var value = (SingleEnum?) sut.RunGenerate(typeof(SingleEnum?), null!, executeStrategy);
+                AllowNull = allowNull
+            };
 
-                if (value == null!)
+            for (var index = 0; index < 10000; index++)
+            {
+                var value = sut.Generate(executeStrategy, typeof(FileAttributes?));
+
+                if (value == null)
                 {
                     nullFound = true;
-                }
-                else
-                {
-                    valueFound = true;
-                }
 
-                if (nullFound && valueFound)
-                {
                     break;
                 }
             }
 
-            nullFound.Should().BeTrue();
-            valueFound.Should().BeTrue();
+            nullFound.Should().Be(allowNull);
+        }
+
+        [Fact]
+        public void AllowNullReturnsFalseByDefault()
+        {
+            var sut = new EnumValueGenerator();
+
+            sut.AllowNull.Should().BeFalse();
         }
 
         [Fact]

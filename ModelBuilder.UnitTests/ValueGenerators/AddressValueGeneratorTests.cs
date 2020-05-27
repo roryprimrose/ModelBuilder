@@ -10,6 +10,33 @@
 
     public class AddressValueGeneratorTests
     {
+        [Theory]
+        [InlineData("address3")]
+        [InlineData("Address3")]
+        [InlineData("addressline3")]
+        [InlineData("addressLine3")]
+        [InlineData("AddressLine3")]
+        [InlineData("Addressline3")]
+        [InlineData("address4")]
+        [InlineData("Address4")]
+        [InlineData("addressline4")]
+        [InlineData("addressLine4")]
+        [InlineData("AddressLine4")]
+        [InlineData("Addressline4")]
+        public void GenerateReturnsEmptyForAddressLinesMoreThanTwo(string referenceName)
+        {
+            var buildChain = new BuildHistory();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            var sut = new Wrapper();
+
+            var actual = sut.RunGenerate(typeof(string), referenceName, executeStrategy) as string;
+
+            actual.Should().BeEmpty();
+        }
+
         [Fact]
         public void GenerateReturnsRandomValue()
         {
@@ -55,7 +82,7 @@
 
             var sut = new Wrapper();
 
-            var actual = (string)sut.RunGenerate(typeof(string), referenceName, executeStrategy)!;
+            var actual = (string) sut.RunGenerate(typeof(string), referenceName, executeStrategy)!;
 
             actual.Should().NotBeNullOrWhiteSpace();
 

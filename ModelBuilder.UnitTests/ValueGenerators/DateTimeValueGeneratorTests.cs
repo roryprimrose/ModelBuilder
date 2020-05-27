@@ -9,6 +9,47 @@
 
     public class DateTimeValueGeneratorTests
     {
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void AllowNullDeterminesWhetherNullCanBeReturned(bool allowNull)
+        {
+            var nullFound = false;
+
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            var buildChain = new BuildHistory();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            var sut = new DateTimeValueGenerator
+            {
+                AllowNull = allowNull
+            };
+
+            for (var index = 0; index < 10000; index++)
+            {
+                var value = sut.Generate(executeStrategy, typeof(DateTime?));
+
+                if (value == null)
+                {
+                    nullFound = true;
+
+                    break;
+                }
+            }
+
+            nullFound.Should().Be(allowNull);
+        }
+
+        [Fact]
+        public void AllowNullReturnsFalseByDefault()
+        {
+            var sut = new DateTimeValueGenerator();
+
+            sut.AllowNull.Should().BeFalse();
+        }
+
         [Fact]
         public void GenerateAlwaysReturnsFutureValuesWithin10Years()
         {
@@ -23,53 +64,9 @@
             {
                 var value = (DateTime?) sut.RunGenerate(typeof(DateTime?), null!, executeStrategy);
 
-                if (value == null!)
-                {
-                    continue;
-                }
-
                 value.Should().BeAfter(DateTime.UtcNow);
                 value.Should().BeBefore(DateTime.UtcNow.AddYears(10));
             }
-        }
-
-        [Theory]
-        [InlineData(typeof(DateTime?))]
-        [InlineData(typeof(DateTimeOffset?))]
-        [InlineData(typeof(TimeSpan?))]
-        public void GenerateCanReturnNullAndRandomValuesTest(Type targetType)
-        {
-            var nullFound = false;
-            var valueFound = false;
-
-            var buildChain = new BuildHistory();
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            executeStrategy.BuildChain.Returns(buildChain);
-
-            var sut = new Wrapper();
-
-            for (var index = 0; index < 1000; index++)
-            {
-                var value = sut.RunGenerate(targetType, null!, executeStrategy);
-
-                if (value == null!)
-                {
-                    nullFound = true;
-                }
-                else
-                {
-                    valueFound = true;
-                }
-
-                if (nullFound && valueFound)
-                {
-                    break;
-                }
-            }
-
-            nullFound.Should().BeTrue();
-            valueFound.Should().BeTrue();
         }
 
         [Fact]

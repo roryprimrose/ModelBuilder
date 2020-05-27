@@ -6,7 +6,7 @@ namespace ModelBuilder.ValueGenerators
     ///     The <see cref="DateOfBirthValueGenerator" />
     ///     class is used to generate random date of birth values.
     /// </summary>
-    public class DateOfBirthValueGenerator : ValueGeneratorMatcher
+    public class DateOfBirthValueGenerator : ValueGeneratorMatcher, INullableBuilder
     {
         /// <summary>
         ///     Initializes a new instance of the <see cref="DateTimeValueGenerator" /> class.
@@ -27,12 +27,15 @@ namespace ModelBuilder.ValueGenerators
 
             if (generateType.IsNullable())
             {
-                // Allow for a 10% the chance that this might be null
-                var range = Generator.NextValue(0, 100);
-
-                if (range < 10)
+                if (AllowNull)
                 {
-                    return null;
+                    // Allow for a 10% the chance that this might be null
+                    var range = Generator.NextValue(0, 100000);
+
+                    if (range < 10000)
+                    {
+                        return null;
+                    }
                 }
 
                 // Hijack the type to generator so we can continue with the normal code pointed at the correct type to generate
@@ -61,6 +64,9 @@ namespace ModelBuilder.ValueGenerators
 
             return offsetPoint;
         }
+
+        /// <inheritdoc />
+        public bool AllowNull { get; set; } = false;
 
         /// <inheritdoc />
         public override int Priority { get; } = 1000;

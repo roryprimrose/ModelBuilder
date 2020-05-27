@@ -10,6 +10,47 @@
     public class AgeValueGeneratorTests
     {
         [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void AllowNullDeterminesWhetherNullCanBeReturned(bool allowNull)
+        {
+            var nullFound = false;
+
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            var buildChain = new BuildHistory();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            var sut = new AgeValueGenerator
+            {
+                AllowNull = allowNull
+            };
+
+            for (var index = 0; index < 10000; index++)
+            {
+                var value = sut.Generate(executeStrategy, typeof(int?));
+
+                if (value == null)
+                {
+                    nullFound = true;
+
+                    break;
+                }
+            }
+
+            nullFound.Should().Be(allowNull);
+        }
+
+        [Fact]
+        public void AllowNullReturnsFalseByDefault()
+        {
+            var sut = new AgeValueGenerator();
+
+            sut.AllowNull.Should().BeFalse();
+        }
+
+        [Theory]
         [InlineData(5, 0)]
         [InlineData(364, 0)]
         [InlineData(365, 1)]
@@ -86,13 +127,6 @@
             for (var index = 0; index < 1000; index++)
             {
                 var value = sut.RunGenerate(type, "Age", executeStrategy);
-
-                if (type.IsNullable()
-                    && value == null!)
-                {
-                    // Nullable values could be returned so nothing more to assert
-                    return;
-                }
 
                 var evaluateType = type;
 
