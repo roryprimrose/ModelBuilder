@@ -120,12 +120,13 @@
                 throw new ArgumentNullException(nameof(action));
             }
 
-            var typeCreator = configuration.TypeCreators.OfType<T>().FirstOrDefault();
+            var targetType = typeof(T);
+            var typeCreator = configuration.TypeCreators.OfType<T>().FirstOrDefault(x => x.GetType() == targetType);
 
             if (typeCreator == null)
             {
                 throw new InvalidOperationException(
-                    $"TypeCreator {typeof(T).FullName} does not exist in the BuildConfiguration");
+                    $"TypeCreator {targetType.FullName} does not exist in the BuildConfiguration");
             }
 
             action(typeCreator);

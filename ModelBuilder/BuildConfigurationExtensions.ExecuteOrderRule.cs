@@ -233,12 +233,13 @@
                 throw new ArgumentNullException(nameof(action));
             }
 
-            var rule = configuration.ExecuteOrderRules.OfType<T>().FirstOrDefault();
+            var targetType = typeof(T);
+            var rule = configuration.ExecuteOrderRules.OfType<T>().FirstOrDefault(x => x.GetType() == targetType);
 
             if (rule == null)
             {
                 throw new InvalidOperationException(
-                    $"ExecuteOrderRule {typeof(T).FullName} does not exist in the BuildConfiguration");
+                    $"ExecuteOrderRule {targetType.FullName} does not exist in the BuildConfiguration");
             }
 
             action(rule);

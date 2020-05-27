@@ -120,12 +120,13 @@
                 throw new ArgumentNullException(nameof(action));
             }
 
-            var postBuildAction = configuration.PostBuildActions.OfType<T>().FirstOrDefault();
+            var targetType = typeof(T);
+            var postBuildAction = configuration.PostBuildActions.OfType<T>().FirstOrDefault(x => x.GetType() == targetType);
 
             if (postBuildAction == null)
             {
                 throw new InvalidOperationException(
-                    $"PostBuildAction {typeof(T).FullName} does not exist in the BuildConfiguration");
+                    $"PostBuildAction {targetType.FullName} does not exist in the BuildConfiguration");
             }
 
             action(postBuildAction);

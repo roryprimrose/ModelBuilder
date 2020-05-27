@@ -1,6 +1,6 @@
 ﻿namespace ModelBuilder.UnitTests.Models
 {
-    public class NumericPropertyTest
+    public class NumericPropertyModel
     {
         public byte PropByte { get; set; }
         public decimal PropDecimal { get; set; }

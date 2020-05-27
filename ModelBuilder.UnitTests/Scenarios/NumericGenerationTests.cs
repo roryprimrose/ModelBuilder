@@ -31,7 +31,7 @@
             var config = BuildConfigurationFactory.CreateEmpty().AddTypeCreator<DefaultTypeCreator>()
                 .AddValueGenerator<NumericValueGenerator>();
 
-            var actual = config.Create<NumericParameterTest>();
+            var actual = config.Create<NumericParameterModel>();
 
             actual.Should().NotBeNull();
         }
@@ -42,7 +42,7 @@
             var config = BuildConfigurationFactory.CreateEmpty().AddTypeCreator<DefaultTypeCreator>()
                 .AddValueGenerator<NumericValueGenerator>();
 
-            var actual = config.Create<NumericPropertyTest>();
+            var actual = config.Create<NumericPropertyModel>();
 
             actual.Should().NotBeNull();
         }
