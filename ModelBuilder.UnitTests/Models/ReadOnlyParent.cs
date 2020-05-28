@@ -15,7 +15,7 @@
             PrivateValue = 0;
         }
 
-        private IEnumerable<Person> EmptySet()
+        private static IEnumerable<Person> EmptySet()
         {
             yield break;
         }

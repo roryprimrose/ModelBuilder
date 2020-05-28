@@ -242,6 +242,11 @@ namespace ModelBuilder.TypeCreators
                 throw new NotSupportedException(message);
             }
 
+            if (buildType != type)
+            {
+                executeStrategy.Log.MappedType(type, buildType);
+            }
+
             return CreateInstance(executeStrategy, buildType, referenceName, args);
         }
 
