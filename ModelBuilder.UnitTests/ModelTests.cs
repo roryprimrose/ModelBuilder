@@ -5,9 +5,17 @@
     using FluentAssertions;
     using ModelBuilder.UnitTests.Models;
     using Xunit;
+    using Xunit.Abstractions;
 
     public class ModelTests
     {
+        private readonly ITestOutputHelper _output;
+
+        public ModelTests(ITestOutputHelper output)
+        {
+            _output = output;
+        }
+
         [Fact]
         public void CreateReturnsInstance()
         {
@@ -75,7 +83,12 @@
         [Fact]
         public void MappingUsesConfigurationToCreateInstance()
         {
-            var actual = Model.Mapping<ITestItem, TestItem>().Create<ITestItem>()!;
+            var configuration = Model.Mapping<ITestItem, TestItem>();
+            var executeStrategy = configuration.UsingExecuteStrategy<DefaultExecuteStrategy<ITestItem>>();
+
+            var actual = executeStrategy.Create()!;
+
+            _output.WriteLine(executeStrategy.Log.Output);
 
             actual.Should().BeOfType<TestItem>();
             actual.FirstName.Should().NotBeNullOrWhiteSpace();

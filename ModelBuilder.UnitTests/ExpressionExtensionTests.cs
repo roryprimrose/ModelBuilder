@@ -67,14 +67,14 @@
             action.Should().Throw<ArgumentNullException>();
         }
 
-        private PropertyInfo Wrapper<T>(Expression<Func<T, object>> expression)
+        private static PropertyInfo Wrapper<T>(Expression<Func<T, object>> expression)
         {
             return expression.GetProperty();
         }
 
         private class StaticGetter
         {
-            public static string Value { get { return Guid.NewGuid().ToString(); } }
+            public static string Value => Guid.NewGuid().ToString();
         }
     }
 }
