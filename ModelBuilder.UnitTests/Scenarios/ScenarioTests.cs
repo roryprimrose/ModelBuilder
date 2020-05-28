@@ -43,9 +43,9 @@
             var strategy = Model.UsingDefaultConfiguration().Set(x => x.ValueGenerators.Clear())
                 .AddValueGenerator<StringValueGenerator>().AddValueGenerator<NumericValueGenerator>()
                 .AddValueGenerator<BooleanValueGenerator>().AddValueGenerator<GuidValueGenerator>()
-                .AddValueGenerator<DateTimeValueGenerator>().AddValueGenerator<EnumValueGenerator>();
+                .AddValueGenerator<DateTimeValueGenerator>().AddValueGenerator<EnumValueGenerator>().UsingExecuteStrategy<DefaultExecuteStrategy<Person>>();
 
-            var actual = strategy.Create<Person>()!;
+            var actual = strategy.WriteLog(_output.WriteLine).Create()!;
 
             Guid.Parse(actual.Address!.AddressLine1!).Should().NotBeEmpty();
         }

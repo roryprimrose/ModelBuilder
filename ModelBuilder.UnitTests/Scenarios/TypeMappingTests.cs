@@ -21,11 +21,11 @@
         [Fact]
         public void CanExplicitlyMapPrivateType()
         {
-            var strategy = Model.Mapping<IPrivate, Private>().UsingExecuteStrategy<DefaultExecuteStrategy<IPrivate>>();
-
-            var actual = strategy.Create();
-
-            _output.WriteLine(strategy.Log.Output);
+            var actual = Model
+                .Mapping<IPrivate, Private>()
+                .UsingExecuteStrategy<DefaultExecuteStrategy<IPrivate>>()
+                .WriteLog(_output.WriteLine)
+                .Create();
 
             actual.Should().BeOfType<Private>();
         }
@@ -33,11 +33,10 @@
         [Fact]
         public void CanMapParameterType()
         {
-            var strategy = Model.UsingExecuteStrategy<DefaultExecuteStrategy<ParameterModel<IItem>>>();
-
-            var actual = strategy.Create()!;
-
-            _output.WriteLine(strategy.Log.Output);
+            var actual = Model
+                .UsingExecuteStrategy<DefaultExecuteStrategy<ParameterModel<IItem>>>()
+                .WriteLog(_output.WriteLine)
+                .Create()!;
 
             actual.Value.Should().BeOfType<Item>();
         }
@@ -45,11 +44,9 @@
         [Fact]
         public void CanMapPropertyType()
         {
-            var strategy = Model.UsingExecuteStrategy<DefaultExecuteStrategy<PropertyModel<IItem>>>();
-
-            var actual = strategy.Create()!;
-
-            _output.WriteLine(strategy.Log.Output);
+            var actual = Model.UsingExecuteStrategy<DefaultExecuteStrategy<PropertyModel<IItem>>>()
+                .WriteLog(_output.WriteLine)
+                .Create()!;
 
             actual.Value.Should().BeOfType<Item>();
         }
@@ -57,11 +54,9 @@
         [Fact]
         public void CanMapRootType()
         {
-            var strategy = Model.UsingExecuteStrategy<DefaultExecuteStrategy<IItem>>();
-
-            var actual = strategy.Create();
-
-            _output.WriteLine(strategy.Log.Output);
+            var actual = Model.UsingExecuteStrategy<DefaultExecuteStrategy<IItem>>()
+                .WriteLog(_output.WriteLine)
+                .Create();
 
             actual.Should().BeOfType<Item>();
         }
