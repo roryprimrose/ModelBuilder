@@ -44,10 +44,7 @@
         /// <returns>The new instance.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="buildConfiguration" /> parameter is <c>null</c>.</exception>
         /// <remarks>This method uses <see cref="DefaultExecuteStrategy{T}" /> to create the instance.</remarks>
-#if NETSTANDARD2_1
-        [return: MaybeNull]
-#endif
-        public static T Create<T>(this IBuildConfiguration buildConfiguration, params object[] args)
+        public static T Create<T>(this IBuildConfiguration buildConfiguration, params object?[]? args) where T : notnull
         {
             if (buildConfiguration == null)
             {
@@ -67,8 +64,8 @@
         /// <exception cref="ArgumentNullException">The <paramref name="buildConfiguration" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="instanceType" /> parameter is <c>null</c>.</exception>
         /// <remarks>This method uses <see cref="DefaultExecuteStrategy" /> to create the instance.</remarks>
-        public static object? Create(this IBuildConfiguration buildConfiguration, Type instanceType,
-            params object[] args)
+        public static object Create(this IBuildConfiguration buildConfiguration, Type instanceType,
+            params object?[]? args)
         {
             if (buildConfiguration == null)
             {
@@ -91,7 +88,7 @@
         /// <param name="instance">The instance to populate.</param>
         /// <returns>The updated instance.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="buildConfiguration" /> parameter is <c>null</c>.</exception>
-        public static T Populate<T>(this IBuildConfiguration buildConfiguration, T instance)
+        public static T Populate<T>(this IBuildConfiguration buildConfiguration, T instance) where T : notnull
         {
             if (buildConfiguration == null)
             {

@@ -12,7 +12,7 @@
         {
             var company = Model.Create<Company>()!;
             var id = Model.Create<Guid>();
-            var refNumber = Model.Create<int?>();
+            var refNumber = Model.Create<int>();
             var number = Model.Create<int>();
             var value = Model.Create<bool>();
 
@@ -26,7 +26,7 @@
         public void PopulatesInstanceTypePropertyWhenConstructorParameterMatchesDefaultTypeValue()
         {
             var id = Model.Create<Guid>();
-            var refNumber = Model.Create<int?>();
+            var refNumber = Model.Create<int>();
             var number = Model.Create<int>();
             var value = Model.Create<bool>();
 
@@ -40,7 +40,7 @@
         {
             var company = Model.Create<Company>();
             var id = Model.Create<Guid>();
-            var refNumber = Model.Create<int?>();
+            var refNumber = Model.Create<int>();
             var number = Model.Create<int>();
             var value = Model.Create<bool>();
 
@@ -54,7 +54,7 @@
         {
             var company = Model.Create<Company>();
             var id = Guid.Empty;
-            var refNumber = Model.Create<int?>();
+            var refNumber = Model.Create<int>();
             var number = Model.Create<int>();
             var value = Model.Create<bool>();
 

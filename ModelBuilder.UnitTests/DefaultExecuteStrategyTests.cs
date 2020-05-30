@@ -550,34 +550,6 @@
         }
 
         [Fact]
-        public void CreateReturnsNullFromProcessor()
-        {
-            var buildHistory = new BuildHistory();
-            var typeCapability = new BuildCapability(GetType())
-            {
-                SupportsPopulate = true,
-                AutoDetectConstructor = false,
-                AutoPopulate = false,
-                SupportsCreate = true
-            };
-
-            var processor = Substitute.For<IBuildProcessor>();
-            var buildConfiguration = Substitute.For<IBuildConfiguration>();
-
-            var sut = new DefaultExecuteStrategy(buildHistory, _buildLog, processor);
-
-            processor.GetBuildCapability(buildConfiguration, buildHistory, Arg.Any<BuildRequirement>(),
-                    typeof(SlimModel))
-                .Returns(typeCapability);
-
-            sut.Initialize(buildConfiguration);
-
-            var actual = sut.Create(typeof(SlimModel));
-
-            actual.Should().BeNull();
-        }
-
-        [Fact]
         public void CreateReturnsValueCreatedFromProvidedArguments()
         {
             var buildHistory = new BuildHistory();
@@ -904,6 +876,34 @@
         }
 
         [Fact]
+        public void CreateThrowsExceptionWhenProcessorReturnsNull()
+        {
+            var buildHistory = new BuildHistory();
+            var typeCapability = new BuildCapability(GetType())
+            {
+                SupportsPopulate = true,
+                AutoDetectConstructor = false,
+                AutoPopulate = false,
+                SupportsCreate = true
+            };
+
+            var processor = Substitute.For<IBuildProcessor>();
+            var buildConfiguration = Substitute.For<IBuildConfiguration>();
+
+            var sut = new DefaultExecuteStrategy(buildHistory, _buildLog, processor);
+
+            processor.GetBuildCapability(buildConfiguration, buildHistory, Arg.Any<BuildRequirement>(),
+                    typeof(SlimModel))
+                .Returns(typeCapability);
+
+            sut.Initialize(buildConfiguration);
+
+            Action action = () => sut.Create(typeof(SlimModel));
+
+            action.Should().Throw<BuildException>();
+        }
+
+        [Fact]
         public void CreateThrowsExceptionWithNullType()
         {
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
@@ -1112,6 +1112,35 @@
             Action action = () => sut.Populate(value);
 
             action.Should().Throw<InvalidOperationException>();
+        }
+
+        [Fact]
+        public void PopulateThrowsExceptionWhenProcessorReturnsNull()
+        {
+            var model = new SlimModel();
+            var buildHistory = new BuildHistory();
+            var typeCapability = new BuildCapability(GetType())
+            {
+                SupportsPopulate = true,
+                AutoDetectConstructor = false,
+                AutoPopulate = false,
+                SupportsCreate = true
+            };
+
+            var processor = Substitute.For<IBuildProcessor>();
+            var buildConfiguration = Substitute.For<IBuildConfiguration>();
+
+            var sut = new DefaultExecuteStrategy(buildHistory, _buildLog, processor);
+
+            processor.GetBuildCapability(buildConfiguration, buildHistory, Arg.Any<BuildRequirement>(),
+                    typeof(SlimModel))
+                .Returns(typeCapability);
+
+            sut.Initialize(buildConfiguration);
+
+            Action action = () => sut.Populate(model);
+
+            action.Should().Throw<BuildException>();
         }
 
         [Fact]

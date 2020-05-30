@@ -20,72 +20,6 @@
         }
 
         [Fact]
-        public void CreateReturnsDefaultWhenNullReturnedByProcessor()
-        {
-            var buildHistory = new BuildHistory();
-            var typeCapability = new BuildCapability(GetType())
-            {
-                SupportsPopulate = false,
-                AutoDetectConstructor = false,
-                AutoPopulate = false,
-                SupportsCreate = true
-            };
-
-            var buildConfiguration = Substitute.For<IBuildConfiguration>();
-            var processor = Substitute.For<IBuildProcessor>();
-
-            var sut = new DefaultExecuteStrategy<int>(buildHistory, _buildLog, processor);
-
-            processor.GetBuildCapability(buildConfiguration, buildHistory, Arg.Any<BuildRequirement>(),
-                    typeof(int))
-                .Returns(typeCapability);
-            processor.Build(sut, typeof(int), null!).Returns((object) null!);
-
-            sut.Initialize(buildConfiguration);
-
-            var actual = sut.Create();
-
-            actual.Should().Be(0);
-        }
-
-        [Fact]
-        public void CreateReturnsNullCalculatedByProcessor()
-        {
-            var buildHistory = new BuildHistory();
-            var typeCapability = new BuildCapability(GetType())
-            {
-                SupportsPopulate = false,
-                AutoDetectConstructor = true,
-                AutoPopulate = false,
-                SupportsCreate = true
-            };
-
-            var buildConfiguration = Substitute.For<IBuildConfiguration>();
-            var constructorResolver = Substitute.For<IConstructorResolver>();
-            var typeResolver = Substitute.For<ITypeResolver>();
-            var processor = Substitute.For<IBuildProcessor>();
-
-            buildConfiguration.ConstructorResolver.Returns(constructorResolver);
-            buildConfiguration.TypeResolver.Returns(typeResolver);
-            typeResolver.GetBuildType(buildConfiguration, typeof(Person)).Returns(x => x.Arg<Type>());
-
-            var sut = new DefaultExecuteStrategy<Person>(buildHistory, _buildLog, processor);
-
-            processor.GetBuildCapability(buildConfiguration, buildHistory, Arg.Any<BuildRequirement>(),
-                    typeof(Person))
-                .Returns(typeCapability);
-            constructorResolver.Resolve(typeof(Person))
-                .Returns(typeof(Person).GetConstructors().Single(x => x.GetParameters().Length == 0));
-            processor.Build(sut, typeof(Person), null!).Returns((Person) null!);
-
-            sut.Initialize(buildConfiguration);
-
-            var actual = sut.Create();
-
-            actual.Should().BeNull();
-        }
-
-        [Fact]
         public void CreateReturnsValueCreatedFromProvidedArguments()
         {
             var buildHistory = new BuildHistory();
@@ -163,6 +97,35 @@
             var actual = sut.Create();
 
             actual.Should().BeSameAs(expected);
+        }
+
+        [Fact]
+        public void CreateThrowsExceptionWhenProcessorReturnsNull()
+        {
+            var buildHistory = new BuildHistory();
+            var typeCapability = new BuildCapability(GetType())
+            {
+                SupportsPopulate = false,
+                AutoDetectConstructor = false,
+                AutoPopulate = false,
+                SupportsCreate = true
+            };
+
+            var buildConfiguration = Substitute.For<IBuildConfiguration>();
+            var processor = Substitute.For<IBuildProcessor>();
+
+            var sut = new DefaultExecuteStrategy<int>(buildHistory, _buildLog, processor);
+
+            processor.GetBuildCapability(buildConfiguration, buildHistory, Arg.Any<BuildRequirement>(),
+                    typeof(int))
+                .Returns(typeCapability);
+            processor.Build(sut, typeof(int), null!).Returns((object) null!);
+
+            sut.Initialize(buildConfiguration);
+
+            Action action = () => sut.Create();
+
+            action.Should().Throw<BuildException>();
         }
 
         [Fact]
