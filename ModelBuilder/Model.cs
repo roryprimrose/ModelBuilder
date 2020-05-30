@@ -18,7 +18,7 @@
         /// <param name="args">The constructor arguments to create the type with.</param>
         /// <returns>The new instance.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="instanceType" /> parameter is <c>null</c>.</exception>
-        public static object? Create(Type instanceType, params object[] args)
+        public static object Create(Type instanceType, params object?[]? args)
         {
             if (instanceType == null)
             {
@@ -36,10 +36,7 @@
         /// <typeparam name="T">The type of instance to create.</typeparam>
         /// <param name="args">The constructor arguments to create the type with.</param>
         /// <returns>The new instance.</returns>
-#if NETSTANDARD2_1
-        [return: System.Diagnostics.CodeAnalysis.MaybeNull]
-#endif
-        public static T Create<T>(params object?[]? args)
+        public static T Create<T>(params object?[]? args) where T : notnull
         {
             return ResolveDefault<T>().Create(args);
         }
@@ -79,7 +76,7 @@
         /// </summary>
         /// <typeparam name="T">The type of instance to create.</typeparam>
         /// <returns>The new instance.</returns>
-        public static T Populate<T>(T instance)
+        public static T Populate<T>(T instance) where T : notnull
         {
             return ResolveDefault<T>().Populate(instance);
         }
@@ -121,7 +118,7 @@
             return UsingExecuteStrategy<DefaultExecuteStrategy>();
         }
 
-        private static IExecuteStrategy<T> ResolveDefault<T>()
+        private static IExecuteStrategy<T> ResolveDefault<T>() where T : notnull
         {
             return UsingExecuteStrategy<DefaultExecuteStrategy<T>>();
         }

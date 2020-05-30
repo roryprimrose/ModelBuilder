@@ -6,7 +6,7 @@
     using ModelBuilder.ValueGenerators;
     using Xunit;
 
-    public class NullableValueTests
+    public class NullableTests
     {
         [Fact]
         public void CanConfigureNullValueGeneration()

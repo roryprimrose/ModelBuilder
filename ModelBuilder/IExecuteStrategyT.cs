@@ -5,16 +5,13 @@
     ///     interface defines the members for creating and populating <typeparamref name="T" /> instances.
     /// </summary>
     /// <typeparam name="T">The type to create or populate.</typeparam>
-    public interface IExecuteStrategy<T> : IExecuteStrategy
+    public interface IExecuteStrategy<T> : IExecuteStrategy where T : notnull
     {
         /// <summary>
         ///     Creates a new instance of <typeparamref name="T" /> using any specified arguments.
         /// </summary>
         /// <param name="args">The constructor arguments of the type.</param>
         /// <returns>A new instance of <typeparamref name="T" /></returns>
-#if NETSTANDARD2_1
-        [return: System.Diagnostics.CodeAnalysis.MaybeNull]
-#endif
         T Create(params object?[]? args);
 
         /// <summary>
