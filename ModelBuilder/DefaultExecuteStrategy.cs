@@ -74,26 +74,40 @@
                 throw new ArgumentNullException(nameof(instance));
             }
 
-            var capability = _buildProcessor.GetBuildCapability(Configuration, _buildHistory, BuildRequirement.Populate,
-                instance.GetType());
-
-            if (capability == null)
-            {
-                return instance;
-            }
-
             var type = instance.GetType();
 
-            var populatedInstance = Populate(capability, instance);
-
-            if (populatedInstance == null)
+            try
             {
-                var message = string.Format(CultureInfo.CurrentCulture, "The type '{0}' failed to return a non-null value of type '{1}' after populating its properties.", capability.ImplementedByType.FullName, type.FullName);
+                var capability = _buildProcessor.GetBuildCapability(Configuration, _buildHistory, BuildRequirement.Populate,
+                    instance.GetType());
 
-                throw new BuildException(message, type, null, null, Log.Output);
+                if (capability == null)
+                {
+                    return instance;
+                }
+
+                var populatedInstance = Populate(capability, instance);
+
+                if (populatedInstance == null)
+                {
+                    var message = string.Format(CultureInfo.CurrentCulture, "The type '{0}' failed to return a non-null value of type '{1}' after populating its properties.", capability.ImplementedByType.FullName, type.FullName);
+
+                    throw new BuildException(message, type, null, null, Log.Output);
+                }
+
+                return populatedInstance;
             }
+            catch (BuildException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                var message = string.Format(CultureInfo.CurrentCulture, "Failed to populate instance of type '{0}'",
+                    type.FullName);
 
-            return populatedInstance;
+                throw new BuildException(message, ex);
+            }
         }
 
         /// <summary>
@@ -109,25 +123,39 @@
                 throw new ArgumentNullException(nameof(type));
             }
 
-            BuildCapability? GetCapability() => _buildProcessor.GetBuildCapability(Configuration, BuildChain, BuildRequirement.Create, type);
-
-            var instance = Build(
-                GetCapability,
-                items => _buildProcessor.Build(this, type, items), type, null, args)!;
-
-            if (instance == null)
+            try
             {
-                // The Build method above would have thrown an exception if the build capability could not be identified
-                var capability = GetCapability()!;
+                BuildCapability? GetCapability() => _buildProcessor.GetBuildCapability(Configuration, BuildChain, BuildRequirement.Create, type);
 
-                var message = string.Format(CultureInfo.CurrentCulture, "The type '{0}' failed to create a non-null value of type '{1}'", capability.ImplementedByType.FullName, type.FullName);
+                var instance = Build(
+                    GetCapability,
+                    items => _buildProcessor.Build(this, type, items), type, null, args)!;
 
-                throw new BuildException(message, type, null, null, Log.Output);
+                if (instance == null)
+                {
+                    // The Build method above would have thrown an exception if the build capability could not be identified
+                    var capability = GetCapability()!;
+
+                    var message = string.Format(CultureInfo.CurrentCulture, "The type '{0}' failed to create a non-null value of type '{1}'", capability.ImplementedByType.FullName, type.FullName);
+
+                    throw new BuildException(message, type, null, null, Log.Output);
+                }
+
+                RunPostBuildActions(instance, type);
+
+                return instance;
             }
+            catch (BuildException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                var message = string.Format(CultureInfo.CurrentCulture, "Failed to create instance of type '{0}'",
+                    type.FullName);
 
-            RunPostBuildActions(instance, type);
-
-            return instance;
+                throw new BuildException(message, ex);
+            }
         }
 
         /// <summary>

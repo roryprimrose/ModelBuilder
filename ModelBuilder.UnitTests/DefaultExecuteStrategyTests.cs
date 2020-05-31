@@ -106,7 +106,7 @@
 
             Action action = () => sut.RunTest(type);
 
-            action.Should().Throw<InvalidOperationException>();
+            action.Should().Throw<BuildException>();
         }
 
         [Fact]
@@ -128,7 +128,7 @@
 
             Action action = () => sut.RunTest(type);
 
-            action.Should().Throw<InvalidOperationException>();
+            action.Should().Throw<BuildException>();
         }
 
         [Fact]
@@ -872,7 +872,7 @@
 
             Action action = () => sut.Create(typeof(Person));
 
-            action.Should().Throw<InvalidOperationException>();
+            action.Should().Throw<BuildException>();
         }
 
         [Fact]
@@ -1111,7 +1111,7 @@
 
             Action action = () => sut.Populate(value);
 
-            action.Should().Throw<InvalidOperationException>();
+            action.Should().Throw<BuildException>();
         }
 
         [Fact]

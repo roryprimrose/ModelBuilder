@@ -5,8 +5,16 @@
     using ModelBuilder.UnitTests.Models;
     using Xunit;
 
-    public class ConstructorParameterMatchingTests
+    public class ConstructorTests
     {
+        [Fact]
+        public void CreateThrowsExceptionWhenNoPublicConstructorFound()
+        {
+            Action action = () => Model.Create<FactoryClass>();
+
+            action.Should().Throw<BuildException>();
+        }
+
         [Fact]
         public void DoesNotSetInstanceParameterAssignedToProperty()
         {
@@ -61,6 +69,21 @@
             var model = Model.Create<WithConstructorParameters>(company, id, refNumber, number, value)!;
 
             model.Id.Should().NotBeEmpty();
+        }
+
+        private class FactoryClass
+        {
+            private FactoryClass(Guid value)
+            {
+                Value = value;
+            }
+
+            public static FactoryClass Create(Guid value)
+            {
+                return new FactoryClass(value);
+            }
+
+            public Guid Value { get; }
         }
     }
 }
