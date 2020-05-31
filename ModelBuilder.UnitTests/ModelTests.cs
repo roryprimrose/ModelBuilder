@@ -37,6 +37,18 @@
         }
 
         [Fact]
+        public void CreateReturnsInstanceWithPopulatedProperties()
+        {
+            var actual = Model.Create<EmailParts>();
+
+            actual.Should().NotBeNull();
+            actual.FirstName.Should().NotBeNull();
+            actual.LastName.Should().NotBeNull();
+            actual.Domain.Should().NotBeNull();
+            actual.Email.Should().NotBeNull();
+        }
+
+        [Fact]
         public void CreateThrowsExceptionWithNullInstanceType()
         {
             Action action = () => Model.Create(null!);
