@@ -6,444 +6,12 @@
     using System.Reflection;
     using FluentAssertions;
     using ModelBuilder.BuildActions;
-    using ModelBuilder.TypeCreators;
     using ModelBuilder.UnitTests.Models;
     using NSubstitute;
     using Xunit;
 
     public class BuildProcessorTests
     {
-        [Fact]
-        public void BuildForParameterReturnsActionValue()
-        {
-            var parameterInfo = typeof(Person).GetConstructors()
-                .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
-            var arguments = new object[] {Guid.NewGuid().ToString()};
-            var expected = new Person();
-            var match = new BuildCapability(typeof(DefaultTypeCreator)) {SupportsCreate = true};
-
-            var action = Substitute.For<IBuildAction>();
-            var buildConfiguration = Substitute.For<IBuildConfiguration>();
-            var buildChain = Substitute.For<IBuildChain>();
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            executeStrategy.BuildChain.Returns(buildChain);
-            executeStrategy.Configuration.Returns(buildConfiguration);
-            action.GetBuildCapability(buildConfiguration, buildChain, parameterInfo).Returns(match);
-            action.Build(executeStrategy, parameterInfo, arguments).Returns(expected);
-
-            var actions = new List<IBuildAction>
-            {
-                action
-            };
-
-            var sut = new BuildProcessor(actions);
-
-            var actual = sut.Build(executeStrategy, parameterInfo, arguments);
-
-            actual.Should().Be(expected);
-        }
-
-        [Fact]
-        public void BuildForParameterReturnsValueFromActionWithHighestPriority()
-        {
-            var parameterInfo = typeof(Person).GetConstructors()
-                .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
-            var arguments = new object[] {Guid.NewGuid().ToString()};
-            var expected = new Person();
-            var match = new BuildCapability(typeof(DefaultTypeCreator)) {SupportsCreate = true};
-
-            var firstAction = Substitute.For<IBuildAction>();
-            var secondAction = Substitute.For<IBuildAction>();
-            var buildConfiguration = Substitute.For<IBuildConfiguration>();
-            var buildChain = Substitute.For<IBuildChain>();
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            executeStrategy.BuildChain.Returns(buildChain);
-            executeStrategy.Configuration.Returns(buildConfiguration);
-            firstAction.Priority.Returns(int.MinValue);
-            firstAction.GetBuildCapability(buildConfiguration, buildChain, parameterInfo).Returns(match);
-            secondAction.Priority.Returns(int.MaxValue);
-            secondAction.GetBuildCapability(buildConfiguration, buildChain, parameterInfo).Returns(match);
-            secondAction.Build(executeStrategy, parameterInfo, arguments).Returns(expected);
-
-            var actions = new List<IBuildAction>
-            {
-                firstAction,
-                secondAction
-            };
-
-            var sut = new BuildProcessor(actions);
-
-            var actual = sut.Build(executeStrategy, parameterInfo, arguments);
-
-            actual.Should().Be(expected);
-        }
-
-        [Fact]
-        public void BuildForParameterReturnsValueFromMatchingAction()
-        {
-            var parameterInfo = typeof(Person).GetConstructors()
-                .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
-            var arguments = new object[] {Guid.NewGuid().ToString()};
-            var expected = new Person();
-            var match = new BuildCapability(typeof(DefaultTypeCreator)) {SupportsCreate = true};
-
-            var firstAction = Substitute.For<IBuildAction>();
-            var secondAction = Substitute.For<IBuildAction>();
-            var buildConfiguration = Substitute.For<IBuildConfiguration>();
-            var buildChain = Substitute.For<IBuildChain>();
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            executeStrategy.BuildChain.Returns(buildChain);
-            executeStrategy.Configuration.Returns(buildConfiguration);
-            firstAction.Priority.Returns(int.MaxValue);
-            secondAction.Priority.Returns(int.MinValue);
-            secondAction.GetBuildCapability(buildConfiguration, buildChain, parameterInfo).Returns(match);
-            secondAction.Build(executeStrategy, parameterInfo, arguments).Returns(expected);
-
-            var actions = new List<IBuildAction>
-            {
-                firstAction,
-                secondAction
-            };
-
-            var sut = new BuildProcessor(actions);
-
-            var actual = sut.Build(executeStrategy, parameterInfo, arguments);
-
-            actual.Should().Be(expected);
-        }
-
-        [Fact]
-        public void BuildForParameterThrowsExceptionWhenNoBuildActionFound()
-        {
-            var actions = Array.Empty<IBuildAction>();
-            var parameterInfo = typeof(Person).GetConstructors()
-                .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
-
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            var sut = new BuildProcessor(actions);
-
-            Action action = () => sut.Build(executeStrategy, parameterInfo);
-
-            action.Should().Throw<NotSupportedException>();
-        }
-
-        [Fact]
-        public void BuildForParameterThrowsExceptionWithNullExecuteStrategy()
-        {
-            var actions = Array.Empty<IBuildAction>();
-            var parameterInfo = typeof(Person).GetConstructors()
-                .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
-
-            var sut = new BuildProcessor(actions);
-
-            Action action = () => sut.Build(null!, parameterInfo);
-
-            action.Should().Throw<ArgumentNullException>();
-        }
-
-        [Fact]
-        public void BuildForParameterThrowsExceptionWithNullParameter()
-        {
-            var actions = Array.Empty<IBuildAction>();
-
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            var sut = new BuildProcessor(actions);
-
-            Action action = () => sut.Build(executeStrategy, (ParameterInfo) null!);
-
-            action.Should().Throw<ArgumentNullException>();
-        }
-
-        [Fact]
-        public void BuildForPropertyReturnsActionValue()
-        {
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
-            var arguments = new object[] {Guid.NewGuid().ToString()};
-            var expected = new Person();
-            var match = new BuildCapability(typeof(DefaultTypeCreator)) {SupportsCreate = true};
-
-            var action = Substitute.For<IBuildAction>();
-            var buildConfiguration = Substitute.For<IBuildConfiguration>();
-            var buildChain = Substitute.For<IBuildChain>();
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            executeStrategy.BuildChain.Returns(buildChain);
-            executeStrategy.Configuration.Returns(buildConfiguration);
-            action.GetBuildCapability(buildConfiguration, buildChain, propertyInfo).Returns(match);
-            action.Build(executeStrategy, propertyInfo, arguments).Returns(expected);
-
-            var actions = new List<IBuildAction>
-            {
-                action
-            };
-
-            var sut = new BuildProcessor(actions);
-
-            var actual = sut.Build(executeStrategy, propertyInfo, arguments);
-
-            actual.Should().Be(expected);
-        }
-
-        [Fact]
-        public void BuildForPropertyReturnsValueFromActionWithHighestPriority()
-        {
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
-            var arguments = new object[] {Guid.NewGuid().ToString()};
-            var expected = new Person();
-            var match = new BuildCapability(typeof(DefaultTypeCreator)) {SupportsCreate = true};
-
-            var firstAction = Substitute.For<IBuildAction>();
-            var secondAction = Substitute.For<IBuildAction>();
-            var buildConfiguration = Substitute.For<IBuildConfiguration>();
-            var buildChain = Substitute.For<IBuildChain>();
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            executeStrategy.BuildChain.Returns(buildChain);
-            executeStrategy.Configuration.Returns(buildConfiguration);
-            firstAction.Priority.Returns(int.MinValue);
-            firstAction.GetBuildCapability(buildConfiguration, buildChain, propertyInfo).Returns(match);
-            secondAction.Priority.Returns(int.MaxValue);
-            secondAction.GetBuildCapability(buildConfiguration, buildChain, propertyInfo).Returns(match);
-            secondAction.Build(executeStrategy, propertyInfo, arguments).Returns(expected);
-
-            var actions = new List<IBuildAction>
-            {
-                firstAction,
-                secondAction
-            };
-
-            var sut = new BuildProcessor(actions);
-
-            var actual = sut.Build(executeStrategy, propertyInfo, arguments);
-
-            actual.Should().Be(expected);
-        }
-
-        [Fact]
-        public void BuildForPropertyReturnsValueFromMatchingAction()
-        {
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
-            var arguments = new object[] {Guid.NewGuid().ToString()};
-            var expected = new Person();
-            var match = new BuildCapability(typeof(DefaultTypeCreator)) {SupportsCreate = true};
-
-            var firstAction = Substitute.For<IBuildAction>();
-            var secondAction = Substitute.For<IBuildAction>();
-            var buildConfiguration = Substitute.For<IBuildConfiguration>();
-            var buildChain = Substitute.For<IBuildChain>();
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            executeStrategy.BuildChain.Returns(buildChain);
-            executeStrategy.Configuration.Returns(buildConfiguration);
-            firstAction.Priority.Returns(int.MaxValue);
-            secondAction.Priority.Returns(int.MinValue);
-            secondAction.GetBuildCapability(buildConfiguration, buildChain, propertyInfo).Returns(match);
-            secondAction.Build(executeStrategy, propertyInfo, arguments).Returns(expected);
-
-            var actions = new List<IBuildAction>
-            {
-                firstAction,
-                secondAction
-            };
-
-            var sut = new BuildProcessor(actions);
-
-            var actual = sut.Build(executeStrategy, propertyInfo, arguments);
-
-            actual.Should().Be(expected);
-        }
-
-        [Fact]
-        public void BuildForPropertyThrowsExceptionWhenNoBuildActionFound()
-        {
-            var context = new Person();
-            var actions = Array.Empty<IBuildAction>();
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
-            var buildChain = new BuildHistory();
-
-            buildChain.Push(context);
-
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            executeStrategy.BuildChain.Returns(buildChain);
-
-            var sut = new BuildProcessor(actions);
-
-            Action action = () => sut.Build(executeStrategy, propertyInfo);
-
-            action.Should().Throw<NotSupportedException>();
-        }
-
-        [Fact]
-        public void BuildForPropertyThrowsExceptionWithNullExecuteStrategy()
-        {
-            var actions = Array.Empty<IBuildAction>();
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
-
-            var sut = new BuildProcessor(actions);
-
-            Action action = () => sut.Build(null!, propertyInfo);
-
-            action.Should().Throw<ArgumentNullException>();
-        }
-
-        [Fact]
-        public void BuildForPropertyThrowsExceptionWithNullProperty()
-        {
-            var actions = Array.Empty<IBuildAction>();
-
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            var sut = new BuildProcessor(actions);
-
-            Action action = () => sut.Build(executeStrategy, (PropertyInfo) null!);
-
-            action.Should().Throw<ArgumentNullException>();
-        }
-
-        [Fact]
-        public void BuildForTypeReturnsActionValue()
-        {
-            var type = typeof(Person);
-            var expected = new Person();
-            var match = new BuildCapability(typeof(DefaultTypeCreator)) {SupportsCreate = true};
-
-            var action = Substitute.For<IBuildAction>();
-            var buildConfiguration = Substitute.For<IBuildConfiguration>();
-            var buildChain = Substitute.For<IBuildChain>();
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            executeStrategy.BuildChain.Returns(buildChain);
-            executeStrategy.Configuration.Returns(buildConfiguration);
-            action.GetBuildCapability(buildConfiguration, buildChain, type).Returns(match);
-            action.Build(executeStrategy, type).Returns(expected);
-
-            var actions = new List<IBuildAction>
-            {
-                action
-            };
-
-            var sut = new BuildProcessor(actions);
-
-            var actual = sut.Build(executeStrategy, type);
-
-            actual.Should().Be(expected);
-        }
-
-        [Fact]
-        public void BuildForTypeReturnsValueFromActionWithHighestPriority()
-        {
-            var type = typeof(Person);
-            var expected = new Person();
-            var match = new BuildCapability(typeof(DefaultTypeCreator)) {SupportsCreate = true};
-
-            var firstAction = Substitute.For<IBuildAction>();
-            var secondAction = Substitute.For<IBuildAction>();
-            var buildConfiguration = Substitute.For<IBuildConfiguration>();
-            var buildChain = Substitute.For<IBuildChain>();
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            executeStrategy.BuildChain.Returns(buildChain);
-            executeStrategy.Configuration.Returns(buildConfiguration);
-            firstAction.Priority.Returns(int.MinValue);
-            firstAction.GetBuildCapability(buildConfiguration, buildChain, type).Returns(match);
-            secondAction.Priority.Returns(int.MaxValue);
-            secondAction.GetBuildCapability(buildConfiguration, buildChain, type).Returns(match);
-            secondAction.Build(executeStrategy, type).Returns(expected);
-
-            var actions = new List<IBuildAction>
-            {
-                firstAction,
-                secondAction
-            };
-
-            var sut = new BuildProcessor(actions);
-
-            var actual = sut.Build(executeStrategy, type);
-
-            actual.Should().Be(expected);
-        }
-
-        [Fact]
-        public void BuildForTypeReturnsValueFromMatchingAction()
-        {
-            var type = typeof(Person);
-            var expected = new Person();
-            var match = new BuildCapability(typeof(DefaultTypeCreator)) {SupportsCreate = true};
-
-            var firstAction = Substitute.For<IBuildAction>();
-            var secondAction = Substitute.For<IBuildAction>();
-            var buildConfiguration = Substitute.For<IBuildConfiguration>();
-            var buildChain = Substitute.For<IBuildChain>();
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            executeStrategy.BuildChain.Returns(buildChain);
-            executeStrategy.Configuration.Returns(buildConfiguration);
-            firstAction.Priority.Returns(int.MaxValue);
-            secondAction.Priority.Returns(int.MinValue);
-            secondAction.GetBuildCapability(buildConfiguration, buildChain, type).Returns(match);
-            secondAction.Build(executeStrategy, type).Returns(expected);
-
-            var actions = new List<IBuildAction>
-            {
-                firstAction,
-                secondAction
-            };
-
-            var sut = new BuildProcessor(actions);
-
-            var actual = sut.Build(executeStrategy, type);
-
-            actual.Should().Be(expected);
-        }
-
-        [Fact]
-        public void BuildForTypeThrowsExceptionWhenNoBuildActionFound()
-        {
-            var actions = Array.Empty<IBuildAction>();
-            var type = typeof(Person);
-
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            var sut = new BuildProcessor(actions);
-
-            Action action = () => sut.Build(executeStrategy, type);
-
-            action.Should().Throw<NotSupportedException>();
-        }
-
-        [Fact]
-        public void BuildForTypeThrowsExceptionWithNullExecuteStrategy()
-        {
-            var actions = Array.Empty<IBuildAction>();
-            var type = typeof(Person);
-
-            var sut = new BuildProcessor(actions);
-
-            Action action = () => sut.Build(null!, type);
-
-            action.Should().Throw<ArgumentNullException>();
-        }
-
-        [Fact]
-        public void BuildForTypeThrowsExceptionWithNullType()
-        {
-            var actions = Array.Empty<IBuildAction>();
-
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            var sut = new BuildProcessor(actions);
-
-            Action action = () => sut.Build(executeStrategy, (Type) null!);
-
-            action.Should().Throw<ArgumentNullException>();
-        }
-
         [Fact]
         public void CanCreateInstance()
         {
@@ -462,94 +30,72 @@
         [InlineData(BuildRequirement.Populate, true, false, false)]
         [InlineData(BuildRequirement.Populate, false, true, true)]
         [InlineData(BuildRequirement.Populate, false, false, false)]
-        public void GetBuildCapabilityForParameterReturnsBuildPlan(BuildRequirement requirement, bool canCreate,
-            bool canPopulate, bool planExists)
+        public void GetBuildCapabilityForParameterReturnsBuildCapabilityWhenSupported(BuildRequirement requirement,
+            bool canCreate,
+            bool canPopulate, bool capabilityExists)
         {
             var parameterInfo = typeof(Person).GetConstructors()
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
-            var capability = new BuildCapability(typeof(DefaultTypeCreator)) {SupportsCreate = canCreate, SupportsPopulate = canPopulate};
 
-            var action = Substitute.For<IBuildAction>();
+            var capability = Substitute.For<IBuildCapability>();
+
+            var buildAction = Substitute.For<IBuildAction>();
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
             var buildChain = Substitute.For<IBuildChain>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
 
-            action.GetBuildCapability(buildConfiguration, buildChain, parameterInfo).Returns(capability);
+            capability.SupportsCreate.Returns(canCreate);
+            capability.SupportsPopulate.Returns(canPopulate);
+            executeStrategy.Configuration.Returns(buildConfiguration);
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            buildAction.GetBuildCapability(buildConfiguration, buildChain, parameterInfo).Returns(capability);
 
             var actions = new List<IBuildAction>
             {
-                action
+                buildAction
             };
 
             var sut = new BuildProcessor(actions);
 
-            var actual = sut.GetBuildCapability(buildConfiguration, buildChain, requirement, parameterInfo);
-
-            if (planExists)
+            if (capabilityExists)
             {
+                var actual = sut.GetBuildCapability(executeStrategy, requirement, parameterInfo);
+
                 actual.Should().Be(capability);
             }
             else
             {
-                actual.Should().BeNull();
+                Action action = () => sut.GetBuildCapability(executeStrategy, requirement, parameterInfo);
+
+                action.Should().Throw<BuildException>();
             }
         }
 
         [Fact]
-        public void GetBuildCapabilityForParameterReturnsPlanFromActionWithHighestPriority()
+        public void GetBuildCapabilityForParameterReturnsCapabilityFromAction()
         {
             var parameterInfo = typeof(Person).GetConstructors()
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
-            var firstMatch = new BuildCapability(typeof(DefaultTypeCreator)) {SupportsCreate = true};
-            var secondMatch = new BuildCapability(typeof(DefaultTypeCreator))
-                {SupportsCreate = true, SupportsPopulate = true, AutoPopulate = true, AutoDetectConstructor = true};
 
+            var firstCapability = Substitute.For<IBuildCapability>();
+            var secondCapability = Substitute.For<IBuildCapability>();
             var firstAction = Substitute.For<IBuildAction>();
             var secondAction = Substitute.For<IBuildAction>();
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
             var buildChain = Substitute.For<IBuildChain>();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
-            executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Configuration.Returns(buildConfiguration);
-            firstAction.Priority.Returns(int.MinValue);
-            firstAction.GetBuildCapability(buildConfiguration, buildChain, parameterInfo).Returns(firstMatch);
-            secondAction.Priority.Returns(int.MaxValue);
-            secondAction.GetBuildCapability(buildConfiguration, buildChain, parameterInfo).Returns(secondMatch);
-
-            var actions = new List<IBuildAction>
-            {
-                firstAction,
-                secondAction
-            };
-
-            var sut = new BuildProcessor(actions);
-
-            var actual = sut.GetBuildCapability(buildConfiguration, buildChain, BuildRequirement.Create, parameterInfo);
-
-            actual.Should().BeEquivalentTo(secondMatch);
-        }
-
-        [Fact]
-        public void GetBuildCapabilityForParameterReturnsValueFromMatchingAction()
-        {
-            var parameterInfo = typeof(Person).GetConstructors()
-                .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
-            var firstMatch = new BuildCapability(typeof(DefaultTypeCreator)) {SupportsCreate = false};
-            var secondMatch = new BuildCapability(typeof(DefaultTypeCreator))
-                {SupportsCreate = true, SupportsPopulate = true, AutoPopulate = true, AutoDetectConstructor = true};
-
-            var firstAction = Substitute.For<IBuildAction>();
-            var secondAction = Substitute.For<IBuildAction>();
-            var buildConfiguration = Substitute.For<IBuildConfiguration>();
-            var buildChain = Substitute.For<IBuildChain>();
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
             executeStrategy.BuildChain.Returns(buildChain);
-            executeStrategy.Configuration.Returns(buildConfiguration);
+            secondCapability.SupportsCreate.Returns(true);
+            secondCapability.SupportsPopulate.Returns(true);
+            secondCapability.AutoPopulate.Returns(true);
+            secondCapability.AutoDetectConstructor.Returns(true);
             firstAction.Priority.Returns(int.MaxValue);
-            firstAction.GetBuildCapability(buildConfiguration, buildChain, parameterInfo).Returns(firstMatch);
+            firstAction.GetBuildCapability(buildConfiguration, buildChain, parameterInfo).Returns(firstCapability);
             secondAction.Priority.Returns(int.MinValue);
-            secondAction.GetBuildCapability(buildConfiguration, buildChain, parameterInfo).Returns(secondMatch);
+            secondAction.GetBuildCapability(buildConfiguration, buildChain, parameterInfo).Returns(secondCapability);
 
             var actions = new List<IBuildAction>
             {
@@ -559,40 +105,61 @@
 
             var sut = new BuildProcessor(actions);
 
-            var actual = sut.GetBuildCapability(buildConfiguration, buildChain, BuildRequirement.Create, parameterInfo);
+            var actual = sut.GetBuildCapability(executeStrategy, BuildRequirement.Create, parameterInfo);
 
-            actual.Should().BeEquivalentTo(secondMatch);
+            actual.Should().BeEquivalentTo(secondCapability);
         }
 
         [Fact]
-        public void GetBuildCapabilityForParameterThrowsExceptionWithNullBuildChain()
+        public void GetBuildCapabilityForParameterReturnsCapabilityFromActionWithHighestPriority()
+        {
+            var parameterInfo = typeof(Person).GetConstructors()
+                .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
+
+            var firstCapability = Substitute.For<IBuildCapability>();
+            var secondCapability = Substitute.For<IBuildCapability>();
+            var firstAction = Substitute.For<IBuildAction>();
+            var secondAction = Substitute.For<IBuildAction>();
+            var buildConfiguration = Substitute.For<IBuildConfiguration>();
+            var buildChain = Substitute.For<IBuildChain>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            firstCapability.SupportsCreate.Returns(true);
+            secondCapability.SupportsCreate.Returns(true);
+            secondCapability.SupportsPopulate.Returns(true);
+            secondCapability.AutoPopulate.Returns(true);
+            secondCapability.AutoDetectConstructor.Returns(true);
+            executeStrategy.Configuration.Returns(buildConfiguration);
+            executeStrategy.BuildChain.Returns(buildChain);
+            firstAction.Priority.Returns(int.MinValue);
+            firstAction.GetBuildCapability(buildConfiguration, buildChain, parameterInfo).Returns(firstCapability);
+            secondAction.Priority.Returns(int.MaxValue);
+            secondAction.GetBuildCapability(buildConfiguration, buildChain, parameterInfo).Returns(secondCapability);
+
+            var actions = new List<IBuildAction>
+            {
+                firstAction,
+                secondAction
+            };
+
+            var sut = new BuildProcessor(actions);
+
+            var actual = sut.GetBuildCapability(executeStrategy, BuildRequirement.Create, parameterInfo);
+
+            actual.Should().BeEquivalentTo(secondCapability);
+        }
+
+        [Fact]
+        public void GetBuildCapabilityForParameterThrowsExceptionWithNullExecuteStrategy()
         {
             var actions = Array.Empty<IBuildAction>();
             var parameterInfo = typeof(Person).GetConstructors()
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
-
-            var buildConfiguration = Substitute.For<IBuildConfiguration>();
 
             var sut = new BuildProcessor(actions);
 
             Action action = () =>
-                sut.GetBuildCapability(buildConfiguration, null!, BuildRequirement.Create, parameterInfo);
-
-            action.Should().Throw<ArgumentNullException>();
-        }
-
-        [Fact]
-        public void GetBuildCapabilityForParameterThrowsExceptionWithNullBuildConfiguration()
-        {
-            var actions = Array.Empty<IBuildAction>();
-            var parameterInfo = typeof(Person).GetConstructors()
-                .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
-
-            var buildChain = Substitute.For<IBuildChain>();
-
-            var sut = new BuildProcessor(actions);
-
-            Action action = () => sut.GetBuildCapability(null!, buildChain, BuildRequirement.Create, parameterInfo);
+                sut.GetBuildCapability(null!, BuildRequirement.Create, parameterInfo);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -604,11 +171,14 @@
 
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
             var buildChain = Substitute.For<IBuildChain>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+            executeStrategy.Configuration.Returns(buildConfiguration);
+            executeStrategy.BuildChain.Returns(buildChain);
 
             var sut = new BuildProcessor(actions);
 
             Action action = () =>
-                sut.GetBuildCapability(buildConfiguration, buildChain, BuildRequirement.Create, (ParameterInfo) null!);
+                sut.GetBuildCapability(executeStrategy, BuildRequirement.Create, (ParameterInfo) null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -622,91 +192,68 @@
         [InlineData(BuildRequirement.Populate, true, false, false)]
         [InlineData(BuildRequirement.Populate, false, true, true)]
         [InlineData(BuildRequirement.Populate, false, false, false)]
-        public void GetBuildCapabilityForPropertyReturnsBuildPlan(BuildRequirement requirement, bool canCreate,
-            bool canPopulate, bool planExists)
+        public void GetBuildCapabilityForPropertyReturnsBuildCapabilityWhenSupported(BuildRequirement requirement,
+            bool canCreate,
+            bool canPopulate, bool capabilityExists)
         {
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
-            var capability = new BuildCapability(typeof(DefaultTypeCreator)) {SupportsCreate = canCreate, SupportsPopulate = canPopulate};
+            var capability = Substitute.For<IBuildCapability>();
+            capability.SupportsCreate.Returns(canCreate);
+            capability.SupportsPopulate.Returns(canPopulate);
 
-            var action = Substitute.For<IBuildAction>();
+            var buildAction = Substitute.For<IBuildAction>();
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
             var buildChain = Substitute.For<IBuildChain>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+            executeStrategy.Configuration.Returns(buildConfiguration);
+            executeStrategy.BuildChain.Returns(buildChain);
 
-            action.GetBuildCapability(buildConfiguration, buildChain, propertyInfo).Returns(capability);
+            buildAction.GetBuildCapability(buildConfiguration, buildChain, propertyInfo).Returns(capability);
 
             var actions = new List<IBuildAction>
             {
-                action
+                buildAction
             };
 
             var sut = new BuildProcessor(actions);
 
-            var actual = sut.GetBuildCapability(buildConfiguration, buildChain, requirement, propertyInfo);
-
-            if (planExists)
+            if (capabilityExists)
             {
+                var actual = sut.GetBuildCapability(executeStrategy, requirement, propertyInfo);
+
                 actual.Should().Be(capability);
             }
             else
             {
-                actual.Should().BeNull();
+                Action action = () => sut.GetBuildCapability(executeStrategy, requirement, propertyInfo);
+
+                action.Should().Throw<BuildException>();
             }
         }
 
         [Fact]
-        public void GetBuildCapabilityForPropertyReturnsPlanFromActionWithHighestPriority()
+        public void GetBuildCapabilityForPropertyReturnsCapabilityFromAction()
         {
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
-            var firstMatch = new BuildCapability(typeof(DefaultTypeCreator)) {SupportsCreate = true};
-            var secondMatch = new BuildCapability(typeof(DefaultTypeCreator))
-                {SupportsCreate = true, SupportsPopulate = true, AutoPopulate = true, AutoDetectConstructor = true};
 
+            var firstCapability = Substitute.For<IBuildCapability>();
+            var secondCapability = Substitute.For<IBuildCapability>();
             var firstAction = Substitute.For<IBuildAction>();
             var secondAction = Substitute.For<IBuildAction>();
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
             var buildChain = Substitute.For<IBuildChain>();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
-            executeStrategy.BuildChain.Returns(buildChain);
-            executeStrategy.Configuration.Returns(buildConfiguration);
-            firstAction.Priority.Returns(int.MinValue);
-            firstAction.GetBuildCapability(buildConfiguration, buildChain, propertyInfo).Returns(firstMatch);
-            secondAction.Priority.Returns(int.MaxValue);
-            secondAction.GetBuildCapability(buildConfiguration, buildChain, propertyInfo).Returns(secondMatch);
-
-            var actions = new List<IBuildAction>
-            {
-                firstAction,
-                secondAction
-            };
-
-            var sut = new BuildProcessor(actions);
-
-            var actual = sut.GetBuildCapability(buildConfiguration, buildChain, BuildRequirement.Create, propertyInfo);
-
-            actual.Should().BeEquivalentTo(secondMatch);
-        }
-
-        [Fact]
-        public void GetBuildCapabilityForPropertyReturnsValueFromMatchingAction()
-        {
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
-            var firstMatch = new BuildCapability(typeof(DefaultTypeCreator)) {SupportsCreate = false};
-            var secondMatch = new BuildCapability(typeof(DefaultTypeCreator))
-                {SupportsCreate = true, SupportsPopulate = true, AutoPopulate = true, AutoDetectConstructor = true};
-
-            var firstAction = Substitute.For<IBuildAction>();
-            var secondAction = Substitute.For<IBuildAction>();
-            var buildConfiguration = Substitute.For<IBuildConfiguration>();
-            var buildChain = Substitute.For<IBuildChain>();
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
+            secondCapability.SupportsCreate.Returns(true);
+            secondCapability.SupportsPopulate.Returns(true);
+            secondCapability.AutoPopulate.Returns(true);
+            secondCapability.AutoDetectConstructor.Returns(true);
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Configuration.Returns(buildConfiguration);
             firstAction.Priority.Returns(int.MaxValue);
-            firstAction.GetBuildCapability(buildConfiguration, buildChain, propertyInfo).Returns(firstMatch);
+            firstAction.GetBuildCapability(buildConfiguration, buildChain, propertyInfo).Returns(firstCapability);
             secondAction.Priority.Returns(int.MinValue);
-            secondAction.GetBuildCapability(buildConfiguration, buildChain, propertyInfo).Returns(secondMatch);
+            secondAction.GetBuildCapability(buildConfiguration, buildChain, propertyInfo).Returns(secondCapability);
 
             var actions = new List<IBuildAction>
             {
@@ -716,38 +263,58 @@
 
             var sut = new BuildProcessor(actions);
 
-            var actual = sut.GetBuildCapability(buildConfiguration, buildChain, BuildRequirement.Create, propertyInfo);
+            var actual = sut.GetBuildCapability(executeStrategy, BuildRequirement.Create, propertyInfo);
 
-            actual.Should().BeEquivalentTo(secondMatch);
+            actual.Should().BeEquivalentTo(secondCapability);
         }
 
         [Fact]
-        public void GetBuildCapabilityForPropertyThrowsExceptionWithNullBuildChain()
+        public void GetBuildCapabilityForPropertyReturnsCapabilityFromActionWithHighestPriority()
         {
-            var actions = Array.Empty<IBuildAction>();
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
+            var firstCapability = Substitute.For<IBuildCapability>();
+            var secondCapability = Substitute.For<IBuildCapability>();
 
+            var firstAction = Substitute.For<IBuildAction>();
+            var secondAction = Substitute.For<IBuildAction>();
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
+            var buildChain = Substitute.For<IBuildChain>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            firstCapability.SupportsCreate.Returns(true);
+            secondCapability.SupportsCreate.Returns(true);
+            secondCapability.SupportsPopulate.Returns(true);
+            secondCapability.AutoPopulate.Returns(true);
+            secondCapability.AutoDetectConstructor.Returns(true);
+            executeStrategy.BuildChain.Returns(buildChain);
+            executeStrategy.Configuration.Returns(buildConfiguration);
+            firstAction.Priority.Returns(int.MinValue);
+            firstAction.GetBuildCapability(buildConfiguration, buildChain, propertyInfo).Returns(firstCapability);
+            secondAction.Priority.Returns(int.MaxValue);
+            secondAction.GetBuildCapability(buildConfiguration, buildChain, propertyInfo).Returns(secondCapability);
+
+            var actions = new List<IBuildAction>
+            {
+                firstAction,
+                secondAction
+            };
 
             var sut = new BuildProcessor(actions);
 
-            Action action = () =>
-                sut.GetBuildCapability(buildConfiguration, null!, BuildRequirement.Create, propertyInfo);
+            var actual = sut.GetBuildCapability(executeStrategy, BuildRequirement.Create, propertyInfo);
 
-            action.Should().Throw<ArgumentNullException>();
+            actual.Should().BeEquivalentTo(secondCapability);
         }
 
         [Fact]
-        public void GetBuildCapabilityForPropertyThrowsExceptionWithNullBuildConfiguration()
+        public void GetBuildCapabilityForPropertyThrowsExceptionWithNullExecuteStrategy()
         {
             var actions = Array.Empty<IBuildAction>();
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
 
-            var buildChain = Substitute.For<IBuildChain>();
-
             var sut = new BuildProcessor(actions);
 
-            Action action = () => sut.GetBuildCapability(null!, buildChain, BuildRequirement.Create, propertyInfo);
+            Action action = () => sut.GetBuildCapability(null!, BuildRequirement.Create, propertyInfo);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -759,11 +326,14 @@
 
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
             var buildChain = Substitute.For<IBuildChain>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+            executeStrategy.Configuration.Returns(buildConfiguration);
+            executeStrategy.BuildChain.Returns(buildChain);
 
             var sut = new BuildProcessor(actions);
 
             Action action = () =>
-                sut.GetBuildCapability(buildConfiguration, buildChain, BuildRequirement.Create, (PropertyInfo) null!);
+                sut.GetBuildCapability(executeStrategy, BuildRequirement.Create, (PropertyInfo) null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -777,44 +347,51 @@
         [InlineData(BuildRequirement.Populate, true, false, false)]
         [InlineData(BuildRequirement.Populate, false, true, true)]
         [InlineData(BuildRequirement.Populate, false, false, false)]
-        public void GetBuildCapabilityForTypeReturnsBuildPlan(BuildRequirement requirement, bool canCreate,
+        public void GetBuildCapabilityForTypeReturnsBuildCapability(BuildRequirement requirement, bool canCreate,
             bool canPopulate, bool planExists)
         {
             var type = typeof(Person);
-            var capability = new BuildCapability(typeof(DefaultTypeCreator)) {SupportsCreate = canCreate, SupportsPopulate = canPopulate};
 
-            var action = Substitute.For<IBuildAction>();
+            var capability = Substitute.For<IBuildCapability>();
+            var buildAction = Substitute.For<IBuildAction>();
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
             var buildChain = Substitute.For<IBuildChain>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
 
-            action.GetBuildCapability(buildConfiguration, buildChain, type).Returns(capability);
+            capability.SupportsCreate.Returns(canCreate);
+            capability.SupportsPopulate.Returns(canPopulate);
+            executeStrategy.Configuration.Returns(buildConfiguration);
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            buildAction.GetBuildCapability(buildConfiguration, buildChain, type).Returns(capability);
 
             var actions = new List<IBuildAction>
             {
-                action
+                buildAction
             };
 
             var sut = new BuildProcessor(actions);
 
-            var actual = sut.GetBuildCapability(buildConfiguration, buildChain, requirement, type);
-
             if (planExists)
             {
+                var actual = sut.GetBuildCapability(executeStrategy, requirement, type);
+
                 actual.Should().Be(capability);
             }
             else
             {
-                actual.Should().BeNull();
+                Action action = () => sut.GetBuildCapability(executeStrategy, requirement, type);
+
+                action.Should().Throw<BuildException>();
             }
         }
 
         [Fact]
-        public void GetBuildCapabilityForTypeReturnsPlanFromActionWithHighestPriority()
+        public void GetBuildCapabilityForTypeReturnsCapabilityFromAction()
         {
             var type = typeof(Person);
-            var firstMatch = new BuildCapability(typeof(DefaultTypeCreator)) {SupportsCreate = true};
-            var secondMatch = new BuildCapability(typeof(DefaultTypeCreator))
-                {SupportsCreate = true, SupportsPopulate = true, AutoPopulate = true, AutoDetectConstructor = true};
+            var firstCapability = Substitute.For<IBuildCapability>();
+            var secondCapability = Substitute.For<IBuildCapability>();
 
             var firstAction = Substitute.For<IBuildAction>();
             var secondAction = Substitute.For<IBuildAction>();
@@ -822,46 +399,16 @@
             var buildChain = Substitute.For<IBuildChain>();
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
-            executeStrategy.BuildChain.Returns(buildChain);
-            executeStrategy.Configuration.Returns(buildConfiguration);
-            firstAction.Priority.Returns(int.MinValue);
-            firstAction.GetBuildCapability(buildConfiguration, buildChain, type).Returns(firstMatch);
-            secondAction.Priority.Returns(int.MaxValue);
-            secondAction.GetBuildCapability(buildConfiguration, buildChain, type).Returns(secondMatch);
-
-            var actions = new List<IBuildAction>
-            {
-                firstAction,
-                secondAction
-            };
-
-            var sut = new BuildProcessor(actions);
-
-            var actual = sut.GetBuildCapability(buildConfiguration, buildChain, BuildRequirement.Create, type);
-
-            actual.Should().BeEquivalentTo(secondMatch);
-        }
-
-        [Fact]
-        public void GetBuildCapabilityForTypeReturnsValueFromMatchingAction()
-        {
-            var type = typeof(Person);
-            var firstMatch = new BuildCapability(typeof(DefaultTypeCreator)) {SupportsCreate = false};
-            var secondMatch = new BuildCapability(typeof(DefaultTypeCreator))
-                {SupportsCreate = true, SupportsPopulate = true, AutoPopulate = true, AutoDetectConstructor = true};
-
-            var firstAction = Substitute.For<IBuildAction>();
-            var secondAction = Substitute.For<IBuildAction>();
-            var buildConfiguration = Substitute.For<IBuildConfiguration>();
-            var buildChain = Substitute.For<IBuildChain>();
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
+            secondCapability.SupportsCreate.Returns(true);
+            secondCapability.SupportsPopulate.Returns(true);
+            secondCapability.AutoPopulate.Returns(true);
+            secondCapability.AutoDetectConstructor.Returns(true);
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Configuration.Returns(buildConfiguration);
             firstAction.Priority.Returns(int.MaxValue);
-            firstAction.GetBuildCapability(buildConfiguration, buildChain, type).Returns(firstMatch);
+            firstAction.GetBuildCapability(buildConfiguration, buildChain, type).Returns(firstCapability);
             secondAction.Priority.Returns(int.MinValue);
-            secondAction.GetBuildCapability(buildConfiguration, buildChain, type).Returns(secondMatch);
+            secondAction.GetBuildCapability(buildConfiguration, buildChain, type).Returns(secondCapability);
 
             var actions = new List<IBuildAction>
             {
@@ -871,37 +418,58 @@
 
             var sut = new BuildProcessor(actions);
 
-            var actual = sut.GetBuildCapability(buildConfiguration, buildChain, BuildRequirement.Create, type);
+            var actual = sut.GetBuildCapability(executeStrategy, BuildRequirement.Create, type);
 
-            actual.Should().BeEquivalentTo(secondMatch);
+            actual.Should().BeEquivalentTo(secondCapability);
         }
 
         [Fact]
-        public void GetBuildCapabilityForTypeThrowsExceptionWithNullBuildChain()
+        public void GetBuildCapabilityForTypeReturnsCapabilityFromActionWithHighestPriority()
         {
-            var actions = Array.Empty<IBuildAction>();
             var type = typeof(Person);
+            var firstCapability = Substitute.For<IBuildCapability>();
+            var secondCapability = Substitute.For<IBuildCapability>();
 
+            var firstAction = Substitute.For<IBuildAction>();
+            var secondAction = Substitute.For<IBuildAction>();
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
+            var buildChain = Substitute.For<IBuildChain>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            firstCapability.SupportsCreate.Returns(true);
+            secondCapability.SupportsCreate.Returns(true);
+            secondCapability.SupportsPopulate.Returns(true);
+            secondCapability.AutoPopulate.Returns(true);
+            secondCapability.AutoDetectConstructor.Returns(true);
+            executeStrategy.BuildChain.Returns(buildChain);
+            executeStrategy.Configuration.Returns(buildConfiguration);
+            firstAction.Priority.Returns(int.MinValue);
+            firstAction.GetBuildCapability(buildConfiguration, buildChain, type).Returns(firstCapability);
+            secondAction.Priority.Returns(int.MaxValue);
+            secondAction.GetBuildCapability(buildConfiguration, buildChain, type).Returns(secondCapability);
+
+            var actions = new List<IBuildAction>
+            {
+                firstAction,
+                secondAction
+            };
 
             var sut = new BuildProcessor(actions);
 
-            Action action = () => sut.GetBuildCapability(buildConfiguration, null!, BuildRequirement.Create, type);
+            var actual = sut.GetBuildCapability(executeStrategy, BuildRequirement.Create, type);
 
-            action.Should().Throw<ArgumentNullException>();
+            actual.Should().BeEquivalentTo(secondCapability);
         }
 
         [Fact]
-        public void GetBuildCapabilityForTypeThrowsExceptionWithNullBuildConfiguration()
+        public void GetBuildCapabilityForTypeThrowsExceptionWithNullExecuteStrategy()
         {
             var actions = Array.Empty<IBuildAction>();
             var type = typeof(Person);
 
-            var buildChain = Substitute.For<IBuildChain>();
-
             var sut = new BuildProcessor(actions);
 
-            Action action = () => sut.GetBuildCapability(null!, buildChain, BuildRequirement.Create, type);
+            Action action = () => sut.GetBuildCapability(null!, BuildRequirement.Create, type);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -913,148 +481,14 @@
 
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
             var buildChain = Substitute.For<IBuildChain>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+            executeStrategy.Configuration.Returns(buildConfiguration);
+            executeStrategy.BuildChain.Returns(buildChain);
 
             var sut = new BuildProcessor(actions);
 
             Action action = () =>
-                sut.GetBuildCapability(buildConfiguration, buildChain, BuildRequirement.Create, (Type) null!);
-
-            action.Should().Throw<ArgumentNullException>();
-        }
-
-        [Fact]
-        public void PopulateReturnsActionValue()
-        {
-            var expected = new Person();
-            var match = new BuildCapability(typeof(DefaultTypeCreator)) {SupportsPopulate = true};
-
-            var action = Substitute.For<IBuildAction>();
-            var buildConfiguration = Substitute.For<IBuildConfiguration>();
-            var buildChain = Substitute.For<IBuildChain>();
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            executeStrategy.BuildChain.Returns(buildChain);
-            executeStrategy.Configuration.Returns(buildConfiguration);
-            action.GetBuildCapability(buildConfiguration, buildChain, expected.GetType()).Returns(match);
-            action.Populate(executeStrategy, expected).Returns(expected);
-
-            var actions = new List<IBuildAction>
-            {
-                action
-            };
-
-            var sut = new BuildProcessor(actions);
-
-            var actual = sut.Populate(executeStrategy, expected);
-
-            actual.Should().Be(expected);
-        }
-
-        [Fact]
-        public void PopulateReturnsValueFromActionWithHighestPriority()
-        {
-            var expected = new Person();
-            var match = new BuildCapability(typeof(DefaultTypeCreator)) {SupportsPopulate = true};
-
-            var firstAction = Substitute.For<IBuildAction>();
-            var secondAction = Substitute.For<IBuildAction>();
-            var buildConfiguration = Substitute.For<IBuildConfiguration>();
-            var buildChain = Substitute.For<IBuildChain>();
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            executeStrategy.BuildChain.Returns(buildChain);
-            executeStrategy.Configuration.Returns(buildConfiguration);
-            firstAction.Priority.Returns(int.MinValue);
-            firstAction.GetBuildCapability(buildConfiguration, buildChain, expected.GetType()).Returns(match);
-            secondAction.Priority.Returns(int.MaxValue);
-            secondAction.GetBuildCapability(buildConfiguration, buildChain, expected.GetType()).Returns(match);
-            secondAction.Populate(executeStrategy, expected).Returns(expected);
-
-            var actions = new List<IBuildAction>
-            {
-                firstAction,
-                secondAction
-            };
-
-            var sut = new BuildProcessor(actions);
-
-            var actual = sut.Populate(executeStrategy, expected);
-
-            actual.Should().Be(expected);
-        }
-
-        [Fact]
-        public void PopulateReturnsValueFromMatchingAction()
-        {
-            var expected = new Person();
-            var match = new BuildCapability(typeof(DefaultTypeCreator)) {SupportsPopulate = true};
-
-            var firstAction = Substitute.For<IBuildAction>();
-            var secondAction = Substitute.For<IBuildAction>();
-            var buildConfiguration = Substitute.For<IBuildConfiguration>();
-            var buildChain = Substitute.For<IBuildChain>();
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            executeStrategy.BuildChain.Returns(buildChain);
-            executeStrategy.Configuration.Returns(buildConfiguration);
-            firstAction.Priority.Returns(int.MaxValue);
-            firstAction.GetBuildCapability(buildConfiguration, buildChain, expected.GetType())
-                .Returns((BuildCapability) null!);
-            secondAction.Priority.Returns(int.MinValue);
-            secondAction.GetBuildCapability(buildConfiguration, buildChain, expected.GetType()).Returns(match);
-            secondAction.Populate(executeStrategy, expected).Returns(expected);
-
-            var actions = new List<IBuildAction>
-            {
-                firstAction,
-                secondAction
-            };
-
-            var sut = new BuildProcessor(actions);
-
-            var actual = sut.Populate(executeStrategy, expected);
-
-            actual.Should().Be(expected);
-        }
-
-        [Fact]
-        public void PopulateThrowsExceptionWhenNoBuildActionFound()
-        {
-            var actions = Array.Empty<IBuildAction>();
-            var instance = new Person();
-
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            var sut = new BuildProcessor(actions);
-
-            Action action = () => sut.Populate(executeStrategy, instance);
-
-            action.Should().Throw<NotSupportedException>();
-        }
-
-        [Fact]
-        public void PopulateThrowsExceptionWithNullExecuteStrategy()
-        {
-            var actions = Array.Empty<IBuildAction>();
-            var instance = new Person();
-
-            var sut = new BuildProcessor(actions);
-
-            Action action = () => sut.Populate(null!, instance);
-
-            action.Should().Throw<ArgumentNullException>();
-        }
-
-        [Fact]
-        public void PopulateThrowsExceptionWithNullInstance()
-        {
-            var actions = Array.Empty<IBuildAction>();
-
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            var sut = new BuildProcessor(actions);
-
-            Action action = () => sut.Populate(executeStrategy, null!);
+                sut.GetBuildCapability(executeStrategy, BuildRequirement.Create, (Type) null!);
 
             action.Should().Throw<ArgumentNullException>();
         }

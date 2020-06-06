@@ -9,7 +9,7 @@
     ///     class is used to create and populate <typeparamref name="T" /> instances.
     /// </summary>
     /// <typeparam name="T">The type of instance to create and populate.</typeparam>
-    public class DefaultExecuteStrategy<T> : DefaultExecuteStrategy, IExecuteStrategy<T>
+    public class DefaultExecuteStrategy<T> : DefaultExecuteStrategy, IExecuteStrategy<T> where T : notnull
     {
         /// <summary>
         ///     Initializes a new instance of the <see cref="DefaultExecuteStrategy" /> class.
@@ -34,19 +34,11 @@
         ///     generate a requested type.
         /// </exception>
         /// <exception cref="BuildException">Failed to generate a requested type.</exception>
-#if NETSTANDARD2_1
-        [return: System.Diagnostics.CodeAnalysis.MaybeNull]
-#endif
         public virtual T Create(params object?[]? args)
         {
             var requestedType = typeof(T);
 
             var instance = Build(requestedType, args);
-
-            if (instance == null)
-            {
-                return default!;
-            }
 
             return (T) instance;
         }

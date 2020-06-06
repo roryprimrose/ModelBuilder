@@ -1,8 +1,8 @@
 ﻿namespace ModelBuilder.Data
 {
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Reflection;
 
@@ -12,21 +12,11 @@
     /// </summary>
     public static class TestData
     {
-        [SuppressMessage(
-            "Microsoft.Performance",
-            "CA1810:InitializeReferenceTypeStaticFieldsInline",
-            Justification =
-                "This is done in the constructor for the better performance of splitting males an females in a single iteration.")]
-        static TestData()
-        {
-            Companies = ReadResource("Companies");
-            Locations = ParseLocations("Locations");
-            FemaleNames = ReadResource("FemaleNames");
-            MaleNames = ReadResource("MaleNames");
-            LastNames = ReadResource("LastNames");
-            TimeZones = ReadResource("TimeZones");
-            Domains = ReadResource("Domains");
-        }
+        private static readonly ConcurrentDictionary<string, IReadOnlyList<string>> _dataCache =
+            new ConcurrentDictionary<string, IReadOnlyList<string>>();
+
+        private static readonly ConcurrentDictionary<string, IReadOnlyList<Location>> _locationCache =
+            new ConcurrentDictionary<string, IReadOnlyList<Location>>();
 
         private static List<Location> ParseLocations(string name)
         {
@@ -80,36 +70,57 @@
         /// <summary>
         ///     Gets a test data set of companies.
         /// </summary>
-        public static IReadOnlyList<string> Companies { get; }
+        public static IReadOnlyList<string> Companies
+        {
+            get { return _dataCache.GetOrAdd(nameof(Companies), x => ReadResource(nameof(Companies))); }
+        }
 
         /// <summary>
         ///     Gets a test data set of domains.
         /// </summary>
-        public static IReadOnlyList<string> Domains { get; }
+        public static IReadOnlyList<string> Domains
+        {
+            get { return _dataCache.GetOrAdd(nameof(Domains), x => ReadResource(nameof(Domains))); }
+        }
 
         /// <summary>
         ///     Gets a test data set of female names.
         /// </summary>
-        public static IReadOnlyList<string> FemaleNames { get; }
+        public static IReadOnlyList<string> FemaleNames
+        {
+            get { return _dataCache.GetOrAdd(nameof(FemaleNames), x => ReadResource(nameof(FemaleNames))); }
+        }
 
         /// <summary>
         ///     Gets a test data set of last names.
         /// </summary>
-        public static IReadOnlyList<string> LastNames { get; }
+        public static IReadOnlyList<string> LastNames
+        {
+            get { return _dataCache.GetOrAdd(nameof(LastNames), x => ReadResource(nameof(LastNames))); }
+        }
 
         /// <summary>
         ///     Gets a test data set of locations.
         /// </summary>
-        public static IReadOnlyList<Location> Locations { get; }
+        public static IReadOnlyList<Location> Locations
+        {
+            get { return _locationCache.GetOrAdd(nameof(Locations), x => ParseLocations(nameof(Locations))); }
+        }
 
         /// <summary>
         ///     Gets a test data set of male names.
         /// </summary>
-        public static IReadOnlyList<string> MaleNames { get; }
+        public static IReadOnlyList<string> MaleNames
+        {
+            get { return _dataCache.GetOrAdd(nameof(MaleNames), x => ReadResource(nameof(MaleNames))); }
+        }
 
         /// <summary>
         ///     Gets a test data set of time zones.
         /// </summary>
-        public static IReadOnlyList<string> TimeZones { get; }
+        public static IReadOnlyList<string> TimeZones
+        {
+            get { return _dataCache.GetOrAdd(nameof(TimeZones), x => ReadResource(nameof(TimeZones))); }
+        }
     }
 }

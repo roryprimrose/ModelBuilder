@@ -14,7 +14,7 @@
         /// <param name="type">The type of object to create.</param>
         /// <param name="args">The constructor arguments of the type.</param>
         /// <returns>A new instance of the specified type.</returns>
-        object? Create(Type type, params object?[]? args);
+        object Create(Type type, params object?[]? args);
 
         /// <summary>
         ///     Initializes the execute strategy with a build configuration.

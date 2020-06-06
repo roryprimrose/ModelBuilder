@@ -9,9 +9,6 @@
             throw new NotImplementedException();
         }
 
-#if NETSTANDARD2_1
-        [return: System.Diagnostics.CodeAnalysis.MaybeNull]
-#endif
         public object Create(Type type, params object?[]? args)
         {
             throw new NotImplementedException();
