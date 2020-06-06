@@ -25,23 +25,19 @@
         {
             var buildHistory = new BuildHistory();
             var expected = new SlimModel();
-            var typeCapability = new BuildCapability(GetType())
-            {
-                SupportsPopulate = false,
-                AutoDetectConstructor = false,
-                AutoPopulate = true,
-                SupportsCreate = true
-            };
-
+            
             var processor = Substitute.For<IBuildProcessor>();
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
+            var buildCapability = Substitute.For<IBuildCapability>();
+
+            buildCapability.AutoPopulate.Returns(true);
+            buildCapability.SupportsCreate.Returns(true);
+            buildCapability.ImplementedByType.Returns(typeof(DummyTypeCreator));
 
             var sut = new DefaultExecuteStrategy(buildHistory, _buildLog, processor);
 
-            processor.GetBuildCapability(buildConfiguration, buildHistory, Arg.Any<BuildRequirement>(),
-                    typeof(SlimModel))
-                .Returns(typeCapability);
-            processor.Build(sut, typeof(SlimModel), Arg.Any<object[]>()).Returns(expected);
+            processor.GetBuildCapability(sut, Arg.Any<BuildRequirement>(), typeof(SlimModel)).Returns(buildCapability);
+            buildCapability.CreateType(sut, typeof(SlimModel), Arg.Any<object[]>()).Returns(expected);
 
             sut.Initialize(buildConfiguration);
 
@@ -159,37 +155,31 @@
         public void CreateCanProvideNullParameterValueToConstructor()
         {
             var buildHistory = new BuildHistory();
-            var typeCapability = new BuildCapability(GetType())
-            {
-                SupportsPopulate = false,
-                AutoDetectConstructor = true,
-                AutoPopulate = false,
-                SupportsCreate = true
-            };
-            var valueCapability = new BuildCapability(GetType())
-            {
-                SupportsPopulate = false,
-                AutoDetectConstructor = false,
-                AutoPopulate = false,
-                SupportsCreate = true
-            };
 
             var processor = Substitute.For<IBuildProcessor>();
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
             var typeResolver = Substitute.For<ITypeResolver>();
             var constructorResolver = Substitute.For<IConstructorResolver>();
+            var typeCapability = Substitute.For<IBuildCapability>();
+            var valueCapability = Substitute.For<IBuildCapability>();
+
+            typeCapability.AutoDetectConstructor.Returns(true);
+            typeCapability.SupportsCreate.Returns(true);
+            typeCapability.ImplementedByType.Returns(typeof(DummyTypeCreator));
+            valueCapability.SupportsCreate.Returns(true);
+            valueCapability.ImplementedByType.Returns(typeof(DummyTypeCreator));
 
             var sut = new DefaultExecuteStrategy(buildHistory, _buildLog, processor);
 
-            processor.GetBuildCapability(buildConfiguration, buildHistory, Arg.Any<BuildRequirement>(),
+            processor.GetBuildCapability(sut, Arg.Any<BuildRequirement>(),
                     typeof(SimpleConstructor))
                 .Returns(typeCapability);
-            processor.GetBuildCapability(buildConfiguration, buildHistory, Arg.Any<BuildRequirement>(),
+            processor.GetBuildCapability(sut, Arg.Any<BuildRequirement>(),
                     Arg.Any<ParameterInfo>())
                 .Returns(valueCapability);
-            processor.Build(sut, typeof(SimpleConstructor), Arg.Any<object[]>())
+            typeCapability.CreateType(sut, typeof(SimpleConstructor), Arg.Any<object[]>())
                 .Returns(x => new SimpleConstructor(x.Arg<object[]>()[0].As<SlimModel?>()));
-            processor.Build(sut, Arg.Is<ParameterInfo>(x => x.Name == "model"),
+            valueCapability.CreateParameter(sut, Arg.Is<ParameterInfo>(x => x.Name == "model"),
                 Arg.Any<object[]>()).Returns(null);
             typeResolver.GetBuildType(buildConfiguration, Arg.Any<Type>()).Returns(x => x.Arg<Type>());
             buildConfiguration.TypeResolver.Returns(typeResolver);
@@ -201,7 +191,7 @@
 
             sut.Initialize(buildConfiguration);
 
-            var actual = (SimpleConstructor) sut.Create(typeof(SimpleConstructor))!;
+            var actual = (SimpleConstructor)sut.Create(typeof(SimpleConstructor))!;
 
             actual.Should().NotBeNull();
             actual.Model.Should().BeNull();
@@ -214,49 +204,44 @@
             var model = new SlimModel();
             var expected = new SimpleConstructor(model);
             var age = Environment.TickCount;
-            var typeCapability = new BuildCapability(GetType())
-            {
-                SupportsPopulate = true,
-                AutoDetectConstructor = false,
-                AutoPopulate = true,
-                SupportsCreate = true
-            };
-            var valueCapability = new BuildCapability(GetType())
-            {
-                SupportsPopulate = false,
-                AutoDetectConstructor = false,
-                AutoPopulate = false,
-                SupportsCreate = true
-            };
 
+            var typeCapability = Substitute.For<IBuildCapability>();
+            var valueCapability = Substitute.For<IBuildCapability>();
             var processor = Substitute.For<IBuildProcessor>();
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
             var propertyResolver = Substitute.For<IPropertyResolver>();
 
+            typeCapability.SupportsPopulate.Returns(true);
+            typeCapability.AutoPopulate.Returns(true);
+            typeCapability.SupportsCreate.Returns(true);
+            typeCapability.ImplementedByType.Returns(typeof(DummyTypeCreator));
+            valueCapability.SupportsCreate.Returns(true);
+            valueCapability.ImplementedByType.Returns(typeof(DummyTypeCreator));
+
             var sut = new DefaultExecuteStrategy(buildHistory, _buildLog, processor);
 
-            processor.GetBuildCapability(buildConfiguration, buildHistory, Arg.Any<BuildRequirement>(),
+            processor.GetBuildCapability(sut, Arg.Any<BuildRequirement>(),
                     typeof(SimpleConstructor))
                 .Returns(typeCapability);
-            processor.GetBuildCapability(buildConfiguration, buildHistory, Arg.Any<BuildRequirement>(),
+            processor.GetBuildCapability(sut, Arg.Any<BuildRequirement>(),
                     Arg.Any<PropertyInfo>())
                 .Returns(valueCapability);
-            processor.GetBuildCapability(buildConfiguration, buildHistory, Arg.Any<BuildRequirement>(),
+            processor.GetBuildCapability(sut, Arg.Any<BuildRequirement>(),
                     typeof(int))
                 .Returns(valueCapability);
-            processor.Build(sut, typeof(SimpleConstructor), Arg.Any<object[]>()).Returns(expected);
-            processor.Build(sut, Arg.Is<PropertyInfo>(x => x.Name == nameof(SimpleConstructor.Model)),
+            typeCapability.CreateType(sut, typeof(SimpleConstructor), Arg.Any<object[]>()).Returns(expected);
+            valueCapability.CreateProperty(sut, Arg.Is<PropertyInfo>(x => x.Name == nameof(SimpleConstructor.Model)),
                 Arg.Any<object[]>()).Returns(model);
-            processor.Build(sut, Arg.Is<PropertyInfo>(x => x.Name == nameof(SimpleConstructor.Age)),
+            valueCapability.CreateProperty(sut, Arg.Is<PropertyInfo>(x => x.Name == nameof(SimpleConstructor.Age)),
                 Arg.Any<object[]>()).Returns(age);
-            processor.Populate(sut, expected).Returns(expected);
+            typeCapability.Populate(sut, expected).Returns(expected);
             buildConfiguration.PropertyResolver.Returns(propertyResolver);
             propertyResolver.GetOrderedProperties(buildConfiguration, typeof(SimpleConstructor))
                 .Returns(typeof(SimpleConstructor).GetProperties());
 
             sut.Initialize(buildConfiguration);
 
-            var actual = (SimpleConstructor) sut.Create(typeof(SimpleConstructor), model)!;
+            var actual = (SimpleConstructor)sut.Create(typeof(SimpleConstructor), model)!;
 
             actual.Should().Be(expected);
             actual.Model.Should().Be(model);
@@ -268,36 +253,34 @@
         {
             var buildHistory = new BuildHistory();
             var expected = new SlimModel();
-            var typeCapability = new BuildCapability(GetType())
-            {
-                SupportsPopulate = false,
-                AutoDetectConstructor = false,
-                AutoPopulate = true,
-                SupportsCreate = true
-            };
 
             var processor = Substitute.For<IBuildProcessor>();
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
+            var typeCapability = Substitute.For<IBuildCapability>();
+            
+            typeCapability.AutoPopulate.Returns(true);
+            typeCapability.SupportsCreate.Returns(true);
+            typeCapability.ImplementedByType.Returns(typeof(DummyTypeCreator));
 
             var sut = new DefaultExecuteStrategy(buildHistory, _buildLog, processor);
 
-            processor.GetBuildCapability(buildConfiguration, buildHistory, Arg.Any<BuildRequirement>(),
+            processor.GetBuildCapability(sut, Arg.Any<BuildRequirement>(),
                     typeof(SlimModel))
                 .Returns(typeCapability);
-            processor.Build(sut, typeof(SlimModel), Arg.Any<object[]>()).Returns(expected);
+            typeCapability.CreateType(sut, typeof(SlimModel), Arg.Any<object[]>()).Returns(expected);
 
             sut.Initialize(buildConfiguration);
 
-            var actual = (SlimModel) sut.Create(typeof(SlimModel))!;
+            var actual = (SlimModel)sut.Create(typeof(SlimModel))!;
 
             actual.Should().Be(expected);
             actual.Value.Should().BeEmpty();
 
-            processor.DidNotReceive().Populate(sut, expected);
+            typeCapability.DidNotReceive().Populate(Arg.Any<IExecuteStrategy>(), Arg.Any<object>());
         }
 
         [Fact]
-        public void CreateDoesNotEvaluatesEmptyPostBuildActions()
+        public void CreateDoesNotEvaluateEmptyPostBuildActions()
         {
             var buildConfiguration = Model.UsingDefaultConfiguration();
 
@@ -311,7 +294,7 @@
         }
 
         [Fact]
-        public void CreateDoesNotEvaluatesNullPostBuildActions()
+        public void CreateDoesNotEvaluateNullPostBuildActions()
         {
             var defaultConfiguration = Model.UsingDefaultConfiguration();
             var configuration = Substitute.For<IBuildConfiguration>();
@@ -321,7 +304,7 @@
             configuration.CreationRules.Returns(defaultConfiguration.CreationRules);
             configuration.ExecuteOrderRules.Returns(defaultConfiguration.ExecuteOrderRules);
             configuration.IgnoreRules.Returns(defaultConfiguration.IgnoreRules);
-            configuration.PostBuildActions.Returns((ICollection<IPostBuildAction>) null!);
+            configuration.PostBuildActions.Returns((ICollection<IPostBuildAction>)null!);
             configuration.TypeCreators.Returns(defaultConfiguration.TypeCreators);
             configuration.TypeMappingRules.Returns(defaultConfiguration.TypeMappingRules);
             configuration.TypeResolver.Returns(defaultConfiguration.TypeResolver);
@@ -368,14 +351,14 @@
             firstAction.Priority.Returns(int.MaxValue);
             secondAction.IsMatch(Arg.Any<IBuildChain>(), typeof(Simple)).Returns(true);
             secondAction.Priority.Returns(int.MinValue);
-            firstAction.WhenForAnyArgs(x => x.Execute(null!, null!, (Type) null!)).Do(
+            firstAction.WhenForAnyArgs(x => x.Execute(null!, null!, (Type)null!)).Do(
                 x =>
                 {
                     executeCount++;
 
                     executeCount.Should().Be(1);
                 });
-            secondAction.WhenForAnyArgs(x => x.Execute(null!, null!, (Type) null!)).Do(
+            secondAction.WhenForAnyArgs(x => x.Execute(null!, null!, (Type)null!)).Do(
                 x =>
                 {
                     executeCount++;
@@ -455,33 +438,31 @@
         {
             var buildHistory = new BuildHistory();
             var expected = new SlimModel();
-            var typeCapability = new BuildCapability(GetType())
-            {
-                SupportsPopulate = true,
-                AutoDetectConstructor = false,
-                AutoPopulate = false,
-                SupportsCreate = true
-            };
 
             var processor = Substitute.For<IBuildProcessor>();
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
+            var typeCapability = Substitute.For<IBuildCapability>();
+
+            typeCapability.SupportsPopulate.Returns(true);
+            typeCapability.SupportsCreate.Returns(true);
+            typeCapability.ImplementedByType.Returns(typeof(DummyTypeCreator));
 
             var sut = new DefaultExecuteStrategy(buildHistory, _buildLog, processor);
 
-            processor.GetBuildCapability(buildConfiguration, buildHistory, Arg.Any<BuildRequirement>(),
+            processor.GetBuildCapability(sut, Arg.Any<BuildRequirement>(),
                     typeof(SlimModel))
                 .Returns(typeCapability);
-            processor.Build(sut, typeof(SlimModel), Arg.Any<object[]>()).Returns(expected);
-            processor.Populate(sut, expected).Returns(expected);
+            typeCapability.CreateType(sut, typeof(SlimModel), Arg.Any<object[]>()).Returns(expected);
+            typeCapability.Populate(sut, expected).Returns(expected);
 
             sut.Initialize(buildConfiguration);
 
-            var actual = (SlimModel) sut.Create(typeof(SlimModel))!;
+            var actual = (SlimModel)sut.Create(typeof(SlimModel))!;
 
             actual.Should().Be(expected);
             actual.Value.Should().BeEmpty();
 
-            processor.Received().Populate(sut, expected);
+            typeCapability.Received().Populate(sut, expected);
         }
 
         [Fact]
@@ -491,40 +472,35 @@
             var buildHistory = new BuildHistory();
             var expected = new SlimModel();
             var value = Guid.NewGuid();
-            var typeCapability = new BuildCapability(GetType())
-            {
-                SupportsPopulate = true,
-                AutoDetectConstructor = false,
-                AutoPopulate = true,
-                SupportsCreate = true
-            };
-            var valueCapability = new BuildCapability(GetType())
-            {
-                SupportsPopulate = false,
-                AutoDetectConstructor = false,
-                AutoPopulate = false,
-                SupportsCreate = true
-            };
 
             var processor = Substitute.For<IBuildProcessor>();
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
             var propertyResolver = Substitute.For<IPropertyResolver>();
+            var typeCapability = Substitute.For<IBuildCapability>();
+            var valueCapability = Substitute.For<IBuildCapability>();
+            
+            typeCapability.SupportsPopulate.Returns(true);
+            typeCapability.AutoPopulate.Returns(true);
+            typeCapability.SupportsCreate.Returns(true);
+            typeCapability.ImplementedByType.Returns(typeof(DummyTypeCreator));
+            valueCapability.SupportsCreate.Returns(true);
+            valueCapability.ImplementedByType.Returns(typeof(DummyTypeCreator));
 
             var sut = new DefaultExecuteStrategy(buildHistory, _buildLog, processor);
 
-            processor.GetBuildCapability(buildConfiguration, buildHistory, Arg.Any<BuildRequirement>(),
+            processor.GetBuildCapability(sut, Arg.Any<BuildRequirement>(),
                     typeof(SlimModel))
                 .Returns(typeCapability);
-            processor.GetBuildCapability(buildConfiguration, buildHistory, Arg.Any<BuildRequirement>(),
+            processor.GetBuildCapability(sut, Arg.Any<BuildRequirement>(),
                     Arg.Any<PropertyInfo>())
                 .Returns(valueCapability);
-            processor.GetBuildCapability(buildConfiguration, buildHistory, Arg.Any<BuildRequirement>(),
+            processor.GetBuildCapability(sut, Arg.Any<BuildRequirement>(),
                     typeof(Guid))
                 .Returns(valueCapability);
-            processor.Build(sut, typeof(SlimModel), Arg.Any<object[]>()).Returns(expected);
-            processor.Build(sut, Arg.Any<PropertyInfo>(), Arg.Any<object[]>()).Returns(value);
-            processor.When(
-                x => x.Build(
+            typeCapability.CreateType(sut, typeof(SlimModel), Arg.Any<object[]>()).Returns(expected);
+            valueCapability.CreateProperty(sut, Arg.Any<PropertyInfo>(), Arg.Any<object[]>()).Returns(value);
+            valueCapability.When(
+                x => x.CreateProperty(
                     Arg.Is<IExecuteStrategy>(y => y.BuildChain.Last == expected), Arg.Any<PropertyInfo>(),
                     Arg.Any<object[]>())).Do(
                 x =>
@@ -533,14 +509,14 @@
                     sut.BuildChain.First().Should().BeOfType<SlimModel>();
                     testPassed = true;
                 });
-            processor.Populate(sut, expected).Returns(expected);
+            typeCapability.Populate(sut, expected).Returns(expected);
             buildConfiguration.PropertyResolver.Returns(propertyResolver);
             propertyResolver.GetOrderedProperties(buildConfiguration, typeof(SlimModel))
                 .Returns(typeof(SlimModel).GetProperties());
 
             sut.Initialize(buildConfiguration);
 
-            var actual = (SlimModel) sut.Create(typeof(SlimModel))!;
+            var actual = (SlimModel)sut.Create(typeof(SlimModel))!;
 
             actual.Should().Be(expected);
             actual.Value.Should().Be(value);
@@ -563,24 +539,21 @@
                 Guid.NewGuid(),
                 Environment.TickCount
             };
-            var typeCapability = new BuildCapability(GetType())
-            {
-                SupportsPopulate = false,
-                AutoDetectConstructor = true,
-                AutoPopulate = false,
-                SupportsCreate = true
-            };
-
             var processor = Substitute.For<IBuildProcessor>();
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
             var propertyResolver = Substitute.For<IPropertyResolver>();
+            var typeCapability = Substitute.For<IBuildCapability>();
+
+            typeCapability.AutoDetectConstructor.Returns(true);
+            typeCapability.SupportsCreate.Returns(true);
+            typeCapability.ImplementedByType.Returns(typeof(DummyTypeCreator));
 
             var sut = new DefaultExecuteStrategy(buildHistory, _buildLog, processor);
 
-            processor.GetBuildCapability(buildConfiguration, buildHistory, Arg.Any<BuildRequirement>(),
+            processor.GetBuildCapability(sut, Arg.Any<BuildRequirement>(),
                     typeof(Person))
                 .Returns(typeCapability);
-            processor.Build(sut, typeof(Person), args).Returns(expected);
+            typeCapability.CreateType(sut, typeof(Person), args).Returns(expected);
             buildConfiguration.PropertyResolver.Returns(propertyResolver);
 
             sut.Initialize(buildConfiguration);
@@ -596,46 +569,41 @@
             var buildHistory = new BuildHistory();
             var expected = new SlimModel();
             var value = Guid.NewGuid();
-            var typeCapability = new BuildCapability(GetType())
-            {
-                SupportsPopulate = true,
-                AutoDetectConstructor = false,
-                AutoPopulate = true,
-                SupportsCreate = true
-            };
-            var valueCapability = new BuildCapability(GetType())
-            {
-                SupportsPopulate = false,
-                AutoDetectConstructor = false,
-                AutoPopulate = false,
-                SupportsCreate = true
-            };
-
+            
             var processor = Substitute.For<IBuildProcessor>();
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
             var propertyResolver = Substitute.For<IPropertyResolver>();
+            var typeCapability = Substitute.For<IBuildCapability>();
+            var valueCapability = Substitute.For<IBuildCapability>();
+
+            typeCapability.AutoPopulate.Returns(true);
+            typeCapability.SupportsCreate.Returns(true);
+            typeCapability.SupportsPopulate.Returns(true);
+            typeCapability.ImplementedByType.Returns(typeof(DummyTypeCreator));
+            valueCapability.SupportsCreate.Returns(true);
+            valueCapability.ImplementedByType.Returns(typeof(DummyTypeCreator));
 
             var sut = new DefaultExecuteStrategy(buildHistory, _buildLog, processor);
 
-            processor.GetBuildCapability(buildConfiguration, buildHistory, Arg.Any<BuildRequirement>(),
+            processor.GetBuildCapability(sut, Arg.Any<BuildRequirement>(),
                     typeof(SlimModel))
                 .Returns(typeCapability);
-            processor.GetBuildCapability(buildConfiguration, buildHistory, Arg.Any<BuildRequirement>(),
+            processor.GetBuildCapability(sut, Arg.Any<BuildRequirement>(),
                     Arg.Any<PropertyInfo>())
                 .Returns(valueCapability);
-            processor.GetBuildCapability(buildConfiguration, buildHistory, Arg.Any<BuildRequirement>(),
+            processor.GetBuildCapability(sut, Arg.Any<BuildRequirement>(),
                     typeof(Guid))
                 .Returns(valueCapability);
-            processor.Build(sut, typeof(SlimModel), Arg.Any<object[]>()).Returns(expected);
-            processor.Build(sut, Arg.Any<PropertyInfo>(), Arg.Any<object[]>()).Returns(value);
-            processor.Populate(sut, expected).Returns(expected);
+            typeCapability.CreateType(sut, typeof(SlimModel), Arg.Any<object[]>()).Returns(expected);
+            valueCapability.CreateProperty(sut, Arg.Any<PropertyInfo>(), Arg.Any<object[]>()).Returns(value);
+            typeCapability.Populate(sut, expected).Returns(expected);
             buildConfiguration.PropertyResolver.Returns(propertyResolver);
             propertyResolver.GetOrderedProperties(buildConfiguration, typeof(SlimModel))
                 .Returns(typeof(SlimModel).GetProperties());
 
             sut.Initialize(buildConfiguration);
 
-            var actual = (SlimModel) sut.Create(typeof(SlimModel))!;
+            var actual = (SlimModel)sut.Create(typeof(SlimModel))!;
 
             actual.Should().Be(expected);
             actual.Value.Should().Be(value);
@@ -647,43 +615,38 @@
             var value = Guid.NewGuid();
             var expected = new ReadOnlyModel(value);
             var buildHistory = new BuildHistory();
-            var typeCapability = new BuildCapability(GetType())
-            {
-                SupportsPopulate = false,
-                AutoDetectConstructor = true,
-                AutoPopulate = false,
-                SupportsCreate = true
-            };
-            var valueCapability = new BuildCapability(GetType())
-            {
-                SupportsPopulate = false,
-                AutoDetectConstructor = false,
-                AutoPopulate = false,
-                SupportsCreate = true
-            };
+
             var constructorInfo = typeof(ReadOnlyModel).GetConstructors().Single();
 
             var processor = Substitute.For<IBuildProcessor>();
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
             var constructorResolver = Substitute.For<IConstructorResolver>();
             var typeResolver = Substitute.For<ITypeResolver>();
+            var typeCapability = Substitute.For<IBuildCapability>();
+            var valueCapability = Substitute.For<IBuildCapability>();
+
+            typeCapability.AutoDetectConstructor.Returns(true);
+            typeCapability.SupportsCreate.Returns(true);
+            typeCapability.ImplementedByType.Returns(typeof(DummyTypeCreator));
+            valueCapability.SupportsCreate.Returns(true);
+            valueCapability.ImplementedByType.Returns(typeof(DummyTypeCreator));
 
             var sut = new DefaultExecuteStrategy(buildHistory, _buildLog, processor);
 
-            processor.GetBuildCapability(buildConfiguration, buildHistory, Arg.Any<BuildRequirement>(),
+            processor.GetBuildCapability(sut, Arg.Any<BuildRequirement>(),
                     typeof(ReadOnlyModel))
                 .Returns(typeCapability);
-            processor.GetBuildCapability(buildConfiguration, buildHistory, BuildRequirement.Create,
+            processor.GetBuildCapability(sut, BuildRequirement.Create,
                     Arg.Any<ParameterInfo>())
                 .Returns(valueCapability);
-            processor.GetBuildCapability(buildConfiguration, buildHistory, BuildRequirement.Populate,
+            processor.GetBuildCapability(sut, BuildRequirement.Populate,
                     typeof(Guid))
                 .Returns(valueCapability);
-            processor.Build(sut, Arg.Is<ParameterInfo>(x => x.Name == "value"),
+            valueCapability.CreateParameter(sut, Arg.Is<ParameterInfo>(x => x.Name == "value"),
                 Arg.Any<object[]>()).Returns(value);
-            processor.Build(sut, typeof(ReadOnlyModel), Arg.Is<object[]>(x => x.Length == 1 && (Guid) x[0] == value))
+            typeCapability.CreateType(sut, typeof(ReadOnlyModel), Arg.Is<object[]>(x => x.Length == 1 && (Guid)x[0] == value))
                 .Returns(expected);
-            processor.Populate(sut, expected).Returns(expected);
+            typeCapability.Populate(sut, expected).Returns(expected);
             buildConfiguration.ConstructorResolver.Returns(constructorResolver);
             buildConfiguration.TypeResolver.Returns(typeResolver);
             typeResolver.GetBuildType(buildConfiguration, Arg.Any<Type>()).Returns(x => x.Arg<Type>());
@@ -693,7 +656,7 @@
 
             sut.Initialize(buildConfiguration);
 
-            var actual = (ReadOnlyModel) sut.Create(typeof(ReadOnlyModel))!;
+            var actual = (ReadOnlyModel)sut.Create(typeof(ReadOnlyModel))!;
 
             actual.Should().Be(expected);
             actual.Value.Should().Be(value);
@@ -704,34 +667,32 @@
         {
             var buildHistory = new BuildHistory();
             var expected = new Person();
-            var typeCapability = new BuildCapability(GetType())
-            {
-                SupportsPopulate = false,
-                AutoDetectConstructor = true,
-                AutoPopulate = false,
-                SupportsCreate = true
-            };
+            
             var constructorInfo = typeof(Person).GetConstructors().Single(x => x.GetParameters().Length == 0);
 
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
             var constructorResolver = Substitute.For<IConstructorResolver>();
             var typeResolver = Substitute.For<ITypeResolver>();
             var processor = Substitute.For<IBuildProcessor>();
+            var typeCapability = Substitute.For<IBuildCapability>();
 
+            typeCapability.AutoDetectConstructor.Returns(true);
+            typeCapability.SupportsCreate.Returns(true);
+            typeCapability.ImplementedByType.Returns(typeof(DummyTypeCreator));
             buildConfiguration.ConstructorResolver.Returns(constructorResolver);
             buildConfiguration.TypeResolver.Returns(typeResolver);
             typeResolver.GetBuildType(buildConfiguration, Arg.Any<Type>()).Returns(x => x.Arg<Type>());
 
             var sut = new DefaultExecuteStrategy(buildHistory, _buildLog, processor);
 
-            processor.GetBuildCapability(buildConfiguration, buildHistory, Arg.Any<BuildRequirement>(),
+            processor.GetBuildCapability(sut, Arg.Any<BuildRequirement>(),
                     typeof(Person))
                 .Returns(typeCapability);
             constructorResolver.Resolve(typeof(Person)).Returns(constructorInfo);
             constructorResolver.GetOrderedParameters(buildConfiguration, constructorInfo)
                 .Returns(constructorInfo.GetParameters());
-            processor.Build(sut, typeof(Person), null!).Returns(expected);
-            processor.Populate(sut, expected).Returns(expected);
+            typeCapability.CreateType(sut, typeof(Person), null!).Returns(expected);
+            typeCapability.Populate(sut, expected).Returns(expected);
 
             sut.Initialize(buildConfiguration);
 
@@ -772,23 +733,22 @@
         public void CreateThrowsExceptionWhenNoCapabilityFoundForParameter()
         {
             var buildHistory = new BuildHistory();
-            var typeCapability = new BuildCapability(GetType())
-            {
-                SupportsPopulate = false,
-                AutoDetectConstructor = true,
-                AutoPopulate = false,
-                SupportsCreate = true
-            };
+
             var constructor = typeof(ReadOnlyModel).GetConstructors().Single();
 
             var processor = Substitute.For<IBuildProcessor>();
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
             var constructorResolver = Substitute.For<IConstructorResolver>();
             var typeResolver = Substitute.For<ITypeResolver>();
+            var typeCapability = Substitute.For<IBuildCapability>();
+
+            typeCapability.AutoDetectConstructor.Returns(true);
+            typeCapability.SupportsCreate.Returns(true);
+            typeCapability.ImplementedByType.Returns(typeof(DummyTypeCreator));
 
             var sut = new DefaultExecuteStrategy(buildHistory, _buildLog, processor);
 
-            processor.GetBuildCapability(buildConfiguration, buildHistory, Arg.Any<BuildRequirement>(),
+            processor.GetBuildCapability(sut, Arg.Any<BuildRequirement>(),
                     typeof(ReadOnlyModel))
                 .Returns(typeCapability);
             buildConfiguration.TypeResolver.Returns(typeResolver);
@@ -818,25 +778,24 @@
         {
             var buildHistory = new BuildHistory();
             var expected = new SlimModel();
-            var typeCapability = new BuildCapability(GetType())
-            {
-                SupportsPopulate = true,
-                AutoDetectConstructor = false,
-                AutoPopulate = true,
-                SupportsCreate = true
-            };
 
             var processor = Substitute.For<IBuildProcessor>();
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
             var propertyResolver = Substitute.For<IPropertyResolver>();
+            var typeCapability = Substitute.For<IBuildCapability>();
+
+            typeCapability.AutoPopulate.Returns(true);
+            typeCapability.SupportsCreate.Returns(true);
+            typeCapability.SupportsPopulate.Returns(true);
+            typeCapability.ImplementedByType.Returns(typeof(DummyTypeCreator));
 
             var sut = new DefaultExecuteStrategy(buildHistory, _buildLog, processor);
 
-            processor.GetBuildCapability(buildConfiguration, buildHistory, Arg.Any<BuildRequirement>(),
+            processor.GetBuildCapability(sut, Arg.Any<BuildRequirement>(),
                     typeof(SlimModel))
                 .Returns(typeCapability);
-            processor.Build(sut, typeof(SlimModel), null!).Returns(expected);
-            processor.Populate(sut, expected).Returns(expected);
+            typeCapability.CreateType(sut, typeof(SlimModel), null!).Returns(expected);
+            typeCapability.Populate(sut, expected).Returns(expected);
             buildConfiguration.PropertyResolver.Returns(propertyResolver);
             propertyResolver.GetOrderedProperties(buildConfiguration, typeof(SlimModel))
                 .Returns(typeof(SlimModel).GetProperties());
@@ -879,20 +838,18 @@
         public void CreateThrowsExceptionWhenProcessorReturnsNull()
         {
             var buildHistory = new BuildHistory();
-            var typeCapability = new BuildCapability(GetType())
-            {
-                SupportsPopulate = true,
-                AutoDetectConstructor = false,
-                AutoPopulate = false,
-                SupportsCreate = true
-            };
 
             var processor = Substitute.For<IBuildProcessor>();
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
+            var typeCapability = Substitute.For<IBuildCapability>();
+
+            typeCapability.SupportsPopulate.Returns(true);
+            typeCapability.SupportsCreate.Returns(true);
+            typeCapability.ImplementedByType.Returns(typeof(DummyTypeCreator));
 
             var sut = new DefaultExecuteStrategy(buildHistory, _buildLog, processor);
 
-            processor.GetBuildCapability(buildConfiguration, buildHistory, Arg.Any<BuildRequirement>(),
+            processor.GetBuildCapability(sut, Arg.Any<BuildRequirement>(),
                     typeof(SlimModel))
                 .Returns(typeCapability);
 
@@ -962,46 +919,41 @@
             var buildHistory = new BuildHistory();
             var model = new SlimModel();
             var expected = Guid.NewGuid();
-            var typeCapability = new BuildCapability(GetType())
-            {
-                SupportsPopulate = true,
-                AutoDetectConstructor = false,
-                AutoPopulate = true,
-                SupportsCreate = true
-            };
-            var valueCapability = new BuildCapability(GetType())
-            {
-                SupportsPopulate = false,
-                AutoDetectConstructor = false,
-                AutoPopulate = false,
-                SupportsCreate = true
-            };
 
             var processor = Substitute.For<IBuildProcessor>();
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
             var propertyResolver = Substitute.For<IPropertyResolver>();
+            var typeCapability = Substitute.For<IBuildCapability>();
+            var valueCapability = Substitute.For<IBuildCapability>();
+            
+            typeCapability.AutoPopulate.Returns(true);
+            typeCapability.SupportsCreate.Returns(true);
+            typeCapability.SupportsPopulate.Returns(true);
+            typeCapability.ImplementedByType.Returns(typeof(DummyTypeCreator));
+            valueCapability.SupportsCreate.Returns(true);
+            valueCapability.ImplementedByType.Returns(typeof(DummyTypeCreator));
 
             var sut = new DefaultExecuteStrategy(buildHistory, _buildLog, processor);
 
-            processor.GetBuildCapability(buildConfiguration, buildHistory, BuildRequirement.Populate,
+            processor.GetBuildCapability(sut, BuildRequirement.Populate,
                     typeof(SlimModel))
                 .Returns(typeCapability);
             buildConfiguration.PropertyResolver.Returns(propertyResolver);
             propertyResolver.GetOrderedProperties(buildConfiguration, typeof(SlimModel))
                 .Returns(typeof(SlimModel).GetProperties());
-            processor.GetBuildCapability(buildConfiguration, buildHistory, BuildRequirement.Create,
+            processor.GetBuildCapability(sut, BuildRequirement.Create,
                     Arg.Is<PropertyInfo>(x => x.Name == nameof(SlimModel.Value)))
                 .Returns(valueCapability);
-            processor.Build(sut, Arg.Is<PropertyInfo>(x => x.Name == nameof(SlimModel.Value)), null!)
+            valueCapability.CreateProperty(sut, Arg.Is<PropertyInfo>(x => x.Name == nameof(SlimModel.Value)), null!)
                 .Returns(expected);
-            processor.GetBuildCapability(buildConfiguration, buildHistory, BuildRequirement.Populate,
+            processor.GetBuildCapability(sut, BuildRequirement.Populate,
                     typeof(Guid))
                 .Returns(valueCapability);
-            processor.Populate(sut, model).Returns(model);
+            typeCapability.Populate(sut, model).Returns(model);
 
             sut.Initialize(buildConfiguration);
 
-            var actual = (SlimModel) sut.Populate(model);
+            var actual = (SlimModel)sut.Populate(model);
 
             actual.Value.Should().Be(expected);
         }
@@ -1011,40 +963,35 @@
         {
             var buildHistory = new BuildHistory();
             var model = new SlimModel();
-            var typeCapability = new BuildCapability(GetType())
-            {
-                SupportsPopulate = true,
-                AutoDetectConstructor = false,
-                AutoPopulate = true,
-                SupportsCreate = true
-            };
-            var valueCapability = new BuildCapability(GetType())
-            {
-                SupportsPopulate = false,
-                AutoDetectConstructor = false,
-                AutoPopulate = false,
-                SupportsCreate = true
-            };
 
             var processor = Substitute.For<IBuildProcessor>();
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
             var propertyResolver = Substitute.For<IPropertyResolver>();
+            var typeCapability = Substitute.For<IBuildCapability>();
+            var valueCapability = Substitute.For<IBuildCapability>();
+
+            typeCapability.AutoPopulate.Returns(true);
+            typeCapability.SupportsCreate.Returns(true);
+            typeCapability.SupportsPopulate.Returns(true);
+            typeCapability.ImplementedByType.Returns(typeof(DummyTypeCreator));
+            valueCapability.SupportsCreate.Returns(true);
+            valueCapability.ImplementedByType.Returns(typeof(DummyTypeCreator));
 
             var sut = new DefaultExecuteStrategy(buildHistory, _buildLog, processor);
 
-            processor.GetBuildCapability(buildConfiguration, buildHistory, BuildRequirement.Populate,
+            processor.GetBuildCapability(sut, BuildRequirement.Populate,
                     typeof(SlimModel))
                 .Returns(typeCapability);
             buildConfiguration.PropertyResolver.Returns(propertyResolver);
             propertyResolver.GetOrderedProperties(buildConfiguration, typeof(SlimModel))
                 .Returns(typeof(SlimModel).GetProperties());
-            processor.GetBuildCapability(buildConfiguration, buildHistory, BuildRequirement.Create,
+            processor.GetBuildCapability(sut, BuildRequirement.Create,
                     Arg.Is<PropertyInfo>(x => x.Name == nameof(SlimModel.Value)))
                 .Returns(valueCapability);
-            processor.GetBuildCapability(buildConfiguration, buildHistory, BuildRequirement.Populate,
+            processor.GetBuildCapability(sut, BuildRequirement.Populate,
                     typeof(Guid))
                 .Returns(valueCapability);
-            processor.Populate(sut, model).Returns(model);
+            typeCapability.Populate(sut, model).Returns(model);
             propertyResolver.IsIgnored(
                 Arg.Any<IBuildConfiguration>(),
                 Arg.Any<object>(),
@@ -1053,11 +1000,11 @@
 
             sut.Initialize(buildConfiguration);
 
-            var actual = (SlimModel) sut.Populate(model);
+            var actual = (SlimModel)sut.Populate(model);
 
             actual.Value.Should().BeEmpty();
 
-            processor.DidNotReceive().Build(sut, Arg.Is<PropertyInfo>(x => x.Name == nameof(SlimModel.Value)), null!);
+            typeCapability.DidNotReceive().CreateProperty(sut, Arg.Is<PropertyInfo>(x => x.Name == nameof(SlimModel.Value)), null!);
         }
 
         [Fact]
@@ -1119,20 +1066,18 @@
         {
             var model = new SlimModel();
             var buildHistory = new BuildHistory();
-            var typeCapability = new BuildCapability(GetType())
-            {
-                SupportsPopulate = true,
-                AutoDetectConstructor = false,
-                AutoPopulate = false,
-                SupportsCreate = true
-            };
 
             var processor = Substitute.For<IBuildProcessor>();
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
+            var typeCapability = Substitute.For<IBuildCapability>();
+
+            typeCapability.SupportsCreate.Returns(true);
+            typeCapability.SupportsPopulate.Returns(true);
+            typeCapability.ImplementedByType.Returns(typeof(DummyTypeCreator));
 
             var sut = new DefaultExecuteStrategy(buildHistory, _buildLog, processor);
 
-            processor.GetBuildCapability(buildConfiguration, buildHistory, Arg.Any<BuildRequirement>(),
+            processor.GetBuildCapability(sut, Arg.Any<BuildRequirement>(),
                     typeof(SlimModel))
                 .Returns(typeCapability);
 

@@ -5,6 +5,7 @@
     using System.Reflection;
     using FluentAssertions;
     using ModelBuilder.BuildActions;
+    using ModelBuilder.CreationRules;
     using ModelBuilder.UnitTests.Models;
     using NSubstitute;
     using Xunit;
@@ -213,6 +214,30 @@
         }
 
         [Fact]
+        public void GetBuildCapabilityForParameterReturnsCapabilityWhenBuildChainContainsMatchingType()
+        {
+            var parameterInfo = typeof(Person).GetConstructors()
+                .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
+            var buildConfiguration = new BuildConfiguration();
+            var buildChain = new BuildHistory();
+
+            buildChain.Push(Guid.NewGuid());
+            buildChain.Push(Guid.NewGuid().ToString());
+            buildChain.Push(DateTimeOffset.UtcNow);
+
+            var sut = new CircularReferenceBuildAction();
+
+            var actual = sut.GetBuildCapability(buildConfiguration, buildChain, parameterInfo)!;
+
+            actual.Should().NotBeNull();
+            actual.SupportsCreate.Should().BeTrue();
+            actual.SupportsPopulate.Should().BeFalse();
+            actual.AutoDetectConstructor.Should().BeFalse();
+            actual.AutoPopulate.Should().BeFalse();
+            actual.ImplementedByType.Should().BeAssignableTo<IBuildCapability>();
+        }
+
+        [Fact]
         public void GetBuildCapabilityForParameterReturnsNullWhenBuildChainDoesNotContainMatchingType()
         {
             var buildConfiguration = new BuildConfiguration();
@@ -245,30 +270,6 @@
         }
 
         [Fact]
-        public void GetBuildCapabilityForParameterReturnsCapabilityWhenBuildChainContainsMatchingType()
-        {
-            var parameterInfo = typeof(Person).GetConstructors()
-                .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
-            var buildConfiguration = new BuildConfiguration();
-            var buildChain = new BuildHistory();
-
-            buildChain.Push(Guid.NewGuid());
-            buildChain.Push(Guid.NewGuid().ToString());
-            buildChain.Push(DateTimeOffset.UtcNow);
-
-            var sut = new CircularReferenceBuildAction();
-
-            var actual = sut.GetBuildCapability(buildConfiguration, buildChain, parameterInfo)!;
-
-            actual.Should().NotBeNull();
-            actual.SupportsCreate.Should().BeTrue();
-            actual.SupportsPopulate.Should().BeFalse();
-            actual.AutoDetectConstructor.Should().BeFalse();
-            actual.AutoPopulate.Should().BeFalse();
-            actual.ImplementedByType.Should().Be<CircularReferenceBuildAction>();
-        }
-
-        [Fact]
         public void GetBuildCapabilityForParameterThrowsExceptionWithNullBuildChain()
         {
             var parameterInfo = typeof(Person).GetConstructors()
@@ -293,6 +294,29 @@
             Action action = () => sut.GetBuildCapability(buildConfiguration, buildChain, (ParameterInfo) null!);
 
             action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void GetBuildCapabilityForPropertyReturnsCapabilityWhenBuildChainContainsMatchingType()
+        {
+            var buildConfiguration = new BuildConfiguration();
+            var buildChain = new BuildHistory();
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
+
+            buildChain.Push(Guid.NewGuid());
+            buildChain.Push(Guid.NewGuid().ToString());
+            buildChain.Push(DateTimeOffset.UtcNow);
+
+            var sut = new CircularReferenceBuildAction();
+
+            var actual = sut.GetBuildCapability(buildConfiguration, buildChain, propertyInfo);
+
+            actual.Should().NotBeNull();
+            actual!.SupportsCreate.Should().BeTrue();
+            actual.SupportsPopulate.Should().BeFalse();
+            actual.AutoDetectConstructor.Should().BeFalse();
+            actual.AutoPopulate.Should().BeFalse();
+            actual.ImplementedByType.Should().BeAssignableTo<IBuildCapability>();
         }
 
         [Fact]
@@ -326,29 +350,6 @@
         }
 
         [Fact]
-        public void GetBuildCapabilityForPropertyReturnsCapabilityWhenBuildChainContainsMatchingType()
-        {
-            var buildConfiguration = new BuildConfiguration();
-            var buildChain = new BuildHistory();
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
-
-            buildChain.Push(Guid.NewGuid());
-            buildChain.Push(Guid.NewGuid().ToString());
-            buildChain.Push(DateTimeOffset.UtcNow);
-
-            var sut = new CircularReferenceBuildAction();
-
-            var actual = sut.GetBuildCapability(buildConfiguration, buildChain, propertyInfo);
-
-            actual.Should().NotBeNull();
-            actual!.SupportsCreate.Should().BeTrue();
-            actual.SupportsPopulate.Should().BeFalse();
-            actual.AutoDetectConstructor.Should().BeFalse();
-            actual.AutoPopulate.Should().BeFalse();
-            actual.ImplementedByType.Should().Be<CircularReferenceBuildAction>();
-        }
-
-        [Fact]
         public void GetBuildCapabilityForPropertyThrowsExceptionWithNullBuildChain()
         {
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
@@ -372,6 +373,29 @@
             Action action = () => sut.GetBuildCapability(buildConfiguration, buildChain, (PropertyInfo) null!);
 
             action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void GetBuildCapabilityForTypeReturnsCapabilityWhenBuildChainContainsMatchingType()
+        {
+            var buildConfiguration = new BuildConfiguration();
+            var buildChain = new BuildHistory();
+            var type = typeof(string);
+
+            buildChain.Push(Guid.NewGuid());
+            buildChain.Push(Guid.NewGuid().ToString());
+            buildChain.Push(DateTimeOffset.UtcNow);
+
+            var sut = new CircularReferenceBuildAction();
+
+            var actual = sut.GetBuildCapability(buildConfiguration, buildChain, type);
+
+            actual.Should().NotBeNull();
+            actual!.SupportsCreate.Should().BeTrue();
+            actual.SupportsPopulate.Should().BeFalse();
+            actual.AutoDetectConstructor.Should().BeFalse();
+            actual.AutoPopulate.Should().BeFalse();
+            actual.ImplementedByType.Should().BeAssignableTo<IBuildCapability>();
         }
 
         [Fact]
@@ -405,29 +429,6 @@
         }
 
         [Fact]
-        public void GetBuildCapabilityForTypeReturnsCapabilityWhenBuildChainContainsMatchingType()
-        {
-            var buildConfiguration = new BuildConfiguration();
-            var buildChain = new BuildHistory();
-            var type = typeof(string);
-
-            buildChain.Push(Guid.NewGuid());
-            buildChain.Push(Guid.NewGuid().ToString());
-            buildChain.Push(DateTimeOffset.UtcNow);
-
-            var sut = new CircularReferenceBuildAction();
-
-            var actual = sut.GetBuildCapability(buildConfiguration, buildChain, type);
-
-            actual.Should().NotBeNull();
-            actual!.SupportsCreate.Should().BeTrue();
-            actual.SupportsPopulate.Should().BeFalse();
-            actual.AutoDetectConstructor.Should().BeFalse();
-            actual.AutoPopulate.Should().BeFalse();
-            actual.ImplementedByType.Should().Be<CircularReferenceBuildAction>();
-        }
-
-        [Fact]
         public void GetBuildCapabilityForTypeThrowsExceptionWithNullBuildChain()
         {
             var type = typeof(string);
@@ -451,6 +452,29 @@
             Action action = () => sut.GetBuildCapability(buildConfiguration, buildChain, (Type) null!);
 
             action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void GetBuildCapabilityReturnsCapabilityWithoutPopulateSupport()
+        {
+            var value = new Person();
+            var buildConfiguration = new BuildConfiguration();
+            var buildChain = new BuildHistory();
+            var type = typeof(string);
+
+            buildChain.Push(Guid.NewGuid());
+            buildChain.Push(Guid.NewGuid().ToString());
+            buildChain.Push(DateTimeOffset.UtcNow);
+
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            var sut = new CircularReferenceBuildAction();
+
+            var actual = sut.GetBuildCapability(buildConfiguration, buildChain, type)!;
+
+            Action action = () => actual.Populate(executeStrategy, value);
+
+            action.Should().Throw<NotSupportedException>();
         }
 
         [Fact]
