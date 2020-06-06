@@ -90,7 +90,7 @@
         /// <exception cref="ArgumentNullException">The <paramref name="buildChain" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="buildConfiguration" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
-        public BuildCapability? GetBuildCapability(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
+        public IBuildCapability? GetBuildCapability(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
             Type type)
         {
             if (buildConfiguration == null)
@@ -117,7 +117,7 @@
         /// <exception cref="ArgumentNullException">The <paramref name="buildChain" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="buildConfiguration" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="parameterInfo" /> parameter is <c>null</c>.</exception>
-        public BuildCapability? GetBuildCapability(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
+        public IBuildCapability? GetBuildCapability(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
             ParameterInfo parameterInfo)
         {
             if (buildConfiguration == null)
@@ -144,7 +144,7 @@
         /// <exception cref="ArgumentNullException">The <paramref name="buildChain" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="buildConfiguration" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="propertyInfo" /> parameter is <c>null</c>.</exception>
-        public BuildCapability? GetBuildCapability(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
+        public IBuildCapability? GetBuildCapability(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
             PropertyInfo propertyInfo)
         {
             if (buildConfiguration == null)
@@ -234,7 +234,7 @@
             }
         }
 
-        private static BuildCapability? GetBuildCapability(Func<ITypeCreator, bool> canCreate,
+        private static IBuildCapability? GetBuildCapability(Func<ITypeCreator, bool> canCreate,
             Func<ITypeCreator, bool> canPopulate, IBuildConfiguration buildConfiguration)
         {
             var typeCreator = GetMatchingTypeCreator(canCreate, buildConfiguration);
@@ -244,16 +244,10 @@
                 return null;
             }
 
-            var canCreateValue = canCreate(typeCreator);
-            var canPopulateValue = canPopulate(typeCreator);
+            var supportsCreate = canCreate(typeCreator);
+            var supportsPopulate = canPopulate(typeCreator);
 
-            return new BuildCapability(typeCreator.GetType())
-            {
-                SupportsCreate = canCreateValue,
-                SupportsPopulate = canPopulateValue,
-                AutoPopulate = typeCreator.AutoPopulate,
-                AutoDetectConstructor = typeCreator.AutoDetectConstructor
-            };
+            return new BuildCapability(typeCreator, supportsCreate, supportsPopulate);
         }
 
         private static ITypeCreator? GetMatchingTypeCreator(Func<ITypeCreator, bool> canCreate,

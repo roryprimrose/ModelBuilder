@@ -41,97 +41,12 @@
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
-        public object? Build(IExecuteStrategy executeStrategy, Type type, params object?[]? arguments)
-        {
-            if (executeStrategy == null)
-            {
-                throw new ArgumentNullException(nameof(executeStrategy));
-            }
-
-            if (type == null)
-            {
-                throw new ArgumentNullException(nameof(type));
-            }
-
-            var match = GetMatch(BuildRequirement.Create, x => x.GetBuildCapability(executeStrategy.Configuration,
-                executeStrategy.BuildChain,
-                type));
-
-            if (match == null)
-            {
-                throw new NotSupportedException();
-            }
-
-            return match.Action.Build(executeStrategy, type, arguments);
-        }
-
-        /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is <c>null</c>.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="parameterInfo" /> parameter is <c>null</c>.</exception>
-        public object? Build(IExecuteStrategy executeStrategy, ParameterInfo parameterInfo, params object?[]? arguments)
-        {
-            if (executeStrategy == null)
-            {
-                throw new ArgumentNullException(nameof(executeStrategy));
-            }
-
-            if (parameterInfo == null)
-            {
-                throw new ArgumentNullException(nameof(parameterInfo));
-            }
-
-            var match = GetMatch(BuildRequirement.Create, x => x.GetBuildCapability(executeStrategy.Configuration,
-                executeStrategy.BuildChain, parameterInfo));
-
-            if (match == null)
-            {
-                throw new NotSupportedException();
-            }
-
-            return match.Action.Build(executeStrategy, parameterInfo, arguments);
-        }
-
-        /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is <c>null</c>.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="propertyInfo" /> parameter is <c>null</c>.</exception>
-        public object? Build(IExecuteStrategy executeStrategy, PropertyInfo propertyInfo, params object?[]? arguments)
-        {
-            if (executeStrategy == null)
-            {
-                throw new ArgumentNullException(nameof(executeStrategy));
-            }
-
-            if (propertyInfo == null)
-            {
-                throw new ArgumentNullException(nameof(propertyInfo));
-            }
-
-            var match = GetMatch(BuildRequirement.Create, x => x.GetBuildCapability(executeStrategy.Configuration,
-                executeStrategy.BuildChain, propertyInfo));
-
-            if (match == null)
-            {
-                throw new NotSupportedException();
-            }
-
-            return match.Action.Build(executeStrategy, propertyInfo, arguments);
-        }
-
-        /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">The <paramref name="buildConfiguration" /> parameter is <c>null</c>.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="buildChain" /> parameter is <c>null</c>.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
-        public BuildCapability? GetBuildCapability(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
+        public IBuildCapability GetBuildCapability(IExecuteStrategy executeStrategy,
             BuildRequirement buildRequirement, Type type)
         {
-            if (buildConfiguration == null)
+            if (executeStrategy == null)
             {
-                throw new ArgumentNullException(nameof(buildConfiguration));
-            }
-
-            if (buildChain == null)
-            {
-                throw new ArgumentNullException(nameof(buildChain));
+                throw new ArgumentNullException(nameof(executeStrategy));
             }
 
             if (type == null)
@@ -139,29 +54,23 @@
                 throw new ArgumentNullException(nameof(type));
             }
 
-            var match = GetMatch(buildRequirement, x => x.GetBuildCapability(buildConfiguration,
-                buildChain,
-                type));
+            var match = GetCapability(executeStrategy, buildRequirement, x => x.GetBuildCapability(
+                executeStrategy.Configuration, executeStrategy.BuildChain,
+                type), type, null);
 
-            return match?.Capability;
+            return match;
         }
 
         /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">The <paramref name="buildConfiguration" /> parameter is <c>null</c>.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="buildChain" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="parameterInfo" /> parameter is <c>null</c>.</exception>
-        public BuildCapability? GetBuildCapability(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
+        public IBuildCapability GetBuildCapability(IExecuteStrategy executeStrategy,
             BuildRequirement buildRequirement,
             ParameterInfo parameterInfo)
         {
-            if (buildConfiguration == null)
+            if (executeStrategy == null)
             {
-                throw new ArgumentNullException(nameof(buildConfiguration));
-            }
-
-            if (buildChain == null)
-            {
-                throw new ArgumentNullException(nameof(buildChain));
+                throw new ArgumentNullException(nameof(executeStrategy));
             }
 
             if (parameterInfo == null)
@@ -169,29 +78,23 @@
                 throw new ArgumentNullException(nameof(parameterInfo));
             }
 
-            var match = GetMatch(buildRequirement, x => x.GetBuildCapability(buildConfiguration,
-                buildChain,
-                parameterInfo));
+            var match = GetCapability(executeStrategy, buildRequirement, x => x.GetBuildCapability(
+                executeStrategy.Configuration, executeStrategy.BuildChain,
+                parameterInfo), parameterInfo.ParameterType, parameterInfo.Name);
 
-            return match?.Capability;
+            return match;
         }
 
         /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">The <paramref name="buildConfiguration" /> parameter is <c>null</c>.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="buildChain" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="propertyInfo" /> parameter is <c>null</c>.</exception>
-        public BuildCapability? GetBuildCapability(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
+        public IBuildCapability GetBuildCapability(IExecuteStrategy executeStrategy,
             BuildRequirement buildRequirement,
             PropertyInfo propertyInfo)
         {
-            if (buildConfiguration == null)
+            if (executeStrategy == null)
             {
-                throw new ArgumentNullException(nameof(buildConfiguration));
-            }
-
-            if (buildChain == null)
-            {
-                throw new ArgumentNullException(nameof(buildChain));
+                throw new ArgumentNullException(nameof(executeStrategy));
             }
 
             if (propertyInfo == null)
@@ -199,66 +102,36 @@
                 throw new ArgumentNullException(nameof(propertyInfo));
             }
 
-            var match = GetMatch(buildRequirement, x => x.GetBuildCapability(buildConfiguration,
-                buildChain,
-                propertyInfo));
+            var match = GetCapability(executeStrategy, buildRequirement, x => x.GetBuildCapability(
+                executeStrategy.Configuration, executeStrategy.BuildChain,
+                propertyInfo), propertyInfo.PropertyType, propertyInfo.Name);
 
-            return match?.Capability;
+            return match;
         }
 
-        /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is <c>null</c>.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="instance" /> parameter is <c>null</c>.</exception>
-        public object Populate(IExecuteStrategy executeStrategy, object instance)
-        {
-            if (executeStrategy == null)
-            {
-                throw new ArgumentNullException(nameof(executeStrategy));
-            }
-
-            if (instance == null)
-            {
-                throw new ArgumentNullException(nameof(instance));
-            }
-
-            var match = GetMatch(BuildRequirement.Populate, x => x.GetBuildCapability(executeStrategy.Configuration,
-                executeStrategy.BuildChain, instance.GetType()));
-
-            if (match == null)
-            {
-                throw new NotSupportedException();
-            }
-
-            return match.Action.Populate(executeStrategy, instance);
-        }
-
-        private Match? GetMatch(BuildRequirement buildRequirement, Func<IBuildAction, BuildCapability?> evaluator)
+        private IBuildCapability GetCapability(IExecuteStrategy executeStrategy, BuildRequirement buildRequirement,
+            Func<IBuildAction, IBuildCapability?> evaluator, Type targetType, string? referenceName)
         {
             var capabilities = from x in _actions
                 orderby x.Priority descending
-                select new Match(x)
-                {
-                    Capability = evaluator(x)
-                };
+                select evaluator(x);
 
             var matches = from x in capabilities
-                where x.Capability != null
-                      && (x.Capability.SupportsCreate && buildRequirement == BuildRequirement.Create
-                          || x.Capability.SupportsPopulate && buildRequirement == BuildRequirement.Populate)
+                where x != null
+                      && (x.SupportsCreate && buildRequirement == BuildRequirement.Create
+                          || x.SupportsPopulate && buildRequirement == BuildRequirement.Populate)
                 select x;
 
-            return matches.FirstOrDefault();
-        }
+            var capability = matches.FirstOrDefault();
 
-        private class Match
-        {
-            public Match(IBuildAction action)
+            if (capability == null)
             {
-                Action = action;
+                var message = $"Failed to identify build capabilities for {targetType.FullName}.";
+
+                throw new BuildException(message, targetType, referenceName, null, executeStrategy.Log.Output);
             }
 
-            public IBuildAction Action { get; }
-            public BuildCapability? Capability { get; set; }
+            return capability;
         }
     }
 }

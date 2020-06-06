@@ -78,13 +78,8 @@
 
             try
             {
-                var capability = _buildProcessor.GetBuildCapability(Configuration, _buildHistory, BuildRequirement.Populate,
+                var capability = _buildProcessor.GetBuildCapability(this, BuildRequirement.Populate,
                     instance.GetType());
-
-                if (capability == null)
-                {
-                    return instance;
-                }
 
                 var populatedInstance = Populate(capability, instance);
 
@@ -125,11 +120,11 @@
 
             try
             {
-                BuildCapability? GetCapability() => _buildProcessor.GetBuildCapability(Configuration, BuildChain, BuildRequirement.Create, type);
+                IBuildCapability GetCapability() => _buildProcessor.GetBuildCapability(this, BuildRequirement.Create, type);
 
                 var instance = Build(
                     GetCapability,
-                    items => _buildProcessor.Build(this, type, items), type, null, args)!;
+                    (capability, items) => capability.CreateType(this, type, items), type, args)!;
 
                 if (instance == null)
                 {
@@ -154,7 +149,7 @@
                 var message = string.Format(CultureInfo.CurrentCulture, "Failed to create instance of type '{0}'",
                     type.FullName);
 
-                throw new BuildException(message, ex);
+                throw new BuildException(message, type, null, BuildChain.Last, Log.Output, ex);
             }
         }
 
@@ -171,10 +166,9 @@
             }
 
             var instance = Build(
-                () => _buildProcessor.GetBuildCapability(Configuration, BuildChain, BuildRequirement.Create,
+                () => _buildProcessor.GetBuildCapability(this, BuildRequirement.Create,
                     parameterInfo),
-                items => _buildProcessor.Build(this, parameterInfo, items), parameterInfo.ParameterType,
-                parameterInfo.Name, null);
+                (capability, items) => capability.CreateParameter(this, parameterInfo, items), parameterInfo.ParameterType, null);
 
             if (instance == null)
             {
@@ -200,9 +194,9 @@
             }
 
             var instance = Build(
-                () => _buildProcessor.GetBuildCapability(Configuration, BuildChain, BuildRequirement.Create,
+                () => _buildProcessor.GetBuildCapability(this, BuildRequirement.Create,
                     propertyInfo),
-                items => _buildProcessor.Build(this, propertyInfo, items), propertyInfo.PropertyType, propertyInfo.Name,
+                (capability, items) => capability.CreateProperty(this, propertyInfo, items), propertyInfo.PropertyType,
                 args);
 
             if (instance == null)
@@ -258,13 +252,10 @@
                 return;
             }
 
-            var capability = _buildProcessor.GetBuildCapability(Configuration, _buildHistory, BuildRequirement.Populate,
+            var capability = _buildProcessor.GetBuildCapability(this, BuildRequirement.Populate,
                 existingValue.GetType());
 
-            if (capability != null)
-            {
-                Populate(capability, existingValue, args);
-            }
+            Populate(capability, existingValue, args);
 
             // This object was never created here but was populated
             // Run post build actions against it so that they can be applied against this existing instance
@@ -291,17 +282,9 @@
             }
         }
 
-        private object? Build(Func<BuildCapability?> getCapability, Func<object?[]?, object?> buildInstance, Type type,
-            string? referenceName, params object?[]? args)
+        private object? Build(Func<IBuildCapability> getCapability, Func<IBuildCapability, object?[]?, object?> buildInstance, Type type, params object?[]? args)
         {
             var capability = getCapability();
-
-            if (capability == null)
-            {
-                var message = $"Failed to identify build capabilities for {type.FullName}.";
-
-                throw new BuildException(message, type, referenceName, null, Log.Output);
-            }
 
             var context = _buildHistory.Last;
 
@@ -314,18 +297,18 @@
                 if (args?.Length > 0)
                 {
                     // We have arguments so will just let the type creator do the work here
-                    instance = buildInstance(args);
+                    instance = buildInstance(capability, args);
                 }
                 else if (capability.AutoDetectConstructor)
                 {
                     var parameters = CreateParameterValues(type);
 
-                    instance = buildInstance(parameters);
+                    instance = buildInstance(capability, parameters);
                 }
                 else
                 {
                     // The type creator is going to be solely responsible for creating this instance
-                    instance = buildInstance(null);
+                    instance = buildInstance(capability, null);
                 }
 
                 if (instance == null)
@@ -341,7 +324,7 @@
                     // where the build action didn't support populating the original type
                     // It has however created a different type that may support population
                     // The example here is IEnumerable<T> which may be built as something like List<T>
-                    capability = _buildProcessor.GetBuildCapability(Configuration, _buildHistory,
+                    capability = _buildProcessor.GetBuildCapability(this,
                         BuildRequirement.Create,
                         instance.GetType());
                 }
@@ -426,7 +409,7 @@
             return parameters;
         }
 
-        private object Populate(BuildCapability capability, object instance, params object?[]? args)
+        private object Populate(IBuildCapability capability, object instance, params object?[]? args)
         {
             if (capability.SupportsPopulate == false)
             {
@@ -445,7 +428,7 @@
                 }
 
                 // Allow the type creator to do its own population of the instance
-                return _buildProcessor.Populate(this, instance);
+                return capability.Populate(this, instance);
             }
             finally
             {
