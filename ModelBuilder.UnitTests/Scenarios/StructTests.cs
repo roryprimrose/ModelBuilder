@@ -7,15 +7,23 @@
     using ModelBuilder.UnitTests.Models;
     using ModelBuilder.ValueGenerators;
     using Xunit;
+    using Xunit.Abstractions;
 
     public class StructTests
     {
+        private readonly ITestOutputHelper _output;
+
+        public StructTests(ITestOutputHelper output)
+        {
+            _output = output;
+        }
+
         [Fact]
         [SuppressMessage("Globalization", "CA1308:Normalize strings to uppercase",
             Justification = "Email addresses are lowercase")]
         public void CanCreateStructProperty()
         {
-            var actual = Model.Create<StructParent>()!;
+            var actual = Model.WriteLog<StructParent>(_output.WriteLine).Create();
 
             actual.Child.Id.Should().NotBeEmpty();
             actual.Child.FirstName.Should().NotBeNullOrWhiteSpace();
@@ -33,7 +41,7 @@
             Justification = "Email addresses are lowercase")]
         public void CanCreateStructThatHasNoConstructor()
         {
-            var actual = Model.Create<StructModel>();
+            var actual = Model.WriteLog<StructModel>(_output.WriteLine).Create();
 
             actual.Id.Should().NotBeEmpty();
             actual.FirstName.Should().NotBeNullOrWhiteSpace();
@@ -52,9 +60,9 @@
         public void CanCreateStructWithConstructor()
         {
             var key = Guid.NewGuid();
-            var value = Model.Create<Person>();
+            var value = Model.WriteLog<Person>(_output.WriteLine).Create();
 
-            var actual = Model.Create<KeyValuePair<Guid, Person>>(key, value);
+            var actual = Model.WriteLog<KeyValuePair<Guid, Person>>(_output.WriteLine).Create(key, value);
 
             actual.Key.Should().Be(key);
             actual.Value.Should().Be(value);
@@ -65,7 +73,7 @@
             Justification = "Email addresses are lowercase")]
         public void CanCreateStructWithConstructorParameters()
         {
-            var actual = Model.Create<KeyValuePair<Guid, Person>>();
+            var actual = Model.WriteLog<KeyValuePair<Guid, Person>>(_output.WriteLine).Create();
 
             actual.Key.Should().NotBeEmpty();
             actual.Value.FirstName.Should().NotBeNullOrWhiteSpace();
@@ -85,7 +93,7 @@
         {
             var model = new StructModel();
 
-            var actual = Model.Populate(model);
+            var actual = Model.WriteLog<StructModel>(_output.WriteLine).Populate(model);
 
             actual.Id.Should().NotBeEmpty();
             actual.FirstName.Should().NotBeNullOrWhiteSpace();

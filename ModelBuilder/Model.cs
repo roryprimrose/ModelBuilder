@@ -88,8 +88,8 @@
         /// <returns>The new build configuration.</returns>
         public static IBuildConfiguration UsingDefaultConfiguration()
         {
-			var configuration = new BuildConfiguration();
-			
+            var configuration = new BuildConfiguration();
+
             return configuration.UsingModule<DefaultConfigurationModule>();
         }
 
@@ -111,6 +111,40 @@
         public static IBuildConfiguration UsingModule<T>() where T : IConfigurationModule, new()
         {
             return UsingDefaultConfiguration().UsingModule<T>();
+        }
+
+        /// <summary>
+        ///     Writes the log entry using the specified action after the execute strategy is invoked.
+        /// </summary>
+        /// <typeparam name="T">The type of instance to create and populate.</typeparam>
+        /// <param name="action">The logging action to call.</param>
+        /// <returns>The execute strategy to invoke.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="action" /> parameter is <c>null</c>.</exception>
+        public static IExecuteStrategy<T> WriteLog<T>(Action<string> action)
+            where T : notnull
+        {
+            if (action == null)
+            {
+                throw new ArgumentNullException(nameof(action));
+            }
+
+            return ResolveDefault<T>().WriteLog(action);
+        }
+
+        /// <summary>
+        ///     Writes the log entry using the specified action after the execute strategy is invoked.
+        /// </summary>
+        /// <param name="action">The logging action to call.</param>
+        /// <returns>The execute strategy to invoke.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="action" /> parameter is <c>null</c>.</exception>
+        public static IExecuteStrategy WriteLog(Action<string> action)
+        {
+            if (action == null)
+            {
+                throw new ArgumentNullException(nameof(action));
+            }
+
+            return ResolveDefault().WriteLog(action);
         }
 
         private static IExecuteStrategy ResolveDefault()

@@ -31,6 +31,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="BuildConfigurationExtensionsTests.*.cs">
+      <DependentUpon>BuildConfigurationExtensionsTests.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\ModelBuilder\ModelBuilder.csproj" />
   </ItemGroup>
 

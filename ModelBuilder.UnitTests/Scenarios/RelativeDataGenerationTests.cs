@@ -6,15 +6,23 @@
     using ModelBuilder.UnitTests.Models;
     using ModelBuilder.ValueGenerators;
     using Xunit;
+    using Xunit.Abstractions;
 
     public class RelativeDataGenerationTests
     {
+        private readonly ITestOutputHelper _output;
+
+        public RelativeDataGenerationTests(ITestOutputHelper output)
+        {
+            _output = output;
+        }
+
         [Fact]
         [SuppressMessage("Globalization", "CA1308:Normalize strings to uppercase",
             Justification = "Emails are lower-case by convention")]
         public void AssignsPropertyValuesRelativeToOtherPropertyValues()
         {
-            var actual = Model.Create<Person>()!;
+            var actual = Model.WriteLog<Person>(_output.WriteLine).Create();
 
             var firstName = EmailValueGenerator.SpecialCharacters.Replace(actual.FirstName, string.Empty);
             var lastName = EmailValueGenerator.SpecialCharacters.Replace(actual.LastName, string.Empty);
@@ -30,7 +38,7 @@
             Justification = "Emails are lower-case by convention")]
         public void CreatesParameterValuesRelativeToOtherParameterValues()
         {
-            var actual = Model.Create<OrderedConstructorParameters>()!;
+            var actual = Model.WriteLog<OrderedConstructorParameters>(_output.WriteLine).Create();
 
             if (actual.Gender == Gender.Female)
             {
