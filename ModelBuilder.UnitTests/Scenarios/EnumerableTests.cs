@@ -9,9 +9,17 @@
     using ModelBuilder.TypeCreators;
     using ModelBuilder.UnitTests.Models;
     using Xunit;
+    using Xunit.Abstractions;
 
     public class EnumerableTests
     {
+        private readonly ITestOutputHelper _output;
+
+        public EnumerableTests(ITestOutputHelper output)
+        {
+            _output = output;
+        }
+
         [Theory]
         [InlineData(typeof(IEnumerable<string>))]
         [InlineData(typeof(ICollection<string>))]
@@ -33,7 +41,7 @@
         [InlineData(typeof(Dictionary<string, Person>))]
         public void CanCreateEnumerableTypes(Type type)
         {
-            var actual = Model.Create(type);
+            var actual = Model.WriteLog(_output.WriteLine).Create(type);
 
             actual.As<IEnumerable>().Should().NotBeEmpty();
         }
@@ -41,7 +49,7 @@
         [Fact]
         public void CanCreateInstanceWithEnumerableProperty()
         {
-            var actual = Model.Create<Company>()!;
+            var actual = Model.WriteLog<Company>(_output.WriteLine).Create();
 
             actual.Address.Should().NotBeNullOrWhiteSpace();
             actual.Name.Should().NotBeNullOrWhiteSpace();
@@ -51,7 +59,7 @@
         [Fact]
         public void CanCreateInstanceWithEnumerablePropertyTypes()
         {
-            var actual = Model.Create<EnumerableParent>()!;
+            var actual = Model.WriteLog<EnumerableParent>(_output.WriteLine).Create();
 
             actual.Collection.Should().NotBeEmpty();
             actual.Enumerable.Should().NotBeEmpty();
@@ -63,7 +71,7 @@
         [Fact]
         public void CanGenerateArrayOfCustomType()
         {
-            var actual = Model.Create<Person[]>()!;
+            var actual = Model.WriteLog<Person[]>(_output.WriteLine).Create();
 
             actual.Length.Should().BeGreaterThan(0);
         }
@@ -71,7 +79,7 @@
         [Fact]
         public void CanGenerateByteArray()
         {
-            var actual = Model.Create<byte[]>()!;
+            var actual = Model.WriteLog<byte[]>(_output.WriteLine).Create();
 
             actual.Length.Should().BeGreaterThan(0);
         }
@@ -81,7 +89,8 @@
         {
             var actual = Model.UsingDefaultConfiguration()
                 .UpdateTypeCreator<EnumerableTypeCreator>(x => x.MinCount = x.MaxCount = 10)
-                .Create<ICollection<Person>>()!;
+                .WriteLog<ICollection<Person>>(_output.WriteLine)
+                .Create();
 
             actual.Count.Should().BeGreaterOrEqualTo(10);
             actual.Count.Should().BeLessOrEqualTo(30);
@@ -91,7 +100,7 @@
         [Fact]
         public void CreateReadOnlyCollectionWithItemCountBetweenMinAndMax()
         {
-            var actual = Model.Create<ReadOnlyCollection<int>>()!;
+            var actual = Model.WriteLog<ReadOnlyCollection<int>>(_output.WriteLine).Create();
 
             actual.Count.Should().BeGreaterOrEqualTo(10);
             actual.Count.Should().BeLessOrEqualTo(30);
@@ -101,7 +110,7 @@
         [Fact]
         public void CreateReturnsCollectionWithItemCountBetweenMinAndMax()
         {
-            var actual = Model.Create<ICollection<int>>()!;
+            var actual = Model.WriteLog<ICollection<int>>(_output.WriteLine).Create();
 
             actual.Count.Should().BeGreaterOrEqualTo(10);
             actual.Count.Should().BeLessOrEqualTo(30);
@@ -111,7 +120,7 @@
         [Fact]
         public void CreateReturnsCompanyWithEnumerableTypeCreatorUsage()
         {
-            var actual = Model.Create<Company>()!;
+            var actual = Model.WriteLog<Company>(_output.WriteLine).Create();
 
             actual.Should().NotBeNull();
             actual.Name.Should().NotBeNullOrWhiteSpace();
@@ -121,7 +130,7 @@
         [Fact]
         public void CreateReturnsEnumerableWithItemCountBetweenMinAndMax()
         {
-            var actual = Model.Create<IEnumerable<int>>().ToList();
+            var actual = Model.WriteLog<IEnumerable<int>>(_output.WriteLine).Create().ToList();
 
             actual.Count.Should().BeGreaterOrEqualTo(10);
             actual.Count.Should().BeLessOrEqualTo(30);
@@ -131,7 +140,7 @@
         [Fact]
         public void CreateReturnsListWithItemCountBetweenMinAndMax()
         {
-            var actual = Model.Create<IList<int>>()!;
+            var actual = Model.WriteLog<IList<int>>(_output.WriteLine).Create();
 
             actual.Count.Should().BeGreaterOrEqualTo(10);
             actual.Count.Should().BeLessOrEqualTo(30);

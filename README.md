@@ -8,6 +8,7 @@ A library for easy generation of model classes
 - [Creating a model](#creating-a-model)
   * [Constructor parameter matching](#constructor-parameter-matching)
 - [Populating a model](#populating-a-model)
+- [Logging the build process](#logging-the-build-process)
 - [Changing the model after creation](#changing-the-model-after-creation)
 - [Customizing the process](#customizing-the-process)
   * [IBuildConfiguration](#ibuildconfiguration)
@@ -78,6 +79,57 @@ var customer = new Person();
 var customerModel = Model.Populate(customer);
 ```
 
+## Logging the build process
+
+ModelBuilder writes log messages while building values. The easiest way to output a build log is to use the `WriteLog` extension method.
+
+This would look like the following when using xUnit.
+
+```
+public class WriteLogTests
+{
+    private readonly ITestOutputHelper _output;
+
+    public WriteLogTests(ITestOutputHelper output)
+    {
+        _output = output;
+    }
+
+    [Fact]
+    public void WriteLogRendersLogFromModel()
+    {
+        var actual = Model.WriteLog<Names>(_output.WriteLine).Create();
+
+        actual.Should().NotBeNull();
+    }
+}
+```
+
+This test then outputs the generated build log to the xUnit test output.
+
+```
+Start creating type ModelBuilder.UnitTests.Models.Names using ModelBuilder.TypeCreators.DefaultTypeCreator
+    Start populating instance ModelBuilder.UnitTests.Models.Names
+        Creating property Gender (ModelBuilder.UnitTests.Models.Gender) on type ModelBuilder.UnitTests.Models.Names
+            Start creating type ModelBuilder.UnitTests.Models.Gender using ModelBuilder.ValueGenerators.EnumValueGenerator
+            End creating type ModelBuilder.UnitTests.Models.Gender
+        Created property Gender (ModelBuilder.UnitTests.Models.Gender) on type ModelBuilder.UnitTests.Models.Names
+        Creating property FirstName (System.String) on type ModelBuilder.UnitTests.Models.Names
+            Start creating type System.String using ModelBuilder.ValueGenerators.FirstNameValueGenerator
+            End creating type System.String
+        Created property FirstName (System.String) on type ModelBuilder.UnitTests.Models.Names
+        Creating property MiddleName (System.String) on type ModelBuilder.UnitTests.Models.Names
+            Start creating type System.String using ModelBuilder.ValueGenerators.MiddleNameValueGenerator
+            End creating type System.String
+        Created property MiddleName (System.String) on type ModelBuilder.UnitTests.Models.Names
+        Creating property LastName (System.String) on type ModelBuilder.UnitTests.Models.Names
+            Start creating type System.String using ModelBuilder.ValueGenerators.LastNameValueGenerator
+            End creating type System.String
+        Created property LastName (System.String) on type ModelBuilder.UnitTests.Models.Names
+    End populating instance ModelBuilder.UnitTests.Models.Names
+End creating type ModelBuilder.UnitTests.Models.Names
+```
+
 ## Changing the model after creation
 
 Sometimes you need to tweak a model after it has been created. This can be done easily using the `Set` extension method on any object.
@@ -124,6 +176,8 @@ The extensibility points defined in `IBuildConfiguration` that control how to cr
 - TypeMappingRule
 - ITypeResolver
 - IValueGenerator
+
+One way to debug how custom extensibility types get resolved is to [output the build log](#logging-the-build-process).
 
 ### IBuildConfiguration
 

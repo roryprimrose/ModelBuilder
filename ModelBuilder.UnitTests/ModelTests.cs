@@ -98,7 +98,7 @@
             var configuration = Model.Mapping<ITestItem, TestItem>();
             var executeStrategy = configuration.UsingExecuteStrategy<DefaultExecuteStrategy<ITestItem>>();
 
-            var actual = executeStrategy.Create()!;
+            var actual = executeStrategy.Create();
 
             _output.WriteLine(executeStrategy.Log.Output);
 
@@ -197,6 +197,40 @@
             var actual = Model.UsingModule<TestConfigurationModule>();
 
             actual.ValueGenerators.FirstOrDefault(x => x.GetType() == typeof(DummyValueGenerator)).Should().NotBeNull();
+        }
+
+        [Fact]
+        public void WriteLogReturnsExecuteStrategyWithLogging()
+        {
+            var actual = Model.WriteLog(_output.WriteLine);
+
+            actual.Should().BeAssignableTo<IExecuteStrategy>();
+            actual.Should().NotBeOfType<DefaultExecuteStrategy>();
+        }
+
+        [Fact]
+        public void WriteLogThrowsExceptionWithNullAction()
+        {
+            Action action = () => Model.WriteLog(null!);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void WriteLogTReturnsExecuteStrategyWithLogging()
+        {
+            var actual = Model.WriteLog<Person>(_output.WriteLine);
+
+            actual.Should().BeAssignableTo<IExecuteStrategy<Person>>();
+            actual.Should().NotBeOfType<DefaultExecuteStrategy<Person>>();
+        }
+
+        [Fact]
+        public void WriteLogTThrowsExceptionWithNullAction()
+        {
+            Action action = () => Model.WriteLog<Person>(null!);
+
+            action.Should().Throw<ArgumentNullException>();
         }
     }
 }

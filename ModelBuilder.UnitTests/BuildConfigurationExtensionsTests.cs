@@ -8,9 +8,17 @@
     using ModelBuilder.ValueGenerators;
     using NSubstitute;
     using Xunit;
+    using Xunit.Abstractions;
 
     public partial class BuildConfigurationExtensionsTests
     {
+        private ITestOutputHelper _output;
+
+        public BuildConfigurationExtensionsTests(ITestOutputHelper output)
+        {
+            _output = output;
+        }
+
         [Fact]
         public void AddConfigurationModuleAddsRuleToConfiguration()
         {

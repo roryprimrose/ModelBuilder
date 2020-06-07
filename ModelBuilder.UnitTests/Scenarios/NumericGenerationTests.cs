@@ -5,13 +5,21 @@
     using ModelBuilder.UnitTests.Models;
     using ModelBuilder.ValueGenerators;
     using Xunit;
+    using Xunit.Abstractions;
 
     public class NumericGenerationTests
     {
+        private readonly ITestOutputHelper _output;
+
+        public NumericGenerationTests(ITestOutputHelper output)
+        {
+            _output = output;
+        }
+
         [Fact]
         public void CanCreateAllNumberTypes()
         {
-            var actual = Model.Create<Numbers>()!;
+            var actual = Model.WriteLog<Numbers>(_output.WriteLine).Create();
 
             actual.First.Should().NotBe(0);
             actual.Second.Should().NotBe(0);
@@ -29,9 +37,9 @@
         public void CanCreateNumericParameters()
         {
             var config = BuildConfigurationFactory.CreateEmpty().AddTypeCreator<DefaultTypeCreator>()
-                .AddValueGenerator<NumericValueGenerator>();
+                .AddValueGenerator<NumericValueGenerator>().WriteLog<NumericParameterModel>(_output.WriteLine);
 
-            var actual = config.Create<NumericParameterModel>();
+            var actual = config.Create();
 
             actual.Should().NotBeNull();
         }
@@ -40,9 +48,9 @@
         public void CanCreateNumericProperties()
         {
             var config = BuildConfigurationFactory.CreateEmpty().AddTypeCreator<DefaultTypeCreator>()
-                .AddValueGenerator<NumericValueGenerator>();
+                .AddValueGenerator<NumericValueGenerator>().WriteLog<NumericPropertyModel>(_output.WriteLine);
 
-            var actual = config.Create<NumericPropertyModel>();
+            var actual = config.Create();
 
             actual.Should().NotBeNull();
         }
