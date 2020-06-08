@@ -24,6 +24,14 @@
         }
 
         [Fact]
+        public void CreateReturnsTypeThatDefinesCopyConstructor()
+        {
+            var actual = Model.WriteLog<Other>(_output.WriteLine).Create();
+
+            actual.Should().NotBeNull();
+        }
+
+        [Fact]
         public void DoesNotSetInstanceParameterAssignedToProperty()
         {
             var company = Model.Create<Company>()!;

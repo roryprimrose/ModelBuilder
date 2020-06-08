@@ -54,6 +54,7 @@
 
         private static void AddTypeCreators(IBuildConfiguration configuration)
         {
+            configuration.AddTypeCreator<FactoryTypeCreator>();
             configuration.AddTypeCreator<ArrayTypeCreator>();
             configuration.AddTypeCreator<EnumerableTypeCreator>();
             configuration.AddTypeCreator<StructTypeCreator>();
