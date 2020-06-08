@@ -24,6 +24,7 @@ A library for easy generation of model classes
   * [TypeMappingRule](#typemappingrule)
   * [ITypeResolver](#ityperesolver)
   * [IValueGenerator](#ivaluegenerator)
+- [Supporters](#supporters)
 - [Upgrading to 6.0.0](#upgrading-to-600)
 
 ## Creating a model
@@ -509,6 +510,10 @@ An `IValueGenerator` typically creates values that do not require constructor pa
 Value generators create values either using random data (string, guid, numbers etc) or use embedded resource data for entity type properties (names, addresses etc) to provide pseudo-random values that are appropriate for their purpose. 
 
 Some generators also use relative data on the object being created to determine more appropriate values to generate. For example, a Gender parameter or property will restrict the value created for FirstName which will then be used to populate EmailAddress.
+
+## Supporters
+
+This project is supported by [JetBrains](https://www.jetbrains.com/?from=ModelBuilder)
 
 ## Upgrading to 6.0.0
 

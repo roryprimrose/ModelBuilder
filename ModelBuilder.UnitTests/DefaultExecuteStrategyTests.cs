@@ -1,7 +1,6 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
-    using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
     using FluentAssertions;
@@ -160,6 +159,7 @@
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
             var typeResolver = Substitute.For<ITypeResolver>();
             var constructorResolver = Substitute.For<IConstructorResolver>();
+            var parameterResolver = Substitute.For<IParameterResolver>();
             var typeCapability = Substitute.For<IBuildCapability>();
             var valueCapability = Substitute.For<IBuildCapability>();
 
@@ -184,10 +184,11 @@
             typeResolver.GetBuildType(buildConfiguration, Arg.Any<Type>()).Returns(x => x.Arg<Type>());
             buildConfiguration.TypeResolver.Returns(typeResolver);
             constructorResolver.Resolve(Arg.Any<Type>()).Returns(x => x.Arg<Type>().GetConstructors().First());
-            constructorResolver
+            parameterResolver
                 .GetOrderedParameters(buildConfiguration, typeof(SimpleConstructor).GetConstructors().First())
                 .Returns(typeof(SimpleConstructor).GetConstructors().First().GetParameters());
             buildConfiguration.ConstructorResolver.Returns(constructorResolver);
+            buildConfiguration.ParameterResolver.Returns(parameterResolver);
 
             sut.Initialize(buildConfiguration);
 
@@ -297,22 +298,10 @@
         public void CreateDoesNotEvaluateNullPostBuildActions()
         {
             var defaultConfiguration = Model.UsingDefaultConfiguration();
-            var configuration = Substitute.For<IBuildConfiguration>();
-
-            configuration.PropertyResolver.Returns(defaultConfiguration.PropertyResolver);
-            configuration.ConstructorResolver.Returns(defaultConfiguration.ConstructorResolver);
-            configuration.CreationRules.Returns(defaultConfiguration.CreationRules);
-            configuration.ExecuteOrderRules.Returns(defaultConfiguration.ExecuteOrderRules);
-            configuration.IgnoreRules.Returns(defaultConfiguration.IgnoreRules);
-            configuration.PostBuildActions.Returns((ICollection<IPostBuildAction>)null!);
-            configuration.TypeCreators.Returns(defaultConfiguration.TypeCreators);
-            configuration.TypeMappingRules.Returns(defaultConfiguration.TypeMappingRules);
-            configuration.TypeResolver.Returns(defaultConfiguration.TypeResolver);
-            configuration.ValueGenerators.Returns(defaultConfiguration.ValueGenerators);
 
             var sut = new DefaultExecuteStrategy();
 
-            sut.Initialize(configuration);
+            sut.Initialize(defaultConfiguration);
 
             var actual = sut.Create(typeof(SimpleConstructor));
 
@@ -621,6 +610,7 @@
             var processor = Substitute.For<IBuildProcessor>();
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
             var constructorResolver = Substitute.For<IConstructorResolver>();
+            var parameterResolver = Substitute.For<IParameterResolver>();
             var typeResolver = Substitute.For<ITypeResolver>();
             var typeCapability = Substitute.For<IBuildCapability>();
             var valueCapability = Substitute.For<IBuildCapability>();
@@ -648,10 +638,11 @@
                 .Returns(expected);
             typeCapability.Populate(sut, expected).Returns(expected);
             buildConfiguration.ConstructorResolver.Returns(constructorResolver);
+            buildConfiguration.ParameterResolver.Returns(parameterResolver);
             buildConfiguration.TypeResolver.Returns(typeResolver);
             typeResolver.GetBuildType(buildConfiguration, Arg.Any<Type>()).Returns(x => x.Arg<Type>());
             constructorResolver.Resolve(typeof(ReadOnlyModel)).Returns(constructorInfo);
-            constructorResolver.GetOrderedParameters(buildConfiguration, constructorInfo)
+            parameterResolver.GetOrderedParameters(buildConfiguration, constructorInfo)
                 .Returns(constructorInfo.GetParameters());
 
             sut.Initialize(buildConfiguration);
@@ -663,7 +654,7 @@
         }
 
         [Fact]
-        public void CreateReturnsValueWithNoArgumentsAndDetectConstructorEnabledCreatedUsingEmptyConstructor()
+        public void CreateReturnsValueWithNoArgumentsAndDetectConstructorEnabledCreatedUsingDefaultConstructor()
         {
             var buildHistory = new BuildHistory();
             var expected = new Person();
@@ -672,6 +663,7 @@
 
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
             var constructorResolver = Substitute.For<IConstructorResolver>();
+            var parameterResolver = Substitute.For<IParameterResolver>();
             var typeResolver = Substitute.For<ITypeResolver>();
             var processor = Substitute.For<IBuildProcessor>();
             var typeCapability = Substitute.For<IBuildCapability>();
@@ -680,6 +672,7 @@
             typeCapability.SupportsCreate.Returns(true);
             typeCapability.ImplementedByType.Returns(typeof(DummyTypeCreator));
             buildConfiguration.ConstructorResolver.Returns(constructorResolver);
+            buildConfiguration.ParameterResolver.Returns(parameterResolver);
             buildConfiguration.TypeResolver.Returns(typeResolver);
             typeResolver.GetBuildType(buildConfiguration, Arg.Any<Type>()).Returns(x => x.Arg<Type>());
 
@@ -689,7 +682,7 @@
                     typeof(Person))
                 .Returns(typeCapability);
             constructorResolver.Resolve(typeof(Person)).Returns(constructorInfo);
-            constructorResolver.GetOrderedParameters(buildConfiguration, constructorInfo)
+            parameterResolver.GetOrderedParameters(buildConfiguration, constructorInfo)
                 .Returns(constructorInfo.GetParameters());
             typeCapability.CreateType(sut, typeof(Person), null!).Returns(expected);
             typeCapability.Populate(sut, expected).Returns(expected);
@@ -739,6 +732,7 @@
             var processor = Substitute.For<IBuildProcessor>();
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
             var constructorResolver = Substitute.For<IConstructorResolver>();
+            var parameterResolver = Substitute.For<IParameterResolver>();
             var typeResolver = Substitute.For<ITypeResolver>();
             var typeCapability = Substitute.For<IBuildCapability>();
 
@@ -755,9 +749,10 @@
             typeResolver.GetBuildType(buildConfiguration, Arg.Any<Type>()).Returns(x => x.Arg<Type>());
             constructorResolver.Resolve(typeof(ReadOnlyModel))
                 .Returns(constructor);
-            constructorResolver.GetOrderedParameters(buildConfiguration, constructor)
+            parameterResolver.GetOrderedParameters(buildConfiguration, constructor)
                 .Returns(constructor.GetParameters());
             buildConfiguration.ConstructorResolver.Returns(constructorResolver);
+            buildConfiguration.ParameterResolver.Returns(parameterResolver);
 
             sut.Initialize(buildConfiguration);
 

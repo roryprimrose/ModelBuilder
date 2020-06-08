@@ -1,10 +1,16 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
+    using System.Reflection;
 
     public class NullExecuteStrategy : IExecuteStrategy
     {
         public object Create(Type type, params object?[]? args)
+        {
+            throw new NotImplementedException();
+        }
+
+        public object?[]? CreateParameters(MethodBase method)
         {
             throw new NotImplementedException();
         }
