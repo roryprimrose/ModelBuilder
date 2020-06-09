@@ -64,7 +64,7 @@
 
             var parameterInfos = Configuration.ParameterResolver.GetOrderedParameters(Configuration, method).ToList();
 
-            if (parameterInfos.Count <= 0)
+            if (parameterInfos.Count == 0)
             {
                 return null;
             }
