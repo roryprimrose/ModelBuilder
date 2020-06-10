@@ -2,6 +2,7 @@
 {
     using System;
     using System.IO;
+    using System.Reflection;
     using FluentAssertions;
     using ModelBuilder.TypeCreators;
     using ModelBuilder.UnitTests.Models;
@@ -11,63 +12,42 @@
     public class DefaultTypeCreatorTests
     {
         [Fact]
-        public void CreateReturnsInstanceCreatedWithDefaultConstructorWhenArgumentsAreEmpty()
+        public void CreateReturnsInstanceCreatedWithCreatedParameters()
         {
-            var buildChain = new BuildHistory();
-            var args = Array.Empty<object>();
-
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-            var typeResolver = Substitute.For<ITypeResolver>();
-            var configuration = Substitute.For<IBuildConfiguration>();
-
-            configuration.TypeResolver.Returns(typeResolver);
-            typeResolver.GetBuildType(configuration, Arg.Any<Type>()).Returns(x => x.Arg<Type>());
-            executeStrategy.BuildChain.Returns(buildChain);
-            executeStrategy.Configuration.Returns(configuration);
-
-            var sut = new DefaultTypeCreator();
-
-            var actual = sut.Create(executeStrategy, typeof(Person), args);
-
-            actual.Should().NotBeNull();
-        }
-
-        [Fact]
-        public void CreateReturnsInstanceCreatedWithDefaultConstructorWhenArgumentsAreNull()
-        {
-            var buildChain = new BuildHistory();
-
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-            var typeResolver = Substitute.For<ITypeResolver>();
-            var configuration = Substitute.For<IBuildConfiguration>();
-
-            configuration.TypeResolver.Returns(typeResolver);
-            typeResolver.GetBuildType(configuration, Arg.Any<Type>()).Returns(x => x.Arg<Type>());
-            executeStrategy.BuildChain.Returns(buildChain);
-            executeStrategy.Configuration.Returns(configuration);
-
-            var sut = new DefaultTypeCreator();
-
-            var actual = sut.Create(executeStrategy, typeof(Person), null!);
-
-            actual.Should().NotBeNull();
-        }
-
-        [Fact]
-        public void CreateReturnsInstanceCreatedWithMatchingParameterConstructor()
-        {
-            var buildChain = new BuildHistory();
             var constructorResolver = new DefaultConstructorResolver(CacheLevel.PerInstance);
+            var constructorInfo = constructorResolver.Resolve(typeof(SimpleConstructor), null)!;
+            var args = new object[]
+            {
+                new SlimModel()
+            };
 
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+            var typeResolver = Substitute.For<ITypeResolver>();
+            var configuration = Substitute.For<IBuildConfiguration>();
+
+            executeStrategy.CreateParameters(constructorInfo).Returns(args);
+            configuration.ConstructorResolver.Returns(constructorResolver);
+            configuration.TypeResolver.Returns(typeResolver);
+            typeResolver.GetBuildType(configuration, Arg.Any<Type>()).Returns(x => x.Arg<Type>());
+            executeStrategy.Configuration.Returns(configuration);
+
+            var sut = new DefaultTypeCreator();
+
+            var actual = sut.Create(executeStrategy, typeof(SimpleConstructor), null);
+
+            actual.Should().NotBeNull();
+        }
+
+        [Fact]
+        public void CreateReturnsInstanceCreatedWithProvidedArguments()
+        {
             var executeStrategy = Substitute.For<IExecuteStrategy>();
             var typeResolver = Substitute.For<ITypeResolver>();
             var configuration = Substitute.For<IBuildConfiguration>();
 
             configuration.TypeResolver.Returns(typeResolver);
             typeResolver.GetBuildType(configuration, Arg.Any<Type>()).Returns(x => x.Arg<Type>());
-            executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Configuration.Returns(configuration);
-            configuration.ConstructorResolver.Returns(constructorResolver);
 
             var args = new object[]
             {
@@ -96,27 +76,65 @@
         }
 
         [Fact]
-        public void CreateThrowsExceptionWhenNoAppropriateConstructorFound()
+        public void CreateReturnsInstanceCreatedWithResolvedDefaultConstructorWhenArgumentsAreEmpty()
         {
-            var buildChain = new BuildHistory();
+            var constructorResolver = new DefaultConstructorResolver(CacheLevel.PerInstance);
+            var args = Array.Empty<object>();
 
             var executeStrategy = Substitute.For<IExecuteStrategy>();
             var typeResolver = Substitute.For<ITypeResolver>();
             var configuration = Substitute.For<IBuildConfiguration>();
 
+            configuration.ConstructorResolver.Returns(constructorResolver);
             configuration.TypeResolver.Returns(typeResolver);
             typeResolver.GetBuildType(configuration, Arg.Any<Type>()).Returns(x => x.Arg<Type>());
-            executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Configuration.Returns(configuration);
-
-            var args = new object[]
-            {
-                Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), Guid.NewGuid(), Environment.TickCount
-            };
 
             var sut = new DefaultTypeCreator();
 
-            Action action = () => sut.Create(executeStrategy, typeof(Person), args);
+            var actual = sut.Create(executeStrategy, typeof(Person), args);
+
+            actual.Should().NotBeNull();
+        }
+
+        [Fact]
+        public void CreateReturnsInstanceCreatedWithResolvedDefaultConstructorWhenArgumentsIsNull()
+        {
+            var constructorResolver = new DefaultConstructorResolver(CacheLevel.PerInstance);
+
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+            var typeResolver = Substitute.For<ITypeResolver>();
+            var configuration = Substitute.For<IBuildConfiguration>();
+
+            configuration.ConstructorResolver.Returns(constructorResolver);
+            configuration.TypeResolver.Returns(typeResolver);
+            typeResolver.GetBuildType(configuration, Arg.Any<Type>()).Returns(x => x.Arg<Type>());
+            executeStrategy.Configuration.Returns(configuration);
+
+            var sut = new DefaultTypeCreator();
+
+            var actual = sut.Create(executeStrategy, typeof(Person), null);
+
+            actual.Should().NotBeNull();
+        }
+
+        [Fact]
+        public void CreateThrowsExceptionWhenConstructorNotFound()
+        {
+            var constructorResolver = Substitute.For<IConstructorResolver>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+            var typeResolver = Substitute.For<ITypeResolver>();
+            var configuration = Substitute.For<IBuildConfiguration>();
+
+            constructorResolver.Resolve(Arg.Any<Type>()).Returns((ConstructorInfo?) null);
+            configuration.ConstructorResolver.Returns(constructorResolver);
+            configuration.TypeResolver.Returns(typeResolver);
+            typeResolver.GetBuildType(configuration, Arg.Any<Type>()).Returns(x => x.Arg<Type>());
+            executeStrategy.Configuration.Returns(configuration);
+
+            var sut = new DefaultTypeCreator();
+
+            Action action = () => sut.Create(executeStrategy, typeof(Person), null);
 
             action.Should().Throw<MissingMemberException>();
         }
@@ -140,6 +158,29 @@
             Action action = () => sut.Create(executeStrategy, typeof(Stream));
 
             action.Should().Throw<NotSupportedException>();
+        }
+
+        [Fact]
+        public void CreateThrowsExceptionWhenTypeConstructorsDoNotSupportProvidedArguments()
+        {
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+            var typeResolver = Substitute.For<ITypeResolver>();
+            var configuration = Substitute.For<IBuildConfiguration>();
+
+            configuration.TypeResolver.Returns(typeResolver);
+            typeResolver.GetBuildType(configuration, Arg.Any<Type>()).Returns(x => x.Arg<Type>());
+            executeStrategy.Configuration.Returns(configuration);
+
+            var args = new object[]
+            {
+                Guid.NewGuid()
+            };
+
+            var sut = new DefaultTypeCreator();
+
+            Action action = () => sut.Create(executeStrategy, typeof(Person), args);
+
+            action.Should().Throw<MissingMethodException>();
         }
 
         [Fact]

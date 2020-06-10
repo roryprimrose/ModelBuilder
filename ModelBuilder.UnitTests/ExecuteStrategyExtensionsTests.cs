@@ -1,6 +1,7 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
+    using System.Linq;
     using FluentAssertions;
     using ModelBuilder.UnitTests.Models;
     using NSubstitute;
@@ -53,6 +54,18 @@
             var actual = executeStrategy.WriteLog(_output.WriteLine).Log;
 
             actual.Should().BeSameAs(expected);
+        }
+
+        [Fact]
+        public void WriteLogCallsCreateParametersOnExecuteStrategy()
+        {
+            var method = typeof(Person).GetConstructors().First();
+
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.WriteLog(_output.WriteLine).CreateParameters(method);
+
+            executeStrategy.Received().CreateParameters(method);
         }
 
         [Fact]
