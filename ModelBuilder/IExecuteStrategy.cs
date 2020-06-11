@@ -1,6 +1,7 @@
 ﻿namespace ModelBuilder
 {
     using System;
+    using System.Reflection;
 
     /// <summary>
     ///     The <see cref="IExecuteStrategy" />
@@ -15,6 +16,13 @@
         /// <param name="args">The constructor arguments of the type.</param>
         /// <returns>A new instance of the specified type.</returns>
         object Create(Type type, params object?[]? args);
+
+        /// <summary>
+        ///     Creates a set of parameters for the specified method.
+        /// </summary>
+        /// <param name="method">The method that defines the parameters.</param>
+        /// <returns>An array of parameter values.</returns>
+        object?[]? CreateParameters(MethodBase method);
 
         /// <summary>
         ///     Initializes the execute strategy with a build configuration.

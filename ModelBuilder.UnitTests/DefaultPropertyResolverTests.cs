@@ -220,32 +220,6 @@
         }
 
         [Fact]
-        public void IsIgnoredReturnsFalseWhenIgnoreRulesAreNull()
-        {
-            var defaultConfiguration = Model.UsingDefaultConfiguration();
-            var configuration = Substitute.For<IBuildConfiguration>();
-
-            configuration.PropertyResolver.Returns(defaultConfiguration.PropertyResolver);
-            configuration.ConstructorResolver.Returns(defaultConfiguration.ConstructorResolver);
-            configuration.CreationRules.Returns(defaultConfiguration.CreationRules);
-            configuration.ExecuteOrderRules.Returns(defaultConfiguration.ExecuteOrderRules);
-            configuration.IgnoreRules.Returns((ICollection<IIgnoreRule>) null!);
-            configuration.PostBuildActions.Returns(defaultConfiguration.PostBuildActions);
-            configuration.TypeCreators.Returns(defaultConfiguration.TypeCreators);
-            configuration.TypeMappingRules.Returns(defaultConfiguration.TypeMappingRules);
-            configuration.TypeResolver.Returns(defaultConfiguration.TypeResolver);
-            configuration.ValueGenerators.Returns(defaultConfiguration.ValueGenerators);
-
-            var sut = new DefaultExecuteStrategy();
-
-            sut.Initialize(configuration);
-
-            var actual = sut.Create(typeof(SimpleConstructor));
-
-            actual.Should().NotBeNull();
-        }
-
-        [Fact]
         public void IsIgnoredReturnsFalseWhenMatchOnConstructorArgumentValueButNotName()
         {
             var configuration = Substitute.For<IBuildConfiguration>();

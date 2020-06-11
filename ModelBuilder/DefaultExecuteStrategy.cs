@@ -54,6 +54,66 @@
         }
 
         /// <inheritdoc />
+        /// <exception cref="ArgumentNullException">The <paramref name="method" /> parameter is <c>null</c>.</exception>
+        public object?[]? CreateParameters(MethodBase method)
+        {
+            if (method == null)
+            {
+                throw new ArgumentNullException(nameof(method));
+            }
+
+            var parameterInfos = Configuration.ParameterResolver.GetOrderedParameters(Configuration, method).ToList();
+
+            if (parameterInfos.Count == 0)
+            {
+                return null;
+            }
+
+            // Create an ExpandoObject to hold the parameter values as we build them
+            // ValueGenerators can use these parameters (expressed as properties) to assist in 
+            // building values that are dependent on other values
+            IDictionary<string, object?> propertyWrapper = new ExpandoObject();
+
+            _buildHistory.Push(propertyWrapper);
+
+            try
+            {
+                foreach (var parameterInfo in parameterInfos)
+                {
+                    var lastContext = _buildHistory.Last;
+
+                    Log.CreatingParameter(parameterInfo, lastContext);
+
+                    // Recurse to build this parameter value
+                    var parameterValue = Build(parameterInfo);
+
+                    propertyWrapper[parameterInfo.Name] = parameterValue;
+
+                    Log.CreatedParameter(parameterInfo, lastContext);
+                }
+            }
+            finally
+            {
+                _buildHistory.Pop();
+            }
+
+            var originalParameters = method.GetParameters();
+            var parameterValues = new Collection<object?>();
+
+            // Re-order the parameters back into the order expected by the constructor
+            foreach (var parameterInfo in originalParameters)
+            {
+                var parameterValue = propertyWrapper[parameterInfo.Name];
+
+                parameterValues.Add(parameterValue);
+            }
+
+            var parameters = parameterValues.ToArray();
+
+            return parameters;
+        }
+
+        /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="configuration" /> parameter is <c>null</c>.</exception>
         public void Initialize(IBuildConfiguration configuration)
         {
@@ -85,7 +145,9 @@
 
                 if (populatedInstance == null)
                 {
-                    var message = string.Format(CultureInfo.CurrentCulture, "The type '{0}' failed to return a non-null value of type '{1}' after populating its properties.", capability.ImplementedByType.FullName, type.FullName);
+                    var message = string.Format(CultureInfo.CurrentCulture,
+                        "The type '{0}' failed to return a non-null value of type '{1}' after populating its properties.",
+                        capability.ImplementedByType.FullName, type.FullName);
 
                     throw new BuildException(message, type, null, null, Log.Output);
                 }
@@ -120,7 +182,8 @@
 
             try
             {
-                IBuildCapability GetCapability() => _buildProcessor.GetBuildCapability(this, BuildRequirement.Create, type);
+                IBuildCapability GetCapability() =>
+                    _buildProcessor.GetBuildCapability(this, BuildRequirement.Create, type);
 
                 var instance = Build(
                     GetCapability,
@@ -131,7 +194,9 @@
                     // The Build method above would have thrown an exception if the build capability could not be identified
                     var capability = GetCapability()!;
 
-                    var message = string.Format(CultureInfo.CurrentCulture, "The type '{0}' failed to create a non-null value of type '{1}'", capability.ImplementedByType.FullName, type.FullName);
+                    var message = string.Format(CultureInfo.CurrentCulture,
+                        "The type '{0}' failed to create a non-null value of type '{1}'",
+                        capability.ImplementedByType.FullName, type.FullName);
 
                     throw new BuildException(message, type, null, null, Log.Output);
                 }
@@ -168,7 +233,8 @@
             var instance = Build(
                 () => _buildProcessor.GetBuildCapability(this, BuildRequirement.Create,
                     parameterInfo),
-                (capability, items) => capability.CreateParameter(this, parameterInfo, items), parameterInfo.ParameterType, null);
+                (capability, items) => capability.CreateParameter(this, parameterInfo, items),
+                parameterInfo.ParameterType, null);
 
             if (instance == null)
             {
@@ -282,7 +348,8 @@
             }
         }
 
-        private object? Build(Func<IBuildCapability> getCapability, Func<IBuildCapability, object?[]?, object?> buildInstance, Type type, params object?[]? args)
+        private object? Build(Func<IBuildCapability> getCapability,
+            Func<IBuildCapability, object?[]?, object?> buildInstance, Type type, params object?[]? args)
         {
             var capability = getCapability();
 
@@ -292,25 +359,8 @@
 
             try
             {
-                object? instance;
-
-                if (args?.Length > 0)
-                {
-                    // We have arguments so will just let the type creator do the work here
-                    instance = buildInstance(capability, args);
-                }
-                else if (capability.AutoDetectConstructor)
-                {
-                    var parameters = CreateParameterValues(type);
-
-                    instance = buildInstance(capability, parameters);
-                }
-                else
-                {
-                    // The type creator is going to be solely responsible for creating this instance
-                    instance = buildInstance(capability, null);
-                }
-
+                var instance = buildInstance(capability, args);
+                
                 if (instance == null)
                 {
                     return null;
@@ -358,55 +408,7 @@
                 return null;
             }
 
-            var parameterInfos = constructorResolver.GetOrderedParameters(Configuration, constructor).ToList();
-
-            if (parameterInfos.Count <= 0)
-            {
-                return null;
-            }
-
-            // Create an ExpandoObject to hold the parameter values as we build them
-            // ValueGenerators can use these parameters (expressed as properties) to assist in 
-            // building values that are dependent on other values
-            IDictionary<string, object?> propertyWrapper = new ExpandoObject();
-
-            _buildHistory.Push(propertyWrapper);
-
-            try
-            {
-                foreach (var parameterInfo in parameterInfos)
-                {
-                    var lastContext = _buildHistory.Last;
-
-                    Log.CreatingParameter(parameterInfo, lastContext);
-
-                    // Recurse to build this parameter value
-                    var parameterValue = Build(parameterInfo);
-
-                    propertyWrapper[parameterInfo.Name] = parameterValue;
-
-                    Log.CreatedParameter(parameterInfo, lastContext);
-                }
-            }
-            finally
-            {
-                _buildHistory.Pop();
-            }
-
-            var originalParameters = constructor.GetParameters();
-            var parameterValues = new Collection<object?>();
-
-            // Re-order the parameters back into the order expected by the constructor
-            foreach (var parameterInfo in originalParameters)
-            {
-                var parameterValue = propertyWrapper[parameterInfo.Name];
-
-                parameterValues.Add(parameterValue);
-            }
-
-            var parameters = parameterValues.ToArray();
-
-            return parameters;
+            return CreateParameters(constructor);
         }
 
         private object Populate(IBuildCapability capability, object instance, params object?[]? args)

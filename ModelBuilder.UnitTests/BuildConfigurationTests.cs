@@ -19,6 +19,18 @@
         }
 
         [Fact]
+        public void CanSetParameterResolver()
+        {
+            var expected = Substitute.For<IParameterResolver>();
+
+            var sut = new BuildConfiguration {ParameterResolver = expected};
+
+            var actual = sut.ParameterResolver;
+
+            actual.Should().Be(expected);
+        }
+
+        [Fact]
         public void CanSetPropertyResolver()
         {
             var expected = Substitute.For<IPropertyResolver>();
@@ -56,6 +68,8 @@
             sut.PostBuildActions.Should().BeEmpty();
             sut.ConstructorResolver.Should().BeOfType<DefaultConstructorResolver>();
             sut.ConstructorResolver.As<DefaultConstructorResolver>().CacheLevel.Should().Be(CacheLevel.PerInstance);
+            sut.ParameterResolver.Should().BeOfType<DefaultParameterResolver>();
+            sut.ParameterResolver.As<DefaultParameterResolver>().CacheLevel.Should().Be(CacheLevel.PerInstance);
             sut.PropertyResolver.Should().BeOfType<DefaultPropertyResolver>();
             sut.PropertyResolver.As<DefaultPropertyResolver>().CacheLevel.Should().Be(CacheLevel.PerInstance);
             sut.TypeResolver.Should().BeOfType<DefaultTypeResolver>();

@@ -21,24 +21,30 @@
             string? referenceName,
             params object?[]? args)
         {
-            if (args == null)
-            {
-                return Activator.CreateInstance(type);
-            }
+            // Resolve the type being created
+            var typeToCreate = ResolveBuildType(executeStrategy.Configuration, type);
 
-            if (args.Length == 0)
+            if (args?.Length > 0)
             {
-                return Activator.CreateInstance(type);
+                // We have arguments supplied so we will assume that they may the resolve type
+                return Activator.CreateInstance(typeToCreate, args);
             }
+            
+            // Use constructor detection to figure out how to create this instance
+            var constructorResolver = executeStrategy.Configuration.ConstructorResolver;
 
-            var constructor = executeStrategy.Configuration?.ConstructorResolver?.Resolve(type, args);
+            // We aren't provided with arguments so we need to resolve the most appropriate constructor
+            var constructor = constructorResolver.Resolve(typeToCreate);
 
             if (constructor == null)
             {
                 throw new MissingMemberException(Resources.DefaultTypeCreator_NoMatchingConstructor);
             }
 
-            return constructor.Invoke(args);
+            // Create the arguments for the constructor we have found
+            var builtArgs = executeStrategy.CreateParameters(constructor);
+            
+            return constructor.Invoke(builtArgs);
         }
 
         /// <inheritdoc />

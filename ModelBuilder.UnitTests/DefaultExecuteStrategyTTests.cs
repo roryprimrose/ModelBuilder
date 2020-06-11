@@ -85,7 +85,7 @@
                 .Returns(typeCapability);
             constructorResolver.Resolve(typeof(Person))
                 .Returns(typeof(Person).GetConstructors().Single(x => x.GetParameters().Length == 0));
-            typeCapability.CreateType(sut, typeof(Person), null!).Returns(expected);
+            typeCapability.CreateType(sut, typeof(Person), Arg.Any<object?[]?>()).Returns(expected);
             typeCapability.Populate(sut, expected).Returns(expected);
 
             sut.Initialize(buildConfiguration);
@@ -112,7 +112,7 @@
             processor.GetBuildCapability(sut, Arg.Any<BuildRequirement>(),
                     typeof(int))
                 .Returns(typeCapability);
-            typeCapability.CreateType(sut, typeof(int), null!).Returns((object)null!);
+            typeCapability.CreateType(sut, typeof(int), Arg.Any<object?[]?>()).Returns((object)null!);
 
             sut.Initialize(buildConfiguration);
 
@@ -127,6 +127,8 @@
             var buildHistory = new BuildHistory();
             var model = new SlimModel();
             var expected = Guid.NewGuid();
+            var properties = typeof(SlimModel).GetProperties();
+            var propertyInfo = properties.Single();
             
             var processor = Substitute.For<IBuildProcessor>();
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
@@ -148,11 +150,10 @@
                 .Returns(typeCapability);
             buildConfiguration.PropertyResolver.Returns(propertyResolver);
             propertyResolver.GetOrderedProperties(buildConfiguration, typeof(SlimModel))
-                .Returns(typeof(SlimModel).GetProperties());
-            processor.GetBuildCapability(sut, BuildRequirement.Create,
-                    Arg.Is<PropertyInfo>(x => x.Name == nameof(SlimModel.Value)))
+                .Returns(properties);
+            processor.GetBuildCapability(sut, BuildRequirement.Create, propertyInfo)
                 .Returns(valueCapability);
-            valueCapability.CreateProperty(sut, Arg.Is<PropertyInfo>(x => x.Name == nameof(SlimModel.Value)), null!)
+            valueCapability.CreateProperty(sut, propertyInfo, Arg.Any<object?[]?>())
                 .Returns(expected);
             processor.GetBuildCapability(sut, BuildRequirement.Populate,
                     typeof(Guid))

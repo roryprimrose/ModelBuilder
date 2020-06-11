@@ -13,6 +13,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Solution Items\CustomDictionary.xml = Solution Items\CustomDictionary.xml
 		GitVersion.yml = GitVersion.yml
 		Solution Items\UnitTest.ruleset = Solution Items\UnitTest.ruleset
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{EBCF1633-3948-4DE6-A189-04FB1BD5EB06}"

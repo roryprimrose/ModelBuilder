@@ -1,6 +1,7 @@
 ﻿namespace ModelBuilder
 {
     using System;
+    using System.Reflection;
 
     /// <summary>
     ///     The <see cref="ExecuteStrategyExtensions" />
@@ -38,7 +39,8 @@
         /// <param name="action">The logging action to call.</param>
         /// <typeparam name="T">The type of instance to create and populate.</typeparam>
         /// <returns>The execute strategy to invoke.</returns>
-        public static IExecuteStrategy<T> WriteLog<T>(this IExecuteStrategy<T> executeStrategy, Action<string> action) where T : notnull
+        public static IExecuteStrategy<T> WriteLog<T>(this IExecuteStrategy<T> executeStrategy, Action<string> action)
+            where T : notnull
         {
             if (executeStrategy == null)
             {
@@ -68,6 +70,11 @@
                 LogAction(Log.Output);
 
                 return value;
+            }
+
+            public object?[]? CreateParameters(MethodBase method)
+            {
+                return Child.CreateParameters(method);
             }
 
             public void Initialize(IBuildConfiguration configuration)

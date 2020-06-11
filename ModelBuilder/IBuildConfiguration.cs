@@ -35,6 +35,11 @@
         ICollection<IIgnoreRule> IgnoreRules { get; }
 
         /// <summary>
+        ///     Gets or sets the parameter resolver used to create an instance of a type.
+        /// </summary>
+        IParameterResolver ParameterResolver { get; set; }
+
+        /// <summary>
         ///     Gets the post build actions used to modify instances after they have been created or populated.
         /// </summary>
         ICollection<IPostBuildAction> PostBuildActions { get; }
