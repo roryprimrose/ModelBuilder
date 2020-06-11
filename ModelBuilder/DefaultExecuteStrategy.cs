@@ -359,25 +359,8 @@
 
             try
             {
-                object? instance;
-
-                if (args?.Length > 0)
-                {
-                    // We have arguments so will just let the type creator do the work here
-                    instance = buildInstance(capability, args);
-                }
-                else if (capability.AutoDetectConstructor)
-                {
-                    var parameters = CreateParameterValues(type);
-
-                    instance = buildInstance(capability, parameters);
-                }
-                else
-                {
-                    // The type creator is going to be solely responsible for creating this instance
-                    instance = buildInstance(capability, null);
-                }
-
+                var instance = buildInstance(capability, args);
+                
                 if (instance == null)
                 {
                     return null;

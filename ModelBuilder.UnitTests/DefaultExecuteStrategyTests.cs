@@ -151,54 +151,6 @@
         }
 
         [Fact]
-        public void CreateCanProvideNullParameterValueToConstructor()
-        {
-            var buildHistory = new BuildHistory();
-
-            var processor = Substitute.For<IBuildProcessor>();
-            var buildConfiguration = Substitute.For<IBuildConfiguration>();
-            var typeResolver = Substitute.For<ITypeResolver>();
-            var constructorResolver = Substitute.For<IConstructorResolver>();
-            var parameterResolver = Substitute.For<IParameterResolver>();
-            var typeCapability = Substitute.For<IBuildCapability>();
-            var valueCapability = Substitute.For<IBuildCapability>();
-
-            typeCapability.AutoDetectConstructor.Returns(true);
-            typeCapability.SupportsCreate.Returns(true);
-            typeCapability.ImplementedByType.Returns(typeof(DummyTypeCreator));
-            valueCapability.SupportsCreate.Returns(true);
-            valueCapability.ImplementedByType.Returns(typeof(DummyTypeCreator));
-
-            var sut = new DefaultExecuteStrategy(buildHistory, _buildLog, processor);
-
-            processor.GetBuildCapability(sut, Arg.Any<BuildRequirement>(),
-                    typeof(SimpleConstructor))
-                .Returns(typeCapability);
-            processor.GetBuildCapability(sut, Arg.Any<BuildRequirement>(),
-                    Arg.Any<ParameterInfo>())
-                .Returns(valueCapability);
-            typeCapability.CreateType(sut, typeof(SimpleConstructor), Arg.Any<object[]>())
-                .Returns(x => new SimpleConstructor(x.Arg<object[]>()[0].As<SlimModel?>()));
-            valueCapability.CreateParameter(sut, Arg.Is<ParameterInfo>(x => x.Name == "model"),
-                Arg.Any<object[]>()).Returns(null);
-            typeResolver.GetBuildType(buildConfiguration, Arg.Any<Type>()).Returns(x => x.Arg<Type>());
-            buildConfiguration.TypeResolver.Returns(typeResolver);
-            constructorResolver.Resolve(Arg.Any<Type>()).Returns(x => x.Arg<Type>().GetConstructors().First());
-            parameterResolver
-                .GetOrderedParameters(buildConfiguration, typeof(SimpleConstructor).GetConstructors().First())
-                .Returns(typeof(SimpleConstructor).GetConstructors().First().GetParameters());
-            buildConfiguration.ConstructorResolver.Returns(constructorResolver);
-            buildConfiguration.ParameterResolver.Returns(parameterResolver);
-
-            sut.Initialize(buildConfiguration);
-
-            var actual = (SimpleConstructor) sut.Create(typeof(SimpleConstructor))!;
-
-            actual.Should().NotBeNull();
-            actual.Model.Should().BeNull();
-        }
-
-        [Fact]
         public void CreateDeterminesPropertiesToCreateByProvidingConstructorArgsForNestedType()
         {
             var buildHistory = new BuildHistory();
@@ -678,103 +630,6 @@
         }
 
         [Fact]
-        public void CreateReturnsValueFromResolvedConstructorAndBuiltParameters()
-        {
-            var value = Guid.NewGuid();
-            var expected = new ReadOnlyModel(value);
-            var buildHistory = new BuildHistory();
-
-            var constructorInfo = typeof(ReadOnlyModel).GetConstructors().Single();
-
-            var processor = Substitute.For<IBuildProcessor>();
-            var buildConfiguration = Substitute.For<IBuildConfiguration>();
-            var constructorResolver = Substitute.For<IConstructorResolver>();
-            var parameterResolver = Substitute.For<IParameterResolver>();
-            var typeResolver = Substitute.For<ITypeResolver>();
-            var typeCapability = Substitute.For<IBuildCapability>();
-            var valueCapability = Substitute.For<IBuildCapability>();
-
-            typeCapability.AutoDetectConstructor.Returns(true);
-            typeCapability.SupportsCreate.Returns(true);
-            typeCapability.ImplementedByType.Returns(typeof(DummyTypeCreator));
-            valueCapability.SupportsCreate.Returns(true);
-            valueCapability.ImplementedByType.Returns(typeof(DummyTypeCreator));
-
-            var sut = new DefaultExecuteStrategy(buildHistory, _buildLog, processor);
-
-            processor.GetBuildCapability(sut, Arg.Any<BuildRequirement>(),
-                    typeof(ReadOnlyModel))
-                .Returns(typeCapability);
-            processor.GetBuildCapability(sut, BuildRequirement.Create,
-                    Arg.Any<ParameterInfo>())
-                .Returns(valueCapability);
-            processor.GetBuildCapability(sut, BuildRequirement.Populate,
-                    typeof(Guid))
-                .Returns(valueCapability);
-            valueCapability.CreateParameter(sut, Arg.Is<ParameterInfo>(x => x.Name == "value"),
-                Arg.Any<object[]>()).Returns(value);
-            typeCapability.CreateType(sut, typeof(ReadOnlyModel),
-                    Arg.Is<object[]>(x => x.Length == 1 && (Guid) x[0] == value))
-                .Returns(expected);
-            typeCapability.Populate(sut, expected).Returns(expected);
-            buildConfiguration.ConstructorResolver.Returns(constructorResolver);
-            buildConfiguration.ParameterResolver.Returns(parameterResolver);
-            buildConfiguration.TypeResolver.Returns(typeResolver);
-            typeResolver.GetBuildType(buildConfiguration, Arg.Any<Type>()).Returns(x => x.Arg<Type>());
-            constructorResolver.Resolve(typeof(ReadOnlyModel)).Returns(constructorInfo);
-            parameterResolver.GetOrderedParameters(buildConfiguration, constructorInfo)
-                .Returns(constructorInfo.GetParameters());
-
-            sut.Initialize(buildConfiguration);
-
-            var actual = (ReadOnlyModel) sut.Create(typeof(ReadOnlyModel))!;
-
-            actual.Should().Be(expected);
-            actual.Value.Should().Be(value);
-        }
-
-        [Fact]
-        public void CreateReturnsValueWithNoArgumentsAndDetectConstructorEnabledCreatedUsingDefaultConstructor()
-        {
-            var buildHistory = new BuildHistory();
-            var expected = new Person();
-
-            var constructorInfo = typeof(Person).GetConstructors().Single(x => x.GetParameters().Length == 0);
-
-            var buildConfiguration = Substitute.For<IBuildConfiguration>();
-            var constructorResolver = Substitute.For<IConstructorResolver>();
-            var parameterResolver = Substitute.For<IParameterResolver>();
-            var typeResolver = Substitute.For<ITypeResolver>();
-            var processor = Substitute.For<IBuildProcessor>();
-            var typeCapability = Substitute.For<IBuildCapability>();
-
-            typeCapability.AutoDetectConstructor.Returns(true);
-            typeCapability.SupportsCreate.Returns(true);
-            typeCapability.ImplementedByType.Returns(typeof(DummyTypeCreator));
-            buildConfiguration.ConstructorResolver.Returns(constructorResolver);
-            buildConfiguration.ParameterResolver.Returns(parameterResolver);
-            buildConfiguration.TypeResolver.Returns(typeResolver);
-            typeResolver.GetBuildType(buildConfiguration, Arg.Any<Type>()).Returns(x => x.Arg<Type>());
-
-            var sut = new DefaultExecuteStrategy(buildHistory, _buildLog, processor);
-
-            processor.GetBuildCapability(sut, Arg.Any<BuildRequirement>(),
-                    typeof(Person))
-                .Returns(typeCapability);
-            constructorResolver.Resolve(typeof(Person)).Returns(constructorInfo);
-            parameterResolver.GetOrderedParameters(buildConfiguration, constructorInfo)
-                .Returns(constructorInfo.GetParameters());
-            typeCapability.CreateType(sut, typeof(Person), null!).Returns(expected);
-            typeCapability.Populate(sut, expected).Returns(expected);
-
-            sut.Initialize(buildConfiguration);
-
-            var actual = sut.Create(typeof(Person));
-
-            actual.Should().BeSameAs(expected);
-        }
-
-        [Fact]
         public void CreateThrowsExceptionWhenAutomaticTypeMappingCantFindMatch()
         {
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
@@ -800,52 +655,6 @@
             Action action = () => sut.Create(typeof(int));
 
             action.Should().Throw<ArgumentNullException>();
-        }
-
-        [Fact]
-        public void CreateThrowsExceptionWhenNoCapabilityFoundForParameter()
-        {
-            var buildHistory = new BuildHistory();
-
-            var constructor = typeof(ReadOnlyModel).GetConstructors().Single();
-
-            var processor = Substitute.For<IBuildProcessor>();
-            var buildConfiguration = Substitute.For<IBuildConfiguration>();
-            var constructorResolver = Substitute.For<IConstructorResolver>();
-            var parameterResolver = Substitute.For<IParameterResolver>();
-            var typeResolver = Substitute.For<ITypeResolver>();
-            var typeCapability = Substitute.For<IBuildCapability>();
-
-            typeCapability.AutoDetectConstructor.Returns(true);
-            typeCapability.SupportsCreate.Returns(true);
-            typeCapability.ImplementedByType.Returns(typeof(DummyTypeCreator));
-
-            var sut = new DefaultExecuteStrategy(buildHistory, _buildLog, processor);
-
-            processor.GetBuildCapability(sut, Arg.Any<BuildRequirement>(),
-                    typeof(ReadOnlyModel))
-                .Returns(typeCapability);
-            buildConfiguration.TypeResolver.Returns(typeResolver);
-            typeResolver.GetBuildType(buildConfiguration, Arg.Any<Type>()).Returns(x => x.Arg<Type>());
-            constructorResolver.Resolve(typeof(ReadOnlyModel))
-                .Returns(constructor);
-            parameterResolver.GetOrderedParameters(buildConfiguration, constructor)
-                .Returns(constructor.GetParameters());
-            buildConfiguration.ConstructorResolver.Returns(constructorResolver);
-            buildConfiguration.ParameterResolver.Returns(parameterResolver);
-
-            sut.Initialize(buildConfiguration);
-
-            try
-            {
-                Action action = () => sut.Create(typeof(ReadOnlyModel));
-
-                action.Should().Throw<BuildException>();
-            }
-            finally
-            {
-                constructorResolver.Received().Resolve(typeof(ReadOnlyModel));
-            }
         }
 
         [Fact]
@@ -994,6 +803,8 @@
             var buildHistory = new BuildHistory();
             var model = new SlimModel();
             var expected = Guid.NewGuid();
+            var properties = typeof(SlimModel).GetProperties();
+            var propertyInfo = properties.Single();
 
             var processor = Substitute.For<IBuildProcessor>();
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
@@ -1015,11 +826,10 @@
                 .Returns(typeCapability);
             buildConfiguration.PropertyResolver.Returns(propertyResolver);
             propertyResolver.GetOrderedProperties(buildConfiguration, typeof(SlimModel))
-                .Returns(typeof(SlimModel).GetProperties());
-            processor.GetBuildCapability(sut, BuildRequirement.Create,
-                    Arg.Is<PropertyInfo>(x => x.Name == nameof(SlimModel.Value)))
+                .Returns(properties);
+            processor.GetBuildCapability(sut, BuildRequirement.Create, propertyInfo)
                 .Returns(valueCapability);
-            valueCapability.CreateProperty(sut, Arg.Is<PropertyInfo>(x => x.Name == nameof(SlimModel.Value)), null!)
+            valueCapability.CreateProperty(sut, propertyInfo, Arg.Any<object?[]?>())
                 .Returns(expected);
             processor.GetBuildCapability(sut, BuildRequirement.Populate,
                     typeof(Guid))

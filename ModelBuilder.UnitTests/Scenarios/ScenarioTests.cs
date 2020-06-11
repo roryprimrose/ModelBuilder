@@ -485,7 +485,7 @@
             typeCreator.AutoPopulate.Returns(true);
             typeCreator.Create(Arg.Any<IExecuteStrategy>(),
                     Arg.Is<PropertyInfo>(x => x.DeclaringType == typeof(Office) && x.Name == nameof(Office.Address)),
-                    null!)
+                    Arg.Any<object?[]?>())
                 .Throws(new InvalidOperationException());
 
             var configuration = Model.UsingDefaultConfiguration().Add(typeCreator);

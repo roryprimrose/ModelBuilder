@@ -1,7 +1,7 @@
 namespace ModelBuilder.TypeCreators
 {
     using System;
-
+    
     /// <summary>
     ///     The <see cref="StructTypeCreator" />
     ///     class is used to create an instance of a struct.
@@ -12,12 +12,28 @@ namespace ModelBuilder.TypeCreators
         protected override object? CreateInstance(IExecuteStrategy executeStrategy, Type type, string? referenceName,
             params object?[]? args)
         {
-            if (type == null)
+            if (args?.Length > 0)
             {
-                throw new ArgumentNullException(nameof(type));
+                // We have arguments supplied so we will assume that they may the resolve type
+                return Activator.CreateInstance(type, args);
+            }
+            
+            // Use constructor detection to figure out how to create this instance
+            var constructorResolver = executeStrategy.Configuration.ConstructorResolver;
+
+            // We aren't provided with arguments so we need to resolve the most appropriate constructor
+            var constructor = constructorResolver.Resolve(type);
+
+            if (constructor == null)
+            {
+                // Structs return null for a default constructor
+                return Activator.CreateInstance(type);
             }
 
-            return Activator.CreateInstance(type, args);
+            // Create the arguments for the constructor we have found
+            var builtArgs = executeStrategy.CreateParameters(constructor);
+            
+            return constructor.Invoke(builtArgs);
         }
 
         /// <inheritdoc />
