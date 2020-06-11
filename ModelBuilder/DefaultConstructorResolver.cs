@@ -18,14 +18,8 @@
         private static readonly ConcurrentDictionary<Type, ConstructorInfo?> _globalConstructorCache =
             new ConcurrentDictionary<Type, ConstructorInfo?>();
 
-        private static readonly ConcurrentDictionary<ConstructorInfo, IList<ParameterInfo>> _globalParametersCache =
-            new ConcurrentDictionary<ConstructorInfo, IList<ParameterInfo>>();
-
         private readonly ConcurrentDictionary<Type, ConstructorInfo?> _perInstanceConstructorCache =
             new ConcurrentDictionary<Type, ConstructorInfo?>();
-
-        private readonly ConcurrentDictionary<ConstructorInfo, IList<ParameterInfo>> _perInstanceParametersCache =
-            new ConcurrentDictionary<ConstructorInfo, IList<ParameterInfo>>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DefaultConstructorResolver"/> class.
@@ -34,37 +28,6 @@
         public DefaultConstructorResolver(CacheLevel cacheLevel)
         {
             CacheLevel = cacheLevel;
-        }
-
-        /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">The <paramref name="configuration" /> parameter is <c>null</c>.</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="constructor" /> parameter is <c>null</c>.</exception>
-        public IEnumerable<ParameterInfo> GetOrderedParameters(IBuildConfiguration configuration,
-            ConstructorInfo constructor)
-        {
-            if (configuration == null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
-
-            if (constructor == null)
-            {
-                throw new ArgumentNullException(nameof(constructor));
-            }
-
-            if (CacheLevel == CacheLevel.Global)
-            {
-                return _globalParametersCache.GetOrAdd(constructor,
-                    x => CalculateOrderedParameters(configuration, constructor).ToList());
-            }
-
-            if (CacheLevel == CacheLevel.PerInstance)
-            {
-                return _perInstanceParametersCache.GetOrAdd(constructor,
-                    x => CalculateOrderedParameters(configuration, constructor).ToList());
-            }
-
-            return CalculateOrderedParameters(configuration, constructor);
         }
 
         /// <inheritdoc />
@@ -100,14 +63,6 @@
             }
 
             return FindConstructorMatchingTypes(type, args!);
-        }
-
-        private static IOrderedEnumerable<ParameterInfo> CalculateOrderedParameters(IBuildConfiguration configuration,
-            ConstructorInfo constructor)
-        {
-            return from x in constructor.GetParameters()
-                orderby GetMaximumOrderPriority(configuration, x) descending
-                select x;
         }
 
         private static ConstructorInfo? CalculateSmallestConstructor(Type type)
@@ -201,28 +156,6 @@
             return constructor;
         }
 
-        private static int GetMaximumOrderPriority(IBuildConfiguration configuration, ParameterInfo parameter)
-        {
-            if (configuration.ExecuteOrderRules == null)
-            {
-                return 0;
-            }
-
-            var matchingRules = from x in configuration.ExecuteOrderRules
-                where x.IsMatch(parameter)
-                orderby x.Priority descending
-                select x;
-
-            var matchingRule = matchingRules.FirstOrDefault();
-
-            if (matchingRule == null)
-            {
-                return 0;
-            }
-
-            return matchingRule.Priority;
-        }
-
         private static bool ParametersMatchArguments(IList<ParameterInfo> parameters, IList<object?> args)
         {
             Debug.Assert(
@@ -300,7 +233,7 @@
         }
 
         /// <summary>
-        ///     Gets or sets whether parameters identified by <see cref="GetOrderedParameters" /> are cached.
+        ///     Gets or sets whether constructors identified by <see cref="Resolve" /> are cached.
         /// </summary>
         /// <returns>Returns the cache level to apply to parameters.</returns>
         public CacheLevel CacheLevel { get; set; }

@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using FluentAssertions;
     using ModelBuilder.TypeCreators;
     using ModelBuilder.UnitTests.Models;
@@ -85,6 +86,41 @@
             var actual = sut.RunCreateInstance(executeStrategy, type, referenceName);
 
             actual.Should().BeOfType<StructModel>();
+        }
+
+        [Fact]
+        public void CreateInstanceReturnsNewValueWithCreatedArguments()
+        {
+            var key = Guid.NewGuid();
+            var value = new Person();
+            var referenceName = Guid.NewGuid().ToString();
+            var type = typeof(KeyValuePair<Guid, Person>);
+            var args = new object[]
+            {
+                key,
+                value
+            };
+            var constructorInfo = type.GetConstructors().Single();
+
+            var constructorResolver = Substitute.For<IConstructorResolver>();
+            var configuration = Substitute.For<IBuildConfiguration>();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.Configuration.Returns(configuration);
+            configuration.ConstructorResolver.Returns(constructorResolver);
+            constructorResolver.Resolve(type).Returns(constructorInfo);
+            executeStrategy.CreateParameters(constructorInfo).Returns(args);
+
+            var sut = new Wrapper();
+
+            var actual = sut.RunCreateInstance(executeStrategy, type, referenceName);
+
+            actual.Should().BeOfType<KeyValuePair<Guid, Person>>();
+
+            var pair = actual.As<KeyValuePair<Guid, Person>>();
+
+            pair.Key.Should().Be(key);
+            pair.Value.Should().Be(value);
         }
 
         [Fact]

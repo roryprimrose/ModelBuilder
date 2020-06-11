@@ -1,6 +1,7 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
+    using System.Reflection;
 
     public class DummyExecuteStrategy : IExecuteStrategy<string>
     {
@@ -10,6 +11,11 @@
         }
 
         public object Create(Type type, params object?[]? args)
+        {
+            throw new NotImplementedException();
+        }
+
+        public object?[] CreateParameters(MethodBase method)
         {
             throw new NotImplementedException();
         }

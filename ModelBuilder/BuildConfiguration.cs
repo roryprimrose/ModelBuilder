@@ -14,7 +14,8 @@
     public class BuildConfiguration : IBuildConfiguration
     {
         /// <inheritdoc />
-        public IConstructorResolver ConstructorResolver { get; set; } = new DefaultConstructorResolver(CacheLevel.PerInstance);
+        public IConstructorResolver ConstructorResolver { get; set; } =
+            new DefaultConstructorResolver(CacheLevel.PerInstance);
 
         /// <inheritdoc />
         public ICollection<ICreationRule> CreationRules { get; } = new List<ICreationRule>();
@@ -24,6 +25,10 @@
 
         /// <inheritdoc />
         public ICollection<IIgnoreRule> IgnoreRules { get; } = new List<IIgnoreRule>();
+
+        /// <inheritdoc />
+        public IParameterResolver ParameterResolver { get; set; } =
+            new DefaultParameterResolver(CacheLevel.PerInstance);
 
         /// <inheritdoc />
         public ICollection<IPostBuildAction> PostBuildActions { get; } = new List<IPostBuildAction>();
