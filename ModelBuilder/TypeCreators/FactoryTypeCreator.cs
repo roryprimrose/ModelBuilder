@@ -1,20 +1,38 @@
 ﻿namespace ModelBuilder.TypeCreators
 {
     using System;
+    using System.Collections.Concurrent;
     using System.Linq;
     using System.Reflection;
 
     /// <summary>
-    /// The <see cref="FactoryTypeCreator"/>
-    /// class is used to create a value using a static factory method found on the type.
+    ///     The <see cref="FactoryTypeCreator" />
+    ///     class is used to create a value using a static factory method found on the type.
     /// </summary>
     public class FactoryTypeCreator : TypeCreatorBase
     {
+        private static readonly ConcurrentDictionary<Type, MethodInfo?> _globalCache =
+            new ConcurrentDictionary<Type, MethodInfo?>();
+
+        private readonly ConcurrentDictionary<Type, MethodInfo?> _perInstanceCache =
+            new ConcurrentDictionary<Type, MethodInfo?>();
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="FactoryTypeCreator" /> class.
+        /// </summary>
+        /// <param name="cacheLevel">The cache level to use for resolved methods.</param>
+        public FactoryTypeCreator(CacheLevel cacheLevel)
+        {
+            CacheLevel = cacheLevel;
+        }
+
         /// <inheritdoc />
         protected override bool CanCreate(IBuildConfiguration configuration, IBuildChain buildChain, Type type,
             string? referenceName)
         {
-            var baseValue = base.CanCreate(configuration, buildChain, type, referenceName);
+            var buildType = ResolveBuildType(configuration, type);
+
+            var baseValue = base.CanCreate(configuration, buildChain, buildType, referenceName);
 
             if (baseValue == false)
             {
@@ -22,7 +40,7 @@
             }
 
             // Check if there is no constructor to use
-            var constructor = configuration.ConstructorResolver.Resolve(type);
+            var constructor = configuration.ConstructorResolver.Resolve(buildType);
 
             if (constructor != null)
             {
@@ -30,7 +48,7 @@
                 return false;
             }
 
-            var method = GetFactoryMethod(type);
+            var method = GetFactoryMethod(buildType);
 
             if (method == null)
             {
@@ -45,36 +63,18 @@
         protected override object? CreateInstance(IExecuteStrategy executeStrategy, Type type, string? referenceName,
             params object?[]? args)
         {
-            var method = GetFactoryMethod(type);
+            var buildType = ResolveBuildType(executeStrategy.Configuration, type);
 
-            if (method == null)
+            // The base class has already validated CanCreate which ensures that the factory method is availabe
+            var method = GetFactoryMethod(buildType)!;
+
+            if (args?.Length > 0)
             {
-                throw new InvalidOperationException($"Failed to resolve factory method on type '{type.FullName}'");
+                return method.Invoke(null, args);
             }
 
-            var parameters = method.GetParameters();
-
-            if (parameters == null)
-            {
-                return method.Invoke(null, null);
-            }
-
-            var parameterArguments = new object[parameters.Length];
-
-            var lastContext = executeStrategy.BuildChain.Last;
-
-            for (var index = 0; index < parameters.Length; index++)
-            {
-                var parameter = parameters[index]!;
-
-                executeStrategy.Log.CreatingParameter(parameter, lastContext);
-
-                var value = executeStrategy.Create(parameter.ParameterType);
-
-                parameterArguments[index] = value;
-
-                executeStrategy.Log.CreatedParameter(parameter, lastContext);
-            }
+            // Build any parameters that the method defines
+            var parameterArguments = executeStrategy.CreateParameters(method);
 
             return method.Invoke(null, parameterArguments);
         }
@@ -82,10 +82,10 @@
         /// <inheritdoc />
         protected override object PopulateInstance(IExecuteStrategy executeStrategy, object instance)
         {
-            throw new NotImplementedException();
+            return instance;
         }
 
-        private static MethodInfo? GetFactoryMethod(Type type)
+        private static MethodInfo? CalculateFactoryMethod(Type type)
         {
             var bindingFlags = BindingFlags.Static
                                | BindingFlags.FlattenHierarchy
@@ -102,6 +102,29 @@
 
             return methods.FirstOrDefault();
         }
+
+        private MethodInfo? GetFactoryMethod(Type type)
+        {
+            if (CacheLevel == CacheLevel.Global)
+            {
+                return _globalCache.GetOrAdd(type,
+                    x => CalculateFactoryMethod(type));
+            }
+
+            if (CacheLevel == CacheLevel.PerInstance)
+            {
+                return _perInstanceCache.GetOrAdd(type,
+                    x => CalculateFactoryMethod(type));
+            }
+
+            return CalculateFactoryMethod(type);
+        }
+
+        /// <summary>
+        ///     Gets or sets whether resolved factory methods are cached.
+        /// </summary>
+        /// <returns>Returns the cache level to apply to methods.</returns>
+        public CacheLevel CacheLevel { get; set; }
 
         /// <inheritdoc />
         public override int Priority { get; } = 200;

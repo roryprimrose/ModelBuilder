@@ -2,7 +2,6 @@
 {
     using System;
     using System.Diagnostics.CodeAnalysis;
-    using ModelBuilder.Properties;
 
     /// <summary>
     ///     The <see cref="DefaultTypeCreator" />
@@ -10,6 +9,35 @@
     /// </summary>
     public class DefaultTypeCreator : TypeCreatorBase
     {
+        /// <inheritdoc />
+        protected override bool CanCreate(IBuildConfiguration configuration, IBuildChain buildChain, Type type,
+            string? referenceName)
+        {
+            var baseValue = base.CanCreate(configuration, buildChain, type, referenceName);
+
+            if (baseValue == false)
+            {
+                return baseValue;
+            }
+
+            // Resolve the type being created
+            var typeToCreate = ResolveBuildType(configuration, type);
+
+            // Use constructor detection to figure out how to create this instance
+            var constructorResolver = configuration.ConstructorResolver;
+
+            // Try to find a constructor to use
+            var constructor = constructorResolver.Resolve(typeToCreate, null);
+
+            if (constructor == null)
+            {
+                // This type does not have an available constructor
+                return false;
+            }
+
+            return true;
+        }
+
         /// <inheritdoc />
         [SuppressMessage(
             "Microsoft.Design",
@@ -29,21 +57,17 @@
                 // We have arguments supplied so we will assume that they may the resolve type
                 return Activator.CreateInstance(typeToCreate, args);
             }
-            
+
             // Use constructor detection to figure out how to create this instance
             var constructorResolver = executeStrategy.Configuration.ConstructorResolver;
 
             // We aren't provided with arguments so we need to resolve the most appropriate constructor
-            var constructor = constructorResolver.Resolve(typeToCreate);
-
-            if (constructor == null)
-            {
-                throw new MissingMemberException(Resources.DefaultTypeCreator_NoMatchingConstructor);
-            }
+            // The constructor must exist because the base class has already validated that it could be resolved
+            var constructor = constructorResolver.Resolve(typeToCreate)!;
 
             // Create the arguments for the constructor we have found
             var builtArgs = executeStrategy.CreateParameters(constructor);
-            
+
             return constructor.Invoke(builtArgs);
         }
 

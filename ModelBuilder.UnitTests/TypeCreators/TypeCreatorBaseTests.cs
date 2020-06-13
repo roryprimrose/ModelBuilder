@@ -24,11 +24,16 @@
         [InlineData(typeof(KeyValuePair<string, Person>), true)]
         public void CanCreateReturnsWhetherTypeCanBeCreatedTest(Type targetType, bool expected)
         {
+            var constructorInfo = targetType.GetConstructors().FirstOrDefault();
+
             var typeResolver = Substitute.For<ITypeResolver>();
+            var constructorResolver = Substitute.For<IConstructorResolver>();
             var configuration = Substitute.For<IBuildConfiguration>();
 
             configuration.TypeResolver.Returns(typeResolver);
+            configuration.ConstructorResolver.Returns(constructorResolver);
             typeResolver.GetBuildType(configuration, targetType).Returns(targetType);
+            constructorResolver.Resolve(targetType, null).Returns(constructorInfo);
 
             var sut = new DefaultTypeCreator();
 

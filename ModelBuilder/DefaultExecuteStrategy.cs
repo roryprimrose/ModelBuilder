@@ -182,8 +182,10 @@
 
             try
             {
-                IBuildCapability GetCapability() =>
-                    _buildProcessor.GetBuildCapability(this, BuildRequirement.Create, type);
+                IBuildCapability GetCapability()
+                {
+                    return _buildProcessor.GetBuildCapability(this, BuildRequirement.Create, type);
+                }
 
                 var instance = Build(
                     GetCapability,
@@ -360,7 +362,7 @@
             try
             {
                 var instance = buildInstance(capability, args);
-                
+
                 if (instance == null)
                 {
                     return null;
@@ -388,27 +390,6 @@
             {
                 Log.CreatedType(type, context);
             }
-        }
-
-        private object?[]? CreateParameterValues(Type type)
-        {
-            // Resolve the type being created
-            var typeToCreate = Configuration.TypeResolver.GetBuildType(Configuration, type);
-
-            // Use constructor detection to figure out how to create this instance
-            var constructorResolver = Configuration.ConstructorResolver;
-
-            var constructor = constructorResolver.Resolve(typeToCreate);
-
-            if (constructor == null)
-            {
-                // This should be a struct that only has a default constructor
-                // In this case the type does not have any registered constructor (no default)
-                // There are no parameters for the default creation of a struct
-                return null;
-            }
-
-            return CreateParameters(constructor);
         }
 
         private object Populate(IBuildCapability capability, object instance, params object?[]? args)

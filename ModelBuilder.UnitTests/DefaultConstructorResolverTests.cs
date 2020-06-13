@@ -207,12 +207,20 @@
             constructor.GetParameters().Should().BeEmpty();
         }
 
-        [Fact]
-        public void ResolveReturnsNullForStructThatHasNoConstructors()
+        [Theory]
+        [InlineData(typeof(StructModel))]
+        [InlineData(typeof(FactoryItem))]
+        [InlineData(typeof(FactoryWithValue))]
+        [InlineData(typeof(NotFactoryItem))]
+        [InlineData(typeof(Singleton))]
+        [InlineData(typeof(Gender))]
+        [InlineData(typeof(Copy))]
+        [InlineData(typeof(Clone))]
+        public void ResolveReturnsNullForTypesWithoutPublicConstructors(Type targetType)
         {
             var sut = new DefaultConstructorResolver(CacheLevel.PerInstance);
 
-            var constructor = sut.Resolve(typeof(StructModel));
+            var constructor = sut.Resolve(targetType);
 
             constructor.Should().BeNull();
         }
@@ -225,16 +233,6 @@
             var constructor = sut.Resolve(typeof(WithValueParameters))!;
 
             constructor.GetParameters().Should().NotBeEmpty();
-        }
-
-        [Fact]
-        public void ResolveThrowsExceptionForEnum()
-        {
-            var sut = new DefaultConstructorResolver(CacheLevel.PerInstance);
-
-            Action action = () => sut.Resolve(typeof(Gender));
-
-            _output.WriteLine(action.Should().Throw<MissingMemberException>().And.Message);
         }
 
         [Fact]
@@ -316,41 +314,11 @@
         }
 
         [Fact]
-        public void ResolveThrowsExceptionWhenClassOnlyContainsConstructorsThatReferenceTheSameType()
-        {
-            var sut = new DefaultConstructorResolver(CacheLevel.PerInstance);
-
-            Action action = () => sut.Resolve(typeof(Clone));
-
-            _output.WriteLine(action.Should().Throw<MissingMemberException>().And.Message);
-        }
-
-        [Fact]
-        public void ResolveThrowsExceptionWhenClassOnlyContainsCopyConstructor()
-        {
-            var sut = new DefaultConstructorResolver(CacheLevel.PerInstance);
-
-            Action action = () => sut.Resolve(typeof(Copy));
-
-            _output.WriteLine(action.Should().Throw<MissingMemberException>().And.Message);
-        }
-
-        [Fact]
         public void ResolveThrowsExceptionWhenNoConstructorMatchingSpecifiedParameters()
         {
             var sut = new DefaultConstructorResolver(CacheLevel.PerInstance);
 
             Action action = () => sut.Resolve(typeof(Simple), Guid.NewGuid().ToString(), true, 123);
-
-            _output.WriteLine(action.Should().Throw<MissingMemberException>().And.Message);
-        }
-
-        [Fact]
-        public void ResolveThrowsExceptionWhenNoPublicConstructorFound()
-        {
-            var sut = new DefaultConstructorResolver(CacheLevel.PerInstance);
-
-            Action action = () => sut.Resolve(typeof(Singleton));
 
             _output.WriteLine(action.Should().Throw<MissingMemberException>().And.Message);
         }
@@ -370,16 +338,6 @@
                 true,
                 Guid.NewGuid(),
                 priority);
-
-            _output.WriteLine(action.Should().Throw<MissingMemberException>().And.Message);
-        }
-
-        [Fact]
-        public void ResolveThrowsExceptionWhenWhenOnlyPrivateConstructorAvailable()
-        {
-            var sut = new DefaultConstructorResolver(CacheLevel.PerInstance);
-
-            Action action = () => sut.Resolve(typeof(Singleton));
 
             _output.WriteLine(action.Should().Throw<MissingMemberException>().And.Message);
         }

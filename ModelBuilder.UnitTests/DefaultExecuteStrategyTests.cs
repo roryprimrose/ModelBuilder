@@ -151,6 +151,49 @@
         }
 
         [Fact]
+        public void CreateCanAssignNullProperty()
+        {
+            var buildHistory = new BuildHistory();
+            var expected = new NullablePropertyModel<Person>();
+
+            var processor = Substitute.For<IBuildProcessor>();
+            var buildConfiguration = Substitute.For<IBuildConfiguration>();
+            var propertyResolver = Substitute.For<IPropertyResolver>();
+            var typeCapability = Substitute.For<IBuildCapability>();
+            var valueCapability = Substitute.For<IBuildCapability>();
+
+            typeCapability.AutoPopulate.Returns(true);
+            typeCapability.SupportsCreate.Returns(true);
+            typeCapability.SupportsPopulate.Returns(true);
+            typeCapability.ImplementedByType.Returns(typeof(DummyTypeCreator));
+            valueCapability.SupportsCreate.Returns(true);
+            valueCapability.ImplementedByType.Returns(typeof(DummyTypeCreator));
+
+            var sut = new DefaultExecuteStrategy(buildHistory, _buildLog, processor);
+
+            processor.GetBuildCapability(sut, Arg.Any<BuildRequirement>(),
+                    typeof(NullablePropertyModel<Person>))
+                .Returns(typeCapability);
+            processor.GetBuildCapability(sut, Arg.Any<BuildRequirement>(),
+                    Arg.Any<PropertyInfo>())
+                .Returns(valueCapability);
+            typeCapability.CreateType(sut, typeof(NullablePropertyModel<Person>), Arg.Any<object[]>())
+                .Returns(expected);
+            valueCapability.CreateProperty(sut, Arg.Any<PropertyInfo>(), Arg.Any<object[]>()).Returns(null);
+            typeCapability.Populate(sut, expected).Returns(expected);
+            buildConfiguration.PropertyResolver.Returns(propertyResolver);
+            propertyResolver.GetOrderedProperties(buildConfiguration, typeof(NullablePropertyModel<Person>))
+                .Returns(typeof(NullablePropertyModel<Person>).GetProperties());
+
+            sut.Initialize(buildConfiguration);
+
+            var actual = (NullablePropertyModel<Person>) sut.Create(typeof(NullablePropertyModel<Person>))!;
+
+            actual.Should().Be(expected);
+            actual.Value.Should().BeNull();
+        }
+
+        [Fact]
         public void CreateDeterminesPropertiesToCreateByProvidingConstructorArgsForNestedType()
         {
             var buildHistory = new BuildHistory();
@@ -372,6 +415,39 @@
 
             action.Received().Execute(Arg.Any<IBuildChain>(), Arg.Any<SlimModel>(), typeof(SlimModel));
             action.Received().Execute(Arg.Any<IBuildChain>(), Arg.Any<SlimModel>(), typeof(SlimModel));
+        }
+
+        [Fact]
+        public void CreateParametersCanReturnNullParameter()
+        {
+            var buildHistory = new BuildHistory();
+            var method = typeof(SimpleConstructor).GetConstructors().First();
+            var parameters = method.GetParameters().OrderBy(x => x.Name);
+
+            var parameterCapability = Substitute.For<IBuildCapability>();
+            var processor = Substitute.For<IBuildProcessor>();
+            var parameterResolver = Substitute.For<IParameterResolver>();
+            var buildConfiguration = Substitute.For<IBuildConfiguration>();
+
+            var sut = new DefaultExecuteStrategy(buildHistory, _buildLog, processor);
+
+            parameterCapability.AutoPopulate.Returns(false);
+            parameterCapability.SupportsCreate.Returns(true);
+            parameterCapability.SupportsPopulate.Returns(false);
+            parameterCapability.AutoDetectConstructor.Returns(false);
+            parameterCapability.ImplementedByType.Returns(GetType());
+            parameterCapability.CreateParameter(sut, Arg.Any<ParameterInfo>(), null).Returns(null);
+            processor.GetBuildCapability(sut, BuildRequirement.Create,
+                Arg.Any<ParameterInfo>()).Returns(parameterCapability);
+            parameterResolver.GetOrderedParameters(buildConfiguration, method).Returns(parameters);
+            buildConfiguration.ParameterResolver.Returns(parameterResolver);
+
+            sut.Initialize(buildConfiguration);
+
+            var actual = sut.CreateParameters(method)!;
+
+            actual.Should().HaveCount(1);
+            actual[0].Should().BeNull();
         }
 
         [Fact]

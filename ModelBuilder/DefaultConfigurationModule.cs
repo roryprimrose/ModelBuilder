@@ -11,7 +11,7 @@
     public class DefaultConfigurationModule : IConfigurationModule
     {
         /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">The <paramref name="configuration"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="configuration" /> is <c>null</c>.</exception>
         public void Configure(IBuildConfiguration configuration)
         {
             if (configuration == null)
@@ -54,7 +54,9 @@
 
         private static void AddTypeCreators(IBuildConfiguration configuration)
         {
-            configuration.AddTypeCreator<FactoryTypeCreator>();
+            var factoryTypeCreator = new FactoryTypeCreator(CacheLevel.Global);
+            configuration.Add(factoryTypeCreator);
+
             configuration.AddTypeCreator<ArrayTypeCreator>();
             configuration.AddTypeCreator<EnumerableTypeCreator>();
             configuration.AddTypeCreator<StructTypeCreator>();
