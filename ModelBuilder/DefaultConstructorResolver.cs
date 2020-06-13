@@ -22,7 +22,7 @@
             new ConcurrentDictionary<Type, ConstructorInfo?>();
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DefaultConstructorResolver"/> class.
+        ///     Initializes a new instance of the <see cref="DefaultConstructorResolver" /> class.
         /// </summary>
         /// <param name="cacheLevel">The cache level to use for resolved constructors and parameters.</param>
         public DefaultConstructorResolver(CacheLevel cacheLevel)
@@ -71,12 +71,10 @@
 
             if (availableConstructors.Count == 0)
             {
-                if (type.IsValueType
-                    && type.IsEnum == false)
-                {
-                    // This must be a struct where there will not be a constructor
-                    return null;
-                }
+                // This could be a struct with no constructor defined
+                // or it is a type that does not have public constructors
+                // We can't return anything here and must rely on TypeCreators to handle this scenario
+                return null;
             }
 
             // Ignore any constructors that have a parameter with the type being created (a copy constructor)
@@ -91,24 +89,8 @@
                 return bestConstructor;
             }
 
-            string message;
-
-            if (availableConstructors.Count > validConstructors.Count)
-            {
-                message = string.Format(
-                    CultureInfo.CurrentCulture,
-                    Resources.ConstructorResolver_NoValidConstructorFound,
-                    type.FullName);
-            }
-            else
-            {
-                message = string.Format(
-                    CultureInfo.CurrentCulture,
-                    Resources.ConstructorResolver_NoPublicConstructorFound,
-                    type.FullName);
-            }
-
-            throw new MissingMemberException(message);
+            // There are public constructors but none of them are available that do not also have the target type as a parameter
+            return null;
         }
 
         private static ConstructorInfo FindConstructorMatchingArguments(Type type, IList<object?> args)
@@ -133,7 +115,7 @@
 
             throw new MissingMemberException(message);
         }
-        
+
         private static ConstructorInfo FindConstructorMatchingTypes(Type type, object[] args)
         {
             // Search for a matching constructor

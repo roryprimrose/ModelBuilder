@@ -2,6 +2,7 @@
 {
     using System;
     using System.IO;
+    using System.Linq;
     using System.Reflection;
     using FluentAssertions;
     using ModelBuilder.TypeCreators;
@@ -11,6 +12,52 @@
 
     public class DefaultTypeCreatorTests
     {
+        [Fact]
+        public void CanCreateReturnsFalseWhenNoPublicConstructorFound()
+        {
+            var type = typeof(FactoryItem);
+            ConstructorInfo? constructorInfo = null;
+
+            var configuration = Substitute.For<IBuildConfiguration>();
+            var typeResolver = Substitute.For<ITypeResolver>();
+            var constructorResolver = Substitute.For<IConstructorResolver>();
+            var buildChain = Substitute.For<IBuildChain>();
+
+            configuration.TypeResolver.Returns(typeResolver);
+            configuration.ConstructorResolver.Returns(constructorResolver);
+            typeResolver.GetBuildType(configuration, type).Returns(type);
+            constructorResolver.Resolve(type, Arg.Any<object?[]?>()).Returns(constructorInfo);
+
+            var sut = new DefaultTypeCreator();
+
+            var actual = sut.CanCreate(configuration, buildChain, type);
+
+            actual.Should().BeFalse();
+        }
+
+        [Fact]
+        public void CanCreateReturnsTrueWhenTypeHasPublicConstructor()
+        {
+            var type = typeof(Person);
+            var constructorInfo = typeof(Person).GetConstructors().First();
+
+            var configuration = Substitute.For<IBuildConfiguration>();
+            var typeResolver = Substitute.For<ITypeResolver>();
+            var constructorResolver = Substitute.For<IConstructorResolver>();
+            var buildChain = Substitute.For<IBuildChain>();
+
+            configuration.TypeResolver.Returns(typeResolver);
+            configuration.ConstructorResolver.Returns(constructorResolver);
+            typeResolver.GetBuildType(configuration, type).Returns(type);
+            constructorResolver.Resolve(type, Arg.Any<object?[]?>()).Returns(constructorInfo);
+
+            var sut = new DefaultTypeCreator();
+
+            var actual = sut.CanCreate(configuration, buildChain, type);
+
+            actual.Should().BeTrue();
+        }
+
         [Fact]
         public void CreateReturnsInstanceCreatedWithCreatedParameters()
         {
@@ -41,13 +88,18 @@
         [Fact]
         public void CreateReturnsInstanceCreatedWithProvidedArguments()
         {
+            var constructorInfo = typeof(Person).GetConstructors().First();
+
             var executeStrategy = Substitute.For<IExecuteStrategy>();
             var typeResolver = Substitute.For<ITypeResolver>();
+            var constructorResolver = Substitute.For<IConstructorResolver>();
             var configuration = Substitute.For<IBuildConfiguration>();
 
             configuration.TypeResolver.Returns(typeResolver);
+            configuration.ConstructorResolver.Returns(constructorResolver);
             typeResolver.GetBuildType(configuration, Arg.Any<Type>()).Returns(x => x.Arg<Type>());
             executeStrategy.Configuration.Returns(configuration);
+            constructorResolver.Resolve(typeof(Person), Arg.Any<object?[]?>()).Returns(constructorInfo);
 
             var args = new object[]
             {
@@ -136,7 +188,7 @@
 
             Action action = () => sut.Create(executeStrategy, typeof(Person), null);
 
-            action.Should().Throw<MissingMemberException>();
+            action.Should().Throw<NotSupportedException>();
         }
 
         [Fact]
@@ -180,7 +232,7 @@
 
             Action action = () => sut.Create(executeStrategy, typeof(Person), args);
 
-            action.Should().Throw<MissingMethodException>();
+            action.Should().Throw<NotSupportedException>();
         }
 
         [Fact]

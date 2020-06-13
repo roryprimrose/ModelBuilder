@@ -16,11 +16,11 @@
         }
 
         [Fact]
-        public void CreateThrowsExceptionWhenNoPublicConstructorFound()
+        public void CreateReturnsTypeThatDefinesCopyConstructor()
         {
-            Action action = () => Model.Create<FactoryClass>();
+            var actual = Model.WriteLog<Other>(_output.WriteLine).Create();
 
-            action.Should().Throw<BuildException>();
+            actual.Should().NotBeNull();
         }
 
         [Fact]
@@ -81,21 +81,6 @@
                 .Create(company, id, refNumber, number, value)!;
 
             model.Id.Should().NotBeEmpty();
-        }
-
-        private class FactoryClass
-        {
-            private FactoryClass(Guid value)
-            {
-                Value = value;
-            }
-
-            public static FactoryClass Create(Guid value)
-            {
-                return new FactoryClass(value);
-            }
-
-            public Guid Value { get; }
         }
     }
 }
