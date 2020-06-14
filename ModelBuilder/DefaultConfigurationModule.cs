@@ -57,6 +57,9 @@
             var factoryTypeCreator = new FactoryTypeCreator(CacheLevel.Global);
             configuration.Add(factoryTypeCreator);
 
+            var singletonTypeCreator = new SingletonTypeCreator(CacheLevel.Global);
+            configuration.Add(singletonTypeCreator);
+
             configuration.AddTypeCreator<ArrayTypeCreator>();
             configuration.AddTypeCreator<EnumerableTypeCreator>();
             configuration.AddTypeCreator<StructTypeCreator>();

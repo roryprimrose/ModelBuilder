@@ -8,6 +8,14 @@
     public class NonConstructorCreationTests
     {
         [Fact]
+        public void CanCreateViaSingletonProperty()
+        {
+            var actual = Model.Create<Singleton>();
+
+            actual.Value.Should().NotBeNullOrWhiteSpace();
+        }
+
+        [Fact]
         public void CanCreateViaStaticFactoryMethodWithCreatedParameters()
         {
             var actual = Model.Create<FactoryWithValue>();
