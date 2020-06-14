@@ -6,22 +6,22 @@
     using System.Reflection;
 
     /// <summary>
-    ///     The <see cref="FactoryTypeCreator" />
-    ///     class is used to create a value using a static factory method found on the type.
+    ///     The <see cref="SingletonTypeCreator" />
+    ///     class is used to create a value using a Singleton property found on the type.
     /// </summary>
-    public class FactoryTypeCreator : TypeCreatorBase
+    public class SingletonTypeCreator : TypeCreatorBase
     {
-        private static readonly ConcurrentDictionary<Type, MethodInfo?> _globalCache =
-            new ConcurrentDictionary<Type, MethodInfo?>();
+        private static readonly ConcurrentDictionary<Type, PropertyInfo?> _globalCache =
+            new ConcurrentDictionary<Type, PropertyInfo?>();
 
-        private readonly ConcurrentDictionary<Type, MethodInfo?> _perInstanceCache =
-            new ConcurrentDictionary<Type, MethodInfo?>();
+        private readonly ConcurrentDictionary<Type, PropertyInfo?> _perInstanceCache =
+            new ConcurrentDictionary<Type, PropertyInfo?>();
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="FactoryTypeCreator" /> class.
+        ///     Initializes a new instance of the <see cref="SingletonTypeCreator" /> class.
         /// </summary>
         /// <param name="cacheLevel">The cache level to use for resolved methods.</param>
-        public FactoryTypeCreator(CacheLevel cacheLevel)
+        public SingletonTypeCreator(CacheLevel cacheLevel)
         {
             CacheLevel = cacheLevel;
         }
@@ -44,13 +44,13 @@
 
             if (constructor != null)
             {
-                // There is a valid constructor to use so we don't need to search for a factory method
+                // There is a valid constructor to use so we don't need to search for a singleton property
                 return false;
             }
 
-            var method = GetFactoryMethod(buildType);
+            var propertyInfo = GetSingletonProperty(buildType);
 
-            if (method == null)
+            if (propertyInfo == null)
             {
                 // There is no factory method that can be used
                 return false;
@@ -65,18 +65,10 @@
         {
             var buildType = ResolveBuildType(executeStrategy.Configuration, type);
 
-            // The base class has already validated CanCreate which ensures that the factory method is available
-            var method = GetFactoryMethod(buildType)!;
+            // The base class has already validated CanCreate which ensures that the singleton property is available
+            var propertyInfo = GetSingletonProperty(buildType)!;
 
-            if (args?.Length > 0)
-            {
-                return method.Invoke(null, args);
-            }
-
-            // Build any parameters that the method defines
-            var parameterArguments = executeStrategy.CreateParameters(method);
-
-            return method.Invoke(null, parameterArguments);
+            return propertyInfo.GetValue(null, args);
         }
 
         /// <inheritdoc />
@@ -85,45 +77,43 @@
             return instance;
         }
 
-        private static MethodInfo? CalculateFactoryMethod(Type type)
+        private static PropertyInfo? CalculateSingletonProperty(Type type)
         {
             const BindingFlags bindingFlags = BindingFlags.Static
                                               | BindingFlags.FlattenHierarchy
                                               | BindingFlags.Public
-                                              | BindingFlags.InvokeMethod;
+                                              | BindingFlags.GetProperty;
 
-            // Get all the public static methods that return the return type but do not have the return type as a parameter
-            // order by the the methods with the least amount of parameters
-            var methods = from x in type.GetMethods(bindingFlags)
-                orderby x.GetParameters().Length
-                where type.IsAssignableFrom(x.ReturnType)
-                      && x.GetParameters().Any(y => y.ParameterType == type) == false
+            // Get all the public static readonly properties that return the return type
+            var methods = from x in type.GetProperties(bindingFlags)
+                where x.GetIndexParameters().Length == 0
+                      && type.IsAssignableFrom(x.PropertyType)
                 select x;
 
             return methods.FirstOrDefault();
         }
 
-        private MethodInfo? GetFactoryMethod(Type type)
+        private PropertyInfo? GetSingletonProperty(Type type)
         {
             if (CacheLevel == CacheLevel.Global)
             {
                 return _globalCache.GetOrAdd(type,
-                    x => CalculateFactoryMethod(type));
+                    x => CalculateSingletonProperty(type));
             }
 
             if (CacheLevel == CacheLevel.PerInstance)
             {
                 return _perInstanceCache.GetOrAdd(type,
-                    x => CalculateFactoryMethod(type));
+                    x => CalculateSingletonProperty(type));
             }
 
-            return CalculateFactoryMethod(type);
+            return CalculateSingletonProperty(type);
         }
 
         /// <summary>
-        ///     Gets or sets whether resolved factory methods are cached.
+        ///     Gets or sets whether resolved singleton properties are cached.
         /// </summary>
-        /// <returns>Returns the cache level to apply to methods.</returns>
+        /// <returns>Returns the cache level to apply to properties.</returns>
         public CacheLevel CacheLevel { get; set; }
 
         /// <inheritdoc />
