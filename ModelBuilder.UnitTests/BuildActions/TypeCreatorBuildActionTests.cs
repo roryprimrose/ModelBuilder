@@ -560,16 +560,11 @@
         }
 
         [Theory]
-        [InlineData(false, false, false)]
-        [InlineData(true, false, false)]
-        [InlineData(false, true, false)]
-        [InlineData(false, false, true)]
-        [InlineData(true, true, false)]
-        [InlineData(true, false, true)]
-        [InlineData(false, true, true)]
-        [InlineData(true, true, true)]
+        [InlineData(false, false)]
+        [InlineData(true, false)]
+        [InlineData(false, true)]
+        [InlineData(true, true)]
         public void GetBuildCapabilityForParameterReturnsMatchResultFromTypeCreator(bool canPopulate,
-            bool autoDetectConstructor,
             bool autoPopulate)
         {
             var parameterInfo = typeof(Person).GetConstructors()
@@ -591,7 +586,6 @@
             creator.CanPopulate(buildConfiguration, buildChain, parameterInfo).Returns(canPopulate);
             creator.Create(executeStrategy, parameterInfo, arguments)
                 .Returns(expected);
-            creator.AutoDetectConstructor.Returns(autoDetectConstructor);
             creator.AutoPopulate.Returns(autoPopulate);
 
             var sut = new TypeCreatorBuildAction();
@@ -601,7 +595,6 @@
             actual.Should().NotBeNull();
             actual.SupportsCreate.Should().BeTrue();
             actual.SupportsPopulate.Should().Be(canPopulate);
-            actual.AutoDetectConstructor.Should().Be(autoDetectConstructor);
             actual.AutoPopulate.Should().Be(autoPopulate);
             actual.ImplementedByType.Should().Be(creator.GetType());
         }
@@ -689,16 +682,11 @@
         }
 
         [Theory]
-        [InlineData(false, false, false)]
-        [InlineData(true, false, false)]
-        [InlineData(false, true, false)]
-        [InlineData(false, false, true)]
-        [InlineData(true, true, false)]
-        [InlineData(true, false, true)]
-        [InlineData(false, true, true)]
-        [InlineData(true, true, true)]
+        [InlineData(false, false)]
+        [InlineData(true, false)]
+        [InlineData(false, true)]
+        [InlineData(true, true)]
         public void GetBuildCapabilityForPropertyReturnsMatchResultFromTypeCreator(bool canPopulate,
-            bool autoDetectConstructor,
             bool autoPopulate)
         {
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
@@ -718,7 +706,6 @@
             creator.CanCreate(buildConfiguration, buildChain, propertyInfo).Returns(true);
             creator.CanPopulate(buildConfiguration, buildChain, propertyInfo).Returns(canPopulate);
             creator.Create(executeStrategy, propertyInfo, arguments).Returns(expected);
-            creator.AutoDetectConstructor.Returns(autoDetectConstructor);
             creator.AutoPopulate.Returns(autoPopulate);
 
             var sut = new TypeCreatorBuildAction();
@@ -728,22 +715,16 @@
             actual.Should().NotBeNull();
             actual!.SupportsCreate.Should().BeTrue();
             actual.SupportsPopulate.Should().Be(canPopulate);
-            actual.AutoDetectConstructor.Should().Be(autoDetectConstructor);
             actual.AutoPopulate.Should().Be(autoPopulate);
             actual.ImplementedByType.Should().Be(creator.GetType());
         }
 
         [Theory]
-        [InlineData(false, false, false)]
-        [InlineData(true, false, false)]
-        [InlineData(false, true, false)]
-        [InlineData(false, false, true)]
-        [InlineData(true, true, false)]
-        [InlineData(true, false, true)]
-        [InlineData(false, true, true)]
-        [InlineData(true, true, true)]
+        [InlineData(false, false)]
+        [InlineData(true, false)]
+        [InlineData(false, true)]
+        [InlineData(true, true)]
         public void GetBuildCapabilityForTypeReturnsMatchResultFromTypeCreator(bool canPopulate,
-            bool autoDetectConstructor,
             bool autoPopulate)
         {
             var type = typeof(Person);
@@ -762,7 +743,6 @@
             creator.CanCreate(buildConfiguration, buildChain, type).Returns(true);
             creator.CanPopulate(buildConfiguration, buildChain, type).Returns(canPopulate);
             creator.Create(executeStrategy, type).Returns(expected);
-            creator.AutoDetectConstructor.Returns(autoDetectConstructor);
             creator.AutoPopulate.Returns(autoPopulate);
 
             var sut = new TypeCreatorBuildAction();
@@ -772,7 +752,6 @@
             actual.Should().NotBeNull();
             actual!.SupportsCreate.Should().BeTrue();
             actual.SupportsPopulate.Should().Be(canPopulate);
-            actual.AutoDetectConstructor.Should().Be(autoDetectConstructor);
             actual.AutoPopulate.Should().Be(autoPopulate);
             actual.ImplementedByType.Should().Be(creator.GetType());
         }

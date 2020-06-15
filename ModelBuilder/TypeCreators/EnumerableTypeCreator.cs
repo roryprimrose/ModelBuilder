@@ -114,24 +114,6 @@
             return false;
         }
 
-        /// <summary>
-        ///     Creates a child item given the context of a possible previous item being created.
-        /// </summary>
-        /// <param name="type">The type of value to generate.</param>
-        /// <param name="executeStrategy">The execute strategy.</param>
-        /// <param name="previousItem">The previous item generated, or <c>null</c>.</param>
-        /// <returns>The new item generated.</returns>
-        /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is <c>null</c>.</exception>
-        protected virtual object? CreateChildItem(Type type, IExecuteStrategy executeStrategy, object? previousItem)
-        {
-            if (executeStrategy == null)
-            {
-                throw new ArgumentNullException(nameof(executeStrategy));
-            }
-
-            return executeStrategy.Create(type);
-        }
-
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
@@ -167,7 +149,24 @@
             }
 
             return CreateInstance(executeStrategy, typeToCreate, referenceName, args);
+        }
 
+        /// <summary>
+        ///     Creates a child item given the context of a possible previous item being created.
+        /// </summary>
+        /// <param name="type">The type of value to generate.</param>
+        /// <param name="executeStrategy">The execute strategy.</param>
+        /// <param name="previousItem">The previous item generated, or <c>null</c>.</param>
+        /// <returns>The new item generated.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is <c>null</c>.</exception>
+        protected virtual object? CreateChildItem(Type type, IExecuteStrategy executeStrategy, object? previousItem)
+        {
+            if (executeStrategy == null)
+            {
+                throw new ArgumentNullException(nameof(executeStrategy));
+            }
+
+            return executeStrategy.Create(type);
         }
 
         /// <inheritdoc />
@@ -389,9 +388,6 @@
 
             return false;
         }
-
-        /// <inheritdoc />
-        public override bool AutoDetectConstructor => false;
 
         /// <inheritdoc />
         public override bool AutoPopulate => false;

@@ -182,19 +182,14 @@
 
             try
             {
-                IBuildCapability GetCapability()
-                {
-                    return _buildProcessor.GetBuildCapability(this, BuildRequirement.Create, type);
-                }
-
                 var instance = Build(
-                    GetCapability,
+                    () => GetCreateTypeCapability(type),
                     (capability, items) => capability.CreateType(this, type, items), type, args)!;
 
                 if (instance == null)
                 {
                     // The Build method above would have thrown an exception if the build capability could not be identified
-                    var capability = GetCapability()!;
+                    var capability = GetCreateTypeCapability(type)!;
 
                     var message = string.Format(CultureInfo.CurrentCulture,
                         "The type '{0}' failed to create a non-null value of type '{1}'",
@@ -390,6 +385,27 @@
             {
                 Log.CreatedType(type, context);
             }
+        }
+
+        private IBuildCapability GetCreateTypeCapability(Type type)
+        {
+            // As an internal implementation, we know that implementations like EnumerableTypeCreator and ArrayTypeCreator 
+            // will make many calls to get a build capability for the same type and state of the build chain.
+            // We can increase performance if we can cache the build capabilities for the same requested type for the same item
+            // at the end of the build chain
+            var capability = _buildHistory.GetCapability(type);
+
+            if (capability != null)
+            {
+                // We have already calculated this capability
+                return capability;
+            }
+
+            capability = _buildProcessor.GetBuildCapability(this, BuildRequirement.Create, type);
+
+            _buildHistory.AddCapability(type, capability);
+
+            return capability;
         }
 
         private object Populate(IBuildCapability capability, object instance, params object?[]? args)

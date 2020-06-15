@@ -88,7 +88,6 @@
             SupportsCreate = supportsCreate;
             SupportsPopulate = supportsPopulate;
             AutoPopulate = typeCreator.AutoPopulate;
-            AutoDetectConstructor = typeCreator.AutoDetectConstructor;
 
             _createType = typeCreator.Create;
             _createProperty = typeCreator.Create;
@@ -169,13 +168,6 @@
 
             return _populate(executeStrategy, instance);
         }
-
-        /// <inheritdoc />
-        /// <remarks>
-        ///     When <c>true</c>, detection of the appropriate constructor and creation of constructor parameters will
-        ///     be required.
-        /// </remarks>
-        public bool AutoDetectConstructor { get; }
 
         /// <inheritdoc />
         public bool AutoPopulate { get; }

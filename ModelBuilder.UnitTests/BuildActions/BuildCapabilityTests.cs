@@ -14,40 +14,6 @@
     public class BuildCapabilityTests
     {
         [Fact]
-        public void AutoDetectConstructorReturnsFalseForCreationRule()
-        {
-            var creationRule = new DummyCreationRule();
-
-            var sut = new BuildCapability(creationRule);
-
-            sut.AutoDetectConstructor.Should().BeFalse();
-        }
-
-        [Fact]
-        public void AutoDetectConstructorReturnsFalseForValueGenerator()
-        {
-            var generator = Substitute.For<IValueGenerator>();
-
-            var sut = new BuildCapability(generator);
-
-            sut.AutoDetectConstructor.Should().BeFalse();
-        }
-
-        [Theory]
-        [InlineData(false)]
-        [InlineData(true)]
-        public void AutoDetectConstructorReturnsTypeCreatorValue(bool autoDetectConstructor)
-        {
-            var typeCreator = Substitute.For<ITypeCreator>();
-
-            typeCreator.AutoDetectConstructor.Returns(autoDetectConstructor);
-
-            var sut = new BuildCapability(typeCreator, false, autoDetectConstructor);
-
-            sut.AutoDetectConstructor.Should().Be(autoDetectConstructor);
-        }
-
-        [Fact]
         public void AutoPopulateReturnsFalseForCreationRule()
         {
             var creationRule = new DummyCreationRule();

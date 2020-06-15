@@ -43,7 +43,8 @@
             var strategy = Model.UsingDefaultConfiguration().Set(x => x.ValueGenerators.Clear())
                 .AddValueGenerator<StringValueGenerator>().AddValueGenerator<NumericValueGenerator>()
                 .AddValueGenerator<BooleanValueGenerator>().AddValueGenerator<GuidValueGenerator>()
-                .AddValueGenerator<DateTimeValueGenerator>().AddValueGenerator<EnumValueGenerator>().UsingExecuteStrategy<DefaultExecuteStrategy<Person>>();
+                .AddValueGenerator<DateTimeValueGenerator>().AddValueGenerator<EnumValueGenerator>()
+                .UsingExecuteStrategy<DefaultExecuteStrategy<Person>>();
 
             var actual = strategy.WriteLog(_output.WriteLine).WriteLog(_output.WriteLine).Create();
 
@@ -287,7 +288,7 @@
             };
 
             var actual = Model.WriteLog<WithConstructorParameters>(_output.WriteLine).Create(args);
-            
+
             actual.First.Should().BeSameAs(args[0]);
             actual.Id.Should().Be((Guid) args[1]);
             actual.RefNumber.Should().Be((int?) args[2]);
@@ -481,7 +482,6 @@
                     Arg.Is<PropertyInfo>(x => x.DeclaringType == typeof(Office) && x.Name == nameof(Office.Address)))
                 .Returns(true);
             typeCreator.Priority.Returns(int.MaxValue);
-            typeCreator.AutoDetectConstructor.Returns(true);
             typeCreator.AutoPopulate.Returns(true);
             typeCreator.Create(Arg.Any<IExecuteStrategy>(),
                     Arg.Is<PropertyInfo>(x => x.DeclaringType == typeof(Office) && x.Name == nameof(Office.Address)),
@@ -518,7 +518,8 @@
         public void IgnoringSkipsPropertyAssignment()
         {
             var entity = Model.WriteLog<Person>(_output.WriteLine).Create();
-            var actual = Model.Ignoring<Person>(x => x.Id).Ignoring<Person>(x => x.IsActive).WriteLog<Person>(_output.WriteLine).Create(entity);
+            var actual = Model.Ignoring<Person>(x => x.Id).Ignoring<Person>(x => x.IsActive)
+                .WriteLog<Person>(_output.WriteLine).Create(entity);
 
             actual.Should().NotBeNull();
             actual.DOB.Should().NotBe(default);
@@ -635,10 +636,10 @@
         {
             var configuration = Model.UsingDefaultConfiguration();
 
-            const int MaxTasks = 100;
-            var tasks = new List<Task<string>>(MaxTasks);
+            const int maxTasks = 100;
+            var tasks = new List<Task<string>>(maxTasks);
 
-            for (var index = 0; index < MaxTasks; index++)
+            for (var index = 0; index < maxTasks; index++)
             {
                 var loopIndex = index;
                 var task = Task<string>.Factory.StartNew(
@@ -657,7 +658,7 @@
 
             Task.WhenAll(tasks).Wait();
 
-            for (var index = 0; index < MaxTasks; index++)
+            for (var index = 0; index < maxTasks; index++)
             {
                 _output.WriteLine(tasks[index].Result + Environment.NewLine);
             }

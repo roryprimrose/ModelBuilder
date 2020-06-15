@@ -480,6 +480,36 @@
         }
 
         [Fact]
+        public void GetBuildCapabilityForParameterInfoReturnsCapabilityWhenMatchingRuleFound()
+        {
+            var parameterInfo = typeof(Person).GetConstructors()
+                .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
+            var buildConfiguration = new BuildConfiguration();
+            var buildChain = new BuildHistory();
+            var expected = new Person();
+
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+            var rule = Substitute.For<ICreationRule>();
+
+            buildConfiguration.CreationRules.Add(rule);
+
+            executeStrategy.Configuration.Returns(buildConfiguration);
+            executeStrategy.Log.Returns(_buildLog);
+            rule.IsMatch(parameterInfo).Returns(true);
+            rule.Create(executeStrategy, parameterInfo).Returns(expected);
+
+            var sut = new CreationRuleBuildAction();
+
+            var actual = sut.GetBuildCapability(buildConfiguration, buildChain, parameterInfo)!;
+
+            actual.Should().NotBeNull();
+            actual.SupportsCreate.Should().BeTrue();
+            actual.SupportsPopulate.Should().BeFalse();
+            actual.AutoPopulate.Should().BeFalse();
+            actual.ImplementedByType.Should().Be(rule.GetType());
+        }
+
+        [Fact]
         public void GetBuildCapabilityForParameterInfoReturnsNullWhenNoMatchingRuleFound()
         {
             var parameterInfo = typeof(Person).GetConstructors()
@@ -520,37 +550,6 @@
             var actual = sut.GetBuildCapability(buildConfiguration, buildChain, parameterInfo);
 
             actual.Should().BeNull();
-        }
-
-        [Fact]
-        public void GetBuildCapabilityForParameterInfoReturnsCapabilityWhenMatchingRuleFound()
-        {
-            var parameterInfo = typeof(Person).GetConstructors()
-                .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
-            var buildConfiguration = new BuildConfiguration();
-            var buildChain = new BuildHistory();
-            var expected = new Person();
-
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-            var rule = Substitute.For<ICreationRule>();
-
-            buildConfiguration.CreationRules.Add(rule);
-
-            executeStrategy.Configuration.Returns(buildConfiguration);
-            executeStrategy.Log.Returns(_buildLog);
-            rule.IsMatch(parameterInfo).Returns(true);
-            rule.Create(executeStrategy, parameterInfo).Returns(expected);
-
-            var sut = new CreationRuleBuildAction();
-
-            var actual = sut.GetBuildCapability(buildConfiguration, buildChain, parameterInfo)!;
-
-            actual.Should().NotBeNull();
-            actual.SupportsCreate.Should().BeTrue();
-            actual.SupportsPopulate.Should().BeFalse();
-            actual.AutoDetectConstructor.Should().BeFalse();
-            actual.AutoPopulate.Should().BeFalse();
-            actual.ImplementedByType.Should().Be(rule.GetType());
         }
 
         [Fact]
@@ -595,6 +594,35 @@
         }
 
         [Fact]
+        public void GetBuildCapabilityForPropertyInfoReturnsCapabilityWhenMatchingRuleFound()
+        {
+            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
+            var buildConfiguration = new BuildConfiguration();
+            var buildChain = new BuildHistory();
+            var expected = new Person();
+
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+            var rule = Substitute.For<ICreationRule>();
+
+            buildConfiguration.CreationRules.Add(rule);
+
+            executeStrategy.Configuration.Returns(buildConfiguration);
+            executeStrategy.Log.Returns(_buildLog);
+            rule.IsMatch(propertyInfo).Returns(true);
+            rule.Create(executeStrategy, propertyInfo).Returns(expected);
+
+            var sut = new CreationRuleBuildAction();
+
+            var actual = sut.GetBuildCapability(buildConfiguration, buildChain, propertyInfo);
+
+            actual.Should().NotBeNull();
+            actual!.SupportsCreate.Should().BeTrue();
+            actual.SupportsPopulate.Should().BeFalse();
+            actual.AutoPopulate.Should().BeFalse();
+            actual.ImplementedByType.Should().Be(rule.GetType());
+        }
+
+        [Fact]
         public void GetBuildCapabilityForPropertyInfoReturnsNullWhenNoMatchingRuleFound()
         {
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
@@ -633,36 +661,6 @@
             var actual = sut.GetBuildCapability(buildConfiguration, buildChain, propertyInfo);
 
             actual.Should().BeNull();
-        }
-
-        [Fact]
-        public void GetBuildCapabilityForPropertyInfoReturnsCapabilityWhenMatchingRuleFound()
-        {
-            var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
-            var buildConfiguration = new BuildConfiguration();
-            var buildChain = new BuildHistory();
-            var expected = new Person();
-
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-            var rule = Substitute.For<ICreationRule>();
-
-            buildConfiguration.CreationRules.Add(rule);
-
-            executeStrategy.Configuration.Returns(buildConfiguration);
-            executeStrategy.Log.Returns(_buildLog);
-            rule.IsMatch(propertyInfo).Returns(true);
-            rule.Create(executeStrategy, propertyInfo).Returns(expected);
-
-            var sut = new CreationRuleBuildAction();
-
-            var actual = sut.GetBuildCapability(buildConfiguration, buildChain, propertyInfo);
-
-            actual.Should().NotBeNull();
-            actual!.SupportsCreate.Should().BeTrue();
-            actual.SupportsPopulate.Should().BeFalse();
-            actual.AutoDetectConstructor.Should().BeFalse();
-            actual.AutoPopulate.Should().BeFalse();
-            actual.ImplementedByType.Should().Be(rule.GetType());
         }
 
         [Fact]
@@ -705,6 +703,35 @@
         }
 
         [Fact]
+        public void GetBuildCapabilityForTypeReturnsCapabilityWhenMatchingRuleFound()
+        {
+            var type = typeof(Person);
+            var buildConfiguration = new BuildConfiguration();
+            var buildChain = new BuildHistory();
+            var expected = new Person();
+
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+            var rule = Substitute.For<ICreationRule>();
+
+            buildConfiguration.CreationRules.Add(rule);
+
+            executeStrategy.Configuration.Returns(buildConfiguration);
+            executeStrategy.Log.Returns(_buildLog);
+            rule.IsMatch(type).Returns(true);
+            rule.Create(executeStrategy, type).Returns(expected);
+
+            var sut = new CreationRuleBuildAction();
+
+            var actual = sut.GetBuildCapability(buildConfiguration, buildChain, type);
+
+            actual.Should().NotBeNull();
+            actual!.SupportsCreate.Should().BeTrue();
+            actual.SupportsPopulate.Should().BeFalse();
+            actual.AutoPopulate.Should().BeFalse();
+            actual.ImplementedByType.Should().Be(rule.GetType());
+        }
+
+        [Fact]
         public void GetBuildCapabilityForTypeReturnsNullWhenNoMatchingRuleFound()
         {
             var type = typeof(Person);
@@ -743,36 +770,6 @@
             var actual = sut.GetBuildCapability(buildConfiguration, buildChain, type);
 
             actual.Should().BeNull();
-        }
-
-        [Fact]
-        public void GetBuildCapabilityForTypeReturnsCapabilityWhenMatchingRuleFound()
-        {
-            var type = typeof(Person);
-            var buildConfiguration = new BuildConfiguration();
-            var buildChain = new BuildHistory();
-            var expected = new Person();
-
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-            var rule = Substitute.For<ICreationRule>();
-
-            buildConfiguration.CreationRules.Add(rule);
-
-            executeStrategy.Configuration.Returns(buildConfiguration);
-            executeStrategy.Log.Returns(_buildLog);
-            rule.IsMatch(type).Returns(true);
-            rule.Create(executeStrategy, type).Returns(expected);
-
-            var sut = new CreationRuleBuildAction();
-
-            var actual = sut.GetBuildCapability(buildConfiguration, buildChain, type);
-
-            actual.Should().NotBeNull();
-            actual!.SupportsCreate.Should().BeTrue();
-            actual.SupportsPopulate.Should().BeFalse();
-            actual.AutoDetectConstructor.Should().BeFalse();
-            actual.AutoPopulate.Should().BeFalse();
-            actual.ImplementedByType.Should().Be(rule.GetType());
         }
 
         [Fact]

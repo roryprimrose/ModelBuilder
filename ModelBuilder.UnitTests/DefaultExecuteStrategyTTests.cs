@@ -2,7 +2,6 @@
 {
     using System;
     using System.Linq;
-    using System.Reflection;
     using FluentAssertions;
     using ModelBuilder.BuildActions;
     using ModelBuilder.UnitTests.Models;
@@ -39,7 +38,6 @@
             var propertyResolver = Substitute.For<IPropertyResolver>();
             var typeCapability = Substitute.For<IBuildCapability>();
 
-            typeCapability.AutoDetectConstructor.Returns(true);
             typeCapability.SupportsCreate.Returns(true);
             typeCapability.ImplementedByType.Returns(typeof(DummyTypeCreator));
 
@@ -70,7 +68,6 @@
             var processor = Substitute.For<IBuildProcessor>();
             var typeCapability = Substitute.For<IBuildCapability>();
 
-            typeCapability.AutoDetectConstructor.Returns(true);
             typeCapability.SupportsCreate.Returns(true);
             typeCapability.ImplementedByType.Returns(typeof(DummyTypeCreator));
 
@@ -112,7 +109,7 @@
             processor.GetBuildCapability(sut, Arg.Any<BuildRequirement>(),
                     typeof(int))
                 .Returns(typeCapability);
-            typeCapability.CreateType(sut, typeof(int), Arg.Any<object?[]?>()).Returns((object)null!);
+            typeCapability.CreateType(sut, typeof(int), Arg.Any<object?[]?>()).Returns((object) null!);
 
             sut.Initialize(buildConfiguration);
 
@@ -129,7 +126,7 @@
             var expected = Guid.NewGuid();
             var properties = typeof(SlimModel).GetProperties();
             var propertyInfo = properties.Single();
-            
+
             var processor = Substitute.For<IBuildProcessor>();
             var buildConfiguration = Substitute.For<IBuildConfiguration>();
             var propertyResolver = Substitute.For<IPropertyResolver>();

@@ -102,16 +102,6 @@
         object Populate(IExecuteStrategy executeStrategy, object instance);
 
         /// <summary>
-        ///     Gets whether this creator identifies that dynamic constructor resolution and parameter building should occur.
-        /// </summary>
-        /// <remarks>
-        ///     Where the value is <c>true</c>, the <see cref="IExecuteStrategy{T}" /> should find the best available constructor
-        ///     and dynamic generate the parameters for it.
-        ///     Where the value is <c>false</c>, the default constructor on the type should be evaluated.
-        /// </remarks>
-        bool AutoDetectConstructor { get; }
-
-        /// <summary>
         ///     Gets whether this creator identifies that properties on the instance should be automatically populated.
         /// </summary>
         bool AutoPopulate { get; }

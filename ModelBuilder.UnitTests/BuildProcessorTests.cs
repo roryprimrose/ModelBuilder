@@ -91,7 +91,6 @@
             secondCapability.SupportsCreate.Returns(true);
             secondCapability.SupportsPopulate.Returns(true);
             secondCapability.AutoPopulate.Returns(true);
-            secondCapability.AutoDetectConstructor.Returns(true);
             firstAction.Priority.Returns(int.MaxValue);
             firstAction.GetBuildCapability(buildConfiguration, buildChain, parameterInfo).Returns(firstCapability);
             secondAction.Priority.Returns(int.MinValue);
@@ -128,7 +127,6 @@
             secondCapability.SupportsCreate.Returns(true);
             secondCapability.SupportsPopulate.Returns(true);
             secondCapability.AutoPopulate.Returns(true);
-            secondCapability.AutoDetectConstructor.Returns(true);
             executeStrategy.Configuration.Returns(buildConfiguration);
             executeStrategy.BuildChain.Returns(buildChain);
             firstAction.Priority.Returns(int.MinValue);
@@ -247,7 +245,6 @@
             secondCapability.SupportsCreate.Returns(true);
             secondCapability.SupportsPopulate.Returns(true);
             secondCapability.AutoPopulate.Returns(true);
-            secondCapability.AutoDetectConstructor.Returns(true);
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Configuration.Returns(buildConfiguration);
             firstAction.Priority.Returns(int.MaxValue);
@@ -285,7 +282,6 @@
             secondCapability.SupportsCreate.Returns(true);
             secondCapability.SupportsPopulate.Returns(true);
             secondCapability.AutoPopulate.Returns(true);
-            secondCapability.AutoDetectConstructor.Returns(true);
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Configuration.Returns(buildConfiguration);
             firstAction.Priority.Returns(int.MinValue);
@@ -402,7 +398,6 @@
             secondCapability.SupportsCreate.Returns(true);
             secondCapability.SupportsPopulate.Returns(true);
             secondCapability.AutoPopulate.Returns(true);
-            secondCapability.AutoDetectConstructor.Returns(true);
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Configuration.Returns(buildConfiguration);
             firstAction.Priority.Returns(int.MaxValue);
@@ -440,7 +435,6 @@
             secondCapability.SupportsCreate.Returns(true);
             secondCapability.SupportsPopulate.Returns(true);
             secondCapability.AutoPopulate.Returns(true);
-            secondCapability.AutoDetectConstructor.Returns(true);
             executeStrategy.BuildChain.Returns(buildChain);
             executeStrategy.Configuration.Returns(buildConfiguration);
             firstAction.Priority.Returns(int.MinValue);
