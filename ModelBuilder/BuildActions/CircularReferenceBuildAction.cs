@@ -153,7 +153,6 @@
         {
             public CircularReferenceCapability()
             {
-                AutoDetectConstructor = false;
                 AutoPopulate = false;
                 ImplementedByType = GetType();
                 SupportsCreate = true;
@@ -200,7 +199,6 @@
                 return item;
             }
 
-            public bool AutoDetectConstructor { get; }
             public bool AutoPopulate { get; }
             public Type ImplementedByType { get; }
             public bool SupportsCreate { get; }

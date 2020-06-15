@@ -144,9 +144,6 @@
         }
 
         /// <inheritdoc />
-        public override bool AutoDetectConstructor => false;
-
-        /// <inheritdoc />
         public override bool AutoPopulate => false;
 
         /// <summary>

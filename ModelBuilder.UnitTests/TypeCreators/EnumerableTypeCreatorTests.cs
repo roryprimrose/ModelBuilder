@@ -17,14 +17,6 @@
     public class EnumerableTypeCreatorTests
     {
         [Fact]
-        public void AutoDetectConstructorReturnsFalse()
-        {
-            var sut = new EnumerableTypeCreator();
-
-            sut.AutoDetectConstructor.Should().BeFalse();
-        }
-
-        [Fact]
         public void AutoPopulateReturnsFalse()
         {
             var sut = new EnumerableTypeCreator();

@@ -45,11 +45,6 @@
         object Populate(IExecuteStrategy executeStrategy, object instance);
 
         /// <summary>
-        ///     Gets whether attempts to create the instance requires a constructor to be automatically resolved.
-        /// </summary>
-        bool AutoDetectConstructor { get; }
-
-        /// <summary>
         ///     Gets whether properties on the created value should be automatically populated.
         /// </summary>
         bool AutoPopulate { get; }

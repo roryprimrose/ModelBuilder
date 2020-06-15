@@ -425,7 +425,6 @@
         {
             var sut = new DummyTypeCreator();
 
-            sut.AutoDetectConstructor.Should().BeTrue();
             sut.AutoPopulate.Should().BeTrue();
             sut.Priority.Should().Be(0);
         }

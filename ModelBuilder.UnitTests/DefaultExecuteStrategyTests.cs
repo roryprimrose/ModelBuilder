@@ -434,7 +434,6 @@
             parameterCapability.AutoPopulate.Returns(false);
             parameterCapability.SupportsCreate.Returns(true);
             parameterCapability.SupportsPopulate.Returns(false);
-            parameterCapability.AutoDetectConstructor.Returns(false);
             parameterCapability.ImplementedByType.Returns(GetType());
             parameterCapability.CreateParameter(sut, Arg.Any<ParameterInfo>(), null).Returns(null);
             processor.GetBuildCapability(sut, BuildRequirement.Create,
@@ -490,7 +489,6 @@
             parameterCapability.AutoPopulate.Returns(false);
             parameterCapability.SupportsCreate.Returns(true);
             parameterCapability.SupportsPopulate.Returns(false);
-            parameterCapability.AutoDetectConstructor.Returns(false);
             parameterCapability.ImplementedByType.Returns(GetType());
             parameterCapability
                 .CreateParameter(sut, Arg.Is<ParameterInfo>(x => x.ParameterType == typeof(string)), null)
@@ -640,7 +638,6 @@
             var propertyResolver = Substitute.For<IPropertyResolver>();
             var typeCapability = Substitute.For<IBuildCapability>();
 
-            typeCapability.AutoDetectConstructor.Returns(true);
             typeCapability.SupportsCreate.Returns(true);
             typeCapability.ImplementedByType.Returns(typeof(DummyTypeCreator));
 

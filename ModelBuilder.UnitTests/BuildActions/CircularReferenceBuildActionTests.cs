@@ -5,7 +5,6 @@
     using System.Reflection;
     using FluentAssertions;
     using ModelBuilder.BuildActions;
-    using ModelBuilder.CreationRules;
     using ModelBuilder.UnitTests.Models;
     using NSubstitute;
     using Xunit;
@@ -232,7 +231,6 @@
             actual.Should().NotBeNull();
             actual.SupportsCreate.Should().BeTrue();
             actual.SupportsPopulate.Should().BeFalse();
-            actual.AutoDetectConstructor.Should().BeFalse();
             actual.AutoPopulate.Should().BeFalse();
             actual.ImplementedByType.Should().BeAssignableTo<IBuildCapability>();
         }
@@ -314,7 +312,6 @@
             actual.Should().NotBeNull();
             actual!.SupportsCreate.Should().BeTrue();
             actual.SupportsPopulate.Should().BeFalse();
-            actual.AutoDetectConstructor.Should().BeFalse();
             actual.AutoPopulate.Should().BeFalse();
             actual.ImplementedByType.Should().BeAssignableTo<IBuildCapability>();
         }
@@ -393,7 +390,6 @@
             actual.Should().NotBeNull();
             actual!.SupportsCreate.Should().BeTrue();
             actual.SupportsPopulate.Should().BeFalse();
-            actual.AutoDetectConstructor.Should().BeFalse();
             actual.AutoPopulate.Should().BeFalse();
             actual.ImplementedByType.Should().BeAssignableTo<IBuildCapability>();
         }

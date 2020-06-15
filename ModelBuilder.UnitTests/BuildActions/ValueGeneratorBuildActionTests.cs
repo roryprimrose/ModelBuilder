@@ -509,7 +509,6 @@
             actual.Should().NotBeNull();
             actual.SupportsCreate.Should().BeTrue();
             actual.SupportsPopulate.Should().BeFalse();
-            actual.AutoDetectConstructor.Should().BeFalse();
             actual.AutoPopulate.Should().BeFalse();
             actual.ImplementedByType.Should().Be(generator.GetType());
         }
@@ -626,7 +625,6 @@
             actual.Should().NotBeNull();
             actual.SupportsCreate.Should().BeTrue();
             actual.SupportsPopulate.Should().BeFalse();
-            actual.AutoDetectConstructor.Should().BeFalse();
             actual.AutoPopulate.Should().BeFalse();
             actual.ImplementedByType.Should().Be(generator.GetType());
         }
@@ -739,7 +737,6 @@
             actual.Should().NotBeNull();
             actual.SupportsCreate.Should().BeTrue();
             actual.SupportsPopulate.Should().BeFalse();
-            actual.AutoDetectConstructor.Should().BeFalse();
             actual.AutoPopulate.Should().BeFalse();
             actual.ImplementedByType.Should().Be(generator.GetType());
         }

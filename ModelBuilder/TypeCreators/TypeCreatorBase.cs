@@ -293,9 +293,6 @@ namespace ModelBuilder.TypeCreators
         }
 
         /// <inheritdoc />
-        public virtual bool AutoDetectConstructor => true;
-
-        /// <inheritdoc />
         public virtual bool AutoPopulate => true;
 
         /// <inheritdoc />

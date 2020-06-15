@@ -288,14 +288,6 @@
         }
 
         [Fact]
-        public void DisablesAutoConstructorDetection()
-        {
-            var sut = new ArrayTypeCreatorWrapper();
-
-            sut.AutoDetectConstructor.Should().BeFalse();
-        }
-
-        [Fact]
         public void DisablesAutoPopulate()
         {
             var sut = new ArrayTypeCreatorWrapper();
