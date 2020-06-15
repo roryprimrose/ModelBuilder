@@ -4,6 +4,8 @@
     using System.Collections;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
+    using System.Linq;
+    using ModelBuilder.BuildActions;
 
     /// <summary>
     ///     The <see cref="BuildHistory" />
@@ -15,20 +17,66 @@
         Justification = "The history is enumerable, but does not have the characteristics of a Collection.")]
     public class BuildHistory : IBuildHistory
     {
-        private readonly Stack<object> _buildHistory = new Stack<object>();
+        private readonly Stack<BuildHistoryItem> _buildHistory = new Stack<BuildHistoryItem>();
+
+        /// <inheritdoc />
+        public void AddCapability(Type type, IBuildCapability capability)
+        {
+            if (type == null)
+            {
+                throw new ArgumentNullException(nameof(type));
+            }
+
+            if (capability == null)
+            {
+                throw new ArgumentNullException(nameof(capability));
+            }
+
+            if (_buildHistory.Count == 0)
+            {
+                return;
+            }
+
+            var historyItem = _buildHistory.Peek();
+
+            historyItem.Capabilities[type] = capability;
+        }
+
+        /// <inheritdoc />
+        public IBuildCapability? GetCapability(Type type)
+        {
+            if (type == null)
+            {
+                throw new ArgumentNullException(nameof(type));
+            }
+
+            if (_buildHistory.Count == 0)
+            {
+                return null;
+            }
+
+            var historyItem = _buildHistory.Peek();
+
+            if (historyItem.Capabilities.ContainsKey(type))
+            {
+                return historyItem.Capabilities[type];
+            }
+
+            return null;
+        }
 
         /// <inheritdoc />
         public IEnumerator GetEnumerator()
         {
-            return _buildHistory.GetEnumerator();
+            return _buildHistory.Select(x => x.Value).GetEnumerator();
         }
 
         /// <inheritdoc />
         public void Pop()
         {
-            var instance = _buildHistory.Pop();
+            var historyItem = _buildHistory.Pop();
 
-            if (First == instance)
+            if (First == historyItem.Value)
             {
                 First = null;
             }
@@ -43,7 +91,9 @@
                 throw new ArgumentNullException(nameof(instance));
             }
 
-            _buildHistory.Push(instance);
+            var historyItem = new BuildHistoryItem(instance);
+
+            _buildHistory.Push(historyItem);
 
             if (First == null)
             {
@@ -54,7 +104,7 @@
         /// <inheritdoc />
         IEnumerator<object> IEnumerable<object>.GetEnumerator()
         {
-            return _buildHistory.GetEnumerator();
+            return _buildHistory.Select(x => x.Value).GetEnumerator();
         }
 
         /// <inheritdoc />
@@ -73,7 +123,7 @@
                     return null;
                 }
 
-                return _buildHistory.Peek();
+                return _buildHistory.Peek().Value;
             }
         }
     }

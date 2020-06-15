@@ -4,11 +4,72 @@
     using System.Collections.Generic;
     using System.Linq;
     using FluentAssertions;
+    using ModelBuilder.BuildActions;
     using ModelBuilder.UnitTests.Models;
+    using NSubstitute;
     using Xunit;
 
     public class BuildHistoryTests
     {
+        [Fact]
+        public void AddCapabilityDoesNotStoreCapabilityWhenHistoryIsEmpty()
+        {
+            var type = typeof(Person);
+
+            var capability = Substitute.For<IBuildCapability>();
+
+            var sut = new BuildHistory();
+
+            sut.AddCapability(type, capability);
+
+            var actual = sut.GetCapability(type);
+
+            actual.Should().BeNull();
+        }
+
+        [Fact]
+        public void AddCapabilityStoresCapability()
+        {
+            var type = typeof(Address);
+            var value = new Person();
+
+            var capability = Substitute.For<IBuildCapability>();
+
+            var sut = new BuildHistory();
+
+            sut.Push(value);
+
+            sut.AddCapability(type, capability);
+
+            var actual = sut.GetCapability(type);
+
+            actual.Should().Be(capability);
+        }
+
+        [Fact]
+        public void AddCapabilityThrowsExceptionWithNullCapability()
+        {
+            var type = typeof(Person);
+
+            var sut = new BuildHistory();
+
+            Action action = () => sut.AddCapability(type, null!);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void AddCapabilityThrowsExceptionWithNullType()
+        {
+            var capability = Substitute.For<IBuildCapability>();
+
+            var sut = new BuildHistory();
+
+            Action action = () => sut.AddCapability(null!, capability);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
         [Theory]
         [InlineData(0)]
         [InlineData(1)]
@@ -169,6 +230,61 @@
             sut.Push(item);
 
             sut.First.Should().BeSameAs(item);
+        }
+
+        [Fact]
+        public void GetCapabilityReturnsNullWhenBuildHistoryIsEmpty()
+        {
+            var type = typeof(Address);
+
+            var sut = new BuildHistory();
+
+            var actual = sut.GetCapability(type);
+
+            actual.Should().BeNull();
+        }
+
+        [Fact]
+        public void GetCapabilityReturnsNullWhenNoCapabilityStoredForType()
+        {
+            var type = typeof(Address);
+            var value = new Person();
+
+            var sut = new BuildHistory();
+
+            sut.Push(value);
+
+            var actual = sut.GetCapability(type);
+
+            actual.Should().BeNull();
+        }
+
+        [Fact]
+        public void GetCapabilityReturnsStoredCapability()
+        {
+            var type = typeof(Address);
+            var value = new Person();
+
+            var capability = Substitute.For<IBuildCapability>();
+
+            var sut = new BuildHistory();
+
+            sut.Push(value);
+            sut.AddCapability(type, capability);
+
+            var actual = sut.GetCapability(type);
+
+            actual.Should().Be(capability);
+        }
+
+        [Fact]
+        public void GetCapabilityThrowsExceptionWithNullType()
+        {
+            var sut = new BuildHistory();
+
+            Action action = () => sut.GetCapability(null!);
+
+            action.Should().Throw<ArgumentNullException>();
         }
 
         [Theory]
