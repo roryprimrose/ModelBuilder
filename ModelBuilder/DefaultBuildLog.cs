@@ -25,6 +25,11 @@
                 throw new ArgumentNullException(nameof(ex));
             }
 
+            if (IsEnabled == false)
+            {
+                return;
+            }
+
             FormatAndWriteMessage(ex.ToString());
         }
 
@@ -35,6 +40,11 @@
             if (type == null)
             {
                 throw new ArgumentNullException(nameof(type));
+            }
+
+            if (IsEnabled == false)
+            {
+                return;
             }
 
             FormatAndWriteMessage(Resources.DefaultBuildLog_CircularReferenceDetected, type.FullName);
@@ -53,6 +63,11 @@
             if (parameterInfo == null)
             {
                 throw new ArgumentNullException(nameof(parameterInfo));
+            }
+
+            if (IsEnabled == false)
+            {
+                return;
             }
 
             _indent--;
@@ -79,6 +94,11 @@
                 throw new ArgumentNullException(nameof(context));
             }
 
+            if (IsEnabled == false)
+            {
+                return;
+            }
+
             _indent--;
 
             FormatAndWriteMessage(
@@ -97,6 +117,11 @@
                 throw new ArgumentNullException(nameof(type));
             }
 
+            if (IsEnabled == false)
+            {
+                return;
+            }
+
             _indent--;
 
             FormatAndWriteMessage(Resources.DefaultBuildLog_CreatedType, type.FullName);
@@ -109,6 +134,11 @@
             if (parameterInfo == null)
             {
                 throw new ArgumentNullException(nameof(parameterInfo));
+            }
+
+            if (IsEnabled == false)
+            {
+                return;
             }
 
             FormatAndWriteMessage(
@@ -135,6 +165,11 @@
                 throw new ArgumentNullException(nameof(context));
             }
 
+            if (IsEnabled == false)
+            {
+                return;
+            }
+
             FormatAndWriteMessage(
                 Resources.DefaultBuildLog_CreatingProperty,
                 propertyInfo.Name,
@@ -159,6 +194,11 @@
                 throw new ArgumentNullException(nameof(creatorType));
             }
 
+            if (IsEnabled == false)
+            {
+                return;
+            }
+
             FormatAndWriteMessage(Resources.DefaultBuildLog_CreatingType, type.FullName, creatorType.FullName);
 
             _indent++;
@@ -179,6 +219,11 @@
                 throw new ArgumentNullException(nameof(generatorType));
             }
 
+            if (IsEnabled == false)
+            {
+                return;
+            }
+
             FormatAndWriteMessage(Resources.DefaultBuildLog_CreatingValue, type.FullName, generatorType.FullName);
         }
 
@@ -195,6 +240,11 @@
             if (context == null)
             {
                 throw new ArgumentNullException(nameof(context));
+            }
+
+            if (IsEnabled == false)
+            {
+                return;
             }
 
             FormatAndWriteMessage(
@@ -219,6 +269,11 @@
                 throw new ArgumentNullException(nameof(target));
             }
 
+            if (IsEnabled == false)
+            {
+                return;
+            }
+
             FormatAndWriteMessage(Resources.DefaultBuildLog_MappingType, source.FullName, target.FullName);
         }
 
@@ -229,6 +284,11 @@
             if (instance == null)
             {
                 throw new ArgumentNullException(nameof(instance));
+            }
+
+            if (IsEnabled == false)
+            {
+                return;
             }
 
             _indent--;
@@ -243,6 +303,11 @@
             if (instance == null)
             {
                 throw new ArgumentNullException(nameof(instance));
+            }
+
+            if (IsEnabled == false)
+            {
+                return;
             }
 
             FormatAndWriteMessage(Resources.DefaultBuildLog_PopulatingInstance, instance.GetType().FullName);
@@ -263,6 +328,11 @@
             if (postBuildType == null)
             {
                 throw new ArgumentNullException(nameof(postBuildType));
+            }
+
+            if (IsEnabled == false)
+            {
+                return;
             }
 
             FormatAndWriteMessage(Resources.DefaultBuildLog_PostBuild, type.FullName, postBuildType.FullName);
@@ -305,6 +375,9 @@
 
             WriteMessage(messageToWrite);
         }
+
+        /// <inheritdoc />
+        public bool IsEnabled { get; set; } = false;
 
         /// <inheritdoc />
         public string Output => _builder.ToString();

@@ -156,6 +156,7 @@
             var strategy = Model.Ignoring<Company>(x => x.Address!)
                 .UsingExecuteStrategy<DefaultExecuteStrategy<Company>>();
 
+            strategy.Log.IsEnabled = true;
             strategy.Create();
 
             var actual = strategy.Log.Output;
@@ -171,6 +172,7 @@
             var strategy = Model.UsingDefaultConfiguration().UsingModule<TestConfigurationModule>()
                 .UsingExecuteStrategy<DefaultExecuteStrategy<Company>>();
 
+            strategy.Log.IsEnabled = true;
             strategy.Create();
 
             var actual = strategy.Log.Output;
@@ -239,6 +241,7 @@
         {
             var strategy = Model.UsingExecuteStrategy<DefaultExecuteStrategy<Company>>();
 
+            strategy.Log.IsEnabled = true;
             strategy.Create();
 
             var actual = strategy.Log.Output;
@@ -253,6 +256,7 @@
         {
             var strategy = Model.UsingExecuteStrategy<DefaultExecuteStrategy<WithValueParameters>>();
 
+            strategy.Log.IsEnabled = true;
             strategy.Create();
 
             var actual = strategy.Log.Output;
