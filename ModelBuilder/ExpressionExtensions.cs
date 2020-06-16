@@ -25,7 +25,7 @@
         ///     The <paramref name="expression" /> parameter does not match a property on the type
         ///     to generate.
         /// </exception>
-        public static PropertyInfo GetProperty<T>(this Expression<Func<T, object>> expression)
+        public static PropertyInfo GetProperty<T>(this Expression<Func<T, object?>> expression)
         {
             if (expression == null)
             {
@@ -48,8 +48,8 @@
             var typeProperties = type.GetProperties(BindingFlags.Instance | BindingFlags.Public);
 
             if (typeProperties.Any(
-                    x => x.DeclaringType == propInfo.DeclaringType && x.PropertyType == propInfo.PropertyType &&
-                         x.Name == propInfo.Name) == false)
+                x => x.DeclaringType == propInfo.DeclaringType && x.PropertyType == propInfo.PropertyType &&
+                     x.Name == propInfo.Name) == false)
             {
                 var message = string.Format(
                     CultureInfo.CurrentCulture,
@@ -63,7 +63,7 @@
             return propInfo;
         }
 
-        private static PropertyInfo? GetPropertyInfo<T>(Expression<Func<T, object>> expression)
+        private static PropertyInfo? GetPropertyInfo<T>(Expression<Func<T, object?>> expression)
         {
             PropertyInfo? property = null;
 

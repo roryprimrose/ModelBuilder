@@ -82,7 +82,7 @@
         /// </exception>
         public static IBuildConfiguration AddIgnoreRule<T>(
             this IBuildConfiguration configuration,
-            Expression<Func<T, object>> expression)
+            Expression<Func<T, object?>> expression)
         {
             if (configuration == null)
             {
@@ -204,7 +204,7 @@
         /// </exception>
         public static IBuildConfiguration Ignoring<T>(
             this IBuildConfiguration buildConfiguration,
-            Expression<Func<T, object>> expression)
+            Expression<Func<T, object?>> expression)
         {
             if (buildConfiguration == null)
             {

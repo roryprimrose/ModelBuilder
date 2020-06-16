@@ -12,7 +12,7 @@
     /// <typeparam name="T">The type being evaluated.</typeparam>
     public class ExpressionExecuteOrderRule<T> : IExecuteOrderRule
     {
-        private readonly Expression<Func<T, object>> _expression;
+        private readonly Expression<Func<T, object?>> _expression;
 
         /// <summary>
         ///     Creates a new instance of the <see cref="ExpressionExecuteOrderRule{T}" /> class.
@@ -20,7 +20,7 @@
         /// <param name="expression">The expression used to identify a property on a type.</param>
         /// <param name="priority">The execution order priority to apply to the property.</param>
         /// <exception cref="ArgumentNullException">The <paramref name="expression" /> parameter is <c>null</c>.</exception>
-        public ExpressionExecuteOrderRule(Expression<Func<T, object>> expression, int priority)
+        public ExpressionExecuteOrderRule(Expression<Func<T, object?>> expression, int priority)
         {
             _expression = expression ?? throw new ArgumentNullException(nameof(expression));
             Priority = priority;

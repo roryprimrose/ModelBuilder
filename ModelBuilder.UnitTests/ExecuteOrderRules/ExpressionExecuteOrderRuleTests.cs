@@ -17,7 +17,7 @@
             var parameterInfo = typeof(Person).GetConstructors()
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
 
-            var sut = new ExpressionExecuteOrderRule<Simple>(x => x.LastName!, priority);
+            var sut = new ExpressionExecuteOrderRule<Simple>(x => x.LastName, priority);
 
             var actual = sut.IsMatch(parameterInfo);
 
@@ -30,7 +30,7 @@
             var priority = Environment.TickCount;
             var property = typeof(Person).GetProperty(nameof(Person.LastName))!;
 
-            var sut = new ExpressionExecuteOrderRule<Simple>(x => x.LastName!, priority);
+            var sut = new ExpressionExecuteOrderRule<Simple>(x => x.LastName, priority);
 
             var actual = sut.IsMatch(property);
 
@@ -43,7 +43,7 @@
             var priority = Environment.TickCount;
             var property = typeof(Person).GetProperty(nameof(Person.FirstName))!;
 
-            var sut = new ExpressionExecuteOrderRule<Person>(x => x.LastName!, priority);
+            var sut = new ExpressionExecuteOrderRule<Person>(x => x.LastName, priority);
 
             var actual = sut.IsMatch(property);
 
@@ -56,7 +56,7 @@
             var priority = Environment.TickCount;
             var property = typeof(Person).GetProperty(nameof(Person.FirstName))!;
 
-            var sut = new ExpressionExecuteOrderRule<Person>(x => x.LastName!, priority);
+            var sut = new ExpressionExecuteOrderRule<Person>(x => x.LastName, priority);
 
             var actual = sut.IsMatch(property);
 
@@ -82,7 +82,7 @@
             var priority = Environment.TickCount;
             var property = typeof(Person).GetProperty(nameof(Person.FirstName))!;
 
-            var sut = new ExpressionExecuteOrderRule<Person>(x => x.FirstName!, priority);
+            var sut = new ExpressionExecuteOrderRule<Person>(x => x.FirstName, priority);
 
             var actual = sut.IsMatch(property);
 
@@ -120,7 +120,7 @@
         {
             var priority = Environment.TickCount;
 
-            var sut = new ExpressionExecuteOrderRule<Person>(x => x.FirstName!, priority);
+            var sut = new ExpressionExecuteOrderRule<Person>(x => x.FirstName, priority);
 
             Action action = () => sut.IsMatch((PropertyInfo) null!);
 
@@ -132,7 +132,7 @@
         {
             var priority = Environment.TickCount;
 
-            var sut = new ExpressionExecuteOrderRule<Person>(x => x.LastName!, priority);
+            var sut = new ExpressionExecuteOrderRule<Person>(x => x.LastName, priority);
 
             sut.Priority.Should().Be(priority);
         }
@@ -151,7 +151,7 @@
         [Fact]
         public void ToStringDoesNotReturnTypeName()
         {
-            var sut = new ExpressionExecuteOrderRule<Person>(x => x.FirstName!, Environment.TickCount);
+            var sut = new ExpressionExecuteOrderRule<Person>(x => x.FirstName, Environment.TickCount);
 
             var actual = sut.ToString();
 

@@ -15,14 +15,23 @@
         {
             var actual = Wrapper<Person>(x => x.Priority);
 
-            actual.Name.Should().Be("Priority");
+            actual.Name.Should().Be(nameof(Person.Priority));
             actual.PropertyType.Should().Be<int>();
+        }
+
+        [Fact]
+        public void GetPropertyReturnsPropertyInfoOfExpressionForNullableType()
+        {
+            var actual = Wrapper<Person>(x => x.FirstName);
+
+            actual.Name.Should().Be(nameof(Person.FirstName));
+            actual.PropertyType.Should().Be<string>();
         }
 
         [Fact]
         public void GetPropertyThrowsExceptionForStaticProperty()
         {
-            Action action = () => Wrapper<WithStatic>(x => WithStatic.Second!);
+            Action action = () => Wrapper<WithStatic>(x => WithStatic.Second);
 
             action.Should().Throw<ArgumentException>();
         }
@@ -67,7 +76,7 @@
             action.Should().Throw<ArgumentNullException>();
         }
 
-        private static PropertyInfo Wrapper<T>(Expression<Func<T, object>> expression)
+        private static PropertyInfo Wrapper<T>(Expression<Func<T, object?>> expression)
         {
             return expression.GetProperty();
         }

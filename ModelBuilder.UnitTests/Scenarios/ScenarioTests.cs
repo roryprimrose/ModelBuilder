@@ -533,7 +533,7 @@
         [Fact]
         public void IgnoringSkipsPropertyAssignmentOfNestedObjects()
         {
-            var actual = Model.Ignoring<Person>(x => x.FirstName!).Ignoring<Address>(x => x.AddressLine1!)
+            var actual = Model.Ignoring<Person>(x => x.FirstName).Ignoring<Address>(x => x.AddressLine1!)
                 .WriteLog<Person>(_output.WriteLine).Create();
 
             actual.Should().NotBeNull();

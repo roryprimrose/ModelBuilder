@@ -12,7 +12,7 @@
     /// <typeparam name="T">The type of value to return.</typeparam>
     public class ExpressionCreationRule<T> : ICreationRule
     {
-        private readonly Expression<Func<T, object>> _expression;
+        private readonly Expression<Func<T, object?>> _expression;
         private readonly PropertyInfo _propertyInfo;
         private readonly Func<object> _valueGenerator;
 
@@ -23,7 +23,7 @@
         /// <param name="value">The value that the rule returns.</param>
         /// <param name="priority">The priority to apply to the rule.</param>
         /// <exception cref="ArgumentNullException">The <paramref name="expression" /> parameter is <c>null</c>.</exception>
-        public ExpressionCreationRule(Expression<Func<T, object>> expression, object value, int priority) : this(
+        public ExpressionCreationRule(Expression<Func<T, object?>> expression, object value, int priority) : this(
             expression,
             () => value, priority)
         {
@@ -37,7 +37,8 @@
         /// <param name="priority">The priority to apply to the rule.</param>
         /// <exception cref="ArgumentNullException">The <paramref name="expression" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="valueGenerator" /> parameter is <c>null</c>.</exception>
-        public ExpressionCreationRule(Expression<Func<T, object>> expression, Func<object> valueGenerator, int priority)
+        public ExpressionCreationRule(Expression<Func<T, object?>> expression, Func<object> valueGenerator,
+            int priority)
         {
             _expression = expression ?? throw new ArgumentNullException(nameof(expression));
             _valueGenerator = valueGenerator ?? throw new ArgumentNullException(nameof(valueGenerator));

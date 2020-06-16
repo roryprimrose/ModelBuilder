@@ -88,7 +88,7 @@
             Justification =
                 "This signature is designed for ease of use rather than requiring that T is either a parameter or return type.")]
         public static IBuildConfiguration AddCreationRule<T>(this IBuildConfiguration configuration,
-            Expression<Func<T, object>> expression,
+            Expression<Func<T, object?>> expression,
             object value,
             int priority)
         {

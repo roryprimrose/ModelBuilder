@@ -87,7 +87,7 @@
         [Fact]
         public void IgnoringUsesConfigurationToCreateInstance()
         {
-            var actual = Model.Ignoring<Person>(x => x.FirstName!).Create<Person>()!;
+            var actual = Model.Ignoring<Person>(x => x.FirstName).Create<Person>()!;
 
             actual.FirstName.Should().BeNull();
         }

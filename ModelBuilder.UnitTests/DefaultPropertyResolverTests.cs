@@ -7,7 +7,6 @@
     using System.Linq;
     using FluentAssertions;
     using ModelBuilder.ExecuteOrderRules;
-    using ModelBuilder.IgnoreRules;
     using ModelBuilder.UnitTests.Models;
     using NSubstitute;
     using Xunit;
@@ -125,10 +124,10 @@
         public void GetOrderedPropertiesReturnsPropertiesInDescendingOrder()
         {
             var configuration = new BuildConfiguration()
-                .AddExecuteOrderRule<EmailParts>(x => x.FirstName!, 40)
-                .AddExecuteOrderRule<EmailParts>(x => x.LastName!, 30)
-                .AddExecuteOrderRule<EmailParts>(x => x.Domain!, 20)
-                .AddExecuteOrderRule<EmailParts>(x => x.Email!, 10);
+                .AddExecuteOrderRule<EmailParts>(x => x.FirstName, 40)
+                .AddExecuteOrderRule<EmailParts>(x => x.LastName, 30)
+                .AddExecuteOrderRule<EmailParts>(x => x.Domain, 20)
+                .AddExecuteOrderRule<EmailParts>(x => x.Email, 10);
             var type = typeof(EmailParts);
 
             var sut = new DefaultPropertyResolver(CacheLevel.None);

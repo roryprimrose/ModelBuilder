@@ -13,7 +13,9 @@
         {
             var sut = new BuildConfiguration();
 
-            sut.AddPostBuildAction<DummyPostBuildAction>();
+            var config = sut.AddPostBuildAction<DummyPostBuildAction>();
+
+            config.Should().Be(sut);
 
             var actual = sut.PostBuildActions.Single();
 
@@ -35,7 +37,9 @@
 
             var sut = new BuildConfiguration();
 
-            sut.Add(postBuildAction);
+            var config = sut.Add(postBuildAction);
+
+            config.Should().Be(sut);
 
             sut.PostBuildActions.Should().Contain(postBuildAction);
         }
@@ -79,7 +83,10 @@
             var sut = new BuildConfiguration();
 
             sut.AddPostBuildAction<DummyPostBuildAction>();
-            sut.RemovePostBuildAction<DummyPostBuildAction>();
+
+            var config = sut.RemovePostBuildAction<DummyPostBuildAction>();
+
+            config.Should().Be(sut);
 
             sut.PostBuildActions.Should().BeEmpty();
         }
@@ -138,7 +145,9 @@
 
             sut.PostBuildActions.Add(rule);
 
-            sut.UpdatePostBuildAction<DummyPostBuildAction>(x => { x.Value = expected; });
+            var config = sut.UpdatePostBuildAction<DummyPostBuildAction>(x => { x.Value = expected; });
+
+            config.Should().Be(sut);
 
             rule.Value.Should().Be(expected);
         }
