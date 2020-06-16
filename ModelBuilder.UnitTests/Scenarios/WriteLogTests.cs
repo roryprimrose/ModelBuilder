@@ -15,6 +15,38 @@
         }
 
         [Fact]
+        public void LoggingIsDisabledByDefault()
+        {
+            var strategy = Model.UsingExecuteStrategy<DefaultExecuteStrategy<Person>>();
+
+            var actual = strategy.Create();
+
+            actual.Should().NotBeNull();
+
+            var log = strategy.Log.Output;
+
+            _output.WriteLine(log);
+
+            log.Should().BeNullOrWhiteSpace();
+        }
+
+        [Fact]
+        public void LoggingIsEnabledOnWriteLog()
+        {
+            var strategy = Model.UsingExecuteStrategy<DefaultExecuteStrategy<Person>>().WriteLog(_output.WriteLine);
+
+            var actual = strategy.Create();
+
+            actual.Should().NotBeNull();
+
+            var log = strategy.Log.Output;
+
+            _output.WriteLine(log);
+
+            log.Should().NotBeNullOrWhiteSpace();
+        }
+
+        [Fact]
         public void WriteLogRendersLogFromConfiguration()
         {
             var actual = Model.Ignoring<Person>(x => x.FirstName).WriteLog<Person>(_output.WriteLine).Create();

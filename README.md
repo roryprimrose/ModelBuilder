@@ -82,7 +82,7 @@ var customerModel = Model.Populate(customer);
 
 ## Logging the build process
 
-ModelBuilder writes log messages while building values. The easiest way to output a build log is to use the `WriteLog` extension method.
+ModelBuilder can write log messages while building values. The easiest way to output a build log is to use the `WriteLog` extension method. Logging the build process is disabled by default however the `WriteLog` extension method implicitly enables logging. 
 
 This would look like the following when using xUnit.
 

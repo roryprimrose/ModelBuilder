@@ -112,6 +112,11 @@
         void PostBuildAction(Type type, Type postBuildType, object context);
 
         /// <summary>
+        ///     Gets or sets whether logging is enabled.
+        /// </summary>
+        public bool IsEnabled { get; set; }
+
+        /// <summary>
         ///     Gets the output of the build log.
         /// </summary>
         string Output { get; }

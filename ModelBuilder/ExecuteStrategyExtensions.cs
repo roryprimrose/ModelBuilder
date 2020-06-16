@@ -61,6 +61,9 @@
             {
                 Child = child;
                 LogAction = action;
+
+                // Enable logging on the child execution strategy
+                Child.Log.IsEnabled = true;
             }
 
             public object Create(Type type, params object?[]? args)
