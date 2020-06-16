@@ -42,6 +42,19 @@
         }
 
         [Fact]
+        public void AddWithConfigurationModuleAddsRuleToConfiguration()
+        {
+            var module = Substitute.For<IConfigurationModule>();
+
+            var sut = new BuildConfiguration();
+
+            var actual = sut.Add(module);
+
+            actual.Should().Be(sut);
+            module.Received().Configure(sut);
+        }
+
+        [Fact]
         public void AddWithConfigurationModuleThrowsExceptionWithNullConfiguration()
         {
             var module = new TestConfigurationModule();
@@ -59,18 +72,6 @@
             Action action = () => sut.Add((IConfigurationModule) null!);
 
             action.Should().Throw<ArgumentNullException>();
-        }
-
-        [Fact]
-        public void AddWithConfigurationModuleAddsRuleToConfiguration()
-        {
-            var module = Substitute.For<IConfigurationModule>();
-
-            var sut = new BuildConfiguration();
-
-            sut.Add(module);
-
-            module.Received().Configure(sut);
         }
 
         [Fact]

@@ -6,7 +6,7 @@
 
     public static class ModelExtensions
     {
-        public static PropertyInfo GetProperty<T>(this T instance, Expression<Func<T, object>> expression)
+        public static PropertyInfo GetProperty<T>(this T instance, Expression<Func<T, object?>> expression)
         {
             return expression.GetProperty();
         }

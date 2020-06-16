@@ -18,7 +18,9 @@
         {
             var sut = new BuildConfiguration();
 
-            sut.AddCreationRule<DummyCreationRule>();
+            var config = sut.AddCreationRule<DummyCreationRule>();
+
+            config.Should().Be(sut);
 
             var actual = sut.CreationRules.Single();
 
@@ -42,7 +44,9 @@
 
             var sut = new BuildConfiguration();
 
-            sut.AddCreationRule<Person>(x => x.FirstName!, value, priority);
+            var config = sut.AddCreationRule<Person>(x => x.FirstName, value, priority);
+
+            config.Should().Be(sut);
 
             var rule = sut.CreationRules.Single();
 
@@ -60,7 +64,7 @@
             var value = Guid.NewGuid().ToString();
 
             Action action = () =>
-                BuildConfigurationExtensions.AddCreationRule<Person>(null!, x => x.FirstName!, value, priority);
+                BuildConfigurationExtensions.AddCreationRule<Person>(null!, x => x.FirstName, value, priority);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -73,7 +77,7 @@
 
             var sut = new BuildConfiguration();
 
-            Action action = () => sut.AddCreationRule((Expression<Func<Person, object>>) null!, value, priority);
+            Action action = () => sut.AddCreationRule((Expression<Func<Person, object?>>) null!, value, priority);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -88,7 +92,9 @@
 
             var sut = new BuildConfiguration();
 
-            sut.AddCreationRule(x => x.ParameterType == typeof(string), value, priority);
+            var config = sut.AddCreationRule(x => x.ParameterType == typeof(string), value, priority);
+
+            config.Should().Be(sut);
 
             var rule = sut.CreationRules.Single();
 
@@ -109,7 +115,9 @@
 
             var sut = new BuildConfiguration();
 
-            sut.AddCreationRule(x => x.ParameterType == typeof(string), () => value, priority);
+            var config = sut.AddCreationRule(x => x.ParameterType == typeof(string), () => value, priority);
+
+            config.Should().Be(sut);
 
             var rule = sut.CreationRules.Single();
 
@@ -193,7 +201,9 @@
 
             var sut = new BuildConfiguration();
 
-            sut.AddCreationRule(x => x.PropertyType == typeof(string), value, priority);
+            var config = sut.AddCreationRule(x => x.PropertyType == typeof(string), value, priority);
+
+            config.Should().Be(sut);
 
             var rule = sut.CreationRules.Single();
 
@@ -213,7 +223,9 @@
 
             var sut = new BuildConfiguration();
 
-            sut.AddCreationRule(x => x.PropertyType == typeof(string), () => value, priority);
+            var config = sut.AddCreationRule(x => x.PropertyType == typeof(string), () => value, priority);
+
+            config.Should().Be(sut);
 
             var rule = sut.CreationRules.Single();
 
@@ -299,7 +311,9 @@
 
             var sut = new BuildConfiguration();
 
-            sut.AddCreationRule(targetType, expression, value, priority);
+            var config = sut.AddCreationRule(targetType, expression, value, priority);
+
+            config.Should().Be(sut);
 
             var rule = sut.CreationRules.Single();
 
@@ -363,7 +377,9 @@
 
             var sut = new BuildConfiguration();
 
-            sut.AddCreationRule(targetType, expression, value, priority);
+            var config = sut.AddCreationRule(targetType, expression, value, priority);
+
+            config.Should().Be(sut);
 
             var rule = sut.CreationRules.Single();
 
@@ -427,7 +443,9 @@
 
             var sut = new BuildConfiguration();
 
-            sut.AddCreationRule((Type x) => x == typeof(string), value, priority);
+            var config = sut.AddCreationRule((Type x) => x == typeof(string), value, priority);
+
+            config.Should().Be(sut);
 
             var rule = sut.CreationRules.Single();
 
@@ -447,7 +465,9 @@
 
             var sut = new BuildConfiguration();
 
-            sut.AddCreationRule((Type x) => x == typeof(string), () => value, priority);
+            var config = sut.AddCreationRule((Type x) => x == typeof(string), () => value, priority);
+
+            config.Should().Be(sut);
 
             var rule = sut.CreationRules.Single();
 
@@ -524,19 +544,20 @@
         [Fact]
         public void AddWithCreationRuleAddsRuleToConfiguration()
         {
-            var rule = new ExpressionCreationRule<Person>(x => x.FirstName!, (object) null!, Environment.TickCount);
+            var rule = new ExpressionCreationRule<Person>(x => x.FirstName, (object) null!, Environment.TickCount);
 
             var sut = new BuildConfiguration();
 
-            sut.Add(rule);
+            var actual = sut.Add(rule);
 
+            actual.Should().Be(sut);
             sut.CreationRules.Should().Contain(rule);
         }
 
         [Fact]
         public void AddWithCreationRuleThrowsExceptionWithNullConfiguration()
         {
-            var rule = new ExpressionCreationRule<Person>(x => x.FirstName!, (object) null!, Environment.TickCount);
+            var rule = new ExpressionCreationRule<Person>(x => x.FirstName, (object) null!, Environment.TickCount);
 
             Action action = () => BuildConfigurationExtensions.Add(null!, rule);
 
@@ -572,7 +593,10 @@
             var sut = new BuildConfiguration();
 
             sut.AddCreationRule<DummyCreationRule>();
-            sut.RemoveCreationRule<DummyCreationRule>();
+
+            var config = sut.RemoveCreationRule<DummyCreationRule>();
+
+            config.Should().Be(sut);
 
             sut.CreationRules.Should().BeEmpty();
         }
@@ -631,7 +655,9 @@
 
             sut.CreationRules.Add(rule);
 
-            sut.UpdateCreationRule<DummyCreationRule>(x => { x.Value = expected; });
+            var config = sut.UpdateCreationRule<DummyCreationRule>(x => { x.Value = expected; });
+
+            config.Should().Be(sut);
 
             rule.Value.Should().Be(expected);
         }

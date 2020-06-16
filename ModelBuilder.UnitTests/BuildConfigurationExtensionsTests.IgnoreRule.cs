@@ -19,11 +19,25 @@
         {
             var sut = new BuildConfiguration();
 
-            sut.AddIgnoreRule<DummyIgnoreRule>();
+            var config = sut.AddIgnoreRule<DummyIgnoreRule>();
+
+            config.Should().Be(sut);
 
             var actual = sut.IgnoreRules.Single();
 
             actual.Should().BeOfType<DummyIgnoreRule>();
+        }
+
+        [Fact]
+        public void AddIgnoreRuleSupportsNullablePropertyType()
+        {
+            var sut = new BuildConfiguration();
+
+            var config = sut.Ignoring<NullableItem>(x => x.Name);
+
+            var actual = config.IgnoreRules.Single();
+
+            actual.Should().BeOfType<ExpressionIgnoreRule<NullableItem>>();
         }
 
         [Fact]
@@ -39,7 +53,7 @@
         {
             var sut = new BuildConfiguration();
 
-            var actual = sut.AddIgnoreRule<Person>(x => x.FirstName!);
+            var actual = sut.AddIgnoreRule<Person>(x => x.FirstName);
 
             actual.Should().Be(sut);
 
@@ -51,7 +65,7 @@
         [Fact]
         public void AddIgnoreRuleWithExpressionThrowsExceptionWithNullConfiguration()
         {
-            Action action = () => BuildConfigurationExtensions.AddIgnoreRule<Person>(null!, x => x.FirstName!);
+            Action action = () => BuildConfigurationExtensions.AddIgnoreRule<Person>(null!, x => x.FirstName);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -61,7 +75,7 @@
         {
             var sut = new BuildConfiguration();
 
-            Action action = () => sut.AddIgnoreRule((Expression<Func<Person, object>>) null!);
+            Action action = () => sut.AddIgnoreRule((Expression<Func<Person, object?>>) null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -176,11 +190,13 @@
         [Fact]
         public void AddWithIgnoreRuleAddsRuleToConfiguration()
         {
-            var rule = new ExpressionIgnoreRule<Person>(x => x.FirstName!);
+            var rule = new ExpressionIgnoreRule<Person>(x => x.FirstName);
 
             var sut = new BuildConfiguration();
 
-            sut.Add(rule);
+            var config = sut.Add(rule);
+
+            config.Should().Be(sut);
 
             sut.IgnoreRules.Should().Contain(rule);
         }
@@ -188,7 +204,7 @@
         [Fact]
         public void AddWithIgnoreRuleThrowsExceptionWithNullConfiguration()
         {
-            var rule = new ExpressionIgnoreRule<Person>(x => x.FirstName!);
+            var rule = new ExpressionIgnoreRule<Person>(x => x.FirstName);
 
             Action action = () => BuildConfigurationExtensions.Add(null!, rule);
 
@@ -239,7 +255,10 @@
             var sut = new BuildConfiguration();
 
             sut.AddIgnoreRule<DummyIgnoreRule>();
-            sut.RemoveIgnoreRule<DummyIgnoreRule>();
+
+            var config = sut.RemoveIgnoreRule<DummyIgnoreRule>();
+
+            config.Should().Be(sut);
 
             sut.IgnoreRules.Should().BeEmpty();
         }
@@ -298,7 +317,9 @@
 
             sut.IgnoreRules.Add(rule);
 
-            sut.UpdateIgnoreRule<DummyIgnoreRule>(x => { x.Value = expected; });
+            var config = sut.UpdateIgnoreRule<DummyIgnoreRule>(x => { x.Value = expected; });
+
+            config.Should().Be(sut);
 
             rule.Value.Should().Be(expected);
         }

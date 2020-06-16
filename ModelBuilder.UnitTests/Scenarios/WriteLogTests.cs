@@ -17,7 +17,7 @@
         [Fact]
         public void WriteLogRendersLogFromConfiguration()
         {
-            var actual = Model.Ignoring<Person>(x => x.FirstName!).WriteLog<Person>(_output.WriteLine).Create();
+            var actual = Model.Ignoring<Person>(x => x.FirstName).WriteLog<Person>(_output.WriteLine).Create();
 
             actual.Should().NotBeNull();
         }
@@ -25,7 +25,7 @@
         [Fact]
         public void WriteLogRendersLogFromExecuteStrategy()
         {
-            var actual = Model.Ignoring<Person>(x => x.FirstName!)
+            var actual = Model.Ignoring<Person>(x => x.FirstName)
                 .UsingExecuteStrategy<DefaultExecuteStrategy<Person>>().WriteLog(_output.WriteLine).Create();
 
             actual.Should().NotBeNull();

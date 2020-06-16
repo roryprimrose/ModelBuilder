@@ -12,14 +12,14 @@
     /// <typeparam name="T">The type being evaluated.</typeparam>
     public class ExpressionIgnoreRule<T> : IIgnoreRule
     {
-        private readonly Expression<Func<T, object>> _expression;
+        private readonly Expression<Func<T, object?>> _expression;
 
         /// <summary>
         ///     Creates a new instance of the <see cref="ExpressionIgnoreRule{T}" /> class.
         /// </summary>
         /// <param name="expression">The expression used to identify a property on a type.</param>
         /// <exception cref="ArgumentNullException">The <paramref name="expression" /> parameter is <c>null</c>.</exception>
-        public ExpressionIgnoreRule(Expression<Func<T, object>> expression)
+        public ExpressionIgnoreRule(Expression<Func<T, object?>> expression)
         {
             _expression = expression ?? throw new ArgumentNullException(nameof(expression));
         }

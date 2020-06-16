@@ -15,7 +15,9 @@
         {
             var sut = new BuildConfiguration();
 
-            sut.AddTypeMappingRule<DummyTypeMappingRule>();
+            var config = sut.AddTypeMappingRule<DummyTypeMappingRule>();
+
+            config.Should().Be(sut);
 
             var actual = sut.TypeMappingRules.Single();
 
@@ -61,7 +63,9 @@
 
             var sut = new BuildConfiguration();
 
-            sut.Add(rule);
+            var config = sut.Add(rule);
+
+            config.Should().Be(sut);
 
             sut.TypeMappingRules.Should().Contain(rule);
         }
@@ -132,7 +136,10 @@
             var sut = new BuildConfiguration();
 
             sut.AddTypeMappingRule<DummyTypeMappingRule>();
-            sut.RemoveTypeMappingRule<DummyTypeMappingRule>();
+
+            var config = sut.RemoveTypeMappingRule<DummyTypeMappingRule>();
+
+            config.Should().Be(sut);
 
             sut.TypeMappingRules.Should().BeEmpty();
         }

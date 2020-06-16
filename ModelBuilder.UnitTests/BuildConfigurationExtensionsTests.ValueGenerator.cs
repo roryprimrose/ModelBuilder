@@ -14,7 +14,9 @@
         {
             var sut = new BuildConfiguration();
 
-            sut.AddValueGenerator<StringValueGenerator>();
+            var config = sut.AddValueGenerator<StringValueGenerator>();
+
+            config.Should().Be(sut);
 
             var actual = sut.ValueGenerators.Single();
 
@@ -36,7 +38,9 @@
 
             var sut = new BuildConfiguration();
 
-            sut.Add(generator);
+            var config = sut.Add(generator);
+
+            config.Should().Be(sut);
 
             sut.ValueGenerators.Should().Contain(generator);
         }
@@ -80,7 +84,10 @@
             var sut = new BuildConfiguration();
 
             sut.AddValueGenerator<StringValueGenerator>();
-            sut.RemoveValueGenerator<StringValueGenerator>();
+
+            var config = sut.RemoveValueGenerator<StringValueGenerator>();
+
+            config.Should().Be(sut);
 
             sut.ValueGenerators.Should().BeEmpty();
         }
@@ -91,6 +98,19 @@
             Action action = () => BuildConfigurationExtensions.RemoveValueGenerator<StringValueGenerator>(null!);
 
             action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void UpdateValueGeneratorThrowsExceptionWhenGeneratorNotFound()
+        {
+            var sut = new BuildConfiguration();
+
+            Action action = () => sut.UpdateValueGenerator<DummyValueGenerator>(x =>
+            {
+                // Do nothing
+            });
+
+            action.Should().Throw<InvalidOperationException>();
         }
 
         [Fact]
@@ -118,19 +138,6 @@
             sut.ValueGenerators.Add(generator);
 
             Action action = () => sut.UpdateValueGenerator<NumericValueGenerator>(x =>
-            {
-                // Do nothing
-            });
-
-            action.Should().Throw<InvalidOperationException>();
-        }
-
-        [Fact]
-        public void UpdateValueGeneratorThrowsExceptionWhenGeneratorNotFound()
-        {
-            var sut = new BuildConfiguration();
-
-            Action action = () => sut.UpdateValueGenerator<DummyValueGenerator>(x =>
             {
                 // Do nothing
             });
@@ -171,7 +178,9 @@
 
             sut.ValueGenerators.Add(generator);
 
-            sut.UpdateValueGenerator<DummyValueGenerator>(x => { x.Value = expected; });
+            var config = sut.UpdateValueGenerator<DummyValueGenerator>(x => { x.Value = expected; });
+
+            config.Should().Be(sut);
 
             generator.Value.Should().Be(expected);
         }
@@ -186,7 +195,9 @@
             sut.ValueGenerators.Add(first);
             sut.ValueGenerators.Add(second);
 
-            sut.UpdateValueGenerator<NumericValueGenerator>(x => { x.AllowNull = true; });
+            var config = sut.UpdateValueGenerator<NumericValueGenerator>(x => { x.AllowNull = true; });
+
+            config.Should().Be(sut);
 
             first.AllowNull.Should().BeFalse();
             second.AllowNull.Should().BeTrue();

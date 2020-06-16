@@ -18,7 +18,9 @@
         {
             var sut = new BuildConfiguration();
 
-            sut.AddExecuteOrderRule<DummyExecuteOrderRule>();
+            var config = sut.AddExecuteOrderRule<DummyExecuteOrderRule>();
+
+            config.Should().Be(sut);
 
             var actual = sut.ExecuteOrderRules.Single();
 
@@ -40,7 +42,9 @@
 
             var sut = new BuildConfiguration();
 
-            sut.AddExecuteOrderRule<Person>(x => x.FirstName!, priority);
+            var config = sut.AddExecuteOrderRule<Person>(x => x.FirstName, priority);
+
+            config.Should().Be(sut);
 
             var rule = sut.ExecuteOrderRules.Single();
 
@@ -59,7 +63,7 @@
             var priority = Environment.TickCount;
 
             Action action = () =>
-                BuildConfigurationExtensions.AddExecuteOrderRule<Person>(null!, x => x.FirstName!, priority);
+                BuildConfigurationExtensions.AddExecuteOrderRule<Person>(null!, x => x.FirstName, priority);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -71,7 +75,7 @@
 
             var sut = new BuildConfiguration();
 
-            Action action = () => sut.AddExecuteOrderRule((Expression<Func<Person, object>>) null!, priority);
+            Action action = () => sut.AddExecuteOrderRule((Expression<Func<Person, object?>>) null!, priority);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -83,7 +87,9 @@
 
             var sut = new BuildConfiguration();
 
-            sut.AddExecuteOrderRule(x => x.Name == nameof(Person.FirstName), priority);
+            var config = sut.AddExecuteOrderRule(x => x.Name == nameof(Person.FirstName), priority);
+
+            config.Should().Be(sut);
 
             var rule = sut.ExecuteOrderRules.Single();
 
@@ -210,7 +216,10 @@
             var sut = new BuildConfiguration();
 
             sut.AddExecuteOrderRule<DummyExecuteOrderRule>();
-            sut.RemoveExecuteOrderRule<DummyExecuteOrderRule>();
+
+            var config = sut.RemoveExecuteOrderRule<DummyExecuteOrderRule>();
+
+            config.Should().Be(sut);
 
             sut.ExecuteOrderRules.Should().BeEmpty();
         }
@@ -269,7 +278,9 @@
 
             sut.ExecuteOrderRules.Add(rule);
 
-            sut.UpdateExecuteOrderRule<DummyExecuteOrderRule>(x => { x.Value = expected; });
+            var config = sut.UpdateExecuteOrderRule<DummyExecuteOrderRule>(x => { x.Value = expected; });
+
+            config.Should().Be(sut);
 
             rule.Value.Should().Be(expected);
         }

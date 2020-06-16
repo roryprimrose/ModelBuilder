@@ -13,7 +13,7 @@
         {
             var property = typeof(Person).GetProperty(nameof(Person.LastName))!;
 
-            var sut = new ExpressionIgnoreRule<Simple>(x => x.LastName!);
+            var sut = new ExpressionIgnoreRule<Simple>(x => x.LastName);
 
             var actual = sut.IsMatch(property);
 
@@ -25,7 +25,7 @@
         {
             var property = typeof(Person).GetProperty(nameof(Person.FirstName))!;
 
-            var sut = new ExpressionIgnoreRule<Person>(x => x.LastName!);
+            var sut = new ExpressionIgnoreRule<Person>(x => x.LastName);
 
             var actual = sut.IsMatch(property);
 
@@ -37,7 +37,7 @@
         {
             var property = typeof(Person).GetProperty(nameof(Person.FirstName))!;
 
-            var sut = new ExpressionIgnoreRule<Person>(x => x.LastName!);
+            var sut = new ExpressionIgnoreRule<Person>(x => x.LastName);
 
             var actual = sut.IsMatch(property);
 
@@ -61,7 +61,7 @@
         {
             var property = typeof(Person).GetProperty(nameof(Person.FirstName))!;
 
-            var sut = new ExpressionIgnoreRule<Person>(x => x.FirstName!);
+            var sut = new ExpressionIgnoreRule<Person>(x => x.FirstName);
 
             var actual = sut.IsMatch(property);
 
@@ -95,7 +95,7 @@
         [Fact]
         public void IsMatchThrowsExceptionWithNullProperty()
         {
-            var sut = new ExpressionIgnoreRule<Person>(x => x.FirstName!);
+            var sut = new ExpressionIgnoreRule<Person>(x => x.FirstName);
 
             Action action = () => sut.IsMatch(null!);
 

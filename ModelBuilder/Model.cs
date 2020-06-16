@@ -49,7 +49,7 @@
         /// <param name="expression">The expression that identifies a property on <typeparamref name="T" /></param>
         /// <returns>A new build configuration.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="expression" /> parameter is <c>null</c>.</exception>
-        public static IBuildConfiguration Ignoring<T>(Expression<Func<T, object>> expression)
+        public static IBuildConfiguration Ignoring<T>(Expression<Func<T, object?>> expression)
         {
             if (expression == null)
             {

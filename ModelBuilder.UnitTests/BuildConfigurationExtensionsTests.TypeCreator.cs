@@ -14,7 +14,9 @@
         {
             var sut = new BuildConfiguration();
 
-            sut.AddTypeCreator<DefaultTypeCreator>();
+            var config = sut.AddTypeCreator<DefaultTypeCreator>();
+
+            config.Should().Be(sut);
 
             var actual = sut.TypeCreators.Single();
 
@@ -36,7 +38,9 @@
 
             var sut = new BuildConfiguration();
 
-            sut.Add(typeCreator);
+            var config = sut.Add(typeCreator);
+
+            config.Should().Be(sut);
 
             sut.TypeCreators.Should().Contain(typeCreator);
         }
@@ -80,7 +84,10 @@
             var sut = new BuildConfiguration();
 
             sut.AddTypeCreator<DefaultTypeCreator>();
-            sut.RemoveTypeCreator<DefaultTypeCreator>();
+
+            var config = sut.RemoveTypeCreator<DefaultTypeCreator>();
+
+            config.Should().Be(sut);
 
             sut.TypeCreators.Should().BeEmpty();
         }
@@ -171,7 +178,9 @@
 
             sut.TypeCreators.Add(typeCreator);
 
-            sut.UpdateTypeCreator<DummyTypeCreator>(x => { x.Value = expected; });
+            var config = sut.UpdateTypeCreator<DummyTypeCreator>(x => { x.Value = expected; });
+
+            config.Should().Be(sut);
 
             typeCreator.Value.Should().Be(expected);
         }
@@ -187,7 +196,9 @@
             sut.TypeCreators.Add(first);
             sut.TypeCreators.Add(second);
 
-            sut.UpdateTypeCreator<ArrayTypeCreator>(x => { x.MaxCount = maxCount; });
+            var config = sut.UpdateTypeCreator<ArrayTypeCreator>(x => { x.MaxCount = maxCount; });
+
+            config.Should().Be(sut);
 
             second.MaxCount.Should().Be(maxCount);
         }
