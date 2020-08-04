@@ -122,7 +122,7 @@ jobs:
     - name: Publish to MyGet.org
       env: 
         MYGET_APIKEY: ${{ secrets.MYGET_APIKEY }}
-      run: mono $NUGET_EXE push *.*.symbols.nupkg $MYGET_APIKEY -source https://www.myget.org/F/divergic/api/v2/package
+      run: mono $NUGET_EXE push *.*.symbols.nupkg $MYGET_APIKEY -source https://www.myget.org/F/neovolve/api/v2/package
       
   release:
     needs: build
