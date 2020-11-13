@@ -1100,7 +1100,7 @@
                 Number = number;
             }
 
-            public ReadOnlyModelWrapper? Child { get; set; } = null;
+            public ReadOnlyModelWrapper? Child { get; set; }
 
             public int Number { get; }
         }
@@ -1154,7 +1154,7 @@
 
             public ReadOnlyModel? Model { get; }
 
-            public ReadOnlyModel? Other { get; set; } = null;
+            public ReadOnlyModel? Other { get; set; }
         }
 
         private class SimpleReadOnlyParent
