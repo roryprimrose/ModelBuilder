@@ -10,9 +10,17 @@
     using NodaTime.TimeZones;
     using NSubstitute;
     using Xunit;
+    using Xunit.Abstractions;
 
     public class TimeZoneValueGeneratorTests
     {
+        private readonly ITestOutputHelper _output;
+
+        public TimeZoneValueGeneratorTests(ITestOutputHelper output)
+        {
+            _output = output;
+        }
+
         [Fact]
         public void GenerateReturnsRandomTimeZoneMatchingCaseInsensitiveCountry()
         {
@@ -277,6 +285,17 @@
             var actual = sut.RunIsMatch(type, referenceName, buildChain);
 
             actual.Should().Be(expected);
+        }
+
+        [Fact]
+        public void ListTimezones()
+        {
+            var ids = TzdbDateTimeZoneSource.Default.GetIds().OrderBy(x => x).ToList();
+
+            foreach (var id in ids)
+            {
+                _output.WriteLine(id);
+            }
         }
 
         private class Wrapper : TimeZoneValueGenerator
