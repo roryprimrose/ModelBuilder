@@ -28,15 +28,9 @@
                 "For usability in the calling code, the return type reflects the actual type to avoid unnecessary conversion or casting.")]
         public static List<T> SetEach<T>(this IEnumerable<T> instances, Action<T> action) where T : class
         {
-            if (instances == null)
-            {
-                throw new ArgumentNullException(nameof(instances));
-            }
+            instances = instances ?? throw new ArgumentNullException(nameof(instances));
 
-            if (action == null)
-            {
-                throw new ArgumentNullException(nameof(action));
-            }
+            action = action ?? throw new ArgumentNullException(nameof(action));
 
             var items = instances as List<T>;
 
@@ -221,7 +215,7 @@
             Justification =
                 "For usability in the calling code, the return type reflects the actual type to avoid unnecessary conversion or casting.")]
         public static Dictionary<TKey, TValue> SetEach<TKey, TValue>(this Dictionary<TKey, TValue> instances,
-            Action<KeyValuePair<TKey, TValue>> action) where TValue : class
+            Action<KeyValuePair<TKey, TValue>> action) where TKey : notnull where TValue : class
         {
             return SetEachExplicit(instances, action);
         }
@@ -265,6 +259,7 @@
                 "For usability in the calling code, the return type reflects the actual type to avoid unnecessary conversion or casting.")]
         public static ReadOnlyDictionary<TKey, TValue> SetEach<TKey, TValue>(
             this ReadOnlyDictionary<TKey, TValue> instances, Action<KeyValuePair<TKey, TValue>> action)
+            where TKey : notnull
             where TValue : class
         {
             return SetEachExplicit(instances, action);
@@ -288,15 +283,9 @@
         public static TList SetEachExplicit<TList, TEntry>(this TList instances, Action<TEntry> action)
             where TList : IEnumerable<TEntry> where TEntry : class
         {
-            if (instances == null)
-            {
-                throw new ArgumentNullException(nameof(instances));
-            }
+            instances = instances ?? throw new ArgumentNullException(nameof(instances));
 
-            if (action == null)
-            {
-                throw new ArgumentNullException(nameof(action));
-            }
+            action = action ?? throw new ArgumentNullException(nameof(action));
 
             foreach (var instance in instances)
             {
@@ -326,15 +315,9 @@
             Action<KeyValuePair<TKey, TValue>> action) where TDictionary : IEnumerable<KeyValuePair<TKey, TValue>>
             where TValue : class
         {
-            if (instances == null)
-            {
-                throw new ArgumentNullException(nameof(instances));
-            }
+            instances = instances ?? throw new ArgumentNullException(nameof(instances));
 
-            if (action == null)
-            {
-                throw new ArgumentNullException(nameof(action));
-            }
+            action = action ?? throw new ArgumentNullException(nameof(action));
 
             foreach (var instance in instances)
             {

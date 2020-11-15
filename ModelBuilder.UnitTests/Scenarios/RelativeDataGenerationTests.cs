@@ -24,8 +24,8 @@
         {
             var actual = Model.WriteLog<Person>(_output.WriteLine).Create();
 
-            var firstName = EmailValueGenerator.SpecialCharacters.Replace(actual.FirstName, string.Empty);
-            var lastName = EmailValueGenerator.SpecialCharacters.Replace(actual.LastName, string.Empty);
+            var firstName = EmailValueGenerator.SpecialCharacters.Replace(actual.FirstName!, string.Empty);
+            var lastName = EmailValueGenerator.SpecialCharacters.Replace(actual.LastName!, string.Empty);
 
             var expected = (firstName + "." + lastName + "@").ToLowerInvariant();
 

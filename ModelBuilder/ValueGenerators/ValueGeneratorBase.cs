@@ -16,10 +16,7 @@
         /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is <c>null</c>.</exception>
         public object? Generate(IExecuteStrategy executeStrategy, Type type)
         {
-            if (type == null)
-            {
-                throw new ArgumentNullException(nameof(type));
-            }
+            type = type ?? throw new ArgumentNullException(nameof(type));
 
             if (executeStrategy == null)
             {
@@ -34,15 +31,9 @@
         /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is <c>null</c>.</exception>
         public virtual object? Generate(IExecuteStrategy executeStrategy, PropertyInfo propertyInfo)
         {
-            if (propertyInfo == null)
-            {
-                throw new ArgumentNullException(nameof(propertyInfo));
-            }
+            propertyInfo = propertyInfo ?? throw new ArgumentNullException(nameof(propertyInfo));
 
-            if (executeStrategy == null)
-            {
-                throw new ArgumentNullException(nameof(executeStrategy));
-            }
+            executeStrategy = executeStrategy ?? throw new ArgumentNullException(nameof(executeStrategy));
 
             var type = propertyInfo.PropertyType;
             var name = propertyInfo.Name;
@@ -55,15 +46,9 @@
         /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is <c>null</c>.</exception>
         public virtual object? Generate(IExecuteStrategy executeStrategy, ParameterInfo parameterInfo)
         {
-            if (parameterInfo == null)
-            {
-                throw new ArgumentNullException(nameof(parameterInfo));
-            }
+            parameterInfo = parameterInfo ?? throw new ArgumentNullException(nameof(parameterInfo));
 
-            if (executeStrategy == null)
-            {
-                throw new ArgumentNullException(nameof(executeStrategy));
-            }
+            executeStrategy = executeStrategy ?? throw new ArgumentNullException(nameof(executeStrategy));
 
             var type = parameterInfo.ParameterType;
             var name = parameterInfo.Name;
@@ -75,15 +60,9 @@
         /// <exception cref="ArgumentNullException">The <paramref name="propertyInfo" /> parameter is <c>null</c>.</exception>
         public virtual bool IsMatch(IBuildChain buildChain, PropertyInfo propertyInfo)
         {
-            if (propertyInfo == null)
-            {
-                throw new ArgumentNullException(nameof(propertyInfo));
-            }
+            propertyInfo = propertyInfo ?? throw new ArgumentNullException(nameof(propertyInfo));
 
-            if (buildChain == null)
-            {
-                throw new ArgumentNullException(nameof(buildChain));
-            }
+            buildChain = buildChain ?? throw new ArgumentNullException(nameof(buildChain));
 
             return IsMatch(buildChain, propertyInfo.PropertyType, propertyInfo.Name);
         }
@@ -92,15 +71,9 @@
         /// <exception cref="ArgumentNullException">The <paramref name="parameterInfo" /> parameter is <c>null</c>.</exception>
         public virtual bool IsMatch(IBuildChain buildChain, ParameterInfo parameterInfo)
         {
-            if (parameterInfo == null)
-            {
-                throw new ArgumentNullException(nameof(parameterInfo));
-            }
+            parameterInfo = parameterInfo ?? throw new ArgumentNullException(nameof(parameterInfo));
 
-            if (buildChain == null)
-            {
-                throw new ArgumentNullException(nameof(buildChain));
-            }
+            buildChain = buildChain ?? throw new ArgumentNullException(nameof(buildChain));
 
             return IsMatch(buildChain, parameterInfo.ParameterType, parameterInfo.Name);
         }
@@ -110,15 +83,9 @@
         /// <exception cref="ArgumentNullException">The <paramref name="buildChain" /> parameter is <c>null</c>.</exception>
         public bool IsMatch(IBuildChain buildChain, Type type)
         {
-            if (type == null)
-            {
-                throw new ArgumentNullException(nameof(type));
-            }
+            type = type ?? throw new ArgumentNullException(nameof(type));
 
-            if (buildChain == null)
-            {
-                throw new ArgumentNullException(nameof(buildChain));
-            }
+            buildChain = buildChain ?? throw new ArgumentNullException(nameof(buildChain));
 
             return IsMatch(buildChain, type, null);
         }

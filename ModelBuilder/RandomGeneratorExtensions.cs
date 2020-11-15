@@ -16,10 +16,7 @@ namespace ModelBuilder
         /// <exception cref="ArgumentNullException">The <paramref name="generator" /> parameter is <c>null</c>.</exception>
         public static T NextValue<T>(this IRandomGenerator generator) where T : struct
         {
-            if (generator == null)
-            {
-                throw new ArgumentNullException(nameof(generator));
-            }
+            generator = generator ?? throw new ArgumentNullException(nameof(generator));
 
             var type = typeof(T);
             var max = generator.GetMax(type);
@@ -38,10 +35,7 @@ namespace ModelBuilder
         /// <exception cref="ArgumentNullException">The <paramref name="generator" /> parameter is <c>null</c>.</exception>
         public static T NextValue<T>(this IRandomGenerator generator, T max) where T : struct
         {
-            if (generator == null)
-            {
-                throw new ArgumentNullException(nameof(generator));
-            }
+            generator = generator ?? throw new ArgumentNullException(nameof(generator));
 
             var type = typeof(T);
             var min = generator.GetMin(type);
@@ -59,10 +53,7 @@ namespace ModelBuilder
         /// <exception cref="ArgumentNullException">The <paramref name="generator" /> parameter is <c>null</c>.</exception>
         public static T NextValue<T>(this IRandomGenerator generator, T min, T max) where T : struct
         {
-            if (generator == null)
-            {
-                throw new ArgumentNullException(nameof(generator));
-            }
+            generator = generator ?? throw new ArgumentNullException(nameof(generator));
 
             var type = typeof(T);
 
@@ -79,15 +70,9 @@ namespace ModelBuilder
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
         public static object NextValue(this IRandomGenerator generator, Type type)
         {
-            if (generator == null)
-            {
-                throw new ArgumentNullException(nameof(generator));
-            }
+            generator = generator ?? throw new ArgumentNullException(nameof(generator));
 
-            if (type == null)
-            {
-                throw new ArgumentNullException(nameof(type));
-            }
+            type = type ?? throw new ArgumentNullException(nameof(type));
 
             var max = generator.GetMax(type);
             var min = generator.GetMin(type);
@@ -106,15 +91,9 @@ namespace ModelBuilder
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
         public static object NextValue(this IRandomGenerator generator, Type type, object max)
         {
-            if (generator == null)
-            {
-                throw new ArgumentNullException(nameof(generator));
-            }
+            generator = generator ?? throw new ArgumentNullException(nameof(generator));
 
-            if (type == null)
-            {
-                throw new ArgumentNullException(nameof(type));
-            }
+            type = type ?? throw new ArgumentNullException(nameof(type));
 
             var min = generator.GetMin(type);
 

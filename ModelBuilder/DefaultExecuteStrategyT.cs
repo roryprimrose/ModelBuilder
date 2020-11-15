@@ -24,7 +24,8 @@
         /// <param name="buildHistory">The build history tracker.</param>
         /// <param name="buildLog">The build log.</param>
         /// <param name="buildProcessor">The build processor.</param>
-        public DefaultExecuteStrategy(IBuildHistory buildHistory, IBuildLog buildLog, IBuildProcessor buildProcessor) : base(buildHistory, buildLog, buildProcessor)
+        public DefaultExecuteStrategy(IBuildHistory buildHistory, IBuildLog buildLog, IBuildProcessor buildProcessor) :
+            base(buildHistory, buildLog, buildProcessor)
         {
         }
 
@@ -52,10 +53,7 @@
         /// <exception cref="BuildException">Failed to generate a requested type.</exception>
         public virtual T Populate(T instance)
         {
-            if (instance == null)
-            {
-                throw new ArgumentNullException(nameof(instance));
-            }
+            instance = instance ?? throw new ArgumentNullException(nameof(instance));
 
             return (T) Populate((object) instance);
         }

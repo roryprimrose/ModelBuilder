@@ -56,8 +56,8 @@
                 for (var index = 0; index < flagCount; index++)
                 {
                     var nextIndex = Generator.NextValue(0, values.Length - 1);
-                    var nextValue = values.GetValue(nextIndex);
-                    var valueText = nextValue.ToString();
+                    var nextValue = values.GetValue(nextIndex)!;
+                    var valueText = nextValue.ToString()!;
 
                     parts.Add(valueText);
                 }
@@ -77,10 +77,7 @@
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
         protected override bool IsMatch(IBuildChain buildChain, Type type, string? referenceName)
         {
-            if (type == null)
-            {
-                throw new ArgumentNullException(nameof(type));
-            }
+            type = type ?? throw new ArgumentNullException(nameof(type));
 
             var generateType = type;
 

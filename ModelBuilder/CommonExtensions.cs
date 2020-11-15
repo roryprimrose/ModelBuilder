@@ -17,10 +17,7 @@
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
         public static bool IsNullable(this Type type)
         {
-            if (type == null)
-            {
-                throw new ArgumentNullException(nameof(type));
-            }
+            type = type ?? throw new ArgumentNullException(nameof(type));
 
             if (type.IsGenericType == false)
             {
@@ -42,10 +39,7 @@
         /// <returns>A new data item.</returns>
         public static T Next<T>(this IReadOnlyList<T> source)
         {
-            if (source == null)
-            {
-                throw new ArgumentNullException(nameof(source));
-            }
+            source = source ?? throw new ArgumentNullException(nameof(source));
 
             if (source.Count == 0)
             {
@@ -70,15 +64,9 @@
         /// <exception cref="ArgumentNullException">The <paramref name="action" /> parameter is <c>null</c>.</exception>
         public static T Set<T>(this T instance, Action<T> action)
         {
-            if (instance == null)
-            {
-                throw new ArgumentNullException(nameof(instance));
-            }
+            instance = instance ?? throw new ArgumentNullException(nameof(instance));
 
-            if (action == null)
-            {
-                throw new ArgumentNullException(nameof(action));
-            }
+            action = action ?? throw new ArgumentNullException(nameof(action));
 
             action(instance);
 

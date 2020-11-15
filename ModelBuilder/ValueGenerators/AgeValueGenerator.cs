@@ -19,15 +19,9 @@
         /// <inheritdoc />
         protected override object? Generate(IExecuteStrategy executeStrategy, Type type, string? referenceName)
         {
-            if (type == null)
-            {
-                throw new ArgumentNullException(nameof(type));
-            }
+            type = type ?? throw new ArgumentNullException(nameof(type));
 
-            if (executeStrategy == null)
-            {
-                throw new ArgumentNullException(nameof(executeStrategy));
-            }
+            executeStrategy = executeStrategy ?? throw new ArgumentNullException(nameof(executeStrategy));
 
             var generateType = type;
 
@@ -77,15 +71,9 @@
         /// <inheritdoc />
         protected override bool IsMatch(IBuildChain buildChain, Type type, string? referenceName)
         {
-            if (type == null)
-            {
-                throw new ArgumentNullException(nameof(type));
-            }
+            type = type ?? throw new ArgumentNullException(nameof(type));
 
-            if (buildChain == null)
-            {
-                throw new ArgumentNullException(nameof(buildChain));
-            }
+            buildChain = buildChain ?? throw new ArgumentNullException(nameof(buildChain));
 
             if (string.IsNullOrEmpty(referenceName))
             {

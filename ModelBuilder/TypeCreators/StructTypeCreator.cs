@@ -1,13 +1,32 @@
 namespace ModelBuilder.TypeCreators
 {
     using System;
-    
+
     /// <summary>
     ///     The <see cref="StructTypeCreator" />
     ///     class is used to create an instance of a struct.
     /// </summary>
     public class StructTypeCreator : TypeCreatorBase
     {
+        /// <inheritdoc />
+        protected override bool CanCreate(IBuildConfiguration configuration, IBuildChain buildChain, Type type,
+            string? referenceName)
+        {
+            type = type ?? throw new ArgumentNullException(nameof(type));
+
+            if (type.IsValueType == false)
+            {
+                return false;
+            }
+
+            if (type.IsEnum)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         /// <inheritdoc />
         protected override object? CreateInstance(IExecuteStrategy executeStrategy, Type type, string? referenceName,
             params object?[]? args)
@@ -17,7 +36,7 @@ namespace ModelBuilder.TypeCreators
                 // We have arguments supplied so we will assume that they may the resolve type
                 return Activator.CreateInstance(type, args);
             }
-            
+
             // Use constructor detection to figure out how to create this instance
             var constructorResolver = executeStrategy.Configuration.ConstructorResolver;
 
@@ -32,29 +51,8 @@ namespace ModelBuilder.TypeCreators
 
             // Create the arguments for the constructor we have found
             var builtArgs = executeStrategy.CreateParameters(constructor);
-            
+
             return constructor.Invoke(builtArgs);
-        }
-
-        /// <inheritdoc />
-        protected override bool CanCreate(IBuildConfiguration configuration, IBuildChain buildChain, Type type, string? referenceName)
-        {
-            if (type == null)
-            {
-                throw new ArgumentNullException(nameof(type));
-            }
-
-            if (type.IsValueType == false)
-            {
-                return false;
-            }
-
-            if (type.IsEnum)
-            {
-                return false;
-            }
-
-            return true;
         }
 
         /// <inheritdoc />

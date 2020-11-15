@@ -24,7 +24,7 @@ namespace ModelBuilder
             new ConcurrentDictionary<Type, IList<PropertyInfo>>();
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DefaultPropertyResolver"/> class.
+        ///     Initializes a new instance of the <see cref="DefaultPropertyResolver" /> class.
         /// </summary>
         /// <param name="cacheLevel">The cache level to use for resolved properties.</param>
         public DefaultPropertyResolver(CacheLevel cacheLevel)
@@ -37,15 +37,9 @@ namespace ModelBuilder
         /// <exception cref="ArgumentNullException">The <paramref name="targetType" /> parameter is <c>null</c>.</exception>
         public IEnumerable<PropertyInfo> GetOrderedProperties(IBuildConfiguration configuration, Type targetType)
         {
-            if (configuration == null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
+            configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 
-            if (targetType == null)
-            {
-                throw new ArgumentNullException(nameof(targetType));
-            }
+            targetType = targetType ?? throw new ArgumentNullException(nameof(targetType));
 
             if (CacheLevel == CacheLevel.Global)
             {
@@ -69,20 +63,11 @@ namespace ModelBuilder
             PropertyInfo propertyInfo,
             object?[]? args)
         {
-            if (configuration == null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
+            configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 
-            if (instance == null)
-            {
-                throw new ArgumentNullException(nameof(instance));
-            }
+            instance = instance ?? throw new ArgumentNullException(nameof(instance));
 
-            if (propertyInfo == null)
-            {
-                throw new ArgumentNullException(nameof(propertyInfo));
-            }
+            propertyInfo = propertyInfo ?? throw new ArgumentNullException(nameof(propertyInfo));
 
             var type = instance.GetType();
 
@@ -252,7 +237,7 @@ namespace ModelBuilder
             }
 
             // There is no set method. This is a read-only property
-            var getMethod = propertyInfo.GetGetMethod();
+            var getMethod = propertyInfo.GetGetMethod()!;
 
             if (getMethod.ReturnType.IsValueType)
             {
@@ -277,7 +262,7 @@ namespace ModelBuilder
         {
             try
             {
-                return _defaultValues.GetOrAdd(type, Activator.CreateInstance);
+                return _defaultValues.GetOrAdd(type, x => Activator.CreateInstance(x)!);
             }
             catch
             {

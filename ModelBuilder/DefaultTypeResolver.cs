@@ -17,15 +17,9 @@
         /// <inheritdoc />
         public Type GetBuildType(IBuildConfiguration configuration, Type requestedType)
         {
-            if (configuration == null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
+            configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 
-            if (requestedType == null)
-            {
-                throw new ArgumentNullException(nameof(requestedType));
-            }
+            requestedType = requestedType ?? throw new ArgumentNullException(nameof(requestedType));
 
             var typeMappingRule = configuration.TypeMappingRules?.Where(x => x.SourceType == requestedType)
                 .FirstOrDefault();
@@ -98,8 +92,8 @@
             // Automatically resolve a derived type within the same assembly
             var assemblyTypes = requestedType.GetTypeInfo().Assembly.GetTypes();
             var possibleTypes = from x in assemblyTypes
-                                where x.IsPublic && x.IsInterface == false && x.IsAbstract == false
-                                select x;
+                where x.IsPublic && x.IsInterface == false && x.IsAbstract == false
+                select x;
 
             var matchingTypes = new List<Type>();
 
@@ -161,6 +155,7 @@
                     return interfaceNameMatchingType;
                 }
             }
+
             // else if instead of if in a discrete block because interfaces are also abstract 
             else if (requestedType.IsAbstract)
             {
@@ -170,7 +165,8 @@
 #if NETSTANDARD2_0
                 abstractNameToMatch = abstractNameToMatch.Replace("Base", string.Empty);
 #else
-                abstractNameToMatch = abstractNameToMatch.Replace("Base", string.Empty, StringComparison.CurrentCulture);
+                abstractNameToMatch =
+ abstractNameToMatch.Replace("Base", string.Empty, StringComparison.CurrentCulture);
 #endif
                 var abstractNameMatchingType = matchingTypes.FirstOrDefault(x => x.Name == abstractNameToMatch);
 

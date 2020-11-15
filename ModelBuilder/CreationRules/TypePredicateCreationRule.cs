@@ -61,10 +61,7 @@
         /// <inheritdoc />
         public bool IsMatch(Type type)
         {
-            if (type == null)
-            {
-                throw new ArgumentNullException(nameof(type));
-            }
+            type = type ?? throw new ArgumentNullException(nameof(type));
 
             return _typePredicate(type);
         }

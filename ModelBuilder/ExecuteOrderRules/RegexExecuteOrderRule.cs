@@ -29,22 +29,16 @@
         /// <exception cref="System.ArgumentNullException">The <paramref name="parameterInfo" /> is <c>null</c>.</exception>
         public bool IsMatch(ParameterInfo parameterInfo)
         {
-            if (parameterInfo == null)
-            {
-                throw new ArgumentNullException(nameof(parameterInfo));
-            }
+            parameterInfo = parameterInfo ?? throw new ArgumentNullException(nameof(parameterInfo));
 
-            return _expression.IsMatch(parameterInfo.Name);
+            return _expression.IsMatch(parameterInfo.Name!);
         }
 
         /// <inheritdoc />
         /// <exception cref="System.ArgumentNullException">The <paramref name="propertyInfo" /> is <c>null</c>.</exception>
         public bool IsMatch(PropertyInfo propertyInfo)
         {
-            if (propertyInfo == null)
-            {
-                throw new ArgumentNullException(nameof(propertyInfo));
-            }
+            propertyInfo = propertyInfo ?? throw new ArgumentNullException(nameof(propertyInfo));
 
             return _expression.IsMatch(propertyInfo.Name);
         }

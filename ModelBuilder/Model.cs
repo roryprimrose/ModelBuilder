@@ -20,10 +20,7 @@
         /// <exception cref="ArgumentNullException">The <paramref name="instanceType" /> parameter is <c>null</c>.</exception>
         public static object Create(Type instanceType, params object?[]? args)
         {
-            if (instanceType == null)
-            {
-                throw new ArgumentNullException(nameof(instanceType));
-            }
+            instanceType = instanceType ?? throw new ArgumentNullException(nameof(instanceType));
 
             return ResolveDefault().Create(instanceType, args);
         }
@@ -51,10 +48,7 @@
         /// <exception cref="ArgumentNullException">The <paramref name="expression" /> parameter is <c>null</c>.</exception>
         public static IBuildConfiguration Ignoring<T>(Expression<Func<T, object?>> expression)
         {
-            if (expression == null)
-            {
-                throw new ArgumentNullException(nameof(expression));
-            }
+            expression = expression ?? throw new ArgumentNullException(nameof(expression));
 
             return UsingDefaultConfiguration().Ignoring(expression);
         }
@@ -123,10 +117,7 @@
         public static IExecuteStrategy<T> WriteLog<T>(Action<string> action)
             where T : notnull
         {
-            if (action == null)
-            {
-                throw new ArgumentNullException(nameof(action));
-            }
+            action = action ?? throw new ArgumentNullException(nameof(action));
 
             return ResolveDefault<T>().WriteLog(action);
         }
@@ -139,10 +130,7 @@
         /// <exception cref="ArgumentNullException">The <paramref name="action" /> parameter is <c>null</c>.</exception>
         public static IExecuteStrategy WriteLog(Action<string> action)
         {
-            if (action == null)
-            {
-                throw new ArgumentNullException(nameof(action));
-            }
+            action = action ?? throw new ArgumentNullException(nameof(action));
 
             return ResolveDefault().WriteLog(action);
         }

@@ -24,15 +24,9 @@
         /// <exception cref="ArgumentNullException">The <paramref name="rule" /> parameter is <c>null</c>.</exception>
         public static IBuildConfiguration Add(this IBuildConfiguration configuration, IIgnoreRule rule)
         {
-            if (configuration == null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
+            configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 
-            if (rule == null)
-            {
-                throw new ArgumentNullException(nameof(rule));
-            }
+            rule = rule ?? throw new ArgumentNullException(nameof(rule));
 
             configuration.IgnoreRules.Add(rule);
 
@@ -54,10 +48,7 @@
         public static IBuildConfiguration AddIgnoreRule<T>(this IBuildConfiguration configuration)
             where T : IIgnoreRule, new()
         {
-            if (configuration == null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
+            configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 
             var rule = new T();
 
@@ -84,15 +75,9 @@
             this IBuildConfiguration configuration,
             Expression<Func<T, object?>> expression)
         {
-            if (configuration == null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
+            configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 
-            if (expression == null)
-            {
-                throw new ArgumentNullException(nameof(expression));
-            }
+            expression = expression ?? throw new ArgumentNullException(nameof(expression));
 
             var rule = new ExpressionIgnoreRule<T>(expression);
 
@@ -113,15 +98,9 @@
             this IBuildConfiguration configuration,
             Predicate<PropertyInfo> predicate)
         {
-            if (configuration == null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
+            configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 
-            if (predicate == null)
-            {
-                throw new ArgumentNullException(nameof(predicate));
-            }
+            predicate = predicate ?? throw new ArgumentNullException(nameof(predicate));
 
             var rule = new PredicateIgnoreRule(predicate);
 
@@ -142,15 +121,9 @@
             this IBuildConfiguration configuration,
             Regex expression)
         {
-            if (configuration == null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
+            configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 
-            if (expression == null)
-            {
-                throw new ArgumentNullException(nameof(expression));
-            }
+            expression = expression ?? throw new ArgumentNullException(nameof(expression));
 
             var rule = new RegexIgnoreRule(expression);
 
@@ -171,10 +144,7 @@
             this IBuildConfiguration configuration,
             string expression)
         {
-            if (configuration == null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
+            configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 
             if (string.IsNullOrEmpty(expression))
             {
@@ -206,15 +176,9 @@
             this IBuildConfiguration buildConfiguration,
             Expression<Func<T, object?>> expression)
         {
-            if (buildConfiguration == null)
-            {
-                throw new ArgumentNullException(nameof(buildConfiguration));
-            }
+            buildConfiguration = buildConfiguration ?? throw new ArgumentNullException(nameof(buildConfiguration));
 
-            if (expression == null)
-            {
-                throw new ArgumentNullException(nameof(expression));
-            }
+            expression = expression ?? throw new ArgumentNullException(nameof(expression));
 
             var rule = new ExpressionIgnoreRule<T>(expression);
 
@@ -236,10 +200,7 @@
         public static IBuildConfiguration RemoveIgnoreRule<T>(this IBuildConfiguration configuration)
             where T : IIgnoreRule
         {
-            if (configuration == null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
+            configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 
             var itemsToRemove = configuration.IgnoreRules.Where(x => x.GetType().IsAssignableFrom(typeof(T))).ToList();
 
@@ -268,15 +229,9 @@
             Action<T> action)
             where T : IIgnoreRule
         {
-            if (configuration == null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
+            configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 
-            if (action == null)
-            {
-                throw new ArgumentNullException(nameof(action));
-            }
+            action = action ?? throw new ArgumentNullException(nameof(action));
 
             var targetType = typeof(T);
             var rule = configuration.IgnoreRules.OfType<T>().FirstOrDefault(x => x.GetType() == targetType);

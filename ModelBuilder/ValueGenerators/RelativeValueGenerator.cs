@@ -37,15 +37,9 @@
         /// <exception cref="ArgumentNullException">The <paramref name="context" /> parameter is <c>null</c>.</exception>
         protected virtual T GetValue<T>(Regex expression, object context)
         {
-            if (expression == null)
-            {
-                throw new ArgumentNullException(nameof(expression));
-            }
+            expression = expression ?? throw new ArgumentNullException(nameof(expression));
 
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
+            context = context ?? throw new ArgumentNullException(nameof(context));
 
             var value = GetPropertyValue(expression, context);
 
@@ -73,10 +67,7 @@
         /// <remarks>The value returned will be random if there is no supported gender identifier found.</remarks>
         protected bool IsMale(IExecuteStrategy executeStrategy)
         {
-            if (executeStrategy == null)
-            {
-                throw new ArgumentNullException(nameof(executeStrategy));
-            }
+            executeStrategy = executeStrategy ?? throw new ArgumentNullException(nameof(executeStrategy));
 
             string? gender = null;
             var context = executeStrategy.BuildChain?.Last;
@@ -189,7 +180,7 @@
                     return null;
                 }
 
-                var keyedProperties = (IDictionary<string, object>) dynamicObject;
+                var keyedProperties = (IDictionary<string, object>) dynamicObject!;
 
                 return keyedProperties[matchingName];
             }

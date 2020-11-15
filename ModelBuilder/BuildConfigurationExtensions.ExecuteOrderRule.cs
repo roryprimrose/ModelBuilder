@@ -24,15 +24,9 @@
         /// <exception cref="ArgumentNullException">The <paramref name="rule" /> parameter is <c>null</c>.</exception>
         public static IBuildConfiguration Add(this IBuildConfiguration configuration, IExecuteOrderRule rule)
         {
-            if (configuration == null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
+            configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 
-            if (rule == null)
-            {
-                throw new ArgumentNullException(nameof(rule));
-            }
+            rule = rule ?? throw new ArgumentNullException(nameof(rule));
 
             configuration.ExecuteOrderRules.Add(rule);
 
@@ -54,10 +48,7 @@
         public static IBuildConfiguration AddExecuteOrderRule<T>(this IBuildConfiguration configuration)
             where T : IExecuteOrderRule, new()
         {
-            if (configuration == null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
+            configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 
             var rule = new T();
 
@@ -91,15 +82,9 @@
             Expression<Func<T, object?>> expression,
             int priority)
         {
-            if (configuration == null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
+            configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 
-            if (expression == null)
-            {
-                throw new ArgumentNullException(nameof(expression));
-            }
+            expression = expression ?? throw new ArgumentNullException(nameof(expression));
 
             var rule = new ExpressionExecuteOrderRule<T>(expression, priority);
 
@@ -127,15 +112,9 @@
             Regex expression,
             int priority)
         {
-            if (configuration == null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
+            configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 
-            if (expression == null)
-            {
-                throw new ArgumentNullException(nameof(expression));
-            }
+            expression = expression ?? throw new ArgumentNullException(nameof(expression));
 
             var rule = new RegexExecuteOrderRule(expression, priority);
 
@@ -158,15 +137,9 @@
             Predicate<PropertyInfo> predicate,
             int priority)
         {
-            if (configuration == null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
+            configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 
-            if (predicate == null)
-            {
-                throw new ArgumentNullException(nameof(predicate));
-            }
+            predicate = predicate ?? throw new ArgumentNullException(nameof(predicate));
 
             var rule = new PropertyPredicateExecuteOrderRule(predicate, priority);
 
@@ -190,10 +163,7 @@
         public static IBuildConfiguration RemoveExecuteOrderRule<T>(this IBuildConfiguration configuration)
             where T : IExecuteOrderRule
         {
-            if (configuration == null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
+            configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 
             var itemsToRemove = configuration.ExecuteOrderRules.Where(x => x.GetType().IsAssignableFrom(typeof(T)))
                 .ToList();
@@ -223,15 +193,9 @@
             Action<T> action)
             where T : IExecuteOrderRule
         {
-            if (configuration == null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
+            configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 
-            if (action == null)
-            {
-                throw new ArgumentNullException(nameof(action));
-            }
+            action = action ?? throw new ArgumentNullException(nameof(action));
 
             var targetType = typeof(T);
             var rule = configuration.ExecuteOrderRules.OfType<T>().FirstOrDefault(x => x.GetType() == targetType);

@@ -44,15 +44,9 @@
         public IBuildCapability GetBuildCapability(IExecuteStrategy executeStrategy,
             BuildRequirement buildRequirement, Type type)
         {
-            if (executeStrategy == null)
-            {
-                throw new ArgumentNullException(nameof(executeStrategy));
-            }
+            executeStrategy = executeStrategy ?? throw new ArgumentNullException(nameof(executeStrategy));
 
-            if (type == null)
-            {
-                throw new ArgumentNullException(nameof(type));
-            }
+            type = type ?? throw new ArgumentNullException(nameof(type));
 
             var match = GetCapability(executeStrategy, buildRequirement, x => x.GetBuildCapability(
                 executeStrategy.Configuration, executeStrategy.BuildChain,
@@ -68,15 +62,9 @@
             BuildRequirement buildRequirement,
             ParameterInfo parameterInfo)
         {
-            if (executeStrategy == null)
-            {
-                throw new ArgumentNullException(nameof(executeStrategy));
-            }
+            executeStrategy = executeStrategy ?? throw new ArgumentNullException(nameof(executeStrategy));
 
-            if (parameterInfo == null)
-            {
-                throw new ArgumentNullException(nameof(parameterInfo));
-            }
+            parameterInfo = parameterInfo ?? throw new ArgumentNullException(nameof(parameterInfo));
 
             var match = GetCapability(executeStrategy, buildRequirement, x => x.GetBuildCapability(
                 executeStrategy.Configuration, executeStrategy.BuildChain,
@@ -92,15 +80,9 @@
             BuildRequirement buildRequirement,
             PropertyInfo propertyInfo)
         {
-            if (executeStrategy == null)
-            {
-                throw new ArgumentNullException(nameof(executeStrategy));
-            }
+            executeStrategy = executeStrategy ?? throw new ArgumentNullException(nameof(executeStrategy));
 
-            if (propertyInfo == null)
-            {
-                throw new ArgumentNullException(nameof(propertyInfo));
-            }
+            propertyInfo = propertyInfo ?? throw new ArgumentNullException(nameof(propertyInfo));
 
             var match = GetCapability(executeStrategy, buildRequirement, x => x.GetBuildCapability(
                 executeStrategy.Configuration, executeStrategy.BuildChain,

@@ -22,15 +22,9 @@
         /// <inheritdoc />
         public void AddCapability(Type type, IBuildCapability capability)
         {
-            if (type == null)
-            {
-                throw new ArgumentNullException(nameof(type));
-            }
+            type = type ?? throw new ArgumentNullException(nameof(type));
 
-            if (capability == null)
-            {
-                throw new ArgumentNullException(nameof(capability));
-            }
+            capability = capability ?? throw new ArgumentNullException(nameof(capability));
 
             if (_buildHistory.Count == 0)
             {
@@ -45,10 +39,7 @@
         /// <inheritdoc />
         public IBuildCapability? GetCapability(Type type)
         {
-            if (type == null)
-            {
-                throw new ArgumentNullException(nameof(type));
-            }
+            type = type ?? throw new ArgumentNullException(nameof(type));
 
             if (_buildHistory.Count == 0)
             {
@@ -86,10 +77,7 @@
         /// <exception cref="ArgumentNullException">The <paramref name="instance" /> parameter is <c>null</c>.</exception>
         public void Push(object instance)
         {
-            if (instance == null)
-            {
-                throw new ArgumentNullException(nameof(instance));
-            }
+            instance = instance ?? throw new ArgumentNullException(nameof(instance));
 
             var historyItem = new BuildHistoryItem(instance);
 

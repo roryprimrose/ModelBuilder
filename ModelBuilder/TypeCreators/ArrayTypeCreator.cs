@@ -22,10 +22,7 @@
         protected override bool CanPopulate(IBuildConfiguration configuration,
             IBuildChain buildChain, Type type, string? referenceName)
         {
-            if (type == null)
-            {
-                throw new ArgumentNullException(nameof(type));
-            }
+            type = type ?? throw new ArgumentNullException(nameof(type));
 
             if (type.IsArray)
             {
@@ -45,10 +42,7 @@
         /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is <c>null</c>.</exception>
         protected virtual object? CreateChildItem(Type type, IExecuteStrategy executeStrategy, object? previousItem)
         {
-            if (executeStrategy == null)
-            {
-                throw new ArgumentNullException(nameof(executeStrategy));
-            }
+            executeStrategy = executeStrategy ?? throw new ArgumentNullException(nameof(executeStrategy));
 
             return executeStrategy.Create(type);
         }
@@ -59,10 +53,7 @@
             Type type, string? referenceName,
             params object?[]? args)
         {
-            if (type == null)
-            {
-                throw new ArgumentNullException(nameof(type));
-            }
+            type = type ?? throw new ArgumentNullException(nameof(type));
 
             var count = Generator.NextValue(MinCount, MaxCount);
 
@@ -78,6 +69,11 @@
             };
             var constructor = type.GetConstructor(parameterTypes);
 
+            if (constructor == null)
+            {
+                throw new BuildException($"No constructor was found that matches the parameters (int)");
+            }
+
             return constructor.Invoke(parameters);
         }
 
@@ -86,15 +82,9 @@
         /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is <c>null</c>.</exception>
         protected override object PopulateInstance(IExecuteStrategy executeStrategy, object instance)
         {
-            if (instance == null)
-            {
-                throw new ArgumentNullException(nameof(instance));
-            }
+            instance = instance ?? throw new ArgumentNullException(nameof(instance));
 
-            if (executeStrategy == null)
-            {
-                throw new ArgumentNullException(nameof(executeStrategy));
-            }
+            executeStrategy = executeStrategy ?? throw new ArgumentNullException(nameof(executeStrategy));
 
             var instanceType = instance.GetType();
 
@@ -126,7 +116,7 @@
                     StringComparison.OrdinalIgnoreCase);
 #endif
 
-                itemType = Type.GetType(typeName);
+                itemType = Type.GetType(typeName!)!;
             }
 
             object? previousItem = null;

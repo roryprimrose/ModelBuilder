@@ -21,15 +21,9 @@
         /// <exception cref="ArgumentNullException">The <paramref name="typeCreator" /> parameter is <c>null</c>.</exception>
         public static IBuildConfiguration Add(this IBuildConfiguration configuration, ITypeCreator typeCreator)
         {
-            if (configuration == null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
+            configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 
-            if (typeCreator == null)
-            {
-                throw new ArgumentNullException(nameof(typeCreator));
-            }
+            typeCreator = typeCreator ?? throw new ArgumentNullException(nameof(typeCreator));
 
             configuration.TypeCreators.Add(typeCreator);
 
@@ -51,10 +45,7 @@
         public static IBuildConfiguration AddTypeCreator<T>(this IBuildConfiguration configuration)
             where T : ITypeCreator, new()
         {
-            if (configuration == null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
+            configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 
             var creator = new T();
 
@@ -78,10 +69,7 @@
         public static IBuildConfiguration RemoveTypeCreator<T>(this IBuildConfiguration configuration)
             where T : ITypeCreator
         {
-            if (configuration == null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
+            configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 
             var itemsToRemove = configuration.TypeCreators.Where(x => x.GetType().IsAssignableFrom(typeof(T))).ToList();
 
@@ -110,15 +98,9 @@
             Action<T> action)
             where T : ITypeCreator
         {
-            if (configuration == null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
+            configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 
-            if (action == null)
-            {
-                throw new ArgumentNullException(nameof(action));
-            }
+            action = action ?? throw new ArgumentNullException(nameof(action));
 
             var targetType = typeof(T);
             var typeCreator = configuration.TypeCreators.OfType<T>().FirstOrDefault(x => x.GetType() == targetType);

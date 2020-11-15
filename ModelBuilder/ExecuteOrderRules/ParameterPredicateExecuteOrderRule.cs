@@ -28,10 +28,7 @@
         /// <exception cref="ArgumentNullException">The <paramref name="parameterInfo" /> parameter is <c>null</c>.</exception>
         public bool IsMatch(ParameterInfo parameterInfo)
         {
-            if (parameterInfo == null)
-            {
-                throw new ArgumentNullException(nameof(parameterInfo));
-            }
+            parameterInfo = parameterInfo ?? throw new ArgumentNullException(nameof(parameterInfo));
 
             return _predicate(parameterInfo);
         }
@@ -46,7 +43,7 @@
         /// <inheritdoc />
         public override string ToString()
         {
-            return _predicate.ToString();
+            return _predicate.ToString() ?? "<predicate>";
         }
 
         /// <inheritdoc />

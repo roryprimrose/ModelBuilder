@@ -19,10 +19,7 @@
         /// <exception cref="ArgumentNullException">The <paramref name="types" /> parameter is <c>null</c>.</exception>
         protected ValueGeneratorMatcher(params Type[] types)
         {
-            if (types == null)
-            {
-                throw new ArgumentNullException(nameof(types));
-            }
+            types = types ?? throw new ArgumentNullException(nameof(types));
 
             _matcher = (type, referenceName, context) => { return types.Any(x => x == type); };
         }
@@ -35,10 +32,7 @@
         /// <exception cref="ArgumentNullException">The <paramref name="referenceName" /> parameter is <c>null</c>.</exception>
         protected ValueGeneratorMatcher(string referenceName, params Type[] types)
         {
-            if (referenceName == null)
-            {
-                throw new ArgumentNullException(nameof(referenceName));
-            }
+            referenceName = referenceName ?? throw new ArgumentNullException(nameof(referenceName));
 
             _matcher = (type, name, context) =>
             {
@@ -55,8 +49,8 @@
                 }
 
                 var matches = from x in types
-                              where x == type && referenceName.Equals(name, StringComparison.OrdinalIgnoreCase)
-                              select x;
+                    where x == type && referenceName.Equals(name, StringComparison.OrdinalIgnoreCase)
+                    select x;
 
                 return matches.Any();
             };
@@ -70,10 +64,7 @@
         /// <exception cref="ArgumentNullException">The <paramref name="expression" /> parameter is <c>null</c>.</exception>
         protected ValueGeneratorMatcher(Regex expression, params Type[] types)
         {
-            if (expression == null)
-            {
-                throw new ArgumentNullException(nameof(expression));
-            }
+            expression = expression ?? throw new ArgumentNullException(nameof(expression));
 
             _matcher = (type, name, context) =>
             {
@@ -90,8 +81,8 @@
                 }
 
                 var matches = from x in types
-                              where x == type && expression.IsMatch(name)
-                              select x;
+                    where x == type && expression.IsMatch(name)
+                    select x;
 
                 return matches.Any();
             };
@@ -102,15 +93,9 @@
         /// <exception cref="ArgumentNullException">The <paramref name="buildChain" /> parameter is <c>null</c>.</exception>
         protected override bool IsMatch(IBuildChain buildChain, Type type, string? referenceName)
         {
-            if (type == null)
-            {
-                throw new ArgumentNullException(nameof(type));
-            }
+            type = type ?? throw new ArgumentNullException(nameof(type));
 
-            if (buildChain == null)
-            {
-                throw new ArgumentNullException(nameof(buildChain));
-            }
+            buildChain = buildChain ?? throw new ArgumentNullException(nameof(buildChain));
 
             return _matcher(type, referenceName, buildChain);
         }
