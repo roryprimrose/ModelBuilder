@@ -127,12 +127,11 @@ jobs:
         MYGET_APIKEY: ${{ secrets.MYGET_APIKEY }}
       run: nuget push *.*.symbols.nupkg $MYGET_APIKEY -source https://www.myget.org/F/neovolve/api/v2/package
       
-    - name: Add GitHub registry to NuGet config
-      run: nuget sources add -name "GitHub" -Source https://nuget.pkg.github.com/roryprimrose/index.json -UserName roryprimrose -Password ${{ secrets.GITHUB_TOKEN }}
- 
     - name: Publish to GitHub
-      run: nuget push *.*.symbols.nupkg -Source "GitHub"
-
+      env: 
+        GPR_APIKEY: ${{ secrets.GPR_APIKEY }}
+      run: nuget push *.*.symbols.nupkg $GPR_APIKEY -source https://nuget.pkg.github.com/roryprimrose/index.json
+      
   release:
     needs: build
     runs-on: ubuntu-latest
