@@ -120,12 +120,13 @@ jobs:
         name: packages
       
     - name: Setup nuget
-      uses: olegtarasov/download-nuget@v1
+      uses: nuget/setup-nuget@v1
+      with:
+        nuget-api-key: ${{ secrets.MYGET_APIKEY }}
+        nuget-version: '5.x'
 
     - name: Publish to MyGet.org
-      env: 
-        MYGET_APIKEY: ${{ secrets.MYGET_APIKEY }}
-      run: mono $NUGET_EXE push *.*.symbols.nupkg $MYGET_APIKEY -source https://www.myget.org/F/neovolve/api/v2/package
+      run: nuget push *.*.symbols.nupkg -source https://www.myget.org/F/neovolve/api/v2/package
       
   release:
     needs: build
@@ -155,7 +156,10 @@ jobs:
       run: Add-Content -Path ${env:GITHUB_ENV} "`nprojectName=$(${env:GITHUB_REPOSITORY}.substring(${env:GITHUB_REPOSITORY}.IndexOf('/') + 1))" -Encoding utf8
       
     - name: Setup nuget
-      uses: olegtarasov/download-nuget@v1
+      uses: nuget/setup-nuget@v1
+      with:
+        nuget-api-key: ${{ secrets.NUGET_APIKEY }}
+        nuget-version: '5.x'
 
 #    - name: Add GitHub registry to NuGet config
 #      run: mono $NUGET_EXE sources add -name "GPR" -Source https://nuget.pkg.github.com/divergic/index.json -UserName roryprimrose -Password ${{ secrets.GITHUB_TOKEN }}
@@ -164,9 +168,7 @@ jobs:
 #      run: mono $NUGET_EXE push *.*.symbols.nupkg -Source "GPR"
 
     - name: Publish to NuGet.org
-      env: 
-        NUGET_APIKEY: ${{ secrets.NUGET_APIKEY }}
-      run: mono $NUGET_EXE push *.*.symbols.nupkg $NUGET_APIKEY -source https://api.nuget.org/v3/index.json
+      run: nuget push *.*.symbols.nupkg -source https://api.nuget.org/v3/index.json
 
     - name: Create release
       id: create_release
