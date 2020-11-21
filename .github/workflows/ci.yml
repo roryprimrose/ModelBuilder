@@ -128,10 +128,9 @@ jobs:
       run: nuget push *.*.symbols.nupkg $MYGET_APIKEY -source https://www.myget.org/F/neovolve/api/v2/package
       
     - name: Add GitHub registry to NuGet config
-      run: nuget sources add -name "GitHub" -Source https://nuget.pkg.github.com/roryprimrose/index.json -UserName roryprimrose
-      # -Password ${{ secrets.GITHUB_TOKEN }}
+      run: nuget sources add -name "GitHub" -Source https://nuget.pkg.github.com/roryprimrose/index.json -UserName roryprimrose -Password ${{ secrets.GITHUB_TOKEN }}
  
-    - name: Push generated package to GitHub registry
+    - name: Publish to GitHub
       run: nuget push *.*.symbols.nupkg -Source "GitHub"
 
   release:
