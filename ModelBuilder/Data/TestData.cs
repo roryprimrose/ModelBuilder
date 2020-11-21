@@ -52,7 +52,7 @@
             var assembly = typeof(TestData).GetTypeInfo().Assembly;
             var resourceName = "ModelBuilder.Resources." + name + ".txt";
 
-            using var stream = assembly.GetManifestResourceStream(resourceName);
+            using var stream = assembly.GetManifestResourceStream(resourceName)!;
             using var reader = new StreamReader(stream);
 
             var values = new List<string>();
@@ -61,7 +61,10 @@
             {
                 var line = reader.ReadLine();
 
-                values.Add(line);
+                if (string.IsNullOrWhiteSpace(line) == false)
+                {
+                    values.Add(line);
+                }
             }
 
             return values;

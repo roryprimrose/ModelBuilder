@@ -110,10 +110,7 @@
         /// <exception cref="ArgumentNullException">The <paramref name="parameterInfo" /> parameter is <c>null</c>.</exception>
         public object? Create(IExecuteStrategy executeStrategy, ParameterInfo parameterInfo)
         {
-            if (parameterInfo == null)
-            {
-                throw new ArgumentNullException(nameof(parameterInfo));
-            }
+            parameterInfo = parameterInfo ?? throw new ArgumentNullException(nameof(parameterInfo));
 
             return _valueGenerator();
         }
@@ -128,10 +125,7 @@
         /// <exception cref="ArgumentNullException">The <paramref name="propertyInfo" /> parameter is <c>null</c>.</exception>
         public bool IsMatch(PropertyInfo propertyInfo)
         {
-            if (propertyInfo == null)
-            {
-                throw new ArgumentNullException(nameof(propertyInfo));
-            }
+            propertyInfo = propertyInfo ?? throw new ArgumentNullException(nameof(propertyInfo));
 
             return IsMatch(propertyInfo.PropertyType, propertyInfo.Name);
         }
@@ -140,12 +134,9 @@
         /// <exception cref="ArgumentNullException">The <paramref name="parameterInfo" /> parameter is <c>null</c>.</exception>
         public bool IsMatch(ParameterInfo parameterInfo)
         {
-            if (parameterInfo == null)
-            {
-                throw new ArgumentNullException(nameof(parameterInfo));
-            }
+            parameterInfo = parameterInfo ?? throw new ArgumentNullException(nameof(parameterInfo));
 
-            return IsMatch(parameterInfo.ParameterType, parameterInfo.Name);
+            return IsMatch(parameterInfo.ParameterType, parameterInfo.Name!);
         }
 
         private bool IsMatch(Type targetType, string referenceName)

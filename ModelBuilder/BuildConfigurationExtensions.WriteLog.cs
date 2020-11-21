@@ -20,15 +20,9 @@
         public static IExecuteStrategy<T> WriteLog<T>(this IBuildConfiguration configuration, Action<string> action)
             where T : notnull
         {
-            if (configuration == null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
+            configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 
-            if (action == null)
-            {
-                throw new ArgumentNullException(nameof(action));
-            }
+            action = action ?? throw new ArgumentNullException(nameof(action));
 
             return configuration.UsingExecuteStrategy<DefaultExecuteStrategy<T>>().WriteLog(action);
         }
@@ -43,15 +37,9 @@
         /// <exception cref="ArgumentNullException">The <paramref name="action" /> parameter is <c>null</c>.</exception>
         public static IExecuteStrategy WriteLog(this IBuildConfiguration configuration, Action<string> action)
         {
-            if (configuration == null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
+            configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 
-            if (action == null)
-            {
-                throw new ArgumentNullException(nameof(action));
-            }
+            action = action ?? throw new ArgumentNullException(nameof(action));
 
             return configuration.UsingExecuteStrategy<DefaultExecuteStrategy>().WriteLog(action);
         }

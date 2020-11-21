@@ -20,15 +20,9 @@
         /// <exception cref="ArgumentNullException">The <paramref name="rule" /> parameter is <c>null</c>.</exception>
         public static IBuildConfiguration Add(this IBuildConfiguration configuration, TypeMappingRule rule)
         {
-            if (configuration == null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
+            configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 
-            if (rule == null)
-            {
-                throw new ArgumentNullException(nameof(rule));
-            }
+            rule = rule ?? throw new ArgumentNullException(nameof(rule));
 
             configuration.TypeMappingRules.Add(rule);
 
@@ -50,10 +44,7 @@
         public static IBuildConfiguration AddTypeMappingRule<T>(this IBuildConfiguration configuration)
             where T : TypeMappingRule, new()
         {
-            if (configuration == null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
+            configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 
             var rule = new T();
 
@@ -77,10 +68,7 @@
                 "This signature is designed for ease of use rather than requiring that T is either a parameter or return type.")]
         public static IBuildConfiguration AddTypeMappingRule<TSource, TTarget>(this IBuildConfiguration configuration)
         {
-            if (configuration == null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
+            configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 
             var rule = new TypeMappingRule(typeof(TSource), typeof(TTarget));
 
@@ -99,10 +87,7 @@
         /// <exception cref="ArgumentNullException">The <paramref name="buildConfiguration" /> parameter is <c>null</c>.</exception>
         public static IBuildConfiguration Mapping<TSource, TTarget>(this IBuildConfiguration buildConfiguration)
         {
-            if (buildConfiguration == null)
-            {
-                throw new ArgumentNullException(nameof(buildConfiguration));
-            }
+            buildConfiguration = buildConfiguration ?? throw new ArgumentNullException(nameof(buildConfiguration));
 
             var sourceType = typeof(TSource);
             var targetType = typeof(TTarget);
@@ -127,10 +112,7 @@
         public static IBuildConfiguration RemoveTypeMappingRule<T>(this IBuildConfiguration configuration)
             where T : TypeMappingRule
         {
-            if (configuration == null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
+            configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 
             var itemsToRemove = configuration.TypeMappingRules.Where(x => x.GetType().IsAssignableFrom(typeof(T)))
                 .ToList();

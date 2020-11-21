@@ -32,10 +32,7 @@
         protected override bool CanCreate(IBuildConfiguration configuration,
             IBuildChain buildChain, Type type, string? referenceName)
         {
-            if (type == null)
-            {
-                throw new ArgumentNullException(nameof(type));
-            }
+            type = type ?? throw new ArgumentNullException(nameof(type));
 
             if (type.IsClass
                 && type.IsAbstract)
@@ -72,15 +69,9 @@
         protected override bool CanPopulate(IBuildConfiguration configuration,
             IBuildChain buildChain, Type type, string? referenceName)
         {
-            if (type == null)
-            {
-                throw new ArgumentNullException(nameof(type));
-            }
+            type = type ?? throw new ArgumentNullException(nameof(type));
 
-            if (configuration == null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
+            configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 
             if (IsReadOnlyType(type))
             {
@@ -120,15 +111,9 @@
         protected override object? Create(IExecuteStrategy executeStrategy, Type type, string? referenceName,
             params object?[]? args)
         {
-            if (executeStrategy == null)
-            {
-                throw new ArgumentNullException(nameof(executeStrategy));
-            }
+            executeStrategy = executeStrategy ?? throw new ArgumentNullException(nameof(executeStrategy));
 
-            if (type == null)
-            {
-                throw new ArgumentNullException(nameof(type));
-            }
+            type = type ?? throw new ArgumentNullException(nameof(type));
 
             if (type.IsInterface == false)
             {
@@ -161,10 +146,7 @@
         /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is <c>null</c>.</exception>
         protected virtual object? CreateChildItem(Type type, IExecuteStrategy executeStrategy, object? previousItem)
         {
-            if (executeStrategy == null)
-            {
-                throw new ArgumentNullException(nameof(executeStrategy));
-            }
+            executeStrategy = executeStrategy ?? throw new ArgumentNullException(nameof(executeStrategy));
 
             return executeStrategy.Create(type);
         }
@@ -175,10 +157,7 @@
             string? referenceName,
             params object?[]? args)
         {
-            if (type == null)
-            {
-                throw new ArgumentNullException(nameof(type));
-            }
+            type = type ?? throw new ArgumentNullException(nameof(type));
 
             return Activator.CreateInstance(type, args);
         }
@@ -210,6 +189,11 @@
 
             // Get the Add method
             var addMethod = collectionType.GetMethod("Add");
+
+            if (addMethod == null)
+            {
+                throw new BuildException($"The type {type.FullName} does not have an 'Add' member to populate with new values.");
+            }
 
             object? previousItem = null;
 

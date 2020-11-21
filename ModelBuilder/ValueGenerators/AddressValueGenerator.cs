@@ -27,27 +27,30 @@
         /// <inheritdoc />
         protected override object? Generate(IExecuteStrategy executeStrategy, Type type, string? referenceName)
         {
-            var multipleMatch = _multipleAddressExpression.Match(referenceName);
-
-            if (multipleMatch.Success)
+            if (referenceName != null)
             {
-                // Get the number from the match
-                var number = int.Parse(multipleMatch.Groups["Number"].Value, CultureInfo.InvariantCulture);
+                var multipleMatch = _multipleAddressExpression.Match(referenceName);
 
-                if (number == 1)
+                if (multipleMatch.Success)
                 {
-                    var floor = Generator.NextValue(1, 15);
-                    var unitIndex = Generator.NextValue(0, 15);
-                    var unit = (char) (65 + unitIndex);
+                    // Get the number from the match
+                    var number = int.Parse(multipleMatch.Groups["Number"].Value, CultureInfo.InvariantCulture);
 
-                    // Return a Unit Xy, Floor X style value
-                    return "Unit " + floor + unit + ", Floor " + floor;
-                }
+                    if (number == 1)
+                    {
+                        var floor = Generator.NextValue(1, 15);
+                        var unitIndex = Generator.NextValue(0, 15);
+                        var unit = (char)(65 + unitIndex);
 
-                if (number > 2)
-                {
-                    // This generator will only populate the first two address lines
-                    return string.Empty;
+                        // Return a Unit Xy, Floor X style value
+                        return "Unit " + floor + unit + ", Floor " + floor;
+                    }
+
+                    if (number > 2)
+                    {
+                        // This generator will only populate the first two address lines
+                        return string.Empty;
+                    }
                 }
             }
 

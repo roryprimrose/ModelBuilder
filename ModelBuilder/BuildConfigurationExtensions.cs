@@ -19,15 +19,9 @@
         /// <exception cref="ArgumentNullException">The <paramref name="module" /> parameter is <c>null</c>.</exception>
         public static IBuildConfiguration Add(this IBuildConfiguration configuration, IConfigurationModule module)
         {
-            if (configuration == null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
+            configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 
-            if (module == null)
-            {
-                throw new ArgumentNullException(nameof(module));
-            }
+            module = module ?? throw new ArgumentNullException(nameof(module));
 
             module.Configure(configuration);
 
@@ -46,10 +40,7 @@
         /// <remarks>This method uses <see cref="DefaultExecuteStrategy{T}" /> to create the instance.</remarks>
         public static T Create<T>(this IBuildConfiguration buildConfiguration, params object?[]? args) where T : notnull
         {
-            if (buildConfiguration == null)
-            {
-                throw new ArgumentNullException(nameof(buildConfiguration));
-            }
+            buildConfiguration = buildConfiguration ?? throw new ArgumentNullException(nameof(buildConfiguration));
 
             return buildConfiguration.UsingExecuteStrategy<DefaultExecuteStrategy<T>>().Create(args);
         }
@@ -67,15 +58,9 @@
         public static object Create(this IBuildConfiguration buildConfiguration, Type instanceType,
             params object?[]? args)
         {
-            if (buildConfiguration == null)
-            {
-                throw new ArgumentNullException(nameof(buildConfiguration));
-            }
+            buildConfiguration = buildConfiguration ?? throw new ArgumentNullException(nameof(buildConfiguration));
 
-            if (instanceType == null)
-            {
-                throw new ArgumentNullException(nameof(instanceType));
-            }
+            instanceType = instanceType ?? throw new ArgumentNullException(nameof(instanceType));
 
             return buildConfiguration.UsingExecuteStrategy<DefaultExecuteStrategy>().Create(instanceType, args);
         }
@@ -90,15 +75,9 @@
         /// <exception cref="ArgumentNullException">The <paramref name="buildConfiguration" /> parameter is <c>null</c>.</exception>
         public static T Populate<T>(this IBuildConfiguration buildConfiguration, T instance) where T : notnull
         {
-            if (buildConfiguration == null)
-            {
-                throw new ArgumentNullException(nameof(buildConfiguration));
-            }
+            buildConfiguration = buildConfiguration ?? throw new ArgumentNullException(nameof(buildConfiguration));
 
-            if (instance == null)
-            {
-                throw new ArgumentNullException(nameof(instance));
-            }
+            instance = instance ?? throw new ArgumentNullException(nameof(instance));
 
             return buildConfiguration.UsingExecuteStrategy<DefaultExecuteStrategy<T>>().Populate(instance);
         }
@@ -113,10 +92,7 @@
         public static T UsingExecuteStrategy<T>(this IBuildConfiguration buildConfiguration)
             where T : IExecuteStrategy, new()
         {
-            if (buildConfiguration == null)
-            {
-                throw new ArgumentNullException(nameof(buildConfiguration));
-            }
+            buildConfiguration = buildConfiguration ?? throw new ArgumentNullException(nameof(buildConfiguration));
 
             var executeStrategy = new T();
 
@@ -140,10 +116,7 @@
         public static IBuildConfiguration UsingModule<T>(this IBuildConfiguration configuration)
             where T : IConfigurationModule, new()
         {
-            if (configuration == null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
+            configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 
             var module = new T();
 

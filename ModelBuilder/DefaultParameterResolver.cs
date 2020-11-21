@@ -32,15 +32,9 @@
         /// <exception cref="ArgumentNullException">The <paramref name="method" /> parameter is <c>null</c>.</exception>
         public IEnumerable<ParameterInfo> GetOrderedParameters(IBuildConfiguration configuration, MethodBase method)
         {
-            if (configuration == null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
+            configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 
-            if (method == null)
-            {
-                throw new ArgumentNullException(nameof(method));
-            }
+            method = method ?? throw new ArgumentNullException(nameof(method));
 
             if (CacheLevel == CacheLevel.Global)
             {

@@ -69,10 +69,7 @@
         /// <inheritdoc />
         public bool IsMatch(PropertyInfo propertyInfo)
         {
-            if (propertyInfo == null)
-            {
-                throw new ArgumentNullException(nameof(propertyInfo));
-            }
+            propertyInfo = propertyInfo ?? throw new ArgumentNullException(nameof(propertyInfo));
 
             return _propertyPredicate(propertyInfo);
         }

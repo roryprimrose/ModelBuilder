@@ -24,10 +24,7 @@ namespace ModelBuilder.TypeCreators
         /// <exception cref="ArgumentNullException">The <paramref name="parameterInfo" /> parameter is <c>null</c>.</exception>
         public bool CanCreate(IBuildConfiguration configuration, IBuildChain buildChain, ParameterInfo parameterInfo)
         {
-            if (parameterInfo == null)
-            {
-                throw new ArgumentNullException(nameof(parameterInfo));
-            }
+            parameterInfo = parameterInfo ?? throw new ArgumentNullException(nameof(parameterInfo));
 
             return CanCreate(configuration, buildChain, parameterInfo.ParameterType, parameterInfo.Name);
         }
@@ -36,10 +33,7 @@ namespace ModelBuilder.TypeCreators
         /// <exception cref="ArgumentNullException">The <paramref name="propertyInfo" /> parameter is <c>null</c>.</exception>
         public bool CanCreate(IBuildConfiguration configuration, IBuildChain buildChain, PropertyInfo propertyInfo)
         {
-            if (propertyInfo == null)
-            {
-                throw new ArgumentNullException(nameof(propertyInfo));
-            }
+            propertyInfo = propertyInfo ?? throw new ArgumentNullException(nameof(propertyInfo));
 
             return CanCreate(configuration, buildChain, propertyInfo.PropertyType, propertyInfo.Name);
         }
@@ -55,10 +49,7 @@ namespace ModelBuilder.TypeCreators
         /// <exception cref="ArgumentNullException">The <paramref name="parameterInfo" /> parameter is <c>null</c>.</exception>
         public bool CanPopulate(IBuildConfiguration configuration, IBuildChain buildChain, ParameterInfo parameterInfo)
         {
-            if (parameterInfo == null)
-            {
-                throw new ArgumentNullException(nameof(parameterInfo));
-            }
+            parameterInfo = parameterInfo ?? throw new ArgumentNullException(nameof(parameterInfo));
 
             return CanPopulate(configuration, buildChain, parameterInfo.ParameterType, parameterInfo.Name);
         }
@@ -67,10 +58,7 @@ namespace ModelBuilder.TypeCreators
         /// <exception cref="ArgumentNullException">The <paramref name="propertyInfo" /> parameter is <c>null</c>.</exception>
         public bool CanPopulate(IBuildConfiguration configuration, IBuildChain buildChain, PropertyInfo propertyInfo)
         {
-            if (propertyInfo == null)
-            {
-                throw new ArgumentNullException(nameof(propertyInfo));
-            }
+            propertyInfo = propertyInfo ?? throw new ArgumentNullException(nameof(propertyInfo));
 
             return CanPopulate(configuration, buildChain, propertyInfo.PropertyType, propertyInfo.Name);
         }
@@ -88,10 +76,7 @@ namespace ModelBuilder.TypeCreators
         /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is <c>null</c>.</exception>
         public object? Create(IExecuteStrategy executeStrategy, ParameterInfo parameterInfo, params object?[]? args)
         {
-            if (parameterInfo == null)
-            {
-                throw new ArgumentNullException(nameof(parameterInfo));
-            }
+            parameterInfo = parameterInfo ?? throw new ArgumentNullException(nameof(parameterInfo));
 
             return Create(executeStrategy, parameterInfo.ParameterType, parameterInfo.Name, args);
         }
@@ -101,10 +86,7 @@ namespace ModelBuilder.TypeCreators
         /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is <c>null</c>.</exception>
         public object? Create(IExecuteStrategy executeStrategy, PropertyInfo propertyInfo, params object?[]? args)
         {
-            if (propertyInfo == null)
-            {
-                throw new ArgumentNullException(nameof(propertyInfo));
-            }
+            propertyInfo = propertyInfo ?? throw new ArgumentNullException(nameof(propertyInfo));
 
             return Create(executeStrategy, propertyInfo.PropertyType, propertyInfo.Name, args);
         }
@@ -114,15 +96,9 @@ namespace ModelBuilder.TypeCreators
         /// <exception cref="ArgumentNullException">The <paramref name="executeStrategy" /> parameter is <c>null</c>.</exception>
         public virtual object Populate(IExecuteStrategy executeStrategy, object instance)
         {
-            if (instance == null)
-            {
-                throw new ArgumentNullException(nameof(instance));
-            }
+            instance = instance ?? throw new ArgumentNullException(nameof(instance));
 
-            if (executeStrategy == null)
-            {
-                throw new ArgumentNullException(nameof(executeStrategy));
-            }
+            executeStrategy = executeStrategy ?? throw new ArgumentNullException(nameof(executeStrategy));
 
             if (executeStrategy.BuildChain == null)
             {
@@ -158,10 +134,7 @@ namespace ModelBuilder.TypeCreators
         protected virtual bool CanCreate(IBuildConfiguration configuration,
             IBuildChain buildChain, Type type, string? referenceName)
         {
-            if (type == null)
-            {
-                throw new ArgumentNullException(nameof(type));
-            }
+            type = type ?? throw new ArgumentNullException(nameof(type));
 
             var buildType = ResolveBuildType(configuration, type);
 
@@ -190,10 +163,7 @@ namespace ModelBuilder.TypeCreators
         protected virtual bool CanPopulate(IBuildConfiguration configuration,
             IBuildChain buildChain, Type type, string? referenceName)
         {
-            if (type == null)
-            {
-                throw new ArgumentNullException(nameof(type));
-            }
+            type = type ?? throw new ArgumentNullException(nameof(type));
 
             return true;
         }
@@ -213,15 +183,9 @@ namespace ModelBuilder.TypeCreators
             string? referenceName,
             params object?[]? args)
         {
-            if (type == null)
-            {
-                throw new ArgumentNullException(nameof(type));
-            }
+            type = type ?? throw new ArgumentNullException(nameof(type));
 
-            if (executeStrategy == null)
-            {
-                throw new ArgumentNullException(nameof(executeStrategy));
-            }
+            executeStrategy = executeStrategy ?? throw new ArgumentNullException(nameof(executeStrategy));
 
             if (executeStrategy.BuildChain == null)
             {
@@ -279,15 +243,9 @@ namespace ModelBuilder.TypeCreators
         /// <returns>The type to build.</returns>
         protected virtual Type ResolveBuildType(IBuildConfiguration buildConfiguration, Type requestedType)
         {
-            if (requestedType == null)
-            {
-                throw new ArgumentNullException(nameof(requestedType));
-            }
+            requestedType = requestedType ?? throw new ArgumentNullException(nameof(requestedType));
 
-            if (buildConfiguration == null)
-            {
-                throw new ArgumentNullException(nameof(buildConfiguration));
-            }
+            buildConfiguration = buildConfiguration ?? throw new ArgumentNullException(nameof(buildConfiguration));
 
             return buildConfiguration.TypeResolver.GetBuildType(buildConfiguration, requestedType);
         }

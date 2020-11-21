@@ -42,10 +42,7 @@
         /// </exception>
         public ConstructorInfo? Resolve(Type type, params object?[]? args)
         {
-            if (type == null)
-            {
-                throw new ArgumentNullException(nameof(type));
-            }
+            type = type ?? throw new ArgumentNullException(nameof(type));
 
             if (args == null)
             {

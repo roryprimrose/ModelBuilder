@@ -148,10 +148,7 @@
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
         public virtual bool IsSupported(Type type)
         {
-            if (type == null)
-            {
-                throw new ArgumentNullException(nameof(type));
-            }
+            type = type ?? throw new ArgumentNullException(nameof(type));
 
             var checkType = type;
 
@@ -226,15 +223,9 @@
         {
             ValidateRequestedType(type);
 
-            if (min == null)
-            {
-                throw new ArgumentNullException(nameof(min));
-            }
+            min = min ?? throw new ArgumentNullException(nameof(min));
 
-            if (max == null)
-            {
-                throw new ArgumentNullException(nameof(max));
-            }
+            max = max ?? throw new ArgumentNullException(nameof(max));
 
             var minimum = Convert.ToDouble(min, CultureInfo.InvariantCulture);
             var maximum = Convert.ToDouble(max, CultureInfo.InvariantCulture);
@@ -303,7 +294,7 @@
             if (isNullable)
             {
                 // Create a nullable with the converted value
-                var instance = Activator.CreateInstance(type, convertedValue);
+                var instance = Activator.CreateInstance(type, convertedValue)!;
 
                 return instance;
             }
@@ -316,10 +307,7 @@
         /// <exception cref="ArgumentNullException">The <paramref name="buffer" /> parameter is <c>null</c>.</exception>
         public void NextValue(byte[] buffer)
         {
-            if (buffer == null)
-            {
-                throw new ArgumentNullException(nameof(buffer));
-            }
+            buffer = buffer ?? throw new ArgumentNullException(nameof(buffer));
 
             for (var index = 0; index < buffer.Length; index++)
             {
@@ -392,10 +380,7 @@
 
         private void ValidateRequestedType(Type type)
         {
-            if (type == null)
-            {
-                throw new ArgumentNullException(nameof(type));
-            }
+            type = type ?? throw new ArgumentNullException(nameof(type));
 
             if (IsSupported(type) == false)
             {

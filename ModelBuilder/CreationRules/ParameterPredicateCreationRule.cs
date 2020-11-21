@@ -75,10 +75,7 @@
         /// <inheritdoc />
         public bool IsMatch(ParameterInfo parameterInfo)
         {
-            if (parameterInfo == null)
-            {
-                throw new ArgumentNullException(nameof(parameterInfo));
-            }
+            parameterInfo = parameterInfo ?? throw new ArgumentNullException(nameof(parameterInfo));
 
             return _parameterPredicate(parameterInfo);
         }

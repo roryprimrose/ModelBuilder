@@ -24,15 +24,9 @@
         /// <exception cref="ArgumentNullException">The <paramref name="rule" /> parameter is <c>null</c>.</exception>
         public static IBuildConfiguration Add(this IBuildConfiguration configuration, ICreationRule rule)
         {
-            if (configuration == null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
+            configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 
-            if (rule == null)
-            {
-                throw new ArgumentNullException(nameof(rule));
-            }
+            rule = rule ?? throw new ArgumentNullException(nameof(rule));
 
             configuration.CreationRules.Add(rule);
 
@@ -54,10 +48,7 @@
         public static IBuildConfiguration AddCreationRule<T>(this IBuildConfiguration configuration)
             where T : ICreationRule, new()
         {
-            if (configuration == null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
+            configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 
             var rule = new T();
 
@@ -92,15 +83,9 @@
             object value,
             int priority)
         {
-            if (configuration == null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
+            configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 
-            if (expression == null)
-            {
-                throw new ArgumentNullException(nameof(expression));
-            }
+            expression = expression ?? throw new ArgumentNullException(nameof(expression));
 
             var rule = new ExpressionCreationRule<T>(expression, value, priority);
 
@@ -124,15 +109,9 @@
             object value,
             int priority)
         {
-            if (configuration == null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
+            configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 
-            if (predicate == null)
-            {
-                throw new ArgumentNullException(nameof(predicate));
-            }
+            predicate = predicate ?? throw new ArgumentNullException(nameof(predicate));
 
             var rule = new TypePredicateCreationRule(predicate, value, priority);
 
@@ -156,20 +135,11 @@
             Func<object> valueGenerator,
             int priority)
         {
-            if (configuration == null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
+            configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 
-            if (predicate == null)
-            {
-                throw new ArgumentNullException(nameof(predicate));
-            }
+            predicate = predicate ?? throw new ArgumentNullException(nameof(predicate));
 
-            if (valueGenerator == null)
-            {
-                throw new ArgumentNullException(nameof(valueGenerator));
-            }
+            valueGenerator = valueGenerator ?? throw new ArgumentNullException(nameof(valueGenerator));
 
             var rule = new TypePredicateCreationRule(predicate, valueGenerator, priority);
 
@@ -193,15 +163,9 @@
             object value,
             int priority)
         {
-            if (configuration == null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
+            configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 
-            if (predicate == null)
-            {
-                throw new ArgumentNullException(nameof(predicate));
-            }
+            predicate = predicate ?? throw new ArgumentNullException(nameof(predicate));
 
             var rule = new PropertyPredicateCreationRule(predicate, value, priority);
 
@@ -225,20 +189,11 @@
             Func<object> valueGenerator,
             int priority)
         {
-            if (configuration == null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
+            configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 
-            if (predicate == null)
-            {
-                throw new ArgumentNullException(nameof(predicate));
-            }
+            predicate = predicate ?? throw new ArgumentNullException(nameof(predicate));
 
-            if (valueGenerator == null)
-            {
-                throw new ArgumentNullException(nameof(valueGenerator));
-            }
+            valueGenerator = valueGenerator ?? throw new ArgumentNullException(nameof(valueGenerator));
 
             var rule = new PropertyPredicateCreationRule(predicate, valueGenerator, priority);
 
@@ -262,15 +217,9 @@
             object value,
             int priority)
         {
-            if (configuration == null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
+            configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 
-            if (predicate == null)
-            {
-                throw new ArgumentNullException(nameof(predicate));
-            }
+            predicate = predicate ?? throw new ArgumentNullException(nameof(predicate));
 
             var rule = new ParameterPredicateCreationRule(predicate, value, priority);
 
@@ -294,20 +243,11 @@
             Func<object> valueGenerator,
             int priority)
         {
-            if (configuration == null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
+            configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 
-            if (predicate == null)
-            {
-                throw new ArgumentNullException(nameof(predicate));
-            }
+            predicate = predicate ?? throw new ArgumentNullException(nameof(predicate));
 
-            if (valueGenerator == null)
-            {
-                throw new ArgumentNullException(nameof(valueGenerator));
-            }
+            valueGenerator = valueGenerator ?? throw new ArgumentNullException(nameof(valueGenerator));
 
             var rule = new ParameterPredicateCreationRule(predicate, valueGenerator, priority);
 
@@ -333,20 +273,11 @@
             object value,
             int priority)
         {
-            if (configuration == null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
+            configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 
-            if (targetType == null)
-            {
-                throw new ArgumentNullException(nameof(targetType));
-            }
+            targetType = targetType ?? throw new ArgumentNullException(nameof(targetType));
 
-            if (expression == null)
-            {
-                throw new ArgumentNullException(nameof(expression));
-            }
+            expression = expression ?? throw new ArgumentNullException(nameof(expression));
 
             var rule = new RegexCreationRule(targetType, expression, value, priority);
 
@@ -372,10 +303,7 @@
             object value,
             int priority)
         {
-            if (configuration == null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
+            configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 
             if (string.IsNullOrEmpty(expression))
             {
@@ -404,10 +332,7 @@
         public static IBuildConfiguration RemoveCreationRule<T>(this IBuildConfiguration configuration)
             where T : ICreationRule
         {
-            if (configuration == null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
+            configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 
             var itemsToRemove = configuration.CreationRules.Where(x => x.GetType().IsAssignableFrom(typeof(T)))
                 .ToList();
@@ -437,15 +362,9 @@
             Action<T> action)
             where T : ICreationRule
         {
-            if (configuration == null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
+            configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 
-            if (action == null)
-            {
-                throw new ArgumentNullException(nameof(action));
-            }
+            action = action ?? throw new ArgumentNullException(nameof(action));
 
             var targetType = typeof(T);
             var rule = configuration.CreationRules.OfType<T>().FirstOrDefault(x => x.GetType() == targetType);

@@ -25,10 +25,7 @@
         /// <exception cref="ArgumentNullException">The <paramref name="generator" /> parameter is <c>null</c>.</exception>
         public BuildCapability(IValueGenerator generator)
         {
-            if (generator == null)
-            {
-                throw new ArgumentNullException(nameof(generator));
-            }
+            generator = generator ?? throw new ArgumentNullException(nameof(generator));
 
             ImplementedByType = generator.GetType();
             SupportsCreate = true;
@@ -48,10 +45,7 @@
         /// <exception cref="ArgumentNullException">The <paramref name="rule" /> parameter is <c>null</c>.</exception>
         public BuildCapability(ICreationRule rule)
         {
-            if (rule == null)
-            {
-                throw new ArgumentNullException(nameof(rule));
-            }
+            rule = rule ?? throw new ArgumentNullException(nameof(rule));
 
             ImplementedByType = rule.GetType();
             SupportsCreate = true;
@@ -79,10 +73,7 @@
         /// <exception cref="ArgumentNullException">The <paramref name="typeCreator" /> parameter is <c>null</c>.</exception>
         public BuildCapability(ITypeCreator typeCreator, bool supportsCreate, bool supportsPopulate)
         {
-            if (typeCreator == null)
-            {
-                throw new ArgumentNullException(nameof(typeCreator));
-            }
+            typeCreator = typeCreator ?? throw new ArgumentNullException(nameof(typeCreator));
 
             ImplementedByType = typeCreator.GetType();
             SupportsCreate = supportsCreate;
@@ -101,15 +92,9 @@
         public object? CreateParameter(IExecuteStrategy executeStrategy, ParameterInfo parameterInfo,
             object?[]? args)
         {
-            if (executeStrategy == null)
-            {
-                throw new ArgumentNullException(nameof(executeStrategy));
-            }
+            executeStrategy = executeStrategy ?? throw new ArgumentNullException(nameof(executeStrategy));
 
-            if (parameterInfo == null)
-            {
-                throw new ArgumentNullException(nameof(parameterInfo));
-            }
+            parameterInfo = parameterInfo ?? throw new ArgumentNullException(nameof(parameterInfo));
 
             return _createParameter(executeStrategy, parameterInfo, args);
         }
@@ -120,15 +105,9 @@
         public object? CreateProperty(IExecuteStrategy executeStrategy, PropertyInfo propertyInfo,
             object?[]? args)
         {
-            if (executeStrategy == null)
-            {
-                throw new ArgumentNullException(nameof(executeStrategy));
-            }
+            executeStrategy = executeStrategy ?? throw new ArgumentNullException(nameof(executeStrategy));
 
-            if (propertyInfo == null)
-            {
-                throw new ArgumentNullException(nameof(propertyInfo));
-            }
+            propertyInfo = propertyInfo ?? throw new ArgumentNullException(nameof(propertyInfo));
 
             return _createProperty(executeStrategy, propertyInfo, args);
         }
@@ -138,15 +117,9 @@
         /// <exception cref="ArgumentNullException">The <paramref name="targetType" /> parameter is <c>null</c>.</exception>
         public object? CreateType(IExecuteStrategy executeStrategy, Type targetType, object?[]? args)
         {
-            if (executeStrategy == null)
-            {
-                throw new ArgumentNullException(nameof(executeStrategy));
-            }
+            executeStrategy = executeStrategy ?? throw new ArgumentNullException(nameof(executeStrategy));
 
-            if (targetType == null)
-            {
-                throw new ArgumentNullException(nameof(targetType));
-            }
+            targetType = targetType ?? throw new ArgumentNullException(nameof(targetType));
 
             return _createType(executeStrategy, targetType, args);
         }
@@ -156,15 +129,9 @@
         /// <exception cref="ArgumentNullException">The <paramref name="instance" /> parameter is <c>null</c>.</exception>
         public object Populate(IExecuteStrategy executeStrategy, object instance)
         {
-            if (executeStrategy == null)
-            {
-                throw new ArgumentNullException(nameof(executeStrategy));
-            }
+            executeStrategy = executeStrategy ?? throw new ArgumentNullException(nameof(executeStrategy));
 
-            if (instance == null)
-            {
-                throw new ArgumentNullException(nameof(instance));
-            }
+            instance = instance ?? throw new ArgumentNullException(nameof(instance));
 
             return _populate(executeStrategy, instance);
         }

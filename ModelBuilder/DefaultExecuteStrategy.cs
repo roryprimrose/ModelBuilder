@@ -57,10 +57,7 @@
         /// <exception cref="ArgumentNullException">The <paramref name="method" /> parameter is <c>null</c>.</exception>
         public object?[]? CreateParameters(MethodBase method)
         {
-            if (method == null)
-            {
-                throw new ArgumentNullException(nameof(method));
-            }
+            method = method ?? throw new ArgumentNullException(nameof(method));
 
             var parameterInfos = Configuration.ParameterResolver.GetOrderedParameters(Configuration, method).ToList();
 
@@ -87,7 +84,7 @@
                     // Recurse to build this parameter value
                     var parameterValue = Build(parameterInfo);
 
-                    propertyWrapper[parameterInfo.Name] = parameterValue;
+                    propertyWrapper[parameterInfo.Name!] = parameterValue;
 
                     Log.CreatedParameter(parameterInfo, lastContext);
                 }
@@ -103,7 +100,7 @@
             // Re-order the parameters back into the order expected by the constructor
             foreach (var parameterInfo in originalParameters)
             {
-                var parameterValue = propertyWrapper[parameterInfo.Name];
+                var parameterValue = propertyWrapper[parameterInfo.Name!];
 
                 parameterValues.Add(parameterValue);
             }
@@ -129,10 +126,7 @@
         /// <exception cref="BuildException">Failed to generate a requested type.</exception>
         public virtual object Populate(object instance)
         {
-            if (instance == null)
-            {
-                throw new ArgumentNullException(nameof(instance));
-            }
+            instance = instance ?? throw new ArgumentNullException(nameof(instance));
 
             var type = instance.GetType();
 
@@ -175,10 +169,7 @@
         /// <returns>The value created.</returns>
         protected virtual object Build(Type type, params object?[]? args)
         {
-            if (type == null)
-            {
-                throw new ArgumentNullException(nameof(type));
-            }
+            type = type ?? throw new ArgumentNullException(nameof(type));
 
             try
             {
@@ -222,10 +213,7 @@
         /// <returns>The value created for the parameter.</returns>
         protected virtual object? Build(ParameterInfo parameterInfo)
         {
-            if (parameterInfo == null)
-            {
-                throw new ArgumentNullException(nameof(parameterInfo));
-            }
+            parameterInfo = parameterInfo ?? throw new ArgumentNullException(nameof(parameterInfo));
 
             var instance = Build(
                 () => _buildProcessor.GetBuildCapability(this, BuildRequirement.Create,
@@ -251,10 +239,7 @@
         /// <returns>The value created for the property.</returns>
         protected virtual object? Build(PropertyInfo propertyInfo, params object?[]? args)
         {
-            if (propertyInfo == null)
-            {
-                throw new ArgumentNullException(nameof(propertyInfo));
-            }
+            propertyInfo = propertyInfo ?? throw new ArgumentNullException(nameof(propertyInfo));
 
             var instance = Build(
                 () => _buildProcessor.GetBuildCapability(this, BuildRequirement.Create,
@@ -281,15 +266,9 @@
         protected virtual void PopulateProperty(PropertyInfo propertyInfo, object instance,
             params object?[]? args)
         {
-            if (propertyInfo == null)
-            {
-                throw new ArgumentNullException(nameof(propertyInfo));
-            }
+            propertyInfo = propertyInfo ?? throw new ArgumentNullException(nameof(propertyInfo));
 
-            if (instance == null)
-            {
-                throw new ArgumentNullException(nameof(instance));
-            }
+            instance = instance ?? throw new ArgumentNullException(nameof(instance));
 
             if (propertyInfo.GetSetMethod() != null)
             {

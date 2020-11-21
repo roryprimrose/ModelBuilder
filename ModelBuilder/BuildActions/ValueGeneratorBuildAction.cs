@@ -17,17 +17,12 @@
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
         public object? Build(IExecuteStrategy executeStrategy, Type type, params object?[]? arguments)
         {
-            if (executeStrategy == null)
-            {
-                throw new ArgumentNullException(nameof(executeStrategy));
-            }
+            executeStrategy = executeStrategy ?? throw new ArgumentNullException(nameof(executeStrategy));
 
-            if (type == null)
-            {
-                throw new ArgumentNullException(nameof(type));
-            }
+            type = type ?? throw new ArgumentNullException(nameof(type));
 
-            var generator = GetMatchingGenerator(executeStrategy.Configuration, x => x.IsMatch(executeStrategy.BuildChain, type));
+            var generator = GetMatchingGenerator(executeStrategy.Configuration,
+                x => x.IsMatch(executeStrategy.BuildChain, type));
 
             return Build(generator, type, null, executeStrategy.BuildChain,
                 () => generator?.Generate(executeStrategy, type),
@@ -39,17 +34,12 @@
         /// <exception cref="ArgumentNullException">The <paramref name="parameterInfo" /> parameter is <c>null</c>.</exception>
         public object? Build(IExecuteStrategy executeStrategy, ParameterInfo parameterInfo, params object?[]? arguments)
         {
-            if (executeStrategy == null)
-            {
-                throw new ArgumentNullException(nameof(executeStrategy));
-            }
+            executeStrategy = executeStrategy ?? throw new ArgumentNullException(nameof(executeStrategy));
 
-            if (parameterInfo == null)
-            {
-                throw new ArgumentNullException(nameof(parameterInfo));
-            }
+            parameterInfo = parameterInfo ?? throw new ArgumentNullException(nameof(parameterInfo));
 
-            var generator = GetMatchingGenerator(executeStrategy.Configuration, x => x.IsMatch(executeStrategy.BuildChain, parameterInfo));
+            var generator = GetMatchingGenerator(executeStrategy.Configuration,
+                x => x.IsMatch(executeStrategy.BuildChain, parameterInfo));
 
             return Build(generator, parameterInfo.ParameterType, parameterInfo.Name, executeStrategy.BuildChain,
                 () => generator?.Generate(executeStrategy, parameterInfo),
@@ -61,17 +51,12 @@
         /// <exception cref="ArgumentNullException">The <paramref name="propertyInfo" /> parameter is <c>null</c>.</exception>
         public object? Build(IExecuteStrategy executeStrategy, PropertyInfo propertyInfo, params object?[]? arguments)
         {
-            if (executeStrategy == null)
-            {
-                throw new ArgumentNullException(nameof(executeStrategy));
-            }
+            executeStrategy = executeStrategy ?? throw new ArgumentNullException(nameof(executeStrategy));
 
-            if (propertyInfo == null)
-            {
-                throw new ArgumentNullException(nameof(propertyInfo));
-            }
+            propertyInfo = propertyInfo ?? throw new ArgumentNullException(nameof(propertyInfo));
 
-            var generator = GetMatchingGenerator(executeStrategy.Configuration, x => x.IsMatch(executeStrategy.BuildChain, propertyInfo));
+            var generator = GetMatchingGenerator(executeStrategy.Configuration,
+                x => x.IsMatch(executeStrategy.BuildChain, propertyInfo));
 
             return Build(generator, propertyInfo.PropertyType, propertyInfo.Name, executeStrategy.BuildChain,
                 () => generator?.Generate(executeStrategy, propertyInfo),
@@ -85,20 +70,11 @@
         public IBuildCapability? GetBuildCapability(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
             Type type)
         {
-            if (buildConfiguration == null)
-            {
-                throw new ArgumentNullException(nameof(buildConfiguration));
-            }
+            buildConfiguration = buildConfiguration ?? throw new ArgumentNullException(nameof(buildConfiguration));
 
-            if (buildChain == null)
-            {
-                throw new ArgumentNullException(nameof(buildChain));
-            }
+            buildChain = buildChain ?? throw new ArgumentNullException(nameof(buildChain));
 
-            if (type == null)
-            {
-                throw new ArgumentNullException(nameof(type));
-            }
+            type = type ?? throw new ArgumentNullException(nameof(type));
 
             return GetBuildCapability(buildConfiguration, x => x.IsMatch(buildChain, type));
         }
@@ -110,20 +86,11 @@
         public IBuildCapability? GetBuildCapability(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
             ParameterInfo parameterInfo)
         {
-            if (buildConfiguration == null)
-            {
-                throw new ArgumentNullException(nameof(buildConfiguration));
-            }
+            buildConfiguration = buildConfiguration ?? throw new ArgumentNullException(nameof(buildConfiguration));
 
-            if (buildChain == null)
-            {
-                throw new ArgumentNullException(nameof(buildChain));
-            }
+            buildChain = buildChain ?? throw new ArgumentNullException(nameof(buildChain));
 
-            if (parameterInfo == null)
-            {
-                throw new ArgumentNullException(nameof(parameterInfo));
-            }
+            parameterInfo = parameterInfo ?? throw new ArgumentNullException(nameof(parameterInfo));
 
             return GetBuildCapability(buildConfiguration, x => x.IsMatch(buildChain, parameterInfo));
         }
@@ -135,20 +102,11 @@
         public IBuildCapability? GetBuildCapability(IBuildConfiguration buildConfiguration, IBuildChain buildChain,
             PropertyInfo propertyInfo)
         {
-            if (buildConfiguration == null)
-            {
-                throw new ArgumentNullException(nameof(buildConfiguration));
-            }
+            buildConfiguration = buildConfiguration ?? throw new ArgumentNullException(nameof(buildConfiguration));
 
-            if (buildChain == null)
-            {
-                throw new ArgumentNullException(nameof(buildChain));
-            }
+            buildChain = buildChain ?? throw new ArgumentNullException(nameof(buildChain));
 
-            if (propertyInfo == null)
-            {
-                throw new ArgumentNullException(nameof(propertyInfo));
-            }
+            propertyInfo = propertyInfo ?? throw new ArgumentNullException(nameof(propertyInfo));
 
             return GetBuildCapability(buildConfiguration, x => x.IsMatch(buildChain, propertyInfo));
         }

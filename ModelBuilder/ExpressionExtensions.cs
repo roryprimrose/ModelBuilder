@@ -27,10 +27,7 @@
         /// </exception>
         public static PropertyInfo GetProperty<T>(this Expression<Func<T, object?>> expression)
         {
-            if (expression == null)
-            {
-                throw new ArgumentNullException(nameof(expression));
-            }
+            expression = expression ?? throw new ArgumentNullException(nameof(expression));
 
             var propInfo = GetPropertyInfo(expression);
 

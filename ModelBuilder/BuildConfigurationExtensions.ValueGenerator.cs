@@ -21,15 +21,9 @@
         /// <exception cref="ArgumentNullException">The <paramref name="valueGenerator" /> parameter is <c>null</c>.</exception>
         public static IBuildConfiguration Add(this IBuildConfiguration configuration, IValueGenerator valueGenerator)
         {
-            if (configuration == null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
+            configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 
-            if (valueGenerator == null)
-            {
-                throw new ArgumentNullException(nameof(valueGenerator));
-            }
+            valueGenerator = valueGenerator ?? throw new ArgumentNullException(nameof(valueGenerator));
 
             configuration.ValueGenerators.Add(valueGenerator);
 
@@ -51,10 +45,7 @@
         public static IBuildConfiguration AddValueGenerator<T>(this IBuildConfiguration configuration)
             where T : IValueGenerator, new()
         {
-            if (configuration == null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
+            configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 
             var generator = new T();
 
@@ -78,10 +69,7 @@
         public static IBuildConfiguration RemoveValueGenerator<T>(this IBuildConfiguration configuration)
             where T : IValueGenerator
         {
-            if (configuration == null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
+            configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 
             var itemsToRemove = configuration.ValueGenerators.Where(x => x.GetType().IsAssignableFrom(typeof(T)))
                 .ToList();
@@ -111,18 +99,13 @@
             Action<T> action)
             where T : IValueGenerator
         {
-            if (configuration == null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
+            configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 
-            if (action == null)
-            {
-                throw new ArgumentNullException(nameof(action));
-            }
+            action = action ?? throw new ArgumentNullException(nameof(action));
 
             var targetType = typeof(T);
-            var valueGenerator = configuration.ValueGenerators.OfType<T>().FirstOrDefault(x => x.GetType() == targetType);
+            var valueGenerator =
+                configuration.ValueGenerators.OfType<T>().FirstOrDefault(x => x.GetType() == targetType);
 
             if (valueGenerator == null)
             {

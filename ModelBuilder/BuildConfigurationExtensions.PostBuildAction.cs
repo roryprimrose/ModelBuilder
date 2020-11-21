@@ -20,15 +20,9 @@
         /// <exception cref="ArgumentNullException">The <paramref name="postBuildAction" /> parameter is <c>null</c>.</exception>
         public static IBuildConfiguration Add(this IBuildConfiguration configuration, IPostBuildAction postBuildAction)
         {
-            if (configuration == null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
+            configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 
-            if (postBuildAction == null)
-            {
-                throw new ArgumentNullException(nameof(postBuildAction));
-            }
+            postBuildAction = postBuildAction ?? throw new ArgumentNullException(nameof(postBuildAction));
 
             configuration.PostBuildActions.Add(postBuildAction);
 
@@ -50,10 +44,7 @@
         public static IBuildConfiguration AddPostBuildAction<T>(this IBuildConfiguration configuration)
             where T : IPostBuildAction, new()
         {
-            if (configuration == null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
+            configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 
             var postBuildAction = new T();
 
@@ -77,10 +68,7 @@
         public static IBuildConfiguration RemovePostBuildAction<T>(this IBuildConfiguration configuration)
             where T : IPostBuildAction
         {
-            if (configuration == null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
+            configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 
             var itemsToRemove = configuration.PostBuildActions.Where(x => x.GetType().IsAssignableFrom(typeof(T)))
                 .ToList();
@@ -110,18 +98,13 @@
             Action<T> action)
             where T : IPostBuildAction
         {
-            if (configuration == null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
+            configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 
-            if (action == null)
-            {
-                throw new ArgumentNullException(nameof(action));
-            }
+            action = action ?? throw new ArgumentNullException(nameof(action));
 
             var targetType = typeof(T);
-            var postBuildAction = configuration.PostBuildActions.OfType<T>().FirstOrDefault(x => x.GetType() == targetType);
+            var postBuildAction = configuration.PostBuildActions.OfType<T>()
+                .FirstOrDefault(x => x.GetType() == targetType);
 
             if (postBuildAction == null)
             {

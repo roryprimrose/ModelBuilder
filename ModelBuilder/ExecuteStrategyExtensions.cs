@@ -19,15 +19,9 @@
         /// <exception cref="ArgumentNullException">The <paramref name="action" /> parameter is <c>null</c>.</exception>
         public static IExecuteStrategy WriteLog(this IExecuteStrategy executeStrategy, Action<string> action)
         {
-            if (executeStrategy == null)
-            {
-                throw new ArgumentNullException(nameof(executeStrategy));
-            }
+            executeStrategy = executeStrategy ?? throw new ArgumentNullException(nameof(executeStrategy));
 
-            if (action == null)
-            {
-                throw new ArgumentNullException(nameof(action));
-            }
+            action = action ?? throw new ArgumentNullException(nameof(action));
 
             return new LoggingExecuteStrategy<IExecuteStrategy>(executeStrategy, action);
         }
@@ -42,15 +36,9 @@
         public static IExecuteStrategy<T> WriteLog<T>(this IExecuteStrategy<T> executeStrategy, Action<string> action)
             where T : notnull
         {
-            if (executeStrategy == null)
-            {
-                throw new ArgumentNullException(nameof(executeStrategy));
-            }
+            executeStrategy = executeStrategy ?? throw new ArgumentNullException(nameof(executeStrategy));
 
-            if (action == null)
-            {
-                throw new ArgumentNullException(nameof(action));
-            }
+            action = action ?? throw new ArgumentNullException(nameof(action));
 
             return new LoggingGenericExecuteStrategy<T>(executeStrategy, action);
         }
