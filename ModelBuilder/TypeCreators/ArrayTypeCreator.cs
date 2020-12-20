@@ -1,6 +1,7 @@
 ﻿namespace ModelBuilder.TypeCreators
 {
     using System;
+    using System.Reflection;
 
     /// <summary>
     ///     The <see cref="ArrayTypeCreator" />
@@ -71,7 +72,9 @@
 
             if (constructor == null)
             {
-                throw new BuildException($"No constructor was found that matches the parameters (int)");
+                constructor = type.GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, parameterTypes, null);
+                if(constructor == null || (constructor.Attributes & MethodAttributes.Assembly) != MethodAttributes.Assembly)
+                    throw new BuildException($"No constructor was found that matches the parameters (int)");
             }
 
             return constructor.Invoke(parameters);
