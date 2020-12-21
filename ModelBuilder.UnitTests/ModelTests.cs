@@ -1,9 +1,9 @@
 ﻿namespace ModelBuilder.UnitTests
 {
-    using System;
-    using System.Linq;
     using FluentAssertions;
     using ModelBuilder.UnitTests.Models;
+    using System;
+    using System.Linq;
     using Xunit;
     using Xunit.Abstractions;
 
@@ -14,6 +14,15 @@
         public ModelTests(ITestOutputHelper output)
         {
             _output = output;
+        }
+
+        [Fact]
+        public void CreateWithInternalConstructorReturnsInstance()
+        {
+            var model = Model.Create<EntityWithInternalConstructor>();
+            model.Should().NotBeNull();
+            model.EntityId.Should().NotBeEmpty();
+            model.EntityName.Should().NotBeNullOrWhiteSpace();
         }
 
         [Fact]
