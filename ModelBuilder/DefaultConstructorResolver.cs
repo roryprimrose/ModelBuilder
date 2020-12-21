@@ -68,10 +68,10 @@
 
             if (availableConstructors.Count == 0)
             {
-                // This could be a struct with no constructor defined
-                // or it is a type that does not have public constructors
-                // We can't return anything here and must rely on TypeCreators to handle this scenario
-                return null;
+                availableConstructors = type.GetConstructors(BindingFlags.NonPublic | BindingFlags.Instance)
+                    .Where(x => (x.Attributes & MethodAttributes.Assembly) == MethodAttributes.Assembly).ToList();
+                if(availableConstructors.Count == 0)
+                    return null;
             }
 
             // Ignore any constructors that have a parameter with the type being created (a copy constructor)
@@ -105,12 +105,35 @@
                 }
             }
 
+            var nonPublicConstructor = FindInternalConstructorMatchingArguments(type, args);
+            if (nonPublicConstructor != null)
+                return nonPublicConstructor;
+
             var message = string.Format(
                 CultureInfo.CurrentCulture,
                 Resources.ConstructorResolver_NoValidConstructorFound,
                 type.FullName);
 
             throw new MissingMemberException(message);
+        }
+
+        private static ConstructorInfo? FindInternalConstructorMatchingArguments(Type type, IList<object?> args)
+        {
+            // Parameters are consulted a lot here so get it into a dictionary first
+            var availableConstructors = type.GetConstructors(BindingFlags.NonPublic | BindingFlags.Instance)
+                .Where(x => (x.Attributes & MethodAttributes.Assembly) == MethodAttributes.Assembly).ToDictionary(x => x, x => x.GetParameters());
+            var possibleConstructors = availableConstructors.Where(x => x.Value.Length >= args.Count)
+                .OrderBy(x => x.Value.Length);
+
+            foreach (var constructor in possibleConstructors)
+            {
+                if (ParametersMatchArguments(constructor.Value, args))
+                {
+                    return constructor.Key;
+                }
+            }
+
+            return null;
         }
 
         private static ConstructorInfo FindConstructorMatchingTypes(Type type, object[] args)
@@ -122,14 +145,18 @@
 
             if (constructor == null)
             {
-                var parameterTypes = types.Select(x => x.FullName).Aggregate((current, next) => current + ", " + next);
-                var message = string.Format(
-                    CultureInfo.CurrentCulture,
-                    "No constructor found matching type {0} with parameters[{1}].",
-                    type.FullName,
-                    parameterTypes);
+                constructor = type.GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, types, null);
+                if (constructor == null || (constructor.Attributes & MethodAttributes.Assembly) != MethodAttributes.Assembly)
+                {
+                    var parameterTypes = types.Select(x => x.FullName).Aggregate((current, next) => current + ", " + next);
+                    var message = string.Format(
+                        CultureInfo.CurrentCulture,
+                        "No constructor found matching type {0} with parameters[{1}].",
+                        type.FullName,
+                        parameterTypes);
 
-                throw new MissingMemberException(message);
+                    throw new MissingMemberException(message);
+                }
             }
 
             return constructor;

@@ -216,7 +216,7 @@
         [InlineData(typeof(Gender))]
         [InlineData(typeof(Copy))]
         [InlineData(typeof(Clone))]
-        public void ResolveReturnsNullForTypesWithoutPublicConstructors(Type targetType)
+        public void ResolveReturnsNullForTypesWithoutPublicOrInternalConstructors(Type targetType)
         {
             var sut = new DefaultConstructorResolver(CacheLevel.PerInstance);
 
