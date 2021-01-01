@@ -35,7 +35,7 @@
             }
 
             var context = executeStrategy.BuildChain?.Last;
-            var min = AllowNegative ? GetMinimum(generateType, referenceName, context) : 0;
+            var min = GetMinimum(generateType, referenceName, context);
             var max = GetMaximum(generateType, referenceName, context);
 
             return Generator.NextValue(generateType, min, max);
@@ -54,7 +54,8 @@
         }
 
         /// <summary>
-        ///     Returns the minimum value for the specified generation target.
+        ///     If AllowNegative, returns the minimum value for the specified generation target.
+        ///     Otherwise returns 0.
         /// </summary>
         /// <param name="type">The type of value to generate.</param>
         /// <param name="referenceName">Identifies the possible parameter or property name the value is intended for.</param>
@@ -62,7 +63,12 @@
         /// <returns>The minimum value allowed to be generated.</returns>
         protected virtual object GetMinimum(Type type, string? referenceName, object? context)
         {
-            return Generator.GetMin(type);
+            if (AllowNegative)
+            {
+                return Generator.GetMin(type);
+            }
+
+            return 0;
         }
 
         /// <inheritdoc />
@@ -91,6 +97,6 @@
         /// <summary>
         ///     Gets or sets whether this type can return negative values or not.
         /// </summary>
-        public bool AllowNegative { get; set; } = false;
+        public virtual bool AllowNegative { get; set; } = false;
     }
 }
