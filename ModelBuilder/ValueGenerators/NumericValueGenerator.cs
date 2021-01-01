@@ -35,7 +35,7 @@
             }
 
             var context = executeStrategy.BuildChain?.Last;
-            var min = GetMinimum(generateType, referenceName, context);
+            var min = AllowNegative ? GetMinimum(generateType, referenceName, context) : 0;
             var max = GetMaximum(generateType, referenceName, context);
 
             return Generator.NextValue(generateType, min, max);
@@ -87,5 +87,10 @@
 
         /// <inheritdoc />
         public bool AllowNull { get; set; } = false;
+
+        /// <summary>
+        ///     Gets or sets whether this type can return negative values or not.
+        /// </summary>
+        public bool AllowNegative { get; set; } = false;
     }
 }
