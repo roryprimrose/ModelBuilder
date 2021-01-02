@@ -1,6 +1,7 @@
 ﻿namespace ModelBuilder.UnitTests.ValueGenerators
 {
     using System;
+    using System.Globalization;
     using FluentAssertions;
     using ModelBuilder.ValueGenerators;
     using NSubstitute;
@@ -135,6 +136,85 @@
 
             action.Should().Throw<ArgumentNullException>();
         }
+
+        [Theory]
+        [ClassData(typeof(NumericTypeDataSource))]
+        public void GenerateDoesNotReturnNegativeValuesByDefault(Type type, bool typeSupported)
+        {
+            if (typeSupported == false)
+            {
+                // Ignore this test
+                return;
+            }
+
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            var buildChain = new BuildHistory();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            var sut = new Wrapper();
+
+            for (var index = 0; index < 1000; index++)
+            {
+                var value = sut.RunGenerate(type, null!, executeStrategy);
+
+                var evaluateType = type;
+
+                if (type.IsNullable())
+                {
+                    evaluateType = type.GenericTypeArguments[0];
+                }
+
+                value.Should().BeOfType(evaluateType);
+
+                var convertedValue = Convert.ToDouble(value, CultureInfo.InvariantCulture);
+                convertedValue.Should().BeGreaterOrEqualTo(0);
+            }
+        }
+
+        [Theory]
+        [ClassData(typeof(NumericTypeRangeDataSource))]
+        public void GenerateCanReturnNegativeValues(Type type, bool typeSupported, double min, double max)
+        {
+            if (typeSupported == false)
+            {
+                // Ignore this test
+                return;
+            }
+
+            if (min >= 0)
+            {
+                // Ignore this test - type does not support negative values
+                return;
+            }
+
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            var buildChain = new BuildHistory();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            var sut = new Wrapper { AllowNegative = true };
+
+            var negativeValueFound = false;
+
+            for (var index = 0; index < 1000; index++)
+            {
+                var nextValue = sut.RunGenerate(type, null!, executeStrategy);
+
+                var convertedValue = Convert.ToDouble(nextValue, CultureInfo.InvariantCulture);
+                convertedValue.Should().BeLessOrEqualTo(max);
+
+                if (convertedValue < 0)
+                {
+                    negativeValueFound = true;
+                }
+            }
+
+            negativeValueFound.Should().BeTrue();
+        }
+
 
         private class Wrapper : NumericValueGenerator
         {
