@@ -19,11 +19,14 @@
             var nullFound = false;
             var valueFound = false;
 
-            var sut = new Wrapper();
+            var sut = new GuidValueGenerator
+            {
+                AllowNull = true
+            };
 
             for (var index = 0; index < 1000; index++)
             {
-                var value = (Guid?) sut.RunGenerate(typeof(Guid?), null!, executeStrategy);
+                var value = (Guid?)sut.Generate(executeStrategy, typeof(Guid?));
 
                 if (value == null!)
                 {
@@ -42,6 +45,14 @@
 
             nullFound.Should().BeTrue();
             valueFound.Should().BeTrue();
+        }
+
+        [Fact]
+        public void AllowNullReturnsFalseByDefault()
+        {
+            var sut = new GuidValueGenerator();
+
+            sut.AllowNull.Should().BeFalse();
         }
 
         [Fact]
@@ -70,13 +81,13 @@
 
             var sut = new Wrapper();
 
-            var first = (Guid) sut.RunGenerate(typeof(Guid), null!, executeStrategy);
+            var first = (Guid)sut.RunGenerate(typeof(Guid), null!, executeStrategy);
 
             var second = first;
 
             for (var index = 0; index < 1000; index++)
             {
-                second = (Guid) sut.RunGenerate(typeof(Guid), null!, executeStrategy);
+                second = (Guid)sut.RunGenerate(typeof(Guid), null!, executeStrategy);
 
                 if (first != second)
                 {
