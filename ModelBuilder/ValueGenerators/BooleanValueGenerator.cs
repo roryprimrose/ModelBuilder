@@ -6,7 +6,7 @@
     ///     The <see cref="BooleanValueGenerator" />
     ///     class is used to generate random <see cref="bool" /> values.
     /// </summary>
-    public class BooleanValueGenerator : ValueGeneratorMatcher
+    public class BooleanValueGenerator : ValueGeneratorMatcher, INullableBuilder
     {
         /// <summary>
         ///     Initializes a new instance of the <see cref="BooleanValueGenerator" /> class.
@@ -18,28 +18,22 @@
         /// <inheritdoc />
         protected override object? Generate(IExecuteStrategy executeStrategy, Type type, string? referenceName)
         {
-            if (type == typeof(bool?))
+            var generateType = type;
+
+            if (generateType.IsNullable())
             {
-                var source = Generator.NextValue<double>(0, 3);
-
-                bool? value;
-
-                if (source < 1)
+                if (AllowNull)
                 {
-                    value = false;
-                }
-                else if (source < 2)
-                {
-                    value = true;
-                }
-                else
-                {
-                    value = null;
-                }
+                    // Allow for a % the chance that this might be null
+                    var range = Generator.NextValue(0, 100000);
 
-                return value;
+                    if (range < NullPercentageChance * 1000)
+                    {
+                        return null;
+                    }
+                }
             }
-
+            
             var nextValue = Generator.NextValue(0, 1);
 
             if (nextValue == 0)
@@ -49,5 +43,11 @@
 
             return true;
         }
+
+        /// <inheritdoc />
+        public bool AllowNull { get; set; } = false;
+
+        /// <inheritdoc />
+        public int NullPercentageChance { get; set; } = 10;
     }
 }

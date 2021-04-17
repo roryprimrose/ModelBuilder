@@ -30,10 +30,10 @@
             {
                 if (AllowNull)
                 {
-                    // Allow for a 10% the chance that this might be null
+                    // Allow for a % the chance that this might be null
                     var range = Generator.NextValue(0, 100000);
 
-                    if (range < 10000)
+                    if (range < NullPercentageChance * 1000)
                     {
                         return null;
                     }
@@ -61,5 +61,8 @@
 
         /// <inheritdoc />
         public bool AllowNull { get; set; } = false;
+
+        /// <inheritdoc />
+        public int NullPercentageChance { get; set; } = 10;
     }
 }

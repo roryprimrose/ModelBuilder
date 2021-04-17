@@ -21,10 +21,10 @@
             {
                 if (AllowNull)
                 {
-                    // Allow for a 10% the chance that this might be null
+                    // Allow for a % the chance that this might be null
                     var range = Generator.NextValue(0, 100000);
 
-                    if (range < 10000)
+                    if (range < NullPercentageChance * 1000)
                     {
                         return null;
                     }
@@ -34,7 +34,7 @@
                 generateType = type.GetGenericArguments()[0];
             }
 
-            var context = executeStrategy.BuildChain?.Last;
+            var context = executeStrategy.BuildChain.Last;
             var min = GetMinimum(generateType, referenceName, context);
             var max = GetMaximum(generateType, referenceName, context);
 
@@ -77,7 +77,6 @@
         protected override bool IsMatch(IBuildChain buildChain, Type type, string? referenceName)
         {
             type = type ?? throw new ArgumentNullException(nameof(type));
-
             buildChain = buildChain ?? throw new ArgumentNullException(nameof(buildChain));
 
             if (type.IsNullable())
@@ -93,6 +92,9 @@
 
         /// <inheritdoc />
         public bool AllowNull { get; set; } = false;
+
+        /// <inheritdoc />
+        public int NullPercentageChance { get; set; } = 10;
 
         /// <summary>
         ///     Gets or sets whether this type can return negative values or not.
