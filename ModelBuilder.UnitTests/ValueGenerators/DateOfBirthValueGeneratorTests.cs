@@ -8,39 +8,6 @@
 
     public class DateOfBirthValueGeneratorTests
     {
-        [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void AllowNullDeterminesWhetherNullCanBeReturned(bool allowNull)
-        {
-            var nullFound = false;
-
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            var buildChain = new BuildHistory();
-
-            executeStrategy.BuildChain.Returns(buildChain);
-
-            var sut = new DateOfBirthValueGenerator
-            {
-                AllowNull = allowNull
-            };
-
-            for (var index = 0; index < 10000; index++)
-            {
-                var value = sut.Generate(executeStrategy, typeof(DateTime?));
-
-                if (value == null)
-                {
-                    nullFound = true;
-
-                    break;
-                }
-            }
-
-            nullFound.Should().Be(allowNull);
-        }
-
         [Fact]
         public void AllowNullReturnsFalseByDefault()
         {
@@ -77,6 +44,42 @@
             var actual = sut.RunGenerate(typeof(DateTime), "dob", executeStrategy);
 
             actual.Should().BeOfType<DateTime>();
+        }
+
+        [Theory]
+        [InlineData(false, 100, false)]
+        [InlineData(true, 100, true)]
+        [InlineData(true, 50, true)]
+        [InlineData(true, 10, true)]
+        [InlineData(true, 0, false)]
+        public void GenerateReturnsNullBasedOnAllowNullAndPercentageChance(bool allowNull, int percentageChance,
+            bool expected)
+        {
+            var buildChain = new BuildHistory();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            var sut = new DateOfBirthValueGenerator
+            {
+                AllowNull = allowNull,
+                NullPercentageChance = percentageChance
+            };
+
+            var nullFound = false;
+
+            for (var index = 0; index < 1000; index++)
+            {
+                var actual = (DateTime?) sut.Generate(executeStrategy, typeof(DateTime?));
+
+                if (actual == null!)
+                {
+                    nullFound = true;
+                    break;
+                }
+            }
+
+            nullFound.Should().Be(expected);
         }
 
         [Fact]
@@ -188,6 +191,14 @@
             Action action = () => sut.RunIsMatch(null!, null!, buildChain);
 
             action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void NullPercentageChanceReturns10ByDefault()
+        {
+            var sut = new DateOfBirthValueGenerator();
+
+            sut.NullPercentageChance.Should().Be(10);
         }
 
         private class Wrapper : DateOfBirthValueGenerator

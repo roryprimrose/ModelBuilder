@@ -10,45 +10,48 @@
 
     public class EnumValueGeneratorTests
     {
-        [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void AllowNullDeterminesWhetherNullCanBeReturned(bool allowNull)
-        {
-            var nullFound = false;
-
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            var buildChain = new BuildHistory();
-
-            executeStrategy.BuildChain.Returns(buildChain);
-
-            var sut = new EnumValueGenerator
-            {
-                AllowNull = allowNull
-            };
-
-            for (var index = 0; index < 10000; index++)
-            {
-                var value = sut.Generate(executeStrategy, typeof(FileAttributes?));
-
-                if (value == null)
-                {
-                    nullFound = true;
-
-                    break;
-                }
-            }
-
-            nullFound.Should().Be(allowNull);
-        }
-
         [Fact]
         public void AllowNullReturnsFalseByDefault()
         {
             var sut = new EnumValueGenerator();
 
             sut.AllowNull.Should().BeFalse();
+        }
+
+        [Theory]
+        [InlineData(false, 100, false)]
+        [InlineData(true, 100, true)]
+        [InlineData(true, 50, true)]
+        [InlineData(true, 10, true)]
+        [InlineData(true, 0, false)]
+        public void GenerateReturnsNullBasedOnAllowNullAndPercentageChance(bool allowNull, int percentageChance,
+            bool expected)
+        {
+            var buildChain = new BuildHistory();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            var sut = new EnumValueGenerator
+            {
+                AllowNull = allowNull,
+                NullPercentageChance = percentageChance
+            };
+
+            var nullFound = false;
+
+            for (var index = 0; index < 1000; index++)
+            {
+                var actual = (FileAttributes?) sut.Generate(executeStrategy, typeof(FileAttributes?));
+
+                if (actual == null!)
+                {
+                    nullFound = true;
+                    break;
+                }
+            }
+
+            nullFound.Should().Be(expected);
         }
 
         [Fact]
@@ -242,6 +245,14 @@
             Action action = () => sut.RunIsMatch(null!, null!, null!);
 
             action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void NullPercentageChanceReturns10ByDefault()
+        {
+            var sut = new EnumValueGenerator();
+
+            sut.NullPercentageChance.Should().Be(10);
         }
 
         private class Wrapper : EnumValueGenerator

@@ -9,12 +9,29 @@
 
     public class NumericValueGeneratorTests
     {
-        [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void AllowNullDeterminesWhetherNullCanBeReturned(bool allowNull)
+        [Fact]
+        public void AllowNullReturnsFalseByDefault()
         {
-            var nullFound = false;
+            var sut = new NumericValueGenerator();
+
+            sut.AllowNull.Should().BeFalse();
+        }
+
+        [Theory]
+        [ClassData(typeof(NumericTypeRangeDataSource))]
+        public void GenerateCanReturnNegativeValues(Type type, bool typeSupported, double min, double max)
+        {
+            if (typeSupported == false)
+            {
+                // Ignore this test
+                return;
+            }
+
+            if (min >= 0)
+            {
+                // Ignore this test - type does not support negative values
+                return;
+            }
 
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
@@ -22,32 +39,60 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var sut = new NumericValueGenerator
-            {
-                AllowNull = allowNull
-            };
+            var sut = new Wrapper {AllowNegative = true};
 
-            for (var index = 0; index < 10000; index++)
-            {
-                var value = sut.Generate(executeStrategy, typeof(int?));
+            var negativeValueFound = false;
 
-                if (value == null)
+            for (var index = 0; index < 1000; index++)
+            {
+                var nextValue = sut.RunGenerate(type, null!, executeStrategy);
+
+                var convertedValue = Convert.ToDouble(nextValue, CultureInfo.InvariantCulture);
+                convertedValue.Should().BeLessOrEqualTo(max);
+
+                if (convertedValue < 0)
                 {
-                    nullFound = true;
-
-                    break;
+                    negativeValueFound = true;
                 }
             }
 
-            nullFound.Should().Be(allowNull);
+            negativeValueFound.Should().BeTrue();
         }
 
-        [Fact]
-        public void AllowNullReturnsFalseByDefault()
+        [Theory]
+        [ClassData(typeof(NumericTypeDataSource))]
+        public void GenerateDoesNotReturnNegativeValuesByDefault(Type type, bool typeSupported)
         {
-            var sut = new NumericValueGenerator();
+            if (typeSupported == false)
+            {
+                // Ignore this test
+                return;
+            }
 
-            sut.AllowNull.Should().BeFalse();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            var buildChain = new BuildHistory();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            var sut = new Wrapper();
+
+            for (var index = 0; index < 1000; index++)
+            {
+                var value = sut.RunGenerate(type, null!, executeStrategy);
+
+                var evaluateType = type;
+
+                if (type.IsNullable())
+                {
+                    evaluateType = type.GenericTypeArguments[0];
+                }
+
+                value.Should().BeOfType(evaluateType);
+
+                var convertedValue = Convert.ToDouble(value, CultureInfo.InvariantCulture);
+                convertedValue.Should().BeGreaterOrEqualTo(0);
+            }
         }
 
         [Theory]
@@ -78,6 +123,42 @@
             }
 
             randomValueFound.Should().BeTrue();
+        }
+
+        [Theory]
+        [InlineData(false, 100, false)]
+        [InlineData(true, 100, true)]
+        [InlineData(true, 50, true)]
+        [InlineData(true, 10, true)]
+        [InlineData(true, 0, false)]
+        public void GenerateReturnsNullBasedOnAllowNullAndPercentageChance(bool allowNull, int percentageChance,
+            bool expected)
+        {
+            var buildChain = new BuildHistory();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            var sut = new NumericValueGenerator
+            {
+                AllowNull = allowNull,
+                NullPercentageChance = percentageChance
+            };
+
+            var nullFound = false;
+
+            for (var index = 0; index < 1000; index++)
+            {
+                var actual = (int?) sut.Generate(executeStrategy, typeof(int?));
+
+                if (actual == null!)
+                {
+                    nullFound = true;
+                    break;
+                }
+            }
+
+            nullFound.Should().Be(expected);
         }
 
         [Fact]
@@ -137,84 +218,13 @@
             action.Should().Throw<ArgumentNullException>();
         }
 
-        [Theory]
-        [ClassData(typeof(NumericTypeDataSource))]
-        public void GenerateDoesNotReturnNegativeValuesByDefault(Type type, bool typeSupported)
+        [Fact]
+        public void NullPercentageChanceReturns10ByDefault()
         {
-            if (typeSupported == false)
-            {
-                // Ignore this test
-                return;
-            }
+            var sut = new NumericValueGenerator();
 
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            var buildChain = new BuildHistory();
-
-            executeStrategy.BuildChain.Returns(buildChain);
-
-            var sut = new Wrapper();
-
-            for (var index = 0; index < 1000; index++)
-            {
-                var value = sut.RunGenerate(type, null!, executeStrategy);
-
-                var evaluateType = type;
-
-                if (type.IsNullable())
-                {
-                    evaluateType = type.GenericTypeArguments[0];
-                }
-
-                value.Should().BeOfType(evaluateType);
-
-                var convertedValue = Convert.ToDouble(value, CultureInfo.InvariantCulture);
-                convertedValue.Should().BeGreaterOrEqualTo(0);
-            }
+            sut.NullPercentageChance.Should().Be(10);
         }
-
-        [Theory]
-        [ClassData(typeof(NumericTypeRangeDataSource))]
-        public void GenerateCanReturnNegativeValues(Type type, bool typeSupported, double min, double max)
-        {
-            if (typeSupported == false)
-            {
-                // Ignore this test
-                return;
-            }
-
-            if (min >= 0)
-            {
-                // Ignore this test - type does not support negative values
-                return;
-            }
-
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            var buildChain = new BuildHistory();
-
-            executeStrategy.BuildChain.Returns(buildChain);
-
-            var sut = new Wrapper { AllowNegative = true };
-
-            var negativeValueFound = false;
-
-            for (var index = 0; index < 1000; index++)
-            {
-                var nextValue = sut.RunGenerate(type, null!, executeStrategy);
-
-                var convertedValue = Convert.ToDouble(nextValue, CultureInfo.InvariantCulture);
-                convertedValue.Should().BeLessOrEqualTo(max);
-
-                if (convertedValue < 0)
-                {
-                    negativeValueFound = true;
-                }
-            }
-
-            negativeValueFound.Should().BeTrue();
-        }
-
 
         private class Wrapper : NumericValueGenerator
         {

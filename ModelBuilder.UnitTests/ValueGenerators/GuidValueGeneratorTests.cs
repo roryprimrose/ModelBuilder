@@ -9,6 +9,14 @@
     public class GuidValueGeneratorTests
     {
         [Fact]
+        public void AllowNullReturnsFalseByDefault()
+        {
+            var sut = new GuidValueGenerator();
+
+            sut.AllowNull.Should().BeFalse();
+        }
+
+        [Fact]
         public void GenerateCanReturnNullAndRandomValues()
         {
             var buildChain = new BuildHistory();
@@ -26,7 +34,7 @@
 
             for (var index = 0; index < 1000; index++)
             {
-                var value = (Guid?)sut.Generate(executeStrategy, typeof(Guid?));
+                var value = (Guid?) sut.Generate(executeStrategy, typeof(Guid?));
 
                 if (value == null!)
                 {
@@ -48,14 +56,6 @@
         }
 
         [Fact]
-        public void AllowNullReturnsFalseByDefault()
-        {
-            var sut = new GuidValueGenerator();
-
-            sut.AllowNull.Should().BeFalse();
-        }
-
-        [Fact]
         public void GenerateReturnsGuidValue()
         {
             var buildChain = new BuildHistory();
@@ -71,6 +71,42 @@
             actual.As<Guid>().Should().NotBeEmpty();
         }
 
+        [Theory]
+        [InlineData(false, 100, false)]
+        [InlineData(true, 100, true)]
+        [InlineData(true, 50, true)]
+        [InlineData(true, 10, true)]
+        [InlineData(true, 0, false)]
+        public void GenerateReturnsNullBasedOnAllowNullAndPercentageChance(bool allowNull, int percentageChance,
+            bool expected)
+        {
+            var buildChain = new BuildHistory();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            var sut = new GuidValueGenerator
+            {
+                AllowNull = allowNull,
+                NullPercentageChance = percentageChance
+            };
+
+            var nullFound = false;
+
+            for (var index = 0; index < 1000; index++)
+            {
+                var actual = (Guid?) sut.Generate(executeStrategy, typeof(Guid?));
+
+                if (actual == null!)
+                {
+                    nullFound = true;
+                    break;
+                }
+            }
+
+            nullFound.Should().Be(expected);
+        }
+
         [Fact]
         public void GenerateReturnsRandomValue()
         {
@@ -81,13 +117,13 @@
 
             var sut = new Wrapper();
 
-            var first = (Guid)sut.RunGenerate(typeof(Guid), null!, executeStrategy);
+            var first = (Guid) sut.RunGenerate(typeof(Guid), null!, executeStrategy);
 
             var second = first;
 
             for (var index = 0; index < 1000; index++)
             {
-                second = (Guid)sut.RunGenerate(typeof(Guid), null!, executeStrategy);
+                second = (Guid) sut.RunGenerate(typeof(Guid), null!, executeStrategy);
 
                 if (first != second)
                 {
@@ -113,6 +149,14 @@
             var actual = sut.RunIsMatch(type, null!, buildChain);
 
             actual.Should().Be(supportedType);
+        }
+
+        [Fact]
+        public void NullPercentageChanceReturns10ByDefault()
+        {
+            var sut = new GuidValueGenerator();
+
+            sut.NullPercentageChance.Should().Be(10);
         }
 
         private class Wrapper : GuidValueGenerator
