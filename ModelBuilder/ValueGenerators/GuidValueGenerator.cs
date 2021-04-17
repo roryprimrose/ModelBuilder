@@ -6,7 +6,7 @@
     ///     The <see cref="GuidValueGenerator" />
     ///     class is used to generate <see cref="Guid" /> values.
     /// </summary>
-    public class GuidValueGenerator : ValueGeneratorMatcher
+    public class GuidValueGenerator : ValueGeneratorMatcher, INullableBuilder
     {
         /// <summary>
         ///     Initializes a new instance of the <see cref="GuidValueGenerator" /> class.
@@ -18,26 +18,23 @@
         /// <inheritdoc />
         protected override object? Generate(IExecuteStrategy executeStrategy, Type type, string? referenceName)
         {
-            if (type == typeof(Guid))
+            if (type == typeof(Guid) || AllowNull == false)
             {
                 return Guid.NewGuid();
             }
 
-            // Weight the random distribution so that it is roughly 5 times more likely to get a new guid than a null
-            var source = Generator.NextValue<double>(0, 5);
+            // Allow for a 10% the chance that this might be null
+            var range = Generator.NextValue(0, 100000);
 
-            Guid? value;
-
-            if (source < 1)
+            if (range < 10000)
             {
-                value = null;
-            }
-            else
-            {
-                value = Guid.NewGuid();
+                return null;
             }
 
-            return value;
+            return Guid.NewGuid();
         }
+
+        /// <inheritdoc />
+        public bool AllowNull { get; set; } = false;
     }
 }
