@@ -75,7 +75,7 @@ jobs:
         targetdir: "Report"
         reporttypes: "HtmlInline;Cobertura"
         tag: '${{ github.run_number }}_${{ github.run_id }}'
-      if: github.event_name == 'pull_request' && github.repository_owner == 'roryprimrose'       # Don't run on forks
+      if: github.event_name == 'pull_request' && github.repository == github.event.pull_request.head.repo.full_name       # Don't run on forks
 
     - name: Publish coverage report
       uses: 5monkeys/cobertura-action@master
@@ -83,7 +83,7 @@ jobs:
         path: Report/Cobertura.xml
         repo_token: ${{ secrets.GITHUB_TOKEN }}
         minimum_coverage: 75
-      if: github.event_name == 'pull_request' && github.repository_owner == 'roryprimrose'       # Don't run on forks
+      if: github.event_name == 'pull_request' && github.repository == github.event.pull_request.head.repo.full_name       # Don't run on forks
       
     - name: Resolve project name
       shell: pwsh
@@ -111,7 +111,8 @@ jobs:
   publish:
     needs: build
     runs-on: ubuntu-latest
-    if: github.repository_owner == 'roryprimrose'       # Don't run on forks
+    # Only run on pushes which should only be on the base repository
+    if: github.event_name == 'push'
 
     steps:
     - name: Download packages
@@ -130,7 +131,8 @@ jobs:
   release:
     needs: build
     runs-on: ubuntu-latest
-    if: github.repository_owner == 'roryprimrose' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v'))
+    # Only run on pushes which should only be on the base repository and only where the branch is master or is a version tagged build
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v'))
 
     steps:
     
