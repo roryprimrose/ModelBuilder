@@ -75,7 +75,8 @@ jobs:
         targetdir: "Report"
         reporttypes: "HtmlInline;Cobertura"
         tag: '${{ github.run_number }}_${{ github.run_id }}'
-      if: github.event_name == 'pull_request' && github.repository == github.event.pull_request.head.repo.full_name       # Don't run on forks
+      # Don't run on fork or dependabot builds
+      if: github.event_name == 'pull_request' && github.repository == github.event.pull_request.head.repo.full_name && github.actor != 'dependabot[bot]'
 
     - name: Publish coverage report
       uses: 5monkeys/cobertura-action@master
@@ -83,7 +84,8 @@ jobs:
         path: Report/Cobertura.xml
         repo_token: ${{ secrets.GITHUB_TOKEN }}
         minimum_coverage: 75
-      if: github.event_name == 'pull_request' && github.repository == github.event.pull_request.head.repo.full_name       # Don't run on forks
+      # Don't run on fork or dependabot builds
+      if: github.event_name == 'pull_request' && github.repository == github.event.pull_request.head.repo.full_name && github.actor != 'dependabot[bot]'
       
     - name: Resolve project name
       shell: pwsh
