@@ -14,8 +14,8 @@ namespace ModelBuilder
     /// </summary>
     public class DefaultPropertyResolver : IPropertyResolver
     {
-        private static readonly ConcurrentDictionary<Type, object> _defaultValues =
-            new ConcurrentDictionary<Type, object>();
+        private static readonly ConcurrentDictionary<Type, object?> _defaultValues =
+            new ConcurrentDictionary<Type, object?>();
 
         private static readonly ConcurrentDictionary<Type, IList<PropertyInfo>> _globalCache =
             new ConcurrentDictionary<Type, IList<PropertyInfo>>();
@@ -214,9 +214,9 @@ namespace ModelBuilder
             Type targetType)
         {
             return from x in targetType.GetProperties(BindingFlags.Instance | BindingFlags.Public)
-                where CanPopulate(x)
-                orderby GetMaximumOrderPriority(configuration, x) descending
-                select x;
+                   where CanPopulate(x)
+                   orderby GetMaximumOrderPriority(configuration, x) descending
+                   select x;
         }
 
         /// <summary>
@@ -262,7 +262,20 @@ namespace ModelBuilder
         {
             try
             {
-                return _defaultValues.GetOrAdd(type, x => Activator.CreateInstance(x)!);
+                // Special case: System.String
+                // Attempting to use Activator.CreateInstance on string throws an exception which is poor for performance
+                if (type == typeof(string))
+                {
+                    return _defaultValues.GetOrAdd(type, x => null);
+                }
+                
+                if (type.IsValueType == false)
+                {
+                    // This is a reference type which should also default to null
+                    return _defaultValues.GetOrAdd(type, x => null);
+                }
+
+                return _defaultValues.GetOrAdd(type, Activator.CreateInstance);
             }
             catch
             {
@@ -278,9 +291,9 @@ namespace ModelBuilder
             }
 
             var matchingRules = from x in configuration.ExecuteOrderRules
-                where x.IsMatch(property)
-                orderby x.Priority descending
-                select x;
+                                where x.IsMatch(property)
+                                orderby x.Priority descending
+                                select x;
 
             var matchingRule = matchingRules.FirstOrDefault();
 
