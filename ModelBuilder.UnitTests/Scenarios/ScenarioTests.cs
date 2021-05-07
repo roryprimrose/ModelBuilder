@@ -109,6 +109,15 @@
         }
 
         [Fact]
+        public void CanCreateInternalTypeFromPublicInterface()
+        {
+            var actual = Model.Create<IInternalItem>();
+
+            actual.Should().NotBeNull();
+            actual.Should().BeOfType<InternalItem>();
+        }
+
+        [Fact]
         public void CanCreateWithMultipleNames()
         {
             var actual = Model.WriteLog<Names>(_output.WriteLine).Create();
@@ -320,6 +329,15 @@
             actual.People.Should().NotBeEmpty();
             actual.RestrictedPeople.Should().BeEmpty();
             actual.Unassigned.Should().BeNull();
+        }
+
+        [Fact]
+        public void CreatePublicTypeInsteadOfInternalType()
+        {
+            var actual = Model.Create<IPublicOverInternal>();
+
+            actual.Should().NotBeNull();
+            actual.Should().BeOfType<PublicPickedItem>();
         }
 
         [Fact]

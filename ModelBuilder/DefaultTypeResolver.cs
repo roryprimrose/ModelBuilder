@@ -18,11 +18,9 @@
         public Type GetBuildType(IBuildConfiguration configuration, Type requestedType)
         {
             configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
-
             requestedType = requestedType ?? throw new ArgumentNullException(nameof(requestedType));
 
-            var typeMappingRule = configuration.TypeMappingRules?.Where(x => x.SourceType == requestedType)
-                .FirstOrDefault();
+            var typeMappingRule = configuration.TypeMappingRules?.FirstOrDefault(x => x.SourceType == requestedType);
 
             if (typeMappingRule != null)
             {
@@ -48,7 +46,7 @@
             return requestedType;
         }
 
-        private static Type AutoResolveBuildType(Type requestedType)
+        private Type AutoResolveBuildType(Type requestedType)
         {
             // Before search for matching types and finding a good match, check if this is an IEnumerable that would support a list type
             if (requestedType.IsInterface
@@ -90,10 +88,7 @@
             }
 
             // Automatically resolve a derived type within the same assembly
-            var assemblyTypes = requestedType.GetTypeInfo().Assembly.GetTypes();
-            var possibleTypes = from x in assemblyTypes
-                where x.IsPublic && x.IsInterface == false && x.IsAbstract == false
-                select x;
+            var possibleTypes = GetTypesToEvaluate(requestedType);
 
             var matchingTypes = new List<Type>();
 
@@ -176,6 +171,15 @@
                 }
             }
 
+            // First match to a public type
+            var publicType = matchingTypes.FirstOrDefault(x => x.IsPublic);
+
+            if (publicType != null)
+            {
+                return publicType;
+            }
+
+            // Match to any other type
             var matchingType = matchingTypes.FirstOrDefault();
 
             if (matchingType == null)
@@ -184,6 +188,20 @@
             }
 
             return matchingType;
+        }
+        
+        /// <summary>
+        /// Gets the types to evaluate for compatibility with the specified type.
+        /// </summary>
+        /// <param name="requestedType">The requested type.</param>
+        /// <returns>The set of types to evaluate.</returns>
+        protected virtual IEnumerable<Type> GetTypesToEvaluate(Type requestedType)
+        {
+            var assemblyTypes = requestedType.GetTypeInfo().Assembly.GetTypes();
+
+            return from x in assemblyTypes
+                where x.IsInterface == false && x.IsAbstract == false
+                select x;
         }
     }
 }
