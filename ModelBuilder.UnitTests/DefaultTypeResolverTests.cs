@@ -95,6 +95,20 @@
         }
 
         [Fact]
+        public void GetBuildTypeReturnsInternalType()
+        {
+            var configuration = new BuildConfiguration();
+
+            var sut = new DefaultTypeResolver();
+
+            var actual = sut.GetBuildType(configuration, typeof(IInternalItem));
+
+            _output.WriteLine(actual.FullName);
+
+            actual.Should().Be<InternalItem>();
+        }
+
+        [Fact]
         public void GetBuildTypeReturnsOriginalTypeWhenNoBetterTypeFound()
         {
             var configuration = new BuildConfiguration();
@@ -146,6 +160,20 @@
             _output.WriteLine(actual.FullName);
 
             actual.Should().Implement<ITestInterface>();
+        }
+
+        [Fact]
+        public void GetBuildTypeReturnsPublicTypeOverInternalType()
+        {
+            var configuration = new BuildConfiguration();
+
+            var sut = new Wrapper(new[] {typeof(InternalNotPickedItem), typeof(PublicPickedItem)});
+
+            var actual = sut.GetBuildType(configuration, typeof(IPublicOverInternal));
+
+            _output.WriteLine(actual.FullName);
+
+            actual.Should().Be<PublicPickedItem>();
         }
 
         [Fact]
@@ -253,6 +281,21 @@
             Action action = () => sut.GetBuildType(configuration, null!);
 
             action.Should().Throw<ArgumentNullException>();
+        }
+
+        private class Wrapper : DefaultTypeResolver
+        {
+            private readonly IEnumerable<Type> _types;
+
+            public Wrapper(IEnumerable<Type> types)
+            {
+                _types = types;
+            }
+
+            protected override IEnumerable<Type> GetTypesToEvaluate(Type requestedType)
+            {
+                return _types;
+            }
         }
     }
 
