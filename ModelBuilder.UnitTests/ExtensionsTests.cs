@@ -100,5 +100,166 @@
 
             action.Should().Throw<ArgumentNullException>();
         }
+
+        [Fact]
+        public void SetAutoPublicSetter()
+        {
+            var sut = new PropertySetters();
+            var expected = Guid.NewGuid();
+
+            var actual = sut.Set(x => x.AutoPublic, expected);
+
+            actual.AutoPublic.Should().Be(expected);
+            sut.AutoPublic.Should().Be(expected);
+        }
+
+        [Fact]
+        public void SetAutoReadonlySetter()
+        {
+            var sut = new PropertySetters();
+
+            var actual = sut.Set(x => x.AutoReadonly, null);
+
+            actual.AutoReadonly.Should().BeNull();
+            sut.AutoReadonly.Should().BeNull();
+        }
+
+        [Fact]
+        public void SetAutoPrivateSetter()
+        {
+            var sut = new PropertySetters();
+            var expected = Model.Create<int>();
+
+            var actual = sut.Set(x => x.AutoPrivate, expected);
+
+            actual.AutoPrivate.Should().Be(expected);
+            sut.AutoPrivate.Should().Be(expected);
+        }
+
+        [Fact]
+        public void SetAutoProtectedSetter()
+        {
+            var sut = new PropertySetters();
+            var expected = Model.Create<decimal>();
+
+            var actual = sut.Set(x => x.AutoProtected, expected);
+
+            actual.AutoProtected.Should().Be(expected);
+            sut.AutoProtected.Should().Be(expected);
+        }
+
+        [Fact]
+        public void SetAutoProtectedInternalSetter()
+        {
+            var sut = new PropertySetters();
+            var expected = Model.Create<Uri>();
+
+            var actual = sut.Set(x => x.AutoProtectedInternal, expected);
+
+            actual.AutoProtectedInternal.Should().BeEquivalentTo(expected);
+            sut.AutoProtectedInternal.Should().BeEquivalentTo(expected);
+        }
+
+        [Fact]
+        public void SetAutoInternalSetter()
+        {
+            var sut = new PropertySetters();
+            var expected = Model.Create<DateTimeOffset>();
+
+            var actual = sut.Set(x => x.AutoInternal, expected);
+
+            actual.AutoInternal.Should().Be(expected);
+            sut.AutoInternal.Should().Be(expected);
+        }
+
+        [Fact]
+        public void SetAutoPrivateInternalSetter()
+        {
+            var sut = new PropertySetters();
+            var expected = Model.Create<PropertySetters>();
+
+            var actual = sut.Set(x => x.AutoPrivateInternal, expected);
+
+            actual.AutoPrivateInternal.Should().BeEquivalentTo(expected);
+            sut.AutoPrivateInternal.Should().BeEquivalentTo(expected);
+        }
+
+        [Fact]
+        public void SetAutoInitSetter()
+        {
+            var sut = new PropertySetters();
+            var expected = Model.Create<ConsoleColor>();
+
+            var actual = sut.Set(x => x.AutoInit, expected);
+
+            actual.AutoInit.Should().Be(expected);
+            sut.AutoInit.Should().Be(expected);
+        }
+
+        [Fact]
+        public void SetBackingField()
+        {
+            var sut = new PropertySetters();
+            var expected = Model.Create<float>();
+
+            var actual = sut.Set(x => x._backingField, expected);
+
+            actual._backingField.Should().Be(expected);
+            sut._backingField.Should().Be(expected);
+        }
+
+        [Fact]
+        public void SetPublicBackingFieldSetter()
+        {
+            var sut = new PropertySetters();
+            var expected = Model.Create<float>();
+
+            var actual = sut.Set(x => x.PublicBackingField, expected);
+
+            actual.PublicBackingField.Should().Be(expected);
+            sut.PublicBackingField.Should().Be(expected);
+        }
+
+        [Fact]
+        public void SetPrivateBackingFieldSetter()
+        {
+            var sut = new PropertySetters();
+            var expected = Model.Create<float>();
+
+            var actual = sut.Set(x => x.PrivateBackingField, expected);
+
+            actual.PrivateBackingField.Should().Be(expected);
+            sut.PrivateBackingField.Should().Be(expected);
+        }
+
+        [Fact]
+        public void SetReadonlySetterThrowsException()
+        {
+            var sut = new PropertySetters();
+
+            Action action = () => sut.Set(x => x.Readonly, null);
+
+            action.Should().Throw<NotSupportedException>();
+        }
+
+        [Fact]
+        public void SetMethodThrowsException()
+        {
+            var sut = new PropertySetters();
+
+            Action action = () => sut.Set(x => x.ToString(), string.Empty);
+
+            action.Should().Throw<NotSupportedException>();
+        }
+
+        [Fact]
+        public void SetComplexExpressionThrowsException()
+        {
+            var sut = new PropertySetters();
+
+            Action action = () => sut.Set(x => x.AutoPublic.ToString(), string.Empty);
+
+            action.Should().Throw<NotSupportedException>();
+        }
     }
 }
