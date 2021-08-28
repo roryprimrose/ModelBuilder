@@ -34,6 +34,7 @@
     <Compile Update="BuildConfigurationExtensionsTests.*.cs">
       <DependentUpon>BuildConfigurationExtensionsTests.cs</DependentUpon>
     </Compile>
+    <Compile Remove="IsExternalInit.cs" Condition="'$(TargetFramework)' == 'net5.0'" />
   </ItemGroup>
 
   <ItemGroup>

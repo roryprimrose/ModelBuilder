@@ -117,13 +117,13 @@
                     return instance;
                 }
 
-                var propertyType = propertyInfo.ReflectedType;
-                if (propertyType == null)
+                var declaringType = propertyInfo.DeclaringType;
+                if (declaringType == null)
                 {
-                    throw new NotSupportedException("Could not find reflected type");
+                    throw new NotSupportedException("Could not find declaring type");
                 }
 
-                var backingField = propertyType.GetField($"<{propertyInfo.Name}>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance);
+                var backingField = declaringType.GetField($"<{propertyInfo.Name}>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance);
                 if (backingField != null && backingField.GetCustomAttribute<CompilerGeneratedAttribute>() != null)
                 {
                     member = backingField;

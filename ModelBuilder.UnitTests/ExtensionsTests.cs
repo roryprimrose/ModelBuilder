@@ -102,7 +102,27 @@
         }
 
         [Fact]
-        public void SetAutoPublicSetter()
+        public void SetExpressionThrowsExceptionWithNullAction()
+        {
+            var sut = new PropertySetters();
+
+            Action action = () => sut.Set(null!, true);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void SetExpressionThrowsExceptionWithNullInstance()
+        {
+            var sut = new PropertySetters();
+
+            Action action = () => ((PropertySetters)null!).Set(x => x.AutoPublic, Guid.Empty);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void SetExpressionAutoPublicSetter()
         {
             var sut = new PropertySetters();
             var expected = Guid.NewGuid();
@@ -114,7 +134,7 @@
         }
 
         [Fact]
-        public void SetAutoReadonlySetter()
+        public void SetExpressionAutoReadonlySetter()
         {
             var sut = new PropertySetters();
 
@@ -125,7 +145,7 @@
         }
 
         [Fact]
-        public void SetAutoPrivateSetter()
+        public void SetExpressionAutoPrivateSetter()
         {
             var sut = new PropertySetters();
             var expected = Model.Create<int>();
@@ -137,7 +157,7 @@
         }
 
         [Fact]
-        public void SetAutoProtectedSetter()
+        public void SetExpressionAutoProtectedSetter()
         {
             var sut = new PropertySetters();
             var expected = Model.Create<decimal>();
@@ -149,7 +169,7 @@
         }
 
         [Fact]
-        public void SetAutoProtectedInternalSetter()
+        public void SetExpressionAutoProtectedInternalSetter()
         {
             var sut = new PropertySetters();
             var expected = Model.Create<Uri>();
@@ -161,7 +181,7 @@
         }
 
         [Fact]
-        public void SetAutoInternalSetter()
+        public void SetExpressionAutoInternalSetter()
         {
             var sut = new PropertySetters();
             var expected = Model.Create<DateTimeOffset>();
@@ -173,7 +193,7 @@
         }
 
         [Fact]
-        public void SetAutoPrivateInternalSetter()
+        public void SetExpressionAutoPrivateInternalSetter()
         {
             var sut = new PropertySetters();
             var expected = Model.Create<PropertySetters>();
@@ -185,7 +205,7 @@
         }
 
         [Fact]
-        public void SetAutoInitSetter()
+        public void SetExpressionAutoInitSetter()
         {
             var sut = new PropertySetters();
             var expected = Model.Create<ConsoleColor>();
@@ -197,7 +217,7 @@
         }
 
         [Fact]
-        public void SetBackingField()
+        public void SetExpressionBackingField()
         {
             var sut = new PropertySetters();
             var expected = Model.Create<float>();
@@ -209,7 +229,7 @@
         }
 
         [Fact]
-        public void SetPublicBackingFieldSetter()
+        public void SetExpressionPublicBackingFieldSetter()
         {
             var sut = new PropertySetters();
             var expected = Model.Create<float>();
@@ -221,7 +241,7 @@
         }
 
         [Fact]
-        public void SetPrivateBackingFieldSetter()
+        public void SetExpressionPrivateBackingFieldSetter()
         {
             var sut = new PropertySetters();
             var expected = Model.Create<float>();
@@ -233,7 +253,7 @@
         }
 
         [Fact]
-        public void SetReadonlySetterThrowsException()
+        public void SetExpressionReadonlySetterThrowsException()
         {
             var sut = new PropertySetters();
 
@@ -243,17 +263,17 @@
         }
 
         [Fact]
-        public void SetMethodThrowsException()
+        public void SetExpressionMethodThrowsException()
         {
             var sut = new PropertySetters();
 
-            Action action = () => sut.Set(x => x.ToString(), string.Empty);
+            Action action = () => sut.Set(x => x.BackingFieldMethod(), default(float));
 
             action.Should().Throw<NotSupportedException>();
         }
 
         [Fact]
-        public void SetComplexExpressionThrowsException()
+        public void SetExpressionComplexExpressionThrowsException()
         {
             var sut = new PropertySetters();
 

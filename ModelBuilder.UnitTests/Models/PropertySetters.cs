@@ -21,7 +21,10 @@
         public ConsoleColor AutoInit { get; init; }
 
         internal float _backingField;
+        public float BackingFieldMethod() => _backingField;
+
         public float PublicBackingField { get => _backingField; set => _backingField = value; }
+        public float BackingField { get => _backingField; set => _backingField = value; }
 
         public float PrivateBackingField { get => _backingField; private set => _backingField = value; }
 
