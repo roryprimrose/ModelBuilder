@@ -43,7 +43,16 @@
         {
             var actual = Model.WriteLog(_output.WriteLine).Create(type);
 
-            actual.As<IEnumerable>().Should().NotBeEmpty();
+            var enumerable = actual.As<IEnumerable>();
+            var entryFound = false;
+
+            foreach (var value in enumerable)
+            {
+                entryFound = true;
+                break;
+            }
+
+            entryFound.Should().BeTrue();
         }
 
         [Fact]
