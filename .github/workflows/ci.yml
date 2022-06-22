@@ -123,7 +123,7 @@ jobs:
         name: packages
       
     - name: Setup nuget
-      uses: nuget/setup-nuget@v2
+      uses: nuget/setup-nuget@v1
 
     - name: Publish to MyGet.org
       env: 
@@ -159,7 +159,7 @@ jobs:
       run: Add-Content -Path ${env:GITHUB_ENV} "`nprojectName=$(${env:GITHUB_REPOSITORY}.substring(${env:GITHUB_REPOSITORY}.IndexOf('/') + 1))" -Encoding utf8
       
     - name: Setup nuget
-      uses: nuget/setup-nuget@v2
+      uses: nuget/setup-nuget@v1
       
     - name: Publish to GitHub
       env: 
