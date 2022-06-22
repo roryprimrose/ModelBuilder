@@ -295,7 +295,17 @@
             actual.Should().NotBeNull();
             actual.Should().BeOfType(expectedType);
             actual.Should().BeAssignableTo(requestedType);
-            actual.As<IEnumerable>().Should().BeEmpty();
+
+            var enumerable = actual.As<IEnumerable>();
+            var entryFound = false;
+
+            foreach (var value in enumerable)
+            {
+                entryFound = true;
+                break;
+            }
+
+            entryFound.Should().BeFalse();
         }
 
         [Fact]
@@ -369,7 +379,16 @@
 
             var converted = (IEnumerable) actual;
 
-            converted.Should().NotBeEmpty();
+            var enumerable = actual.As<IEnumerable>();
+            var entryFound = false;
+
+            foreach (var value in enumerable)
+            {
+                entryFound = true;
+                break;
+            }
+
+            entryFound.Should().BeTrue();
         }
 
         [Fact]
