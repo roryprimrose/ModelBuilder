@@ -1,73 +1,78 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+	<PropertyGroup>
+		<TargetFrameworks>netstandard2.0</TargetFrameworks>
 
-    <CodeAnalysisRuleSet>..\Solution Items\Application.ruleset</CodeAnalysisRuleSet>
-    <NeutralLanguage>en-US</NeutralLanguage>
-    <LangVersion>latest</LangVersion>
-    <Nullable>enable</Nullable>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <WarningsAsErrors />
+		<CodeAnalysisRuleSet>..\Solution Items\Application.ruleset</CodeAnalysisRuleSet>
+		<NeutralLanguage>en-US</NeutralLanguage>
+		<LangVersion>latest</LangVersion>
+		<Nullable>enable</Nullable>
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+		<WarningsAsErrors />
 
-    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
-    <Authors>rprimrose</Authors>
-    <Company>Neovolve</Company>
-    <Description>Provides build features for creating model data.</Description>
-    <PackageProjectUrl>https://github.com/roryprimrose/ModelBuilder</PackageProjectUrl>
-    <PackageTags>Model Builder DTO Testing</PackageTags>
-    <Copyright>Copyright © Neovolve 2016</Copyright>
-    <IncludeSymbols>True</IncludeSymbols>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <RepositoryUrl>https://github.com/roryprimrose/ModelBuilder</RepositoryUrl>
-  </PropertyGroup>
+		<DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+		<Authors>rprimrose</Authors>
+		<Company>Neovolve</Company>
+		<Description>Provides build features for creating model data.</Description>
+		<PackageProjectUrl>https://github.com/roryprimrose/ModelBuilder</PackageProjectUrl>
+		<PackageTags>Model Builder DTO Testing</PackageTags>
+		<Copyright>Copyright © Neovolve 2016</Copyright>
+		<IncludeSymbols>True</IncludeSymbols>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<RepositoryUrl>https://github.com/roryprimrose/ModelBuilder</RepositoryUrl>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="Resources\Companies.txt" />
-    <None Remove="Resources\Domains.txt" />
-    <None Remove="Resources\FemaleNames.txt" />
-    <None Remove="Resources\LastNames.txt" />
-    <None Remove="Resources\Locations.txt" />
-    <None Remove="Resources\MaleNames.txt" />
-    <None Remove="Resources\TimeZones.txt" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Include="..\README.md" Pack="true" PackagePath="\" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\Companies.txt" />
-    <EmbeddedResource Include="Resources\Domains.txt" />
-    <EmbeddedResource Include="Resources\FemaleNames.txt" />
-    <EmbeddedResource Include="Resources\LastNames.txt" />
-    <EmbeddedResource Include="Resources\Locations.txt" />
-    <EmbeddedResource Include="Resources\MaleNames.txt" />
-    <EmbeddedResource Include="Resources\TimeZones.txt" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <Compile Update="BuildConfigurationExtensions.*.cs">
-      <DependentUpon>BuildConfigurationExtensions.cs</DependentUpon>
-    </Compile>
-  </ItemGroup>
+	<ItemGroup>
+		<None Remove="Resources\Companies.txt" />
+		<None Remove="Resources\Domains.txt" />
+		<None Remove="Resources\FemaleNames.txt" />
+		<None Remove="Resources\LastNames.txt" />
+		<None Remove="Resources\Locations.txt" />
+		<None Remove="Resources\MaleNames.txt" />
+		<None Remove="Resources\TimeZones.txt" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="6.0.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-  </ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="Resources\Companies.txt" />
+		<EmbeddedResource Include="Resources\Domains.txt" />
+		<EmbeddedResource Include="Resources\FemaleNames.txt" />
+		<EmbeddedResource Include="Resources\LastNames.txt" />
+		<EmbeddedResource Include="Resources\Locations.txt" />
+		<EmbeddedResource Include="Resources\MaleNames.txt" />
+		<EmbeddedResource Include="Resources\TimeZones.txt" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Compile Update="Properties\Resources.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-  </ItemGroup>
+	<ItemGroup>
+		<Compile Update="BuildConfigurationExtensions.*.cs">
+			<DependentUpon>BuildConfigurationExtensions.cs</DependentUpon>
+		</Compile>
+	</ItemGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Update="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="7.0.3">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Update="Properties\Resources.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Resources.resx</DependentUpon>
+		</Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Update="Properties\Resources.resx">
+			<Generator>ResXFileCodeGenerator</Generator>
+			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+	</ItemGroup>
 
 </Project>
