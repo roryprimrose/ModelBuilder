@@ -90,6 +90,7 @@
             actual.State.Should().NotBeNullOrWhiteSpace();
             actual.Suburb.Should().NotBeNullOrWhiteSpace();
             actual.TimeZone.Should().NotBeNullOrWhiteSpace();
+            actual.Code.Should().NotBe(default);
         }
 
         [Fact]
