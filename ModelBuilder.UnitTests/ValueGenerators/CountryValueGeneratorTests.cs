@@ -81,18 +81,18 @@
 
         [Theory]
         [InlineData(typeof(Stream), "country", false)]
-        [InlineData(typeof(string), null!, false)]
+        [InlineData(typeof(string), null, false)]
         [InlineData(typeof(string), "", false)]
         [InlineData(typeof(string), "Stuff", false)]
         [InlineData(typeof(string), "country", true)]
         [InlineData(typeof(string), "Country", true)]
-        public void IsMatchReturnsExpectedValueTest(Type type, string referenceName, bool expected)
+        public void IsMatchReturnsExpectedValueTest(Type type, string? referenceName, bool expected)
         {
             var buildChain = Substitute.For<IBuildChain>();
 
             var sut = new Wrapper();
 
-            var actual = sut.RunIsMatch(type, referenceName, buildChain);
+            var actual = sut.RunIsMatch(type, referenceName!, buildChain);
 
             actual.Should().Be(expected);
         }

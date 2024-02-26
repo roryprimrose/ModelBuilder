@@ -157,7 +157,7 @@
         [InlineData(typeof(TimeSpan), "dob", false)]
         [InlineData(typeof(TimeZoneInfo), "dob", false)]
         [InlineData(typeof(string), "dob", false)]
-        [InlineData(typeof(DateTime), null!, false)]
+        [InlineData(typeof(DateTime), null, false)]
         [InlineData(typeof(DateTime), "", false)]
         [InlineData(typeof(DateTime), "Stuff", false)]
         [InlineData(typeof(DateTime), "dob", true)]
@@ -170,13 +170,13 @@
         [InlineData(typeof(DateTime), "born", true)]
         [InlineData(typeof(DateTime), "DateOfBirth", true)]
         [InlineData(typeof(DateTime), "dateofbirth", true)]
-        public void IsMatchReturnsWhetherTypeAndNameAreSupportedTest(Type type, string referenceName, bool expected)
+        public void IsMatchReturnsWhetherTypeAndNameAreSupportedTest(Type type, string? referenceName, bool expected)
         {
             var buildChain = Substitute.For<IBuildChain>();
 
             var sut = new Wrapper();
 
-            var actual = sut.RunIsMatch(type, referenceName, buildChain);
+            var actual = sut.RunIsMatch(type, referenceName!, buildChain);
 
             actual.Should().Be(expected);
         }

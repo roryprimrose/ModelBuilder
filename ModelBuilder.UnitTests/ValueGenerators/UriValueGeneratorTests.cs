@@ -44,7 +44,7 @@
         }
 
         [Theory]
-        [InlineData(typeof(string), null!, false)]
+        [InlineData(typeof(string), null, false)]
         [InlineData(typeof(string), "", false)]
         [InlineData(typeof(string), "Stuff", false)]
         [InlineData(typeof(bool), "Uri", false)]
@@ -54,12 +54,12 @@
         [InlineData(typeof(string), "Url", true)]
         [InlineData(typeof(string), "URL", true)]
         [InlineData(typeof(string), "url", true)]
-        [InlineData(typeof(Uri), null!, true)]
-        public void IsMatchReturnsWhetherScenarioIsValidTest(Type type, string referenceName, bool supported)
+        [InlineData(typeof(Uri), null, true)]
+        public void IsMatchReturnsWhetherScenarioIsValidTest(Type type, string? referenceName, bool supported)
         {
             var sut = new Wrapper();
 
-            var actual = sut.RunIsMatch(type, referenceName, null!);
+            var actual = sut.RunIsMatch(type, referenceName!, null!);
 
             actual.Should().Be(supported);
         }

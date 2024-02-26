@@ -97,7 +97,7 @@
         }
 
         [Theory]
-        [InlineData(null!, false)]
+        [InlineData(null, false)]
         [InlineData("", false)]
         [InlineData("other", false)]
         [InlineData("someCount", false)]
@@ -106,13 +106,13 @@
         [InlineData("Length", true)]
         [InlineData("count", true)]
         [InlineData("Count", true)]
-        public void IsMatchEvaluatesRequestedReferenceNameTest(string referenceName, bool isSupported)
+        public void IsMatchEvaluatesRequestedReferenceNameTest(string? referenceName, bool isSupported)
         {
             var buildChain = Substitute.For<IBuildChain>();
 
             var sut = new Wrapper();
 
-            var actual = sut.RunIsMatch(typeof(int), referenceName, buildChain);
+            var actual = sut.RunIsMatch(typeof(int), referenceName!, buildChain);
 
             actual.Should().Be(isSupported);
         }

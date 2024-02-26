@@ -168,13 +168,13 @@
         }
 
         [Theory]
-        [InlineData(null!)]
+        [InlineData(null)]
         [InlineData("")]
-        public void AddIgnoreRuleWithStringExpressionThrowsExceptionWithInvalidExpression(string expression)
+        public void AddIgnoreRuleWithStringExpressionThrowsExceptionWithInvalidExpression(string? expression)
         {
             var sut = new BuildConfiguration();
 
-            Action action = () => sut.AddIgnoreRule(expression);
+            Action action = () => sut.AddIgnoreRule(expression!);
 
             action.Should().Throw<ArgumentNullException>();
         }

@@ -211,8 +211,8 @@
         [InlineData("Australia", "Canberra")]
         [InlineData("Other", "Canberra")] // Matches on city first then country
         [InlineData("", "Canberra")]
-        [InlineData(null!, "Canberra")]
-        public void GenerateReturnsValueMatchingCityValuesTest(string country, string city)
+        [InlineData(null, "Canberra")]
+        public void GenerateReturnsValueMatchingCityValuesTest(string? country, string city)
         {
             var address = new Address
             {
@@ -267,13 +267,13 @@
 
         [Theory]
         [InlineData(typeof(Stream), "timezone", false)]
-        [InlineData(typeof(string), null!, false)]
+        [InlineData(typeof(string), null, false)]
         [InlineData(typeof(string), "", false)]
         [InlineData(typeof(string), "Stuff", false)]
         [InlineData(typeof(string), "timezone", true)]
         [InlineData(typeof(string), "TimeZone", true)]
         [InlineData(typeof(string), "timeZone", true)]
-        public void IsMatchReturnsWhetherTypeAndNameAreSupportedTest(Type type, string referenceName, bool expected)
+        public void IsMatchReturnsWhetherTypeAndNameAreSupportedTest(Type type, string? referenceName, bool expected)
         {
             var address = new Address();
             var buildChain = new BuildHistory();
@@ -282,7 +282,7 @@
 
             var sut = new Wrapper();
 
-            var actual = sut.RunIsMatch(type, referenceName, buildChain);
+            var actual = sut.RunIsMatch(type, referenceName!, buildChain);
 
             actual.Should().Be(expected);
         }

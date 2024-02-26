@@ -58,12 +58,12 @@
         }
 
         [Theory]
-        [InlineData(null!)]
+        [InlineData(null)]
         [InlineData("")]
-        public void ThrowsExceptionWhenCreatedWithInvalidExpression(string expression)
+        public void ThrowsExceptionWhenCreatedWithInvalidExpression(string? expression)
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Action action = () => new RegexIgnoreRule(expression);
+            Action action = () => new RegexIgnoreRule(expression!);
 
             action.Should().Throw<ArgumentNullException>();
         }

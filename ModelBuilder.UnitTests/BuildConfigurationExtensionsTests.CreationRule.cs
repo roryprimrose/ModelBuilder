@@ -391,9 +391,9 @@
         }
 
         [Theory]
-        [InlineData(null!)]
+        [InlineData(null)]
         [InlineData("")]
-        public void AddCreationRuleWithStringExpressionThrowsExceptionWithInvalidExpression(string expression)
+        public void AddCreationRuleWithStringExpressionThrowsExceptionWithInvalidExpression(string? expression)
         {
             var targetType = typeof(string);
             var value = Guid.NewGuid().ToString();
@@ -401,7 +401,7 @@
 
             var sut = new BuildConfiguration();
 
-            Action action = () => sut.AddCreationRule(targetType, expression, value, priority);
+            Action action = () => sut.AddCreationRule(targetType, expression!, value, priority);
 
             action.Should().Throw<ArgumentNullException>();
         }

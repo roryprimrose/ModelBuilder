@@ -239,15 +239,15 @@
         }
 
         [Theory]
-        [InlineData(null!)]
+        [InlineData(null)]
         [InlineData("")]
-        public void ThrowsExceptionWhenCreatedWithInvalidStringExpression(string expression)
+        public void ThrowsExceptionWhenCreatedWithInvalidStringExpression(string? expression)
         {
             var value = Guid.NewGuid().ToString();
             var priority = Environment.TickCount;
 
             // ReSharper disable once ObjectCreationAsStatement
-            Action action = () => new RegexCreationRule(typeof(string), expression, value, priority);
+            Action action = () => new RegexCreationRule(typeof(string), expression!, value, priority);
 
             action.Should().Throw<ArgumentNullException>();
         }

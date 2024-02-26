@@ -654,7 +654,7 @@
         }
 
         [Fact]
-        public void UsesBuildLogInstancePerExecutionPipeline()
+        public async Task UsesBuildLogInstancePerExecutionPipeline()
         {
             var configuration = Model.UsingDefaultConfiguration();
 
@@ -678,35 +678,45 @@
                 tasks.Add(task);
             }
 
-            Task.WhenAll(tasks).Wait();
+            await Task.WhenAll(tasks);
 
             for (var index = 0; index < maxTasks; index++)
             {
-                _output.WriteLine(tasks[index].Result + Environment.NewLine);
+                var result = await tasks[index];
+
+                _output.WriteLine(result + Environment.NewLine);
             }
         }
 
+        // ReSharper disable once ClassNeverInstantiated.Local
+        [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Local")]
         private class Bottom
         {
             public Top? Root { get; set; }
 
             public string? Value { get; set; }
         }
-
+        
+        // ReSharper disable once ClassNeverInstantiated.Local
+        [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Local")]
         private class Child
         {
             public Bottom? End { get; set; }
 
             public string? Value { get; set; }
         }
-
+        
+        // ReSharper disable once ClassNeverInstantiated.Local
+        [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Local")]
         private class Looper
         {
             public Looper? Other { get; set; }
 
             public string? Stuff { get; set; }
         }
-
+        
+        // ReSharper disable once ClassNeverInstantiated.Local
+        [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Local")]
         private class Top
         {
             public Child? Next { get; set; }
