@@ -69,6 +69,14 @@ namespace ModelBuilder
 
             propertyInfo = propertyInfo ?? throw new ArgumentNullException(nameof(propertyInfo));
 
+            // Special case for SyncRoot properties. They are found on some old collection types
+            if (propertyInfo.Name == "SyncRoot")
+            {
+                // This is a property that is used for locking and often points to itself
+                // As it is used for locking, we really should not be modifying this value
+                return true;
+            }
+
             var type = instance.GetType();
 
             // Check if there is a matching ignore rule
@@ -88,6 +96,15 @@ namespace ModelBuilder
             }
 
             var propertyValue = propertyInfo.GetValue(instance, null);
+
+            if (AreEqual(propertyValue, instance))
+            {
+                // This is a property that references its own instance
+                // We need to leave this one alone because there is likely a design reason for this self-referencing design
+                // and we also don't want to get into infinite loops trying to create/populate itself
+                return true;
+            }
+
             var defaultValue = GetDefaultValue(propertyInfo.PropertyType);
 
             if (AreEqual(propertyValue, defaultValue))
@@ -202,6 +219,11 @@ namespace ModelBuilder
                 return false;
             }
 
+            if (ReferenceEquals(first, second))
+            {
+                return true;
+            }
+
             if (first.Equals(second))
             {
                 return true;
@@ -214,9 +236,9 @@ namespace ModelBuilder
             Type targetType)
         {
             return from x in targetType.GetProperties(BindingFlags.Instance | BindingFlags.Public)
-                   where CanPopulate(x)
-                   orderby GetMaximumOrderPriority(configuration, x) descending
-                   select x;
+                where CanPopulate(x)
+                orderby GetMaximumOrderPriority(configuration, x) descending
+                select x;
         }
 
         /// <summary>
@@ -229,7 +251,8 @@ namespace ModelBuilder
         {
             var setMethod = propertyInfo.GetSetMethod();
 
-            if (setMethod != null)
+            if (setMethod != null
+                && setMethod.IsPublic)
             {
                 // This is a publicly settable instance property
                 // Against this we can assign both value and reference types
@@ -238,6 +261,12 @@ namespace ModelBuilder
 
             // There is no set method. This is a read-only property
             var getMethod = propertyInfo.GetGetMethod()!;
+
+            if (getMethod.IsPublic == false)
+            {
+                // We can't use this property to obtain existing values value to either determine whether we should write to it or populate child properties on reference types
+                return false;
+            }
 
             if (getMethod.ReturnType.IsValueType)
             {
@@ -268,7 +297,7 @@ namespace ModelBuilder
                 {
                     return _defaultValues.GetOrAdd(type, x => null);
                 }
-                
+
                 if (type.IsValueType == false)
                 {
                     // This is a reference type which should also default to null
@@ -291,9 +320,9 @@ namespace ModelBuilder
             }
 
             var matchingRules = from x in configuration.ExecuteOrderRules
-                                where x.IsMatch(property)
-                                orderby x.Priority descending
-                                select x;
+                where x.IsMatch(property)
+                orderby x.Priority descending
+                select x;
 
             var matchingRule = matchingRules.FirstOrDefault();
 

@@ -48,9 +48,12 @@
 
             type = type ?? throw new ArgumentNullException(nameof(type));
 
+            // Resolve the type that should be created
+            var targetType = executeStrategy.Configuration.TypeResolver.GetBuildType(executeStrategy.Configuration, type);
+            
             var match = GetCapability(executeStrategy, buildRequirement, x => x.GetBuildCapability(
                 executeStrategy.Configuration, executeStrategy.BuildChain,
-                type), type, null);
+                targetType), type, null);
 
             return match;
         }
@@ -65,7 +68,7 @@
             executeStrategy = executeStrategy ?? throw new ArgumentNullException(nameof(executeStrategy));
 
             parameterInfo = parameterInfo ?? throw new ArgumentNullException(nameof(parameterInfo));
-
+            
             var match = GetCapability(executeStrategy, buildRequirement, x => x.GetBuildCapability(
                 executeStrategy.Configuration, executeStrategy.BuildChain,
                 parameterInfo), parameterInfo.ParameterType, parameterInfo.Name);

@@ -19,6 +19,7 @@
             configuration.ConstructorResolver = new DefaultConstructorResolver(CacheLevel.Global);
             configuration.PropertyResolver = new DefaultPropertyResolver(CacheLevel.Global);
 
+            AddTypeMappings(configuration);
             AddExecuteOrderRules(configuration);
             AddTypeCreators(configuration);
             AddValueGenerators(configuration);
@@ -61,6 +62,11 @@
             configuration.AddTypeCreator<EnumerableTypeCreator>();
             configuration.AddTypeCreator<StructTypeCreator>();
             configuration.AddTypeCreator<DefaultTypeCreator>();
+        }
+
+        private static void AddTypeMappings(IBuildConfiguration configuration)
+        {
+            configuration.AddTypeMappingRule<object, string>();
         }
 
         private static void AddValueGenerators(IBuildConfiguration configuration)

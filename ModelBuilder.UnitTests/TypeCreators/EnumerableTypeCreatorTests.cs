@@ -88,7 +88,7 @@
 
             var sut = new EnumerableTypeCreator();
 
-            Action action = () => sut.CanCreate(configuration, null!, (ParameterInfo) null!);
+            Action action = () => sut.CanCreate(configuration, null!, (ParameterInfo)null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -103,7 +103,7 @@
 
             var sut = new EnumerableTypeCreator();
 
-            Action action = () => sut.CanCreate(configuration, null!, (PropertyInfo) null!);
+            Action action = () => sut.CanCreate(configuration, null!, (PropertyInfo)null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -118,7 +118,7 @@
 
             var sut = new EnumerableTypeCreator();
 
-            Action action = () => sut.CanCreate(configuration, null!, (Type) null!);
+            Action action = () => sut.CanCreate(configuration, null!, (Type)null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -184,7 +184,7 @@
             var sut = new EnumerableTypeCreator();
             var configuration = Substitute.For<IBuildConfiguration>();
 
-            Action action = () => sut.CanPopulate(configuration, null!, (ParameterInfo) null!);
+            Action action = () => sut.CanPopulate(configuration, null!, (ParameterInfo)null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -195,7 +195,7 @@
             var sut = new EnumerableTypeCreator();
             var configuration = Substitute.For<IBuildConfiguration>();
 
-            Action action = () => sut.CanPopulate(configuration, null!, (PropertyInfo) null!);
+            Action action = () => sut.CanPopulate(configuration, null!, (PropertyInfo)null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -206,7 +206,7 @@
             var sut = new EnumerableTypeCreator();
             var configuration = Substitute.For<IBuildConfiguration>();
 
-            Action action = () => sut.CanPopulate(configuration, null!, (Type) null!);
+            Action action = () => sut.CanPopulate(configuration, null!, (Type)null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -240,7 +240,8 @@
 
             var sut = new EnumerableTypeCreatorWrapper();
 
-            Action action = () => sut.CreateItem(typeof(Person), null!, person);
+            Action action = () =>
+                sut.CreateItem(typeof(Person), typeof(List<string>).GetMethod("Add")!, null!, new[] { person });
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -347,7 +348,7 @@
 
             actual.Should().BeSameAs(expected);
 
-            var set = (Collection<Guid>) actual;
+            var set = (Collection<Guid>)actual;
 
             set.Count.Should().BeGreaterOrEqualTo(sut.MinCount);
             set.Count.Should().BeLessOrEqualTo(sut.MaxCount);
@@ -377,7 +378,7 @@
 
             sut.Populate(executeStrategy, actual);
 
-            var converted = (IEnumerable) actual;
+            var converted = (IEnumerable)actual;
 
             var enumerable = actual.As<IEnumerable>();
             var entryFound = false;
@@ -410,7 +411,7 @@
 
             actual.Should().BeSameAs(expected);
 
-            var set = (List<Guid>) actual;
+            var set = (List<Guid>)actual;
 
             set.Count.Should().BeGreaterOrEqualTo(sut.MinCount);
             set.Count.Should().BeLessOrEqualTo(sut.MaxCount);
@@ -426,7 +427,7 @@
 
             var sut = new IncrementingEnumerableTypeCreator();
 
-            var result = (List<int>) sut.Populate(executeStrategy, actual);
+            var result = (List<int>)sut.Populate(executeStrategy, actual);
 
             var baseValue = result[0];
             var expected = new List<int>(result.Count);
@@ -492,9 +493,10 @@
                 return Create(executeStrategy, type, referenceName, args);
             }
 
-            public void CreateItem(Type type, IExecuteStrategy executeStrategy, object item)
+            public void CreateItem(Type type, MethodInfo addMember, IExecuteStrategy executeStrategy,
+                object?[]? previousValues)
             {
-                CreateChildItem(type, executeStrategy, item);
+                CreateChildItem(type, addMember, executeStrategy, previousValues);
             }
 
             public object? CreateValue(IExecuteStrategy executeStrategy, Type type, string? referenceName,

@@ -19,8 +19,12 @@
             Justification = "The code is written in this way to validate a test scenario.")]
         public Guid CannotSetValue => Guid.Empty;
 
+        public Guid PrivateGet { private get; set; }
+
         public Guid PrivateSet { get; }
 
         public Guid Public { get; set; }
+
+        public Guid WriteOnly { set { } }
     }
 }

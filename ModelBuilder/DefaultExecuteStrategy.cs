@@ -270,7 +270,9 @@
 
             instance = instance ?? throw new ArgumentNullException(nameof(instance));
 
-            if (propertyInfo.GetSetMethod() != null)
+            var setMethod = propertyInfo.GetSetMethod();
+
+            if (setMethod != null && setMethod.IsPublic)
             {
                 // We can assign to this property
                 Log.CreatingProperty(propertyInfo, instance);

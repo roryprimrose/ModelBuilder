@@ -4,6 +4,7 @@
     using System.Collections;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.Collections.Specialized;
     using System.Linq;
     using FluentAssertions;
     using ModelBuilder.TypeCreators;
@@ -26,7 +27,6 @@
         [InlineData(typeof(Collection<string>))]
         [InlineData(typeof(IList<string>))]
         [InlineData(typeof(List<string>))]
-        [InlineData(typeof(LinkedList<string>))]
         [InlineData(typeof(InheritedGenericCollection))]
         [InlineData(typeof(HashSet<string>))]
         [InlineData(typeof(IList<KeyValuePair<string, Guid>>))]
@@ -39,6 +39,14 @@
         [InlineData(typeof(IReadOnlyList<int>))]
         [InlineData(typeof(IDictionary<string, Person>))]
         [InlineData(typeof(Dictionary<string, Person>))]
+        [InlineData(typeof(SortedDictionary<string, Person>))]
+        [InlineData(typeof(SortedList<string, Person>))]
+        [InlineData(typeof(IDictionary))]
+        [InlineData(typeof(Hashtable))]
+        [InlineData(typeof(SortedList))]
+        [InlineData(typeof(IOrderedDictionary))]
+        [InlineData(typeof(OrderedDictionary))]
+        [InlineData(typeof(ListDictionary))]
         public void CanCreateEnumerableTypes(Type type)
         {
             var actual = Model.WriteLog(_output.WriteLine).Create(type);

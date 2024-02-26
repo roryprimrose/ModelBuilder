@@ -243,10 +243,6 @@ namespace ModelBuilder.TypeCreators
         /// <returns>The type to build.</returns>
         protected virtual Type ResolveBuildType(IBuildConfiguration buildConfiguration, Type requestedType)
         {
-            requestedType = requestedType ?? throw new ArgumentNullException(nameof(requestedType));
-
-            buildConfiguration = buildConfiguration ?? throw new ArgumentNullException(nameof(buildConfiguration));
-
             return buildConfiguration.TypeResolver.GetBuildType(buildConfiguration, requestedType);
         }
 

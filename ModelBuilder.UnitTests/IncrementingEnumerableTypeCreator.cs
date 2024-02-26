@@ -2,6 +2,7 @@
 {
     using System;
     using System.Globalization;
+    using System.Reflection;
     using ModelBuilder.TypeCreators;
 
     public class IncrementingEnumerableTypeCreator : EnumerableTypeCreator
@@ -46,21 +47,23 @@
             return generator.IsSupported(baseType);
         }
 
-        protected override object? CreateChildItem(Type type, IExecuteStrategy executeStrategy, object? previousItem)
+        protected override object?[]? CreateChildItem(Type type, MethodInfo addMember, IExecuteStrategy executeStrategy,
+            object?[]? previousValues)
         {
-            if (previousItem == null!)
+            if (previousValues == null
+                || previousValues.Length > 1)
             {
-                return base.CreateChildItem(type, executeStrategy, null!);
+                return base.CreateChildItem(type, addMember, executeStrategy, null);
             }
 
             // Use a double as the base type then convert later
-            var value = Convert.ToDouble(previousItem, CultureInfo.InvariantCulture);
+            var value = Convert.ToDouble(previousValues[0], CultureInfo.InvariantCulture);
 
             value++;
 
             var converted = Convert.ChangeType(value, type, CultureInfo.InvariantCulture);
 
-            return converted;
+            return new[] { converted };
         }
     }
 }

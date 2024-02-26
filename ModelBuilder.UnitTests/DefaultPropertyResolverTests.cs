@@ -1,6 +1,7 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
+    using System.Collections;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Diagnostics.CodeAnalysis;
@@ -29,6 +30,19 @@
         {
             var configuration = Substitute.For<IBuildConfiguration>();
             var type = typeof(PrivateProp);
+
+            var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
+
+            var actual = sut.GetOrderedProperties(configuration, type);
+
+            actual.Should().NotContain(x => x.Name == "Person");
+        }
+
+        [Fact]
+        public void GetOrderedPropertiesDoesNotReturnReadOnlyProperty()
+        {
+            var configuration = Substitute.For<IBuildConfiguration>();
+            var type = typeof(ReadOnlyProp);
 
             var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
 
@@ -89,6 +103,19 @@
             actual.Should().NotContain(x => x.Name == nameof(StaticSetter.Person));
         }
 
+        [Fact]
+        public void GetOrderedPropertiesDoesNotReturnWriteOnlyProperty()
+        {
+            var configuration = Substitute.For<IBuildConfiguration>();
+            var type = typeof(ReadOnlyProp);
+
+            var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
+
+            var actual = sut.GetOrderedProperties(configuration, type);
+
+            actual.Should().NotContain(x => x.Name == "Person");
+        }
+
         [Theory]
         [InlineData(CacheLevel.Global)]
         [InlineData(CacheLevel.PerInstance)]
@@ -121,6 +148,34 @@
         }
 
         [Fact]
+        public void GetOrderedPropertiesReturnsPrivateGetProperty()
+        {
+            // We can use this because it has a public setter which we can write to
+            var configuration = Substitute.For<IBuildConfiguration>();
+            var type = typeof(PrivateGetProp);
+
+            var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
+
+            var actual = sut.GetOrderedProperties(configuration, type);
+
+            actual.Should().Contain(x => x.Name == "Person");
+        }
+
+        [Fact]
+        public void GetOrderedPropertiesReturnsPrivateSetProperty()
+        {
+            // In this case the property has a public get of a reference type that we can populate
+            var configuration = Substitute.For<IBuildConfiguration>();
+            var type = typeof(PrivateSetProp);
+
+            var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
+
+            var actual = sut.GetOrderedProperties(configuration, type);
+
+            actual.Should().Contain(x => x.Name == "Person");
+        }
+
+        [Fact]
         public void GetOrderedPropertiesReturnsPropertiesInDescendingOrder()
         {
             var configuration = new BuildConfiguration()
@@ -146,7 +201,7 @@
             var configuration = Substitute.For<IBuildConfiguration>();
             var type = typeof(EmailParts);
 
-            configuration.ExecuteOrderRules.Returns((ICollection<IExecuteOrderRule>) null!);
+            configuration.ExecuteOrderRules.Returns((ICollection<IExecuteOrderRule>)null!);
 
             var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
 
@@ -231,7 +286,7 @@
             {
                 value
             };
-            var constructor = instance.GetType().GetConstructor(new[] {typeof(string)});
+            var constructor = instance.GetType().GetConstructor(new[] { typeof(string) });
 
             configuration.ConstructorResolver.Returns(constructorResolver);
             constructorResolver.Resolve(typeof(Optionals), args).Returns(constructor);
@@ -258,7 +313,7 @@
             {
                 Guid.NewGuid().ToString()
             };
-            var constructor = instance.GetType().GetConstructor(new[] {typeof(string)});
+            var constructor = instance.GetType().GetConstructor(new[] { typeof(string) });
 
             configuration.ConstructorResolver.Returns(constructorResolver);
             constructorResolver.Resolve(typeof(Optionals), args).Returns(constructor);
@@ -356,14 +411,14 @@
         public void IsIgnoredReturnsFalseWhenParameterDoesNotMatchStructPropertyWithNameMatch()
         {
             var configuration = Model.UsingDefaultConfiguration();
-            var value = new StructModel {FirstName = Guid.NewGuid().ToString()};
+            var value = new StructModel { FirstName = Guid.NewGuid().ToString() };
             var model = new StructMatchingNameWrapper<StructModel>(value);
             var propertyInfo =
                 typeof(StructMatchingNameWrapper<StructModel>).GetProperty(nameof(StructMatchingNameWrapper<StructModel>
                     .Value))!;
             var args = new object?[]
             {
-                new StructModel {FirstName = Guid.NewGuid().ToString()}
+                new StructModel { FirstName = Guid.NewGuid().ToString() }
             };
 
             var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
@@ -377,14 +432,14 @@
         public void IsIgnoredReturnsFalseWhenParameterDoesNotMatchStructPropertyWithNameMismatch()
         {
             var configuration = Model.UsingDefaultConfiguration();
-            var item = new StructModel {FirstName = Guid.NewGuid().ToString()};
+            var item = new StructModel { FirstName = Guid.NewGuid().ToString() };
             var model = new StructMismatchingNameWrapper<StructModel>(item);
             var propertyInfo =
                 typeof(StructMismatchingNameWrapper<StructModel>).GetProperty(
                     nameof(StructMismatchingNameWrapper<StructModel>.Value))!;
             var args = new object?[]
             {
-                new StructModel {FirstName = Guid.NewGuid().ToString()}
+                new StructModel { FirstName = Guid.NewGuid().ToString() }
             };
 
             var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
@@ -459,7 +514,7 @@
         public void IsIgnoredReturnsFalseWhenParameterMatchesStructPropertyWithNameMismatch()
         {
             var configuration = Model.UsingDefaultConfiguration();
-            var item = new StructModel {FirstName = Guid.NewGuid().ToString()};
+            var item = new StructModel { FirstName = Guid.NewGuid().ToString() };
             var model = new StructMismatchingNameWrapper<StructModel>(item);
             var propertyInfo =
                 typeof(StructMismatchingNameWrapper<StructModel>).GetProperty(
@@ -717,6 +772,39 @@
         }
 
         [Fact]
+        public void IsIgnoredReturnsTrueForSyncRootProperties()
+        {
+            var configuration = Substitute.For<IBuildConfiguration>();
+            var instance = new Hashtable();
+            var type = typeof(Hashtable);
+            var propertyInfo = type.GetProperties().First(x => x.Name == nameof(Hashtable.SyncRoot));
+
+            var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
+
+            var actual = sut.IsIgnored(configuration, instance, propertyInfo, null!);
+
+            actual.Should().BeTrue();
+        }
+
+        [Fact]
+        public void IsIgnoredReturnsTrueWhenExistingValueIsSameAsInstance()
+        {
+            var configuration = Substitute.For<IBuildConfiguration>();
+            var instance = new SelfReferrer();
+
+            instance.Self = instance;
+
+            var type = typeof(SelfReferrer);
+            var propertyInfo = type.GetProperties().First(x => x.Name == nameof(SelfReferrer.Self));
+
+            var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
+
+            var actual = sut.IsIgnored(configuration, instance, propertyInfo, null!);
+
+            actual.Should().BeTrue();
+        }
+
+        [Fact]
         public void IsIgnoredReturnsTrueWhenIgnoreRuleMatched()
         {
             var configuration = Model.UsingDefaultConfiguration()!.AddIgnoreRule<Person>(x => x.Address!);
@@ -795,7 +883,7 @@
         public void IsIgnoredReturnsTrueWhenParameterMatchesStructPropertyWithNameMatch()
         {
             var configuration = Model.UsingDefaultConfiguration();
-            var value = new StructModel {FirstName = Guid.NewGuid().ToString()};
+            var value = new StructModel { FirstName = Guid.NewGuid().ToString() };
             var model = new StructMatchingNameWrapper<StructModel>(value);
             var propertyInfo =
                 typeof(StructMatchingNameWrapper<StructModel>).GetProperty(nameof(StructMatchingNameWrapper<StructModel>
@@ -951,9 +1039,19 @@
             public T Value { get; set; }
         }
 
+        private class PrivateGetProp
+        {
+            public Person? Person { set; private get; }
+        }
+
         private class PrivateProp
         {
             private Person? Person { set; get; }
+        }
+
+        private class PrivateSetProp
+        {
+            public Person? Person { private set; get; }
         }
 
         private class PrivateString
@@ -969,6 +1067,11 @@
         private class ReadOnlyModelParent
         {
             public ReadOnlyModel? Child { get; set; }
+        }
+
+        private class ReadOnlyProp
+        {
+            private Person? Person { get; } = null;
         }
 
         private class StaticGetter
@@ -999,6 +1102,11 @@
             }
 
             public T Value { get; set; }
+        }
+
+        private class WriteOnlyProp
+        {
+            private Person? Person { set { } }
         }
     }
 }
