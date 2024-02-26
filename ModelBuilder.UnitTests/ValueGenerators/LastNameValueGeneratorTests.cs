@@ -25,7 +25,7 @@
 
             var sut = new Wrapper();
 
-            var actual = (string) sut.RunGenerate(typeof(string), "LastName", executeStrategy);
+            var actual = (string)sut.RunGenerate(typeof(string), "LastName", executeStrategy);
 
             TestData.LastNames.Any(x => x == actual).Should().BeTrue();
         }

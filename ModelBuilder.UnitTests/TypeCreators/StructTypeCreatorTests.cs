@@ -89,6 +89,28 @@
         }
 
         [Fact]
+        public void CreateInstanceReturnsNewValueWithArguments()
+        {
+            var key = Guid.NewGuid();
+            var value = new Person();
+
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+            var referenceName = Guid.NewGuid().ToString();
+            var type = typeof(KeyValuePair<Guid, Person>);
+
+            var sut = new Wrapper();
+
+            var actual = sut.RunCreateInstance(executeStrategy, type, referenceName, key, value);
+
+            actual.Should().BeOfType<KeyValuePair<Guid, Person>>();
+
+            var pair = actual.As<KeyValuePair<Guid, Person>>();
+
+            pair.Key.Should().Be(key);
+            pair.Value.Should().Be(value);
+        }
+
+        [Fact]
         public void CreateInstanceReturnsNewValueWithCreatedArguments()
         {
             var key = Guid.NewGuid();
@@ -114,28 +136,6 @@
             var sut = new Wrapper();
 
             var actual = sut.RunCreateInstance(executeStrategy, type, referenceName);
-
-            actual.Should().BeOfType<KeyValuePair<Guid, Person>>();
-
-            var pair = actual.As<KeyValuePair<Guid, Person>>();
-
-            pair.Key.Should().Be(key);
-            pair.Value.Should().Be(value);
-        }
-
-        [Fact]
-        public void CreateInstanceReturnsNewValueWithArguments()
-        {
-            var key = Guid.NewGuid();
-            var value = new Person();
-
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-            var referenceName = Guid.NewGuid().ToString();
-            var type = typeof(KeyValuePair<Guid, Person>);
-
-            var sut = new Wrapper();
-
-            var actual = sut.RunCreateInstance(executeStrategy, type, referenceName, key, value);
 
             actual.Should().BeOfType<KeyValuePair<Guid, Person>>();
 

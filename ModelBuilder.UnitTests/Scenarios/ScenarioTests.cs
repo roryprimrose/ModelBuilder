@@ -303,10 +303,10 @@
             var actual = Model.WriteLog<WithConstructorParameters>(_output.WriteLine).Create(args);
 
             actual.First.Should().BeSameAs(args[0]);
-            actual.Id.Should().Be((Guid) args[1]);
-            actual.RefNumber.Should().Be((int?) args[2]);
-            actual.Number.Should().Be((int) args[3]);
-            actual.Value.Should().Be((bool) args[4]);
+            actual.Id.Should().Be((Guid)args[1]);
+            actual.RefNumber.Should().Be((int?)args[2]);
+            actual.Number.Should().Be((int)args[3]);
+            actual.Value.Should().Be((bool)args[4]);
         }
 
         [Fact]
@@ -457,8 +457,8 @@
 
             var actual = Model.WriteLog<WithMixedValueParameters>(_output.WriteLine).Create(args);
 
-            actual.FirstName.Should().NotBe((string) args[0]);
-            actual.LastName.Should().NotBe((string) args[0]);
+            actual.FirstName.Should().NotBe((string)args[0]);
+            actual.LastName.Should().NotBe((string)args[0]);
         }
 
         [Fact]
@@ -696,7 +696,7 @@
 
             public string? Value { get; set; }
         }
-        
+
         // ReSharper disable once ClassNeverInstantiated.Local
         [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Local")]
         private class Child
@@ -705,7 +705,7 @@
 
             public string? Value { get; set; }
         }
-        
+
         // ReSharper disable once ClassNeverInstantiated.Local
         [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Local")]
         private class Looper
@@ -714,7 +714,7 @@
 
             public string? Stuff { get; set; }
         }
-        
+
         // ReSharper disable once ClassNeverInstantiated.Local
         [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Local")]
         private class Top

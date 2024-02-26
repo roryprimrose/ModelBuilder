@@ -38,7 +38,7 @@
         {
             var sut = new Wrapper();
 
-            var actual = (string) sut.RunGenerate(typeof(string), referenceName, null!);
+            var actual = (string)sut.RunGenerate(typeof(string), referenceName, null!);
 
             TestData.Domains.Any(x => actual.Contains(x, StringComparison.OrdinalIgnoreCase)).Should().BeTrue();
         }

@@ -125,7 +125,7 @@ namespace ModelBuilder.UnitTests.ValueGenerators
         {
             var sut = new Wrapper<string>(
                 NameExpression.FirstName,
-                (Type) null!);
+                (Type)null!);
 
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
             Action action = () => sut.ReadValue(NameExpression.LastName, null!);
@@ -141,7 +141,7 @@ namespace ModelBuilder.UnitTests.ValueGenerators
 
             var sut = new Wrapper<string>(
                 NameExpression.FirstName,
-                (Type) null!);
+                (Type)null!);
 
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
             Action action = () => sut.ReadValue(null!, context);

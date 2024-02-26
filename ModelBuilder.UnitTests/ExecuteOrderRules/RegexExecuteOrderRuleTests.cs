@@ -71,7 +71,7 @@
 
             var sut = new RegexExecuteOrderRule(NameExpression.FirstName, priority);
 
-            Action action = () => sut.IsMatch((ParameterInfo) null!);
+            Action action = () => sut.IsMatch((ParameterInfo)null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -83,7 +83,7 @@
 
             var sut = new RegexExecuteOrderRule(NameExpression.FirstName, priority);
 
-            Action action = () => sut.IsMatch((PropertyInfo) null!);
+            Action action = () => sut.IsMatch((PropertyInfo)null!);
 
             action.Should().Throw<ArgumentNullException>();
         }

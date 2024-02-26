@@ -28,7 +28,7 @@
 
             var sut = new Wrapper();
 
-            var actual = (string) sut.RunGenerate(typeof(string), "MiddleName", executeStrategy);
+            var actual = (string)sut.RunGenerate(typeof(string), "MiddleName", executeStrategy);
 
             TestData.FemaleNames.Any(x => x == actual).Should().BeTrue();
         }
@@ -49,7 +49,7 @@
 
             var sut = new Wrapper();
 
-            var actual = (string) sut.RunGenerate(typeof(string), "MiddleName", executeStrategy);
+            var actual = (string)sut.RunGenerate(typeof(string), "MiddleName", executeStrategy);
 
             TestData.FemaleNames.Any(x => x == actual).Should().BeTrue();
         }
@@ -70,7 +70,7 @@
 
             var sut = new Wrapper();
 
-            var actual = (string) sut.RunGenerate(typeof(string), "MiddleName", executeStrategy);
+            var actual = (string)sut.RunGenerate(typeof(string), "MiddleName", executeStrategy);
 
             TestData.MaleNames.Any(x => x == actual).Should().BeTrue();
         }
@@ -88,7 +88,7 @@
 
             var sut = new Wrapper();
 
-            var actual = (string) sut.RunGenerate(typeof(string), "MiddleName", executeStrategy);
+            var actual = (string)sut.RunGenerate(typeof(string), "MiddleName", executeStrategy);
 
             if (TestData.MaleNames.Any(x => x == actual))
             {

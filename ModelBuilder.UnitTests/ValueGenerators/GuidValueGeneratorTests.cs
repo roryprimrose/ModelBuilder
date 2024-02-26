@@ -34,7 +34,7 @@
 
             for (var index = 0; index < 1000; index++)
             {
-                var value = (Guid?) sut.Generate(executeStrategy, typeof(Guid?));
+                var value = (Guid?)sut.Generate(executeStrategy, typeof(Guid?));
 
                 if (value == null!)
                 {
@@ -95,7 +95,7 @@
 
             for (var index = 0; index < 1000; index++)
             {
-                var actual = (Guid?) sut.Generate(executeStrategy, typeof(Guid?));
+                var actual = (Guid?)sut.Generate(executeStrategy, typeof(Guid?));
 
                 if (actual == null!)
                 {
@@ -117,13 +117,13 @@
 
             var sut = new Wrapper();
 
-            var first = (Guid) sut.RunGenerate(typeof(Guid), null!, executeStrategy);
+            var first = (Guid)sut.RunGenerate(typeof(Guid), null!, executeStrategy);
 
             var second = first;
 
             for (var index = 0; index < 1000; index++)
             {
-                second = (Guid) sut.RunGenerate(typeof(Guid), null!, executeStrategy);
+                second = (Guid)sut.RunGenerate(typeof(Guid), null!, executeStrategy);
 
                 if (first != second)
                 {

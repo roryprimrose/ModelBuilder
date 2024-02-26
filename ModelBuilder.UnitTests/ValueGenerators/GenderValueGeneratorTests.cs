@@ -24,7 +24,7 @@
 
             for (var index = 0; index < 1000; index++)
             {
-                var actual = (string) sut.RunGenerate(typeof(string), "Gender", executeStrategy);
+                var actual = (string)sut.RunGenerate(typeof(string), "Gender", executeStrategy);
 
                 if (actual == "Male")
                 {
@@ -74,7 +74,7 @@
 
             var sut = new Wrapper();
 
-            var actual = (string) sut.RunGenerate(type, referenceName, executeStrategy);
+            var actual = (string)sut.RunGenerate(type, referenceName, executeStrategy);
 
             actual.Should().NotBeNullOrEmpty();
         }

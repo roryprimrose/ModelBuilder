@@ -117,14 +117,14 @@
 
             actual.Should().BeOfType<Person>();
 
-            var person = (Person) actual!;
+            var person = (Person)actual!;
 
-            person.FirstName.Should().Be((string) args[0]);
-            person.LastName.Should().Be((string) args[1]);
-            person.DOB.Should().Be((DateTime) args[2]);
-            person.IsActive.Should().Be((bool) args[3]);
-            person.Id.Should().Be((Guid) args[4]);
-            person.Priority.Should().Be((int) args[5]);
+            person.FirstName.Should().Be((string)args[0]);
+            person.LastName.Should().Be((string)args[1]);
+            person.DOB.Should().Be((DateTime)args[2]);
+            person.IsActive.Should().Be((bool)args[3]);
+            person.Id.Should().Be((Guid)args[4]);
+            person.Priority.Should().Be((int)args[5]);
         }
 
         [Fact]
@@ -178,7 +178,7 @@
             var typeResolver = Substitute.For<ITypeResolver>();
             var configuration = Substitute.For<IBuildConfiguration>();
 
-            constructorResolver.Resolve(Arg.Any<Type>()).Returns((ConstructorInfo?) null);
+            constructorResolver.Resolve(Arg.Any<Type>()).Returns((ConstructorInfo?)null);
             configuration.ConstructorResolver.Returns(constructorResolver);
             configuration.TypeResolver.Returns(typeResolver);
             typeResolver.GetBuildType(configuration, Arg.Any<Type>()).Returns(x => x.Arg<Type>());

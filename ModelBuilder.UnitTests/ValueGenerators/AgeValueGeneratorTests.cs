@@ -40,9 +40,9 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var sut = new Wrapper {MinAge = 15, MaxAge = 30};
+            var sut = new Wrapper { MinAge = 15, MaxAge = 30 };
 
-            var actual = (int) sut.RunGenerate(typeof(int), "age", executeStrategy)!;
+            var actual = (int)sut.RunGenerate(typeof(int), "age", executeStrategy)!;
 
             actual.Should().Be(expectedYears);
         }
@@ -71,7 +71,7 @@
 
             for (var index = 0; index < 1000; index++)
             {
-                var actual = (int?) sut.Generate(executeStrategy, typeof(int?));
+                var actual = (int?)sut.Generate(executeStrategy, typeof(int?));
 
                 if (actual == null!)
                 {
@@ -101,9 +101,9 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var sut = new Wrapper {MinAge = 15, MaxAge = 30};
+            var sut = new Wrapper { MinAge = 15, MaxAge = 30 };
 
-            var actual = (int) sut.RunGenerate(typeof(int), "age", executeStrategy)!;
+            var actual = (int)sut.RunGenerate(typeof(int), "age", executeStrategy)!;
 
             actual.Should().BeGreaterOrEqualTo(15);
             actual.Should().BeLessOrEqualTo(30);
@@ -125,7 +125,7 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var sut = new Wrapper {MinAge = 15, MaxAge = 30};
+            var sut = new Wrapper { MinAge = 15, MaxAge = 30 };
 
             for (var index = 0; index < 1000; index++)
             {

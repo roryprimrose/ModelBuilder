@@ -70,7 +70,7 @@
 
             for (var index = 0; index < 1000; index++)
             {
-                var actual = (DateTime?) sut.Generate(executeStrategy, typeof(DateTime?));
+                var actual = (DateTime?)sut.Generate(executeStrategy, typeof(DateTime?));
 
                 if (actual == null!)
                 {
@@ -92,7 +92,7 @@
 
             var sut = new Wrapper();
 
-            var first = (DateTimeOffset) sut.RunGenerate(typeof(DateTimeOffset), "dob", executeStrategy);
+            var first = (DateTimeOffset)sut.RunGenerate(typeof(DateTimeOffset), "dob", executeStrategy);
 
             first.As<DateTimeOffset>().Should().BeBefore(DateTimeOffset.UtcNow);
             first.As<DateTimeOffset>().Should().BeAfter(DateTimeOffset.UtcNow.AddYears(-100));
@@ -102,7 +102,7 @@
 
             for (var index = 0; index < 1000; index++)
             {
-                second = (DateTimeOffset) sut.RunGenerate(typeof(DateTimeOffset), "dob", executeStrategy);
+                second = (DateTimeOffset)sut.RunGenerate(typeof(DateTimeOffset), "dob", executeStrategy);
 
                 if (first != second)
                 {
@@ -123,7 +123,7 @@
 
             var sut = new Wrapper();
 
-            var first = (DateTime) sut.RunGenerate(typeof(DateTime), "dob", executeStrategy);
+            var first = (DateTime)sut.RunGenerate(typeof(DateTime), "dob", executeStrategy);
 
             first.As<DateTime>().Should().BeBefore(DateTime.UtcNow);
             first.As<DateTime>().Should().BeAfter(DateTime.UtcNow.AddYears(-100));
@@ -133,7 +133,7 @@
 
             for (var index = 0; index < 1000; index++)
             {
-                second = (DateTime) sut.RunGenerate(typeof(DateTime), "dob", executeStrategy);
+                second = (DateTime)sut.RunGenerate(typeof(DateTime), "dob", executeStrategy);
 
                 if (first != second)
                 {

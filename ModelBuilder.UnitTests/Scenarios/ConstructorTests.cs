@@ -48,7 +48,7 @@
             var value = Model.Create<bool>();
 
             var model = Model.WriteLog<WithConstructorParameters>(_output.WriteLine)
-                .Create((Company) null!, id, refNumber, number, value)!;
+                .Create(null!, id, refNumber, number, value)!;
 
             model.First.Should().NotBeNull();
         }

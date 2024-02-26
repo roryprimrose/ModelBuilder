@@ -98,13 +98,13 @@
 
             var sut = new Wrapper();
 
-            var first = (string) sut.RunGenerate(typeof(string), "State", executeStrategy);
+            var first = (string)sut.RunGenerate(typeof(string), "State", executeStrategy);
 
             string second = string.Empty;
 
             for (var index = 0; index < 1000; index++)
             {
-                second = (string) sut.RunGenerate(typeof(string), "State", executeStrategy);
+                second = (string)sut.RunGenerate(typeof(string), "State", executeStrategy);
 
                 if (string.Equals(first, second, StringComparison.OrdinalIgnoreCase) == false)
                 {
@@ -152,7 +152,7 @@
 
             var sut = new Wrapper();
 
-            var actual = (string) sut.RunGenerate(type, referenceName, executeStrategy);
+            var actual = (string)sut.RunGenerate(type, referenceName, executeStrategy);
 
             actual.Should().NotBeNullOrEmpty();
         }

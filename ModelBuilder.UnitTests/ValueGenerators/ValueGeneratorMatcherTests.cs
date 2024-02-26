@@ -179,14 +179,14 @@
             {
             }
 
-            protected override object? Generate(IExecuteStrategy executeStrategy, Type type, string? referenceName)
-            {
-                throw new NotImplementedException();
-            }
-
             public bool RunIsMatch(Type type, string referenceName, IBuildChain buildChain)
             {
                 return IsMatch(buildChain, type, referenceName);
+            }
+
+            protected override object? Generate(IExecuteStrategy executeStrategy, Type type, string? referenceName)
+            {
+                throw new NotImplementedException();
             }
         }
     }

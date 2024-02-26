@@ -72,7 +72,7 @@
         public void ThrowsExceptionWhenCreatedWithNullExpression()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Action action = () => new RegexIgnoreRule((Regex) null!);
+            Action action = () => new RegexIgnoreRule((Regex)null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
