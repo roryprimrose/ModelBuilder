@@ -30,8 +30,10 @@
             actual.Child.LastName.Should().NotBeNullOrWhiteSpace();
             actual.Child.Email.Should().NotBeNullOrWhiteSpace();
 
-            var expectedFirstName = EmailValueGenerator.SpecialCharacters.Replace(actual.Child.FirstName!, string.Empty).ToLowerInvariant();
-            var expectedLastName = EmailValueGenerator.SpecialCharacters.Replace(actual.Child.LastName!, string.Empty).ToLowerInvariant();
+            var expectedFirstName = EmailValueGenerator.SpecialCharacters.Replace(actual.Child.FirstName!, string.Empty)
+                .ToLowerInvariant();
+            var expectedLastName = EmailValueGenerator.SpecialCharacters.Replace(actual.Child.LastName!, string.Empty)
+                .ToLowerInvariant();
 
             actual.Child.Email.Should().StartWith(expectedFirstName + "." + expectedLastName + "@");
         }
@@ -48,8 +50,10 @@
             actual.LastName.Should().NotBeNullOrWhiteSpace();
             actual.Email.Should().NotBeNullOrWhiteSpace();
 
-            var expectedFirstName = EmailValueGenerator.SpecialCharacters.Replace(actual.FirstName!, string.Empty).ToLowerInvariant();
-            var expectedLastName = EmailValueGenerator.SpecialCharacters.Replace(actual.LastName!, string.Empty).ToLowerInvariant();
+            var expectedFirstName = EmailValueGenerator.SpecialCharacters.Replace(actual.FirstName!, string.Empty)
+                .ToLowerInvariant();
+            var expectedLastName = EmailValueGenerator.SpecialCharacters.Replace(actual.LastName!, string.Empty)
+                .ToLowerInvariant();
 
             actual.Email.Should().StartWith(expectedFirstName + "." + expectedLastName + "@");
         }
@@ -80,8 +84,10 @@
             actual.Value.LastName.Should().NotBeNullOrWhiteSpace();
             actual.Value.PersonalEmail.Should().NotBeNullOrWhiteSpace();
 
-            var expectedFirstName = EmailValueGenerator.SpecialCharacters.Replace(actual.Value.FirstName!, string.Empty).ToLowerInvariant();
-            var expectedLastName = EmailValueGenerator.SpecialCharacters.Replace(actual.Value.LastName!, string.Empty).ToLowerInvariant();
+            var expectedFirstName = EmailValueGenerator.SpecialCharacters.Replace(actual.Value.FirstName!, string.Empty)
+                .ToLowerInvariant();
+            var expectedLastName = EmailValueGenerator.SpecialCharacters.Replace(actual.Value.LastName!, string.Empty)
+                .ToLowerInvariant();
 
             actual.Value.PersonalEmail.Should().StartWith(expectedFirstName + "." + expectedLastName + "@");
         }
@@ -100,14 +106,18 @@
             actual.LastName.Should().NotBeNullOrWhiteSpace();
             actual.Email.Should().NotBeNullOrWhiteSpace();
 
-            var expectedFirstName = EmailValueGenerator.SpecialCharacters.Replace(actual.FirstName!, string.Empty).ToLowerInvariant();
-            var expectedLastName = EmailValueGenerator.SpecialCharacters.Replace(actual.LastName!, string.Empty).ToLowerInvariant();
+            var expectedFirstName = EmailValueGenerator.SpecialCharacters.Replace(actual.FirstName!, string.Empty)
+                .ToLowerInvariant();
+            var expectedLastName = EmailValueGenerator.SpecialCharacters.Replace(actual.LastName!, string.Empty)
+                .ToLowerInvariant();
 
             actual.Email.Should().StartWith(expectedFirstName + "." + expectedLastName + "@");
         }
 
+        // ReSharper disable once ClassNeverInstantiated.Local
         private class StructParent
         {
+            // ReSharper disable once UnusedAutoPropertyAccessor.Local
             public StructModel Child { get; set; }
         }
     }

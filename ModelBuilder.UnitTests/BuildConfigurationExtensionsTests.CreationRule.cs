@@ -77,7 +77,7 @@
 
             var sut = new BuildConfiguration();
 
-            Action action = () => sut.AddCreationRule((Expression<Func<Person, object?>>) null!, value, priority);
+            Action action = () => sut.AddCreationRule((Expression<Func<Person, object?>>)null!, value, priority);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -149,7 +149,7 @@
 
             var sut = new BuildConfiguration();
 
-            Action action = () => sut.AddCreationRule((Predicate<ParameterInfo>) null!, () => value, priority);
+            Action action = () => sut.AddCreationRule((Predicate<ParameterInfo>)null!, () => value, priority);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -187,7 +187,7 @@
 
             var sut = new BuildConfiguration();
 
-            Action action = () => sut.AddCreationRule((Predicate<ParameterInfo>) null!, value, priority);
+            Action action = () => sut.AddCreationRule((Predicate<ParameterInfo>)null!, value, priority);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -257,7 +257,7 @@
 
             var sut = new BuildConfiguration();
 
-            Action action = () => sut.AddCreationRule((Predicate<PropertyInfo>) null!, () => value, priority);
+            Action action = () => sut.AddCreationRule((Predicate<PropertyInfo>)null!, () => value, priority);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -295,7 +295,7 @@
 
             var sut = new BuildConfiguration();
 
-            Action action = () => sut.AddCreationRule((Predicate<PropertyInfo>) null!, value, priority);
+            Action action = () => sut.AddCreationRule((Predicate<PropertyInfo>)null!, value, priority);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -347,7 +347,7 @@
 
             var sut = new BuildConfiguration();
 
-            Action action = () => sut.AddCreationRule(targetType, (Regex) null!, value, priority);
+            Action action = () => sut.AddCreationRule(targetType, (Regex)null!, value, priority);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -391,9 +391,9 @@
         }
 
         [Theory]
-        [InlineData(null!)]
+        [InlineData(null)]
         [InlineData("")]
-        public void AddCreationRuleWithStringExpressionThrowsExceptionWithInvalidExpression(string expression)
+        public void AddCreationRuleWithStringExpressionThrowsExceptionWithInvalidExpression(string? expression)
         {
             var targetType = typeof(string);
             var value = Guid.NewGuid().ToString();
@@ -401,7 +401,7 @@
 
             var sut = new BuildConfiguration();
 
-            Action action = () => sut.AddCreationRule(targetType, expression, value, priority);
+            Action action = () => sut.AddCreationRule(targetType, expression!, value, priority);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -499,7 +499,7 @@
 
             var sut = new BuildConfiguration();
 
-            Action action = () => sut.AddCreationRule((Predicate<Type>) null!, () => value, priority);
+            Action action = () => sut.AddCreationRule((Predicate<Type>)null!, () => value, priority);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -536,7 +536,7 @@
 
             var sut = new BuildConfiguration();
 
-            Action action = () => sut.AddCreationRule((Predicate<Type>) null!, value, priority);
+            Action action = () => sut.AddCreationRule((Predicate<Type>)null!, value, priority);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -544,7 +544,7 @@
         [Fact]
         public void AddWithCreationRuleAddsRuleToConfiguration()
         {
-            var rule = new ExpressionCreationRule<Person>(x => x.FirstName, (object) null!, Environment.TickCount);
+            var rule = new ExpressionCreationRule<Person>(x => x.FirstName, (object)null!, Environment.TickCount);
 
             var sut = new BuildConfiguration();
 
@@ -557,7 +557,7 @@
         [Fact]
         public void AddWithCreationRuleThrowsExceptionWithNullConfiguration()
         {
-            var rule = new ExpressionCreationRule<Person>(x => x.FirstName, (object) null!, Environment.TickCount);
+            var rule = new ExpressionCreationRule<Person>(x => x.FirstName, (object)null!, Environment.TickCount);
 
             Action action = () => BuildConfigurationExtensions.Add(null!, rule);
 
@@ -569,7 +569,7 @@
         {
             var sut = Substitute.For<IBuildConfiguration>();
 
-            Action action = () => sut.Add((ICreationRule) null!);
+            Action action = () => sut.Add((ICreationRule)null!);
 
             action.Should().Throw<ArgumentNullException>();
         }

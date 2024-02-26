@@ -214,9 +214,9 @@ namespace ModelBuilder
             Type targetType)
         {
             return from x in targetType.GetProperties(BindingFlags.Instance | BindingFlags.Public)
-                   where CanPopulate(x)
-                   orderby GetMaximumOrderPriority(configuration, x) descending
-                   select x;
+                where CanPopulate(x)
+                orderby GetMaximumOrderPriority(configuration, x) descending
+                select x;
         }
 
         /// <summary>
@@ -268,7 +268,7 @@ namespace ModelBuilder
                 {
                     return _defaultValues.GetOrAdd(type, x => null);
                 }
-                
+
                 if (type.IsValueType == false)
                 {
                     // This is a reference type which should also default to null
@@ -291,9 +291,9 @@ namespace ModelBuilder
             }
 
             var matchingRules = from x in configuration.ExecuteOrderRules
-                                where x.IsMatch(property)
-                                orderby x.Priority descending
-                                select x;
+                where x.IsMatch(property)
+                orderby x.Priority descending
+                select x;
 
             var matchingRule = matchingRules.FirstOrDefault();
 

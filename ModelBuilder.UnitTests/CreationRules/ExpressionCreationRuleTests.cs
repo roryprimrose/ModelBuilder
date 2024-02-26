@@ -12,9 +12,9 @@
         [Fact]
         public void CreateForParameterThrowsException()
         {
-            var sut = new ExpressionCreationRule<Person>(x => x.FirstName, (object) null!, Environment.TickCount);
+            var sut = new ExpressionCreationRule<Person>(x => x.FirstName, (object)null!, Environment.TickCount);
 
-            Action action = () => sut.Create(null!, (ParameterInfo) null!);
+            Action action = () => sut.Create(null!, (ParameterInfo)null!);
 
             action.Should().Throw<NotSupportedException>();
         }
@@ -24,7 +24,7 @@
         {
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
 
-            var sut = new ExpressionCreationRule<Person>(x => x.FirstName, (object) null!, Environment.TickCount);
+            var sut = new ExpressionCreationRule<Person>(x => x.FirstName, (object)null!, Environment.TickCount);
 
             var actual = sut.Create(null!, propertyInfo);
 
@@ -60,7 +60,7 @@
         [Fact]
         public void CreateForTypeThrowsException()
         {
-            var sut = new ExpressionCreationRule<Person>(x => x.FirstName, (object) null!, Environment.TickCount);
+            var sut = new ExpressionCreationRule<Person>(x => x.FirstName, (object)null!, Environment.TickCount);
 
             Action action = () => sut.Create(null!, typeof(string));
 
@@ -72,9 +72,9 @@
         {
             var priority = Environment.TickCount;
 
-            var sut = new ExpressionCreationRule<Person>(x => x.FirstName, (object) null!, priority);
+            var sut = new ExpressionCreationRule<Person>(x => x.FirstName, (object)null!, priority);
 
-            var actual = sut.IsMatch((ParameterInfo) null!);
+            var actual = sut.IsMatch((ParameterInfo)null!);
 
             actual.Should().BeFalse();
         }
@@ -91,7 +91,7 @@
             var propertyInfo = declaringType.GetProperty(propertyName)!;
             var priority = Environment.TickCount;
 
-            var sut = new ExpressionCreationRule<Person>(x => x.FirstName, (object) null!, priority);
+            var sut = new ExpressionCreationRule<Person>(x => x.FirstName, (object)null!, priority);
 
             var actual = sut.IsMatch(propertyInfo);
 
@@ -103,7 +103,7 @@
         {
             var priority = Environment.TickCount;
 
-            var sut = new ExpressionCreationRule<Person>(x => x.FirstName, (object) null!, priority);
+            var sut = new ExpressionCreationRule<Person>(x => x.FirstName, (object)null!, priority);
 
             var actual = sut.IsMatch(typeof(string));
 
@@ -115,9 +115,9 @@
         {
             var priority = Environment.TickCount;
 
-            var sut = new ExpressionCreationRule<Person>(x => x.FirstName, (object) null!, priority);
+            var sut = new ExpressionCreationRule<Person>(x => x.FirstName, (object)null!, priority);
 
-            Action action = () => sut.IsMatch((PropertyInfo) null!);
+            Action action = () => sut.IsMatch((PropertyInfo)null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -127,7 +127,7 @@
         {
             var priority = Environment.TickCount;
 
-            var sut = new ExpressionCreationRule<Person>(x => x.FirstName, (object) null!, priority);
+            var sut = new ExpressionCreationRule<Person>(x => x.FirstName, (object)null!, priority);
 
             sut.Priority.Should().Be(priority);
         }
@@ -135,7 +135,7 @@
         [Fact]
         public void ThrowsExceptionWhenCreatedWithNullExpression()
         {
-            Action action = () => new ExpressionCreationRule<Person>(null!, (object) null!, Environment.TickCount);
+            Action action = () => new ExpressionCreationRule<Person>(null!, (object)null!, Environment.TickCount);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -152,7 +152,7 @@
         [Fact]
         public void ToStringReturnsExpressionDisplay()
         {
-            var sut = new ExpressionCreationRule<Person>(x => x.FirstName, (object) null!, Environment.TickCount);
+            var sut = new ExpressionCreationRule<Person>(x => x.FirstName, (object)null!, Environment.TickCount);
 
             var actual = sut.ToString();
 

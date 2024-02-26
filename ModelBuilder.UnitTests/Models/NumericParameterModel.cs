@@ -57,12 +57,6 @@
         public float ParamFloat { get; }
         public int ParamInt { get; }
         public long ParamLong { get; }
-
-        public sbyte ParamSbyte { get; }
-        public short ParamShort { get; }
-        public uint ParamUint { get; }
-        public ulong ParamUlong { get; }
-        public ushort ParamUshort { get; }
         public byte? ParamNullableByte { get; }
         public decimal? ParamNullableDecimal { get; }
         public double? ParamNullableDouble { get; }
@@ -74,5 +68,11 @@
         public uint? ParamNullableUint { get; }
         public ulong? ParamNullableUlong { get; }
         public ushort? ParamNullableUshort { get; }
+
+        public sbyte ParamSbyte { get; }
+        public short ParamShort { get; }
+        public uint ParamUint { get; }
+        public ulong ParamUlong { get; }
+        public ushort ParamUshort { get; }
     }
 }

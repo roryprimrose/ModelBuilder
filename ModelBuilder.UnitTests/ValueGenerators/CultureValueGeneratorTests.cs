@@ -141,7 +141,7 @@
 
         [Theory]
         [InlineData(typeof(Stream), "culture", false)]
-        [InlineData(typeof(string), null!, false)]
+        [InlineData(typeof(string), null, false)]
         [InlineData(typeof(string), "", false)]
         [InlineData(typeof(string), "Stuff", false)]
         [InlineData(typeof(string), "culture", true)]
@@ -156,13 +156,13 @@
         [InlineData(typeof(CultureInfo), "Culturename", true)]
         [InlineData(typeof(CultureInfo), "cultureName", true)]
         [InlineData(typeof(CultureInfo), "CultureName", true)]
-        public void IsMatchReturnsWhetherTypeAndNameAreSupportedTest(Type type, string referenceName, bool expected)
+        public void IsMatchReturnsWhetherTypeAndNameAreSupportedTest(Type type, string? referenceName, bool expected)
         {
             var buildChain = Substitute.For<IBuildChain>();
 
             var sut = new Wrapper();
 
-            var actual = sut.RunIsMatch(type, referenceName, buildChain);
+            var actual = sut.RunIsMatch(type, referenceName!, buildChain);
 
             actual.Should().Be(expected);
         }

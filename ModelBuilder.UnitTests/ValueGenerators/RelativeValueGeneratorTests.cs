@@ -125,7 +125,7 @@ namespace ModelBuilder.UnitTests.ValueGenerators
         {
             var sut = new Wrapper<string>(
                 NameExpression.FirstName,
-                (Type) null!);
+                (Type)null!);
 
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
             Action action = () => sut.ReadValue(NameExpression.LastName, null!);
@@ -141,7 +141,7 @@ namespace ModelBuilder.UnitTests.ValueGenerators
 
             var sut = new Wrapper<string>(
                 NameExpression.FirstName,
-                (Type) null!);
+                (Type)null!);
 
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
             Action action = () => sut.ReadValue(null!, context);
@@ -285,9 +285,9 @@ namespace ModelBuilder.UnitTests.ValueGenerators
         }
 
         [Theory]
-        [InlineData(typeof(bool), null!, null!, false)] // Type and name doesn't match
-        [InlineData(typeof(string), null!, null!, false)] // Name is null
-        [InlineData(typeof(string), "FirstName", null!, false)] // No build context
+        [InlineData(typeof(bool), null, null, false)] // Type and name doesn't match
+        [InlineData(typeof(string), null, null, false)] // Name is null
+        [InlineData(typeof(string), "FirstName", null, false)] // No build context
         [InlineData(typeof(string), "stuff", typeof(Person),
             false)] // Name doesn't match but we have an object to check for properties
         [InlineData(typeof(string), "FirstName", typeof(Guid),
@@ -299,8 +299,8 @@ namespace ModelBuilder.UnitTests.ValueGenerators
         [InlineData(typeof(string), "FirstName", typeof(Person), true)]
         public void IsMatchReturnsWhetherScenarioSupported(
             Type type,
-            string referenceName,
-            Type contextType,
+            string? referenceName,
+            Type? contextType,
             bool expected)
         {
             var buildChain = new BuildHistory();
@@ -323,7 +323,7 @@ namespace ModelBuilder.UnitTests.ValueGenerators
 
             var sut = new Wrapper<string>(NameExpression.FirstName);
 
-            var actual = sut.RunIsMatch(type, referenceName, buildChain);
+            var actual = sut.RunIsMatch(type, referenceName!, buildChain);
 
             actual.Should().Be(expected);
         }
