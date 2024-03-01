@@ -58,7 +58,7 @@
             var priority = Environment.TickCount;
             var sut = new ParameterPredicateExecuteOrderRule(x => x.Name == nameof(Person.FirstName), priority);
 
-            Action action = () => sut.IsMatch((ParameterInfo) null!);
+            Action action = () => sut.IsMatch((ParameterInfo)null!);
 
             action.Should().Throw<ArgumentNullException>();
         }

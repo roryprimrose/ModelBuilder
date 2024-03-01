@@ -60,7 +60,7 @@
         {
             var sut = Substitute.For<IBuildConfiguration>();
 
-            Action action = () => sut.Add((ITypeCreator) null!);
+            Action action = () => sut.Add((ITypeCreator)null!);
 
             action.Should().Throw<ArgumentNullException>();
         }

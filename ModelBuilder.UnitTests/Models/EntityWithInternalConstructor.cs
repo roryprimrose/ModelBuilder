@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ModelBuilder.UnitTests.Models
+﻿namespace ModelBuilder.UnitTests.Models
 {
+    using System;
+
     public class EntityWithInternalConstructor
     {
         internal EntityWithInternalConstructor(Guid entityId, string entityName)

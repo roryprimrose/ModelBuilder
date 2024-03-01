@@ -40,7 +40,8 @@
         /// <param name="referenceName">Identifies the possible parameter or property name the instance is intended for.</param>
         /// <param name="context">The possible context object the instance is being created for.</param>
         /// <param name="buildLog">The build log.</param>
-        public BuildException(string message, Type? targetType, string? referenceName, object? context, string? buildLog) :
+        public BuildException(string message, Type? targetType, string? referenceName, object? context,
+            string? buildLog) :
             this(message, targetType, referenceName, context, buildLog, null)
         {
         }
