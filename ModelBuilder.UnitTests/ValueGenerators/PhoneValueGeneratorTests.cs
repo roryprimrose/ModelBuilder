@@ -98,13 +98,13 @@
 
             var sut = new Wrapper();
 
-            var first = (string) sut.RunGenerate(typeof(string), "cell", executeStrategy);
+            var first = (string)sut.RunGenerate(typeof(string), "cell", executeStrategy);
 
             var second = first;
 
             for (var index = 0; index < 1000; index++)
             {
-                second = (string) sut.RunGenerate(typeof(string), "cell", executeStrategy);
+                second = (string)sut.RunGenerate(typeof(string), "cell", executeStrategy);
 
                 if (string.Equals(first, second, StringComparison.OrdinalIgnoreCase) == false)
                 {
@@ -171,7 +171,7 @@
 
             var sut = new Wrapper();
 
-            var actual = (string) sut.RunGenerate(type, referenceName, executeStrategy);
+            var actual = (string)sut.RunGenerate(type, referenceName, executeStrategy);
 
             actual.Should().NotBeNullOrEmpty();
         }
@@ -187,7 +187,7 @@
 
         [Theory]
         [InlineData(typeof(Stream), "phonenumber", false)]
-        [InlineData(typeof(string), null!, false)]
+        [InlineData(typeof(string), null, false)]
         [InlineData(typeof(string), "", false)]
         [InlineData(typeof(string), "Stuff", false)]
         [InlineData(typeof(string), "cell", true)]
@@ -213,7 +213,7 @@
         [InlineData(typeof(string), "faxNumber", true)]
         [InlineData(typeof(string), "FaxNumber", true)]
         [InlineData(typeof(string), "faxnumber", true)]
-        public void IsMatchReturnsWhetherTypeAndNameAreSupportedTest(Type type, string referenceName, bool expected)
+        public void IsMatchReturnsWhetherTypeAndNameAreSupportedTest(Type type, string? referenceName, bool expected)
         {
             var address = new Address();
             var buildChain = new BuildHistory();
@@ -222,7 +222,7 @@
 
             var sut = new Wrapper();
 
-            var actual = sut.RunIsMatch(type, referenceName, buildChain);
+            var actual = sut.RunIsMatch(type, referenceName!, buildChain);
 
             actual.Should().Be(expected);
         }

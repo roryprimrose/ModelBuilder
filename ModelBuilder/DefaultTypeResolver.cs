@@ -46,6 +46,20 @@
             return requestedType;
         }
 
+        /// <summary>
+        ///     Gets the types to evaluate for compatibility with the specified type.
+        /// </summary>
+        /// <param name="requestedType">The requested type.</param>
+        /// <returns>The set of types to evaluate.</returns>
+        protected virtual IEnumerable<Type> GetTypesToEvaluate(Type requestedType)
+        {
+            var assemblyTypes = requestedType.GetTypeInfo().Assembly.GetTypes();
+
+            return from x in assemblyTypes
+                where x.IsInterface == false && x.IsAbstract == false
+                select x;
+        }
+
         private Type AutoResolveBuildType(Type requestedType)
         {
             // Before search for matching types and finding a good match, check if this is an IEnumerable that would support a list type
@@ -188,20 +202,6 @@
             }
 
             return matchingType;
-        }
-        
-        /// <summary>
-        /// Gets the types to evaluate for compatibility with the specified type.
-        /// </summary>
-        /// <param name="requestedType">The requested type.</param>
-        /// <returns>The set of types to evaluate.</returns>
-        protected virtual IEnumerable<Type> GetTypesToEvaluate(Type requestedType)
-        {
-            var assemblyTypes = requestedType.GetTypeInfo().Assembly.GetTypes();
-
-            return from x in assemblyTypes
-                where x.IsInterface == false && x.IsAbstract == false
-                select x;
         }
     }
 }

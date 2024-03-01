@@ -63,7 +63,7 @@
 
             var sut = new ArrayTypeCreator();
 
-            Action action = () => sut.CanCreate(configuration, null!, (ParameterInfo) null!);
+            Action action = () => sut.CanCreate(configuration, null!, (ParameterInfo)null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -75,7 +75,7 @@
 
             var sut = new ArrayTypeCreator();
 
-            Action action = () => sut.CanCreate(configuration, null!, (PropertyInfo) null!);
+            Action action = () => sut.CanCreate(configuration, null!, (PropertyInfo)null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -87,7 +87,7 @@
 
             var sut = new ArrayTypeCreator();
 
-            Action action = () => sut.CanCreate(configuration, null!, (Type) null!);
+            Action action = () => sut.CanCreate(configuration, null!, (Type)null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -134,7 +134,7 @@
 
             var sut = new ArrayTypeCreator();
 
-            Action action = () => sut.CanPopulate(configuration, null!, (ParameterInfo) null!);
+            Action action = () => sut.CanPopulate(configuration, null!, (ParameterInfo)null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -146,7 +146,7 @@
 
             var sut = new ArrayTypeCreator();
 
-            Action action = () => sut.CanPopulate(configuration, null!, (PropertyInfo) null!);
+            Action action = () => sut.CanPopulate(configuration, null!, (PropertyInfo)null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -158,7 +158,7 @@
 
             var sut = new ArrayTypeCreator();
 
-            Action action = () => sut.CanPopulate(configuration, null!, (Type) null!);
+            Action action = () => sut.CanPopulate(configuration, null!, (Type)null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -207,7 +207,7 @@
                 MaxCount = 15
             };
 
-            var actual = (Person[]) sut.Create(executeStrategy, typeof(Person[]))!;
+            var actual = (Person[])sut.Create(executeStrategy, typeof(Person[]))!;
 
             actual.Length.Should().BeGreaterOrEqualTo(sut.MinCount);
             actual.Length.Should().BeLessOrEqualTo(sut.MaxCount);
@@ -320,7 +320,7 @@
 
             actual.Should().BeSameAs(expected);
 
-            var set = (Guid[]) actual;
+            var set = (Guid[])actual;
 
             set.Should().HaveCount(sut.MaxCount);
             set.All(x => x != Guid.Empty).Should().BeTrue();
@@ -346,7 +346,7 @@
 
             actual.Should().BeSameAs(expected);
 
-            var set = (Guid[]) actual;
+            var set = (Guid[])actual;
 
             set.Should().HaveCount(sut.MaxCount);
             set.All(x => x != Guid.Empty).Should().BeTrue();
@@ -361,7 +361,7 @@
 
             var sut = new IncrementingArrayTypeCreator();
 
-            var result = (int[]) sut.Populate(executeStrategy, actual);
+            var result = (int[])sut.Populate(executeStrategy, actual);
 
             var baseValue = result[0];
             var expected = new int[actual.Length];
@@ -383,7 +383,7 @@
 
             var sut = new ArrayTypeCreator();
 
-            var result = (Person[]) sut.Populate(executeStrategy, actual);
+            var result = (Person[])sut.Populate(executeStrategy, actual);
 
             result.All(x => x != null!).Should().BeTrue();
         }
@@ -436,7 +436,7 @@
 
             actual.Should().BeSameAs(expected);
 
-            var set = (Guid[]) actual;
+            var set = (Guid[])actual;
 
             set.Should().BeEmpty();
         }

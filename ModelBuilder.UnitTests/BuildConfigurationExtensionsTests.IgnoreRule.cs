@@ -75,7 +75,7 @@
         {
             var sut = new BuildConfiguration();
 
-            Action action = () => sut.AddIgnoreRule((Expression<Func<Person, object?>>) null!);
+            Action action = () => sut.AddIgnoreRule((Expression<Func<Person, object?>>)null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -108,7 +108,7 @@
         {
             var sut = new BuildConfiguration();
 
-            Action action = () => sut.AddIgnoreRule((Predicate<PropertyInfo>) null!);
+            Action action = () => sut.AddIgnoreRule((Predicate<PropertyInfo>)null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -148,7 +148,7 @@
         {
             var sut = new BuildConfiguration();
 
-            Action action = () => sut.AddIgnoreRule((Regex) null!);
+            Action action = () => sut.AddIgnoreRule((Regex)null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -168,13 +168,13 @@
         }
 
         [Theory]
-        [InlineData(null!)]
+        [InlineData(null)]
         [InlineData("")]
-        public void AddIgnoreRuleWithStringExpressionThrowsExceptionWithInvalidExpression(string expression)
+        public void AddIgnoreRuleWithStringExpressionThrowsExceptionWithInvalidExpression(string? expression)
         {
             var sut = new BuildConfiguration();
 
-            Action action = () => sut.AddIgnoreRule(expression);
+            Action action = () => sut.AddIgnoreRule(expression!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -216,7 +216,7 @@
         {
             var sut = Substitute.For<IBuildConfiguration>();
 
-            Action action = () => sut.Add((IIgnoreRule) null!);
+            Action action = () => sut.Add((IIgnoreRule)null!);
 
             action.Should().Throw<ArgumentNullException>();
         }

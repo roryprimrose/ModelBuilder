@@ -33,7 +33,7 @@
                     }
                 }
             }
-            
+
             var nextValue = Generator.NextValue(0, 1);
 
             if (nextValue == 0)
