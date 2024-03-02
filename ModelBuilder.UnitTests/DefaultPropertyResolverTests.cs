@@ -146,7 +146,7 @@
             var configuration = Substitute.For<IBuildConfiguration>();
             var type = typeof(EmailParts);
 
-            configuration.ExecuteOrderRules.Returns((ICollection<IExecuteOrderRule>) null!);
+            configuration.ExecuteOrderRules.Returns((ICollection<IExecuteOrderRule>)null!);
 
             var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
 
@@ -231,7 +231,7 @@
             {
                 value
             };
-            var constructor = instance.GetType().GetConstructor(new[] {typeof(string)});
+            var constructor = instance.GetType().GetConstructor(new[] { typeof(string) });
 
             configuration.ConstructorResolver.Returns(constructorResolver);
             constructorResolver.Resolve(typeof(Optionals), args).Returns(constructor);
@@ -258,7 +258,7 @@
             {
                 Guid.NewGuid().ToString()
             };
-            var constructor = instance.GetType().GetConstructor(new[] {typeof(string)});
+            var constructor = instance.GetType().GetConstructor(new[] { typeof(string) });
 
             configuration.ConstructorResolver.Returns(constructorResolver);
             constructorResolver.Resolve(typeof(Optionals), args).Returns(constructor);
@@ -356,14 +356,14 @@
         public void IsIgnoredReturnsFalseWhenParameterDoesNotMatchStructPropertyWithNameMatch()
         {
             var configuration = Model.UsingDefaultConfiguration();
-            var value = new StructModel {FirstName = Guid.NewGuid().ToString()};
+            var value = new StructModel { FirstName = Guid.NewGuid().ToString() };
             var model = new StructMatchingNameWrapper<StructModel>(value);
             var propertyInfo =
                 typeof(StructMatchingNameWrapper<StructModel>).GetProperty(nameof(StructMatchingNameWrapper<StructModel>
                     .Value))!;
             var args = new object?[]
             {
-                new StructModel {FirstName = Guid.NewGuid().ToString()}
+                new StructModel { FirstName = Guid.NewGuid().ToString() }
             };
 
             var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
@@ -377,14 +377,14 @@
         public void IsIgnoredReturnsFalseWhenParameterDoesNotMatchStructPropertyWithNameMismatch()
         {
             var configuration = Model.UsingDefaultConfiguration();
-            var item = new StructModel {FirstName = Guid.NewGuid().ToString()};
+            var item = new StructModel { FirstName = Guid.NewGuid().ToString() };
             var model = new StructMismatchingNameWrapper<StructModel>(item);
             var propertyInfo =
                 typeof(StructMismatchingNameWrapper<StructModel>).GetProperty(
                     nameof(StructMismatchingNameWrapper<StructModel>.Value))!;
             var args = new object?[]
             {
-                new StructModel {FirstName = Guid.NewGuid().ToString()}
+                new StructModel { FirstName = Guid.NewGuid().ToString() }
             };
 
             var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
@@ -459,7 +459,7 @@
         public void IsIgnoredReturnsFalseWhenParameterMatchesStructPropertyWithNameMismatch()
         {
             var configuration = Model.UsingDefaultConfiguration();
-            var item = new StructModel {FirstName = Guid.NewGuid().ToString()};
+            var item = new StructModel { FirstName = Guid.NewGuid().ToString() };
             var model = new StructMismatchingNameWrapper<StructModel>(item);
             var propertyInfo =
                 typeof(StructMismatchingNameWrapper<StructModel>).GetProperty(
@@ -795,7 +795,7 @@
         public void IsIgnoredReturnsTrueWhenParameterMatchesStructPropertyWithNameMatch()
         {
             var configuration = Model.UsingDefaultConfiguration();
-            var value = new StructModel {FirstName = Guid.NewGuid().ToString()};
+            var value = new StructModel { FirstName = Guid.NewGuid().ToString() };
             var model = new StructMatchingNameWrapper<StructModel>(value);
             var propertyInfo =
                 typeof(StructMatchingNameWrapper<StructModel>).GetProperty(nameof(StructMatchingNameWrapper<StructModel>

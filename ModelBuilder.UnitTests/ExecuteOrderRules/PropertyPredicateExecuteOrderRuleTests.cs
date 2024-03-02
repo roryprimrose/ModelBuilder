@@ -124,7 +124,7 @@
             var priority = Environment.TickCount;
             var sut = new PropertyPredicateExecuteOrderRule(x => x.Name == nameof(Person.FirstName), priority);
 
-            Action action = () => sut.IsMatch((PropertyInfo) null!);
+            Action action = () => sut.IsMatch((PropertyInfo)null!);
 
             action.Should().Throw<ArgumentNullException>();
         }

@@ -484,7 +484,7 @@
         public void ThrowsExceptionWithNullCreationRule()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Action action = () => new BuildCapability((ICreationRule) null!);
+            Action action = () => new BuildCapability((ICreationRule)null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -502,7 +502,7 @@
         public void ThrowsExceptionWithNullValueGenerator()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Action action = () => new BuildCapability((IValueGenerator) null!);
+            Action action = () => new BuildCapability((IValueGenerator)null!);
 
             action.Should().Throw<ArgumentNullException>();
         }

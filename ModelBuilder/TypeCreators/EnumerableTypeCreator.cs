@@ -192,7 +192,8 @@
 
             if (addMethod == null)
             {
-                throw new BuildException($"The type {type.FullName} does not have an 'Add' member to populate with new values.");
+                throw new BuildException(
+                    $"The type {type.FullName} does not have an 'Add' member to populate with new values.");
             }
 
             object? previousItem = null;
