@@ -93,7 +93,7 @@
 
             var sut = new ParameterPredicateCreationRule(type => true, () => value, priority);
 
-            Action action = () => sut.IsMatch((ParameterInfo) null!);
+            Action action = () => sut.IsMatch((ParameterInfo)null!);
 
             action.Should().Throw<ArgumentNullException>();
         }

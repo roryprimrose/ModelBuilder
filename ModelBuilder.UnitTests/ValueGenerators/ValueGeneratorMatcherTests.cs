@@ -13,7 +13,7 @@
         [InlineData(typeof(string), "Value|Other", "stuff", false)]
         [InlineData(typeof(bool), "Value|Other", "stuff", false)]
         [InlineData(typeof(string), "Value|Other", "Other", false)]
-        [InlineData(typeof(bool), "Value|Other", null!, false)]
+        [InlineData(typeof(bool), "Value|Other", null, false)]
         [InlineData(typeof(bool), "Value|Other", "Value", true)]
         [InlineData(typeof(bool), "Value|Other", "Other", true)]
         [InlineData(typeof(bool?), "Value|Other", "Value", true)]
@@ -21,7 +21,7 @@
         public void IsMatchEvaluatesSpecifiedExpressionAndTypesTest(
             Type type,
             string expression,
-            string referenceName,
+            string? referenceName,
             bool expected)
         {
             var regex = new Regex(expression);
@@ -30,7 +30,7 @@
 
             var sut = new Wrapper(regex, typeof(bool), typeof(bool?));
 
-            var actual = sut.RunIsMatch(type, referenceName, buildChain);
+            var actual = sut.RunIsMatch(type, referenceName!, buildChain);
 
             actual.Should().Be(expected);
         }
@@ -75,16 +75,16 @@
 
         [Theory]
         [InlineData("stuff", false)]
-        [InlineData(null!, false)]
+        [InlineData(null, false)]
         [InlineData("Match", true)]
         [InlineData("match", true)]
-        public void IsMatchEvaluatesSpecifiedNamesTest(string referenceName, bool expected)
+        public void IsMatchEvaluatesSpecifiedNamesTest(string? referenceName, bool expected)
         {
             var buildChain = Substitute.For<IBuildChain>();
 
             var sut = new Wrapper("Match");
 
-            var actual = sut.RunIsMatch(typeof(Guid), referenceName, buildChain);
+            var actual = sut.RunIsMatch(typeof(Guid), referenceName!, buildChain);
 
             actual.Should().Be(expected);
         }
@@ -179,14 +179,14 @@
             {
             }
 
-            protected override object? Generate(IExecuteStrategy executeStrategy, Type type, string? referenceName)
-            {
-                throw new NotImplementedException();
-            }
-
             public bool RunIsMatch(Type type, string referenceName, IBuildChain buildChain)
             {
                 return IsMatch(buildChain, type, referenceName);
+            }
+
+            protected override object? Generate(IExecuteStrategy executeStrategy, Type type, string? referenceName)
+            {
+                throw new NotImplementedException();
             }
         }
     }

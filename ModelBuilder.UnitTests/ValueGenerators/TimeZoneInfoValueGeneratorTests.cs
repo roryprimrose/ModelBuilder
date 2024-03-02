@@ -19,13 +19,13 @@
 
             var sut = new Wrapper();
 
-            var first = (TimeZoneInfo) sut.RunGenerate(typeof(TimeZoneInfo), null!, executeStrategy);
+            var first = (TimeZoneInfo)sut.RunGenerate(typeof(TimeZoneInfo), null!, executeStrategy);
 
             var second = first;
 
             for (var index = 0; index < 1000; index++)
             {
-                second = (TimeZoneInfo) sut.RunGenerate(typeof(TimeZoneInfo), null!, executeStrategy);
+                second = (TimeZoneInfo)sut.RunGenerate(typeof(TimeZoneInfo), null!, executeStrategy);
 
                 if (first.Equals(second) == false)
                 {

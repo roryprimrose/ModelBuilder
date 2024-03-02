@@ -12,7 +12,7 @@
 
     public partial class BuildConfigurationExtensionsTests
     {
-        private ITestOutputHelper _output;
+        private readonly ITestOutputHelper _output;
 
         public BuildConfigurationExtensionsTests(ITestOutputHelper output)
         {
@@ -69,7 +69,7 @@
         {
             var sut = Substitute.For<IBuildConfiguration>();
 
-            Action action = () => sut.Add((IConfigurationModule) null!);
+            Action action = () => sut.Add((IConfigurationModule)null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -98,7 +98,7 @@
         [Fact]
         public void CreateThrowsExceptionWithNullBuildConfiguration()
         {
-            Action action = () => ((IBuildConfiguration) null!).Create(typeof(Guid));
+            Action action = () => ((IBuildConfiguration)null!).Create(typeof(Guid));
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -137,7 +137,7 @@
         [Fact]
         public void CreateTThrowsExceptionWithNullBuildConfiguration()
         {
-            Action action = () => ((IBuildConfiguration) null!).Create<Guid>();
+            Action action = () => ((IBuildConfiguration)null!).Create<Guid>();
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -145,7 +145,7 @@
         [Fact]
         public void IgnoringThrowsExceptionWithNullBuildConfiguration()
         {
-            Action action = () => ((IBuildConfiguration) null!).Ignoring<Person>(x => x.Priority);
+            Action action = () => ((IBuildConfiguration)null!).Ignoring<Person>(x => x.Priority);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -207,7 +207,7 @@
         [Fact]
         public void UsingExecuteStrategyThrowsExceptionWithNullConfiguration()
         {
-            Action action = () => ((IBuildConfiguration) null!).UsingExecuteStrategy<NullExecuteStrategy>();
+            Action action = () => ((IBuildConfiguration)null!).UsingExecuteStrategy<NullExecuteStrategy>();
 
             action.Should().Throw<ArgumentNullException>();
         }

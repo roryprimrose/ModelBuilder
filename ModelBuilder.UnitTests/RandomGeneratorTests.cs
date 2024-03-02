@@ -211,7 +211,7 @@
 
             for (var index = 0; index < 1000; index++)
             {
-                var value = (decimal) sut.NextValue(typeof(decimal), double.MaxValue, double.MaxValue);
+                var value = (decimal)sut.NextValue(typeof(decimal), double.MaxValue, double.MaxValue);
 
                 value.Should().Be(decimal.MaxValue);
             }
@@ -224,7 +224,7 @@
 
             for (var index = 0; index < 1000; index++)
             {
-                var value = (decimal) sut.NextValue(typeof(decimal), double.MinValue, double.MinValue);
+                var value = (decimal)sut.NextValue(typeof(decimal), double.MinValue, double.MinValue);
 
                 value.Should().Be(decimal.MinValue);
             }
@@ -413,7 +413,7 @@
 
                 var actual = Convert.ToDouble(value, CultureInfo.InvariantCulture);
 
-                if (unchecked(actual != (int) actual))
+                if (unchecked(actual != (int)actual))
                 {
                     decimalFound = true;
 
