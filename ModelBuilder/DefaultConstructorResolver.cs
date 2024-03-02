@@ -70,8 +70,10 @@
             {
                 availableConstructors = type.GetConstructors(BindingFlags.NonPublic | BindingFlags.Instance)
                     .Where(x => (x.Attributes & MethodAttributes.Assembly) == MethodAttributes.Assembly).ToList();
-                if(availableConstructors.Count == 0)
+                if (availableConstructors.Count == 0)
+                {
                     return null;
+                }
             }
 
             // Ignore any constructors that have a parameter with the type being created (a copy constructor)
@@ -107,7 +109,9 @@
 
             var nonPublicConstructor = FindInternalConstructorMatchingArguments(type, args);
             if (nonPublicConstructor != null)
+            {
                 return nonPublicConstructor;
+            }
 
             var message = string.Format(
                 CultureInfo.CurrentCulture,
@@ -115,25 +119,6 @@
                 type.FullName);
 
             throw new MissingMemberException(message);
-        }
-
-        private static ConstructorInfo? FindInternalConstructorMatchingArguments(Type type, IList<object?> args)
-        {
-            // Parameters are consulted a lot here so get it into a dictionary first
-            var availableConstructors = type.GetConstructors(BindingFlags.NonPublic | BindingFlags.Instance)
-                .Where(x => (x.Attributes & MethodAttributes.Assembly) == MethodAttributes.Assembly).ToDictionary(x => x, x => x.GetParameters());
-            var possibleConstructors = availableConstructors.Where(x => x.Value.Length >= args.Count)
-                .OrderBy(x => x.Value.Length);
-
-            foreach (var constructor in possibleConstructors)
-            {
-                if (ParametersMatchArguments(constructor.Value, args))
-                {
-                    return constructor.Key;
-                }
-            }
-
-            return null;
         }
 
         private static ConstructorInfo FindConstructorMatchingTypes(Type type, object[] args)
@@ -146,9 +131,11 @@
             if (constructor == null)
             {
                 constructor = type.GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, types, null);
-                if (constructor == null || (constructor.Attributes & MethodAttributes.Assembly) != MethodAttributes.Assembly)
+                if (constructor == null
+                    || (constructor.Attributes & MethodAttributes.Assembly) != MethodAttributes.Assembly)
                 {
-                    var parameterTypes = types.Select(x => x.FullName).Aggregate((current, next) => current + ", " + next);
+                    var parameterTypes = types.Select(x => x.FullName)
+                        .Aggregate((current, next) => current + ", " + next);
                     var message = string.Format(
                         CultureInfo.CurrentCulture,
                         "No constructor found matching type {0} with parameters[{1}].",
@@ -160,6 +147,26 @@
             }
 
             return constructor;
+        }
+
+        private static ConstructorInfo? FindInternalConstructorMatchingArguments(Type type, IList<object?> args)
+        {
+            // Parameters are consulted a lot here so get it into a dictionary first
+            var availableConstructors = type.GetConstructors(BindingFlags.NonPublic | BindingFlags.Instance)
+                .Where(x => (x.Attributes & MethodAttributes.Assembly) == MethodAttributes.Assembly)
+                .ToDictionary(x => x, x => x.GetParameters());
+            var possibleConstructors = availableConstructors.Where(x => x.Value.Length >= args.Count)
+                .OrderBy(x => x.Value.Length);
+
+            foreach (var constructor in possibleConstructors)
+            {
+                if (ParametersMatchArguments(constructor.Value, args))
+                {
+                    return constructor.Key;
+                }
+            }
+
+            return null;
         }
 
         private static bool ParametersMatchArguments(IList<ParameterInfo> parameters, IList<object?> args)

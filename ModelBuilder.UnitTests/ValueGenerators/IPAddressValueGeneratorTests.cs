@@ -43,19 +43,19 @@
         }
 
         [Theory]
-        [InlineData(typeof(string), (string) null!, false)]
+        [InlineData(typeof(string), null, false)]
         [InlineData(typeof(string), "", false)]
         [InlineData(typeof(string), "Stuff", false)]
         [InlineData(typeof(bool), "IPAddress", false)]
         [InlineData(typeof(string), "IPAddress", true)]
         [InlineData(typeof(string), "ipaddress", true)]
         [InlineData(typeof(string), "IPADDRESS", true)]
-        [InlineData(typeof(IPAddress), (string) null!, true)]
-        public void IsMatchReturnsWhetherScenarioIsValidTest(Type type, string referenceName, bool supported)
+        [InlineData(typeof(IPAddress), null, true)]
+        public void IsMatchReturnsWhetherScenarioIsValidTest(Type type, string? referenceName, bool supported)
         {
             var sut = new Wrapper();
 
-            var actual = sut.RunIsMatch(type, referenceName, null!);
+            var actual = sut.RunIsMatch(type, referenceName!, null!);
 
             actual.Should().Be(supported);
         }

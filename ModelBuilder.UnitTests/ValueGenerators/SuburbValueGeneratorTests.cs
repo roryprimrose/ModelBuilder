@@ -20,13 +20,13 @@
 
             var sut = new Wrapper();
 
-            var first = (string) sut.RunGenerate(typeof(string), "suburb", executeStrategy);
+            var first = (string)sut.RunGenerate(typeof(string), "suburb", executeStrategy);
 
             var second = first;
 
             for (var index = 0; index < 1000; index++)
             {
-                second = (string) sut.RunGenerate(typeof(string), "suburb", executeStrategy);
+                second = (string)sut.RunGenerate(typeof(string), "suburb", executeStrategy);
 
                 if (string.Equals(first, second, StringComparison.OrdinalIgnoreCase) == false)
                 {
@@ -65,7 +65,7 @@
 
             var sut = new Wrapper();
 
-            var actual = (string) sut.RunGenerate(type, referenceName, executeStrategy);
+            var actual = (string)sut.RunGenerate(type, referenceName, executeStrategy);
 
             TestData.LastNames.Should().Contain(actual);
         }
@@ -81,18 +81,18 @@
 
         [Theory]
         [InlineData(typeof(Stream), "suburb", false)]
-        [InlineData(typeof(string), null!, false)]
+        [InlineData(typeof(string), null, false)]
         [InlineData(typeof(string), "", false)]
         [InlineData(typeof(string), "Stuff", false)]
         [InlineData(typeof(string), "suburb", true)]
         [InlineData(typeof(string), "Suburb", true)]
-        public void IsMatchReturnsWhetherTypeAndNameAreSupportedTest(Type type, string referenceName, bool expected)
+        public void IsMatchReturnsWhetherTypeAndNameAreSupportedTest(Type type, string? referenceName, bool expected)
         {
             var buildChain = Substitute.For<IBuildChain>();
 
             var sut = new Wrapper();
 
-            var actual = sut.RunIsMatch(type, referenceName, buildChain);
+            var actual = sut.RunIsMatch(type, referenceName!, buildChain);
 
             actual.Should().Be(expected);
         }

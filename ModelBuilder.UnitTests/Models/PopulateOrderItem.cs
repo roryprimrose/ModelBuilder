@@ -43,7 +43,7 @@
             get { return _y; }
             set
             {
-                if (Z == (SimpleEnum) int.MinValue)
+                if (Z == (SimpleEnum)int.MinValue)
                 {
                     throw new InvalidOperationException(
                         "Execution order was not run as expected because the enum was not assigned before the int");
@@ -53,6 +53,6 @@
             }
         }
 
-        public SimpleEnum Z { get; set; } = (SimpleEnum) int.MinValue;
+        public SimpleEnum Z { get; set; } = (SimpleEnum)int.MinValue;
     }
 }

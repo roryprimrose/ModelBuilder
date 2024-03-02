@@ -85,7 +85,7 @@
         {
             var sut = Substitute.For<IBuildConfiguration>();
 
-            Action action = () => sut.Add((TypeMappingRule) null!);
+            Action action = () => sut.Add((TypeMappingRule)null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -112,7 +112,7 @@
         [Fact]
         public void MappingThrowsExceptionWithNullBuildConfiguration()
         {
-            Action action = () => ((IBuildConfiguration) null!).Mapping<Stream, MemoryStream>();
+            Action action = () => ((IBuildConfiguration)null!).Mapping<Stream, MemoryStream>();
 
             action.Should().Throw<ArgumentNullException>();
         }
