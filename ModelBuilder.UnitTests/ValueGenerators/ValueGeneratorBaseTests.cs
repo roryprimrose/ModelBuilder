@@ -91,7 +91,7 @@
 
             var sut = new Wrapper(true, value);
 
-            Action action = () => sut.Generate(executeStrategy, (ParameterInfo) null!);
+            Action action = () => sut.Generate(executeStrategy, (ParameterInfo)null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -105,7 +105,7 @@
 
             var sut = new Wrapper(true, value);
 
-            Action action = () => sut.Generate(executeStrategy, (PropertyInfo) null!);
+            Action action = () => sut.Generate(executeStrategy, (PropertyInfo)null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -119,7 +119,7 @@
 
             var sut = new Wrapper(true, value);
 
-            Action action = () => sut.Generate(executeStrategy, (Type) null!);
+            Action action = () => sut.Generate(executeStrategy, (Type)null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -215,7 +215,7 @@
 
             var sut = new Wrapper(true, value);
 
-            Action action = () => sut.IsMatch(buildChain, (ParameterInfo) null!);
+            Action action = () => sut.IsMatch(buildChain, (ParameterInfo)null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -229,7 +229,7 @@
 
             var sut = new Wrapper(true, value);
 
-            Action action = () => sut.IsMatch(buildChain, (PropertyInfo) null!);
+            Action action = () => sut.IsMatch(buildChain, (PropertyInfo)null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -243,7 +243,7 @@
 
             var sut = new Wrapper(true, value);
 
-            Action action = () => sut.IsMatch(buildChain, (Type) null!);
+            Action action = () => sut.IsMatch(buildChain, (Type)null!);
 
             action.Should().Throw<ArgumentNullException>();
         }

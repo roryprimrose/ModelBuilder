@@ -45,8 +45,8 @@
             var typeProperties = type.GetProperties(BindingFlags.Instance | BindingFlags.Public);
 
             if (typeProperties.Any(
-                x => x.DeclaringType == propInfo.DeclaringType && x.PropertyType == propInfo.PropertyType &&
-                     x.Name == propInfo.Name) == false)
+                    x => x.DeclaringType == propInfo.DeclaringType && x.PropertyType == propInfo.PropertyType &&
+                         x.Name == propInfo.Name) == false)
             {
                 var message = string.Format(
                     CultureInfo.CurrentCulture,
@@ -66,7 +66,7 @@
 
             if (expression.Body is UnaryExpression unaryExpression)
             {
-                property = ((MemberExpression) unaryExpression.Operand).Member as PropertyInfo;
+                property = ((MemberExpression)unaryExpression.Operand).Member as PropertyInfo;
             }
 
             if (property != null)

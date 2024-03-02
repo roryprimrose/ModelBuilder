@@ -28,7 +28,7 @@
         {
             var parameterInfo = typeof(Person).GetConstructors()
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
-            var arguments = new object[] {Guid.NewGuid().ToString()};
+            var arguments = new object[] { Guid.NewGuid().ToString() };
             var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
             var expected = new Person();
@@ -57,7 +57,7 @@
         {
             var parameterInfo = typeof(Person).GetConstructors()
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
-            var arguments = new object[] {Guid.NewGuid().ToString()};
+            var arguments = new object[] { Guid.NewGuid().ToString() };
             var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
 
@@ -79,7 +79,7 @@
         {
             var parameterInfo = typeof(Person).GetConstructors()
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
-            var arguments = new object[] {Guid.NewGuid().ToString()};
+            var arguments = new object[] { Guid.NewGuid().ToString() };
             var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
 
@@ -104,7 +104,7 @@
         {
             var parameterInfo = typeof(Person).GetConstructors()
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
-            var arguments = new object[] {Guid.NewGuid().ToString()};
+            var arguments = new object[] { Guid.NewGuid().ToString() };
             var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
             var expected = new Person();
@@ -138,7 +138,7 @@
         {
             var parameterInfo = typeof(Person).GetConstructors()
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
-            var arguments = new object[] {Guid.NewGuid().ToString()};
+            var arguments = new object[] { Guid.NewGuid().ToString() };
 
             var sut = new TypeCreatorBuildAction();
 
@@ -154,7 +154,7 @@
 
             var sut = new TypeCreatorBuildAction();
 
-            Action action = () => sut.Build(executeStrategy, (ParameterInfo) null!);
+            Action action = () => sut.Build(executeStrategy, (ParameterInfo)null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -163,7 +163,7 @@
         public void BuildForPropertyInfoReturnsCreatorValueWhenMatchingCreatorFound()
         {
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
-            var arguments = new object[] {Guid.NewGuid().ToString()};
+            var arguments = new object[] { Guid.NewGuid().ToString() };
             var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
             var expected = new Person();
@@ -190,7 +190,7 @@
         public void BuildForPropertyInfoReturnsNullWhenNoCreatorsExist()
         {
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
-            var arguments = new object[] {Guid.NewGuid().ToString()};
+            var arguments = new object[] { Guid.NewGuid().ToString() };
             var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
 
@@ -211,7 +211,7 @@
         public void BuildForPropertyInfoReturnsNullWhenNoMatchingCreatorFound()
         {
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
-            var arguments = new object[] {Guid.NewGuid().ToString()};
+            var arguments = new object[] { Guid.NewGuid().ToString() };
             var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
 
@@ -235,7 +235,7 @@
         public void BuildForPropertyInfoReturnsValueFromCreatorWithHighestPriority()
         {
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
-            var arguments = new object[] {Guid.NewGuid().ToString()};
+            var arguments = new object[] { Guid.NewGuid().ToString() };
             var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
             var expected = new Person();
@@ -268,7 +268,7 @@
         public void BuildForPropertyInfoThrowsExceptionWithNullExecuteStrategy()
         {
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
-            var arguments = new object[] {Guid.NewGuid().ToString()};
+            var arguments = new object[] { Guid.NewGuid().ToString() };
 
             var sut = new TypeCreatorBuildAction();
 
@@ -284,7 +284,7 @@
 
             var sut = new TypeCreatorBuildAction();
 
-            Action action = () => sut.Build(executeStrategy, (PropertyInfo) null!);
+            Action action = () => sut.Build(executeStrategy, (PropertyInfo)null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -293,7 +293,7 @@
         public void BuildForTypeReturnsCreatorValueWhenMatchingCreatorFound()
         {
             var type = typeof(Person);
-            var arguments = new object[] {Guid.NewGuid().ToString()};
+            var arguments = new object[] { Guid.NewGuid().ToString() };
             var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
             var expected = new Person();
@@ -320,7 +320,7 @@
         public void BuildForTypeReturnsNullWhenNoCreatorsExist()
         {
             var type = typeof(Person);
-            var arguments = new object[] {Guid.NewGuid().ToString()};
+            var arguments = new object[] { Guid.NewGuid().ToString() };
             var buildConfiguration = new BuildConfiguration();
 
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -338,7 +338,7 @@
         public void BuildForTypeReturnsNullWhenNoMatchingCreatorFound()
         {
             var type = typeof(Person);
-            var arguments = new object[] {Guid.NewGuid().ToString()};
+            var arguments = new object[] { Guid.NewGuid().ToString() };
             var buildConfiguration = new BuildConfiguration();
 
             var executeStrategy = Substitute.For<IExecuteStrategy>();
@@ -360,7 +360,7 @@
         public void BuildForTypeReturnsValueFromCreatorWithHighestPriority()
         {
             var type = typeof(Person);
-            var arguments = new object[] {Guid.NewGuid().ToString()};
+            var arguments = new object[] { Guid.NewGuid().ToString() };
             var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
             var expected = new Person();
@@ -407,7 +407,7 @@
 
             var sut = new TypeCreatorBuildAction();
 
-            Action action = () => sut.Build(executeStrategy, (Type) null!);
+            Action action = () => sut.Build(executeStrategy, (Type)null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -417,7 +417,7 @@
         {
             var parameterInfo = typeof(Person).GetConstructors()
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
-            var arguments = new object[] {Guid.NewGuid().ToString()};
+            var arguments = new object[] { Guid.NewGuid().ToString() };
             var buildConfiguration = new BuildConfiguration();
 
             var buildChain = Substitute.For<IBuildChain>();
@@ -446,7 +446,7 @@
         public void BuildThrowsExceptionWhenCreatorFails()
         {
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
-            var arguments = new object[] {Guid.NewGuid().ToString()};
+            var arguments = new object[] { Guid.NewGuid().ToString() };
             var buildConfiguration = new BuildConfiguration();
 
             var buildChain = Substitute.For<IBuildChain>();
@@ -554,7 +554,7 @@
 
             var sut = new TypeCreatorBuildAction();
 
-            Action action = () => sut.GetBuildCapability(buildConfiguration, buildChain, (ParameterInfo) null!);
+            Action action = () => sut.GetBuildCapability(buildConfiguration, buildChain, (ParameterInfo)null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -569,7 +569,7 @@
         {
             var parameterInfo = typeof(Person).GetConstructors()
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
-            var arguments = new object[] {Guid.NewGuid().ToString()};
+            var arguments = new object[] { Guid.NewGuid().ToString() };
             var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
             var expected = new Person();
@@ -676,7 +676,7 @@
 
             var sut = new TypeCreatorBuildAction();
 
-            Action action = () => sut.GetBuildCapability(buildConfiguration, buildChain, (PropertyInfo) null!);
+            Action action = () => sut.GetBuildCapability(buildConfiguration, buildChain, (PropertyInfo)null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -690,7 +690,7 @@
             bool autoPopulate)
         {
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
-            var arguments = new object[] {Guid.NewGuid().ToString()};
+            var arguments = new object[] { Guid.NewGuid().ToString() };
             var buildConfiguration = new BuildConfiguration();
             var buildChain = new BuildHistory();
             var expected = new Person();
@@ -832,7 +832,7 @@
 
             var sut = new TypeCreatorBuildAction();
 
-            Action action = () => sut.GetBuildCapability(buildConfiguration, buildChain, (Type) null!);
+            Action action = () => sut.GetBuildCapability(buildConfiguration, buildChain, (Type)null!);
 
             action.Should().Throw<ArgumentNullException>();
         }

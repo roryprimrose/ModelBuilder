@@ -41,7 +41,7 @@
 
             var instance = Build(requestedType, args);
 
-            return (T) instance;
+            return (T)instance;
         }
 
         /// <inheritdoc />
@@ -55,7 +55,7 @@
         {
             instance = instance ?? throw new ArgumentNullException(nameof(instance));
 
-            return (T) Populate((object) instance);
+            return (T)Populate((object)instance);
         }
     }
 }

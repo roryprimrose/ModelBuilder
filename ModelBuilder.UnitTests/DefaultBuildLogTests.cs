@@ -16,7 +16,7 @@
         {
             var ex = new BuildException(Guid.NewGuid().ToString());
 
-            var sut = new DefaultBuildLog {IsEnabled = true};
+            var sut = new DefaultBuildLog { IsEnabled = true };
 
             sut.BuildFailure(ex);
 
@@ -38,7 +38,7 @@
         [Fact]
         public void BuildFailureThrowsExceptionWithNullType()
         {
-            var sut = new DefaultBuildLog {IsEnabled = true};
+            var sut = new DefaultBuildLog { IsEnabled = true };
 
             Action action = () => sut.BuildFailure(null!);
 
@@ -48,7 +48,7 @@
         [Fact]
         public void CircularReferenceDetectedAppendsLogEntry()
         {
-            var sut = new DefaultBuildLog {IsEnabled = true};
+            var sut = new DefaultBuildLog { IsEnabled = true };
 
             sut.CircularReferenceDetected(typeof(string));
 
@@ -68,7 +68,7 @@
         [Fact]
         public void CircularReferenceDetectedThrowsExceptionWithNullType()
         {
-            var sut = new DefaultBuildLog {IsEnabled = true};
+            var sut = new DefaultBuildLog { IsEnabled = true };
 
             Action action = () => sut.CircularReferenceDetected(null!);
 
@@ -81,7 +81,7 @@
             var generatorType = typeof(StateValueGenerator);
             var type = typeof(string);
 
-            var sut = new DefaultBuildLog {IsEnabled = true};
+            var sut = new DefaultBuildLog { IsEnabled = true };
 
             sut.CreatingValue(type, generatorType, null!);
 
@@ -98,7 +98,7 @@
             var parameterInfo = typeof(Person).GetConstructors()
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
 
-            var sut = new DefaultBuildLog {IsEnabled = true};
+            var sut = new DefaultBuildLog { IsEnabled = true };
 
             sut.CreatedParameter(parameterInfo, null!);
 
@@ -123,7 +123,7 @@
         {
             var context = Guid.NewGuid().ToString();
 
-            var sut = new DefaultBuildLog {IsEnabled = true};
+            var sut = new DefaultBuildLog { IsEnabled = true };
 
             Action action = () => sut.CreatedParameter(null!, context);
 
@@ -136,7 +136,7 @@
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
             var context = new Person();
 
-            var sut = new DefaultBuildLog {IsEnabled = true};
+            var sut = new DefaultBuildLog { IsEnabled = true };
 
             sut.CreatedProperty(propertyInfo, context);
 
@@ -161,7 +161,7 @@
         {
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
 
-            var sut = new DefaultBuildLog {IsEnabled = true};
+            var sut = new DefaultBuildLog { IsEnabled = true };
 
             Action action = () => sut.CreatedProperty(propertyInfo, null!);
 
@@ -173,7 +173,7 @@
         {
             var context = new Person();
 
-            var sut = new DefaultBuildLog {IsEnabled = true};
+            var sut = new DefaultBuildLog { IsEnabled = true };
 
             Action action = () => sut.CreatedProperty(null!, context);
 
@@ -183,7 +183,7 @@
         [Fact]
         public void CreatedTypeAppendsLogEntry()
         {
-            var sut = new DefaultBuildLog {IsEnabled = true};
+            var sut = new DefaultBuildLog { IsEnabled = true };
 
             sut.CreatedType(typeof(string), null!);
 
@@ -203,7 +203,7 @@
         [Fact]
         public void CreatedTypeThrowsExceptionWithNullType()
         {
-            var sut = new DefaultBuildLog {IsEnabled = true};
+            var sut = new DefaultBuildLog { IsEnabled = true };
 
             Action action = () => sut.CreatedType(null!, null!);
 
@@ -216,7 +216,7 @@
             var generatorType = typeof(StateValueGenerator);
             var creatorType = typeof(DefaultTypeCreator);
 
-            var sut = new DefaultBuildLog {IsEnabled = true};
+            var sut = new DefaultBuildLog { IsEnabled = true };
 
             sut.CreatingType(typeof(Person), creatorType, null!);
             sut.CreatingValue(typeof(string), generatorType, null!);
@@ -233,7 +233,7 @@
             var parameterInfo = typeof(Person).GetConstructors()
                 .First(x => x.GetParameters().FirstOrDefault()?.Name == "firstName").GetParameters().First();
 
-            var sut = new DefaultBuildLog {IsEnabled = true};
+            var sut = new DefaultBuildLog { IsEnabled = true };
 
             sut.CreatingParameter(parameterInfo, null!);
 
@@ -258,7 +258,7 @@
         {
             var context = Guid.NewGuid().ToString();
 
-            var sut = new DefaultBuildLog {IsEnabled = true};
+            var sut = new DefaultBuildLog { IsEnabled = true };
 
             Action action = () => sut.CreatingParameter(null!, context);
 
@@ -271,7 +271,7 @@
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
             var context = new Person();
 
-            var sut = new DefaultBuildLog {IsEnabled = true};
+            var sut = new DefaultBuildLog { IsEnabled = true };
 
             sut.CreatingProperty(propertyInfo, context);
 
@@ -296,7 +296,7 @@
         {
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
 
-            var sut = new DefaultBuildLog {IsEnabled = true};
+            var sut = new DefaultBuildLog { IsEnabled = true };
 
             Action action = () => sut.CreatingProperty(propertyInfo, null!);
 
@@ -308,7 +308,7 @@
         {
             var context = new Person();
 
-            var sut = new DefaultBuildLog {IsEnabled = true};
+            var sut = new DefaultBuildLog { IsEnabled = true };
 
             Action action = () => sut.CreatingProperty(null!, context);
 
@@ -320,7 +320,7 @@
         {
             var creatorType = typeof(DefaultTypeCreator);
 
-            var sut = new DefaultBuildLog {IsEnabled = true};
+            var sut = new DefaultBuildLog { IsEnabled = true };
 
             sut.CreatingType(typeof(string), creatorType, null!);
 
@@ -344,7 +344,7 @@
         {
             var type = typeof(string);
 
-            var sut = new DefaultBuildLog {IsEnabled = true};
+            var sut = new DefaultBuildLog { IsEnabled = true };
 
             Action action = () => sut.CreatingType(type, null!, null!);
 
@@ -356,7 +356,7 @@
         {
             var creatorType = typeof(DefaultTypeCreator);
 
-            var sut = new DefaultBuildLog {IsEnabled = true};
+            var sut = new DefaultBuildLog { IsEnabled = true };
 
             Action action = () => sut.CreatingType(null!, creatorType, null!);
 
@@ -369,7 +369,7 @@
             var generatorType = typeof(StateValueGenerator);
             var type = typeof(string);
 
-            var sut = new DefaultBuildLog {IsEnabled = true};
+            var sut = new DefaultBuildLog { IsEnabled = true };
 
             sut.CreatingValue(type, generatorType, null!);
 
@@ -394,7 +394,7 @@
         {
             var type = typeof(string);
 
-            var sut = new DefaultBuildLog {IsEnabled = true};
+            var sut = new DefaultBuildLog { IsEnabled = true };
 
             Action action = () => sut.CreatingValue(type, null!, null!);
 
@@ -406,7 +406,7 @@
         {
             var generatorType = typeof(StateValueGenerator);
 
-            var sut = new DefaultBuildLog {IsEnabled = true};
+            var sut = new DefaultBuildLog { IsEnabled = true };
 
             Action action = () => sut.CreatingValue(null!, generatorType, null!);
 
@@ -419,7 +419,7 @@
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
             var context = new Person();
 
-            var sut = new DefaultBuildLog {IsEnabled = true};
+            var sut = new DefaultBuildLog { IsEnabled = true };
 
             sut.IgnoringProperty(propertyInfo, context);
 
@@ -444,7 +444,7 @@
         {
             var propertyInfo = typeof(Person).GetProperty(nameof(Person.FirstName))!;
 
-            var sut = new DefaultBuildLog {IsEnabled = true};
+            var sut = new DefaultBuildLog { IsEnabled = true };
 
             Action action = () => sut.IgnoringProperty(propertyInfo, null!);
 
@@ -456,7 +456,7 @@
         {
             var context = new Person();
 
-            var sut = new DefaultBuildLog {IsEnabled = true};
+            var sut = new DefaultBuildLog { IsEnabled = true };
 
             Action action = () => sut.IgnoringProperty(null!, context);
 
@@ -474,7 +474,7 @@
         [Fact]
         public void MappedTypeAppendsLogEntry()
         {
-            var sut = new DefaultBuildLog {IsEnabled = true};
+            var sut = new DefaultBuildLog { IsEnabled = true };
 
             sut.MappedType(typeof(Stream), typeof(MemoryStream));
 
@@ -494,7 +494,7 @@
         [Fact]
         public void MappedTypeThrowsExceptionWithNullSourceType()
         {
-            var sut = new DefaultBuildLog {IsEnabled = true};
+            var sut = new DefaultBuildLog { IsEnabled = true };
 
             Action action = () => sut.MappedType(null!, typeof(MemoryStream));
 
@@ -504,7 +504,7 @@
         [Fact]
         public void MappedTypeThrowsExceptionWithNullTargetType()
         {
-            var sut = new DefaultBuildLog {IsEnabled = true};
+            var sut = new DefaultBuildLog { IsEnabled = true };
 
             Action action = () => sut.MappedType(typeof(Stream), null!);
 
@@ -516,7 +516,7 @@
         {
             var instance = new Person();
 
-            var sut = new DefaultBuildLog {IsEnabled = true};
+            var sut = new DefaultBuildLog { IsEnabled = true };
 
             sut.PopulatedInstance(instance);
 
@@ -538,7 +538,7 @@
         [Fact]
         public void PopulatedInstanceThrowsExceptionWithNullInstance()
         {
-            var sut = new DefaultBuildLog {IsEnabled = true};
+            var sut = new DefaultBuildLog { IsEnabled = true };
 
             Action action = () => sut.PopulatedInstance(null!);
 
@@ -553,7 +553,7 @@
 
             var instance = new Person();
 
-            var sut = new DefaultBuildLog {IsEnabled = true};
+            var sut = new DefaultBuildLog { IsEnabled = true };
 
             sut.PopulatingInstance(instance);
             sut.CreatingValue(type, generatorType, null!);
@@ -569,7 +569,7 @@
         {
             var instance = new Person();
 
-            var sut = new DefaultBuildLog {IsEnabled = true};
+            var sut = new DefaultBuildLog { IsEnabled = true };
 
             sut.PopulatingInstance(instance);
 
@@ -591,7 +591,7 @@
         [Fact]
         public void PopulatingInstanceThrowsExceptionWithNullInstance()
         {
-            var sut = new DefaultBuildLog {IsEnabled = true};
+            var sut = new DefaultBuildLog { IsEnabled = true };
 
             Action action = () => sut.PopulatingInstance(null!);
 
@@ -603,7 +603,7 @@
         {
             var postBuildType = typeof(DummyPostBuildAction);
 
-            var sut = new DefaultBuildLog {IsEnabled = true};
+            var sut = new DefaultBuildLog { IsEnabled = true };
 
             sut.PostBuildAction(typeof(string), postBuildType, null!);
 
@@ -627,7 +627,7 @@
         {
             var type = typeof(string);
 
-            var sut = new DefaultBuildLog {IsEnabled = true};
+            var sut = new DefaultBuildLog { IsEnabled = true };
 
             Action action = () => sut.PostBuildAction(type, null!, null!);
 
@@ -639,7 +639,7 @@
         {
             var creatorType = typeof(DefaultTypeCreator);
 
-            var sut = new DefaultBuildLog {IsEnabled = true};
+            var sut = new DefaultBuildLog { IsEnabled = true };
 
             Action action = () => sut.PostBuildAction(null!, creatorType, null!);
 
@@ -651,7 +651,7 @@
         {
             var creatorType = typeof(DefaultTypeCreator);
 
-            var sut = new DefaultBuildLog {IsEnabled = true};
+            var sut = new DefaultBuildLog { IsEnabled = true };
 
             Exception exception;
 

@@ -122,7 +122,7 @@
 
             var sut = new ExpressionExecuteOrderRule<Person>(x => x.FirstName, priority);
 
-            Action action = () => sut.IsMatch((PropertyInfo) null!);
+            Action action = () => sut.IsMatch((PropertyInfo)null!);
 
             action.Should().Throw<ArgumentNullException>();
         }

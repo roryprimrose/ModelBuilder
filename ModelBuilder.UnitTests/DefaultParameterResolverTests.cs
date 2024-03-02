@@ -89,7 +89,7 @@
             var configuration = Substitute.For<IBuildConfiguration>();
             var constructor = typeof(OrderedConstructorParameters).GetConstructors().First();
 
-            configuration.ExecuteOrderRules.Returns((ICollection<IExecuteOrderRule>) null!);
+            configuration.ExecuteOrderRules.Returns((ICollection<IExecuteOrderRule>)null!);
 
             var sut = new DefaultParameterResolver(CacheLevel.PerInstance);
 

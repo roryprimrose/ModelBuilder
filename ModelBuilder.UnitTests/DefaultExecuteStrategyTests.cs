@@ -187,7 +187,7 @@
 
             sut.Initialize(buildConfiguration);
 
-            var actual = (NullablePropertyModel<Person>) sut.Create(typeof(NullablePropertyModel<Person>))!;
+            var actual = (NullablePropertyModel<Person>)sut.Create(typeof(NullablePropertyModel<Person>))!;
 
             actual.Should().Be(expected);
             actual.Value.Should().BeNull();
@@ -237,7 +237,7 @@
 
             sut.Initialize(buildConfiguration);
 
-            var actual = (SimpleConstructor) sut.Create(typeof(SimpleConstructor), model)!;
+            var actual = (SimpleConstructor)sut.Create(typeof(SimpleConstructor), model)!;
 
             actual.Should().Be(expected);
             actual.Model.Should().Be(model);
@@ -267,7 +267,7 @@
 
             sut.Initialize(buildConfiguration);
 
-            var actual = (SlimModel) sut.Create(typeof(SlimModel))!;
+            var actual = (SlimModel)sut.Create(typeof(SlimModel))!;
 
             actual.Should().Be(expected);
             actual.Value.Should().BeEmpty();
@@ -335,14 +335,14 @@
             firstAction.Priority.Returns(int.MaxValue);
             secondAction.IsMatch(Arg.Any<IBuildChain>(), typeof(Simple)).Returns(true);
             secondAction.Priority.Returns(int.MinValue);
-            firstAction.WhenForAnyArgs(x => x.Execute(null!, null!, (Type) null!)).Do(
+            firstAction.WhenForAnyArgs(x => x.Execute(null!, null!, (Type)null!)).Do(
                 x =>
                 {
                     executeCount++;
 
                     executeCount.Should().Be(1);
                 });
-            secondAction.WhenForAnyArgs(x => x.Execute(null!, null!, (Type) null!)).Do(
+            secondAction.WhenForAnyArgs(x => x.Execute(null!, null!, (Type)null!)).Do(
                 x =>
                 {
                     executeCount++;
@@ -551,7 +551,7 @@
 
             sut.Initialize(buildConfiguration);
 
-            var actual = (SlimModel) sut.Create(typeof(SlimModel))!;
+            var actual = (SlimModel)sut.Create(typeof(SlimModel))!;
 
             actual.Should().Be(expected);
             actual.Value.Should().BeEmpty();
@@ -610,7 +610,7 @@
 
             sut.Initialize(buildConfiguration);
 
-            var actual = (SlimModel) sut.Create(typeof(SlimModel))!;
+            var actual = (SlimModel)sut.Create(typeof(SlimModel))!;
 
             actual.Should().Be(expected);
             actual.Value.Should().Be(value);
@@ -696,7 +696,7 @@
 
             sut.Initialize(buildConfiguration);
 
-            var actual = (SlimModel) sut.Create(typeof(SlimModel))!;
+            var actual = (SlimModel)sut.Create(typeof(SlimModel))!;
 
             actual.Should().Be(expected);
             actual.Value.Should().Be(value);
@@ -911,7 +911,7 @@
 
             sut.Initialize(buildConfiguration);
 
-            var actual = (SlimModel) sut.Populate(model);
+            var actual = (SlimModel)sut.Populate(model);
 
             actual.Value.Should().Be(expected);
         }
@@ -958,7 +958,7 @@
 
             sut.Initialize(buildConfiguration);
 
-            var actual = (SlimModel) sut.Populate(model);
+            var actual = (SlimModel)sut.Populate(model);
 
             actual.Value.Should().BeEmpty();
 

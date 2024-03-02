@@ -74,7 +74,7 @@
             var value = Guid.NewGuid().ToString();
             var priority = Environment.TickCount;
 
-            var sut = new PropertyPredicateCreationRule((item) => true, () => value, priority);
+            var sut = new PropertyPredicateCreationRule(item => true, () => value, priority);
 
             var actual = sut.IsMatch(parameterInfo);
 
@@ -105,7 +105,7 @@
 
             var sut = new PropertyPredicateCreationRule(type => true, () => value, priority);
 
-            Action action = () => sut.IsMatch((PropertyInfo) null!);
+            Action action = () => sut.IsMatch((PropertyInfo)null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -128,7 +128,7 @@
         {
             var priority = Environment.TickCount;
 
-            var sut = new PropertyPredicateCreationRule((item) => true, () => null!, priority);
+            var sut = new PropertyPredicateCreationRule(item => true, () => null!, priority);
 
             sut.Priority.Should().Be(priority);
         }
