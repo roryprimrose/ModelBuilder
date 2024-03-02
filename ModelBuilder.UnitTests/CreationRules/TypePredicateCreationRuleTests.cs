@@ -116,7 +116,7 @@
 
             var sut = new TypePredicateCreationRule(item => true, () => value, priority);
 
-            Action action = () => sut.IsMatch((Type) null!);
+            Action action = () => sut.IsMatch((Type)null!);
 
             action.Should().Throw<ArgumentNullException>();
         }

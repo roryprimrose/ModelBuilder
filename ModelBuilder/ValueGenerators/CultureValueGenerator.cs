@@ -23,7 +23,8 @@ namespace ModelBuilder.ValueGenerators
         /// <inheritdoc />
         protected override object? Generate(IExecuteStrategy executeStrategy, Type type, string? referenceName)
         {
-            var cultures = CultureInfo.GetCultures(CultureTypes.AllCultures).Where(x => string.IsNullOrWhiteSpace(x.Name) == false).ToList();
+            var cultures = CultureInfo.GetCultures(CultureTypes.AllCultures)
+                .Where(x => string.IsNullOrWhiteSpace(x.Name) == false).ToList();
             var index = Generator.NextValue(0, cultures.Count - 1);
             var culture = cultures[index];
 

@@ -6,7 +6,8 @@
     {
         public bool Equals(StructModel other)
         {
-            return Id.Equals(other.Id) && FirstName == other.FirstName && LastName == other.LastName && Email == other.Email;
+            return Id.Equals(other.Id) && FirstName == other.FirstName && LastName == other.LastName
+                   && Email == other.Email;
         }
 
         public override bool Equals(object? obj)
@@ -19,8 +20,10 @@
             unchecked
             {
                 var hashCode = Id.GetHashCode();
-                hashCode = (hashCode * 397) ^ (FirstName != null ? FirstName.GetHashCode(StringComparison.CurrentCulture) : 0);
-                hashCode = (hashCode * 397) ^ (LastName != null ? LastName.GetHashCode(StringComparison.CurrentCulture) : 0);
+                hashCode = (hashCode * 397)
+                           ^ (FirstName != null ? FirstName.GetHashCode(StringComparison.CurrentCulture) : 0);
+                hashCode = (hashCode * 397)
+                           ^ (LastName != null ? LastName.GetHashCode(StringComparison.CurrentCulture) : 0);
                 hashCode = (hashCode * 397) ^ (Email != null ? Email.GetHashCode(StringComparison.CurrentCulture) : 0);
                 return hashCode;
             }

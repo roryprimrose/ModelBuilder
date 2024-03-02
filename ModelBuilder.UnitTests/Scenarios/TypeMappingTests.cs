@@ -1,6 +1,5 @@
 namespace ModelBuilder.UnitTests.Scenarios
 {
-    using System.IO;
     using FluentAssertions;
     using ModelBuilder.UnitTests.Models;
     using Xunit;

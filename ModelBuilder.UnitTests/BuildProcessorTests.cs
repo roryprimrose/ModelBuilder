@@ -176,7 +176,7 @@
             var sut = new BuildProcessor(actions);
 
             Action action = () =>
-                sut.GetBuildCapability(executeStrategy, BuildRequirement.Create, (ParameterInfo) null!);
+                sut.GetBuildCapability(executeStrategy, BuildRequirement.Create, (ParameterInfo)null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -329,7 +329,7 @@
             var sut = new BuildProcessor(actions);
 
             Action action = () =>
-                sut.GetBuildCapability(executeStrategy, BuildRequirement.Create, (PropertyInfo) null!);
+                sut.GetBuildCapability(executeStrategy, BuildRequirement.Create, (PropertyInfo)null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -482,7 +482,7 @@
             var sut = new BuildProcessor(actions);
 
             Action action = () =>
-                sut.GetBuildCapability(executeStrategy, BuildRequirement.Create, (Type) null!);
+                sut.GetBuildCapability(executeStrategy, BuildRequirement.Create, (Type)null!);
 
             action.Should().Throw<ArgumentNullException>();
         }

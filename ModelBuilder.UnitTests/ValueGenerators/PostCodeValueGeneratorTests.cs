@@ -55,6 +55,36 @@
         }
 
         [Fact]
+        public void GenerateReturnsRandomPostCode()
+        {
+            var address = new Address();
+            var buildChain = new BuildHistory();
+            var executeStrategy = Substitute.For<IExecuteStrategy>();
+
+            executeStrategy.BuildChain.Returns(buildChain);
+
+            buildChain.Push(address);
+
+            var sut = new Wrapper();
+
+            var first = (string)sut.RunGenerate(typeof(string), "City", executeStrategy);
+
+            var second = first;
+
+            for (var index = 0; index < 1000; index++)
+            {
+                second = (string)sut.RunGenerate(typeof(string), "City", executeStrategy);
+
+                if (string.Equals(first, second, StringComparison.OrdinalIgnoreCase) == false)
+                {
+                    break;
+                }
+            }
+
+            first.Should().NotBe(second);
+        }
+
+        [Fact]
         public void GenerateReturnsRandomPostCodeMatchingCaseInsensitiveCity()
         {
             var address = new Address
@@ -211,36 +241,6 @@
         }
 
         [Fact]
-        public void GenerateReturnsRandomPostCode()
-        {
-            var address = new Address();
-            var buildChain = new BuildHistory();
-            var executeStrategy = Substitute.For<IExecuteStrategy>();
-
-            executeStrategy.BuildChain.Returns(buildChain);
-
-            buildChain.Push(address);
-
-            var sut = new Wrapper();
-
-            var first = (string) sut.RunGenerate(typeof(string), "City", executeStrategy);
-
-            var second = first;
-
-            for (var index = 0; index < 1000; index++)
-            {
-                second = (string) sut.RunGenerate(typeof(string), "City", executeStrategy);
-
-                if (string.Equals(first, second, StringComparison.OrdinalIgnoreCase) == false)
-                {
-                    break;
-                }
-            }
-
-            first.Should().NotBe(second);
-        }
-
-        [Fact]
         public void GenerateReturnsRandomStateWhenNoMatchingState()
         {
             var address = new Address
@@ -303,7 +303,7 @@
 
             var sut = new Wrapper();
 
-            var actual = (string) sut.RunGenerate(typeof(string), referenceName, executeStrategy);
+            var actual = (string)sut.RunGenerate(typeof(string), referenceName, executeStrategy);
 
             actual.Should().NotBeNullOrEmpty();
         }
@@ -319,7 +319,7 @@
 
         [Theory]
         [InlineData(typeof(Stream), "postcode", false)]
-        [InlineData(typeof(string), null!, false)]
+        [InlineData(typeof(string), null, false)]
         [InlineData(typeof(string), "", false)]
         [InlineData(typeof(string), "Stuff", false)]
         [InlineData(typeof(string), "postcode", true)]
@@ -330,7 +330,7 @@
         [InlineData(typeof(string), "ZipCode", true)]
         [InlineData(typeof(string), "zipcode", true)]
         [InlineData(typeof(string), "Zipcode", true)]
-        public void IsMatchReturnsWhetherTypeAndNameAreSupportedTest(Type type, string referenceName, bool expected)
+        public void IsMatchReturnsWhetherTypeAndNameAreSupportedTest(Type type, string? referenceName, bool expected)
         {
             var address = new Address();
             var buildChain = new BuildHistory();
@@ -339,7 +339,7 @@
 
             var sut = new Wrapper();
 
-            var actual = sut.RunIsMatch(type, referenceName, buildChain);
+            var actual = sut.RunIsMatch(type, referenceName!, buildChain);
 
             actual.Should().Be(expected);
         }
