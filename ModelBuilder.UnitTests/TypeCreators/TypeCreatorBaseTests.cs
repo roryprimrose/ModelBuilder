@@ -49,7 +49,7 @@
 
             var sut = new TypeCreatorWrapper();
 
-            Action action = () => sut.CanCreate(configuration, null!, (ParameterInfo) null!);
+            Action action = () => sut.CanCreate(configuration, null!, (ParameterInfo)null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -61,7 +61,7 @@
 
             var sut = new TypeCreatorWrapper();
 
-            Action action = () => sut.CanCreate(configuration, null!, (PropertyInfo) null!);
+            Action action = () => sut.CanCreate(configuration, null!, (PropertyInfo)null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -73,7 +73,7 @@
 
             var sut = new TypeCreatorWrapper();
 
-            Action action = () => sut.CanCreate(configuration, null!, (Type) null!);
+            Action action = () => sut.CanCreate(configuration, null!, (Type)null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -86,7 +86,7 @@
 
             var sut = new TypeCreatorWrapper();
 
-            Action action = () => sut.CanPopulate(configuration, buildChain, (ParameterInfo) null!);
+            Action action = () => sut.CanPopulate(configuration, buildChain, (ParameterInfo)null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -99,7 +99,7 @@
 
             var sut = new TypeCreatorWrapper();
 
-            Action action = () => sut.CanPopulate(configuration, buildChain, (PropertyInfo) null!);
+            Action action = () => sut.CanPopulate(configuration, buildChain, (PropertyInfo)null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -112,7 +112,7 @@
 
             var sut = new TypeCreatorWrapper();
 
-            Action action = () => sut.CanPopulate(configuration, buildChain, (Type) null!);
+            Action action = () => sut.CanPopulate(configuration, buildChain, (Type)null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -215,7 +215,7 @@
 
             var sut = new TypeCreatorWrapper();
 
-            Action action = () => sut.Create(executeStrategy, (ParameterInfo) null!);
+            Action action = () => sut.Create(executeStrategy, (ParameterInfo)null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -230,7 +230,7 @@
 
             var sut = new TypeCreatorWrapper();
 
-            Action action = () => sut.Create(executeStrategy, (PropertyInfo) null!);
+            Action action = () => sut.Create(executeStrategy, (PropertyInfo)null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -240,7 +240,7 @@
         {
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
-            executeStrategy.BuildChain.Returns((IBuildChain) null!);
+            executeStrategy.BuildChain.Returns((IBuildChain)null!);
 
             var sut = new TypeCreatorWrapper();
 
@@ -259,7 +259,7 @@
 
             var sut = new TypeCreatorWrapper();
 
-            Action action = () => sut.Create(executeStrategy, (Type) null!);
+            Action action = () => sut.Create(executeStrategy, (Type)null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -353,7 +353,7 @@
         {
             var executeStrategy = Substitute.For<IExecuteStrategy>();
 
-            executeStrategy.BuildChain.Returns((IBuildChain) null!);
+            executeStrategy.BuildChain.Returns((IBuildChain)null!);
 
             var sut = new TypeCreatorWrapper();
 

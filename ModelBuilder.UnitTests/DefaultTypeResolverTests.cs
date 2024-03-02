@@ -135,7 +135,7 @@
             configuration.IgnoreRules.Returns(defaultConfiguration.IgnoreRules);
             configuration.PostBuildActions.Returns(defaultConfiguration.PostBuildActions);
             configuration.TypeCreators.Returns(defaultConfiguration.TypeCreators);
-            configuration.TypeMappingRules.Returns((ICollection<TypeMappingRule>) null!);
+            configuration.TypeMappingRules.Returns((ICollection<TypeMappingRule>)null!);
             configuration.TypeResolver.Returns(defaultConfiguration.TypeResolver);
             configuration.ValueGenerators.Returns(defaultConfiguration.ValueGenerators);
 
@@ -167,7 +167,7 @@
         {
             var configuration = new BuildConfiguration();
 
-            var sut = new Wrapper(new[] {typeof(InternalNotPickedItem), typeof(PublicPickedItem)});
+            var sut = new Wrapper(new[] { typeof(InternalNotPickedItem), typeof(PublicPickedItem) });
 
             var actual = sut.GetBuildType(configuration, typeof(IPublicOverInternal));
 

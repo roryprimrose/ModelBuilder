@@ -18,13 +18,13 @@
 
             var sut = new Wrapper();
 
-            var first = (string) sut.RunGenerate(typeof(string), null!, executeStrategy);
+            var first = (string)sut.RunGenerate(typeof(string), null!, executeStrategy);
 
             var second = first;
 
             for (var index = 0; index < 1000; index++)
             {
-                second = (string) sut.RunGenerate(typeof(string), null!, executeStrategy);
+                second = (string)sut.RunGenerate(typeof(string), null!, executeStrategy);
 
                 if (string.Equals(first, second, StringComparison.OrdinalIgnoreCase) == false)
                 {

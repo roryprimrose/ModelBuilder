@@ -8,11 +8,6 @@
         public float PropFloat { get; set; }
         public int PropInt { get; set; }
         public long PropLong { get; set; }
-        public sbyte PropSbyte { get; set; }
-        public short PropShort { get; set; }
-        public uint PropUint { get; set; }
-        public ulong PropUlong { get; set; }
-        public ushort PropUshort { get; set; }
         public byte? PropNullableByte { get; set; }
         public decimal? PropNullableDecimal { get; set; }
         public double? PropNullableDouble { get; set; }
@@ -24,5 +19,10 @@
         public uint? PropNullableUint { get; set; }
         public ulong? PropNullableUlong { get; set; }
         public ushort? PropNullableUshort { get; set; }
+        public sbyte PropSbyte { get; set; }
+        public short PropShort { get; set; }
+        public uint PropUint { get; set; }
+        public ulong PropUlong { get; set; }
+        public ushort PropUshort { get; set; }
     }
 }

@@ -11,7 +11,7 @@
         {
             var expected = Substitute.For<IConstructorResolver>();
 
-            var sut = new BuildConfiguration {ConstructorResolver = expected};
+            var sut = new BuildConfiguration { ConstructorResolver = expected };
 
             var actual = sut.ConstructorResolver;
 
@@ -23,7 +23,7 @@
         {
             var expected = Substitute.For<IParameterResolver>();
 
-            var sut = new BuildConfiguration {ParameterResolver = expected};
+            var sut = new BuildConfiguration { ParameterResolver = expected };
 
             var actual = sut.ParameterResolver;
 
@@ -35,7 +35,7 @@
         {
             var expected = Substitute.For<IPropertyResolver>();
 
-            var sut = new BuildConfiguration {PropertyResolver = expected};
+            var sut = new BuildConfiguration { PropertyResolver = expected };
 
             var actual = sut.PropertyResolver;
 
@@ -47,7 +47,7 @@
         {
             var expected = Substitute.For<ITypeResolver>();
 
-            var sut = new BuildConfiguration {TypeResolver = expected};
+            var sut = new BuildConfiguration { TypeResolver = expected };
 
             var actual = sut.TypeResolver;
 
