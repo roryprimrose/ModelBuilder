@@ -56,7 +56,7 @@
                 expectedType = expectedType.GetGenericArguments()[0];
             }
 
-            return (T) Convert.ChangeType(value, expectedType, CultureInfo.CurrentCulture);
+            return (T)Convert.ChangeType(value, expectedType, CultureInfo.CurrentCulture);
         }
 
         /// <summary>
@@ -180,7 +180,7 @@
                     return null;
                 }
 
-                var keyedProperties = (IDictionary<string, object>) dynamicObject!;
+                var keyedProperties = (IDictionary<string, object>)dynamicObject!;
 
                 return keyedProperties[matchingName];
             }

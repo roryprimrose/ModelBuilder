@@ -29,7 +29,7 @@
 
             for (var index = 0; index < 1000; index++)
             {
-                var value = (DateTime?) sut.RunGenerate(typeof(DateTime?), null!, executeStrategy);
+                var value = (DateTime?)sut.RunGenerate(typeof(DateTime?), null!, executeStrategy);
 
                 value.Should().BeAfter(DateTime.UtcNow);
                 value.Should().BeBefore(DateTime.UtcNow.AddYears(10));
@@ -90,7 +90,7 @@
 
             for (var index = 0; index < 1000; index++)
             {
-                var actual = (DateTime?) sut.Generate(executeStrategy, typeof(DateTime?));
+                var actual = (DateTime?)sut.Generate(executeStrategy, typeof(DateTime?));
 
                 if (actual == null!)
                 {
@@ -112,7 +112,7 @@
 
             var sut = new Wrapper();
 
-            var first = (DateTimeOffset) sut.RunGenerate(typeof(DateTimeOffset), null!, executeStrategy);
+            var first = (DateTimeOffset)sut.RunGenerate(typeof(DateTimeOffset), null!, executeStrategy);
 
             first.As<DateTimeOffset>().Offset.Should().Be(TimeSpan.Zero);
 
@@ -120,7 +120,7 @@
 
             for (var index = 0; index < 1000; index++)
             {
-                second = (DateTimeOffset) sut.RunGenerate(typeof(DateTimeOffset), null!, executeStrategy);
+                second = (DateTimeOffset)sut.RunGenerate(typeof(DateTimeOffset), null!, executeStrategy);
 
                 if (first != second)
                 {
@@ -141,7 +141,7 @@
 
             var sut = new Wrapper();
 
-            var first = (DateTime) sut.RunGenerate(typeof(DateTime), null!, executeStrategy);
+            var first = (DateTime)sut.RunGenerate(typeof(DateTime), null!, executeStrategy);
 
             first.As<DateTime>().Kind.Should().Be(DateTimeKind.Utc);
 
@@ -149,7 +149,7 @@
 
             for (var index = 0; index < 1000; index++)
             {
-                second = (DateTime) sut.RunGenerate(typeof(DateTime), null!, executeStrategy);
+                second = (DateTime)sut.RunGenerate(typeof(DateTime), null!, executeStrategy);
 
                 if (first != second)
                 {
@@ -170,13 +170,13 @@
 
             var sut = new Wrapper();
 
-            var first = (TimeSpan) sut.RunGenerate(typeof(TimeSpan), null!, executeStrategy);
+            var first = (TimeSpan)sut.RunGenerate(typeof(TimeSpan), null!, executeStrategy);
 
             var second = first;
 
             for (var index = 0; index < 1000; index++)
             {
-                second = (TimeSpan) sut.RunGenerate(typeof(TimeSpan), null!, executeStrategy);
+                second = (TimeSpan)sut.RunGenerate(typeof(TimeSpan), null!, executeStrategy);
 
                 if (first != second)
                 {

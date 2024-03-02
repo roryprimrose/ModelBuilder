@@ -39,7 +39,7 @@
 
             var sut = new Wrapper();
 
-            var actual = (string) sut.RunGenerate(typeof(string), "email", executeStrategy);
+            var actual = (string)sut.RunGenerate(typeof(string), "email", executeStrategy);
 
             actual.Should().StartWith(expected.ToLowerInvariant());
         }
@@ -58,7 +58,7 @@
 
             var sut = new MailinatorEmailValueGenerator();
 
-            var actual = (string) sut.Generate(executeStrategy, property)!;
+            var actual = (string)sut.Generate(executeStrategy, property)!;
 
             actual.Should().EndWith("mailinator.com");
         }
@@ -76,7 +76,7 @@
 
             var sut = new Wrapper();
 
-            var actual = (string) sut.RunGenerate(typeof(string), "email", executeStrategy);
+            var actual = (string)sut.RunGenerate(typeof(string), "email", executeStrategy);
 
             var domain = actual.Substring(actual.IndexOf("@", StringComparison.Ordinal) + 1);
 
@@ -100,7 +100,7 @@
 
             var sut = new Wrapper();
 
-            var actual = (string) sut.RunGenerate(typeof(string), "email", executeStrategy);
+            var actual = (string)sut.RunGenerate(typeof(string), "email", executeStrategy);
 
             var expected = "dejour.mccormick";
 
@@ -123,7 +123,7 @@
 
             var sut = new Wrapper();
 
-            var actual = (string) sut.RunGenerate(typeof(string), "email", executeStrategy);
+            var actual = (string)sut.RunGenerate(typeof(string), "email", executeStrategy);
 
             var firstName = actual.Substring(0, actual.IndexOf(".", StringComparison.OrdinalIgnoreCase));
 
@@ -146,7 +146,7 @@
 
             var sut = new Wrapper();
 
-            var actual = (string) sut.RunGenerate(typeof(string), "email", executeStrategy);
+            var actual = (string)sut.RunGenerate(typeof(string), "email", executeStrategy);
 
             var firstName = actual.Substring(0, actual.IndexOf(".", StringComparison.Ordinal));
 
@@ -169,7 +169,7 @@
 
             var sut = new Wrapper();
 
-            var actual = (string) sut.RunGenerate(typeof(string), "email", executeStrategy);
+            var actual = (string)sut.RunGenerate(typeof(string), "email", executeStrategy);
 
             actual.Should().EndWith(parts.Domain);
         }
@@ -191,7 +191,7 @@
 
             var sut = new Wrapper();
 
-            var actual = (string) sut.RunGenerate(typeof(string), "email", executeStrategy);
+            var actual = (string)sut.RunGenerate(typeof(string), "email", executeStrategy);
 
             var firstName = EmailValueGenerator.SpecialCharacters.Replace(parts.FirstName, string.Empty);
             var lastName = EmailValueGenerator.SpecialCharacters.Replace(parts.LastName, string.Empty);
@@ -219,7 +219,7 @@
 
             var sut = new Wrapper();
 
-            var actual = (string) sut.RunGenerate(typeof(string), "email", executeStrategy);
+            var actual = (string)sut.RunGenerate(typeof(string), "email", executeStrategy);
 
             var firstName = EmailValueGenerator.SpecialCharacters.Replace(parts.FirstName, string.Empty);
             var lastName = EmailValueGenerator.SpecialCharacters.Replace(parts.LastName, string.Empty);
@@ -245,7 +245,7 @@
 
             var sut = new Wrapper();
 
-            var actual = (string) sut.RunGenerate(typeof(string), "email", executeStrategy);
+            var actual = (string)sut.RunGenerate(typeof(string), "email", executeStrategy);
 
             var expected = person.FirstName.Substring(0, 1);
 
@@ -268,7 +268,7 @@
 
             var sut = new Wrapper();
 
-            var actual = (string) sut.RunGenerate(typeof(string), "email", executeStrategy);
+            var actual = (string)sut.RunGenerate(typeof(string), "email", executeStrategy);
 
             var expected = person.LastName;
 
@@ -292,7 +292,7 @@
 
             var sut = new Wrapper();
 
-            var first = (string) sut.RunGenerate(typeof(string), "email", firstExecuteStrategy);
+            var first = (string)sut.RunGenerate(typeof(string), "email", firstExecuteStrategy);
 
             var secondPerson = new Person
             {
@@ -310,7 +310,7 @@
 
             for (var index = 0; index < 1000; index++)
             {
-                second = (string) sut.RunGenerate(typeof(string), "email", secondExecuteStrategy);
+                second = (string)sut.RunGenerate(typeof(string), "email", secondExecuteStrategy);
 
                 if (string.Equals(first, second, StringComparison.OrdinalIgnoreCase) == false)
                 {
@@ -358,7 +358,7 @@
 
             var sut = new Wrapper();
 
-            var actual = (string) sut.RunGenerate(typeof(string), "email", executeStrategy);
+            var actual = (string)sut.RunGenerate(typeof(string), "email", executeStrategy);
 
             actual.Should().NotBeNullOrWhiteSpace();
         }
@@ -374,11 +374,11 @@
 
         [Theory]
         [InlineData(typeof(Stream), "email", false)]
-        [InlineData(typeof(string), null!, false)]
+        [InlineData(typeof(string), null, false)]
         [InlineData(typeof(string), "", false)]
         [InlineData(typeof(string), "Stuff", false)]
         [InlineData(typeof(string), "email", true)]
-        public void IsMatchReturnsWhetherTypeAndNameAreSupportedTest(Type type, string referenceName, bool expected)
+        public void IsMatchReturnsWhetherTypeAndNameAreSupportedTest(Type type, string? referenceName, bool expected)
         {
             var person = new Person();
             var buildChain = new BuildHistory();
@@ -387,7 +387,7 @@
 
             var sut = new Wrapper();
 
-            var actual = sut.RunIsMatch(type, referenceName, buildChain);
+            var actual = sut.RunIsMatch(type, referenceName!, buildChain);
 
             actual.Should().Be(expected);
         }

@@ -18,7 +18,7 @@
             var priority = Environment.TickCount;
 
             // ReSharper disable once ObjectCreationAsStatement
-            Action action = () => new RegexCreationRule(typeof(string), expression, (object) null!, priority);
+            Action action = () => new RegexCreationRule(typeof(string), expression, (object)null!, priority);
 
             action.Should().NotThrow();
         }
@@ -64,7 +64,7 @@
 
             var sut = new RegexCreationRule(typeof(string), expression, value, priority);
 
-            Action action = () => sut.Create(null!, (ParameterInfo) null!);
+            Action action = () => sut.Create(null!, (ParameterInfo)null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -108,7 +108,7 @@
 
             var sut = new RegexCreationRule(typeof(string), expression, value, priority);
 
-            Action action = () => sut.Create(null!, (PropertyInfo) null!);
+            Action action = () => sut.Create(null!, (PropertyInfo)null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -207,7 +207,7 @@
 
             var sut = new RegexCreationRule(typeof(string), expression, value, priority);
 
-            Action action = () => sut.IsMatch((ParameterInfo) null!);
+            Action action = () => sut.IsMatch((ParameterInfo)null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -221,7 +221,7 @@
 
             var sut = new RegexCreationRule(typeof(string), expression, value, priority);
 
-            Action action = () => sut.IsMatch((PropertyInfo) null!);
+            Action action = () => sut.IsMatch((PropertyInfo)null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -239,15 +239,15 @@
         }
 
         [Theory]
-        [InlineData(null!)]
+        [InlineData(null)]
         [InlineData("")]
-        public void ThrowsExceptionWhenCreatedWithInvalidStringExpression(string expression)
+        public void ThrowsExceptionWhenCreatedWithInvalidStringExpression(string? expression)
         {
             var value = Guid.NewGuid().ToString();
             var priority = Environment.TickCount;
 
             // ReSharper disable once ObjectCreationAsStatement
-            Action action = () => new RegexCreationRule(typeof(string), expression, value, priority);
+            Action action = () => new RegexCreationRule(typeof(string), expression!, value, priority);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -259,7 +259,7 @@
             var priority = Environment.TickCount;
 
             // ReSharper disable once ObjectCreationAsStatement
-            Action action = () => new RegexCreationRule(typeof(string), (Regex) null!, value, priority);
+            Action action = () => new RegexCreationRule(typeof(string), (Regex)null!, value, priority);
 
             action.Should().Throw<ArgumentNullException>();
         }

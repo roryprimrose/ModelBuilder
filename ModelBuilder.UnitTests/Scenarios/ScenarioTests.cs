@@ -90,6 +90,7 @@
             actual.State.Should().NotBeNullOrWhiteSpace();
             actual.Suburb.Should().NotBeNullOrWhiteSpace();
             actual.TimeZone.Should().NotBeNullOrWhiteSpace();
+            actual.Code.Should().NotBe(default);
         }
 
         [Fact]
@@ -303,10 +304,10 @@
             var actual = Model.WriteLog<WithConstructorParameters>(_output.WriteLine).Create(args);
 
             actual.First.Should().BeSameAs(args[0]);
-            actual.Id.Should().Be((Guid) args[1]);
-            actual.RefNumber.Should().Be((int?) args[2]);
-            actual.Number.Should().Be((int) args[3]);
-            actual.Value.Should().Be((bool) args[4]);
+            actual.Id.Should().Be((Guid)args[1]);
+            actual.RefNumber.Should().Be((int?)args[2]);
+            actual.Number.Should().Be((int)args[3]);
+            actual.Value.Should().Be((bool)args[4]);
         }
 
         [Fact]
@@ -457,8 +458,8 @@
 
             var actual = Model.WriteLog<WithMixedValueParameters>(_output.WriteLine).Create(args);
 
-            actual.FirstName.Should().NotBe((string) args[0]);
-            actual.LastName.Should().NotBe((string) args[0]);
+            actual.FirstName.Should().NotBe((string)args[0]);
+            actual.LastName.Should().NotBe((string)args[0]);
         }
 
         [Fact]
@@ -654,7 +655,7 @@
         }
 
         [Fact]
-        public void UsesBuildLogInstancePerExecutionPipeline()
+        public async Task UsesBuildLogInstancePerExecutionPipeline()
         {
             var configuration = Model.UsingDefaultConfiguration();
 
@@ -678,14 +679,18 @@
                 tasks.Add(task);
             }
 
-            Task.WhenAll(tasks).Wait();
+            await Task.WhenAll(tasks);
 
             for (var index = 0; index < maxTasks; index++)
             {
-                _output.WriteLine(tasks[index].Result + Environment.NewLine);
+                var result = await tasks[index];
+
+                _output.WriteLine(result + Environment.NewLine);
             }
         }
 
+        // ReSharper disable once ClassNeverInstantiated.Local
+        [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Local")]
         private class Bottom
         {
             public Top? Root { get; set; }
@@ -693,6 +698,8 @@
             public string? Value { get; set; }
         }
 
+        // ReSharper disable once ClassNeverInstantiated.Local
+        [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Local")]
         private class Child
         {
             public Bottom? End { get; set; }
@@ -700,6 +707,8 @@
             public string? Value { get; set; }
         }
 
+        // ReSharper disable once ClassNeverInstantiated.Local
+        [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Local")]
         private class Looper
         {
             public Looper? Other { get; set; }
@@ -707,6 +716,8 @@
             public string? Stuff { get; set; }
         }
 
+        // ReSharper disable once ClassNeverInstantiated.Local
+        [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Local")]
         private class Top
         {
             public Child? Next { get; set; }

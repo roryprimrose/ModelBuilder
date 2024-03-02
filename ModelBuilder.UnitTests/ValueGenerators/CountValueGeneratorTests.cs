@@ -70,7 +70,7 @@
 
             for (var index = 0; index < 1000; index++)
             {
-                var value = (int) sut.RunGenerate(typeof(int), "Count", executeStrategy);
+                var value = (int)sut.RunGenerate(typeof(int), "Count", executeStrategy);
 
                 value.Should().BeGreaterOrEqualTo(1);
                 value.Should().BeLessOrEqualTo(sut.MaxCount);
@@ -85,11 +85,11 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var sut = new Wrapper {MaxCount = 10};
+            var sut = new Wrapper { MaxCount = 10 };
 
             for (var index = 0; index < 1000; index++)
             {
-                var value = (int) sut.RunGenerate(typeof(int), "Count", executeStrategy);
+                var value = (int)sut.RunGenerate(typeof(int), "Count", executeStrategy);
 
                 value.Should().BeGreaterOrEqualTo(1);
                 value.Should().BeLessOrEqualTo(sut.MaxCount);
@@ -97,7 +97,7 @@
         }
 
         [Theory]
-        [InlineData(null!, false)]
+        [InlineData(null, false)]
         [InlineData("", false)]
         [InlineData("other", false)]
         [InlineData("someCount", false)]
@@ -106,13 +106,13 @@
         [InlineData("Length", true)]
         [InlineData("count", true)]
         [InlineData("Count", true)]
-        public void IsMatchEvaluatesRequestedReferenceNameTest(string referenceName, bool isSupported)
+        public void IsMatchEvaluatesRequestedReferenceNameTest(string? referenceName, bool isSupported)
         {
             var buildChain = Substitute.For<IBuildChain>();
 
             var sut = new Wrapper();
 
-            var actual = sut.RunIsMatch(typeof(int), referenceName, buildChain);
+            var actual = sut.RunIsMatch(typeof(int), referenceName!, buildChain);
 
             actual.Should().Be(isSupported);
         }

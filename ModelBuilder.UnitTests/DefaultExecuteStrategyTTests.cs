@@ -109,7 +109,7 @@
             processor.GetBuildCapability(sut, Arg.Any<BuildRequirement>(),
                     typeof(int))
                 .Returns(typeCapability);
-            typeCapability.CreateType(sut, typeof(int), Arg.Any<object?[]?>()).Returns((object) null!);
+            typeCapability.CreateType(sut, typeof(int), Arg.Any<object?[]?>()).Returns((object)null!);
 
             sut.Initialize(buildConfiguration);
 

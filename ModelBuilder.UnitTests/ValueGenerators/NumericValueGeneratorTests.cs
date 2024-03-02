@@ -39,7 +39,7 @@
 
             executeStrategy.BuildChain.Returns(buildChain);
 
-            var sut = new Wrapper {AllowNegative = true};
+            var sut = new Wrapper { AllowNegative = true };
 
             var negativeValueFound = false;
 
@@ -149,7 +149,7 @@
 
             for (var index = 0; index < 1000; index++)
             {
-                var actual = (int?) sut.Generate(executeStrategy, typeof(int?));
+                var actual = (int?)sut.Generate(executeStrategy, typeof(int?));
 
                 if (actual == null!)
                 {
