@@ -88,6 +88,14 @@ namespace ModelBuilder
             }
 
             var propertyValue = propertyInfo.GetValue(instance, null);
+
+            if (AreEqual(instance, propertyValue))
+            {
+                // This property is a self reference to the owning instance
+                // For example, Hashtable.SyncRoot is a reference to Hashtable itself
+                return true;
+            }
+            
             var defaultValue = GetDefaultValue(propertyInfo.PropertyType);
 
             if (AreEqual(propertyValue, defaultValue))
@@ -200,6 +208,12 @@ namespace ModelBuilder
             {
                 // Only one of the values is null
                 return false;
+            }
+
+            if (ReferenceEquals(first, second))
+            {
+                // These reference the same instance in memory
+                return true;
             }
 
             if (first.Equals(second))
