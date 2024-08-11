@@ -32,7 +32,7 @@
         {
             var sut = new DefaultConstructorResolver(CacheLevel.PerInstance);
 
-            var constructor = sut.Resolve(typeof(Person), (Person) null!)!;
+            var constructor = sut.Resolve(typeof(Person), (Person)null!)!;
 
             constructor.GetParameters().Length.Should().Be(1);
         }

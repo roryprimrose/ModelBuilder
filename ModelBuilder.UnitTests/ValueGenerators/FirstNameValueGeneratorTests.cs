@@ -28,7 +28,7 @@
 
             var sut = new Wrapper();
 
-            var actual = (string) sut.RunGenerate(typeof(string), "FirstName", executeStrategy);
+            var actual = (string)sut.RunGenerate(typeof(string), "FirstName", executeStrategy);
 
             TestData.FemaleNames.Any(x => x == actual).Should().BeTrue();
         }
@@ -49,7 +49,7 @@
 
             var sut = new Wrapper();
 
-            var actual = (string) sut.RunGenerate(typeof(string), "FirstName", executeStrategy);
+            var actual = (string)sut.RunGenerate(typeof(string), "FirstName", executeStrategy);
 
             TestData.FemaleNames.Any(x => x == actual).Should().BeTrue();
         }
@@ -70,7 +70,7 @@
 
             var sut = new Wrapper();
 
-            var actual = (string) sut.RunGenerate(typeof(string), "FirstName", executeStrategy);
+            var actual = (string)sut.RunGenerate(typeof(string), "FirstName", executeStrategy);
 
             TestData.MaleNames.Any(x => x == actual).Should().BeTrue();
         }
@@ -88,7 +88,7 @@
 
             var sut = new Wrapper();
 
-            var actual = (string) sut.RunGenerate(typeof(string), "FirstName", executeStrategy);
+            var actual = (string)sut.RunGenerate(typeof(string), "FirstName", executeStrategy);
 
             if (TestData.MaleNames.Any(x => x == actual))
             {
@@ -103,7 +103,7 @@
 
         [Theory]
         [InlineData(typeof(Stream), "firstname", false)]
-        [InlineData(typeof(string), null!, false)]
+        [InlineData(typeof(string), null, false)]
         [InlineData(typeof(string), "", false)]
         [InlineData(typeof(string), "Stuff", false)]
         [InlineData(typeof(string), "FirstName", true)]
@@ -118,7 +118,7 @@
         [InlineData(typeof(string), "Given_Name", true)]
         [InlineData(typeof(string), "given_name", true)]
         [InlineData(typeof(string), "GIVEN_NAME", true)]
-        public void IsMatchReturnsWhetherTypeAndNameAreSupportedTest(Type type, string referenceName, bool expected)
+        public void IsMatchReturnsWhetherTypeAndNameAreSupportedTest(Type type, string? referenceName, bool expected)
         {
             var person = new Person();
             var buildChain = new BuildHistory();
@@ -127,7 +127,7 @@
 
             var sut = new Wrapper();
 
-            var actual = sut.RunIsMatch(type, referenceName, buildChain);
+            var actual = sut.RunIsMatch(type, referenceName!, buildChain);
 
             actual.Should().Be(expected);
         }

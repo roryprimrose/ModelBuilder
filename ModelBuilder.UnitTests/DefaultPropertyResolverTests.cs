@@ -959,6 +959,22 @@
         }
 
         [Fact]
+        public void IsIgnoredReturnsTrueWhenPropertyValueMatchesOwningInstance()
+        {
+            var configuration = Model.UsingDefaultConfiguration();
+            var instance = new Hashtable();
+            var args = Array.Empty<object?>();
+
+            var propertyInfo = instance.GetType().GetProperty(nameof(Hashtable.SyncRoot))!;
+
+            var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
+
+            var actual = sut.IsIgnored(configuration, instance, propertyInfo, args);
+
+            actual.Should().BeTrue();
+        }
+
+        [Fact]
         public void IsIgnoredThrowsExceptionWhenConstructorNotFound()
         {
             var configuration = Substitute.For<IBuildConfiguration>();
@@ -1017,6 +1033,22 @@
             Action action = () => sut.IsIgnored(configuration, instance, null!, null!);
 
             action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void IsIgnoredTreatsFailedConstructorForDefaultValueDetectionAsNull()
+        {
+            var configuration = Model.UsingDefaultConfiguration();
+            var instance = new PropertyModel<StructConstructorException>();
+            var args = Array.Empty<object?>();
+
+            var propertyInfo = instance.GetType().GetProperty(nameof(PropertyModel<StructConstructorException>.Value))!;
+
+            var sut = new DefaultPropertyResolver(CacheLevel.PerInstance);
+
+            var actual = sut.IsIgnored(configuration, instance, propertyInfo, args);
+
+            actual.Should().BeFalse();
         }
 
         private class ClassMatchingNameWrapper<T> where T : class

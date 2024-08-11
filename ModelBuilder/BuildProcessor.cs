@@ -103,8 +103,8 @@
 
             var matches = from x in capabilities
                 where x != null
-                      && (x.SupportsCreate && buildRequirement == BuildRequirement.Create
-                          || x.SupportsPopulate && buildRequirement == BuildRequirement.Populate)
+                      && ((x.SupportsCreate && buildRequirement == BuildRequirement.Create)
+                          || (x.SupportsPopulate && buildRequirement == BuildRequirement.Populate))
                 select x;
 
             var capability = matches.FirstOrDefault();

@@ -139,7 +139,7 @@
 
             var sut = new CreationRuleBuildAction();
 
-            Action action = () => sut.Build(executeStrategy, (ParameterInfo) null!);
+            Action action = () => sut.Build(executeStrategy, (ParameterInfo)null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -280,7 +280,7 @@
 
             var sut = new CreationRuleBuildAction();
 
-            Action action = () => sut.Build(executeStrategy, (PropertyInfo) null!);
+            Action action = () => sut.Build(executeStrategy, (PropertyInfo)null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -396,7 +396,7 @@
 
             var sut = new CreationRuleBuildAction();
 
-            Action action = () => sut.Build(executeStrategy, (Type) null!);
+            Action action = () => sut.Build(executeStrategy, (Type)null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -588,7 +588,7 @@
 
             var sut = new CreationRuleBuildAction();
 
-            Action action = () => sut.GetBuildCapability(buildConfiguration, buildChain, (ParameterInfo) null!);
+            Action action = () => sut.GetBuildCapability(buildConfiguration, buildChain, (ParameterInfo)null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -697,7 +697,7 @@
 
             var sut = new CreationRuleBuildAction();
 
-            Action action = () => sut.GetBuildCapability(buildConfiguration, buildChain, (PropertyInfo) null!);
+            Action action = () => sut.GetBuildCapability(buildConfiguration, buildChain, (PropertyInfo)null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -806,7 +806,7 @@
 
             var sut = new CreationRuleBuildAction();
 
-            Action action = () => sut.GetBuildCapability(buildConfiguration, buildChain, (Type) null!);
+            Action action = () => sut.GetBuildCapability(buildConfiguration, buildChain, (Type)null!);
 
             action.Should().Throw<ArgumentNullException>();
         }

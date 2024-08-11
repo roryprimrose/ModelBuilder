@@ -221,6 +221,7 @@ namespace ModelBuilder
 
             if (ReferenceEquals(first, second))
             {
+                // These reference the same instance in memory
                 return true;
             }
 

@@ -42,7 +42,7 @@
 
             for (var index = 0; index < 1000; index++)
             {
-                var actual = (FileAttributes?) sut.Generate(executeStrategy, typeof(FileAttributes?));
+                var actual = (FileAttributes?)sut.Generate(executeStrategy, typeof(FileAttributes?));
 
                 if (actual == null!)
                 {
@@ -175,7 +175,7 @@
 
             for (var index = 0; index < 1000; index++)
             {
-                var actual = (SmallFlags) sut.RunGenerate(typeof(SmallFlags), null!, executeStrategy);
+                var actual = (SmallFlags)sut.RunGenerate(typeof(SmallFlags), null!, executeStrategy);
 
                 if (actual == SmallFlags.First)
                 {
@@ -216,7 +216,7 @@
             var actual = sut.RunGenerate(typeof(NoValues), null!, executeStrategy);
 
             actual.Should().BeOfType<NoValues>();
-            actual.Should().Be((NoValues) 0);
+            actual.Should().Be((NoValues)0);
         }
 
         [Theory]

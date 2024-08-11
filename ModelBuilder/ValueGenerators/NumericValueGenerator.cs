@@ -90,15 +90,15 @@
             return Generator.IsSupported(type);
         }
 
+        /// <summary>
+        ///     Gets or sets whether this type can return negative values or not.
+        /// </summary>
+        public virtual bool AllowNegative { get; set; } = false;
+
         /// <inheritdoc />
         public bool AllowNull { get; set; } = false;
 
         /// <inheritdoc />
         public int NullPercentageChance { get; set; } = 10;
-
-        /// <summary>
-        ///     Gets or sets whether this type can return negative values or not.
-        /// </summary>
-        public virtual bool AllowNegative { get; set; } = false;
     }
 }

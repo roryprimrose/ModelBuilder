@@ -185,7 +185,7 @@
             var actual = sut.Create(executeStrategy, type);
 
             actual.Should().BeOfType<FactoryWithValue>();
-            actual.As<FactoryWithValue>().Value.Should().Be((Guid) parameters[0]);
+            actual.As<FactoryWithValue>().Value.Should().Be((Guid)parameters[0]);
         }
 
         [Fact]
@@ -245,7 +245,7 @@
             var actual = sut.Create(executeStrategy, type, parameters);
 
             actual.Should().BeOfType<FactoryWithValue>();
-            actual.As<FactoryWithValue>().Value.Should().Be((Guid) parameters[0]);
+            actual.As<FactoryWithValue>().Value.Should().Be((Guid)parameters[0]);
         }
 
         [Fact]

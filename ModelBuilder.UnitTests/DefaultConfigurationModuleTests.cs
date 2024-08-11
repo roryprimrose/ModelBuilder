@@ -30,7 +30,8 @@
 
             configuration.IgnoreRules.Should().BeEmpty();
             configuration.ConstructorResolver.Should().BeOfType<DefaultConstructorResolver>();
-            configuration.ConstructorResolver.As<DefaultConstructorResolver>().CacheLevel.Should().Be(CacheLevel.Global);
+            configuration.ConstructorResolver.As<DefaultConstructorResolver>().CacheLevel.Should()
+                .Be(CacheLevel.Global);
             configuration.PropertyResolver.Should().BeOfType<DefaultPropertyResolver>();
             configuration.PropertyResolver.As<DefaultPropertyResolver>().CacheLevel.Should().Be(CacheLevel.Global);
             configuration.CreationRules.Should().BeEmpty();
@@ -128,25 +129,6 @@
         }
 
         [Fact]
-        public void OrderOfTypeCreators()
-        {
-            var configuration = new BuildConfiguration();
-
-            var sut = new DefaultConfigurationModule();
-
-            sut.Configure(configuration);
-
-            var items = configuration.TypeCreators.OrderByDescending(x => x.Priority);
-
-            _output.WriteLine("TypeCreators are evaluated in the following order");
-
-            foreach (var item in items)
-            {
-                _output.WriteLine("{0} - {1}", item.Priority, item.GetType().Name);
-            }
-        }
-
-        [Fact]
         public void OrderOfExecuteOrderRules()
         {
             var configuration = new BuildConfiguration();
@@ -162,6 +144,25 @@
             foreach (var item in items)
             {
                 _output.WriteLine("{0} - {1}", item.Priority, item);
+            }
+        }
+
+        [Fact]
+        public void OrderOfTypeCreators()
+        {
+            var configuration = new BuildConfiguration();
+
+            var sut = new DefaultConfigurationModule();
+
+            sut.Configure(configuration);
+
+            var items = configuration.TypeCreators.OrderByDescending(x => x.Priority);
+
+            _output.WriteLine("TypeCreators are evaluated in the following order");
+
+            foreach (var item in items)
+            {
+                _output.WriteLine("{0} - {1}", item.Priority, item.GetType().Name);
             }
         }
 

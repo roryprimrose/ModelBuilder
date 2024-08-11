@@ -74,6 +74,7 @@
             configuration.AddValueGenerator<AddressValueGenerator>();
             configuration.AddValueGenerator<AgeValueGenerator>();
             configuration.AddValueGenerator<BooleanValueGenerator>();
+            configuration.AddValueGenerator<CharValueGenerator>();
             configuration.AddValueGenerator<CityValueGenerator>();
             configuration.AddValueGenerator<CompanyValueGenerator>();
             configuration.AddValueGenerator<CountryValueGenerator>();

@@ -31,12 +31,12 @@
         }
 
         [Theory]
-        [InlineData(null!)]
+        [InlineData(null)]
         [InlineData("")]
         [InlineData("  ")]
-        public void ParseThrowsExceptionWithInvalidData(string data)
+        public void ParseThrowsExceptionWithInvalidData(string? data)
         {
-            Action action = () => Location.Parse(data);
+            Action action = () => Location.Parse(data!);
 
             action.Should().Throw<ArgumentException>();
         }

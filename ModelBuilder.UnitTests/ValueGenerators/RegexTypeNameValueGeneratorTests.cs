@@ -44,10 +44,10 @@
         }
 
         [Theory]
-        [InlineData(null!)]
+        [InlineData(null)]
         [InlineData("")]
         [InlineData("  ")]
-        public void IsMatchReturnsFalseForUnsupportedReferenceName(string referenceName)
+        public void IsMatchReturnsFalseForUnsupportedReferenceName(string? referenceName)
         {
             var nameRegex = NameExpression.FirstName;
             var value = Guid.NewGuid().ToString();
@@ -56,7 +56,7 @@
 
             var sut = new Wrapper(nameRegex, typeof(string), value);
 
-            var actual = sut.RunIsMatch(typeof(string), referenceName, buildChain);
+            var actual = sut.RunIsMatch(typeof(string), referenceName!, buildChain);
 
             actual.Should().BeFalse();
         }
