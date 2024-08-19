@@ -56,11 +56,16 @@
 
             public object Create(Type type, params object?[]? args)
             {
-                var value = Child.Create(type, args);
+                try
+                {
+                    var value = Child.Create(type, args);
 
-                LogAction(Log.Output);
-
-                return value;
+                    return value;
+                }
+                finally
+                {
+                    LogAction(Log.Output);
+                }
             }
 
             public object?[]? CreateParameters(MethodBase method)
@@ -75,11 +80,16 @@
 
             public object Populate(object instance)
             {
-                var value = Child.Populate(instance);
+                try
+                {
+                    var value = Child.Populate(instance);
 
-                LogAction(Log.Output);
-
-                return value;
+                    return value;
+                }
+                finally
+                {
+                    LogAction(Log.Output);
+                }
             }
 
             public IBuildChain BuildChain => Child.BuildChain;
@@ -99,20 +109,30 @@
 
             public T Create(params object?[]? args)
             {
-                var value = Child.Create(args);
+                try
+                {
+                    var value = Child.Create(args);
 
-                LogAction(Log.Output);
-
-                return value;
+                    return value;
+                }
+                finally
+                {
+                    LogAction(Log.Output);
+                }
             }
 
             public T Populate(T instance)
             {
-                var value = Child.Populate(instance);
+                try
+                {
+                    var value = Child.Populate(instance);
 
-                LogAction(Log.Output);
-
-                return value;
+                    return value;
+                }
+                finally
+                {
+                    LogAction(Log.Output);
+                }
             }
         }
     }

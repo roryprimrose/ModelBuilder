@@ -192,8 +192,11 @@
 
             if (addMethod == null)
             {
+                var context = executeStrategy.BuildChain.Last;
+                var buildLog = executeStrategy.Log.Output;
+
                 throw new BuildException(
-                    $"The type {type.FullName} does not have an 'Add' member to populate with new values.");
+                    $"The type {type.FullName} does not have an 'Add' member to populate with new values.", type, null, context, buildLog);
             }
 
             object? previousItem = null;
