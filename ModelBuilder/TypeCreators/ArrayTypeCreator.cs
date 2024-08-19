@@ -77,7 +77,10 @@
                 if (constructor == null
                     || (constructor.Attributes & MethodAttributes.Assembly) != MethodAttributes.Assembly)
                 {
-                    throw new BuildException("No constructor was found that matches the parameters (int)");
+                    var context = executeStrategy.BuildChain.Last;
+                    var buildLog = executeStrategy.Log.Output;
+
+                    throw new BuildException("No constructor was found that matches the parameters (int)", type, referenceName, context, buildLog);
                 }
             }
 
