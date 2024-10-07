@@ -85,7 +85,7 @@ jobs:
       run: dotnet pack "./${{ env.projectName }}/${{ env.projectName }}.csproj" -c Release --no-build --include-symbols -o $GITHUB_WORKSPACE/staging
 
     - name: Publish build artifacts
-      uses: actions/upload-artifact@v4.3.3
+      uses: actions/upload-artifact@v4.4.1
       with:
         name: packages
         path: staging
@@ -95,7 +95,7 @@ jobs:
       run: |
         echo '${{ steps.gitversion.outputs.NuGetVersionV2 }}' > version.txt
     - name: Upload version
-      uses: actions/upload-artifact@v4.3.3
+      uses: actions/upload-artifact@v4.4.1
       with:
         name: version
         path: version.txt
