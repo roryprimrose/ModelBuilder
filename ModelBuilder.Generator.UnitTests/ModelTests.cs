@@ -21,6 +21,14 @@
         }
 
         [Fact]
+        public void WithConstructorParameters()
+        {
+            var actual = Model.Create<WithConstructorParameters>();
+
+            actual.Should().NotBeNull();
+        }
+
+        [Fact]
         public void CanCreateInstanceAlreadyGenerated()
         {
             var first = Model.Create<Address>();

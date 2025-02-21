@@ -38,6 +38,4 @@
         /// </summary>
         ICollection<IGenerator> Generators { get; }
     }
-
-
 }
