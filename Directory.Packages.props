@@ -10,6 +10,11 @@
     <PackageVersion Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.301" />
   </ItemGroup>
 
+  <!-- Benchmarking -->
+  <ItemGroup>
+    <PackageVersion Include="BenchmarkDotNet" Version="0.15.2" />
+  </ItemGroup>
+
   <!--
     Test stack: xUnit v3 on Microsoft.Testing.Platform (MTP).
     FluentAssertions is pinned to the 7.x line, the last release published under
