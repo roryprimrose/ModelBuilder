@@ -108,6 +108,61 @@ namespace ModelBuilder.vNext
         }
 
         /// <summary>
+        ///     Builds a value for a member, resolving a registered value source first and then a
+        ///     registered builder, with circular-reference and depth guards applied for built types.
+        /// </summary>
+        /// <typeparam name="T">The member type to build.</typeparam>
+        /// <param name="declaringType">The type that declares the member.</param>
+        /// <param name="memberName">The name of the member.</param>
+        /// <returns>The built value, or <c>default</c> when no source or builder is registered or a guard fired.</returns>
+        /// <exception cref="ArgumentNullException">
+        ///     The <paramref name="declaringType" /> or <paramref name="memberName" /> parameter is <c>null</c>.
+        /// </exception>
+        public T Build<T>(Type declaringType, string memberName)
+        {
+            declaringType = declaringType ?? throw new ArgumentNullException(nameof(declaringType));
+            memberName = memberName ?? throw new ArgumentNullException(nameof(memberName));
+
+            var memberType = typeof(T);
+
+            var source = ValueSource<T>.Instance;
+
+            if (source != null)
+            {
+                using (EnterMember(declaringType, memberName, memberType))
+                {
+                    return source.Create(this, new BuildTarget(memberType, memberName));
+                }
+            }
+
+            var builder = ModelBuilderSlot<T>.Instance;
+
+            if (builder == null)
+            {
+                return default!;
+            }
+
+            if (IsInBuildChain(memberType))
+            {
+                Log.Write(BuildLogEntryKind.SkipMember, memberType, memberName, "circular-reference guard");
+
+                return default!;
+            }
+
+            if (IsDepthExceeded)
+            {
+                Log.Write(BuildLogEntryKind.SkipMember, memberType, memberName, "depth guard");
+
+                return default!;
+            }
+
+            using (EnterMember(declaringType, memberName, memberType))
+            {
+                return builder.Create(this);
+            }
+        }
+
+        /// <summary>
         ///     Determines whether a type is currently under construction in the build chain, used to
         ///     detect circular references.
         /// </summary>

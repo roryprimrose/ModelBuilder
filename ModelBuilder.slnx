@@ -24,6 +24,8 @@
     <File Path="Solution Items/UnitTest.ruleset" />
   </Folder>
   <Project Path="ModelBuilder.BenchmarkTests/ModelBuilder.BenchmarkTests.csproj" />
+  <Project Path="ModelBuilder.Generator/ModelBuilder.Generator.csproj" />
+  <Project Path="ModelBuilder.Generator.UnitTests/ModelBuilder.Generator.UnitTests.csproj" />
   <Project Path="ModelBuilder.UnitTests/ModelBuilder.UnitTests.csproj" />
   <Project Path="ModelBuilder/ModelBuilder.csproj" />
 </Solution>
