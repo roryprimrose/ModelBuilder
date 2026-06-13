@@ -70,6 +70,28 @@ namespace ModelBuilder.Generator
             var symbol = capture.Symbol!;
             var location = capture.Location ?? Location.None;
 
+            var isUnbuildable = symbol.TypeKind == TypeKind.Interface
+                                || symbol.IsAbstract
+                                || ((symbol.TypeKind == TypeKind.Class || symbol.TypeKind == TypeKind.Struct)
+                                    && BuildGraphWalker.HasAccessibleConstructor(symbol) == false);
+
+            if (isUnbuildable == false)
+            {
+                return;
+            }
+
+            if (capture.IsTypeOfRoot)
+            {
+                // Model.Create(typeof(X)) names an unbuildable constant type (s12.7).
+                context.ReportDiagnostic(
+                    Diagnostic.Create(
+                        DiagnosticDescriptors.UnbuildableTypeOfRoot,
+                        location,
+                        symbol.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)));
+
+                return;
+            }
+
             if (symbol.TypeKind == TypeKind.Interface || symbol.IsAbstract)
             {
                 context.ReportDiagnostic(
@@ -81,15 +103,11 @@ namespace ModelBuilder.Generator
                 return;
             }
 
-            if ((symbol.TypeKind == TypeKind.Class || symbol.TypeKind == TypeKind.Struct)
-                && BuildGraphWalker.HasAccessibleConstructor(symbol) == false)
-            {
-                context.ReportDiagnostic(
-                    Diagnostic.Create(
-                        DiagnosticDescriptors.NoAccessibleConstructor,
-                        location,
-                        symbol.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)));
-            }
+            context.ReportDiagnostic(
+                Diagnostic.Create(
+                    DiagnosticDescriptors.NoAccessibleConstructor,
+                    location,
+                    symbol.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)));
         }
 
         private static RootCapture GetRootType(GeneratorSyntaxContext context, CancellationToken token)
@@ -131,10 +149,40 @@ namespace ModelBuilder.Generator
 
             if (method.TypeArguments.Length != 1)
             {
+                // Non-generic Model.Create(typeof(X)) - the typeof constant names a build root (s6.2.1).
+                if (method.Name == "Create"
+                    && containingType == ModelTypeName
+                    && TryGetTypeOfArgument(invocation, context.SemanticModel, token, out var constantType))
+                {
+                    return new RootCapture(constantType, invocation.GetLocation(), isTypeOfRoot: true);
+                }
+
                 return default;
             }
 
             return new RootCapture(method.TypeArguments[0] as INamedTypeSymbol, invocation.GetLocation());
+        }
+
+        private static bool TryGetTypeOfArgument(
+            InvocationExpressionSyntax invocation,
+            SemanticModel semanticModel,
+            CancellationToken token,
+            out INamedTypeSymbol? type)
+        {
+            type = null;
+
+            var firstArgument = invocation.ArgumentList.Arguments.Count > 0
+                ? invocation.ArgumentList.Arguments[0].Expression
+                : null;
+
+            if (firstArgument is not TypeOfExpressionSyntax typeOf)
+            {
+                return false;
+            }
+
+            type = semanticModel.GetTypeInfo(typeOf.Type, token).Type as INamedTypeSymbol;
+
+            return type is not null;
         }
 
         private static bool IsCandidateInvocation(SyntaxNode node)
@@ -150,11 +198,14 @@ namespace ModelBuilder.Generator
 
         private readonly struct RootCapture
         {
-            public RootCapture(INamedTypeSymbol? symbol, Location location)
+            public RootCapture(INamedTypeSymbol? symbol, Location location, bool isTypeOfRoot = false)
             {
                 Symbol = symbol;
                 Location = location;
+                IsTypeOfRoot = isTypeOfRoot;
             }
+
+            public bool IsTypeOfRoot { get; }
 
             public Location? Location { get; }
 

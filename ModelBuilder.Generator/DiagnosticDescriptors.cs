@@ -27,5 +27,14 @@ namespace ModelBuilder.Generator
             DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
             helpLinkUri: "https://github.com/roryprimrose/ModelBuilder");
+
+        public static readonly DiagnosticDescriptor UnbuildableTypeOfRoot = new DiagnosticDescriptor(
+            "MB1005",
+            "Model.Create(typeof(X)) names a type that cannot be built",
+            "'{0}' has no generated builder because it is abstract, an interface, or has no accessible constructor. Make it discoverable: call Model.Create<{0}>() somewhere, add a Mapping<,> to it, or annotate it with [GenerateModelBuilder].",
+            Category,
+            DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
+            helpLinkUri: "https://github.com/roryprimrose/ModelBuilder");
     }
 }

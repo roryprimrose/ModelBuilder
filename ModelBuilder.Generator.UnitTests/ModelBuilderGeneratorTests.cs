@@ -203,6 +203,52 @@ namespace Sample
         }
 
         [Fact]
+        public void ReportsMB1005ForUnbuildableTypeOfRoot()
+        {
+            const string source = @"
+namespace Sample
+{
+    public abstract class Shape
+    {
+        public int Sides { get; set; }
+    }
+
+    public static class Caller
+    {
+        public static object Build() => global::ModelBuilder.vNext.Model.Create(typeof(Shape));
+    }
+}";
+
+            var harness = GeneratorTestHarness.Run(source);
+
+            harness.GeneratorDiagnostics.Should().Contain(d => d.Id == "MB1005");
+        }
+
+        [Fact]
+        public void EmitsBuilderForBuildableTypeOfRoot()
+        {
+            const string source = @"
+namespace Sample
+{
+    public sealed class Person
+    {
+        public int Age { get; set; }
+    }
+
+    public static class Caller
+    {
+        public static object Build() => global::ModelBuilder.vNext.Model.Create(typeof(Person));
+    }
+}";
+
+            var harness = GeneratorTestHarness.Run(source);
+
+            harness.GeneratorDiagnostics.Should().BeEmpty();
+            harness.CompilationErrors.Should().BeEmpty();
+            harness.GeneratedSources[0].Should().Contain("Sample_PersonBuilder");
+        }
+
+        [Fact]
         public void ReportsMB1001ForAbstractRoot()
         {
             const string source = @"

@@ -112,6 +112,36 @@ namespace Sample
         }
 
         [Fact]
+        public void CreateByTypeBuildsTypeOfRoot()
+        {
+            const string source = @"
+namespace Sample
+{
+    public sealed class Person
+    {
+        public int Age { get; set; }
+    }
+
+    public static class Caller
+    {
+        public static object Build() => global::ModelBuilder.vNext.Model.Create(typeof(Person));
+    }
+}";
+
+            var harness = GeneratorTestHarness.Run(source);
+            harness.CompilationErrors.Should().BeEmpty();
+
+            var assembly = harness.EmitAndLoad();
+            var personType = assembly.GetType("Sample.Person", throwOnError: true)!;
+            var callerType = assembly.GetType("Sample.Caller", throwOnError: true)!;
+
+            var person = callerType.GetMethod("Build")!.Invoke(null, null);
+
+            person.Should().BeOfType(personType);
+            personType.GetProperty("Age")!.GetValue(person).Should().NotBe(0);
+        }
+
+        [Fact]
         public void CreateWrapsThrowingValueSourceWithBuildPath()
         {
             const string source = @"
