@@ -17,6 +17,7 @@ namespace ModelBuilder.Generator
     public sealed class ModelBuilderGenerator : IIncrementalGenerator
     {
         private const string ModelTypeName = "ModelBuilder.vNext.Model";
+        private const string ConfigurationTypeName = "ModelBuilder.vNext.ModelConfiguration";
 
         /// <inheritdoc />
         public void Initialize(IncrementalGeneratorInitializationContext context)
@@ -107,12 +108,23 @@ namespace ModelBuilder.Generator
 
             var containingType = method.ContainingType?.ToDisplayString();
 
-            if (containingType != ModelTypeName)
+            if (containingType != ModelTypeName && containingType != ConfigurationTypeName)
             {
                 return default;
             }
 
-            if (method.Name != "Create" && method.Name != "Populate")
+            if (method.Name == "Mapping")
+            {
+                // Model.Mapping<TSource, TTarget>() makes the concrete TTarget a build root.
+                if (method.TypeArguments.Length != 2)
+                {
+                    return default;
+                }
+
+                return new RootCapture(method.TypeArguments[1] as INamedTypeSymbol, invocation.GetLocation());
+            }
+
+            if (method.Name != "Create" && method.Name != "Populate" && method.Name != "Ignoring")
             {
                 return default;
             }
@@ -131,7 +143,7 @@ namespace ModelBuilder.Generator
             {
                 Expression: MemberAccessExpressionSyntax
                 {
-                    Name.Identifier.ValueText: "Create" or "Populate"
+                    Name.Identifier.ValueText: "Create" or "Populate" or "Mapping" or "Ignoring"
                 }
             };
         }

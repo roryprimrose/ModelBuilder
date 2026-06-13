@@ -112,6 +112,82 @@ namespace Sample
         }
 
         [Fact]
+        public void IgnoringLeavesMemberAtDefault()
+        {
+            const string source = @"
+namespace Sample
+{
+    public sealed class Person
+    {
+        public int Age { get; set; }
+        public string? Notes { get; set; }
+    }
+
+    public static class Caller
+    {
+        public static Person Build() => global::ModelBuilder.vNext.Model.Ignoring<Person>(p => p.Notes).Create<Person>();
+    }
+}";
+
+            var harness = GeneratorTestHarness.Run(source);
+            harness.CompilationErrors.Should().BeEmpty();
+
+            var assembly = harness.EmitAndLoad();
+            var personType = assembly.GetType("Sample.Person", throwOnError: true)!;
+
+            // Build through the generated ignoring call by invoking the static caller.
+            var callerType = assembly.GetType("Sample.Caller", throwOnError: true)!;
+            var person = callerType.GetMethod("Build")!.Invoke(null, null)!;
+
+            personType.GetProperty("Notes")!.GetValue(person).Should().BeNull();
+            personType.GetProperty("Age")!.GetValue(person).Should().NotBe(0);
+        }
+
+        [Fact]
+        public void MappingBuildsConcreteTypeForAbstractMember()
+        {
+            const string source = @"
+namespace Sample
+{
+    public abstract class Animal
+    {
+        public string? Name { get; set; }
+    }
+
+    public sealed class Dog : Animal
+    {
+        public int Legs { get; set; }
+    }
+
+    public sealed class Owner
+    {
+        public Animal? Pet { get; set; }
+    }
+
+    public static class Caller
+    {
+        public static Owner Build() =>
+            global::ModelBuilder.vNext.Model.Mapping<Animal, Dog>().Create<Owner>();
+    }
+}";
+
+            var harness = GeneratorTestHarness.Run(source);
+            harness.CompilationErrors.Should().BeEmpty();
+
+            var assembly = harness.EmitAndLoad();
+            var ownerType = assembly.GetType("Sample.Owner", throwOnError: true)!;
+            var dogType = assembly.GetType("Sample.Dog", throwOnError: true)!;
+            var callerType = assembly.GetType("Sample.Caller", throwOnError: true)!;
+
+            var owner = callerType.GetMethod("Build")!.Invoke(null, null)!;
+
+            var pet = ownerType.GetProperty("Pet")!.GetValue(owner);
+
+            pet.Should().NotBeNull();
+            pet!.GetType().Should().Be(dogType);
+        }
+
+        [Fact]
         public void CreateTerminatesOnSelfReferencingType()
         {
             const string source = @"

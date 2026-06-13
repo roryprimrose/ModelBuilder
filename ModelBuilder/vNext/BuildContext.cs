@@ -197,6 +197,24 @@ namespace ModelBuilder.vNext
 
             var memberType = typeof(T);
 
+            if (Configuration.TryGetMapping(memberType, out var mappedType))
+            {
+                if (IsInBuildChain(mappedType))
+                {
+                    Log.Write(BuildLogEntryKind.SkipMember, mappedType, memberName, "circular-reference guard");
+
+                    return default!;
+                }
+
+                if (Model.Registry.TryGet(mappedType, out var mappedBuilder) && mappedBuilder != null)
+                {
+                    using (EnterMember(declaringType, memberName, mappedType))
+                    {
+                        return (T)mappedBuilder.Create(this);
+                    }
+                }
+            }
+
             var source = ValueSource<T>.Instance;
 
             if (source != null)

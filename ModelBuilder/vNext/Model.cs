@@ -30,7 +30,7 @@ namespace ModelBuilder.vNext
                 throw NoBuilder(instanceType);
             }
 
-            var context = NewContext();
+            var context = NewContext(null);
 
             using (context.EnterRoot(instanceType))
             {
@@ -47,14 +47,31 @@ namespace ModelBuilder.vNext
         /// <exception cref="ModelBuildException">No builder has been generated for the type.</exception>
         public static T Create<T>(params object?[]? args)
         {
-            var builder = ModelBuilderSlot<T>.Instance ?? throw NoBuilder(typeof(T));
+            return CreateWith<T>(null, args);
+        }
 
-            var context = NewContext();
+        /// <summary>
+        ///     Begins a configured build that ignores the specified member.
+        /// </summary>
+        /// <typeparam name="T">The type that declares the member to ignore.</typeparam>
+        /// <param name="expression">An expression selecting the member to ignore.</param>
+        /// <returns>A configuration to continue building.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="expression" /> parameter is <c>null</c>.</exception>
+        public static ModelConfiguration Ignoring<T>(System.Linq.Expressions.Expression<Func<T, object?>> expression)
+        {
+            return new ModelConfiguration().Ignoring(expression);
+        }
 
-            using (context.EnterRoot(typeof(T)))
-            {
-                return builder.Create(context, args);
-            }
+        /// <summary>
+        ///     Begins a configured build that maps a source type to a concrete target type.
+        /// </summary>
+        /// <typeparam name="TSource">The source type, typically an interface or abstract type.</typeparam>
+        /// <typeparam name="TTarget">The concrete type to build in its place.</typeparam>
+        /// <returns>A configuration to continue building.</returns>
+        public static ModelConfiguration Mapping<TSource, TTarget>()
+            where TTarget : TSource
+        {
+            return new ModelConfiguration().Mapping<TSource, TTarget>();
         }
 
         /// <summary>
@@ -67,6 +84,34 @@ namespace ModelBuilder.vNext
         /// <exception cref="ModelBuildException">No builder has been generated for the type.</exception>
         public static T Populate<T>(T instance)
         {
+            return PopulateWith(instance, null);
+        }
+
+        /// <summary>
+        ///     Begins a configured build using the specified configuration module.
+        /// </summary>
+        /// <typeparam name="TModule">The configuration module to apply.</typeparam>
+        /// <returns>A configuration to continue building.</returns>
+        public static ModelConfiguration UsingModule<TModule>()
+            where TModule : IConfigurationModule, new()
+        {
+            return new ModelConfiguration().UsingModule<TModule>();
+        }
+
+        internal static T CreateWith<T>(BuildConfiguration? configuration, object?[]? args)
+        {
+            var builder = ModelBuilderSlot<T>.Instance ?? throw NoBuilder(typeof(T));
+
+            var context = NewContext(configuration);
+
+            using (context.EnterRoot(typeof(T)))
+            {
+                return builder.Create(context, args);
+            }
+        }
+
+        internal static T PopulateWith<T>(T instance, BuildConfiguration? configuration)
+        {
             if (instance is null)
             {
                 throw new ArgumentNullException(nameof(instance));
@@ -74,7 +119,7 @@ namespace ModelBuilder.vNext
 
             var builder = ModelBuilderSlot<T>.Instance ?? throw NoBuilder(typeof(T));
 
-            var context = NewContext();
+            var context = NewContext(configuration);
 
             using (context.EnterRoot(typeof(T)))
             {
@@ -82,9 +127,9 @@ namespace ModelBuilder.vNext
             }
         }
 
-        private static BuildContext NewContext()
+        private static BuildContext NewContext(BuildConfiguration? configuration)
         {
-            return new BuildContext(new RandomSource());
+            return new BuildContext(new RandomSource(), null, null, configuration);
         }
 
         private static ModelBuildException NoBuilder(Type type)
