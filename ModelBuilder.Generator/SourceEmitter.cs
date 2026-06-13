@@ -192,6 +192,7 @@ namespace ModelBuilder.Generator
             builder.Append(Indent).AppendLine($"    public {type} Populate(global::ModelBuilder.vNext.BuildContext context, {type} instance, object?[]? args = null)");
             builder.Append(Indent).AppendLine("    {");
             builder.Append(Indent).AppendLine($"        using (context.Log.BeginScope(global::ModelBuilder.vNext.BuildLogEntryKind.PopulateInstance, typeof({type})))");
+            builder.Append(Indent).AppendLine($"        using (context.EnterSiblingScope())");
             builder.Append(Indent).AppendLine("        {");
 
             foreach (var member in model.Members)
@@ -199,6 +200,7 @@ namespace ModelBuilder.Generator
                 builder.Append(Indent).AppendLine($"            if (context.ShouldPopulate(typeof({type}), \"{member.Name}\", typeof({member.TypeName})))");
                 builder.Append(Indent).AppendLine("            {");
                 builder.Append(Indent).AppendLine($"                instance.{member.Name} = context.Build<{member.TypeName}>(typeof({type}), \"{member.Name}\");");
+                builder.Append(Indent).AppendLine($"                context.RecordSibling(\"{member.Name}\", instance.{member.Name});");
                 builder.Append(Indent).AppendLine("            }");
             }
 

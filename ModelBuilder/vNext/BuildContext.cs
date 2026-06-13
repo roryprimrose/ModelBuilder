@@ -14,6 +14,7 @@ namespace ModelBuilder.vNext
         private static readonly IBuildConfiguration _emptyConfiguration = new BuildConfiguration();
         private readonly List<Type> _chain = new List<Type>();
         private readonly List<BuildFrame> _path = new List<BuildFrame>();
+        private readonly List<Dictionary<string, object?>> _siblingScopes = new List<Dictionary<string, object?>>();
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="BuildContext" /> class.
@@ -117,6 +118,65 @@ namespace ModelBuilder.vNext
             type = type ?? throw new ArgumentNullException(nameof(type));
 
             return Enter(new BuildFrame(type, null, type));
+        }
+
+        /// <summary>
+        ///     Opens a sibling scope for the instance currently being populated, so that members already
+        ///     set on it can be read by value sources for later members via <see cref="GetSibling{T}" />.
+        /// </summary>
+        /// <returns>A token that closes the sibling scope when disposed.</returns>
+        public IDisposable EnterSiblingScope()
+        {
+            _siblingScopes.Add(new Dictionary<string, object?>(StringComparer.Ordinal));
+
+            return new SiblingScope(this);
+        }
+
+        /// <summary>
+        ///     Reads a sibling member value already populated on the instance currently being built.
+        /// </summary>
+        /// <typeparam name="T">The expected sibling value type.</typeparam>
+        /// <param name="memberName">The name of the sibling member.</param>
+        /// <returns>
+        ///     The sibling value, or <c>default</c> when there is no sibling scope or no matching member
+        ///     has been recorded.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="memberName" /> parameter is <c>null</c>.</exception>
+        public T? GetSibling<T>(string memberName)
+        {
+            memberName = memberName ?? throw new ArgumentNullException(nameof(memberName));
+
+            if (_siblingScopes.Count == 0)
+            {
+                return default;
+            }
+
+            var scope = _siblingScopes[_siblingScopes.Count - 1];
+
+            if (scope.TryGetValue(memberName, out var value) && value is T typed)
+            {
+                return typed;
+            }
+
+            return default;
+        }
+
+        /// <summary>
+        ///     Records a member value into the current sibling scope so later members can read it.
+        /// </summary>
+        /// <param name="memberName">The name of the member.</param>
+        /// <param name="value">The value that was set on the member.</param>
+        /// <exception cref="ArgumentNullException">The <paramref name="memberName" /> parameter is <c>null</c>.</exception>
+        public void RecordSibling(string memberName, object? value)
+        {
+            memberName = memberName ?? throw new ArgumentNullException(nameof(memberName));
+
+            if (_siblingScopes.Count == 0)
+            {
+                return;
+            }
+
+            _siblingScopes[_siblingScopes.Count - 1][memberName] = value;
         }
 
         /// <summary>
@@ -271,6 +331,14 @@ namespace ModelBuilder.vNext
             }
         }
 
+        private void ExitSiblingScope()
+        {
+            if (_siblingScopes.Count > 0)
+            {
+                _siblingScopes.RemoveAt(_siblingScopes.Count - 1);
+            }
+        }
+
         /// <summary>
         ///     Gets the current build path from the root type down to the frame being built.
         /// </summary>
@@ -352,6 +420,22 @@ namespace ModelBuilder.vNext
             public void Dispose()
             {
                 _context?.Exit();
+                _context = null;
+            }
+        }
+
+        private sealed class SiblingScope : IDisposable
+        {
+            private BuildContext? _context;
+
+            public SiblingScope(BuildContext context)
+            {
+                _context = context;
+            }
+
+            public void Dispose()
+            {
+                _context?.ExitSiblingScope();
                 _context = null;
             }
         }

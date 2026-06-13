@@ -78,11 +78,28 @@ namespace ModelBuilder.vNext
 
         private static string NextEmail(BuildContext context)
         {
-            var first = NextFirstName(context).ToLowerInvariant();
-            var last = Pick(context, TestData.LastNames).ToLowerInvariant();
-            var domain = Pick(context, TestData.Domains);
+            // Prefer sibling name/domain values already set on the instance so the email is consistent
+            // with them; otherwise compose a believable address from the data sets.
+            var first = context.GetSibling<string>("FirstName");
+            var last = context.GetSibling<string>("LastName");
+            var domain = context.GetSibling<string>("Domain");
 
-            return first + "." + last + "@" + domain;
+            if (string.IsNullOrEmpty(first))
+            {
+                first = NextFirstName(context);
+            }
+
+            if (string.IsNullOrEmpty(last))
+            {
+                last = Pick(context, TestData.LastNames);
+            }
+
+            if (string.IsNullOrEmpty(domain))
+            {
+                domain = Pick(context, TestData.Domains);
+            }
+
+            return first!.ToLowerInvariant() + "." + last!.ToLowerInvariant() + "@" + domain;
         }
 
         private static string NextFirstName(BuildContext context)

@@ -112,6 +112,41 @@ namespace Sample
         }
 
         [Fact]
+        public void CreateDerivesEmailFromSiblingNameMembers()
+        {
+            const string source = @"
+namespace Sample
+{
+    public sealed class Person
+    {
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
+        public string? Email { get; set; }
+    }
+
+    public static class Caller
+    {
+        public static Person Build() => global::ModelBuilder.vNext.Model.Create<Person>();
+    }
+}";
+
+            var harness = GeneratorTestHarness.Run(source);
+            harness.CompilationErrors.Should().BeEmpty();
+
+            var assembly = harness.EmitAndLoad();
+            var personType = assembly.GetType("Sample.Person", throwOnError: true)!;
+
+            var person = CreateViaModel(personType);
+
+            var firstName = (string)personType.GetProperty("FirstName")!.GetValue(person)!;
+            var lastName = (string)personType.GetProperty("LastName")!.GetValue(person)!;
+            var email = (string)personType.GetProperty("Email")!.GetValue(person)!;
+
+            email.Should().Contain(firstName.ToLowerInvariant());
+            email.Should().Contain(lastName.ToLowerInvariant());
+        }
+
+        [Fact]
         public void CreatePopulatesEntityMembersFromNamedSources()
         {
             const string source = @"
