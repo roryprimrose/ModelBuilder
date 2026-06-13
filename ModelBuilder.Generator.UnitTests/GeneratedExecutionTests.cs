@@ -112,6 +112,40 @@ namespace Sample
         }
 
         [Fact]
+        public void CreatePopulatesPrimitivesFromBuiltInSources()
+        {
+            const string source = @"
+namespace Sample
+{
+    public sealed class Customer
+    {
+        public int Id { get; set; }
+        public string? Name { get; set; }
+        public System.Guid Token { get; set; }
+        public System.DateTimeOffset CreatedAt { get; set; }
+    }
+
+    public static class Caller
+    {
+        public static Customer Build() => global::ModelBuilder.vNext.Model.Create<Customer>();
+    }
+}";
+
+            var harness = GeneratorTestHarness.Run(source);
+            harness.CompilationErrors.Should().BeEmpty();
+
+            var assembly = harness.EmitAndLoad();
+            var customerType = assembly.GetType("Sample.Customer", throwOnError: true)!;
+
+            var customer = CreateViaModel(customerType);
+
+            customerType.GetProperty("Id")!.GetValue(customer).Should().NotBe(0);
+            customerType.GetProperty("Name")!.GetValue(customer).Should().NotBeNull();
+            customerType.GetProperty("Token")!.GetValue(customer).Should().NotBe(Guid.Empty);
+            customerType.GetProperty("CreatedAt")!.GetValue(customer).Should().NotBe(default(DateTimeOffset));
+        }
+
+        [Fact]
         public void CreateBuildsListAndDictionaryWithElements()
         {
             const string source = @"

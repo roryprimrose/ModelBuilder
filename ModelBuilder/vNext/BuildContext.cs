@@ -22,12 +22,14 @@ namespace ModelBuilder.vNext
         /// <param name="log">The optional build log; a no-op log is used when <c>null</c>.</param>
         /// <param name="options">The optional build options; defaults are used when <c>null</c>.</param>
         /// <param name="configuration">The optional build configuration; an empty configuration is used when <c>null</c>.</param>
+        /// <param name="valueSources">The optional value source registry; the built-in defaults are used when <c>null</c>.</param>
         /// <exception cref="ArgumentNullException">The <paramref name="random" /> parameter is <c>null</c>.</exception>
         public BuildContext(
             IRandomSource random,
             IBuildLog? log = null,
             BuildContextOptions? options = null,
-            IBuildConfiguration? configuration = null)
+            IBuildConfiguration? configuration = null,
+            ValueSourceRegistry? valueSources = null)
         {
             Random = random ?? throw new ArgumentNullException(nameof(random));
             Log = log ?? NullBuildLog.Instance;
@@ -39,6 +41,7 @@ namespace ModelBuilder.vNext
             MinCount = resolvedOptions.MinCount;
             MaxCount = resolvedOptions.MaxCount;
             Configuration = configuration ?? _emptyConfiguration;
+            ValueSources = valueSources ?? BuiltInValueSources.Default;
         }
 
         /// <summary>
@@ -141,6 +144,14 @@ namespace ModelBuilder.vNext
                 }
             }
 
+            if (TryResolveValueSource<T>(out var builtIn) && builtIn != null)
+            {
+                using (EnterMember(declaringType, memberName, memberType))
+                {
+                    return builtIn.Create(this, new BuildTarget(memberType, memberName));
+                }
+            }
+
             var builder = ModelBuilderSlot<T>.Instance;
 
             if (builder == null)
@@ -215,6 +226,27 @@ namespace ModelBuilder.vNext
             return Configuration.ShouldIgnore(new MemberSignature(declaringType, memberName, memberType)) == false;
         }
 
+        /// <summary>
+        ///     Resolves the value source for <typeparamref name="T" />, preferring a registered override
+        ///     in the typed-static slot and falling back to the value source registry.
+        /// </summary>
+        /// <typeparam name="T">The type to resolve a value source for.</typeparam>
+        /// <param name="source">The resolved value source, when one exists.</param>
+        /// <returns><c>true</c> if a value source was resolved; otherwise, <c>false</c>.</returns>
+        public bool TryResolveValueSource<T>(out IValueSource<T>? source)
+        {
+            var slot = ValueSource<T>.Instance;
+
+            if (slot != null)
+            {
+                source = slot;
+
+                return true;
+            }
+
+            return ValueSources.TryGet(out source);
+        }
+
         private void Exit()
         {
             if (_path.Count > 0)
@@ -286,6 +318,11 @@ namespace ModelBuilder.vNext
         ///     Gets the random source for the current build.
         /// </summary>
         public IRandomSource Random { get; }
+
+        /// <summary>
+        ///     Gets the registry of value sources consulted when no typed-static override is registered.
+        /// </summary>
+        public ValueSourceRegistry ValueSources { get; }
 
         private sealed class BuildScope : IDisposable
         {

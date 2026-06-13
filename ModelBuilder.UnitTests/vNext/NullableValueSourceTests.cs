@@ -44,7 +44,8 @@ namespace ModelBuilder.UnitTests.vNext
             {
                 NullPercentage = 0
             };
-            var context = new BuildContext(new RandomSource(1), null, options);
+            var emptySources = new ValueSourceRegistry();
+            var context = new BuildContext(new RandomSource(1), null, options, null, emptySources);
             var sut = new NullableValueSource<int>();
 
             var actual = sut.Create(context, new BuildTarget(typeof(int?)));

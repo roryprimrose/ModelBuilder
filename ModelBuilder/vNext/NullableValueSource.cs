@@ -18,9 +18,7 @@ namespace ModelBuilder.vNext
                 return null;
             }
 
-            var inner = ValueSource<T>.Instance;
-
-            if (inner == null)
+            if (context.TryResolveValueSource<T>(out var inner) == false || inner == null)
             {
                 return null;
             }
