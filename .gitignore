@@ -32,6 +32,8 @@ BenchmarkDotNet.Artifacts/
 # MSTest test Results
 [Tt]est[Rr]esult*/
 [Bb]uild[Ll]og.*
+# The pattern above targets MSBuild diagnostic logs; keep the vNext BuildLog source file tracked.
+![Bb]uild[Ll]og.cs
 
 # NUNIT
 *.VisualState.xml
