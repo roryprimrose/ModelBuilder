@@ -176,6 +176,33 @@ namespace Sample
         }
 
         [Fact]
+        public void EmitsNullableValueSourceForNullableEnum()
+        {
+            const string source = @"
+namespace Sample
+{
+    public enum Gender { Female, Male }
+
+    public sealed class Person
+    {
+        public Gender? Gender { get; set; }
+    }
+
+    public static class Caller
+    {
+        public static Person Build() => global::ModelBuilder.vNext.Model.Create<Person>();
+    }
+}";
+
+            var harness = GeneratorTestHarness.Run(source);
+
+            harness.GeneratorDiagnostics.Should().BeEmpty();
+            harness.CompilationErrors.Should().BeEmpty();
+            harness.GeneratedSources[0].Should().Contain("Sample_GenderValueSource");
+            harness.GeneratedSources[0].Should().Contain("NullableValueSource<global::Sample.Gender>");
+        }
+
+        [Fact]
         public void EmitsNothingWhenNoRootsPresent()
         {
             const string source = @"

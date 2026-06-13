@@ -186,6 +186,11 @@ namespace ModelBuilder.Generator
                 builder.Append(Indent).AppendLine($"        global::ModelBuilder.vNext.ValueSource<{enumModel.FullyQualifiedName}>.Instance = new {enumModel.SourceName}();");
             }
 
+            foreach (var underlying in model.NullableUnderlyingTypes)
+            {
+                builder.Append(Indent).AppendLine($"        global::ModelBuilder.vNext.ValueSource<{underlying}?>.Instance = new global::ModelBuilder.vNext.NullableValueSource<{underlying}>();");
+            }
+
             foreach (var buildable in model.Builders)
             {
                 builder.Append(Indent).AppendLine($"        var {buildable.BuilderName}_instance = new {buildable.BuilderName}();");

@@ -16,6 +16,7 @@ namespace ModelBuilder.Generator
         {
             var discovered = new Dictionary<string, INamedTypeSymbol>();
             var enums = new Dictionary<string, INamedTypeSymbol>();
+            var nullables = new SortedSet<string>(System.StringComparer.Ordinal);
             var queue = new Queue<INamedTypeSymbol>();
             var seen = new HashSet<INamedTypeSymbol>(SymbolEqualityComparer.Default);
 
@@ -51,12 +52,12 @@ namespace ModelBuilder.Generator
 
                 foreach (var parameter in SelectConstructor(type)?.Parameters ?? ImmutableArray<IParameterSymbol>.Empty)
                 {
-                    Visit(parameter.Type, queue, seen);
+                    Visit(parameter.Type, queue, seen, nullables);
                 }
 
                 foreach (var property in GetSettableProperties(type))
                 {
-                    Visit(property.Type, queue, seen);
+                    Visit(property.Type, queue, seen, nullables);
                 }
             }
 
@@ -78,7 +79,8 @@ namespace ModelBuilder.Generator
 
             return new GenerationModel(
                 new EquatableArray<BuildableModel>(builders.ToImmutable()),
-                new EquatableArray<EnumModel>(enumModels.ToImmutable()));
+                new EquatableArray<EnumModel>(enumModels.ToImmutable()),
+                new EquatableArray<string>(nullables.ToImmutableArray()));
         }
 
         private static EnumModel CreateEnumModel(INamedTypeSymbol type, string fullyQualifiedName, HashSet<string> sourceNames)
@@ -127,12 +129,30 @@ namespace ModelBuilder.Generator
             };
         }
 
-        private static void Visit(ITypeSymbol type, Queue<INamedTypeSymbol> queue, HashSet<INamedTypeSymbol> seen)
+        private static void Visit(
+            ITypeSymbol type,
+            Queue<INamedTypeSymbol> queue,
+            HashSet<INamedTypeSymbol> seen,
+            SortedSet<string> nullables)
         {
-            if (type is INamedTypeSymbol named)
+            if (type is not INamedTypeSymbol named)
             {
-                Enqueue(named, queue, seen);
+                return;
             }
+
+            if (named.OriginalDefinition.SpecialType == SpecialType.System_Nullable_T
+                && named.TypeArguments.Length == 1)
+            {
+                var underlying = named.TypeArguments[0];
+
+                nullables.Add(underlying.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat));
+
+                Visit(underlying, queue, seen, nullables);
+
+                return;
+            }
+
+            Enqueue(named, queue, seen);
         }
 
         private static BuildableModel CreateModel(

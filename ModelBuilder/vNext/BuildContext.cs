@@ -31,7 +31,11 @@ namespace ModelBuilder.vNext
         {
             Random = random ?? throw new ArgumentNullException(nameof(random));
             Log = log ?? NullBuildLog.Instance;
-            MaxDepth = (options ?? new BuildContextOptions()).MaxDepth;
+
+            var resolvedOptions = options ?? new BuildContextOptions();
+
+            MaxDepth = resolvedOptions.MaxDepth;
+            NullPercentage = resolvedOptions.NullPercentage;
             Configuration = configuration ?? _emptyConfiguration;
         }
 
@@ -247,6 +251,11 @@ namespace ModelBuilder.vNext
         ///     safe limit.
         /// </summary>
         public int MaxDepth { get; }
+
+        /// <summary>
+        ///     Gets the percentage chance (0 to 100) that a nullable value is produced as <c>null</c>.
+        /// </summary>
+        public int NullPercentage { get; }
 
         /// <summary>
         ///     Gets the random source for the current build.

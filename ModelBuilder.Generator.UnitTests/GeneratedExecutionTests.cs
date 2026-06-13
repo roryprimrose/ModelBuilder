@@ -82,6 +82,36 @@ namespace Sample
         }
 
         [Fact]
+        public void CreateBuildsNullableEnumWithoutThrowing()
+        {
+            const string source = @"
+namespace Sample
+{
+    public enum Mood { Calm, Excited, Tense }
+
+    public sealed class Survey
+    {
+        public Mood? Mood { get; set; }
+    }
+
+    public static class Caller
+    {
+        public static Survey Build() => global::ModelBuilder.vNext.Model.Create<Survey>();
+    }
+}";
+
+            var harness = GeneratorTestHarness.Run(source);
+            harness.CompilationErrors.Should().BeEmpty();
+
+            var assembly = harness.EmitAndLoad();
+            var surveyType = assembly.GetType("Sample.Survey", throwOnError: true)!;
+
+            var survey = CreateViaModel(surveyType);
+
+            survey.Should().NotBeNull();
+        }
+
+        [Fact]
         public void CreateBuildsStructWithSettableProperties()
         {
             const string source = @"
