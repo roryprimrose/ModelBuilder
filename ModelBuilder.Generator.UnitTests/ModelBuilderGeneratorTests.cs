@@ -203,6 +203,80 @@ namespace Sample
         }
 
         [Fact]
+        public void EmitsListAndArrayValueSources()
+        {
+            const string source = @"
+namespace Sample
+{
+    public sealed class Bag
+    {
+        public System.Collections.Generic.List<int> Numbers { get; set; }
+        public string[] Tags { get; set; }
+    }
+
+    public static class Caller
+    {
+        public static Bag Build() => global::ModelBuilder.vNext.Model.Create<Bag>();
+    }
+}";
+
+            var harness = GeneratorTestHarness.Run(source);
+
+            harness.GeneratorDiagnostics.Should().BeEmpty();
+            harness.CompilationErrors.Should().BeEmpty();
+            harness.GeneratedSources[0].Should().Contain("new global::System.Collections.Generic.List<int>(count)");
+            harness.GeneratedSources[0].Should().Contain("new string[count]");
+        }
+
+        [Fact]
+        public void EmitsDictionaryValueSource()
+        {
+            const string source = @"
+namespace Sample
+{
+    public sealed class Lookup
+    {
+        public System.Collections.Generic.Dictionary<int, string> Map { get; set; }
+    }
+
+    public static class Caller
+    {
+        public static Lookup Build() => global::ModelBuilder.vNext.Model.Create<Lookup>();
+    }
+}";
+
+            var harness = GeneratorTestHarness.Run(source);
+
+            harness.GeneratorDiagnostics.Should().BeEmpty();
+            harness.CompilationErrors.Should().BeEmpty();
+            harness.GeneratedSources[0].Should().Contain("new global::System.Collections.Generic.Dictionary<int, string>()");
+        }
+
+        [Fact]
+        public void EmitsListForCollectionInterface()
+        {
+            const string source = @"
+namespace Sample
+{
+    public sealed class Bag
+    {
+        public System.Collections.Generic.IReadOnlyList<int> Numbers { get; set; }
+    }
+
+    public static class Caller
+    {
+        public static Bag Build() => global::ModelBuilder.vNext.Model.Create<Bag>();
+    }
+}";
+
+            var harness = GeneratorTestHarness.Run(source);
+
+            harness.CompilationErrors.Should().BeEmpty();
+            harness.GeneratedSources[0].Should().Contain("global::System.Collections.Generic.IReadOnlyList<int>");
+            harness.GeneratedSources[0].Should().Contain("new global::System.Collections.Generic.List<int>(count)");
+        }
+
+        [Fact]
         public void EmitsNothingWhenNoRootsPresent()
         {
             const string source = @"

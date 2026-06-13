@@ -112,6 +112,48 @@ namespace Sample
         }
 
         [Fact]
+        public void CreateBuildsListAndDictionaryWithElements()
+        {
+            const string source = @"
+namespace Sample
+{
+    public sealed class Bag
+    {
+        public System.Collections.Generic.List<int> Numbers { get; set; }
+        public System.Collections.Generic.Dictionary<int, int> Map { get; set; }
+    }
+
+    public static class Caller
+    {
+        public static Bag Build() => global::ModelBuilder.vNext.Model.Create<Bag>();
+    }
+}";
+
+            var harness = GeneratorTestHarness.Run(source);
+            harness.CompilationErrors.Should().BeEmpty();
+
+            var assembly = harness.EmitAndLoad();
+            var bagType = assembly.GetType("Sample.Bag", throwOnError: true)!;
+
+            ValueSource<int>.Instance = new SequentialInt32Source();
+
+            try
+            {
+                var bag = CreateViaModel(bagType);
+
+                var numbers = (System.Collections.IEnumerable)bagType.GetProperty("Numbers")!.GetValue(bag)!;
+                numbers.Cast<int>().Should().NotBeEmpty();
+
+                var map = (System.Collections.IDictionary)bagType.GetProperty("Map")!.GetValue(bag)!;
+                map.Count.Should().BeGreaterThan(0);
+            }
+            finally
+            {
+                ValueSource<int>.Instance = null;
+            }
+        }
+
+        [Fact]
         public void CreateBuildsStructWithSettableProperties()
         {
             const string source = @"
@@ -212,6 +254,16 @@ namespace Sample
             public int Create(BuildContext context, in BuildTarget target)
             {
                 return _value;
+            }
+        }
+
+        private sealed class SequentialInt32Source : IValueSource<int>
+        {
+            private int _next;
+
+            public int Create(BuildContext context, in BuildTarget target)
+            {
+                return ++_next;
             }
         }
     }

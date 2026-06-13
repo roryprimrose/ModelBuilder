@@ -33,6 +33,12 @@ namespace ModelBuilder.Generator
                 builder.AppendLine();
             }
 
+            foreach (var collection in model.Collections)
+            {
+                EmitCollectionSource(builder, collection);
+                builder.AppendLine();
+            }
+
             EmitRegistration(builder, model);
 
             builder.AppendLine("}");
@@ -97,6 +103,66 @@ namespace ModelBuilder.Generator
             builder.Append(Indent).AppendLine($"    public {type} Create(global::ModelBuilder.vNext.BuildContext context, in global::ModelBuilder.vNext.BuildTarget target)");
             builder.Append(Indent).AppendLine("    {");
             builder.Append(Indent).AppendLine("        return _values[context.Random.NextInt32(0, _values.Length - 1)];");
+            builder.Append(Indent).AppendLine("    }");
+            builder.Append(Indent).AppendLine("}");
+        }
+
+        private static void EmitCollectionSource(StringBuilder builder, CollectionModel model)
+        {
+            var slot = model.SlotType;
+            var element = model.ElementType;
+
+            builder.Append(Indent).AppendLine($"internal sealed class {model.SourceName}");
+            builder.Append(Indent).AppendLine($"    : global::ModelBuilder.vNext.IValueSource<{slot}>");
+            builder.Append(Indent).AppendLine("{");
+            builder.Append(Indent).AppendLine($"    public {slot} Create(global::ModelBuilder.vNext.BuildContext context, in global::ModelBuilder.vNext.BuildTarget target)");
+            builder.Append(Indent).AppendLine("    {");
+            builder.Append(Indent).AppendLine("        var count = context.NextCount();");
+
+            switch (model.Kind)
+            {
+                case CollectionKind.Array:
+                    builder.Append(Indent).AppendLine($"        var result = new {element}[count];");
+                    builder.Append(Indent).AppendLine("        for (var i = 0; i < count; i++)");
+                    builder.Append(Indent).AppendLine("        {");
+                    builder.Append(Indent).AppendLine($"            result[i] = context.Build<{element}>(typeof({slot}), \"item\");");
+                    builder.Append(Indent).AppendLine("        }");
+
+                    break;
+                case CollectionKind.Set:
+                    builder.Append(Indent).AppendLine($"        var result = new global::System.Collections.Generic.HashSet<{element}>();");
+                    builder.Append(Indent).AppendLine("        for (var i = 0; i < count; i++)");
+                    builder.Append(Indent).AppendLine("        {");
+                    builder.Append(Indent).AppendLine($"            result.Add(context.Build<{element}>(typeof({slot}), \"item\"));");
+                    builder.Append(Indent).AppendLine("        }");
+
+                    break;
+                case CollectionKind.Dictionary:
+                    builder.Append(Indent).AppendLine($"        var result = new global::System.Collections.Generic.Dictionary<{element}, {model.ValueType}>();");
+                    builder.Append(Indent).AppendLine("        for (var i = 0; i < count; i++)");
+                    builder.Append(Indent).AppendLine("        {");
+                    builder.Append(Indent).AppendLine($"            var key = context.Build<{element}>(typeof({slot}), \"key\");");
+
+                    if (model.KeyCanBeNull)
+                    {
+                        builder.Append(Indent).AppendLine("            if (key is null) { continue; }");
+                    }
+
+                    builder.Append(Indent).AppendLine($"            result[key] = context.Build<{model.ValueType}>(typeof({slot}), \"value\");");
+                    builder.Append(Indent).AppendLine("        }");
+
+                    break;
+                default:
+                    builder.Append(Indent).AppendLine($"        var result = new global::System.Collections.Generic.List<{element}>(count);");
+                    builder.Append(Indent).AppendLine("        for (var i = 0; i < count; i++)");
+                    builder.Append(Indent).AppendLine("        {");
+                    builder.Append(Indent).AppendLine($"            result.Add(context.Build<{element}>(typeof({slot}), \"item\"));");
+                    builder.Append(Indent).AppendLine("        }");
+
+                    break;
+            }
+
+            builder.Append(Indent).AppendLine("        return result;");
             builder.Append(Indent).AppendLine("    }");
             builder.Append(Indent).AppendLine("}");
         }
@@ -189,6 +255,11 @@ namespace ModelBuilder.Generator
             foreach (var underlying in model.NullableUnderlyingTypes)
             {
                 builder.Append(Indent).AppendLine($"        global::ModelBuilder.vNext.ValueSource<{underlying}?>.Instance = new global::ModelBuilder.vNext.NullableValueSource<{underlying}>();");
+            }
+
+            foreach (var collection in model.Collections)
+            {
+                builder.Append(Indent).AppendLine($"        global::ModelBuilder.vNext.ValueSource<{collection.SlotType}>.Instance = new {collection.SourceName}();");
             }
 
             foreach (var buildable in model.Builders)

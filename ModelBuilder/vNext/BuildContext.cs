@@ -36,6 +36,8 @@ namespace ModelBuilder.vNext
 
             MaxDepth = resolvedOptions.MaxDepth;
             NullPercentage = resolvedOptions.NullPercentage;
+            MinCount = resolvedOptions.MinCount;
+            MaxCount = resolvedOptions.MaxCount;
             Configuration = configuration ?? _emptyConfiguration;
         }
 
@@ -181,6 +183,19 @@ namespace ModelBuilder.vNext
         }
 
         /// <summary>
+        ///     Returns a random item count for a collection within the configured minimum and maximum,
+        ///     coercing the bounds so an out-of-order or negative configuration cannot throw.
+        /// </summary>
+        /// <returns>A count between the effective minimum and maximum, inclusive.</returns>
+        public int NextCount()
+        {
+            var min = MinCount < 0 ? 0 : MinCount;
+            var max = MaxCount < min ? min : MaxCount;
+
+            return Random.NextInt32(min, max);
+        }
+
+        /// <summary>
         ///     Determines whether a member should be populated according to the configured ignore rules.
         /// </summary>
         /// <param name="declaringType">The type that declares the member.</param>
@@ -251,6 +266,16 @@ namespace ModelBuilder.vNext
         ///     safe limit.
         /// </summary>
         public int MaxDepth { get; }
+
+        /// <summary>
+        ///     Gets the maximum number of items generated for a collection.
+        /// </summary>
+        public int MaxCount { get; }
+
+        /// <summary>
+        ///     Gets the minimum number of items generated for a collection.
+        /// </summary>
+        public int MinCount { get; }
 
         /// <summary>
         ///     Gets the percentage chance (0 to 100) that a nullable value is produced as <c>null</c>.

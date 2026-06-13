@@ -17,6 +17,7 @@ namespace ModelBuilder.Generator
             var discovered = new Dictionary<string, INamedTypeSymbol>();
             var enums = new Dictionary<string, INamedTypeSymbol>();
             var nullables = new SortedSet<string>(System.StringComparer.Ordinal);
+            var collections = new Dictionary<string, ITypeSymbol>();
             var queue = new Queue<INamedTypeSymbol>();
             var seen = new HashSet<INamedTypeSymbol>(SymbolEqualityComparer.Default);
 
@@ -52,12 +53,12 @@ namespace ModelBuilder.Generator
 
                 foreach (var parameter in SelectConstructor(type)?.Parameters ?? ImmutableArray<IParameterSymbol>.Empty)
                 {
-                    Visit(parameter.Type, queue, seen, nullables);
+                    Visit(parameter.Type, queue, seen, nullables, collections);
                 }
 
                 foreach (var property in GetSettableProperties(type))
                 {
-                    Visit(property.Type, queue, seen, nullables);
+                    Visit(property.Type, queue, seen, nullables, collections);
                 }
             }
 
@@ -77,10 +78,31 @@ namespace ModelBuilder.Generator
                 enumModels.Add(CreateEnumModel(pair.Value, pair.Key, sourceNames));
             }
 
+            var collectionModels = ImmutableArray.CreateBuilder<CollectionModel>();
+
+            foreach (var pair in collections.OrderBy(p => p.Key, System.StringComparer.Ordinal))
+            {
+                collectionModels.Add(CreateCollectionModel(pair.Value, pair.Key, sourceNames));
+            }
+
             return new GenerationModel(
                 new EquatableArray<BuildableModel>(builders.ToImmutable()),
                 new EquatableArray<EnumModel>(enumModels.ToImmutable()),
-                new EquatableArray<string>(nullables.ToImmutableArray()));
+                new EquatableArray<string>(nullables.ToImmutableArray()),
+                new EquatableArray<CollectionModel>(collectionModels.ToImmutable()));
+        }
+
+        private static CollectionModel CreateCollectionModel(ITypeSymbol type, string slotType, HashSet<string> sourceNames)
+        {
+            TryClassifyCollection(type, out var kind, out var element, out var value);
+
+            return new CollectionModel(
+                kind,
+                slotType,
+                CreateName(slotType, "ValueSource", sourceNames),
+                element?.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) ?? string.Empty,
+                value?.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) ?? string.Empty,
+                kind == CollectionKind.Dictionary && element?.IsReferenceType == true);
         }
 
         private static EnumModel CreateEnumModel(INamedTypeSymbol type, string fullyQualifiedName, HashSet<string> sourceNames)
@@ -133,8 +155,21 @@ namespace ModelBuilder.Generator
             ITypeSymbol type,
             Queue<INamedTypeSymbol> queue,
             HashSet<INamedTypeSymbol> seen,
-            SortedSet<string> nullables)
+            SortedSet<string> nullables,
+            Dictionary<string, ITypeSymbol> collections)
         {
+            if (type is IArrayTypeSymbol array)
+            {
+                if (array.Rank == 1)
+                {
+                    collections[type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)] = type;
+
+                    Visit(array.ElementType, queue, seen, nullables, collections);
+                }
+
+                return;
+            }
+
             if (type is not INamedTypeSymbol named)
             {
                 return;
@@ -147,12 +182,91 @@ namespace ModelBuilder.Generator
 
                 nullables.Add(underlying.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat));
 
-                Visit(underlying, queue, seen, nullables);
+                Visit(underlying, queue, seen, nullables, collections);
+
+                return;
+            }
+
+            if (TryClassifyCollection(named, out _, out var element, out var value))
+            {
+                collections[named.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)] = named;
+
+                if (element != null)
+                {
+                    Visit(element, queue, seen, nullables, collections);
+                }
+
+                if (value != null)
+                {
+                    Visit(value, queue, seen, nullables, collections);
+                }
 
                 return;
             }
 
             Enqueue(named, queue, seen);
+        }
+
+        private static bool TryClassifyCollection(
+            ITypeSymbol type,
+            out CollectionKind kind,
+            out ITypeSymbol? element,
+            out ITypeSymbol? value)
+        {
+            kind = CollectionKind.Array;
+            element = null;
+            value = null;
+
+            if (type is IArrayTypeSymbol array)
+            {
+                if (array.Rank != 1)
+                {
+                    return false;
+                }
+
+                kind = CollectionKind.Array;
+                element = array.ElementType;
+
+                return true;
+            }
+
+            if (type is not INamedTypeSymbol { IsGenericType: true } named)
+            {
+                return false;
+            }
+
+            var definition = named.OriginalDefinition.ToDisplayString();
+            var args = named.TypeArguments;
+
+            switch (definition)
+            {
+                case "System.Collections.Generic.List<T>":
+                case "System.Collections.Generic.IList<T>":
+                case "System.Collections.Generic.ICollection<T>":
+                case "System.Collections.Generic.IEnumerable<T>":
+                case "System.Collections.Generic.IReadOnlyList<T>":
+                case "System.Collections.Generic.IReadOnlyCollection<T>":
+                    kind = CollectionKind.List;
+                    element = args[0];
+
+                    return true;
+                case "System.Collections.Generic.HashSet<T>":
+                case "System.Collections.Generic.ISet<T>":
+                    kind = CollectionKind.Set;
+                    element = args[0];
+
+                    return true;
+                case "System.Collections.Generic.Dictionary<TKey, TValue>":
+                case "System.Collections.Generic.IDictionary<TKey, TValue>":
+                case "System.Collections.Generic.IReadOnlyDictionary<TKey, TValue>":
+                    kind = CollectionKind.Dictionary;
+                    element = args[0];
+                    value = args[1];
+
+                    return true;
+                default:
+                    return false;
+            }
         }
 
         private static BuildableModel CreateModel(
