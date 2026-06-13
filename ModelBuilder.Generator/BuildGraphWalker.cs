@@ -12,6 +12,14 @@ namespace ModelBuilder.Generator
     /// </summary>
     internal static class BuildGraphWalker
     {
+        /// <summary>
+        ///     Determines whether the type has a public constructor the generated code can call.
+        /// </summary>
+        public static bool HasAccessibleConstructor(INamedTypeSymbol type)
+        {
+            return SelectConstructor(type) != null;
+        }
+
         public static GenerationModel Walk(IEnumerable<INamedTypeSymbol> roots)
         {
             var discovered = new Dictionary<string, INamedTypeSymbol>();

@@ -203,6 +203,96 @@ namespace Sample
         }
 
         [Fact]
+        public void ReportsMB1001ForAbstractRoot()
+        {
+            const string source = @"
+namespace Sample
+{
+    public abstract class Shape
+    {
+        public int Sides { get; set; }
+    }
+
+    public static class Caller
+    {
+        public static Shape Build() => global::ModelBuilder.vNext.Model.Create<Shape>();
+    }
+}";
+
+            var harness = GeneratorTestHarness.Run(source);
+
+            harness.GeneratorDiagnostics.Should().Contain(d => d.Id == "MB1001");
+        }
+
+        [Fact]
+        public void ReportsMB1001ForInterfaceRoot()
+        {
+            const string source = @"
+namespace Sample
+{
+    public interface IShape
+    {
+        int Sides { get; set; }
+    }
+
+    public static class Caller
+    {
+        public static IShape Build() => global::ModelBuilder.vNext.Model.Create<IShape>();
+    }
+}";
+
+            var harness = GeneratorTestHarness.Run(source);
+
+            harness.GeneratorDiagnostics.Should().Contain(d => d.Id == "MB1001");
+        }
+
+        [Fact]
+        public void ReportsMB1002ForRootWithoutAccessibleConstructor()
+        {
+            const string source = @"
+namespace Sample
+{
+    public sealed class Locked
+    {
+        private Locked() { }
+
+        public int Value { get; set; }
+    }
+
+    public static class Caller
+    {
+        public static Locked Build() => global::ModelBuilder.vNext.Model.Create<Locked>();
+    }
+}";
+
+            var harness = GeneratorTestHarness.Run(source);
+
+            harness.GeneratorDiagnostics.Should().Contain(d => d.Id == "MB1002");
+        }
+
+        [Fact]
+        public void DoesNotReportDiagnosticsForBuildableRoot()
+        {
+            const string source = @"
+namespace Sample
+{
+    public sealed class Person
+    {
+        public int Age { get; set; }
+    }
+
+    public static class Caller
+    {
+        public static Person Build() => global::ModelBuilder.vNext.Model.Create<Person>();
+    }
+}";
+
+            var harness = GeneratorTestHarness.Run(source);
+
+            harness.GeneratorDiagnostics.Should().BeEmpty();
+        }
+
+        [Fact]
         public void EmitsListAndArrayValueSources()
         {
             const string source = @"

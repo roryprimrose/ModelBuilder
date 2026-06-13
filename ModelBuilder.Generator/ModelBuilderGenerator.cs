@@ -25,26 +25,36 @@ namespace ModelBuilder.Generator
                 .CreateSyntaxProvider(
                     static (node, _) => IsCandidateInvocation(node),
                     static (ctx, token) => GetRootType(ctx, token))
-                .Where(static symbol => symbol is not null)
-                .Select(static (symbol, _) => symbol!);
+                .Where(static capture => capture.Symbol is not null)
+                .Select(static (capture, _) => capture);
 
             var collected = roots.Collect();
 
-            context.RegisterSourceOutput(collected, static (spc, symbols) => Execute(spc, symbols));
+            context.RegisterSourceOutput(collected, static (spc, captures) => Execute(spc, captures));
         }
 
-        private static void Execute(SourceProductionContext context, ImmutableArray<INamedTypeSymbol> roots)
+        private static void Execute(SourceProductionContext context, ImmutableArray<RootCapture> captures)
         {
-            var distinct = roots
-                .Where(static symbol => symbol is not null)
-                .ToImmutableArray();
+            var distinct = new Dictionary<string, INamedTypeSymbol>();
 
-            if (distinct.Length == 0)
+            foreach (var capture in captures)
+            {
+                if (capture.Symbol is null)
+                {
+                    continue;
+                }
+
+                ReportRootDiagnostics(context, capture);
+
+                distinct[capture.Symbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)] = capture.Symbol;
+            }
+
+            if (distinct.Count == 0)
             {
                 return;
             }
 
-            var models = BuildGraphWalker.Walk(distinct);
+            var models = BuildGraphWalker.Walk(distinct.Values);
 
             if (models.IsEmpty)
             {
@@ -54,38 +64,65 @@ namespace ModelBuilder.Generator
             context.AddSource("ModelBuilderGenerated.g.cs", SourceEmitter.Emit(models));
         }
 
-        private static INamedTypeSymbol? GetRootType(GeneratorSyntaxContext context, CancellationToken token)
+        private static void ReportRootDiagnostics(SourceProductionContext context, RootCapture capture)
+        {
+            var symbol = capture.Symbol!;
+            var location = capture.Location ?? Location.None;
+
+            if (symbol.TypeKind == TypeKind.Interface || symbol.IsAbstract)
+            {
+                context.ReportDiagnostic(
+                    Diagnostic.Create(
+                        DiagnosticDescriptors.UnmappedAbstractRoot,
+                        location,
+                        symbol.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)));
+
+                return;
+            }
+
+            if ((symbol.TypeKind == TypeKind.Class || symbol.TypeKind == TypeKind.Struct)
+                && BuildGraphWalker.HasAccessibleConstructor(symbol) == false)
+            {
+                context.ReportDiagnostic(
+                    Diagnostic.Create(
+                        DiagnosticDescriptors.NoAccessibleConstructor,
+                        location,
+                        symbol.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)));
+            }
+        }
+
+        private static RootCapture GetRootType(GeneratorSyntaxContext context, CancellationToken token)
         {
             var invocation = (InvocationExpressionSyntax)context.Node;
 
             if (invocation.Expression is not MemberAccessExpressionSyntax)
             {
-                return null;
+                return default;
             }
 
             if (context.SemanticModel.GetSymbolInfo(invocation, token).Symbol is not IMethodSymbol method)
             {
-                return null;
+                return default;
             }
 
             var containingType = method.ContainingType?.ToDisplayString();
 
             if (containingType != ModelTypeName)
             {
-                return null;
+                return default;
             }
 
             if (method.Name != "Create" && method.Name != "Populate")
             {
-                return null;
+                return default;
             }
 
             if (method.TypeArguments.Length != 1)
             {
-                return null;
+                return default;
             }
 
-            return method.TypeArguments[0] as INamedTypeSymbol;
+            return new RootCapture(method.TypeArguments[0] as INamedTypeSymbol, invocation.GetLocation());
         }
 
         private static bool IsCandidateInvocation(SyntaxNode node)
@@ -97,6 +134,19 @@ namespace ModelBuilder.Generator
                     Name.Identifier.ValueText: "Create" or "Populate"
                 }
             };
+        }
+
+        private readonly struct RootCapture
+        {
+            public RootCapture(INamedTypeSymbol? symbol, Location location)
+            {
+                Symbol = symbol;
+                Location = location;
+            }
+
+            public Location? Location { get; }
+
+            public INamedTypeSymbol? Symbol { get; }
         }
     }
 }
