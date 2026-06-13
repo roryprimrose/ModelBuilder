@@ -112,6 +112,55 @@ namespace Sample
         }
 
         [Fact]
+        public void CreateWrapsThrowingValueSourceWithBuildPath()
+        {
+            const string source = @"
+namespace Sample
+{
+    public sealed class Person
+    {
+        public int Age { get; set; }
+    }
+
+    public static class Caller
+    {
+        public static Person Build() => global::ModelBuilder.vNext.Model.Create<Person>();
+    }
+}";
+
+            var harness = GeneratorTestHarness.Run(source);
+            harness.CompilationErrors.Should().BeEmpty();
+
+            var assembly = harness.EmitAndLoad();
+            var personType = assembly.GetType("Sample.Person", throwOnError: true)!;
+
+            ValueSource<int>.Instance = new ThrowingInt32Source();
+
+            try
+            {
+                ModelBuildException? captured = null;
+
+                try
+                {
+                    CreateViaModel(personType);
+                }
+                catch (System.Reflection.TargetInvocationException ex)
+                {
+                    captured = ex.InnerException as ModelBuildException;
+                }
+
+                captured.Should().NotBeNull();
+                captured!.FailureKind.Should().Be(FailureKind.ValueSourceThrew);
+                captured.BuildPath.Should().NotBeEmpty();
+                captured.InnerException.Should().BeOfType<InvalidOperationException>();
+            }
+            finally
+            {
+                ValueSource<int>.Instance = null;
+            }
+        }
+
+        [Fact]
         public void WriteLogCapturesNestedBuildTrace()
         {
             const string source = @"
@@ -518,6 +567,14 @@ namespace Sample
             public int Create(BuildContext context, in BuildTarget target)
             {
                 return ++_next;
+            }
+        }
+
+        private sealed class ThrowingInt32Source : IValueSource<int>
+        {
+            public int Create(BuildContext context, in BuildTarget target)
+            {
+                throw new InvalidOperationException("boom");
             }
         }
     }

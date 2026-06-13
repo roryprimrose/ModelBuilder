@@ -210,7 +210,7 @@ namespace ModelBuilder.vNext
                 {
                     using (EnterMember(declaringType, memberName, mappedType))
                     {
-                        return (T)mappedBuilder.Create(this);
+                        return (T)Invoke(memberName, () => mappedBuilder.Create(this));
                     }
                 }
             }
@@ -223,7 +223,7 @@ namespace ModelBuilder.vNext
 
                 using (EnterMember(declaringType, memberName, memberType))
                 {
-                    return source.Create(this, new BuildTarget(memberType, memberName));
+                    return Invoke(memberName, () => source.Create(this, new BuildTarget(memberType, memberName)));
                 }
             }
 
@@ -233,7 +233,7 @@ namespace ModelBuilder.vNext
 
                 using (EnterMember(declaringType, memberName, memberType))
                 {
-                    return named.Create(this, new BuildTarget(memberType, memberName));
+                    return Invoke(memberName, () => named.Create(this, new BuildTarget(memberType, memberName)));
                 }
             }
 
@@ -243,7 +243,7 @@ namespace ModelBuilder.vNext
 
                 using (EnterMember(declaringType, memberName, memberType))
                 {
-                    return builtIn.Create(this, new BuildTarget(memberType, memberName));
+                    return Invoke(memberName, () => builtIn.Create(this, new BuildTarget(memberType, memberName)));
                 }
             }
 
@@ -270,7 +270,26 @@ namespace ModelBuilder.vNext
 
             using (EnterMember(declaringType, memberName, memberType))
             {
-                return builder.Create(this);
+                return Invoke(memberName, () => builder.Create(this));
+            }
+        }
+
+        private TResult Invoke<TResult>(string memberName, Func<TResult> create)
+        {
+            try
+            {
+                return create();
+            }
+            catch (ModelBuildException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw CreateBuildException(
+                    "Failed to create a value for '" + memberName + "'. " + ex.Message,
+                    FailureKind.ValueSourceThrew,
+                    ex);
             }
         }
 
