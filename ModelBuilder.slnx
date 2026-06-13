@@ -23,6 +23,7 @@
     <File Path="Solution Items/CustomDictionary.xml" />
     <File Path="Solution Items/UnitTest.ruleset" />
   </Folder>
+  <Project Path="ModelBuilder.AotValidation/ModelBuilder.AotValidation.csproj" />
   <Project Path="ModelBuilder.BenchmarkTests/ModelBuilder.BenchmarkTests.csproj" />
   <Project Path="ModelBuilder.Generator/ModelBuilder.Generator.csproj" />
   <Project Path="ModelBuilder.Generator.UnitTests/ModelBuilder.Generator.UnitTests.csproj" />

@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <IsPackable>false</IsPackable>
+    <Nullable>enable</Nullable>
+    <!--
+      Turns on the trim, single-file and AOT analyzers. The vNext engine is reflection-free, so a
+      build of this app that only touches ModelBuilder.vNext must produce zero IL2###/IL3### warnings.
+      TreatWarningsAsErrors (from Directory.Build.props) makes any such warning fail the build.
+    -->
+    <IsAotCompatible>true</IsAotCompatible>
+    <!-- The runtime ruleset is geared at the library; this validation app only needs the trim/AOT analyzers. -->
+    <CodeAnalysisRuleSet />
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ModelBuilder\ModelBuilder.csproj" />
+    <ProjectReference Include="..\ModelBuilder.Generator\ModelBuilder.Generator.csproj"
+                      OutputItemType="Analyzer"
+                      ReferenceOutputAssembly="false" />
+  </ItemGroup>
+
+</Project>
