@@ -1,0 +1,27 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/.github/">
+    <File Path=".github/dependabot.yml" />
+  </Folder>
+  <Folder Name="/.github/workflows/">
+    <File Path=".github/workflows/ci.yml" />
+  </Folder>
+  <Folder Name="/Documentation/">
+    <File Path="LICENSE.md" />
+    <File Path="README.md" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path=".gitattributes" />
+    <File Path=".gitignore" />
+    <File Path="GitVersion.yml" />
+    <File Path="Solution Items/Application.ruleset" />
+    <File Path="Solution Items/CustomDictionary.xml" />
+    <File Path="Solution Items/UnitTest.ruleset" />
+  </Folder>
+  <Project Path="ModelBuilder.UnitTests/ModelBuilder.UnitTests.csproj" />
+  <Project Path="ModelBuilder/ModelBuilder.csproj" />
+</Solution>

@@ -43,39 +43,42 @@ jobs:
         fileVersion: ${{ steps.gitversion.outputs.MajorMinorPatch }}
         informationalVersion: ${{ steps.gitversion.outputs.InformationalVersion }}  
         
-    - name: Setup dotnet v8.0
+    - name: Setup dotnet
       uses: actions/setup-dotnet@v4.0.0
       with:
-        dotnet-version: '8.x' # SDK Version to use.
+        # 10.x provides the SDK pinned in global.json; 8.x provides the runtime the tests target.
+        dotnet-version: |
+          8.x
+          10.x
 
     - name: Restore
       run: dotnet restore
 
     - name: Build
       run: dotnet build -c Release --no-restore
-    
+
     - name: Test
-      run: dotnet test -c Release --no-build /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura
+      run: dotnet test -c Release --no-build
 
-    - name: Generate coverage report
-      # run: reportgenerator -reports:**/coverage.cobertura.xml -targetdir:Report -reporttypes:HtmlInline_AzurePipelines;Cobertura
-      uses: danielpalme/ReportGenerator-GitHub-Action@5.2.4
-      with:
-        reports: "**/coverage*cobertura.xml"
-        targetdir: "Report"
-        reporttypes: "HtmlInline;Cobertura"
-        tag: '${{ github.run_number }}_${{ github.run_id }}'
-      # Don't run on fork or dependabot builds
-      if: github.event_name == 'pull_request' && github.repository == github.event.pull_request.head.repo.full_name && github.actor != 'dependabot[bot]'
+    # Code coverage reporting is temporarily disabled: coverlet.msbuild does not run under the
+    # Microsoft Testing Platform that xUnit v3 uses. MTP-native coverage is reintroduced when the
+    # CI/coverage workstream of the rewrite is implemented (see design.md s13).
+    # - name: Generate coverage report
+    #   uses: danielpalme/ReportGenerator-GitHub-Action@5.2.4
+    #   with:
+    #     reports: "**/coverage*cobertura.xml"
+    #     targetdir: "Report"
+    #     reporttypes: "HtmlInline;Cobertura"
+    #     tag: '${{ github.run_number }}_${{ github.run_id }}'
+    #   if: github.event_name == 'pull_request' && github.repository == github.event.pull_request.head.repo.full_name && github.actor != 'dependabot[bot]'
 
-    - name: Publish coverage report
-      uses: 5monkeys/cobertura-action@master
-      with:
-        path: Report/Cobertura.xml
-        repo_token: ${{ secrets.GITHUB_TOKEN }}
-        minimum_coverage: 75
-      # Don't run on fork or dependabot builds
-      if: github.event_name == 'pull_request' && github.repository == github.event.pull_request.head.repo.full_name && github.actor != 'dependabot[bot]'
+    # - name: Publish coverage report
+    #   uses: 5monkeys/cobertura-action@master
+    #   with:
+    #     path: Report/Cobertura.xml
+    #     repo_token: ${{ secrets.GITHUB_TOKEN }}
+    #     minimum_coverage: 75
+    #   if: github.event_name == 'pull_request' && github.repository == github.event.pull_request.head.repo.full_name && github.actor != 'dependabot[bot]'
       
     - name: Resolve project name
       shell: pwsh
