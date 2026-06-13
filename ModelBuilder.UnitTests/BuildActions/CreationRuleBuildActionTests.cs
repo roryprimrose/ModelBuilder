@@ -10,7 +10,6 @@
     using NSubstitute;
     using NSubstitute.ExceptionExtensions;
     using Xunit;
-    using Xunit.Abstractions;
 
     public class CreationRuleBuildActionTests
     {

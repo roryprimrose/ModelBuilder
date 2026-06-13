@@ -6,7 +6,6 @@
     using System.Linq;
     using FluentAssertions;
     using Xunit;
-    using Xunit.Abstractions;
 
     public class RandomGeneratorTests
     {

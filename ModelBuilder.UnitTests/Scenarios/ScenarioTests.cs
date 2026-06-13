@@ -16,7 +16,6 @@
     using NSubstitute;
     using NSubstitute.ExceptionExtensions;
     using Xunit;
-    using Xunit.Abstractions;
     using Location = ModelBuilder.UnitTests.Models.Location;
 
     public class ScenarioTests
@@ -674,7 +673,8 @@
 
                         return "Iteration " + loopIndex + " on thread " + Thread.CurrentThread.ManagedThreadId +
                                Environment.NewLine + strategy.Log.Output;
-                    });
+                    },
+                    TestContext.Current.CancellationToken);
 
                 tasks.Add(task);
             }

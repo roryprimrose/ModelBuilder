@@ -6,7 +6,6 @@
     using ModelBuilder.ValueGenerators;
     using NSubstitute;
     using Xunit;
-    using Xunit.Abstractions;
 
     public class CharValueGeneratorTests
     {

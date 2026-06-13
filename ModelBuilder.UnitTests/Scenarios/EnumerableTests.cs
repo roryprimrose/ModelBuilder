@@ -9,7 +9,6 @@
     using ModelBuilder.TypeCreators;
     using ModelBuilder.UnitTests.Models;
     using Xunit;
-    using Xunit.Abstractions;
 
     public class EnumerableTests
     {

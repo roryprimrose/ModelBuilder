@@ -1,0 +1,27 @@
+<Project>
+
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
+  </PropertyGroup>
+
+  <!-- Production analyzers -->
+  <ItemGroup>
+    <PackageVersion Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.301" />
+  </ItemGroup>
+
+  <!--
+    Test stack: xUnit v3 on Microsoft.Testing.Platform (MTP).
+    FluentAssertions is pinned to the 7.x line, the last release published under
+    the Apache-2.0 licence; 8.0.0+ moved to a commercial licence that is
+    incompatible with this MIT-licensed library.
+  -->
+  <ItemGroup>
+    <PackageVersion Include="xunit.v3" Version="3.2.2" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
+    <PackageVersion Include="FluentAssertions" Version="7.2.2" />
+    <PackageVersion Include="NSubstitute" Version="5.3.0" />
+    <PackageVersion Include="NodaTime" Version="3.3.2" />
+  </ItemGroup>
+
+</Project>

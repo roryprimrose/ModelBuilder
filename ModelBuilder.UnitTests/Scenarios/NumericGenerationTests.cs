@@ -5,7 +5,6 @@
     using ModelBuilder.UnitTests.Models;
     using ModelBuilder.ValueGenerators;
     using Xunit;
-    using Xunit.Abstractions;
 
     public class NumericGenerationTests
     {

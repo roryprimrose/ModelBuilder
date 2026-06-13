@@ -1,6 +1,6 @@
 ﻿namespace ModelBuilder.UnitTests
 {
-    using Xunit.Abstractions;
+    using Xunit;
 
     public class OutputBuildLog : DefaultBuildLog
     {

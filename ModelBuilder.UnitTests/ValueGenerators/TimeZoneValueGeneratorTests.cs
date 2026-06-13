@@ -10,7 +10,6 @@
     using NodaTime.TimeZones;
     using NSubstitute;
     using Xunit;
-    using Xunit.Abstractions;
 
     public class TimeZoneValueGeneratorTests
     {

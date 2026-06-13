@@ -8,7 +8,6 @@
     using ModelBuilder.ValueGenerators;
     using NSubstitute;
     using Xunit;
-    using Xunit.Abstractions;
 
     public partial class BuildConfigurationExtensionsTests
     {

@@ -5,7 +5,6 @@
     using FluentAssertions;
     using ModelBuilder.UnitTests.Models;
     using Xunit;
-    using Xunit.Abstractions;
 
     public class ModelTests
     {

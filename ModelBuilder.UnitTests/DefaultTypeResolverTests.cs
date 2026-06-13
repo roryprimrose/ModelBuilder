@@ -9,7 +9,6 @@
     using ModelBuilder.UnitTests.Models;
     using NSubstitute;
     using Xunit;
-    using Xunit.Abstractions;
 
     public class DefaultTypeResolverTests
     {
@@ -38,7 +37,7 @@
 
             var actual = sut.GetBuildType(configuration, requestedType);
 
-            _output.WriteLine(actual.FullName);
+            _output.WriteLine(actual.FullName!);
 
             actual.Should().Be(expectedType);
         }
@@ -89,7 +88,7 @@
 
             var actual = sut.GetBuildType(configuration, typeof(SomeClassBase));
 
-            _output.WriteLine(actual.FullName);
+            _output.WriteLine(actual.FullName!);
 
             actual.Should().Be<SomeClass>();
         }
@@ -103,7 +102,7 @@
 
             var actual = sut.GetBuildType(configuration, typeof(IInternalItem));
 
-            _output.WriteLine(actual.FullName);
+            _output.WriteLine(actual.FullName!);
 
             actual.Should().Be<InternalItem>();
         }
@@ -117,7 +116,7 @@
 
             var actual = sut.GetBuildType(configuration, typeof(INoMatch));
 
-            _output.WriteLine(actual.FullName);
+            _output.WriteLine(actual.FullName!);
 
             actual.Should().Be<INoMatch>();
         }
@@ -143,7 +142,7 @@
 
             var actual = sut.GetBuildType(configuration, typeof(INoMatch));
 
-            _output.WriteLine(actual.FullName);
+            _output.WriteLine(actual.FullName!);
 
             actual.Should().Be<INoMatch>();
         }
@@ -157,7 +156,7 @@
 
             var actual = sut.GetBuildType(configuration, typeof(ITestInterface));
 
-            _output.WriteLine(actual.FullName);
+            _output.WriteLine(actual.FullName!);
 
             actual.Should().Implement<ITestInterface>();
         }
@@ -171,7 +170,7 @@
 
             var actual = sut.GetBuildType(configuration, typeof(IPublicOverInternal));
 
-            _output.WriteLine(actual.FullName);
+            _output.WriteLine(actual.FullName!);
 
             actual.Should().Be<PublicPickedItem>();
         }

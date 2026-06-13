@@ -12,7 +12,6 @@
     using ModelBuilder.UnitTests.Models;
     using NSubstitute;
     using Xunit;
-    using Xunit.Abstractions;
 
     public class ArrayTypeCreatorTests
     {

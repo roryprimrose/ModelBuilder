@@ -1,0 +1,17 @@
+<Project>
+
+  <!--
+    Shared build settings for all projects in the repository.
+    Project-specific settings (package metadata, code-analysis rulesets, TFMs)
+    remain in the individual .csproj files.
+  -->
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningsAsErrors />
+    <NeutralLanguage>en-US</NeutralLanguage>
+  </PropertyGroup>
+
+</Project>
