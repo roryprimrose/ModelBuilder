@@ -30,7 +30,12 @@ namespace ModelBuilder.vNext
                 throw NoBuilder(instanceType);
             }
 
-            return builder.Create(NewContext(), args);
+            var context = NewContext();
+
+            using (context.EnterRoot(instanceType))
+            {
+                return builder.Create(context, args);
+            }
         }
 
         /// <summary>
@@ -44,7 +49,12 @@ namespace ModelBuilder.vNext
         {
             var builder = ModelBuilderSlot<T>.Instance ?? throw NoBuilder(typeof(T));
 
-            return builder.Create(NewContext(), args);
+            var context = NewContext();
+
+            using (context.EnterRoot(typeof(T)))
+            {
+                return builder.Create(context, args);
+            }
         }
 
         /// <summary>
@@ -64,7 +74,12 @@ namespace ModelBuilder.vNext
 
             var builder = ModelBuilderSlot<T>.Instance ?? throw NoBuilder(typeof(T));
 
-            return builder.Populate(NewContext(), instance);
+            var context = NewContext();
+
+            using (context.EnterRoot(typeof(T)))
+            {
+                return builder.Populate(context, instance);
+            }
         }
 
         private static BuildContext NewContext()

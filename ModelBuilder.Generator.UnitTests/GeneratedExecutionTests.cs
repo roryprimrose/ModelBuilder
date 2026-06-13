@@ -112,6 +112,37 @@ namespace Sample
         }
 
         [Fact]
+        public void CreateTerminatesOnSelfReferencingType()
+        {
+            const string source = @"
+namespace Sample
+{
+    public sealed class Node
+    {
+        public int Value { get; set; }
+        public Node? Next { get; set; }
+    }
+
+    public static class Caller
+    {
+        public static Node Build() => global::ModelBuilder.vNext.Model.Create<Node>();
+    }
+}";
+
+            var harness = GeneratorTestHarness.Run(source);
+            harness.CompilationErrors.Should().BeEmpty();
+
+            var assembly = harness.EmitAndLoad();
+            var nodeType = assembly.GetType("Sample.Node", throwOnError: true)!;
+
+            // Must not StackOverflow; the circular-reference guard returns null past the first re-entry.
+            var node = CreateViaModel(nodeType);
+
+            node.Should().NotBeNull();
+            nodeType.GetProperty("Next")!.GetValue(node).Should().BeNull();
+        }
+
+        [Fact]
         public void CreateDerivesEmailFromSiblingNameMembers()
         {
             const string source = @"
