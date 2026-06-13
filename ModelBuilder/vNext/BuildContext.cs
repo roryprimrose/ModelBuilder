@@ -11,6 +11,7 @@ namespace ModelBuilder.vNext
     /// </summary>
     public sealed class BuildContext
     {
+        private static readonly IBuildConfiguration _emptyConfiguration = new BuildConfiguration();
         private readonly List<Type> _chain = new List<Type>();
         private readonly List<BuildFrame> _path = new List<BuildFrame>();
 
@@ -20,12 +21,18 @@ namespace ModelBuilder.vNext
         /// <param name="random">The random source used to generate values.</param>
         /// <param name="log">The optional build log; a no-op log is used when <c>null</c>.</param>
         /// <param name="options">The optional build options; defaults are used when <c>null</c>.</param>
+        /// <param name="configuration">The optional build configuration; an empty configuration is used when <c>null</c>.</param>
         /// <exception cref="ArgumentNullException">The <paramref name="random" /> parameter is <c>null</c>.</exception>
-        public BuildContext(IRandomSource random, IBuildLog? log = null, BuildContextOptions? options = null)
+        public BuildContext(
+            IRandomSource random,
+            IBuildLog? log = null,
+            BuildContextOptions? options = null,
+            IBuildConfiguration? configuration = null)
         {
             Random = random ?? throw new ArgumentNullException(nameof(random));
             Log = log ?? NullBuildLog.Instance;
             MaxDepth = (options ?? new BuildContextOptions()).MaxDepth;
+            Configuration = configuration ?? _emptyConfiguration;
         }
 
         /// <summary>
@@ -114,6 +121,26 @@ namespace ModelBuilder.vNext
             return _chain.Contains(type);
         }
 
+        /// <summary>
+        ///     Determines whether a member should be populated according to the configured ignore rules.
+        /// </summary>
+        /// <param name="declaringType">The type that declares the member.</param>
+        /// <param name="memberName">The name of the member.</param>
+        /// <param name="memberType">The type of the member.</param>
+        /// <returns><c>true</c> if the member should be populated; otherwise, <c>false</c>.</returns>
+        /// <exception cref="ArgumentNullException">
+        ///     The <paramref name="declaringType" />, <paramref name="memberName" />, or
+        ///     <paramref name="memberType" /> parameter is <c>null</c>.
+        /// </exception>
+        public bool ShouldPopulate(Type declaringType, string memberName, Type memberType)
+        {
+            declaringType = declaringType ?? throw new ArgumentNullException(nameof(declaringType));
+            memberName = memberName ?? throw new ArgumentNullException(nameof(memberName));
+            memberType = memberType ?? throw new ArgumentNullException(nameof(memberType));
+
+            return Configuration.ShouldIgnore(new MemberSignature(declaringType, memberName, memberType)) == false;
+        }
+
         private void Exit()
         {
             if (_path.Count > 0)
@@ -131,6 +158,11 @@ namespace ModelBuilder.vNext
         ///     Gets the current build path from the root type down to the frame being built.
         /// </summary>
         public IReadOnlyList<BuildFrame> BuildPath => _path.ToArray();
+
+        /// <summary>
+        ///     Gets the build configuration for the current build.
+        /// </summary>
+        public IBuildConfiguration Configuration { get; }
 
         /// <summary>
         ///     Gets the frame currently being built.
