@@ -121,6 +121,61 @@ namespace Sample
         }
 
         [Fact]
+        public void EmitsEnumValueSourceForReachableEnum()
+        {
+            const string source = @"
+namespace Sample
+{
+    public enum Gender { Female, Male, NonBinary }
+
+    public sealed class Person
+    {
+        public Gender Gender { get; set; }
+    }
+
+    public static class Caller
+    {
+        public static Person Build() => global::ModelBuilder.vNext.Model.Create<Person>();
+    }
+}";
+
+            var harness = GeneratorTestHarness.Run(source);
+
+            harness.GeneratorDiagnostics.Should().BeEmpty();
+            harness.CompilationErrors.Should().BeEmpty();
+            harness.GeneratedSources[0].Should().Contain("Sample_GenderValueSource");
+            harness.GeneratedSources[0].Should().Contain("global::ModelBuilder.vNext.ValueSource<global::Sample.Gender>.Instance");
+        }
+
+        [Fact]
+        public void EmitsFlagsEnumValueSourceWithBitwiseCombine()
+        {
+            const string source = @"
+namespace Sample
+{
+    [System.Flags]
+    public enum Access { None = 0, Read = 1, Write = 2, Delete = 4 }
+
+    public sealed class Resource
+    {
+        public Access Access { get; set; }
+    }
+
+    public static class Caller
+    {
+        public static Resource Build() => global::ModelBuilder.vNext.Model.Create<Resource>();
+    }
+}";
+
+            var harness = GeneratorTestHarness.Run(source);
+
+            harness.GeneratorDiagnostics.Should().BeEmpty();
+            harness.CompilationErrors.Should().BeEmpty();
+            harness.GeneratedSources[0].Should().Contain("result |= global::Sample.Access.Read");
+            harness.GeneratedSources[0].Should().NotContain("Access.None");
+        }
+
+        [Fact]
         public void EmitsNothingWhenNoRootsPresent()
         {
             const string source = @"

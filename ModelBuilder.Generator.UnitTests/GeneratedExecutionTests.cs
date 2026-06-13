@@ -48,6 +48,40 @@ namespace Sample
         }
 
         [Fact]
+        public void CreateBuildsEnumMemberFromGeneratedSource()
+        {
+            const string source = @"
+namespace Sample
+{
+    public enum Priority { Low, Medium, High }
+
+    public sealed class Job
+    {
+        public Priority Priority { get; set; }
+    }
+
+    public static class Caller
+    {
+        public static Job Build() => global::ModelBuilder.vNext.Model.Create<Job>();
+    }
+}";
+
+            var harness = GeneratorTestHarness.Run(source);
+            harness.CompilationErrors.Should().BeEmpty();
+
+            var assembly = harness.EmitAndLoad();
+            var jobType = assembly.GetType("Sample.Job", throwOnError: true)!;
+            var priorityType = assembly.GetType("Sample.Priority", throwOnError: true)!;
+
+            var job = CreateViaModel(jobType);
+
+            var priority = jobType.GetProperty("Priority")!.GetValue(job);
+
+            priority.Should().NotBeNull();
+            Enum.IsDefined(priorityType, priority!).Should().BeTrue();
+        }
+
+        [Fact]
         public void CreateBuildsStructWithSettableProperties()
         {
             const string source = @"

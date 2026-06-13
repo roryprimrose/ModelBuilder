@@ -12,9 +12,10 @@ namespace ModelBuilder.Generator
     /// </summary>
     internal static class BuildGraphWalker
     {
-        public static ImmutableArray<BuildableModel> Walk(IEnumerable<INamedTypeSymbol> roots)
+        public static GenerationModel Walk(IEnumerable<INamedTypeSymbol> roots)
         {
             var discovered = new Dictionary<string, INamedTypeSymbol>();
+            var enums = new Dictionary<string, INamedTypeSymbol>();
             var queue = new Queue<INamedTypeSymbol>();
             var seen = new HashSet<INamedTypeSymbol>(SymbolEqualityComparer.Default);
 
@@ -26,6 +27,13 @@ namespace ModelBuilder.Generator
             while (queue.Count > 0)
             {
                 var type = queue.Dequeue();
+
+                if (type.TypeKind == TypeKind.Enum)
+                {
+                    enums[type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)] = type;
+
+                    continue;
+                }
 
                 if (IsBuildable(type) == false)
                 {
@@ -43,24 +51,88 @@ namespace ModelBuilder.Generator
 
                 foreach (var parameter in SelectConstructor(type)?.Parameters ?? ImmutableArray<IParameterSymbol>.Empty)
                 {
-                    EnqueueIfNamed(parameter.Type, queue, seen);
+                    Visit(parameter.Type, queue, seen);
                 }
 
                 foreach (var property in GetSettableProperties(type))
                 {
-                    EnqueueIfNamed(property.Type, queue, seen);
+                    Visit(property.Type, queue, seen);
                 }
             }
 
             var builderNames = new HashSet<string>();
-            var models = ImmutableArray.CreateBuilder<BuildableModel>();
+            var sourceNames = new HashSet<string>();
+            var builders = ImmutableArray.CreateBuilder<BuildableModel>();
 
             foreach (var pair in discovered.OrderBy(p => p.Key, System.StringComparer.Ordinal))
             {
-                models.Add(CreateModel(pair.Value, pair.Key, builderNames));
+                builders.Add(CreateModel(pair.Value, pair.Key, builderNames));
             }
 
-            return models.ToImmutable();
+            var enumModels = ImmutableArray.CreateBuilder<EnumModel>();
+
+            foreach (var pair in enums.OrderBy(p => p.Key, System.StringComparer.Ordinal))
+            {
+                enumModels.Add(CreateEnumModel(pair.Value, pair.Key, sourceNames));
+            }
+
+            return new GenerationModel(
+                new EquatableArray<BuildableModel>(builders.ToImmutable()),
+                new EquatableArray<EnumModel>(enumModels.ToImmutable()));
+        }
+
+        private static EnumModel CreateEnumModel(INamedTypeSymbol type, string fullyQualifiedName, HashSet<string> sourceNames)
+        {
+            var isFlags = type.GetAttributes()
+                .Any(a => a.AttributeClass?.ToDisplayString() == "System.FlagsAttribute");
+
+            var members = ImmutableArray.CreateBuilder<string>();
+
+            foreach (var member in type.GetMembers())
+            {
+                if (member is not IFieldSymbol field || field.IsConst == false || field.ConstantValue is null)
+                {
+                    continue;
+                }
+
+                if (isFlags && IsZero(field.ConstantValue))
+                {
+                    // The zero member contributes nothing to a flags combination.
+                    continue;
+                }
+
+                members.Add(field.Name);
+            }
+
+            return new EnumModel(
+                fullyQualifiedName,
+                CreateName(fullyQualifiedName, "ValueSource", sourceNames),
+                new EquatableArray<string>(members.ToImmutable()),
+                isFlags);
+        }
+
+        private static bool IsZero(object constantValue)
+        {
+            return constantValue switch
+            {
+                byte b => b == 0,
+                sbyte b => b == 0,
+                short s => s == 0,
+                ushort s => s == 0,
+                int i => i == 0,
+                uint i => i == 0,
+                long l => l == 0,
+                ulong l => l == 0,
+                _ => false
+            };
+        }
+
+        private static void Visit(ITypeSymbol type, Queue<INamedTypeSymbol> queue, HashSet<INamedTypeSymbol> seen)
+        {
+            if (type is INamedTypeSymbol named)
+            {
+                Enqueue(named, queue, seen);
+            }
         }
 
         private static BuildableModel CreateModel(
@@ -94,12 +166,12 @@ namespace ModelBuilder.Generator
 
             return new BuildableModel(
                 fullyQualifiedName,
-                CreateBuilderName(fullyQualifiedName, builderNames),
+                CreateName(fullyQualifiedName, "Builder", builderNames),
                 new EquatableArray<MemberModel>(ctorParameters.ToImmutable()),
                 new EquatableArray<MemberModel>(members.ToImmutable()));
         }
 
-        private static string CreateBuilderName(string fullyQualifiedName, HashSet<string> builderNames)
+        private static string CreateName(string fullyQualifiedName, string suffix, HashSet<string> usedNames)
         {
             var chars = fullyQualifiedName.ToCharArray();
 
@@ -111,15 +183,15 @@ namespace ModelBuilder.Generator
                 }
             }
 
-            var candidate = new string(chars).Trim('_') + "Builder";
+            var candidate = new string(chars).Trim('_') + suffix;
 
             var name = candidate;
-            var suffix = 1;
+            var attempt = 1;
 
-            while (builderNames.Add(name) == false)
+            while (usedNames.Add(name) == false)
             {
-                name = candidate + suffix;
-                suffix++;
+                name = candidate + attempt;
+                attempt++;
             }
 
             return name;
@@ -130,14 +202,6 @@ namespace ModelBuilder.Generator
             if (seen.Add(type))
             {
                 queue.Enqueue(type);
-            }
-        }
-
-        private static void EnqueueIfNamed(ITypeSymbol type, Queue<INamedTypeSymbol> queue, HashSet<INamedTypeSymbol> seen)
-        {
-            if (type is INamedTypeSymbol named)
-            {
-                Enqueue(named, queue, seen);
             }
         }
 

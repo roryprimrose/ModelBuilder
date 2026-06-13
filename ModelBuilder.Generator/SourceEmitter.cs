@@ -1,18 +1,17 @@
 namespace ModelBuilder.Generator
 {
-    using System.Collections.Immutable;
     using System.Text;
 
     /// <summary>
     ///     The <see cref="SourceEmitter" /> class
     ///     renders the discovered build models into a single generated C# source file containing the
-    ///     builders and their module-initializer registration.
+    ///     builders, the enum value sources, and their module-initializer registration.
     /// </summary>
     internal static class SourceEmitter
     {
         private const string Indent = "    ";
 
-        public static string Emit(ImmutableArray<BuildableModel> models)
+        public static string Emit(GenerationModel model)
         {
             var builder = new StringBuilder();
 
@@ -22,17 +21,84 @@ namespace ModelBuilder.Generator
             builder.AppendLine("namespace ModelBuilder.Generated");
             builder.AppendLine("{");
 
-            foreach (var model in models)
+            foreach (var buildable in model.Builders)
             {
-                EmitBuilder(builder, model);
+                EmitBuilder(builder, buildable);
                 builder.AppendLine();
             }
 
-            EmitRegistration(builder, models);
+            foreach (var enumModel in model.Enums)
+            {
+                EmitEnumSource(builder, enumModel);
+                builder.AppendLine();
+            }
+
+            EmitRegistration(builder, model);
 
             builder.AppendLine("}");
 
             return builder.ToString();
+        }
+
+        private static void EmitEnumSource(StringBuilder builder, EnumModel model)
+        {
+            var type = model.FullyQualifiedName;
+
+            builder.Append(Indent).AppendLine($"internal sealed class {model.SourceName}");
+            builder.Append(Indent).AppendLine($"    : global::ModelBuilder.vNext.IValueSource<{type}>");
+            builder.Append(Indent).AppendLine("{");
+
+            if (model.MemberNames.Count == 0)
+            {
+                builder.Append(Indent).AppendLine($"    public {type} Create(global::ModelBuilder.vNext.BuildContext context, in global::ModelBuilder.vNext.BuildTarget target)");
+                builder.Append(Indent).AppendLine("    {");
+                builder.Append(Indent).AppendLine($"        return default({type});");
+                builder.Append(Indent).AppendLine("    }");
+                builder.Append(Indent).AppendLine("}");
+
+                return;
+            }
+
+            if (model.IsFlags)
+            {
+                builder.Append(Indent).AppendLine($"    public {type} Create(global::ModelBuilder.vNext.BuildContext context, in global::ModelBuilder.vNext.BuildTarget target)");
+                builder.Append(Indent).AppendLine("    {");
+                builder.Append(Indent).AppendLine($"        var result = default({type});");
+
+                foreach (var member in model.MemberNames)
+                {
+                    builder.Append(Indent).AppendLine($"        if (context.Random.NextBool()) result |= {type}.{member};");
+                }
+
+                builder.Append(Indent).AppendLine("        return result;");
+                builder.Append(Indent).AppendLine("    }");
+                builder.Append(Indent).AppendLine("}");
+
+                return;
+            }
+
+            builder.Append(Indent).Append("    private static readonly ").Append(type).Append("[] _values = { ");
+
+            var first = true;
+
+            foreach (var member in model.MemberNames)
+            {
+                if (first == false)
+                {
+                    builder.Append(", ");
+                }
+
+                builder.Append(type).Append('.').Append(member);
+                first = false;
+            }
+
+            builder.AppendLine(" };");
+            builder.AppendLine();
+            builder.Append(Indent).AppendLine($"    public {type} Create(global::ModelBuilder.vNext.BuildContext context, in global::ModelBuilder.vNext.BuildTarget target)");
+            builder.Append(Indent).AppendLine("    {");
+            builder.Append(Indent).AppendLine("        return _values[context.Random.NextInt32(0, _values.Length - 1)];");
+            builder.Append(Indent).AppendLine("    }");
+            builder.Append(Indent).AppendLine("}");
         }
 
         private static void EmitBuilder(StringBuilder builder, BuildableModel model)
@@ -107,7 +173,7 @@ namespace ModelBuilder.Generator
             }
         }
 
-        private static void EmitRegistration(StringBuilder builder, ImmutableArray<BuildableModel> models)
+        private static void EmitRegistration(StringBuilder builder, GenerationModel model)
         {
             builder.Append(Indent).AppendLine("internal static class GeneratedModelBuilderRegistration");
             builder.Append(Indent).AppendLine("{");
@@ -115,11 +181,16 @@ namespace ModelBuilder.Generator
             builder.Append(Indent).AppendLine("    internal static void Initialize()");
             builder.Append(Indent).AppendLine("    {");
 
-            foreach (var model in models)
+            foreach (var enumModel in model.Enums)
             {
-                builder.Append(Indent).AppendLine($"        var {model.BuilderName}_instance = new {model.BuilderName}();");
-                builder.Append(Indent).AppendLine($"        global::ModelBuilder.vNext.ModelBuilderSlot<{model.FullyQualifiedName}>.Instance = {model.BuilderName}_instance;");
-                builder.Append(Indent).AppendLine($"        global::ModelBuilder.vNext.Model.Registry.Register({model.BuilderName}_instance);");
+                builder.Append(Indent).AppendLine($"        global::ModelBuilder.vNext.ValueSource<{enumModel.FullyQualifiedName}>.Instance = new {enumModel.SourceName}();");
+            }
+
+            foreach (var buildable in model.Builders)
+            {
+                builder.Append(Indent).AppendLine($"        var {buildable.BuilderName}_instance = new {buildable.BuilderName}();");
+                builder.Append(Indent).AppendLine($"        global::ModelBuilder.vNext.ModelBuilderSlot<{buildable.FullyQualifiedName}>.Instance = {buildable.BuilderName}_instance;");
+                builder.Append(Indent).AppendLine($"        global::ModelBuilder.vNext.Model.Registry.Register({buildable.BuilderName}_instance);");
             }
 
             builder.Append(Indent).AppendLine("    }");

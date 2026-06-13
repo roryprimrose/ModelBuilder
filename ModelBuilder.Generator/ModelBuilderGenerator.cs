@@ -46,7 +46,7 @@ namespace ModelBuilder.Generator
 
             var models = BuildGraphWalker.Walk(distinct);
 
-            if (models.Length == 0)
+            if (models.IsEmpty)
             {
                 return;
             }
