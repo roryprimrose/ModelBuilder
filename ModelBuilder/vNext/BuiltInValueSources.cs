@@ -1,6 +1,8 @@
 namespace ModelBuilder.vNext
 {
     using System;
+    using System.Collections.Generic;
+    using ModelBuilder.Data;
 
     /// <summary>
     ///     The <see cref="BuiltInValueSources" /> class
@@ -10,6 +12,30 @@ namespace ModelBuilder.vNext
     public static class BuiltInValueSources
     {
         private const string StringAlphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+        /// <summary>
+        ///     Creates a new registry of entity-style value sources matched by member name.
+        /// </summary>
+        /// <returns>The populated registry.</returns>
+        public static NamedValueSourceRegistry CreateNamedRegistry()
+        {
+            var registry = new NamedValueSourceRegistry();
+
+            registry.Register(new DelegateValueSource<string>(NextFirstName), "FirstName", "GivenName");
+            registry.Register(new DelegateValueSource<string>(c => Pick(c, TestData.LastNames)), "LastName", "Surname", "FamilyName");
+            registry.Register(new DelegateValueSource<string>(NextMiddleName), "MiddleName");
+            registry.Register(new DelegateValueSource<string>(NextEmail), "Email");
+            registry.Register(new DelegateValueSource<string>(c => Pick(c, TestData.Domains)), "Domain");
+            registry.Register(new DelegateValueSource<string>(c => Pick(c, TestData.Companies)), "Company", "Business");
+            registry.Register(new DelegateValueSource<string>(c => Location(c).Country), "Country");
+            registry.Register(new DelegateValueSource<string>(c => Location(c).State), "State", "Province");
+            registry.Register(new DelegateValueSource<string>(c => Location(c).City), "City", "Suburb", "Town");
+            registry.Register(new DelegateValueSource<string>(c => Location(c).PostCode), "PostCode", "ZipCode", "Postcode", "Zip");
+            registry.Register(new DelegateValueSource<string>(c => Location(c).Phone), "Phone", "Mobile", "Cell", "Fax");
+            registry.Register(new DelegateValueSource<string>(c => Pick(c, TestData.TimeZones)), "TimeZone");
+
+            return registry;
+        }
 
         /// <summary>
         ///     Creates a new registry populated with all built-in value sources.
@@ -48,6 +74,45 @@ namespace ModelBuilder.vNext
         private static char NextChar(BuildContext context)
         {
             return StringAlphabet[context.Random.NextInt32(0, StringAlphabet.Length - 1)];
+        }
+
+        private static string NextEmail(BuildContext context)
+        {
+            var first = NextFirstName(context).ToLowerInvariant();
+            var last = Pick(context, TestData.LastNames).ToLowerInvariant();
+            var domain = Pick(context, TestData.Domains);
+
+            return first + "." + last + "@" + domain;
+        }
+
+        private static string NextFirstName(BuildContext context)
+        {
+            var useFemale = context.Random.NextBool();
+            var names = useFemale ? TestData.FemaleNames : TestData.MaleNames;
+
+            return Pick(context, names);
+        }
+
+        private static string NextMiddleName(BuildContext context)
+        {
+            return NextFirstName(context);
+        }
+
+        private static Location Location(BuildContext context)
+        {
+            var locations = TestData.Locations;
+
+            return locations[context.Random.NextInt32(0, locations.Count - 1)];
+        }
+
+        private static string Pick(BuildContext context, IReadOnlyList<string> values)
+        {
+            if (values.Count == 0)
+            {
+                return string.Empty;
+            }
+
+            return values[context.Random.NextInt32(0, values.Count - 1)];
         }
 
         private static byte[] NextBytes(BuildContext context)
@@ -108,5 +173,10 @@ namespace ModelBuilder.vNext
         ///     Gets the shared default registry of built-in value sources.
         /// </summary>
         public static ValueSourceRegistry Default { get; } = CreateRegistry();
+
+        /// <summary>
+        ///     Gets the shared default registry of entity-style value sources matched by member name.
+        /// </summary>
+        public static NamedValueSourceRegistry DefaultNamed { get; } = CreateNamedRegistry();
     }
 }

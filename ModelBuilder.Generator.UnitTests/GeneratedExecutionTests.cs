@@ -112,6 +112,41 @@ namespace Sample
         }
 
         [Fact]
+        public void CreatePopulatesEntityMembersFromNamedSources()
+        {
+            const string source = @"
+namespace Sample
+{
+    public sealed class Contact
+    {
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
+        public string? Email { get; set; }
+        public string? Company { get; set; }
+    }
+
+    public static class Caller
+    {
+        public static Contact Build() => global::ModelBuilder.vNext.Model.Create<Contact>();
+    }
+}";
+
+            var harness = GeneratorTestHarness.Run(source);
+            harness.CompilationErrors.Should().BeEmpty();
+
+            var assembly = harness.EmitAndLoad();
+            var contactType = assembly.GetType("Sample.Contact", throwOnError: true)!;
+
+            var contact = CreateViaModel(contactType);
+
+            var firstName = (string)contactType.GetProperty("FirstName")!.GetValue(contact)!;
+            var email = (string)contactType.GetProperty("Email")!.GetValue(contact)!;
+
+            firstName.Should().NotBeNullOrEmpty();
+            email.Should().Contain("@");
+        }
+
+        [Fact]
         public void CreatePopulatesPrimitivesFromBuiltInSources()
         {
             const string source = @"

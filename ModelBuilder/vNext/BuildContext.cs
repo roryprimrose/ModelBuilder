@@ -23,13 +23,15 @@ namespace ModelBuilder.vNext
         /// <param name="options">The optional build options; defaults are used when <c>null</c>.</param>
         /// <param name="configuration">The optional build configuration; an empty configuration is used when <c>null</c>.</param>
         /// <param name="valueSources">The optional value source registry; the built-in defaults are used when <c>null</c>.</param>
+        /// <param name="namedValueSources">The optional named value source registry; the built-in defaults are used when <c>null</c>.</param>
         /// <exception cref="ArgumentNullException">The <paramref name="random" /> parameter is <c>null</c>.</exception>
         public BuildContext(
             IRandomSource random,
             IBuildLog? log = null,
             BuildContextOptions? options = null,
             IBuildConfiguration? configuration = null,
-            ValueSourceRegistry? valueSources = null)
+            ValueSourceRegistry? valueSources = null,
+            NamedValueSourceRegistry? namedValueSources = null)
         {
             Random = random ?? throw new ArgumentNullException(nameof(random));
             Log = log ?? NullBuildLog.Instance;
@@ -42,6 +44,7 @@ namespace ModelBuilder.vNext
             MaxCount = resolvedOptions.MaxCount;
             Configuration = configuration ?? _emptyConfiguration;
             ValueSources = valueSources ?? BuiltInValueSources.Default;
+            NamedValueSources = namedValueSources ?? BuiltInValueSources.DefaultNamed;
         }
 
         /// <summary>
@@ -141,6 +144,14 @@ namespace ModelBuilder.vNext
                 using (EnterMember(declaringType, memberName, memberType))
                 {
                     return source.Create(this, new BuildTarget(memberType, memberName));
+                }
+            }
+
+            if (NamedValueSources.TryGet<T>(memberName, out var named) && named != null)
+            {
+                using (EnterMember(declaringType, memberName, memberType))
+                {
+                    return named.Create(this, new BuildTarget(memberType, memberName));
                 }
             }
 
@@ -303,6 +314,11 @@ namespace ModelBuilder.vNext
         ///     Gets the maximum number of items generated for a collection.
         /// </summary>
         public int MaxCount { get; }
+
+        /// <summary>
+        ///     Gets the registry of entity-style value sources matched by member name.
+        /// </summary>
+        public NamedValueSourceRegistry NamedValueSources { get; }
 
         /// <summary>
         ///     Gets the minimum number of items generated for a collection.
