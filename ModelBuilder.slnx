@@ -25,7 +25,7 @@
     <File Path="Solution Items/CustomDictionary.xml" />
     <File Path="Solution Items/UnitTest.ruleset" />
   </Folder>
-  <Project Path="ModelBuilder.Benchmarks/ModelBuilder.Benchmarks.csproj" />
+  <Project Path="ModelBuilder.BenchmarkTests/ModelBuilder.BenchmarkTests.csproj" />
   <Project Path="ModelBuilder.UnitTests/ModelBuilder.UnitTests.csproj" />
   <Project Path="ModelBuilder/ModelBuilder.csproj" />
 </Solution>

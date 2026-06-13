@@ -1,7 +1,7 @@
-namespace ModelBuilder.Benchmarks
+namespace ModelBuilder.BenchmarkTests
 {
     using BenchmarkDotNet.Attributes;
-    using ModelBuilder.Benchmarks.Models;
+    using ModelBuilder.BenchmarkTests.Models;
 
     /// <summary>
     /// Measures <c>Model.Populate(instance)</c> on pre-allocated instances across model shapes.

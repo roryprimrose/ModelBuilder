@@ -1,4 +1,4 @@
-namespace ModelBuilder.Benchmarks.Models
+namespace ModelBuilder.BenchmarkTests.Models
 {
     using System;
     using System.Collections.Generic;

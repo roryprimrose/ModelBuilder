@@ -1,4 +1,4 @@
-namespace ModelBuilder.Benchmarks
+namespace ModelBuilder.BenchmarkTests
 {
     using BenchmarkDotNet.Running;
 

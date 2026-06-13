@@ -15,14 +15,14 @@ far fewer allocations, lower GC pressure — can be published as concrete eviden
 ## How to run
 
 ```pwsh
-cd ModelBuilder.Benchmarks
+cd ModelBuilder.BenchmarkTests
 # Full suite across every supported runtime (short job):
 dotnet run -c Release -f net8.0 -- --filter * --runtimes net472 net8.0 net9.0 net10.0 --job short
 # Single runtime, default (longer, more stable) job:
 dotnet run -c Release -f net8.0 -- --filter *CreateBenchmarks* --runtimes net8.0
 ```
 
-Generated reports land under `ModelBuilder.Benchmarks/BenchmarkDotNet.Artifacts/` (git-ignored).
+Generated reports land under `ModelBuilder.BenchmarkTests/BenchmarkDotNet.Artifacts/` (git-ignored).
 
 ## Method and model shapes
 
