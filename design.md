@@ -977,6 +977,43 @@ replaces the current library's reflection-based access to non-public constructor
 - Address open data requests where cheap: alternative `Country` matches (#345), and validate
   collection-count configuration so `MaxCount` without `MinCount` cannot throw (#188).
 
+#### 9.1.1 `IRandomSource` requirements (lessons from the v8 `RandomGenerator`)
+
+The v8 `RandomGenerator` underpins every numeric/byte value in the library, and a review of it
+surfaced concrete defects that the vNext `IRandomSource` must fix by construction. These are
+acceptance criteria, not aspirations:
+
+- **Thread-safe.** v8 shares one `static readonly Random` across all instances; `System.Random` is
+  not thread-safe, and concurrent access (e.g. parallel xUnit collections) can corrupt its state so
+  it returns `0.0`/min values or correlated garbage. `IRandomSource` must be safe under parallel use
+  — `Random.Shared` on modern TFMs, a `ThreadLocal<Random>`/per-thread instance on `netstandard2.0`,
+  or equivalent. No shared mutable `Random` touched without isolation.
+- **Seedable and reproducible.** v8's `new Random()` is private, static, and unseeded — a failing
+  test can't be reproduced. `IRandomSource` must accept a seed, expose the seed in play, and surface
+  it in the build log and `ModelBuildException` (§9.2, §15.5) so any generated-value failure is a
+  deterministic repro.
+- **Typed, allocation-free API (no `object`, no reflection).** v8 routes everything through
+  `object NextValue(Type, object, object)` with `Convert.ChangeType` and, for nullable,
+  `Activator.CreateInstance` — boxing every value and using reflection on the hot path.
+  `IRandomSource` must expose typed methods (`NextInt32`, `NextInt64`, `NextDouble`,
+  `NextDecimal`, …) returning the value type directly, consistent with the generic value-source
+  model (§8.2) and the no-reflection goal (§1).
+- **No precision loss for wide types.** v8 computes in `double` then converts back, so `long`/`ulong`
+  above 2^53 are quantized and `decimal` loses precision; the boundary clamps over-represent
+  `MaxValue`. `IRandomSource` must generate integer and `decimal` ranges with their own arithmetic
+  (e.g. 64-bit integer math, `decimal` math), not via `double`.
+- **Efficient bulk bytes.** v8's `NextValue(byte[])` runs the full per-`Type` value path **per byte**
+  (validation + two `Convert.ToDouble` + double math + `Convert.ChangeType` + a box, each byte).
+  `IRandomSource` must fill buffers in one call (`Random.NextBytes`-style).
+- **Boundary validation at the public edge.** v8 throws `min > max` deep inside a private double
+  routine after conversions. `IRandomSource` must validate `min <= max` at the public method with a
+  clear message, and uniformly cover the requested range (no coin-flip half-range fallback for the
+  full-`double` case).
+
+These criteria are exercised by the BenchmarkDotNet baseline (§13 step 2 — the v8 boxing/`double`
+path is a key allocation source to measure) and by unit tests carried into vNext (thread-safety
+stress test, seeded-reproducibility test, wide-integer distribution test).
+
 ### 9.2 Build log (troubleshooting why a value was/was not created)
 
 Generated code has the shape of the object graph baked in, but a developer still needs to see
