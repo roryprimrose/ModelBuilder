@@ -112,6 +112,49 @@ namespace Sample
         }
 
         [Fact]
+        public void WriteLogCapturesNestedBuildTrace()
+        {
+            const string source = @"
+namespace Sample
+{
+    public sealed class Address
+    {
+        public string? City { get; set; }
+    }
+
+    public sealed class Person
+    {
+        public string? FirstName { get; set; }
+        public Address? Home { get; set; }
+    }
+
+    public static class Caller
+    {
+        public static (Person, string) Build()
+        {
+            string captured = string.Empty;
+            var person = global::ModelBuilder.vNext.Model.WriteLog(log => captured = log).Create<Person>();
+            return (person, captured);
+        }
+    }
+}";
+
+            var harness = GeneratorTestHarness.Run(source);
+            harness.CompilationErrors.Should().BeEmpty();
+
+            var assembly = harness.EmitAndLoad();
+            var callerType = assembly.GetType("Sample.Caller", throwOnError: true)!;
+
+            var result = callerType.GetMethod("Build")!.Invoke(null, null)!;
+            var captured = (string)result.GetType().GetField("Item2")!.GetValue(result)!;
+
+            captured.Should().Contain("Create Person");
+            captured.Should().Contain("Populate Person");
+            captured.Should().Contain("FirstName");
+            captured.Should().Contain("Create Address");
+        }
+
+        [Fact]
         public void IgnoringLeavesMemberAtDefault()
         {
             const string source = @"

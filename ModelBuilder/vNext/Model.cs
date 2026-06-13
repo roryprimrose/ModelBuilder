@@ -30,7 +30,7 @@ namespace ModelBuilder.vNext
                 throw NoBuilder(instanceType);
             }
 
-            var context = NewContext(null);
+            var context = NewContext(null, null);
 
             using (context.EnterRoot(instanceType))
             {
@@ -98,11 +98,27 @@ namespace ModelBuilder.vNext
             return new ModelConfiguration().UsingModule<TModule>();
         }
 
+        /// <summary>
+        ///     Begins a configured build that writes the structured build log to the supplied sink.
+        /// </summary>
+        /// <param name="sink">The action that receives the rendered build log after the build.</param>
+        /// <returns>A configuration to continue building.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="sink" /> parameter is <c>null</c>.</exception>
+        public static ModelConfiguration WriteLog(Action<string> sink)
+        {
+            return new ModelConfiguration().WriteLog(sink);
+        }
+
         internal static T CreateWith<T>(BuildConfiguration? configuration, object?[]? args)
+        {
+            return CreateWith<T>(configuration, null, args);
+        }
+
+        internal static T CreateWith<T>(BuildConfiguration? configuration, IBuildLog? log, object?[]? args)
         {
             var builder = ModelBuilderSlot<T>.Instance ?? throw NoBuilder(typeof(T));
 
-            var context = NewContext(configuration);
+            var context = NewContext(configuration, log);
 
             using (context.EnterRoot(typeof(T)))
             {
@@ -112,6 +128,11 @@ namespace ModelBuilder.vNext
 
         internal static T PopulateWith<T>(T instance, BuildConfiguration? configuration)
         {
+            return PopulateWith(instance, configuration, null);
+        }
+
+        internal static T PopulateWith<T>(T instance, BuildConfiguration? configuration, IBuildLog? log)
+        {
             if (instance is null)
             {
                 throw new ArgumentNullException(nameof(instance));
@@ -119,7 +140,7 @@ namespace ModelBuilder.vNext
 
             var builder = ModelBuilderSlot<T>.Instance ?? throw NoBuilder(typeof(T));
 
-            var context = NewContext(configuration);
+            var context = NewContext(configuration, log);
 
             using (context.EnterRoot(typeof(T)))
             {
@@ -127,9 +148,9 @@ namespace ModelBuilder.vNext
             }
         }
 
-        private static BuildContext NewContext(BuildConfiguration? configuration)
+        private static BuildContext NewContext(BuildConfiguration? configuration, IBuildLog? log)
         {
-            return new BuildContext(new RandomSource(), null, null, configuration);
+            return new BuildContext(new RandomSource(), log, null, configuration);
         }
 
         private static ModelBuildException NoBuilder(Type type)

@@ -11,6 +11,7 @@ namespace ModelBuilder.vNext
     public sealed class ModelConfiguration
     {
         private readonly BuildConfiguration _configuration = new BuildConfiguration();
+        private Action<string>? _logSink;
 
         /// <summary>
         ///     Creates a populated instance of <typeparamref name="T" /> using this configuration.
@@ -20,7 +21,21 @@ namespace ModelBuilder.vNext
         /// <returns>The created instance.</returns>
         public T Create<T>(params object?[]? args)
         {
-            return Model.CreateWith<T>(_configuration, args);
+            if (_logSink == null)
+            {
+                return Model.CreateWith<T>(_configuration, args);
+            }
+
+            var log = new BuildLog();
+
+            try
+            {
+                return Model.CreateWith<T>(_configuration, log, args);
+            }
+            finally
+            {
+                _logSink(log.Render());
+            }
         }
 
         /// <summary>
@@ -62,7 +77,21 @@ namespace ModelBuilder.vNext
         /// <returns>The populated instance.</returns>
         public T Populate<T>(T instance)
         {
-            return Model.PopulateWith(instance, _configuration);
+            if (_logSink == null)
+            {
+                return Model.PopulateWith(instance, _configuration);
+            }
+
+            var log = new BuildLog();
+
+            try
+            {
+                return Model.PopulateWith(instance, _configuration, log);
+            }
+            finally
+            {
+                _logSink(log.Render());
+            }
         }
 
         /// <summary>
@@ -74,6 +103,19 @@ namespace ModelBuilder.vNext
             where TModule : IConfigurationModule, new()
         {
             new TModule().Configure(_configuration);
+
+            return this;
+        }
+
+        /// <summary>
+        ///     Captures the structured build log and writes it to the supplied sink after the build.
+        /// </summary>
+        /// <param name="sink">The action that receives the rendered build log.</param>
+        /// <returns>The same configuration for chaining.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="sink" /> parameter is <c>null</c>.</exception>
+        public ModelConfiguration WriteLog(Action<string> sink)
+        {
+            _logSink = sink ?? throw new ArgumentNullException(nameof(sink));
 
             return this;
         }

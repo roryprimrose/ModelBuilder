@@ -219,6 +219,8 @@ namespace ModelBuilder.vNext
 
             if (source != null)
             {
+                Log.Write(BuildLogEntryKind.CreateValue, memberType, memberName, "registered value source");
+
                 using (EnterMember(declaringType, memberName, memberType))
                 {
                     return source.Create(this, new BuildTarget(memberType, memberName));
@@ -227,6 +229,8 @@ namespace ModelBuilder.vNext
 
             if (NamedValueSources.TryGet<T>(memberName, out var named) && named != null)
             {
+                Log.Write(BuildLogEntryKind.CreateValue, memberType, memberName, "named value source");
+
                 using (EnterMember(declaringType, memberName, memberType))
                 {
                     return named.Create(this, new BuildTarget(memberType, memberName));
@@ -235,6 +239,8 @@ namespace ModelBuilder.vNext
 
             if (TryResolveValueSource<T>(out var builtIn) && builtIn != null)
             {
+                Log.Write(BuildLogEntryKind.CreateValue, memberType, memberName, "built-in value source");
+
                 using (EnterMember(declaringType, memberName, memberType))
                 {
                     return builtIn.Create(this, new BuildTarget(memberType, memberName));
