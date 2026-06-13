@@ -193,7 +193,7 @@ namespace ModelBuilder.Generator
 
         private static bool IsBuildable(INamedTypeSymbol type)
         {
-            if (type.TypeKind != TypeKind.Class)
+            if (type.TypeKind != TypeKind.Class && type.TypeKind != TypeKind.Struct)
             {
                 return false;
             }
@@ -203,8 +203,14 @@ namespace ModelBuilder.Generator
                 return false;
             }
 
-            if (type.SpecialType == SpecialType.System_String || type.SpecialType == SpecialType.System_Object)
+            if (type.IsTupleType)
             {
+                return false;
+            }
+
+            if (type.SpecialType != SpecialType.None)
+            {
+                // Primitives, string, decimal, IntPtr, etc. are leaf value types, not buildable graphs.
                 return false;
             }
 

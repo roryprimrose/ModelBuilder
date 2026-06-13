@@ -48,6 +48,45 @@ namespace Sample
         }
 
         [Fact]
+        public void CreateBuildsStructWithSettableProperties()
+        {
+            const string source = @"
+namespace Sample
+{
+    public struct Point
+    {
+        public int X { get; set; }
+        public int Y { get; set; }
+    }
+
+    public static class Caller
+    {
+        public static Point Build() => global::ModelBuilder.vNext.Model.Create<Point>();
+    }
+}";
+
+            var harness = GeneratorTestHarness.Run(source);
+            harness.CompilationErrors.Should().BeEmpty();
+
+            var assembly = harness.EmitAndLoad();
+            var pointType = assembly.GetType("Sample.Point", throwOnError: true)!;
+
+            ValueSource<int>.Instance = new ConstantInt32Source(11);
+
+            try
+            {
+                var point = CreateViaModel(pointType);
+
+                pointType.GetProperty("X")!.GetValue(point).Should().Be(11);
+                pointType.GetProperty("Y")!.GetValue(point).Should().Be(11);
+            }
+            finally
+            {
+                ValueSource<int>.Instance = null;
+            }
+        }
+
+        [Fact]
         public void CreatePopulatesLeafFromRegisteredValueSource()
         {
             const string source = @"

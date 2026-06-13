@@ -95,6 +95,32 @@ namespace Sample
         }
 
         [Fact]
+        public void EmitsBuilderForStructRoot()
+        {
+            const string source = @"
+namespace Sample
+{
+    public struct Point
+    {
+        public int X { get; set; }
+        public int Y { get; set; }
+    }
+
+    public static class Caller
+    {
+        public static Point Build() => global::ModelBuilder.vNext.Model.Create<Point>();
+    }
+}";
+
+            var harness = GeneratorTestHarness.Run(source);
+
+            harness.GeneratorDiagnostics.Should().BeEmpty();
+            harness.CompilationErrors.Should().BeEmpty();
+            harness.GeneratedSources[0].Should().Contain("Sample_PointBuilder");
+            harness.GeneratedSources[0].Should().Contain("new global::Sample.Point(");
+        }
+
+        [Fact]
         public void EmitsNothingWhenNoRootsPresent()
         {
             const string source = @"
