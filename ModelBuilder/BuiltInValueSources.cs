@@ -19,9 +19,15 @@
 
         // Keys under which shared data is cached in the build scope so that related members of the same
         // instance stay internally consistent. Location-style members all read one cached location row,
-        // and Age/DateOfBirth read one cached age, regardless of the order the members are built in.
+        // and Age is calculated from one cached date of birth, regardless of the order the members are
+        // built in.
         private const string LocationScopeKey = "ModelBuilder.BuiltIn.Location";
-        private const string AgeScopeKey = "ModelBuilder.BuiltIn.Age";
+        private const string DateOfBirthScopeKey = "ModelBuilder.BuiltIn.DateOfBirth";
+
+        // The fixed reference date that date-based sources are anchored to so generated values stay
+        // deterministic for a given seed. Date of birth is offset back from here, and Age is the number
+        // of completed years between the cached date of birth and this reference.
+        private static readonly DateTime _referenceDate = new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
         // The member-name aliases shared between the named-source registration (CreateNamedRegistry)
         // and the sibling lookups in NextEmail. Keeping them in one place ensures the email value
@@ -197,21 +203,44 @@
 
         private static int NextAge(IBuildContext context)
         {
-            // Cache one age for the instance being built so that Age and DateOfBirth stay consistent
+            // Age is derived from the shared date of birth, which is the definitive value. Computing the
+            // completed years between the cached birth date and the reference keeps the two consistent
             // regardless of which member is built first: saying Age is 18 while DateOfBirth implies 35 is
-            // illogical. DateOfBirth reads this same cached age.
-            return context.GetOrAddScopedValue(AgeScopeKey, c => c.Random.NextInt32(MinAge, MaxAge));
+            // illogical.
+            var dateOfBirth = NextDateOfBirth(context);
+
+            return CalculateAge(dateOfBirth, _referenceDate);
         }
 
         private static DateTime NextDateOfBirth(IBuildContext context)
         {
-            // Anchor the birth date to the same fixed reference as NextDateTime and to the shared age so
-            // the generated date represents exactly the cached age in completed years. Subtracting up to a
-            // year of extra days keeps the completed-year count equal to the age.
-            var ageYears = NextAge(context);
+            // The date of birth is the definitive value that Age is calculated from, so it is the value
+            // cached for the instance. Both DateOfBirth and Age therefore agree no matter which is built
+            // first.
+            return context.GetOrAddScopedValue(DateOfBirthScopeKey, RandomDateOfBirth);
+        }
+
+        private static DateTime RandomDateOfBirth(IBuildContext context)
+        {
+            // A UTC date that lands within the human-plausible age range, anchored to the same fixed
+            // reference date as NextDateTime.
+            var ageYears = context.Random.NextInt32(MinAge, MaxAge);
             var extraDays = context.Random.NextInt32(0, 364);
 
-            return new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddYears(-ageYears).AddDays(-extraDays);
+            return _referenceDate.AddYears(-ageYears).AddDays(-extraDays);
+        }
+
+        private static int CalculateAge(DateTime dateOfBirth, DateTime reference)
+        {
+            var age = reference.Year - dateOfBirth.Year;
+
+            if (reference < dateOfBirth.AddYears(age))
+            {
+                // The birthday has not yet occurred by the reference date, so a year has not completed.
+                age--;
+            }
+
+            return age;
         }
 
         private static Location Location(IBuildContext context)
@@ -255,7 +284,7 @@
             var ticksRange = TimeSpan.FromDays(3650).Ticks;
             var offset = context.Random.NextInt64(0, ticksRange);
 
-            return new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddTicks(-offset);
+            return _referenceDate.AddTicks(-offset);
         }
 
         private static Guid NextGuid(IBuildContext context)

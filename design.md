@@ -939,8 +939,9 @@ built-in sources share data through `IBuildContext.GetOrAddScopedValue<T>(key, f
 whose lifetime is the instance currently being populated (the same lifetime as the sibling scope).
 The first location-style member (`Country`/`State`/`City`/`PostCode`/`Phone`) caches one `Location`
 row and the rest read it, so an instance never produces an impossible address like
-`London, New South Wales, India`. `Age` and `DateOfBirth` likewise share one cached age, so the two
-stay consistent regardless of which member is built first. A separate instance elsewhere in the
+`London, New South Wales, India`. `DateOfBirth` is the definitive value of the birth-date/age pair —
+the scope caches one date of birth and `Age` is calculated as the completed years between it and the
+reference date, so the two always agree regardless of which member is built first. A separate instance elsewhere in the
 graph gets its own scope and therefore its own location and age. This method is also the public
 extension point: a consumer adding several value sources around a shared data set can have the first
 source cache a chosen data item under a key and the others read it for coherent, related values.
