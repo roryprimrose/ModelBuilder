@@ -21,7 +21,7 @@ namespace Sample
 
     public static class Caller
     {
-        public static Person Build() => global::ModelBuilder.vNext.Model.Create<Person>();
+        public static Person Build() => global::ModelBuilder.Model.Create<Person>();
     }
 }";
 
@@ -52,7 +52,7 @@ namespace Sample
 
     public static class Caller
     {
-        public static Person Build() => global::ModelBuilder.vNext.Model.Create<Person>();
+        public static Person Build() => global::ModelBuilder.Model.Create<Person>();
     }
 }";
 
@@ -83,7 +83,7 @@ namespace Sample
 
     public static class Caller
     {
-        public static Account Build() => global::ModelBuilder.vNext.Model.Create<Account>();
+        public static Account Build() => global::ModelBuilder.Model.Create<Account>();
     }
 }";
 
@@ -108,7 +108,7 @@ namespace Sample
 
     public static class Caller
     {
-        public static Point Build() => global::ModelBuilder.vNext.Model.Create<Point>();
+        public static Point Build() => global::ModelBuilder.Model.Create<Point>();
     }
 }";
 
@@ -135,7 +135,7 @@ namespace Sample
 
     public static class Caller
     {
-        public static Person Build() => global::ModelBuilder.vNext.Model.Create<Person>();
+        public static Person Build() => global::ModelBuilder.Model.Create<Person>();
     }
 }";
 
@@ -144,7 +144,7 @@ namespace Sample
             harness.GeneratorDiagnostics.Should().BeEmpty();
             harness.CompilationErrors.Should().BeEmpty();
             harness.GeneratedSources[0].Should().Contain("Sample_GenderValueSource");
-            harness.GeneratedSources[0].Should().Contain("global::ModelBuilder.vNext.ValueSource<global::Sample.Gender>.Instance");
+            harness.GeneratedSources[0].Should().Contain("global::ModelBuilder.ValueSource<global::Sample.Gender>.Instance");
         }
 
         [Fact]
@@ -163,7 +163,7 @@ namespace Sample
 
     public static class Caller
     {
-        public static Resource Build() => global::ModelBuilder.vNext.Model.Create<Resource>();
+        public static Resource Build() => global::ModelBuilder.Model.Create<Resource>();
     }
 }";
 
@@ -190,7 +190,7 @@ namespace Sample
 
     public static class Caller
     {
-        public static Person Build() => global::ModelBuilder.vNext.Model.Create<Person>();
+        public static Person Build() => global::ModelBuilder.Model.Create<Person>();
     }
 }";
 
@@ -215,7 +215,7 @@ namespace Sample
 
     public static class Caller
     {
-        public static object Build() => global::ModelBuilder.vNext.Model.Create(typeof(Shape));
+        public static object Build() => global::ModelBuilder.Model.Create(typeof(Shape));
     }
 }";
 
@@ -237,7 +237,7 @@ namespace Sample
 
     public static class Caller
     {
-        public static object Build() => global::ModelBuilder.vNext.Model.Create(typeof(Person));
+        public static object Build() => global::ModelBuilder.Model.Create(typeof(Person));
     }
 }";
 
@@ -261,7 +261,7 @@ namespace Sample
 
     public static class Caller
     {
-        public static Shape Build() => global::ModelBuilder.vNext.Model.Create<Shape>();
+        public static Shape Build() => global::ModelBuilder.Model.Create<Shape>();
     }
 }";
 
@@ -283,7 +283,7 @@ namespace Sample
 
     public static class Caller
     {
-        public static IShape Build() => global::ModelBuilder.vNext.Model.Create<IShape>();
+        public static IShape Build() => global::ModelBuilder.Model.Create<IShape>();
     }
 }";
 
@@ -307,7 +307,7 @@ namespace Sample
 
     public static class Caller
     {
-        public static Locked Build() => global::ModelBuilder.vNext.Model.Create<Locked>();
+        public static Locked Build() => global::ModelBuilder.Model.Create<Locked>();
     }
 }";
 
@@ -329,7 +329,7 @@ namespace Sample
 
     public static class Caller
     {
-        public static Person Build() => global::ModelBuilder.vNext.Model.Create<Person>();
+        public static Person Build() => global::ModelBuilder.Model.Create<Person>();
     }
 }";
 
@@ -352,7 +352,7 @@ namespace Sample
 
     public static class Caller
     {
-        public static Bag Build() => global::ModelBuilder.vNext.Model.Create<Bag>();
+        public static Bag Build() => global::ModelBuilder.Model.Create<Bag>();
     }
 }";
 
@@ -377,7 +377,7 @@ namespace Sample
 
     public static class Caller
     {
-        public static Lookup Build() => global::ModelBuilder.vNext.Model.Create<Lookup>();
+        public static Lookup Build() => global::ModelBuilder.Model.Create<Lookup>();
     }
 }";
 
@@ -401,7 +401,7 @@ namespace Sample
 
     public static class Caller
     {
-        public static Bag Build() => global::ModelBuilder.vNext.Model.Create<Bag>();
+        public static Bag Build() => global::ModelBuilder.Model.Create<Bag>();
     }
 }";
 
@@ -470,7 +470,7 @@ namespace Sample
 
     public static class Caller
     {
-        public static Person Build() => global::ModelBuilder.vNext.Model.Populate(new Person());
+        public static Person Build() => global::ModelBuilder.Model.Populate(new Person());
     }
 }";
 

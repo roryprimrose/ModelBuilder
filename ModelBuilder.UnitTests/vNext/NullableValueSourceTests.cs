@@ -3,7 +3,6 @@ namespace ModelBuilder.UnitTests.vNext
     using System.Linq;
     using FluentAssertions;
     using ModelBuilder;
-    using ModelBuilder.vNext;
     using Xunit;
 
     public class NullableValueSourceTests

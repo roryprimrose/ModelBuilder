@@ -116,7 +116,7 @@ namespace ModelBuilder.Generator.UnitTests
                 }
             }
 
-            references.Add(MetadataReference.CreateFromFile(typeof(ModelBuilder.vNext.Model).Assembly.Location));
+            references.Add(MetadataReference.CreateFromFile(typeof(ModelBuilder.Model).Assembly.Location));
 
             return references.ToImmutableArray();
         }

@@ -2,7 +2,7 @@ namespace ModelBuilder.BenchmarkTests
 {
     using BenchmarkDotNet.Attributes;
     using ModelBuilder.BenchmarkTests.Models;
-    using Model = ModelBuilder.vNext.Model;
+    using Model = ModelBuilder.Model;
 
     /// <summary>
     /// Measures <c>Model.Create&lt;T&gt;()</c> across model shapes of increasing size and

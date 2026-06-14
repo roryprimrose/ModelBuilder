@@ -1,4 +1,4 @@
-namespace ModelBuilder.vNext
+namespace ModelBuilder
 {
     /// <summary>
     ///     The <see cref="BuildContextOptions" /> class

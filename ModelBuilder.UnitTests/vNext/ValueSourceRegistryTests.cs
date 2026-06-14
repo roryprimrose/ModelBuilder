@@ -2,7 +2,6 @@ namespace ModelBuilder.UnitTests.vNext
 {
     using FluentAssertions;
     using ModelBuilder;
-    using ModelBuilder.vNext;
     using Xunit;
 
     public class ValueSourceRegistryTests

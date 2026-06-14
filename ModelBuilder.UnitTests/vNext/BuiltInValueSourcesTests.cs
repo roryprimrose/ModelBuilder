@@ -4,7 +4,6 @@ namespace ModelBuilder.UnitTests.vNext
     using System.Collections.Generic;
     using FluentAssertions;
     using ModelBuilder;
-    using ModelBuilder.vNext;
     using Xunit;
 
     public class BuiltInValueSourcesTests

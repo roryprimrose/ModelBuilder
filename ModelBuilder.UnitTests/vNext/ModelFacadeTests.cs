@@ -2,7 +2,7 @@ namespace ModelBuilder.UnitTests.vNext
 {
     using System;
     using FluentAssertions;
-    using ModelBuilder.vNext;
+    using ModelBuilder;
     using Xunit;
 
     public class ModelFacadeTests
@@ -14,7 +14,7 @@ namespace ModelBuilder.UnitTests.vNext
 
             try
             {
-                var actual = global::ModelBuilder.vNext.Model.Create<Widget>();
+                var actual = global::ModelBuilder.Model.Create<Widget>();
 
                 actual.Should().BeOfType<Widget>();
                 actual.Built.Should().BeTrue();
@@ -28,7 +28,7 @@ namespace ModelBuilder.UnitTests.vNext
         [Fact]
         public void CreateGenericThrowsBuildExceptionWhenNoBuilderRegistered()
         {
-            Action action = () => global::ModelBuilder.vNext.Model.Create<Unregistered>();
+            Action action = () => global::ModelBuilder.Model.Create<Unregistered>();
 
             action.Should().Throw<ModelBuildException>()
                 .Which.FailureKind.Should().Be(FailureKind.NoBuilderForType);
@@ -37,9 +37,9 @@ namespace ModelBuilder.UnitTests.vNext
         [Fact]
         public void CreateTypeReturnsInstanceFromRegistry()
         {
-            global::ModelBuilder.vNext.Model.Registry.Register(new WidgetBuilder());
+            global::ModelBuilder.Model.Registry.Register(new WidgetBuilder());
 
-            var actual = global::ModelBuilder.vNext.Model.Create(typeof(Widget));
+            var actual = global::ModelBuilder.Model.Create(typeof(Widget));
 
             actual.Should().BeOfType<Widget>();
         }
@@ -47,7 +47,7 @@ namespace ModelBuilder.UnitTests.vNext
         [Fact]
         public void CreateTypeThrowsBuildExceptionWhenNoBuilderRegistered()
         {
-            Action action = () => global::ModelBuilder.vNext.Model.Create(typeof(Unregistered));
+            Action action = () => global::ModelBuilder.Model.Create(typeof(Unregistered));
 
             action.Should().Throw<ModelBuildException>()
                 .Which.FailureKind.Should().Be(FailureKind.NoBuilderForType);
@@ -56,7 +56,7 @@ namespace ModelBuilder.UnitTests.vNext
         [Fact]
         public void CreateTypeThrowsWithNullType()
         {
-            Action action = () => global::ModelBuilder.vNext.Model.Create(null!);
+            Action action = () => global::ModelBuilder.Model.Create(null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
@@ -70,7 +70,7 @@ namespace ModelBuilder.UnitTests.vNext
             {
                 var instance = new Widget();
 
-                var actual = global::ModelBuilder.vNext.Model.Populate(instance);
+                var actual = global::ModelBuilder.Model.Populate(instance);
 
                 actual.Should().BeSameAs(instance);
                 actual.Built.Should().BeTrue();

@@ -3,7 +3,6 @@ namespace ModelBuilder.UnitTests.vNext
     using System;
     using FluentAssertions;
     using ModelBuilder;
-    using ModelBuilder.vNext;
     using Xunit;
 
     public class BuildContextSiblingTests

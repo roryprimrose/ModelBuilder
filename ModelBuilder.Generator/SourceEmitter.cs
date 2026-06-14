@@ -62,12 +62,12 @@ namespace ModelBuilder.Generator
             var type = model.FullyQualifiedName;
 
             builder.Append(Indent).AppendLine($"internal sealed class {model.SourceName}");
-            builder.Append(Indent).AppendLine($"    : global::ModelBuilder.vNext.IValueSource<{type}>");
+            builder.Append(Indent).AppendLine($"    : global::ModelBuilder.IValueSource<{type}>");
             builder.Append(Indent).AppendLine("{");
 
             if (model.MemberNames.Count == 0)
             {
-                builder.Append(Indent).AppendLine($"    public {type} Create(global::ModelBuilder.vNext.BuildContext context, in global::ModelBuilder.vNext.BuildTarget target)");
+                builder.Append(Indent).AppendLine($"    public {type} Create(global::ModelBuilder.BuildContext context, in global::ModelBuilder.BuildTarget target)");
                 builder.Append(Indent).AppendLine("    {");
                 builder.Append(Indent).AppendLine($"        return default({type});");
                 builder.Append(Indent).AppendLine("    }");
@@ -78,7 +78,7 @@ namespace ModelBuilder.Generator
 
             if (model.IsFlags)
             {
-                builder.Append(Indent).AppendLine($"    public {type} Create(global::ModelBuilder.vNext.BuildContext context, in global::ModelBuilder.vNext.BuildTarget target)");
+                builder.Append(Indent).AppendLine($"    public {type} Create(global::ModelBuilder.BuildContext context, in global::ModelBuilder.BuildTarget target)");
                 builder.Append(Indent).AppendLine("    {");
                 builder.Append(Indent).AppendLine($"        var result = default({type});");
 
@@ -111,7 +111,7 @@ namespace ModelBuilder.Generator
 
             builder.AppendLine(" };");
             builder.AppendLine();
-            builder.Append(Indent).AppendLine($"    public {type} Create(global::ModelBuilder.vNext.BuildContext context, in global::ModelBuilder.vNext.BuildTarget target)");
+            builder.Append(Indent).AppendLine($"    public {type} Create(global::ModelBuilder.BuildContext context, in global::ModelBuilder.BuildTarget target)");
             builder.Append(Indent).AppendLine("    {");
             builder.Append(Indent).AppendLine("        return _values[context.Random.NextInt32(0, _values.Length - 1)];");
             builder.Append(Indent).AppendLine("    }");
@@ -139,9 +139,9 @@ namespace ModelBuilder.Generator
             var element = model.ElementType;
 
             builder.Append(Indent).AppendLine($"internal sealed class {model.SourceName}");
-            builder.Append(Indent).AppendLine($"    : global::ModelBuilder.vNext.IValueSource<{slot}>");
+            builder.Append(Indent).AppendLine($"    : global::ModelBuilder.IValueSource<{slot}>");
             builder.Append(Indent).AppendLine("{");
-            builder.Append(Indent).AppendLine($"    public {slot} Create(global::ModelBuilder.vNext.BuildContext context, in global::ModelBuilder.vNext.BuildTarget target)");
+            builder.Append(Indent).AppendLine($"    public {slot} Create(global::ModelBuilder.BuildContext context, in global::ModelBuilder.BuildTarget target)");
             builder.Append(Indent).AppendLine("    {");
             builder.Append(Indent).AppendLine("        var count = context.NextCount();");
 
@@ -198,13 +198,13 @@ namespace ModelBuilder.Generator
             var type = model.FullyQualifiedName;
 
             builder.Append(Indent).AppendLine($"internal sealed class {model.BuilderName}");
-            builder.Append(Indent).AppendLine($"    : global::ModelBuilder.vNext.IModelBuilder<{type}>, global::ModelBuilder.vNext.IModelBuilder");
+            builder.Append(Indent).AppendLine($"    : global::ModelBuilder.IModelBuilder<{type}>, global::ModelBuilder.IModelBuilder");
             builder.Append(Indent).AppendLine("{");
 
             // Generic Create
-            builder.Append(Indent).AppendLine($"    public {type} Create(global::ModelBuilder.vNext.BuildContext context, params object?[]? args)");
+            builder.Append(Indent).AppendLine($"    public {type} Create(global::ModelBuilder.BuildContext context, params object?[]? args)");
             builder.Append(Indent).AppendLine("    {");
-            builder.Append(Indent).AppendLine($"        using (context.Log.BeginScope(global::ModelBuilder.vNext.BuildLogEntryKind.CreateInstance, typeof({type})))");
+            builder.Append(Indent).AppendLine($"        using (context.Log.BeginScope(global::ModelBuilder.BuildLogEntryKind.CreateInstance, typeof({type})))");
             builder.Append(Indent).AppendLine("        {");
             builder.Append(Indent).Append("            var instance = new ").Append(type).Append('(');
             EmitConstructorArguments(builder, model);
@@ -215,9 +215,9 @@ namespace ModelBuilder.Generator
             builder.AppendLine();
 
             // Generic Populate
-            builder.Append(Indent).AppendLine($"    public {type} Populate(global::ModelBuilder.vNext.BuildContext context, {type} instance, object?[]? args = null)");
+            builder.Append(Indent).AppendLine($"    public {type} Populate(global::ModelBuilder.BuildContext context, {type} instance, object?[]? args = null)");
             builder.Append(Indent).AppendLine("    {");
-            builder.Append(Indent).AppendLine($"        using (context.Log.BeginScope(global::ModelBuilder.vNext.BuildLogEntryKind.PopulateInstance, typeof({type})))");
+            builder.Append(Indent).AppendLine($"        using (context.Log.BeginScope(global::ModelBuilder.BuildLogEntryKind.PopulateInstance, typeof({type})))");
             builder.Append(Indent).AppendLine($"        using (context.EnterSiblingScope())");
             builder.Append(Indent).AppendLine("        {");
 
@@ -237,17 +237,17 @@ namespace ModelBuilder.Generator
             builder.AppendLine();
 
             // Non-generic surface
-            builder.Append(Indent).AppendLine("    object global::ModelBuilder.vNext.IModelBuilder.Create(global::ModelBuilder.vNext.BuildContext context, params object?[]? args)");
+            builder.Append(Indent).AppendLine("    object global::ModelBuilder.IModelBuilder.Create(global::ModelBuilder.BuildContext context, params object?[]? args)");
             builder.Append(Indent).AppendLine("    {");
             builder.Append(Indent).AppendLine("        return Create(context, args)!;");
             builder.Append(Indent).AppendLine("    }");
             builder.AppendLine();
-            builder.Append(Indent).AppendLine("    object global::ModelBuilder.vNext.IModelBuilder.Populate(global::ModelBuilder.vNext.BuildContext context, object instance, object?[]? args)");
+            builder.Append(Indent).AppendLine("    object global::ModelBuilder.IModelBuilder.Populate(global::ModelBuilder.BuildContext context, object instance, object?[]? args)");
             builder.Append(Indent).AppendLine("    {");
             builder.Append(Indent).AppendLine($"        return Populate(context, ({type})instance, args)!;");
             builder.Append(Indent).AppendLine("    }");
             builder.AppendLine();
-            builder.Append(Indent).AppendLine($"    global::System.Type global::ModelBuilder.vNext.IModelBuilder.BuildType => typeof({type});");
+            builder.Append(Indent).AppendLine($"    global::System.Type global::ModelBuilder.IModelBuilder.BuildType => typeof({type});");
             builder.Append(Indent).AppendLine("}");
         }
 
@@ -277,24 +277,24 @@ namespace ModelBuilder.Generator
 
             foreach (var enumModel in model.Enums)
             {
-                builder.Append(Indent).AppendLine($"        global::ModelBuilder.vNext.ValueSource<{enumModel.FullyQualifiedName}>.Instance = new {enumModel.SourceName}();");
+                builder.Append(Indent).AppendLine($"        global::ModelBuilder.ValueSource<{enumModel.FullyQualifiedName}>.Instance = new {enumModel.SourceName}();");
             }
 
             foreach (var underlying in model.NullableUnderlyingTypes)
             {
-                builder.Append(Indent).AppendLine($"        global::ModelBuilder.vNext.ValueSource<{underlying}?>.Instance = new global::ModelBuilder.vNext.NullableValueSource<{underlying}>();");
+                builder.Append(Indent).AppendLine($"        global::ModelBuilder.ValueSource<{underlying}?>.Instance = new global::ModelBuilder.NullableValueSource<{underlying}>();");
             }
 
             foreach (var collection in model.Collections)
             {
-                builder.Append(Indent).AppendLine($"        global::ModelBuilder.vNext.ValueSource<{collection.SlotType}>.Instance = new {collection.SourceName}();");
+                builder.Append(Indent).AppendLine($"        global::ModelBuilder.ValueSource<{collection.SlotType}>.Instance = new {collection.SourceName}();");
             }
 
             foreach (var buildable in model.Builders)
             {
                 builder.Append(Indent).AppendLine($"        var {buildable.BuilderName}_instance = new {buildable.BuilderName}();");
-                builder.Append(Indent).AppendLine($"        global::ModelBuilder.vNext.ModelBuilderSlot<{buildable.FullyQualifiedName}>.Instance = {buildable.BuilderName}_instance;");
-                builder.Append(Indent).AppendLine($"        global::ModelBuilder.vNext.Model.Registry.Register({buildable.BuilderName}_instance);");
+                builder.Append(Indent).AppendLine($"        global::ModelBuilder.ModelBuilderSlot<{buildable.FullyQualifiedName}>.Instance = {buildable.BuilderName}_instance;");
+                builder.Append(Indent).AppendLine($"        global::ModelBuilder.Model.Registry.Register({buildable.BuilderName}_instance);");
             }
 
             builder.Append(Indent).AppendLine("    }");

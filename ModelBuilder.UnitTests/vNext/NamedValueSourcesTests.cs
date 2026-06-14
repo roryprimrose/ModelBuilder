@@ -4,7 +4,6 @@ namespace ModelBuilder.UnitTests.vNext
     using FluentAssertions;
     using ModelBuilder;
     using ModelBuilder.Data;
-    using ModelBuilder.vNext;
     using Xunit;
 
     public class NamedValueSourcesTests

@@ -2,7 +2,7 @@ namespace ModelBuilder.UnitTests.vNext
 {
     using System;
     using FluentAssertions;
-    using ModelBuilder.vNext;
+    using ModelBuilder;
     using Xunit;
 
     public class ModelConfigurationTests

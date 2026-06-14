@@ -16,8 +16,8 @@ namespace ModelBuilder.Generator
     [Generator(LanguageNames.CSharp)]
     public sealed class ModelBuilderGenerator : IIncrementalGenerator
     {
-        private const string ModelTypeName = "ModelBuilder.vNext.Model";
-        private const string ConfigurationTypeName = "ModelBuilder.vNext.ModelConfiguration";
+        private const string ModelTypeName = "ModelBuilder.Model";
+        private const string ConfigurationTypeName = "ModelBuilder.ModelConfiguration";
 
         /// <inheritdoc />
         public void Initialize(IncrementalGeneratorInitializationContext context)

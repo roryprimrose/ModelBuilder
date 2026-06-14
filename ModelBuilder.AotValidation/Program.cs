@@ -2,7 +2,7 @@ namespace ModelBuilder.AotValidation
 {
     using System;
     using System.Collections.Generic;
-    using ModelBuilder.vNext;
+    using ModelBuilder;
 
     /// <summary>
     ///     The <see cref="Program" /> class

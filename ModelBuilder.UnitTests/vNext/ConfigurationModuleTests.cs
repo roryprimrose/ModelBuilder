@@ -3,7 +3,7 @@ namespace ModelBuilder.UnitTests.vNext
     using System;
     using System.IO;
     using FluentAssertions;
-    using ModelBuilder.vNext;
+    using ModelBuilder;
     using Xunit;
 
     public class ConfigurationModuleTests

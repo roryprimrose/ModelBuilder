@@ -1,4 +1,4 @@
-namespace ModelBuilder.vNext
+namespace ModelBuilder
 {
     using System.Diagnostics.CodeAnalysis;
 

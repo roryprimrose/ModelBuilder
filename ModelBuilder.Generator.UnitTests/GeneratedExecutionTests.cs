@@ -4,7 +4,7 @@ namespace ModelBuilder.Generator.UnitTests
     using System.Linq;
     using System.Reflection;
     using FluentAssertions;
-    using ModelBuilder.vNext;
+    using ModelBuilder;
     using Xunit;
 
     [Collection(GeneratorExecutionCollection.Name)]
@@ -28,7 +28,7 @@ namespace Sample
 
     public static class Caller
     {
-        public static Person Build() => global::ModelBuilder.vNext.Model.Create<Person>();
+        public static Person Build() => global::ModelBuilder.Model.Create<Person>();
     }
 }";
 
@@ -62,7 +62,7 @@ namespace Sample
 
     public static class Caller
     {
-        public static Job Build() => global::ModelBuilder.vNext.Model.Create<Job>();
+        public static Job Build() => global::ModelBuilder.Model.Create<Job>();
     }
 }";
 
@@ -96,7 +96,7 @@ namespace Sample
 
     public static class Caller
     {
-        public static Survey Build() => global::ModelBuilder.vNext.Model.Create<Survey>();
+        public static Survey Build() => global::ModelBuilder.Model.Create<Survey>();
     }
 }";
 
@@ -124,7 +124,7 @@ namespace Sample
 
     public static class Caller
     {
-        public static object Build() => global::ModelBuilder.vNext.Model.Create(typeof(Person));
+        public static object Build() => global::ModelBuilder.Model.Create(typeof(Person));
     }
 }";
 
@@ -154,7 +154,7 @@ namespace Sample
 
     public static class Caller
     {
-        public static Person Build() => global::ModelBuilder.vNext.Model.Create<Person>();
+        public static Person Build() => global::ModelBuilder.Model.Create<Person>();
     }
 }";
 
@@ -212,7 +212,7 @@ namespace Sample
         public static (Person, string) Build()
         {
             string captured = string.Empty;
-            var person = global::ModelBuilder.vNext.Model.WriteLog(log => captured = log).Create<Person>();
+            var person = global::ModelBuilder.Model.WriteLog(log => captured = log).Create<Person>();
             return (person, captured);
         }
     }
@@ -247,7 +247,7 @@ namespace Sample
 
     public static class Caller
     {
-        public static Person Build() => global::ModelBuilder.vNext.Model.Ignoring<Person>(p => p.Notes).Create<Person>();
+        public static Person Build() => global::ModelBuilder.Model.Ignoring<Person>(p => p.Notes).Create<Person>();
     }
 }";
 
@@ -289,7 +289,7 @@ namespace Sample
     public static class Caller
     {
         public static Owner Build() =>
-            global::ModelBuilder.vNext.Model.Mapping<Animal, Dog>().Create<Owner>();
+            global::ModelBuilder.Model.Mapping<Animal, Dog>().Create<Owner>();
     }
 }";
 
@@ -323,7 +323,7 @@ namespace Sample
 
     public static class Caller
     {
-        public static Node Build() => global::ModelBuilder.vNext.Model.Create<Node>();
+        public static Node Build() => global::ModelBuilder.Model.Create<Node>();
     }
 }";
 
@@ -355,7 +355,7 @@ namespace Sample
 
     public static class Caller
     {
-        public static Person Build() => global::ModelBuilder.vNext.Model.Create<Person>();
+        public static Person Build() => global::ModelBuilder.Model.Create<Person>();
     }
 }";
 
@@ -391,7 +391,7 @@ namespace Sample
 
     public static class Caller
     {
-        public static Contact Build() => global::ModelBuilder.vNext.Model.Create<Contact>();
+        public static Contact Build() => global::ModelBuilder.Model.Create<Contact>();
     }
 }";
 
@@ -426,7 +426,7 @@ namespace Sample
 
     public static class Caller
     {
-        public static Customer Build() => global::ModelBuilder.vNext.Model.Create<Customer>();
+        public static Customer Build() => global::ModelBuilder.Model.Create<Customer>();
     }
 }";
 
@@ -458,7 +458,7 @@ namespace Sample
 
     public static class Caller
     {
-        public static Bag Build() => global::ModelBuilder.vNext.Model.Create<Bag>();
+        public static Bag Build() => global::ModelBuilder.Model.Create<Bag>();
     }
 }";
 
@@ -500,7 +500,7 @@ namespace Sample
 
     public static class Caller
     {
-        public static Point Build() => global::ModelBuilder.vNext.Model.Create<Point>();
+        public static Point Build() => global::ModelBuilder.Model.Create<Point>();
     }
 }";
 
@@ -538,7 +538,7 @@ namespace Sample
 
     public static class Caller
     {
-        public static Widget Build() => global::ModelBuilder.vNext.Model.Create<Widget>();
+        public static Widget Build() => global::ModelBuilder.Model.Create<Widget>();
     }
 }";
 
