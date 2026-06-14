@@ -17,6 +17,10 @@ namespace ModelBuilder
             // null-percentage and value-source resolution that are not part of the public contract.
             var ctx = (BuildContext)context;
 
+            // Roll one of 100 equally-likely buckets (0..99) and compare with a strict '<'. This makes the
+            // null probability exactly NullPercentage/100. The strict '<' is deliberate: it is what makes
+            // NullPercentage = 0 mean "never null" (with '<=', a 0 would still produce null 1% of the time),
+            // so a caller can fully disable nulls. NullPercentage = 100 conversely means "always null".
             if (ctx.Random.NextInt32(0, 99) < ctx.NullPercentage)
             {
                 return null;

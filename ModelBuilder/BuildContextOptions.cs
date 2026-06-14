@@ -12,9 +12,12 @@ namespace ModelBuilder
         public const int DefaultMaxDepth = 50;
 
         /// <summary>
-        ///     The default percentage chance that a nullable value is produced as <c>null</c>.
+        ///     The default percentage chance that a nullable value is produced as <c>null</c>. Kept low
+        ///     so a populated value is the strong default, while still exercising the <c>null</c> path
+        ///     often enough across a test run to surface null-handling bugs. Set
+        ///     <see cref="NullPercentage" /> to 0 to never produce <c>null</c>.
         /// </summary>
-        public const int DefaultNullPercentage = 10;
+        public const int DefaultNullPercentage = 5;
 
         /// <summary>
         ///     The default minimum number of items generated for a collection.
