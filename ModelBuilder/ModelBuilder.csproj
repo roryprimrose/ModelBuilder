@@ -26,23 +26,35 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Resources\Companies.txt" />
-    <None Remove="Resources\Domains.txt" />
-    <None Remove="Resources\FemaleNames.txt" />
-    <None Remove="Resources\LastNames.txt" />
-    <None Remove="Resources\Locations.txt" />
-    <None Remove="Resources\MaleNames.txt" />
-    <None Remove="Resources\TimeZones.txt" />
+    <!--
+      Reference the source generator so it runs during this build, but do not add it as a runtime
+      dependency (ReferenceOutputAssembly=false) and do not flow it to consumers as a normal reference
+      (PrivateAssets=all). The None item below is what places its DLL into the package.
+    -->
+    <ProjectReference Include="..\ModelBuilder.Generator\ModelBuilder.Generator.csproj"
+                      OutputItemType="Analyzer"
+                      ReferenceOutputAssembly="false"
+                      PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Companies.txt" />
-    <EmbeddedResource Include="Resources\Domains.txt" />
-    <EmbeddedResource Include="Resources\FemaleNames.txt" />
-    <EmbeddedResource Include="Resources\LastNames.txt" />
-    <EmbeddedResource Include="Resources\Locations.txt" />
-    <EmbeddedResource Include="Resources\MaleNames.txt" />
-    <EmbeddedResource Include="Resources\TimeZones.txt" />
+    <!--
+      Pack the generator assembly into analyzers/dotnet/cs so NuGet loads it as a Roslyn source generator
+      in the consuming project's compilation. Without this the package would ship only the runtime library
+      and no builders would be generated for consumers. Analyzers are not target-framework specific, so a
+      single None item is used rather than a per-TFM packaging hook. The ProjectReference above guarantees
+      the DLL exists by the time pack copies it.
+    -->
+    <None Include="..\ModelBuilder.Generator\bin\$(Configuration)\netstandard2.0\ModelBuilder.Generator.dll"
+          Pack="true"
+          PackagePath="analyzers/dotnet/cs"
+          Visible="false" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- The SDK includes *.txt files as None by default, so remove them before re-adding as embedded resources. -->
+    <None Remove="Resources\*.txt" />
+    <EmbeddedResource Include="Resources\*.txt" />
   </ItemGroup>
 
   <ItemGroup>
