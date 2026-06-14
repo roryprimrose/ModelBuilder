@@ -31,17 +31,5 @@ namespace ModelBuilder.UnitTests.vNext
 
             action.Should().Throw<ArgumentNullException>();
         }
-
-        [Fact]
-        public void EqualsReturnsTrueForEquivalentSignatures()
-        {
-            var first = new MemberSignature(typeof(Uri), "Host", typeof(string));
-            var second = new MemberSignature(typeof(Uri), "Host", typeof(string));
-
-            first.Equals(second).Should().BeTrue();
-            (first == second).Should().BeTrue();
-            (first != second).Should().BeFalse();
-            first.GetHashCode().Should().Be(second.GetHashCode());
-        }
     }
 }

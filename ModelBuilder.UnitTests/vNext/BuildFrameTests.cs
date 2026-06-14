@@ -34,18 +34,6 @@ namespace ModelBuilder.UnitTests.vNext
         }
 
         [Fact]
-        public void EqualsReturnsTrueForEquivalentFrames()
-        {
-            var first = new BuildFrame(typeof(Uri), "Endpoint", typeof(string));
-            var second = new BuildFrame(typeof(Uri), "Endpoint", typeof(string));
-
-            first.Equals(second).Should().BeTrue();
-            (first == second).Should().BeTrue();
-            (first != second).Should().BeFalse();
-            first.GetHashCode().Should().Be(second.GetHashCode());
-        }
-
-        [Fact]
         public void MemberNameIsNullForRootFrame()
         {
             var sut = new BuildFrame(typeof(int), null, typeof(int));

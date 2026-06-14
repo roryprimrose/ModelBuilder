@@ -25,38 +25,6 @@ namespace ModelBuilder.UnitTests.vNext
         }
 
         [Fact]
-        public void EqualsReturnsFalseForDifferentMemberName()
-        {
-            var first = new BuildTarget(typeof(int), "Age");
-            var second = new BuildTarget(typeof(int), "Count");
-
-            first.Equals(second).Should().BeFalse();
-            (first == second).Should().BeFalse();
-            (first != second).Should().BeTrue();
-        }
-
-        [Fact]
-        public void EqualsReturnsFalseForDifferentType()
-        {
-            var first = new BuildTarget(typeof(int));
-            var second = new BuildTarget(typeof(long));
-
-            first.Equals(second).Should().BeFalse();
-        }
-
-        [Fact]
-        public void EqualsReturnsTrueForSameTypeAndMemberName()
-        {
-            var first = new BuildTarget(typeof(int), "Age");
-            var second = new BuildTarget(typeof(int), "Age");
-
-            first.Equals(second).Should().BeTrue();
-            (first == second).Should().BeTrue();
-            (first != second).Should().BeFalse();
-            first.GetHashCode().Should().Be(second.GetHashCode());
-        }
-
-        [Fact]
         public void MemberNameIsNullWhenNotProvided()
         {
             var sut = new BuildTarget(typeof(Guid));

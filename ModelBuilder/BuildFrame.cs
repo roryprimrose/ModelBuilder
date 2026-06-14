@@ -7,7 +7,7 @@ namespace ModelBuilder
     ///     is used to describe a single step in the build path from the root type down to a member
     ///     currently being built.
     /// </summary>
-    public readonly struct BuildFrame : IEquatable<BuildFrame>
+    public readonly record struct BuildFrame
     {
         /// <summary>
         ///     Initializes a new instance of the <see cref="BuildFrame" /> struct.
@@ -23,56 +23,6 @@ namespace ModelBuilder
             DeclaringType = declaringType ?? throw new ArgumentNullException(nameof(declaringType));
             MemberType = memberType ?? throw new ArgumentNullException(nameof(memberType));
             MemberName = memberName;
-        }
-
-        /// <inheritdoc />
-        public bool Equals(BuildFrame other)
-        {
-            return DeclaringType == other.DeclaringType
-                   && MemberType == other.MemberType
-                   && string.Equals(MemberName, other.MemberName, StringComparison.Ordinal);
-        }
-
-        /// <inheritdoc />
-        public override bool Equals(object? obj)
-        {
-            return obj is BuildFrame other && Equals(other);
-        }
-
-        /// <inheritdoc />
-        public override int GetHashCode()
-        {
-            unchecked
-            {
-                var hash = DeclaringType.GetHashCode();
-
-                hash = hash * 397 ^ MemberType.GetHashCode();
-                hash = hash * 397 ^ (MemberName is null ? 0 : StringComparer.Ordinal.GetHashCode(MemberName));
-
-                return hash;
-            }
-        }
-
-        /// <summary>
-        ///     Determines whether two <see cref="BuildFrame" /> values are equal.
-        /// </summary>
-        /// <param name="left">The first value to compare.</param>
-        /// <param name="right">The second value to compare.</param>
-        /// <returns><c>true</c> if the values are equal; otherwise, <c>false</c>.</returns>
-        public static bool operator ==(BuildFrame left, BuildFrame right)
-        {
-            return left.Equals(right);
-        }
-
-        /// <summary>
-        ///     Determines whether two <see cref="BuildFrame" /> values are not equal.
-        /// </summary>
-        /// <param name="left">The first value to compare.</param>
-        /// <param name="right">The second value to compare.</param>
-        /// <returns><c>true</c> if the values are not equal; otherwise, <c>false</c>.</returns>
-        public static bool operator !=(BuildFrame left, BuildFrame right)
-        {
-            return left.Equals(right) == false;
         }
 
         /// <summary>
