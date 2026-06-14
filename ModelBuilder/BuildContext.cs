@@ -15,6 +15,7 @@ namespace ModelBuilder
         private readonly List<Type> _chain = new List<Type>();
         private readonly List<BuildFrame> _path = new List<BuildFrame>();
         private readonly List<Dictionary<string, object?>> _siblingScopes = new List<Dictionary<string, object?>>();
+        private readonly List<Dictionary<string, object?>> _scopedValueScopes = new List<Dictionary<string, object?>>();
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="BuildContext" /> class.
@@ -124,6 +125,7 @@ namespace ModelBuilder
         public IDisposable EnterSiblingScope()
         {
             _siblingScopes.Add(new Dictionary<string, object?>(StringComparer.Ordinal));
+            _scopedValueScopes.Add(new Dictionary<string, object?>(StringComparer.Ordinal));
 
             return new SiblingScope(this);
         }
@@ -164,6 +166,33 @@ namespace ModelBuilder
             }
 
             return default;
+        }
+
+        /// <inheritdoc />
+        public T GetOrAddScopedValue<T>(string key, Func<IBuildContext, T> factory)
+        {
+            key = key ?? throw new ArgumentNullException(nameof(key));
+            factory = factory ?? throw new ArgumentNullException(nameof(factory));
+
+            if (_scopedValueScopes.Count == 0)
+            {
+                // No instance is being populated, so there is nothing to share the value with; create a
+                // throwaway value without caching it.
+                return factory(this);
+            }
+
+            var scope = _scopedValueScopes[_scopedValueScopes.Count - 1];
+
+            if (scope.TryGetValue(key, out var existing) && existing is T typed)
+            {
+                return typed;
+            }
+
+            var created = factory(this);
+
+            scope[key] = created;
+
+            return created;
         }
 
         /// <inheritdoc />
@@ -383,6 +412,11 @@ namespace ModelBuilder
             if (_siblingScopes.Count > 0)
             {
                 _siblingScopes.RemoveAt(_siblingScopes.Count - 1);
+            }
+
+            if (_scopedValueScopes.Count > 0)
+            {
+                _scopedValueScopes.RemoveAt(_scopedValueScopes.Count - 1);
             }
         }
 

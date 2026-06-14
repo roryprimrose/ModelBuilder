@@ -144,5 +144,116 @@ namespace ModelBuilder.UnitTests.vNext
 
             action.Should().Throw<ArgumentNullException>();
         }
+
+        [Fact]
+        public void GetOrAddScopedValueCreatesValueWhenAbsent()
+        {
+            var sut = new BuildContext(new RandomSource(1));
+
+            using (sut.EnterSiblingScope())
+            {
+                var actual = sut.GetOrAddScopedValue("key", _ => 42);
+
+                actual.Should().Be(42);
+            }
+        }
+
+        [Fact]
+        public void GetOrAddScopedValueReturnsCachedValueWithoutReinvokingFactory()
+        {
+            var sut = new BuildContext(new RandomSource(1));
+            var calls = 0;
+
+            using (sut.EnterSiblingScope())
+            {
+                var first = sut.GetOrAddScopedValue("key", _ =>
+                {
+                    calls++;
+
+                    return 42;
+                });
+                var second = sut.GetOrAddScopedValue("key", _ =>
+                {
+                    calls++;
+
+                    return 99;
+                });
+
+                first.Should().Be(42);
+                // The second call returns the cached value and does not run its factory.
+                second.Should().Be(42);
+                calls.Should().Be(1);
+            }
+        }
+
+        [Fact]
+        public void GetOrAddScopedValueIsolatesValuesBetweenScopes()
+        {
+            var sut = new BuildContext(new RandomSource(1));
+
+            using (sut.EnterSiblingScope())
+            {
+                sut.GetOrAddScopedValue("key", _ => 1).Should().Be(1);
+            }
+
+            using (sut.EnterSiblingScope())
+            {
+                // A fresh scope does not see the previous scope's cached value, so the factory runs again.
+                sut.GetOrAddScopedValue("key", _ => 2).Should().Be(2);
+            }
+        }
+
+        [Fact]
+        public void GetOrAddScopedValueReplacesValueOfDifferentType()
+        {
+            var sut = new BuildContext(new RandomSource(1));
+
+            using (sut.EnterSiblingScope())
+            {
+                sut.GetOrAddScopedValue<object>("key", _ => "text");
+
+                // The cached value is a string, so requesting an int under the same key produces a new value.
+                sut.GetOrAddScopedValue("key", _ => 7).Should().Be(7);
+            }
+        }
+
+        [Fact]
+        public void GetOrAddScopedValueCreatesValueWithoutCachingWhenNoScopeOpen()
+        {
+            var sut = new BuildContext(new RandomSource(1));
+            var calls = 0;
+
+            Func<int> create = () => sut.GetOrAddScopedValue("key", _ =>
+            {
+                calls++;
+
+                return 5;
+            });
+
+            create().Should().Be(5);
+            // With no scope to share within, each request creates a fresh value.
+            create().Should().Be(5);
+            calls.Should().Be(2);
+        }
+
+        [Fact]
+        public void GetOrAddScopedValueThrowsWithNullKey()
+        {
+            var sut = new BuildContext(new RandomSource(1));
+
+            Action action = () => sut.GetOrAddScopedValue(null!, _ => 1);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void GetOrAddScopedValueThrowsWithNullFactory()
+        {
+            var sut = new BuildContext(new RandomSource(1));
+
+            Action action = () => sut.GetOrAddScopedValue<int>("key", null!);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
     }
 }

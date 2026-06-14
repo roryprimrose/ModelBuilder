@@ -164,6 +164,102 @@ namespace ModelBuilder.UnitTests.vNext
             TestData.Domains.Should().Contain(actual);
         }
 
+        [Fact]
+        public void BuildResolvesLocationMembersFromSingleCoherentRow()
+        {
+            var context = new BuildContext(new RandomSource(7));
+
+            string country;
+            string state;
+            string city;
+            string postCode;
+            string phone;
+
+            // Within one instance scope, every location-style member must come from the same location row.
+            using (context.EnterSiblingScope())
+            {
+                country = context.Build<string>(typeof(Sample), "Country");
+                state = context.Build<string>(typeof(Sample), "State");
+                city = context.Build<string>(typeof(Sample), "City");
+                postCode = context.Build<string>(typeof(Sample), "PostCode");
+                phone = context.Build<string>(typeof(Sample), "Phone");
+            }
+
+            var matchingRows = TestData.Locations.Where(location =>
+                location.Country == country
+                && location.State == state
+                && location.City == city
+                && location.PostCode == postCode
+                && location.Phone == phone);
+
+            // Exactly the cached row satisfies all five values together, proving they are internally
+            // consistent rather than independently sampled.
+            matchingRows.Should().NotBeEmpty();
+        }
+
+        [Fact]
+        public void BuildResolvesLocationMembersIndependentlyAcrossScopes()
+        {
+            var context = new BuildContext(new RandomSource(7));
+
+            string firstCountry;
+
+            using (context.EnterSiblingScope())
+            {
+                firstCountry = context.Build<string>(typeof(Sample), "Country");
+            }
+
+            var sawDifferentCountry = false;
+
+            for (var index = 0; index < 50 && sawDifferentCountry == false; index++)
+            {
+                using (context.EnterSiblingScope())
+                {
+                    var country = context.Build<string>(typeof(Sample), "Country");
+
+                    if (country != firstCountry)
+                    {
+                        sawDifferentCountry = true;
+                    }
+                }
+            }
+
+            // A new instance scope picks its own location, so the cached value does not leak between
+            // instances.
+            sawDifferentCountry.Should().BeTrue();
+        }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void BuildResolvesAgeAndDateOfBirthConsistentlyRegardlessOfOrder(bool ageFirst)
+        {
+            var context = new BuildContext(new RandomSource(7));
+            var reference = new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
+            int age;
+            DateTime dateOfBirth;
+
+            using (context.EnterSiblingScope())
+            {
+                if (ageFirst)
+                {
+                    age = context.Build<int>(typeof(Sample), "Age");
+                    dateOfBirth = context.Build<DateTime>(typeof(Sample), "DateOfBirth");
+                }
+                else
+                {
+                    dateOfBirth = context.Build<DateTime>(typeof(Sample), "DateOfBirth");
+                    age = context.Build<int>(typeof(Sample), "Age");
+                }
+            }
+
+            // The date of birth represents exactly the cached age in completed years against the fixed
+            // reference, whichever member is built first.
+            dateOfBirth.Should().BeOnOrBefore(reference.AddYears(-age));
+            dateOfBirth.Should().BeAfter(reference.AddYears(-(age + 1)));
+        }
+
         private sealed class Sample
         {
         }

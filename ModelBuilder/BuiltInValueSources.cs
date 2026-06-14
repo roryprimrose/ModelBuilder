@@ -17,6 +17,12 @@
         private const int MinAge = 1;
         private const int MaxAge = 100;
 
+        // Keys under which shared data is cached in the build scope so that related members of the same
+        // instance stay internally consistent. Location-style members all read one cached location row,
+        // and Age/DateOfBirth read one cached age, regardless of the order the members are built in.
+        private const string LocationScopeKey = "ModelBuilder.BuiltIn.Location";
+        private const string AgeScopeKey = "ModelBuilder.BuiltIn.Age";
+
         // The member-name aliases shared between the named-source registration (CreateNamedRegistry)
         // and the sibling lookups in NextEmail. Keeping them in one place ensures the email value
         // source reads the same member names the registry matches, so adding an alias cannot silently
@@ -191,20 +197,33 @@
 
         private static int NextAge(IBuildContext context)
         {
-            return context.Random.NextInt32(MinAge, MaxAge);
+            // Cache one age for the instance being built so that Age and DateOfBirth stay consistent
+            // regardless of which member is built first: saying Age is 18 while DateOfBirth implies 35 is
+            // illogical. DateOfBirth reads this same cached age.
+            return context.GetOrAddScopedValue(AgeScopeKey, c => c.Random.NextInt32(MinAge, MaxAge));
         }
 
         private static DateTime NextDateOfBirth(IBuildContext context)
         {
-            // A UTC date that lands within the human-plausible age range, anchored to the same fixed
-            // reference date as NextDateTime so generated values stay deterministic for a given seed.
-            var ageYears = context.Random.NextInt32(MinAge, MaxAge);
+            // Anchor the birth date to the same fixed reference as NextDateTime and to the shared age so
+            // the generated date represents exactly the cached age in completed years. Subtracting up to a
+            // year of extra days keeps the completed-year count equal to the age.
+            var ageYears = NextAge(context);
             var extraDays = context.Random.NextInt32(0, 364);
 
             return new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddYears(-ageYears).AddDays(-extraDays);
         }
 
         private static Location Location(IBuildContext context)
+        {
+            // Cache a single location row for the instance being built so that every location-style member
+            // (Country, State, City, PostCode, Phone) is drawn from the same coherent row, avoiding
+            // impossible combinations like "London, New South Wales, India". A different instance elsewhere
+            // in the graph receives its own scope and therefore its own location.
+            return context.GetOrAddScopedValue(LocationScopeKey, RandomLocation);
+        }
+
+        private static Location RandomLocation(IBuildContext context)
         {
             var locations = TestData.Locations;
 

@@ -934,6 +934,17 @@ The embedded-data sources — `FirstName`, `MiddleName`, `LastName`, `FullName`/
 aliases like `Age` never fire for `PageCount`), so they never fire for an arbitrary `string` unless
 the name matches. This is where the "realistic data" breadth lives without expanding the type list.
 
+**Cross-field consistency via scoped values.** Related members of one instance must agree, so the
+built-in sources share data through `IBuildContext.GetOrAddScopedValue<T>(key, factory)` — a cache
+whose lifetime is the instance currently being populated (the same lifetime as the sibling scope).
+The first location-style member (`Country`/`State`/`City`/`PostCode`/`Phone`) caches one `Location`
+row and the rest read it, so an instance never produces an impossible address like
+`London, New South Wales, India`. `Age` and `DateOfBirth` likewise share one cached age, so the two
+stay consistent regardless of which member is built first. A separate instance elsewhere in the
+graph gets its own scope and therefore its own location and age. This method is also the public
+extension point: a consumer adding several value sources around a shared data set can have the first
+source cache a chosen data item under a key and the others read it for coherent, related values.
+
 **Tier 4 — collections (structural, generator-emitted):**
 `T[]`, `List<T>`, `IList<T>`, `IReadOnlyList<T>`, `IEnumerable<T>`, `ICollection<T>`,
 `IReadOnlyCollection<T>`, `Dictionary<K,V>`, `IDictionary<K,V>`, `IReadOnlyDictionary<K,V>`,
