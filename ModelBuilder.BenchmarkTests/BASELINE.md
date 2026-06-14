@@ -121,7 +121,22 @@ with the largest wins on the deep/wide and collection-heavy graphs.
 ## vNext delta (source-generated vs reflection)
 
 `CreateComparisonBenchmarks` runs the v8 reflection engine and the vNext source-generated engine on
-the same shapes side by side (the v8 method is the baseline). Short-job run, .NET 8.0:
+the same shapes side by side (the v8 method is the baseline).
+
+> [!IMPORTANT]
+> **This is an accumulating record — retain every run.** The v8-vs-vNext comparison below (Run 1) is a
+> **frozen historical snapshot**: the v8 reflection engine and its `CreateComparisonBenchmarks` harness
+> were removed in the cutover, so that exact side-by-side can never be regenerated. Keep it as-is.
+> Ongoing tracking is **vNext-only** from the live `CreateBenchmarks`/`PopulateBenchmarks` suite — when
+> you capture a new vNext run, **append** it as a new dated run below and leave both the v8 baseline
+> tables further up this document and every earlier run in place. Never overwrite or delete old data;
+> the point is to keep the full history visible so drift between runs stays trackable.
+
+### Run 1 — initial v8-vs-vNext comparison (short job, .NET 8.0) — frozen
+
+First and final side-by-side capture, taken when the comparison benchmark landed (design.md §10, step
+10) while the v8 engine still existed. The v8 engine has since been removed, so this snapshot cannot be
+re-run; it is retained here permanently as the "before/after" evidence.
 
 | Shape | Engine | Mean | Ratio | Gen0 | Gen1 | Allocated | Alloc Ratio |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -137,7 +152,7 @@ the same shapes side by side (the v8 method is the baseline). Short-job run, .NE
 > Ratios are vNext relative to the v8 baseline **for the same shape** (the table above uses each v8
 > method as its own baseline, so the v8 rows read 1.00).
 
-**The headline result the rewrite set out to demonstrate:**
+**The headline result the rewrite set out to demonstrate (Run 1):**
 
 - **Faster everywhere** — vNext is 2.2× faster on the flat POCO and 11–14× faster on the nested,
   collection and enum/nullable shapes, because there is no per-build reflection, constructor
@@ -148,5 +163,14 @@ the same shapes side by side (the v8 method is the baseline). Short-job run, .NE
 - **No Gen1 pressure** — vNext records **zero Gen1 collections** across every shape, versus
   non-trivial Gen1 on the v8 path; Gen0 drops by an order of magnitude too.
 
-Re-run with `dotnet run -c Release -f net8.0 -- --filter *CreateComparisonBenchmarks* --runtimes net8.0`
-(add `--job short` for a quick read).
+<!--
+### Run N — <date>, <job>, <runtime> (vNext-only)
+
+Append the next vNext run here, ABOVE the older runs (most-recent-first), leaving every prior run and
+the frozen Run 1 in place. Capture it from the live suite:
+
+    dotnet run -c Release -f net8.0 -- --filter *Create* *Populate* --runtimes net8.0 --job short
+
+Copy the table + observations format and note the date, job and runtime so runs stay comparable.
+-->
+
