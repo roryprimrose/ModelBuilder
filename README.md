@@ -261,11 +261,53 @@ ModelBuilder ships value sources for the common primitive and BCL types (`bool`,
 `char`, `string`, `Guid`, `DateTime`, `DateTimeOffset`, `TimeSpan`, `Uri`, `Version`, `byte[]`),
 plus enum, nullable and collection support that the generator wires up automatically.
 
-Entity-style members are filled with embedded reference data rather than random noise, so the values
-read naturally — names, companies, and address parts (country, state, city, postcode, street, phone)
-come from curated data sets. Some values are derived from their siblings on the same instance: an
-`Email` is built from the `FirstName`, `LastName` and `Domain` already set on the object so the parts
-agree.
+### Entity-style data matched by member name
+
+Members whose name matches a known entity field are filled with embedded reference data rather than
+random noise, so the values read naturally. Matching is on a whole PascalCase/camelCase word and is
+case-insensitive, so `ContactEmailAddress` matches `Email`, while a short field name like `PageCount`
+is *not* treated as an `Age`.
+
+| Member name (with aliases) | Generated value |
+| --- | --- |
+| `FirstName`, `GivenName` | A given name |
+| `LastName`, `Surname`, `FamilyName` | A family name |
+| `MiddleName` | A given name |
+| `FullName`, `Name`, `DisplayName` | `First Last` |
+| `UserName`, `Username`, `Login` | `first.last` with a numeric suffix, lower-cased |
+| `Email` | `first.last@domain` |
+| `Domain` | A domain |
+| `Company`, `Business` | A company name |
+| `Country` | A country |
+| `State`, `Province` | A state or province |
+| `City`, `Suburb`, `Town` | A city |
+| `PostCode`, `ZipCode`, `Postcode`, `Zip` | A post/zip code |
+| `Phone`, `Mobile`, `Cell`, `Fax` | A phone number |
+| `TimeZone` | A time-zone identifier |
+| `Age` | An integer in the human-plausible range 1–100 |
+| `DateOfBirth`, `DOB`, `BirthDate`, `Birthday` | A UTC date for a 1–100 year old |
+
+A member named like one of these but typed differently from what the source produces (for example an
+`Age` that is a `string` rather than an `int`) falls through to the ordinary type-based sources, so
+the name match never produces a type mismatch.
+
+### Cross-field consistency
+
+Related members on the same instance agree with each other instead of being sampled independently,
+and the agreement is order-independent — it does not matter which related member the generator builds
+first:
+
+- **Names flow into email, username and full name.** `Email` is built from the `FirstName`,
+  `LastName` and `Domain` already set on the object (falling back to fresh data when they are
+  absent), and `FullName`/`UserName` are composed from the same name fields. A model that spells the
+  members `GivenName`/`Surname` still gets a matching email.
+- **One coherent location per instance.** `Country`, `State`, `City`, `PostCode` and `Phone` are
+  drawn from a single address row, so an instance never produces an impossible combination such as
+  *London, New South Wales, India*. A different instance elsewhere in the graph gets its own
+  location.
+- **Age follows date of birth.** `DateOfBirth` is the definitive value; `Age` is the number of
+  completed years between it and a fixed reference date, so a generated `Age` of 18 can never sit
+  next to a `DateOfBirth` that implies 35.
 
 ## Target frameworks
 
