@@ -376,6 +376,43 @@ namespace Sample
         }
 
         [Fact]
+        public void CreateDerivesEmailFromAliasNameMembers()
+        {
+            const string source = @"
+namespace Sample
+{
+    public sealed class Person
+    {
+        public string? GivenName { get; set; }
+        public string? Surname { get; set; }
+        public string? Email { get; set; }
+    }
+
+    public static class Caller
+    {
+        public static Person Build() => global::ModelBuilder.Model.Create<Person>();
+    }
+}";
+
+            var harness = GeneratorTestHarness.Run(source);
+            harness.CompilationErrors.Should().BeEmpty();
+
+            var assembly = harness.EmitAndLoad();
+            var personType = assembly.GetType("Sample.Person", throwOnError: true)!;
+
+            var person = CreateViaModel(personType);
+
+            var givenName = (string)personType.GetProperty("GivenName")!.GetValue(person)!;
+            var surname = (string)personType.GetProperty("Surname")!.GetValue(person)!;
+            var email = (string)personType.GetProperty("Email")!.GetValue(person)!;
+
+            // The email value source must read the GivenName/Surname siblings via their aliases, so the
+            // derived email matches the name members even though they are not spelled FirstName/LastName.
+            email.Should().Contain(givenName.ToLowerInvariant());
+            email.Should().Contain(surname.ToLowerInvariant());
+        }
+
+        [Fact]
         public void CreatePopulatesEntityMembersFromNamedSources()
         {
             const string source = @"

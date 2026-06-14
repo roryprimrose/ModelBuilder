@@ -13,6 +13,14 @@
     {
         private const string StringAlphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
+        // The member-name aliases shared between the named-source registration (CreateNamedRegistry)
+        // and the sibling lookups in NextEmail. Keeping them in one place ensures the email value
+        // source reads the same member names the registry matches, so adding an alias cannot silently
+        // break the email derivation for that spelling.
+        private static readonly string[] _firstNameMembers = { "FirstName", "GivenName" };
+        private static readonly string[] _lastNameMembers = { "LastName", "Surname", "FamilyName" };
+        private static readonly string[] _domainMembers = { "Domain" };
+
         /// <summary>
         ///     Creates a new registry of entity-style value sources matched by member name.
         /// </summary>
@@ -21,11 +29,11 @@
         {
             var registry = new NamedValueSourceRegistry();
 
-            registry.Register(new DelegateValueSource<string>(NextFirstName), "FirstName", "GivenName");
-            registry.Register(new DelegateValueSource<string>(c => Pick(c, TestData.LastNames)), "LastName", "Surname", "FamilyName");
+            registry.Register(new DelegateValueSource<string>(NextFirstName), _firstNameMembers);
+            registry.Register(new DelegateValueSource<string>(c => Pick(c, TestData.LastNames)), _lastNameMembers);
             registry.Register(new DelegateValueSource<string>(NextMiddleName), "MiddleName");
             registry.Register(new DelegateValueSource<string>(NextEmail), "Email");
-            registry.Register(new DelegateValueSource<string>(c => Pick(c, TestData.Domains)), "Domain");
+            registry.Register(new DelegateValueSource<string>(c => Pick(c, TestData.Domains)), _domainMembers);
             registry.Register(new DelegateValueSource<string>(c => Pick(c, TestData.Companies)), "Company", "Business");
             registry.Register(new DelegateValueSource<string>(c => Location(c).Country), "Country");
             registry.Register(new DelegateValueSource<string>(c => Location(c).State), "State", "Province");
@@ -79,10 +87,12 @@
         private static string NextEmail(IBuildContext context)
         {
             // Prefer sibling name/domain values already set on the instance so the email is consistent
-            // with them; otherwise compose a believable address from the data sets.
-            var first = context.GetSibling<string>("FirstName");
-            var last = context.GetSibling<string>("LastName");
-            var domain = context.GetSibling<string>("Domain");
+            // with them; otherwise compose a believable address from the data sets. The sibling lookups
+            // use the same member-name aliases the registry matches, so a model that spells the members
+            // GivenName/Surname (rather than FirstName/LastName) still derives a matching email.
+            var first = FirstSibling(context, _firstNameMembers);
+            var last = FirstSibling(context, _lastNameMembers);
+            var domain = FirstSibling(context, _domainMembers);
 
             if (string.IsNullOrEmpty(first))
             {
@@ -100,6 +110,21 @@
             }
 
             return first!.ToLowerInvariant() + "." + last!.ToLowerInvariant() + "@" + domain;
+        }
+
+        private static string? FirstSibling(IBuildContext context, params string[] memberNames)
+        {
+            foreach (var memberName in memberNames)
+            {
+                var value = context.GetSibling<string>(memberName);
+
+                if (string.IsNullOrEmpty(value) == false)
+                {
+                    return value;
+                }
+            }
+
+            return null;
         }
 
         private static string NextFirstName(IBuildContext context)
