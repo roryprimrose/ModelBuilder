@@ -44,11 +44,11 @@ These keep their shape, so the bulk of a typical test project compiles unchanged
 | --- | --- | --- |
 | `IValueGenerator` / `ValueGeneratorBase` | `IValueSource<T>` | One `Create` method; no `IsMatch`/`Generate(Type,…)`. Matching moves to registration. |
 | `ITypeCreator` / `TypeCreatorBase` (constructor-only type) | `IValueSource<T>` | `Create` calls the constructor and returns the instance; the engine populates it afterwards. |
-| `configuration.AddValueGenerator<G>()` | `configuration.Register<T>(source, "MemberName")` on a `NamedValueSourceRegistry`, or a typed-static override | The `T` fixes the type; the name/predicate is declared at registration. |
-| `configuration.AddTypeCreator<C>()` | register an `IValueSource<T>` | Same registration shape. |
+| `configuration.AddValueGenerator<G>()` | `configuration.AddValueSource<T>(source, "MemberName")` (named) or `configuration.AddValueSource<T>(source)` (typed) | The `T` fixes the type; the member name is declared at registration. |
+| `configuration.AddTypeCreator<C>()` | `configuration.AddValueSource<T>(source)` | Same registration shape; `Create` calls the constructor. |
 | `UpdateValueGenerator<G>(g => g.X = …)` / `UpdateTypeCreator<C>(c => c.X = …)` | `BuildContextOptions` (e.g. `MinCount`/`MaxCount`/`NullPercentage`/`MaxDepth`) | Strongly-typed tuning hooks instead of reflection-tuning arbitrary generators. |
 | `AddIgnoreRule<T>(x => x.Member)` | `Model.Ignoring<T>(x => x.Member)` or `configuration.IgnoreAny(member => ...)` | Targeted unchanged; type-agnostic `IgnoreAny` is new. |
-| `AddCreationRule(predicate, value, priority)` | a small `IValueSource<T>` registered with a name match | The fast-value shortcut becomes an ordinary source. |
+| `AddCreationRule(predicate, value, priority)` | `configuration.AddValueSource<T>(source, "MemberName")` | The fast-value shortcut becomes an ordinary named source. |
 | `DefaultConfigurationModule` (called explicitly) | implicit default configuration | The built-in sources register automatically; a custom module only adds deltas. |
 | `RandomGenerator` (`object NextValue(Type, …)`) | `IRandomSource` (`NextInt32`/`NextInt64`/`NextDouble`/…) | Typed, thread-safe, seedable, no boxing, no precision loss. |
 
@@ -86,11 +86,11 @@ public class TestModule : IConfigurationModule
 ```csharp
 public sealed class TestModule : IConfigurationModule
 {
-    public void Configure(BuildConfiguration configuration)
+    public void Configure(IBuildConfiguration configuration)
     {
         configuration.Ignore(typeof(Person), nameof(Person.Notes));
-        // For a constructor-only type, register a value source that builds it:
-        // configuration.AddMapping<IPayment, CardPayment>();
+        // Replace a generator/type-creator with a value source:
+        configuration.AddValueSource(new DelegateValueSource<PaymentType>(c => PaymentType.Card), "PaymentType");
     }
 }
 ```

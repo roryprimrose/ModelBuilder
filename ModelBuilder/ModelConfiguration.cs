@@ -53,6 +53,22 @@ namespace ModelBuilder
         }
 
         /// <inheritdoc />
+        public IModelConfiguration AddValueSource<T>(IValueSource<T> source)
+        {
+            _configuration.AddValueSource(source);
+
+            return this;
+        }
+
+        /// <inheritdoc />
+        public IModelConfiguration AddValueSource<T>(IValueSource<T> source, params string[] memberNames)
+        {
+            _configuration.AddValueSource(source, memberNames);
+
+            return this;
+        }
+
+        /// <inheritdoc />
         public T Populate<T>(T instance)
         {
             if (_logSink == null)

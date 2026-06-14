@@ -32,6 +32,7 @@ discovered at compile time and gets a dedicated builder, so ModelBuilder:
   * [Constructor arguments and parameter matching](#constructor-arguments-and-parameter-matching)
   * [Ignoring members](#ignoring-members)
   * [Mapping abstract and interface types](#mapping-abstract-and-interface-types)
+  * [Custom value sources](#custom-value-sources)
 - [How types are discovered](#how-types-are-discovered)
   * [Build-time diagnostics](#build-time-diagnostics)
   * [GenerateModelBuilder](#generatemodelbuilder)
@@ -105,6 +106,62 @@ var payload = Model.Mapping<IShipment, GroundShipment>().Create<Parcel>();
 
 There is no automatic assembly scan that guesses a concrete type — the mapping is explicit, which is
 what keeps the build deterministic and reflection-free.
+
+### Custom value sources
+
+When the built-in data does not produce what your model needs, register a custom value source. A
+value source is an `IValueSource<T>` that produces a `T` for a member or root; the simplest way to
+supply one is `DelegateValueSource<T>` wrapping a lambda. A registered source takes precedence over
+the built-in sources.
+
+Register a source **by type** to control every value of that type:
+
+```csharp
+var order = Model.AddValueSource(new DelegateValueSource<OrderStatus>(c => OrderStatus.Pending))
+    .Create<Order>();
+```
+
+Register a source **by member name** to control only members whose name matches (matched as a whole
+PascalCase/camelCase word, the same way the built-in entity data is matched). A named source takes
+precedence over a typed source for a matching member:
+
+```csharp
+var account = Model.AddValueSource(
+        new DelegateValueSource<string>(c => "acct-" + c.Random.NextInt32(1000, 9999)),
+        "AccountNumber")
+    .Create<Account>();
+```
+
+The factory receives the `IBuildContext`, so a custom source can use the same seams the built-in
+sources use — the random source, `GetSibling<T>` to stay consistent with other members already set on
+the instance, and `GetOrAddScopedValue<T>` to share one cached data item across several related
+members (the mechanism the built-in location and date-of-birth sources use):
+
+```csharp
+public sealed class AddressModule : IConfigurationModule
+{
+    private const string AddressKey = "MyApp.Address";
+
+    public void Configure(IBuildConfiguration configuration)
+    {
+        // Both members draw from one cached address row, so they stay internally consistent.
+        configuration.AddValueSource(
+            new DelegateValueSource<string>(c => RowFor(c).Street),
+            "Street", "AddressLine1");
+        configuration.AddValueSource(
+            new DelegateValueSource<string>(c => RowFor(c).City),
+            "City");
+    }
+
+    private static AddressRow RowFor(IBuildContext context)
+    {
+        return context.GetOrAddScopedValue(AddressKey, _ => AddressRow.Random());
+    }
+}
+```
+
+Custom value sources can be registered through a configuration module's `IBuildConfiguration` exactly
+as above, so they can be packaged and shared like mappings and ignore rules.
 
 ## How types are discovered
 

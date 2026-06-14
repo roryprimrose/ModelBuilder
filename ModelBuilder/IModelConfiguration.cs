@@ -39,6 +39,32 @@ namespace ModelBuilder
             where TTarget : TSource;
 
         /// <summary>
+        ///     Registers a custom value source for every member and root of type <typeparamref name="T" />.
+        /// </summary>
+        /// <typeparam name="T">The type the value source produces.</typeparam>
+        /// <param name="source">The value source to register.</param>
+        /// <returns>The same configuration for chaining.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="source" /> parameter is <c>null</c>.</exception>
+        IModelConfiguration AddValueSource<T>(IValueSource<T> source);
+
+        /// <summary>
+        ///     Registers a custom value source for members of type <typeparamref name="T" /> whose name
+        ///     matches one of <paramref name="memberNames" />.
+        /// </summary>
+        /// <typeparam name="T">The type the value source produces.</typeparam>
+        /// <param name="source">The value source to register.</param>
+        /// <param name="memberNames">The member names the source matches.</param>
+        /// <returns>The same configuration for chaining.</returns>
+        /// <exception cref="ArgumentNullException">
+        ///     The <paramref name="source" /> or <paramref name="memberNames" /> parameter is <c>null</c>.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        ///     The <paramref name="memberNames" /> parameter is empty or contains a null, empty or
+        ///     whitespace entry.
+        /// </exception>
+        IModelConfiguration AddValueSource<T>(IValueSource<T> source, params string[] memberNames);
+
+        /// <summary>
         ///     Populates an existing instance of <typeparamref name="T" /> using this configuration.
         /// </summary>
         /// <typeparam name="T">The type to populate.</typeparam>

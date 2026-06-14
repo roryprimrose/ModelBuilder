@@ -4,11 +4,11 @@ namespace ModelBuilder
 
     /// <summary>
     ///     The <see cref="DelegateValueSource{T}" /> class
-    ///     adapts a factory delegate into an <see cref="IValueSource{T}" />, used to register the
-    ///     built-in value sources without a dedicated class per type.
+    ///     adapts a factory delegate into an <see cref="IValueSource{T}" />, so a custom value source can
+    ///     be registered from a lambda without writing a dedicated class.
     /// </summary>
     /// <typeparam name="T">The type the source produces.</typeparam>
-    internal sealed class DelegateValueSource<T> : IValueSource<T>
+    public sealed class DelegateValueSource<T> : IValueSource<T>
     {
         private readonly Func<IBuildContext, BuildTarget, T> _factory;
 

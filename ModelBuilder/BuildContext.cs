@@ -13,6 +13,7 @@ namespace ModelBuilder
     {
         private static readonly IBuildConfiguration _emptyConfiguration = new BuildConfiguration();
         private readonly List<Type> _chain = new List<Type>();
+        private readonly BuildConfiguration? _buildConfiguration;
         private readonly List<BuildFrame> _path = new List<BuildFrame>();
         private readonly List<Dictionary<string, object?>> _siblingScopes = new List<Dictionary<string, object?>>();
         private readonly List<Dictionary<string, object?>> _scopedValueScopes = new List<Dictionary<string, object?>>();
@@ -45,6 +46,7 @@ namespace ModelBuilder
             MinCount = resolvedOptions.MinCount;
             MaxCount = resolvedOptions.MaxCount;
             Configuration = configuration ?? _emptyConfiguration;
+            _buildConfiguration = Configuration as BuildConfiguration;
             ValueSources = valueSources ?? BuiltInValueSources.Default;
             NamedValueSources = namedValueSources ?? BuiltInValueSources.DefaultNamed;
         }
@@ -234,6 +236,36 @@ namespace ModelBuilder
                 }
             }
 
+            // Custom value sources registered on the build configuration take precedence over the
+            // built-in sources, so a consumer can replace what the library produces for their own types
+            // and members. A custom named source is tried before a custom typed source because matching on
+            // member name is more specific than matching on type alone.
+            if (_buildConfiguration != null
+                && _buildConfiguration.HasCustomNamedValueSources
+                && _buildConfiguration.CustomNamedValueSources!.TryGet<T>(memberName, out var customNamed)
+                && customNamed != null)
+            {
+                Log.Write(BuildLogEntryKind.CreateValue, memberType, memberName, "custom named value source");
+
+                using (EnterMember(declaringType, memberName, memberType))
+                {
+                    return Invoke(memberName, () => customNamed.Create(this, new BuildTarget(memberType, memberName)));
+                }
+            }
+
+            if (_buildConfiguration != null
+                && _buildConfiguration.HasCustomValueSources
+                && _buildConfiguration.CustomValueSources!.TryGet<T>(out var customTyped)
+                && customTyped != null)
+            {
+                Log.Write(BuildLogEntryKind.CreateValue, memberType, memberName, "custom value source");
+
+                using (EnterMember(declaringType, memberName, memberType))
+                {
+                    return Invoke(memberName, () => customTyped.Create(this, new BuildTarget(memberType, memberName)));
+                }
+            }
+
             var source = ValueSource<T>.Instance;
 
             if (source != null)
@@ -382,6 +414,14 @@ namespace ModelBuilder
         /// <returns><c>true</c> if a value source was resolved; otherwise, <c>false</c>.</returns>
         internal bool TryResolveValueSource<T>(out IValueSource<T>? source)
         {
+            if (_buildConfiguration != null
+                && _buildConfiguration.HasCustomValueSources
+                && _buildConfiguration.CustomValueSources!.TryGet(out source)
+                && source != null)
+            {
+                return true;
+            }
+
             var slot = ValueSource<T>.Instance;
 
             if (slot != null)

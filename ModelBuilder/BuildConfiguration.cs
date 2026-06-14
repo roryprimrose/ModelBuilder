@@ -13,6 +13,8 @@ namespace ModelBuilder
         private readonly HashSet<MemberKey> _ignoredMembers = new HashSet<MemberKey>();
         private readonly List<Func<MemberSignature, bool>> _ignorePredicates = new List<Func<MemberSignature, bool>>();
         private readonly Dictionary<Type, Type> _typeMappings = new Dictionary<Type, Type>();
+        private ValueSourceRegistry? _valueSources;
+        private NamedValueSourceRegistry? _namedValueSources;
 
         /// <inheritdoc />
         public IBuildConfiguration AddMapping(Type sourceType, Type targetType)
@@ -30,6 +32,42 @@ namespace ModelBuilder
             where TTarget : TSource
         {
             return AddMapping(typeof(TSource), typeof(TTarget));
+        }
+
+        /// <inheritdoc />
+        public IBuildConfiguration AddValueSource<T>(IValueSource<T> source)
+        {
+            source = source ?? throw new ArgumentNullException(nameof(source));
+
+            _valueSources ??= new ValueSourceRegistry();
+            _valueSources.Register(source);
+
+            return this;
+        }
+
+        /// <inheritdoc />
+        public IBuildConfiguration AddValueSource<T>(IValueSource<T> source, params string[] memberNames)
+        {
+            source = source ?? throw new ArgumentNullException(nameof(source));
+            memberNames = memberNames ?? throw new ArgumentNullException(nameof(memberNames));
+
+            if (memberNames.Length == 0)
+            {
+                throw new ArgumentException("At least one member name must be supplied.", nameof(memberNames));
+            }
+
+            foreach (var memberName in memberNames)
+            {
+                if (string.IsNullOrWhiteSpace(memberName))
+                {
+                    throw new ArgumentException("Member names must not be null, empty or whitespace.", nameof(memberNames));
+                }
+            }
+
+            _namedValueSources ??= new NamedValueSourceRegistry();
+            _namedValueSources.Register(source, memberNames);
+
+            return this;
         }
 
         /// <inheritdoc />
@@ -82,6 +120,28 @@ namespace ModelBuilder
 
         /// <inheritdoc />
         public IReadOnlyDictionary<Type, Type> TypeMappings => _typeMappings;
+
+        /// <summary>
+        ///     Gets a value indicating whether any custom typed value sources have been registered.
+        /// </summary>
+        /// <returns><c>true</c> if a custom typed value source has been registered; otherwise, <c>false</c>.</returns>
+        internal bool HasCustomValueSources => _valueSources != null;
+
+        /// <summary>
+        ///     Gets the registry of custom typed value sources, or <c>null</c> when none have been registered.
+        /// </summary>
+        internal ValueSourceRegistry? CustomValueSources => _valueSources;
+
+        /// <summary>
+        ///     Gets a value indicating whether any custom named value sources have been registered.
+        /// </summary>
+        /// <returns><c>true</c> if a custom named value source has been registered; otherwise, <c>false</c>.</returns>
+        internal bool HasCustomNamedValueSources => _namedValueSources != null;
+
+        /// <summary>
+        ///     Gets the registry of custom named value sources, or <c>null</c> when none have been registered.
+        /// </summary>
+        internal NamedValueSourceRegistry? CustomNamedValueSources => _namedValueSources;
 
         private readonly struct MemberKey : IEquatable<MemberKey>
         {
