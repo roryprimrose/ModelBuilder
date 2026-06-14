@@ -8,7 +8,7 @@ namespace ModelBuilder
     ///     holds value sources that apply only to members whose name matches one of a set of names,
     ///     used by the entity-style built-in sources that match on member name rather than type alone.
     /// </summary>
-    public sealed class NamedValueSourceRegistry
+    internal sealed class NamedValueSourceRegistry
     {
         private readonly Dictionary<Type, List<Entry>> _byType = new Dictionary<Type, List<Entry>>();
 

@@ -1,4 +1,4 @@
-namespace ModelBuilder.UnitTests.vNext
+﻿namespace ModelBuilder.UnitTests.vNext
 {
     using FluentAssertions;
     using ModelBuilder;
@@ -44,7 +44,7 @@ namespace ModelBuilder.UnitTests.vNext
 
         private sealed class AgeValueSource : IValueSource<int>
         {
-            public int Create(BuildContext context, in BuildTarget target)
+            public int Create(IBuildContext context, in BuildTarget target)
             {
                 return context.Random.NextInt32(18, 65);
             }
@@ -52,7 +52,7 @@ namespace ModelBuilder.UnitTests.vNext
 
         private sealed class ConstantValueSource : IValueSource
         {
-            public object Create(BuildContext context, in BuildTarget target)
+            public object Create(IBuildContext context, in BuildTarget target)
             {
                 return 42;
             }
@@ -65,12 +65,12 @@ namespace ModelBuilder.UnitTests.vNext
 
         private sealed class WidgetBuilder : IModelBuilder<Widget>
         {
-            public Widget Create(BuildContext context, params object?[]? args)
+            public Widget Create(IBuildContext context, params object?[]? args)
             {
                 return Populate(context, new Widget(), args);
             }
 
-            public Widget Populate(BuildContext context, Widget instance, object?[]? args = null)
+            public Widget Populate(IBuildContext context, Widget instance, object?[]? args = null)
             {
                 instance.Serial = context.Random.NextInt32(1, int.MaxValue);
 

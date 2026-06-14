@@ -1,4 +1,4 @@
-namespace ModelBuilder.Generator.UnitTests
+﻿namespace ModelBuilder.Generator.UnitTests
 {
     using System;
     using System.Linq;
@@ -584,7 +584,7 @@ namespace Sample
                 _value = value;
             }
 
-            public int Create(BuildContext context, in BuildTarget target)
+            public int Create(IBuildContext context, in BuildTarget target)
             {
                 return _value;
             }
@@ -594,7 +594,7 @@ namespace Sample
         {
             private int _next;
 
-            public int Create(BuildContext context, in BuildTarget target)
+            public int Create(IBuildContext context, in BuildTarget target)
             {
                 return ++_next;
             }
@@ -602,7 +602,7 @@ namespace Sample
 
         private sealed class ThrowingInt32Source : IValueSource<int>
         {
-            public int Create(BuildContext context, in BuildTarget target)
+            public int Create(IBuildContext context, in BuildTarget target)
             {
                 throw new InvalidOperationException("boom");
             }

@@ -4,7 +4,7 @@ namespace ModelBuilder
     ///     The <see cref="BuildContextOptions" /> class
     ///     is used to configure the behaviour of a <see cref="BuildContext" />.
     /// </summary>
-    public sealed class BuildContextOptions
+    internal sealed class BuildContextOptions
     {
         /// <summary>
         ///     The default maximum build depth.

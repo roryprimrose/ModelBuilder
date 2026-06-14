@@ -9,7 +9,7 @@ namespace ModelBuilder
     ///     provides a capturing <see cref="IBuildLog" /> that records a nested tree of build entries and
     ///     can render them as indented text.
     /// </summary>
-    public sealed class BuildLog : IBuildLog
+    internal sealed class BuildLog : IBuildLog
     {
         private const int IndentWidth = 2;
         private readonly List<BuildLogEntry> _root = new List<BuildLogEntry>();

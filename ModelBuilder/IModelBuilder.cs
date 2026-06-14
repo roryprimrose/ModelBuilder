@@ -16,7 +16,7 @@ namespace ModelBuilder
         /// <param name="context">The build context for the current build.</param>
         /// <param name="args">The optional constructor arguments.</param>
         /// <returns>The created instance.</returns>
-        T Create(BuildContext context, params object?[]? args);
+        T Create(IBuildContext context, params object?[]? args);
 
         /// <summary>
         ///     Populates an existing instance of <typeparamref name="T" />.
@@ -25,7 +25,7 @@ namespace ModelBuilder
         /// <param name="instance">The instance to populate.</param>
         /// <param name="args">The optional constructor arguments.</param>
         /// <returns>The populated instance.</returns>
-        T Populate(BuildContext context, T instance, object?[]? args = null);
+        T Populate(IBuildContext context, T instance, object?[]? args = null);
     }
 
     /// <summary>
@@ -41,7 +41,7 @@ namespace ModelBuilder
         /// <param name="context">The build context for the current build.</param>
         /// <param name="args">The optional constructor arguments.</param>
         /// <returns>The created instance.</returns>
-        object Create(BuildContext context, params object?[]? args);
+        object Create(IBuildContext context, params object?[]? args);
 
         /// <summary>
         ///     Populates an existing instance of the built type.
@@ -50,7 +50,7 @@ namespace ModelBuilder
         /// <param name="instance">The instance to populate.</param>
         /// <param name="args">The optional constructor arguments.</param>
         /// <returns>The populated instance.</returns>
-        object Populate(BuildContext context, object instance, object?[]? args = null);
+        object Populate(IBuildContext context, object instance, object?[]? args = null);
 
         /// <summary>
         ///     Gets the type this builder creates.

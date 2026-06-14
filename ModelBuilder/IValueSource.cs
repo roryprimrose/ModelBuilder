@@ -14,7 +14,7 @@ namespace ModelBuilder
         /// <param name="context">The build context for the current build.</param>
         /// <param name="target">The target the value is being built for.</param>
         /// <returns>The created value.</returns>
-        T Create(BuildContext context, in BuildTarget target);
+        T Create(IBuildContext context, in BuildTarget target);
     }
 
     /// <summary>
@@ -31,6 +31,6 @@ namespace ModelBuilder
         /// <param name="context">The build context for the current build.</param>
         /// <param name="target">The target the value is being built for.</param>
         /// <returns>The created value, which may be <c>null</c>.</returns>
-        object? Create(BuildContext context, in BuildTarget target);
+        object? Create(IBuildContext context, in BuildTarget target);
     }
 }

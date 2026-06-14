@@ -1,4 +1,4 @@
-namespace ModelBuilder.UnitTests.vNext
+﻿namespace ModelBuilder.UnitTests.vNext
 {
     using FluentAssertions;
     using ModelBuilder;
@@ -43,7 +43,7 @@ namespace ModelBuilder.UnitTests.vNext
 
         private sealed class ConstantInt32Source : IValueSource<int>
         {
-            public int Create(BuildContext context, in BuildTarget target)
+            public int Create(IBuildContext context, in BuildTarget target)
             {
                 return 1;
             }
@@ -55,12 +55,12 @@ namespace ModelBuilder.UnitTests.vNext
 
         private sealed class SampleBuilder : IModelBuilder<Sample>
         {
-            public Sample Create(BuildContext context, params object?[]? args)
+            public Sample Create(IBuildContext context, params object?[]? args)
             {
                 return new Sample();
             }
 
-            public Sample Populate(BuildContext context, Sample instance, object?[]? args = null)
+            public Sample Populate(IBuildContext context, Sample instance, object?[]? args = null)
             {
                 return instance;
             }

@@ -57,7 +57,7 @@ namespace ModelBuilder
         /// <param name="expression">An expression selecting the member to ignore.</param>
         /// <returns>A configuration to continue building.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="expression" /> parameter is <c>null</c>.</exception>
-        public static ModelConfiguration Ignoring<T>(System.Linq.Expressions.Expression<Func<T, object?>> expression)
+        public static IModelConfiguration Ignoring<T>(System.Linq.Expressions.Expression<Func<T, object?>> expression)
         {
             return new ModelConfiguration().Ignoring(expression);
         }
@@ -68,7 +68,7 @@ namespace ModelBuilder
         /// <typeparam name="TSource">The source type, typically an interface or abstract type.</typeparam>
         /// <typeparam name="TTarget">The concrete type to build in its place.</typeparam>
         /// <returns>A configuration to continue building.</returns>
-        public static ModelConfiguration Mapping<TSource, TTarget>()
+        public static IModelConfiguration Mapping<TSource, TTarget>()
             where TTarget : TSource
         {
             return new ModelConfiguration().Mapping<TSource, TTarget>();
@@ -92,7 +92,7 @@ namespace ModelBuilder
         /// </summary>
         /// <typeparam name="TModule">The configuration module to apply.</typeparam>
         /// <returns>A configuration to continue building.</returns>
-        public static ModelConfiguration UsingModule<TModule>()
+        public static IModelConfiguration UsingModule<TModule>()
             where TModule : IConfigurationModule, new()
         {
             return new ModelConfiguration().UsingModule<TModule>();
@@ -104,7 +104,7 @@ namespace ModelBuilder
         /// <param name="sink">The action that receives the rendered build log after the build.</param>
         /// <returns>A configuration to continue building.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="sink" /> parameter is <c>null</c>.</exception>
-        public static ModelConfiguration WriteLog(Action<string> sink)
+        public static IModelConfiguration WriteLog(Action<string> sink)
         {
             return new ModelConfiguration().WriteLog(sink);
         }
@@ -181,8 +181,15 @@ namespace ModelBuilder
 
         /// <summary>
         ///     Gets the registry that maps a runtime <see cref="Type" /> to its generated builder for the
-        ///     non-generic <see cref="Create(Type, object[])" /> path.
+        ///     non-generic <see cref="Create(Type, object[])" /> path. The generated module initializer
+        ///     registers each builder through this registry.
         /// </summary>
-        public static ModelBuilderRegistry Registry => _registry;
+        public static IModelBuilderRegistry Registry => _registry;
+
+        /// <summary>
+        ///     Gets the concrete registry for engine-internal lookups (the read side is not part of the
+        ///     public contract).
+        /// </summary>
+        internal static ModelBuilderRegistry RegistryInternal => _registry;
     }
 }

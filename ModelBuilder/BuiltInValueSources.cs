@@ -1,4 +1,4 @@
-namespace ModelBuilder
+﻿namespace ModelBuilder
 {
     using System;
     using System.Collections.Generic;
@@ -9,7 +9,7 @@ namespace ModelBuilder
     ///     creates the default registry of value sources for the in-box leaf types: primitives, core
     ///     value types, and the common BCL types that appear in models.
     /// </summary>
-    public static class BuiltInValueSources
+    internal static class BuiltInValueSources
     {
         private const string StringAlphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
@@ -71,12 +71,12 @@ namespace ModelBuilder
             return registry;
         }
 
-        private static char NextChar(BuildContext context)
+        private static char NextChar(IBuildContext context)
         {
             return StringAlphabet[context.Random.NextInt32(0, StringAlphabet.Length - 1)];
         }
 
-        private static string NextEmail(BuildContext context)
+        private static string NextEmail(IBuildContext context)
         {
             // Prefer sibling name/domain values already set on the instance so the email is consistent
             // with them; otherwise compose a believable address from the data sets.
@@ -102,7 +102,7 @@ namespace ModelBuilder
             return first!.ToLowerInvariant() + "." + last!.ToLowerInvariant() + "@" + domain;
         }
 
-        private static string NextFirstName(BuildContext context)
+        private static string NextFirstName(IBuildContext context)
         {
             var useFemale = context.Random.NextBool();
             var names = useFemale ? TestData.FemaleNames : TestData.MaleNames;
@@ -110,19 +110,19 @@ namespace ModelBuilder
             return Pick(context, names);
         }
 
-        private static string NextMiddleName(BuildContext context)
+        private static string NextMiddleName(IBuildContext context)
         {
             return NextFirstName(context);
         }
 
-        private static Location Location(BuildContext context)
+        private static Location Location(IBuildContext context)
         {
             var locations = TestData.Locations;
 
             return locations[context.Random.NextInt32(0, locations.Count - 1)];
         }
 
-        private static string Pick(BuildContext context, IReadOnlyList<string> values)
+        private static string Pick(IBuildContext context, IReadOnlyList<string> values)
         {
             if (values.Count == 0)
             {
@@ -132,7 +132,7 @@ namespace ModelBuilder
             return values[context.Random.NextInt32(0, values.Count - 1)];
         }
 
-        private static byte[] NextBytes(BuildContext context)
+        private static byte[] NextBytes(IBuildContext context)
         {
             var buffer = new byte[context.Random.NextInt32(1, 16)];
 
@@ -141,7 +141,7 @@ namespace ModelBuilder
             return buffer;
         }
 
-        private static DateTime NextDateTime(BuildContext context)
+        private static DateTime NextDateTime(IBuildContext context)
         {
             // A value within roughly the last ten years, kept well inside DateTime bounds.
             var ticksRange = TimeSpan.FromDays(3650).Ticks;
@@ -150,7 +150,7 @@ namespace ModelBuilder
             return new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddTicks(-offset);
         }
 
-        private static Guid NextGuid(BuildContext context)
+        private static Guid NextGuid(IBuildContext context)
         {
             var buffer = new byte[16];
 
@@ -159,7 +159,7 @@ namespace ModelBuilder
             return new Guid(buffer);
         }
 
-        private static string NextString(BuildContext context)
+        private static string NextString(IBuildContext context)
         {
             var length = context.Random.NextInt32(5, 12);
             var chars = new char[length];
@@ -172,12 +172,12 @@ namespace ModelBuilder
             return new string(chars);
         }
 
-        private static Uri NextUri(BuildContext context)
+        private static Uri NextUri(IBuildContext context)
         {
             return new Uri("https://" + NextString(context).ToLowerInvariant() + ".example.com/");
         }
 
-        private static Version NextVersion(BuildContext context)
+        private static Version NextVersion(IBuildContext context)
         {
             return new Version(
                 context.Random.NextInt32(0, 20),

@@ -8,7 +8,7 @@ namespace ModelBuilder
     ///     provides an <see cref="IBuildLog" /> that records nothing, so build logging carries no cost
     ///     when it is not enabled.
     /// </summary>
-    public sealed class NullBuildLog : IBuildLog
+    internal sealed class NullBuildLog : IBuildLog
     {
         private static readonly IDisposable _scope = new NoopScope();
 

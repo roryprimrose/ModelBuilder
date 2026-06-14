@@ -11,6 +11,6 @@ namespace ModelBuilder
         ///     Applies this module's configuration to the supplied configuration.
         /// </summary>
         /// <param name="configuration">The configuration to populate.</param>
-        void Configure(BuildConfiguration configuration);
+        void Configure(IBuildConfiguration configuration);
     }
 }

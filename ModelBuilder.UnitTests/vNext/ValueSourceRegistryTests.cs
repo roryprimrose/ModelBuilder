@@ -1,4 +1,4 @@
-namespace ModelBuilder.UnitTests.vNext
+﻿namespace ModelBuilder.UnitTests.vNext
 {
     using FluentAssertions;
     using ModelBuilder;
@@ -41,7 +41,7 @@ namespace ModelBuilder.UnitTests.vNext
 
         private sealed class ConstantInt32Source : IValueSource<int>
         {
-            public int Create(BuildContext context, in BuildTarget target)
+            public int Create(IBuildContext context, in BuildTarget target)
             {
                 return 7;
             }

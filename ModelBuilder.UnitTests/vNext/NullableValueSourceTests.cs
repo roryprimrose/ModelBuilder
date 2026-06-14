@@ -1,4 +1,4 @@
-namespace ModelBuilder.UnitTests.vNext
+﻿namespace ModelBuilder.UnitTests.vNext
 {
     using System.Linq;
     using FluentAssertions;
@@ -85,7 +85,7 @@ namespace ModelBuilder.UnitTests.vNext
                 _value = value;
             }
 
-            public int Create(BuildContext context, in BuildTarget target)
+            public int Create(IBuildContext context, in BuildTarget target)
             {
                 return _value;
             }

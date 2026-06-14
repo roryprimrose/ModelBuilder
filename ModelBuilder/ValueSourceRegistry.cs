@@ -10,7 +10,7 @@ namespace ModelBuilder
     ///     value is never boxed because the source is invoked through the typed
     ///     <see cref="IValueSource{T}" />.
     /// </summary>
-    public sealed class ValueSourceRegistry
+    internal sealed class ValueSourceRegistry
     {
         private readonly Dictionary<Type, object> _sources = new Dictionary<Type, object>();
 

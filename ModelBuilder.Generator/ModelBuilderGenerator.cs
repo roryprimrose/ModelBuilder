@@ -17,7 +17,7 @@ namespace ModelBuilder.Generator
     public sealed class ModelBuilderGenerator : IIncrementalGenerator
     {
         private const string ModelTypeName = "ModelBuilder.Model";
-        private const string ConfigurationTypeName = "ModelBuilder.ModelConfiguration";
+        private const string ConfigurationTypeName = "ModelBuilder.IModelConfiguration";
 
         /// <inheritdoc />
         public void Initialize(IncrementalGeneratorInitializationContext context)

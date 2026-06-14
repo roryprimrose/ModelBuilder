@@ -1,4 +1,4 @@
-namespace ModelBuilder.UnitTests.vNext
+﻿namespace ModelBuilder.UnitTests.vNext
 {
     using System;
     using FluentAssertions;
@@ -111,24 +111,24 @@ namespace ModelBuilder.UnitTests.vNext
 
         private sealed class WidgetBuilder : IModelBuilder<Widget>, IModelBuilder
         {
-            public Widget Create(BuildContext context, params object?[]? args)
+            public Widget Create(IBuildContext context, params object?[]? args)
             {
                 return Populate(context, new Widget(), args);
             }
 
-            public Widget Populate(BuildContext context, Widget instance, object?[]? args = null)
+            public Widget Populate(IBuildContext context, Widget instance, object?[]? args = null)
             {
                 instance.Built = true;
 
                 return instance;
             }
 
-            object IModelBuilder.Create(BuildContext context, params object?[]? args)
+            object IModelBuilder.Create(IBuildContext context, params object?[]? args)
             {
                 return Create(context, args);
             }
 
-            object IModelBuilder.Populate(BuildContext context, object instance, object?[]? args)
+            object IModelBuilder.Populate(IBuildContext context, object instance, object?[]? args)
             {
                 return Populate(context, (Widget)instance, args);
             }

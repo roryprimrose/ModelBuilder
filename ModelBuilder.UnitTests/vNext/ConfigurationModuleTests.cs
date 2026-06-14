@@ -23,7 +23,7 @@ namespace ModelBuilder.UnitTests.vNext
 
         private sealed class SampleModule : IConfigurationModule
         {
-            public void Configure(BuildConfiguration configuration)
+            public void Configure(IBuildConfiguration configuration)
             {
                 configuration.AddMapping<Stream, MemoryStream>()
                     .IgnoreAny(member => member.Name == "Fragment");

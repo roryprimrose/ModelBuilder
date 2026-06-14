@@ -11,19 +11,23 @@ namespace ModelBuilder
         where T : struct
     {
         /// <inheritdoc />
-        public T? Create(BuildContext context, in BuildTarget target)
+        public T? Create(IBuildContext context, in BuildTarget target)
         {
-            if (context.Random.NextInt32(0, 99) < context.NullPercentage)
+            // The engine always supplies the concrete BuildContext; the cast reaches the internal
+            // null-percentage and value-source resolution that are not part of the public contract.
+            var ctx = (BuildContext)context;
+
+            if (ctx.Random.NextInt32(0, 99) < ctx.NullPercentage)
             {
                 return null;
             }
 
-            if (context.TryResolveValueSource<T>(out var inner) == false || inner == null)
+            if (ctx.TryResolveValueSource<T>(out var inner) == false || inner == null)
             {
                 return null;
             }
 
-            return inner.Create(context, in target);
+            return inner.Create(ctx, in target);
         }
     }
 }

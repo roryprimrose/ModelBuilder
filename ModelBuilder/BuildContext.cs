@@ -9,7 +9,7 @@ namespace ModelBuilder
     ///     source, the build log, the build chain used for circular-reference detection, and the build
     ///     path used to report failures.
     /// </summary>
-    public sealed class BuildContext
+    internal sealed class BuildContext : IBuildContext
     {
         private static readonly IBuildConfiguration _emptyConfiguration = new BuildConfiguration();
         private readonly List<Type> _chain = new List<Type>();
@@ -26,7 +26,7 @@ namespace ModelBuilder
         /// <param name="valueSources">The optional value source registry; the built-in defaults are used when <c>null</c>.</param>
         /// <param name="namedValueSources">The optional named value source registry; the built-in defaults are used when <c>null</c>.</param>
         /// <exception cref="ArgumentNullException">The <paramref name="random" /> parameter is <c>null</c>.</exception>
-        public BuildContext(
+        internal BuildContext(
             IRandomSource random,
             IBuildLog? log = null,
             BuildContextOptions? options = null,
@@ -56,7 +56,7 @@ namespace ModelBuilder
         /// <param name="failureKind">The category of the failure.</param>
         /// <param name="innerException">The optional exception that caused the failure.</param>
         /// <returns>The created exception.</returns>
-        public ModelBuildException CreateBuildException(
+        internal ModelBuildException CreateBuildException(
             string message,
             FailureKind failureKind,
             Exception? innerException = null)
@@ -79,7 +79,7 @@ namespace ModelBuilder
         /// </summary>
         /// <param name="frame">The frame to enter.</param>
         /// <returns>A token that exits the frame when disposed.</returns>
-        public IDisposable Enter(BuildFrame frame)
+        internal IDisposable Enter(BuildFrame frame)
         {
             _path.Add(frame);
             _chain.Add(frame.MemberType);
@@ -98,7 +98,7 @@ namespace ModelBuilder
         ///     The <paramref name="declaringType" />, <paramref name="memberName" />, or
         ///     <paramref name="memberType" /> parameter is <c>null</c>.
         /// </exception>
-        public IDisposable EnterMember(Type declaringType, string memberName, Type memberType)
+        internal IDisposable EnterMember(Type declaringType, string memberName, Type memberType)
         {
             declaringType = declaringType ?? throw new ArgumentNullException(nameof(declaringType));
             memberName = memberName ?? throw new ArgumentNullException(nameof(memberName));
@@ -113,18 +113,14 @@ namespace ModelBuilder
         /// <param name="type">The root type.</param>
         /// <returns>A token that exits the frame when disposed.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
-        public IDisposable EnterRoot(Type type)
+        internal IDisposable EnterRoot(Type type)
         {
             type = type ?? throw new ArgumentNullException(nameof(type));
 
             return Enter(new BuildFrame(type, null, type));
         }
 
-        /// <summary>
-        ///     Opens a sibling scope for the instance currently being populated, so that members already
-        ///     set on it can be read by value sources for later members via <see cref="GetSibling{T}" />.
-        /// </summary>
-        /// <returns>A token that closes the sibling scope when disposed.</returns>
+        /// <inheritdoc />
         public IDisposable EnterSiblingScope()
         {
             _siblingScopes.Add(new Dictionary<string, object?>(StringComparer.Ordinal));
@@ -132,16 +128,7 @@ namespace ModelBuilder
             return new SiblingScope(this);
         }
 
-        /// <summary>
-        ///     Reads a sibling member value already populated on the instance currently being built.
-        /// </summary>
-        /// <typeparam name="T">The expected sibling value type.</typeparam>
-        /// <param name="memberName">The name of the sibling member.</param>
-        /// <returns>
-        ///     The sibling value, or <c>default</c> when there is no sibling scope or no matching member
-        ///     has been recorded.
-        /// </returns>
-        /// <exception cref="ArgumentNullException">The <paramref name="memberName" /> parameter is <c>null</c>.</exception>
+        /// <inheritdoc />
         public T? GetSibling<T>(string memberName)
         {
             memberName = memberName ?? throw new ArgumentNullException(nameof(memberName));
@@ -161,12 +148,7 @@ namespace ModelBuilder
             return default;
         }
 
-        /// <summary>
-        ///     Records a member value into the current sibling scope so later members can read it.
-        /// </summary>
-        /// <param name="memberName">The name of the member.</param>
-        /// <param name="value">The value that was set on the member.</param>
-        /// <exception cref="ArgumentNullException">The <paramref name="memberName" /> parameter is <c>null</c>.</exception>
+        /// <inheritdoc />
         public void RecordSibling(string memberName, object? value)
         {
             memberName = memberName ?? throw new ArgumentNullException(nameof(memberName));
@@ -179,17 +161,7 @@ namespace ModelBuilder
             _siblingScopes[_siblingScopes.Count - 1][memberName] = value;
         }
 
-        /// <summary>
-        ///     Builds a value for a member, resolving a registered value source first and then a
-        ///     registered builder, with circular-reference and depth guards applied for built types.
-        /// </summary>
-        /// <typeparam name="T">The member type to build.</typeparam>
-        /// <param name="declaringType">The type that declares the member.</param>
-        /// <param name="memberName">The name of the member.</param>
-        /// <returns>The built value, or <c>default</c> when no source or builder is registered or a guard fired.</returns>
-        /// <exception cref="ArgumentNullException">
-        ///     The <paramref name="declaringType" /> or <paramref name="memberName" /> parameter is <c>null</c>.
-        /// </exception>
+        /// <inheritdoc />
         public T Build<T>(Type declaringType, string memberName)
         {
             declaringType = declaringType ?? throw new ArgumentNullException(nameof(declaringType));
@@ -206,7 +178,7 @@ namespace ModelBuilder
                     return default!;
                 }
 
-                if (Model.Registry.TryGet(mappedType, out var mappedBuilder) && mappedBuilder != null)
+                if (Model.RegistryInternal.TryGet(mappedType, out var mappedBuilder) && mappedBuilder != null)
                 {
                     using (EnterMember(declaringType, memberName, mappedType))
                     {
@@ -282,7 +254,7 @@ namespace ModelBuilder
         /// <typeparam name="T">The root type to build.</typeparam>
         /// <param name="value">The built value when a value source is resolved; otherwise <c>default</c>.</param>
         /// <returns><c>true</c> if a value source produced a value; otherwise, <c>false</c>.</returns>
-        public bool TryBuildRootValue<T>(out T value)
+        internal bool TryBuildRootValue<T>(out T value)
         {
             var targetType = typeof(T);
 
@@ -328,18 +300,14 @@ namespace ModelBuilder
         /// <param name="type">The type to check.</param>
         /// <returns><c>true</c> if the type is in the build chain; otherwise, <c>false</c>.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="type" /> parameter is <c>null</c>.</exception>
-        public bool IsInBuildChain(Type type)
+        internal bool IsInBuildChain(Type type)
         {
             type = type ?? throw new ArgumentNullException(nameof(type));
 
             return _chain.Contains(type);
         }
 
-        /// <summary>
-        ///     Returns a random item count for a collection within the configured minimum and maximum,
-        ///     coercing the bounds so an out-of-order or negative configuration cannot throw.
-        /// </summary>
-        /// <returns>A count between the effective minimum and maximum, inclusive.</returns>
+        /// <inheritdoc />
         public int NextCount()
         {
             var min = MinCount < 0 ? 0 : MinCount;
@@ -348,17 +316,7 @@ namespace ModelBuilder
             return Random.NextInt32(min, max);
         }
 
-        /// <summary>
-        ///     Determines whether a member should be populated according to the configured ignore rules.
-        /// </summary>
-        /// <param name="declaringType">The type that declares the member.</param>
-        /// <param name="memberName">The name of the member.</param>
-        /// <param name="memberType">The type of the member.</param>
-        /// <returns><c>true</c> if the member should be populated; otherwise, <c>false</c>.</returns>
-        /// <exception cref="ArgumentNullException">
-        ///     The <paramref name="declaringType" />, <paramref name="memberName" />, or
-        ///     <paramref name="memberType" /> parameter is <c>null</c>.
-        /// </exception>
+        /// <inheritdoc />
         public bool ShouldPopulate(Type declaringType, string memberName, Type memberType)
         {
             declaringType = declaringType ?? throw new ArgumentNullException(nameof(declaringType));
@@ -375,7 +333,7 @@ namespace ModelBuilder
         /// <typeparam name="T">The type to resolve a value source for.</typeparam>
         /// <param name="source">The resolved value source, when one exists.</param>
         /// <returns><c>true</c> if a value source was resolved; otherwise, <c>false</c>.</returns>
-        public bool TryResolveValueSource<T>(out IValueSource<T>? source)
+        internal bool TryResolveValueSource<T>(out IValueSource<T>? source)
         {
             var slot = ValueSource<T>.Instance;
 
@@ -413,71 +371,65 @@ namespace ModelBuilder
         /// <summary>
         ///     Gets the current build path from the root type down to the frame being built.
         /// </summary>
-        public IReadOnlyList<BuildFrame> BuildPath => _path.ToArray();
+        internal IReadOnlyList<BuildFrame> BuildPath => _path.ToArray();
 
-        /// <summary>
-        ///     Gets the build configuration for the current build.
-        /// </summary>
+        /// <inheritdoc />
         public IBuildConfiguration Configuration { get; }
 
         /// <summary>
         ///     Gets the frame currently being built.
         /// </summary>
         /// <returns>The current frame, or <c>null</c> when no frame has been entered.</returns>
-        public BuildFrame? CurrentTarget => _path.Count > 0 ? _path[_path.Count - 1] : (BuildFrame?)null;
+        internal BuildFrame? CurrentTarget => _path.Count > 0 ? _path[_path.Count - 1] : (BuildFrame?)null;
 
         /// <summary>
         ///     Gets the current build depth.
         /// </summary>
-        public int Depth => _chain.Count;
+        internal int Depth => _chain.Count;
 
         /// <summary>
         ///     Gets a value indicating whether the current build depth has reached the configured
         ///     maximum.
         /// </summary>
         /// <returns><c>true</c> if the maximum depth has been reached; otherwise, <c>false</c>.</returns>
-        public bool IsDepthExceeded => _chain.Count >= MaxDepth;
+        internal bool IsDepthExceeded => _chain.Count >= MaxDepth;
 
-        /// <summary>
-        ///     Gets the build log for the current build.
-        /// </summary>
+        /// <inheritdoc />
         public IBuildLog Log { get; }
 
         /// <summary>
         ///     Gets the maximum depth the build may descend before it is considered to have exceeded a
         ///     safe limit.
         /// </summary>
-        public int MaxDepth { get; }
+        internal int MaxDepth { get; }
 
         /// <summary>
         ///     Gets the maximum number of items generated for a collection.
         /// </summary>
-        public int MaxCount { get; }
+        internal int MaxCount { get; }
 
         /// <summary>
         ///     Gets the registry of entity-style value sources matched by member name.
         /// </summary>
-        public NamedValueSourceRegistry NamedValueSources { get; }
+        internal NamedValueSourceRegistry NamedValueSources { get; }
 
         /// <summary>
         ///     Gets the minimum number of items generated for a collection.
         /// </summary>
-        public int MinCount { get; }
+        internal int MinCount { get; }
 
         /// <summary>
         ///     Gets the percentage chance (0 to 100) that a nullable value is produced as <c>null</c>.
         /// </summary>
-        public int NullPercentage { get; }
+        internal int NullPercentage { get; }
 
-        /// <summary>
-        ///     Gets the random source for the current build.
-        /// </summary>
+        /// <inheritdoc />
         public IRandomSource Random { get; }
 
         /// <summary>
         ///     Gets the registry of value sources consulted when no typed-static override is registered.
         /// </summary>
-        public ValueSourceRegistry ValueSources { get; }
+        internal ValueSourceRegistry ValueSources { get; }
 
         private sealed class BuildScope : IDisposable
         {

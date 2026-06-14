@@ -26,6 +26,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- The unit tests exercise internal engine types (registries, value sources, build context, etc.). -->
+    <InternalsVisibleTo Include="ModelBuilder.UnitTests" />
+  </ItemGroup>
+
+  <ItemGroup>
     <!--
       Reference the source generator so it runs during this build, but do not add it as a runtime
       dependency (ReferenceOutputAssembly=false) and do not flow it to consumers as a normal reference

@@ -17,7 +17,7 @@ namespace ModelBuilder
     ///         single call.
     ///     </para>
     /// </remarks>
-    public sealed class RandomSource : IRandomSource
+    internal sealed class RandomSource : IRandomSource
     {
         private const decimal UnitDecimalScale = 1_000_000_000_000_000_000m;
         private const double UnitDoubleScale = 1.0 / 9007199254740992.0;
