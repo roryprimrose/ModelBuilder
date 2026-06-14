@@ -927,11 +927,12 @@ harmless to include even if rarely used in test models, and are simply absent fr
 (modern TFMs), and `byte[]` (random buffer) which is common on DTOs.
 
 **Tier 3 — entity-style string data, matched by member *name* (default on):**
-The embedded-data sources — `FirstName`, `MiddleName`, `LastName`, `Email`, `DomainName`, `Company`,
-`Country`, `State`, `City`, `Suburb`, `PostCode`, `Phone`, `TimeZone`, plus `Age`/`DateOfBirth` and
-the gender-aware name relationships. These are all `string`/numeric typed but **match on member
-name**, so they never fire for an arbitrary `string` unless the name matches. This is where the
-"realistic data" breadth lives without expanding the type list.
+The embedded-data sources — `FirstName`, `MiddleName`, `LastName`, `FullName`/`Name`/`DisplayName`,
+`UserName`, `Email`, `DomainName`, `Company`, `Country`, `State`, `City`, `Suburb`, `PostCode`,
+`Phone`, `TimeZone`, plus `Age`/`DateOfBirth` and the gender-aware name relationships. These are all
+`string`/numeric typed but **match on member name** (as a whole PascalCase/camelCase word, so short
+aliases like `Age` never fire for `PageCount`), so they never fire for an arbitrary `string` unless
+the name matches. This is where the "realistic data" breadth lives without expanding the type list.
 
 **Tier 4 — collections (structural, generator-emitted):**
 `T[]`, `List<T>`, `IList<T>`, `IReadOnlyList<T>`, `IEnumerable<T>`, `ICollection<T>`,

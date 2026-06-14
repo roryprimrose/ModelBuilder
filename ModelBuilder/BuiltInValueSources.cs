@@ -13,6 +13,10 @@
     {
         private const string StringAlphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
+        // The inclusive human-plausible age range used by the Age and DateOfBirth named sources.
+        private const int MinAge = 1;
+        private const int MaxAge = 100;
+
         // The member-name aliases shared between the named-source registration (CreateNamedRegistry)
         // and the sibling lookups in NextEmail. Keeping them in one place ensures the email value
         // source reads the same member names the registry matches, so adding an alias cannot silently
@@ -41,6 +45,26 @@
             registry.Register(new DelegateValueSource<string>(c => Location(c).PostCode), "PostCode", "ZipCode", "Postcode", "Zip");
             registry.Register(new DelegateValueSource<string>(c => Location(c).Phone), "Phone", "Mobile", "Cell", "Fax");
             registry.Register(new DelegateValueSource<string>(c => Pick(c, TestData.TimeZones)), "TimeZone");
+
+            // UserName is registered before the full-name source because member names are matched by
+            // case-insensitive substring, first-registered wins. The full-name source matches the bare
+            // alias "Name", which is a substring of "UserName", so UserName must be checked first.
+            registry.Register(new DelegateValueSource<string>(NextUserName), "UserName", "Username", "Login");
+
+            // The full-name source is registered last among the string sources. Its bare "Name" alias is a
+            // substring of many member names (DomainName, CompanyName, CityName, and so on), so the more
+            // specific sources above must be matched first. Anything still containing "Name" (or named
+            // "FullName"/"DisplayName") falls through to a person-style full name here.
+            registry.Register(new DelegateValueSource<string>(NextFullName), "FullName", "DisplayName", "Name");
+
+            // Age and date-of-birth are constrained to a human-plausible range. A member named Age is an
+            // int, but a random int would happily produce values like 100000 that make no sense for a
+            // person, so a named source narrows it to MinAge..MaxAge. DateOfBirth derives a UTC date that
+            // lands within the same age range. Members with these names that are NOT int/DateTime fall
+            // through to the general value sources, because the named registry is keyed by both name and
+            // type.
+            registry.Register<int>(new DelegateValueSource<int>(NextAge), "Age");
+            registry.Register<DateTime>(new DelegateValueSource<DateTime>(NextDateOfBirth), "DateOfBirth", "DOB", "BirthDate", "Birthday");
 
             return registry;
         }
@@ -123,6 +147,61 @@
         private static string NextMiddleName(IBuildContext context)
         {
             return NextFirstName(context);
+        }
+
+        private static string NextFullName(IBuildContext context)
+        {
+            // Compose from the first/last name siblings already set on the instance so the full name is
+            // consistent with them; otherwise pick fresh values from the data sets.
+            var first = context.GetSibling<string>(_firstNameMembers);
+            var last = context.GetSibling<string>(_lastNameMembers);
+
+            if (string.IsNullOrEmpty(first))
+            {
+                first = NextFirstName(context);
+            }
+
+            if (string.IsNullOrEmpty(last))
+            {
+                last = Pick(context, TestData.LastNames);
+            }
+
+            return first + " " + last;
+        }
+
+        private static string NextUserName(IBuildContext context)
+        {
+            // Derive a believable user name from the name siblings (consistent with FullName/Email),
+            // with a numeric suffix to keep collisions unlikely across a generated set.
+            var first = context.GetSibling<string>(_firstNameMembers);
+            var last = context.GetSibling<string>(_lastNameMembers);
+
+            if (string.IsNullOrEmpty(first))
+            {
+                first = NextFirstName(context);
+            }
+
+            if (string.IsNullOrEmpty(last))
+            {
+                last = Pick(context, TestData.LastNames);
+            }
+
+            return first!.ToLowerInvariant() + "." + last!.ToLowerInvariant() + context.Random.NextInt32(1, 99);
+        }
+
+        private static int NextAge(IBuildContext context)
+        {
+            return context.Random.NextInt32(MinAge, MaxAge);
+        }
+
+        private static DateTime NextDateOfBirth(IBuildContext context)
+        {
+            // A UTC date that lands within the human-plausible age range, anchored to the same fixed
+            // reference date as NextDateTime so generated values stay deterministic for a given seed.
+            var ageYears = context.Random.NextInt32(MinAge, MaxAge);
+            var extraDays = context.Random.NextInt32(0, 364);
+
+            return new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddYears(-ageYears).AddDays(-extraDays);
         }
 
         private static Location Location(IBuildContext context)

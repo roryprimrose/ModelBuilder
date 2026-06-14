@@ -5,8 +5,9 @@ namespace ModelBuilder
 
     /// <summary>
     ///     The <see cref="NamedValueSourceRegistry" /> class
-    ///     holds value sources that apply only to members whose name matches one of a set of names,
-    ///     used by the entity-style built-in sources that match on member name rather than type alone.
+    ///     holds value sources that apply only to members whose name contains one of a set of names as a
+    ///     whole PascalCase or camelCase word, used by the entity-style built-in sources that match on
+    ///     member name rather than type alone.
     /// </summary>
     internal sealed class NamedValueSourceRegistry
     {
@@ -14,7 +15,7 @@ namespace ModelBuilder
 
         /// <summary>
         ///     Registers a value source that applies to members of type <typeparamref name="T" /> whose
-        ///     name contains one of the supplied names.
+        ///     name contains one of the supplied names as a whole PascalCase or camelCase word.
         /// </summary>
         /// <typeparam name="T">The member type the source produces.</typeparam>
         /// <param name="source">The value source.</param>
@@ -61,13 +62,38 @@ namespace ModelBuilder
             {
                 foreach (var name in entry.Names)
                 {
-                    if (memberName!.IndexOf(name, StringComparison.OrdinalIgnoreCase) >= 0)
+                    if (MatchesName(memberName!, name))
                     {
                         source = (IValueSource<T>)entry.Source;
 
                         return true;
                     }
                 }
+            }
+
+            return false;
+        }
+
+        private static bool MatchesName(string memberName, string name)
+        {
+            // Match the alias as a whole PascalCase/camelCase word (or run of words) within the member
+            // name rather than a raw substring. This keeps descriptive matches such as
+            // "ContactEmailAddress" -> "Email" working while preventing short aliases like "Age" from
+            // matching mid-word, for example the "age" inside "PageCount" or "StorageSize".
+            var index = memberName.IndexOf(name, StringComparison.OrdinalIgnoreCase);
+
+            while (index >= 0)
+            {
+                var startIsBoundary = index == 0 || char.IsUpper(memberName[index]);
+                var endIndex = index + name.Length;
+                var endIsBoundary = endIndex == memberName.Length || char.IsUpper(memberName[endIndex]);
+
+                if (startIsBoundary && endIsBoundary)
+                {
+                    return true;
+                }
+
+                index = memberName.IndexOf(name, index + 1, StringComparison.OrdinalIgnoreCase);
             }
 
             return false;
