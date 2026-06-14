@@ -3,18 +3,6 @@ namespace ModelBuilder.Generator
     using System;
 
     /// <summary>
-    ///     The <see cref="CollectionKind" /> enum
-    ///     identifies how a discovered collection target is materialized.
-    /// </summary>
-    internal enum CollectionKind
-    {
-        Array = 0,
-        List,
-        Set,
-        Dictionary
-    }
-
-    /// <summary>
     ///     The <see cref="CollectionModel" /> struct
     ///     is the value-equatable description of a closed collection type the generator emits a value
     ///     source for.
