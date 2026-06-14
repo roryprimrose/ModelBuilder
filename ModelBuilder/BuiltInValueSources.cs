@@ -106,8 +106,8 @@
             registry.Register<Guid>(new DelegateValueSource<Guid>(NextGuid));
 
             registry.Register<DateTime>(new DelegateValueSource<DateTime>(NextDateTime));
-            registry.Register<DateTimeOffset>(new DelegateValueSource<DateTimeOffset>(c => new DateTimeOffset(NextDateTime(c))));
-            registry.Register<TimeSpan>(new DelegateValueSource<TimeSpan>(c => TimeSpan.FromMinutes(c.Random.NextInt32(0, 1440))));
+            registry.Register<DateTimeOffset>(new DelegateValueSource<DateTimeOffset>(NextDateTimeOffset));
+            registry.Register<TimeSpan>(new DelegateValueSource<TimeSpan>(NextTimeSpan));
             registry.Register<Uri>(new DelegateValueSource<Uri>(NextUri));
             registry.Register<Version>(new DelegateValueSource<Version>(NextVersion));
             registry.Register<byte[]>(new DelegateValueSource<byte[]>(NextBytes));
@@ -117,7 +117,9 @@
 
         private static char NextChar(IBuildContext context)
         {
-            return StringAlphabet[context.Random.NextInt32(0, StringAlphabet.Length - 1)];
+            var index = context.Random.NextInt32(0, StringAlphabet.Length - 1);
+
+            return StringAlphabet[index];
         }
 
         private static string NextEmail(IBuildContext context)
@@ -255,8 +257,9 @@
         private static Location RandomLocation(IBuildContext context)
         {
             var locations = TestData.Locations;
+            var index = context.Random.NextInt32(0, locations.Count - 1);
 
-            return locations[context.Random.NextInt32(0, locations.Count - 1)];
+            return locations[index];
         }
 
         private static string Pick(IBuildContext context, IReadOnlyList<string> values)
@@ -266,12 +269,15 @@
                 return string.Empty;
             }
 
-            return values[context.Random.NextInt32(0, values.Count - 1)];
+            var index = context.Random.NextInt32(0, values.Count - 1);
+
+            return values[index];
         }
 
         private static byte[] NextBytes(IBuildContext context)
         {
-            var buffer = new byte[context.Random.NextInt32(1, 16)];
+            var length = context.Random.NextInt32(1, 16);
+            var buffer = new byte[length];
 
             context.Random.NextBytes(buffer);
 
@@ -285,6 +291,20 @@
             var offset = context.Random.NextInt64(0, ticksRange);
 
             return _referenceDate.AddTicks(-offset);
+        }
+
+        private static DateTimeOffset NextDateTimeOffset(IBuildContext context)
+        {
+            var value = NextDateTime(context);
+
+            return new DateTimeOffset(value);
+        }
+
+        private static TimeSpan NextTimeSpan(IBuildContext context)
+        {
+            var minutes = context.Random.NextInt32(0, 1440);
+
+            return TimeSpan.FromMinutes(minutes);
         }
 
         private static Guid NextGuid(IBuildContext context)
@@ -303,7 +323,9 @@
 
             for (var index = 0; index < length; index++)
             {
-                chars[index] = StringAlphabet[context.Random.NextInt32(0, StringAlphabet.Length - 1)];
+                var charIndex = context.Random.NextInt32(0, StringAlphabet.Length - 1);
+
+                chars[index] = StringAlphabet[charIndex];
             }
 
             return new string(chars);
@@ -325,11 +347,12 @@
 
         private static Version NextVersion(IBuildContext context)
         {
-            return new Version(
-                context.Random.NextInt32(0, 20),
-                context.Random.NextInt32(0, 20),
-                context.Random.NextInt32(0, 99),
-                context.Random.NextInt32(0, 9999));
+            var major = context.Random.NextInt32(0, 20);
+            var minor = context.Random.NextInt32(0, 20);
+            var build = context.Random.NextInt32(0, 99);
+            var revision = context.Random.NextInt32(0, 9999);
+
+            return new Version(major, minor, build, revision);
         }
 
         /// <summary>
