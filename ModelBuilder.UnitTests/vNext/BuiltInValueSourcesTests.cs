@@ -4,6 +4,7 @@ namespace ModelBuilder.UnitTests.vNext
     using System.Collections.Generic;
     using FluentAssertions;
     using ModelBuilder;
+    using ModelBuilder.Data;
     using Xunit;
 
     public class BuiltInValueSourcesTests
@@ -82,6 +83,20 @@ namespace ModelBuilder.UnitTests.vNext
             var actual = source!.Create(context, new BuildTarget(typeof(Guid)));
 
             actual.Should().NotBe(Guid.Empty);
+        }
+
+        [Fact]
+        public void UriSourceProducesHostFromDomainData()
+        {
+            var context = new BuildContext(new RandomSource(42));
+
+            context.TryResolveValueSource<Uri>(out var source);
+
+            var actual = source!.Create(context, new BuildTarget(typeof(Uri)));
+
+            // The URI host is drawn from the curated domain data set rather than a synthetic placeholder.
+            actual.Scheme.Should().Be("https");
+            TestData.Domains.Should().Contain(actual.Host);
         }
     }
 }

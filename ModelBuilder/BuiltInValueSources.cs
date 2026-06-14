@@ -199,7 +199,16 @@
 
         private static Uri NextUri(IBuildContext context)
         {
-            return new Uri("https://" + NextString(context).ToLowerInvariant() + ".example.com/");
+            // Build the URI from the curated domain data set (the same source NextEmail uses for the
+            // email domain) so generated URIs read like real hosts and stay consistent with emails.
+            var domain = Pick(context, TestData.Domains);
+
+            if (string.IsNullOrEmpty(domain))
+            {
+                domain = NextString(context).ToLowerInvariant() + ".example.com";
+            }
+
+            return new Uri("https://" + domain + "/");
         }
 
         private static Version NextVersion(IBuildContext context)
