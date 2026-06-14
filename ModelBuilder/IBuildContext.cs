@@ -41,7 +41,7 @@ namespace ModelBuilder
 
         /// <summary>
         ///     Opens a sibling scope for the instance currently being populated, so that members already
-        ///     set on it can be read by value sources for later members via <see cref="GetSibling{T}" />.
+        ///     set on it can be read by value sources for later members via <see cref="GetSibling{T}(string)" />.
         /// </summary>
         /// <returns>A token that closes the sibling scope when disposed.</returns>
         IDisposable EnterSiblingScope();
@@ -57,6 +57,20 @@ namespace ModelBuilder
         /// </returns>
         /// <exception cref="ArgumentNullException">The <paramref name="memberName" /> parameter is <c>null</c>.</exception>
         T? GetSibling<T>(string memberName);
+
+        /// <summary>
+        ///     Reads the first recorded sibling member value among the supplied candidate names, so a
+        ///     value source can resolve a sibling that may be spelled under any of several aliases (for
+        ///     example <c>FirstName</c> or <c>GivenName</c>).
+        /// </summary>
+        /// <typeparam name="T">The expected sibling value type.</typeparam>
+        /// <param name="memberNames">The candidate member names, tried in order.</param>
+        /// <returns>
+        ///     The first non-<c>default</c> sibling value matched by one of the supplied names, or
+        ///     <c>default</c> when there is no sibling scope or none of the names has a recorded value.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="memberNames" /> parameter is <c>null</c>.</exception>
+        T? GetSibling<T>(params string[] memberNames);
 
         /// <summary>
         ///     Returns a random item count for a collection within the configured minimum and maximum,

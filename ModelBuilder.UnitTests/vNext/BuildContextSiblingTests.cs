@@ -53,6 +53,47 @@ namespace ModelBuilder.UnitTests.vNext
         }
 
         [Fact]
+        public void GetSiblingWithAliasesReturnsFirstRecordedMatch()
+        {
+            var sut = new BuildContext(new RandomSource(1));
+
+            using (sut.EnterSiblingScope())
+            {
+                sut.RecordSibling("GivenName", "Janet");
+
+                // FirstName is not recorded, so the alias lookup falls through to GivenName.
+                sut.GetSibling<string>("FirstName", "GivenName").Should().Be("Janet");
+            }
+        }
+
+        [Fact]
+        public void GetSiblingWithAliasesPrefersEarlierNameWhenBothRecorded()
+        {
+            var sut = new BuildContext(new RandomSource(1));
+
+            using (sut.EnterSiblingScope())
+            {
+                sut.RecordSibling("FirstName", "Janet");
+                sut.RecordSibling("GivenName", "Other");
+
+                sut.GetSibling<string>("FirstName", "GivenName").Should().Be("Janet");
+            }
+        }
+
+        [Fact]
+        public void GetSiblingWithAliasesReturnsDefaultWhenNoneRecorded()
+        {
+            var sut = new BuildContext(new RandomSource(1));
+
+            using (sut.EnterSiblingScope())
+            {
+                sut.RecordSibling("Age", 42);
+
+                sut.GetSibling<string>("FirstName", "GivenName").Should().BeNull();
+            }
+        }
+
+        [Fact]
         public void NestedScopeDoesNotLeakToOuterScope()
         {
             var sut = new BuildContext(new RandomSource(1));
@@ -89,7 +130,17 @@ namespace ModelBuilder.UnitTests.vNext
         {
             var sut = new BuildContext(new RandomSource(1));
 
-            Action action = () => sut.GetSibling<string>(null!);
+            Action action = () => sut.GetSibling<string>((string)null!);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void GetSiblingThrowsWithNullMemberNames()
+        {
+            var sut = new BuildContext(new RandomSource(1));
+
+            Action action = () => sut.GetSibling<string>((string[])null!);
 
             action.Should().Throw<ArgumentNullException>();
         }

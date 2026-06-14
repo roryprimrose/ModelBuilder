@@ -90,9 +90,9 @@
             // with them; otherwise compose a believable address from the data sets. The sibling lookups
             // use the same member-name aliases the registry matches, so a model that spells the members
             // GivenName/Surname (rather than FirstName/LastName) still derives a matching email.
-            var first = FirstSibling(context, _firstNameMembers);
-            var last = FirstSibling(context, _lastNameMembers);
-            var domain = FirstSibling(context, _domainMembers);
+            var first = context.GetSibling<string>(_firstNameMembers);
+            var last = context.GetSibling<string>(_lastNameMembers);
+            var domain = context.GetSibling<string>(_domainMembers);
 
             if (string.IsNullOrEmpty(first))
             {
@@ -110,21 +110,6 @@
             }
 
             return first!.ToLowerInvariant() + "." + last!.ToLowerInvariant() + "@" + domain;
-        }
-
-        private static string? FirstSibling(IBuildContext context, params string[] memberNames)
-        {
-            foreach (var memberName in memberNames)
-            {
-                var value = context.GetSibling<string>(memberName);
-
-                if (string.IsNullOrEmpty(value) == false)
-                {
-                    return value;
-                }
-            }
-
-            return null;
         }
 
         private static string NextFirstName(IBuildContext context)

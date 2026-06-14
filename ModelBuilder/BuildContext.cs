@@ -149,6 +149,24 @@ namespace ModelBuilder
         }
 
         /// <inheritdoc />
+        public T? GetSibling<T>(params string[] memberNames)
+        {
+            memberNames = memberNames ?? throw new ArgumentNullException(nameof(memberNames));
+
+            foreach (var memberName in memberNames)
+            {
+                var value = GetSibling<T>(memberName);
+
+                if (value is not null)
+                {
+                    return value;
+                }
+            }
+
+            return default;
+        }
+
+        /// <inheritdoc />
         public void RecordSibling(string memberName, object? value)
         {
             memberName = memberName ?? throw new ArgumentNullException(nameof(memberName));
