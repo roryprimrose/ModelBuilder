@@ -274,6 +274,34 @@ namespace ModelBuilder
             }
         }
 
+        /// <summary>
+        ///     Attempts to build a root value from a registered value source, so that
+        ///     <see cref="Model.Create{T}(object[])" /> works for value-source-only types such as enums and
+        ///     primitives that have no generated model builder.
+        /// </summary>
+        /// <typeparam name="T">The root type to build.</typeparam>
+        /// <param name="value">The built value when a value source is resolved; otherwise <c>default</c>.</param>
+        /// <returns><c>true</c> if a value source produced a value; otherwise, <c>false</c>.</returns>
+        public bool TryBuildRootValue<T>(out T value)
+        {
+            var targetType = typeof(T);
+
+            if (TryResolveValueSource<T>(out var source) && source != null)
+            {
+                var target = new BuildTarget(targetType, targetType.Name);
+
+                Log.Write(BuildLogEntryKind.CreateValue, targetType, targetType.Name, "root value source");
+
+                value = Invoke(targetType.Name, () => source.Create(this, target));
+
+                return true;
+            }
+
+            value = default!;
+
+            return false;
+        }
+
         private TResult Invoke<TResult>(string memberName, Func<TResult> create)
         {
             try

@@ -116,14 +116,29 @@ namespace ModelBuilder
 
         internal static T CreateWith<T>(BuildConfiguration? configuration, IBuildLog? log, object?[]? args)
         {
-            var builder = ModelBuilderSlot<T>.Instance ?? throw NoBuilder(typeof(T));
-
             var context = NewContext(configuration, log);
 
+            var builder = ModelBuilderSlot<T>.Instance;
+
+            if (builder != null)
+            {
+                using (context.EnterRoot(typeof(T)))
+                {
+                    return builder.Create(context, args);
+                }
+            }
+
+            // No generated model builder exists for T. Fall back to a registered value source so that
+            // value-source-only roots such as Model.Create<int>() or Model.Create<SomeEnum>() work.
             using (context.EnterRoot(typeof(T)))
             {
-                return builder.Create(context, args);
+                if (context.TryBuildRootValue<T>(out var value))
+                {
+                    return value;
+                }
             }
+
+            throw NoBuilder(typeof(T));
         }
 
         internal static T PopulateWith<T>(T instance, BuildConfiguration? configuration)

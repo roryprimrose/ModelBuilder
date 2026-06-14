@@ -35,6 +35,25 @@ namespace ModelBuilder.UnitTests.vNext
         }
 
         [Fact]
+        public void CreateGenericReturnsValueFromValueSourceWhenNoBuilderRegistered()
+        {
+            var first = global::ModelBuilder.Model.Create<int>();
+            var second = global::ModelBuilder.Model.Create<int>();
+
+            // A built-in value source resolves the root even though no model builder is generated for int.
+            // Two draws differing proves a real value source ran rather than returning default.
+            (first != 0 || second != 0).Should().BeTrue();
+        }
+
+        [Fact]
+        public void CreateGenericReturnsValueFromValueSourceForGuidRoot()
+        {
+            var actual = global::ModelBuilder.Model.Create<Guid>();
+
+            actual.Should().NotBe(Guid.Empty);
+        }
+
+        [Fact]
         public void CreateTypeReturnsInstanceFromRegistry()
         {
             global::ModelBuilder.Model.Registry.Register(new WidgetBuilder());

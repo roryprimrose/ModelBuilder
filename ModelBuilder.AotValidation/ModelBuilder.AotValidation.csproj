@@ -7,10 +7,17 @@
     <Nullable>enable</Nullable>
     <!--
       Turns on the trim, single-file and AOT analyzers. The vNext engine is reflection-free, so a
-      build of this app that only touches ModelBuilder.vNext must produce zero IL2###/IL3### warnings.
+      build of this app that only touches ModelBuilder must produce zero IL2###/IL3### warnings.
       TreatWarningsAsErrors (from Directory.Build.props) makes any such warning fail the build.
     -->
     <IsAotCompatible>true</IsAotCompatible>
+    <!--
+      Trim settings live in the project (not passed as global -p: properties) so they apply only to
+      this app's publish and do not leak onto the netstandard2.0 generator/library targets, which
+      cannot be trimmed (NETSDK1124).
+    -->
+    <PublishTrimmed>true</PublishTrimmed>
+    <TrimMode>full</TrimMode>
     <!-- The runtime ruleset is geared at the library; this validation app only needs the trim/AOT analyzers. -->
     <CodeAnalysisRuleSet />
   </PropertyGroup>
