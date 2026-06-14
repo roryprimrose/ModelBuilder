@@ -29,12 +29,19 @@ namespace ModelBuilder.Generator
                 .Where(static capture => capture.Symbol is not null)
                 .Select(static (capture, _) => capture);
 
-            var collected = roots.Collect();
+            var hasModuleInitializer = context.CompilationProvider.Select(
+                static (compilation, _) =>
+                    compilation.GetTypeByMetadataName("System.Runtime.CompilerServices.ModuleInitializerAttribute") is not null);
 
-            context.RegisterSourceOutput(collected, static (spc, captures) => Execute(spc, captures));
+            var collected = roots.Collect().Combine(hasModuleInitializer);
+
+            context.RegisterSourceOutput(collected, static (spc, input) => Execute(spc, input.Left, input.Right));
         }
 
-        private static void Execute(SourceProductionContext context, ImmutableArray<RootCapture> captures)
+        private static void Execute(
+            SourceProductionContext context,
+            ImmutableArray<RootCapture> captures,
+            bool hasModuleInitializer)
         {
             var distinct = new Dictionary<string, INamedTypeSymbol>();
 
@@ -62,7 +69,7 @@ namespace ModelBuilder.Generator
                 return;
             }
 
-            context.AddSource("ModelBuilderGenerated.g.cs", SourceEmitter.Emit(models));
+            context.AddSource("ModelBuilderGenerated.g.cs", SourceEmitter.Emit(models, hasModuleInitializer));
         }
 
         private static void ReportRootDiagnostics(SourceProductionContext context, RootCapture capture)

@@ -117,3 +117,36 @@ Runtimes  : .NET Framework 4.7.2 (4.8.1 runtime), .NET 8.0.28, .NET 9.0.16, .NET
 These numbers are the reflection-based "before". The vNext target is materially lower `Mean`,
 **substantially lower Allocated/Alloc Ratio**, and fewer Gen0/Gen1 collections across every shape,
 with the largest wins on the deep/wide and collection-heavy graphs.
+
+## vNext delta (source-generated vs reflection)
+
+`CreateComparisonBenchmarks` runs the v8 reflection engine and the vNext source-generated engine on
+the same shapes side by side (the v8 method is the baseline). Short-job run, .NET 8.0:
+
+| Shape | Engine | Mean | Ratio | Gen0 | Gen1 | Allocated | Alloc Ratio |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| FlatPoco | v8 | 32.22 μs | 1.00 | 4.8828 | 0.2441 | 80.91 KB | 1.00 |
+| FlatPoco | **vNext** | **14.44 μs** | **0.45** | 0.2747 | - | **4.50 KB** | **0.06** |
+| SmallNested | v8 | 98.83 μs | 1.00 | 7.8125 | 0.4883 | 134.96 KB | 1.00 |
+| SmallNested | **vNext** | **7.19 μs** | **0.07** | 0.2670 | - | **4.45 KB** | **0.03** |
+| WithCollections | v8 | 285.32 μs | 1.00 | 35.1563 | 1.9531 | 589.34 KB | 1.00 |
+| WithCollections | **vNext** | **19.52 μs** | **0.07** | 0.7324 | - | **11.99 KB** | **0.02** |
+| WithEnumsNullable | v8 | 34.92 μs | 1.00 | 4.2725 | 0.1221 | 70.91 KB | 1.00 |
+| WithEnumsNullable | **vNext** | **2.99 μs** | **0.09** | 0.1488 | - | **2.47 KB** | **0.03** |
+
+> Ratios are vNext relative to the v8 baseline **for the same shape** (the table above uses each v8
+> method as its own baseline, so the v8 rows read 1.00).
+
+**The headline result the rewrite set out to demonstrate:**
+
+- **Faster everywhere** — vNext is 2.2× faster on the flat POCO and 11–14× faster on the nested,
+  collection and enum/nullable shapes, because there is no per-build reflection, constructor
+  resolution, or `ExpandoObject`.
+- **Allocations collapse** — vNext allocates **6–50× less** (e.g. `WithCollections` 589 KB → 12 KB,
+  `SmallNested` 135 KB → 4.5 KB). The reflection metadata, boxing and per-call configuration objects
+  are simply gone.
+- **No Gen1 pressure** — vNext records **zero Gen1 collections** across every shape, versus
+  non-trivial Gen1 on the v8 path; Gen0 drops by an order of magnitude too.
+
+Re-run with `dotnet run -c Release -f net8.0 -- --filter *CreateComparisonBenchmarks* --runtimes net8.0`
+(add `--job short` for a quick read).
