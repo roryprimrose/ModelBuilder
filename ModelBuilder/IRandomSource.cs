@@ -8,8 +8,7 @@ namespace ModelBuilder
     /// </summary>
     /// <remarks>
     ///     <para>
-    ///         This is the vNext replacement for <see cref="IRandomGenerator" />. Unlike the v8
-    ///         generator it exposes typed methods that return the value type directly (no boxing and
+    ///         It exposes typed methods that return the value type directly (no boxing and
     ///         no reflection on the value path), generates wide-integer and <see cref="decimal" />
     ///         ranges with their own arithmetic (no precision loss through <see cref="double" />),
     ///         fills byte buffers in a single call, validates range boundaries at the public edge,
