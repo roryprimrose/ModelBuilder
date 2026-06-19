@@ -60,6 +60,27 @@ You can also build by runtime `Type` when the type is only known at runtime:
 object person = Model.Create(typeof(Person));
 ```
 
+This path still depends on compile-time discovery. A builder only exists for a type the generator
+saw at compile time, so the runtime `Type` you pass must already be buildable through one of the
+[discovery triggers](#how-types-are-discovered) — a `Model.Create<T>()`/`Model.Create(typeof(T))`
+call somewhere in the build, a `Mapping<,>`, or a `[GenerateModelBuilder]` annotation. Passing a
+`Type` that the generator never saw throws a `ModelBuildException` at runtime, because there is no
+generated builder to dispatch to:
+
+```csharp
+// Throws at runtime: the concrete type came from reflection/config/a plugin, so the generator
+// never saw it and produced no builder.
+Type runtimeType = Type.GetType(typeNameFromConfig)!;
+object instance = Model.Create(runtimeType);
+```
+
+To make such a type buildable, give the generator a compile-time anchor — most simply by annotating
+the type (or naming it from your test assembly):
+
+```csharp
+[assembly: GenerateModelBuilder(typeof(MyApp.PluginPayload))]
+```
+
 Value-source types such as enums and primitives can be built as roots directly:
 
 ```csharp
