@@ -1201,10 +1201,93 @@ root type down to the failing member**, plus the captured build log.
 
 ### Remaining open
 
-*None. All design questions are resolved; what remains is prototype validation and the build-out
-in §13.*
+- **12.8 — Typed constructor invocation (`Model.Construct<T>().From(...)`).** *Proposed, not yet
+  built.* Today the only construction entry point is `Model.Create<T>(params object?[]? args)`: the
+  args are loosely typed `object?[]`, which **boxes** value-type arguments and allocates an array,
+  is matched at **runtime** (an unbuildable arg list throws `ModelBuildException` rather than failing
+  to compile), and gives **no per-type IntelliSense** — the generic `Create<T>` shows only
+  `params object?[]?`, never `T`'s actual constructor parameters or their xmldoc.
+
+  **Goal.** A typed, per-constructor entry point so that, for a given `T`, the editor offers exactly
+  `T`'s constructors (parameter names + copied ctor xmldoc), arguments are passed with their real
+  types (no boxing, compile-time arity/type validation), and the existing `Model.Create<T>()` stays
+  exactly as-is.
+
+  **Why the obvious shapes do not work (the constraints that force the design):**
+  - `Create<T>(string, string)` cannot have **per-`T`** parameters — a C# generic method has one
+    shared parameter list across every `T` (no C++-style specialization).
+  - Return-type-only overloads (`Person Create(string,string)` / `Address Create(string,string)`)
+    are illegal — overload resolution ignores return type, so two target types with the same ctor
+    signature collide (CS0111). The same `(string,string)` / single-`int` ctors are extremely
+    common, so this is the normal case, not a corner case.
+  - Overloads differing **only by generic constraint** (`where T : FirstType` vs `where T :
+    SecondType`) are also illegal — constraints are not part of the signature (CS0111). A constraint
+    *does* filter IntelliSense, but it cannot **multiply** one `(string)` overload to cover two
+    types separately.
+  - Therefore the disambiguating information (which concrete type) must live in a **type-specific
+    receiver symbol**, not in a type argument or a return type.
+
+  **Chosen shape: `Model.Construct<T>().From(ctorArgs)`.**
+  - `Construct<T>()` is a hand-written core method returning a `readonly struct Construction<T>` that
+    **builds nothing**. It is complete and bound on its own, so it is a valid **live-IDE generator
+    trigger** with no bootstrap gap (the generator keys off the closed `Construct<T>()` call exactly
+    as it keys off `Create<T>()` today; Roslyn runs generators in the editor, so the `.From`
+    overloads exist by the time the caret reaches `.From(`). This is the property the rejected
+    `Model.Create<T>(args)` (args are the unbound expression being typed) and `Model.<Type>.Create(`
+    (receiver unresolved until generated) both lacked.
+  - `.From(...)` is a **generated extension method keyed on the receiver** `Construction<T>` — one
+    overload per constructor of `T`, emitted into the consumer assembly with the constructor's
+    xmldoc copied via `IMethodSymbol.GetDocumentationCommentXml()`. Because the receiver is
+    `Construction<ThirdType>`, completion offers **only** `ThirdType`'s constructors; `FirstType`'s
+    `From(this Construction<FirstType>, …)` cannot appear. This resolves both collision cases:
+    different types with the same ctor signature differ by **receiver type**; multiple ctors on one
+    type differ by their (definitionally distinct) parameter lists.
+  - Rejected verbs: `With` (reads as mutation; near C# `with` expressions), `Using` (near `using`
+    directives/statements), `WithParams`. `From` reads front-to-back ("construct T **from** these
+    values"), has no keyword proximity.
+  - The complexity is **entirely generator-side**; the runtime core needs no new build machinery
+    **except** one public seam — `.From` is the first generated code that *starts* a build from the
+    consumer assembly, and context creation / `EnterRoot` / log rendering are `internal` today. A
+    single `public` helper (e.g. `Construction<T>.Execute(...)` wrapping context creation +
+    `EnterRoot` + the `try/finally` log render) keeps the widening contained to one method.
+
+  **Extensibility is preserved.** Every seam (mappings, typed + named custom value sources, ignore
+  rules, sibling/scoped-value consistency, logging) is consulted **inside `BuildContext`**, not at
+  the entry point, so they all apply automatically to the constructed object and its whole subgraph
+  — *provided* `Construction<T>` carries the `BuildConfiguration` + log sink. To compose with the
+  fluent chain (`Model.UsingModule<M>().Ignoring<…>().Construct<T>().From(…)`),
+  `IModelConfiguration` gains `Construct<T>()` seeded from the accumulated configuration;
+  `Model.Construct<T>()` returns an unconfigured one. A top-level mapping or root value source for
+  `T` itself is moot under `Construct` (you named a concrete `T` and chose construction) but still
+  applies to every nested member.
+
+  **Gating prerequisite — `Populate` must skip constructor-assigned members.** The whole feature is
+  incorrect without this. The generated `Populate` currently re-assigns **every** settable member
+  that is not ignore-ruled (`ShouldPopulate` consults ignore rules only), so it would immediately
+  overwrite the members the constructor just set:
+  `Model.Construct<Person>().From("Fred","Smith")` would `new Person("Fred","Smith")` and then
+  randomise `FirstName`/`LastName`. v8 had logic that detected a settable property matching a
+  constructor parameter by name/value and assumed the constructor set it (skipping the overwrite);
+  **this is absent in vNext.** The clean vNext replacement is compile-time, not v8's runtime
+  value-comparison: for a typed `.From` overload the generator already knows that constructor's
+  parameters, so it **omits** the name/type-matching members from that overload's populate loop
+  entirely. This makes the populate body per-constructor (a contained generator change) and is more
+  precise than v8 (no value-equality guessing). Interaction to record: an explicit `.From(...)` arg
+  therefore **overrides** any custom/built-in value source for that member (the member is skipped in
+  populate); nested members are unaffected.
+
+  **Related discrepancy to verify (separate from this feature).** The README's
+  *Constructor arguments and parameter matching* section states that ModelBuilder "matches
+  constructor parameters to properties of the same name and type so a freshly generated value does
+  not overwrite a value the constructor already assigned." The current generated `Populate` does
+  **not** implement this (it overwrites unconditionally except for ignore rules), and the generic
+  `Create` builds ctor args via `context.Build<…>` rather than from the passed `args`. Confirm
+  whether the doc is aspirational or whether member exclusion was intended to happen at generation
+  time (excluding ctor-bound members from `model.Members`) and is missing; the §12.8 prerequisite
+  would also resolve this for the typed path.
 
 ---
+
 
 ## 13. Suggested build-out order
 
