@@ -306,11 +306,98 @@ namespace ModelBuilder.Generator
                         property.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)));
             }
 
+            var allConstructors = ImmutableArray.CreateBuilder<ConstructorModel>();
+
+            foreach (var publicConstructor in type.InstanceConstructors)
+            {
+                if (publicConstructor.DeclaredAccessibility != Accessibility.Public)
+                {
+                    continue;
+                }
+
+                var parameters = ImmutableArray.CreateBuilder<MemberModel>();
+
+                foreach (var parameter in publicConstructor.Parameters)
+                {
+                    parameters.Add(
+                        new MemberModel(
+                            parameter.Name,
+                            parameter.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)));
+                }
+
+                allConstructors.Add(
+                    new ConstructorModel(
+                        new EquatableArray<MemberModel>(parameters.ToImmutable()),
+                        new EquatableArray<string>(RenderConstructorDoc(publicConstructor))));
+            }
+
             return new BuildableModel(
                 fullyQualifiedName,
                 CreateName(fullyQualifiedName, "Builder", builderNames),
                 new EquatableArray<MemberModel>(ctorParameters.ToImmutable()),
-                new EquatableArray<MemberModel>(members.ToImmutable()));
+                new EquatableArray<MemberModel>(members.ToImmutable()),
+                new EquatableArray<ConstructorModel>(allConstructors.ToImmutable()));
+        }
+
+        private static ImmutableArray<string> RenderConstructorDoc(IMethodSymbol constructor)
+        {
+            var xml = constructor.GetDocumentationCommentXml();
+
+            if (string.IsNullOrWhiteSpace(xml))
+            {
+                return ImmutableArray<string>.Empty;
+            }
+
+            System.Xml.Linq.XElement root;
+
+            try
+            {
+                root = System.Xml.Linq.XElement.Parse(xml);
+            }
+            catch (System.Xml.XmlException)
+            {
+                return ImmutableArray<string>.Empty;
+            }
+
+            var lines = ImmutableArray.CreateBuilder<string>();
+
+            var summary = root.Element("summary");
+
+            if (summary != null)
+            {
+                var text = Normalize(summary.Value);
+
+                if (text.Length > 0)
+                {
+                    lines.Add("/// <summary>");
+                    lines.Add("/// " + Escape(text));
+                    lines.Add("/// </summary>");
+                }
+            }
+
+            foreach (var param in root.Elements("param"))
+            {
+                var name = param.Attribute("name")?.Value;
+
+                if (string.IsNullOrEmpty(name))
+                {
+                    continue;
+                }
+
+                lines.Add("/// <param name=\"" + name + "\">" + Escape(Normalize(param.Value)) + "</param>");
+            }
+
+            return lines.ToImmutable();
+        }
+
+        private static string Normalize(string value)
+        {
+            return string.Join(" ", value.Split(new[] { '\r', '\n', '\t', ' ' }, System.StringSplitOptions.RemoveEmptyEntries));
+        }
+
+        private static string Escape(string value)
+        {
+            return value.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
         }
 
         private static string CreateName(string fullyQualifiedName, string suffix, HashSet<string> usedNames)

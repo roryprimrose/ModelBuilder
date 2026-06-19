@@ -53,6 +53,12 @@ namespace ModelBuilder
         }
 
         /// <inheritdoc />
+        public Construction<T> Construct<T>()
+        {
+            return new Construction<T>(_configuration, _logSink);
+        }
+
+        /// <inheritdoc />
         public IModelConfiguration AddValueSource<T>(IValueSource<T> source)
         {
             _configuration.AddValueSource(source);

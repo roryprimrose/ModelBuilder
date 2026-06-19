@@ -1199,10 +1199,8 @@ root type down to the failing member**, plus the captured build log.
   catalogue with stable IDs, actionable messages, suggested fixes, and code-fix providers where
   practical. Quality of diagnostics is treated as a first-class deliverable, not a nicety.
 
-### Remaining open
-
-- **12.8 — Typed constructor invocation (`Model.Construct<T>().From(...)`).** *Proposed, not yet
-  built.* Today the only construction entry point is `Model.Create<T>(params object?[]? args)`: the
+- **12.8 — Typed constructor invocation (`Model.Construct<T>().From(...)`). Resolved — implemented.**
+  Today `Model.Create<T>(params object?[]? args)` is the only construction entry point: the
   args are loosely typed `object?[]`, which **boxes** value-type arguments and allocates an array,
   is matched at **runtime** (an unbuildable arg list throws `ModelBuildException` rather than failing
   to compile), and gives **no per-type IntelliSense** — the generic `Create<T>` shows only
@@ -1236,20 +1234,32 @@ root type down to the failing member**, plus the captured build log.
     `Model.Create<T>(args)` (args are the unbound expression being typed) and `Model.<Type>.Create(`
     (receiver unresolved until generated) both lacked.
   - `.From(...)` is a **generated extension method keyed on the receiver** `Construction<T>` — one
-    overload per constructor of `T`, emitted into the consumer assembly with the constructor's
-    xmldoc copied via `IMethodSymbol.GetDocumentationCommentXml()`. Because the receiver is
-    `Construction<ThirdType>`, completion offers **only** `ThirdType`'s constructors; `FirstType`'s
+    overload per **public** constructor of `T`, emitted with the constructor's xmldoc copied via
+    `IMethodSymbol.GetDocumentationCommentXml()`. Because the receiver is `Construction<ThirdType>`,
+    completion offers **only** `ThirdType`'s constructors; `FirstType`'s
     `From(this Construction<FirstType>, …)` cannot appear. This resolves both collision cases:
     different types with the same ctor signature differ by **receiver type**; multiple ctors on one
-    type differ by their (definitionally distinct) parameter lists.
+    type differ by their (definitionally distinct) parameter lists. Because the typed args are
+    supplied by the caller, the **non-selected** constructors' parameter types do not need to be
+    buildable, so collecting all public constructors for emission does **not** expand the build
+    graph.
+  - **Discoverability (resolved: per-calling-namespace emission).** An extension method is only
+    offered when its containing static class's namespace is imported. Rather than require the
+    consumer to add a `using` (poor discovery) or emit a `global using` (would force the consumer to
+    compile with C# 10+), the generator captures the **namespace of each `Construct<T>()` call site**
+    and emits a `From` extension class **into that same namespace**, so the overloads are in scope
+    with no consumer import and **no `LangVersion` floor** — the broadest, safest compatibility. The
+    extension classes are emitted into the **single** generated file (additional namespace blocks),
+    preserving the one-file invariant.
   - Rejected verbs: `With` (reads as mutation; near C# `with` expressions), `Using` (near `using`
     directives/statements), `WithParams`. `From` reads front-to-back ("construct T **from** these
     values"), has no keyword proximity.
   - The complexity is **entirely generator-side**; the runtime core needs no new build machinery
     **except** one public seam — `.From` is the first generated code that *starts* a build from the
     consumer assembly, and context creation / `EnterRoot` / log rendering are `internal` today. A
-    single `public` helper (e.g. `Construction<T>.Execute(...)` wrapping context creation +
-    `EnterRoot` + the `try/finally` log render) keeps the widening contained to one method.
+    single `public` helper, `Construction<T>.Execute(Func<IBuildContext, T> build)`, wraps context
+    creation + `EnterRoot` + the `try/finally` log render, keeping the widening contained to one
+    method.
 
   **Extensibility is preserved.** Every seam (mappings, typed + named custom value sources, ignore
   rules, sibling/scoped-value consistency, logging) is consulted **inside `BuildContext`**, not at
@@ -1261,32 +1271,33 @@ root type down to the failing member**, plus the captured build log.
   `T` itself is moot under `Construct` (you named a concrete `T` and chose construction) but still
   applies to every nested member.
 
-  **Gating prerequisite — `Populate` must skip constructor-assigned members.** The whole feature is
-  incorrect without this. The generated `Populate` currently re-assigns **every** settable member
-  that is not ignore-ruled (`ShouldPopulate` consults ignore rules only), so it would immediately
-  overwrite the members the constructor just set:
-  `Model.Construct<Person>().From("Fred","Smith")` would `new Person("Fred","Smith")` and then
-  randomise `FirstName`/`LastName`. v8 had logic that detected a settable property matching a
-  constructor parameter by name/value and assumed the constructor set it (skipping the overwrite);
-  **this is absent in vNext.** The clean vNext replacement is compile-time, not v8's runtime
-  value-comparison: for a typed `.From` overload the generator already knows that constructor's
-  parameters, so it **omits** the name/type-matching members from that overload's populate loop
-  entirely. This makes the populate body per-constructor (a contained generator change) and is more
-  precise than v8 (no value-equality guessing). Interaction to record: an explicit `.From(...)` arg
-  therefore **overrides** any custom/built-in value source for that member (the member is skipped in
-  populate); nested members are unaffected.
+  **Constructor-assigned member suppression (resolved, applied to both paths).** The generated
+  population must not re-randomise a member the constructor just set. The clean vNext rule is
+  compile-time, not v8's runtime value-comparison: for a given constructor the generator knows its
+  parameters, so it **omits from that construction's population** any settable member whose name
+  matches a constructor parameter (case-insensitive) **and** whose type matches. This is applied
+  **per construction path**:
+  - each `.From` overload populates the complement of *its* constructor's members;
+  - the existing `Create<T>()` path populates the complement of the **selected** constructor's
+    members (this also corrects the long-standing README claim that ctor-assigned members are not
+    overwritten — previously false);
+  - the standalone `Model.Populate(instance)` path is unchanged and still assigns **all** settable
+    members, because no construction happened there.
 
-  **Related discrepancy to verify (separate from this feature).** The README's
-  *Constructor arguments and parameter matching* section states that ModelBuilder "matches
-  constructor parameters to properties of the same name and type so a freshly generated value does
-  not overwrite a value the constructor already assigned." The current generated `Populate` does
-  **not** implement this (it overwrites unconditionally except for ignore rules), and the generic
-  `Create` builds ctor args via `context.Build<…>` rather than from the passed `args`. Confirm
-  whether the doc is aspirational or whether member exclusion was intended to happen at generation
-  time (excluding ctor-bound members from `model.Members`) and is missing; the §12.8 prerequisite
-  would also resolve this for the typed path.
+  Constructor-set members are still **recorded as siblings** (under their property name) before the
+  complement is populated, so sibling-derived values (e.g. `Email` from `FirstName`/`LastName`) stay
+  consistent with the supplied constructor arguments. Interaction to record: an explicit `.From(...)`
+  argument therefore **overrides** any custom/built-in value source for that member (the member is
+  skipped in population); nested members are unaffected.
 
 ---
+
+### Remaining open
+
+*None. All design questions are resolved.*
+
+---
+
 
 
 ## 13. Suggested build-out order

@@ -30,6 +30,7 @@ discovered at compile time and gets a dedicated builder, so ModelBuilder:
 
 - [Creating a model](#creating-a-model)
   * [Constructor arguments and parameter matching](#constructor-arguments-and-parameter-matching)
+  * [Typed construction](#typed-construction)
   * [Ignoring members](#ignoring-members)
   * [Mapping abstract and interface types](#mapping-abstract-and-interface-types)
   * [Custom value sources](#custom-value-sources)
@@ -70,7 +71,7 @@ generated builder to dispatch to:
 ```csharp
 // Throws at runtime: the concrete type came from reflection/config/a plugin, so the generator
 // never saw it and produced no builder.
-Type runtimeType = Type.GetType(typeNameFromConfig)!;
+Type runtimeType = Type.GetType("MyApp.PluginPayload")!;
 object instance = Model.Create(runtimeType);
 ```
 
@@ -101,6 +102,36 @@ properties of the same name and type so a freshly generated value does not overw
 constructor already assigned. Constructor selection prefers a parameterless constructor, then the
 constructor with the fewest parameters, unless you supply arguments that match a specific
 constructor.
+
+### Typed construction
+
+`Model.Create<T>(params object?[]? args)` matches its arguments at runtime, which boxes value types
+and only fails when the build runs. When you want a specific constructor with **typed** arguments,
+use `Model.Construct<T>().From(...)`:
+
+```csharp
+var person = Model.Construct<Person>().From("Fred", "Smith");
+```
+
+The generator emits a `From` overload for every public constructor of `T`, so the editor offers
+exactly that type's constructors — with the real parameter names and the constructor's own
+documentation copied across. Because the arguments are strongly typed:
+
+- value-type arguments are **not boxed** and there is no `object?[]` array,
+- a wrong argument type or count is a **compile-time error**, not a runtime exception,
+- members assigned by the chosen constructor are **not** re-populated with random values (they keep
+  the values you passed, and sibling-derived members such as `Email` stay consistent with them).
+
+Every other member is still populated as usual, and the whole configuration chain composes with it:
+
+```csharp
+var order = Model.Ignoring<Order>(x => x.InternalId)
+    .Construct<Order>()
+    .From(customerId);
+```
+
+The `From` overloads are generated into the namespace of the call site, so they are available with
+no extra `using`. They appear in the editor as soon as `Model.Construct<T>()` is written.
 
 ### Ignoring members
 

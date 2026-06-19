@@ -12,12 +12,14 @@ namespace ModelBuilder.Generator
             string fullyQualifiedName,
             string builderName,
             EquatableArray<MemberModel> constructorParameters,
-            EquatableArray<MemberModel> members)
+            EquatableArray<MemberModel> members,
+            EquatableArray<ConstructorModel> allConstructors)
         {
             FullyQualifiedName = fullyQualifiedName;
             BuilderName = builderName;
             ConstructorParameters = constructorParameters;
             Members = members;
+            AllConstructors = allConstructors;
         }
 
         public bool Equals(BuildableModel other)
@@ -25,7 +27,8 @@ namespace ModelBuilder.Generator
             return string.Equals(FullyQualifiedName, other.FullyQualifiedName, StringComparison.Ordinal)
                    && string.Equals(BuilderName, other.BuilderName, StringComparison.Ordinal)
                    && ConstructorParameters.Equals(other.ConstructorParameters)
-                   && Members.Equals(other.Members);
+                   && Members.Equals(other.Members)
+                   && AllConstructors.Equals(other.AllConstructors);
         }
 
         public override bool Equals(object? obj)
@@ -42,10 +45,13 @@ namespace ModelBuilder.Generator
                 hash = hash * 397 ^ StringComparer.Ordinal.GetHashCode(BuilderName);
                 hash = hash * 397 ^ ConstructorParameters.GetHashCode();
                 hash = hash * 397 ^ Members.GetHashCode();
+                hash = hash * 397 ^ AllConstructors.GetHashCode();
 
                 return hash;
             }
         }
+
+        public EquatableArray<ConstructorModel> AllConstructors { get; }
 
         public string BuilderName { get; }
 

@@ -75,6 +75,24 @@ namespace ModelBuilder
         }
 
         /// <summary>
+        ///     Begins a typed construction of <typeparamref name="T" />. Supply constructor arguments
+        ///     through the generated <c>From</c> extension method on the returned handle, for example
+        ///     <c>Model.Construct&lt;Person&gt;().From("Fred", "Smith")</c>.
+        /// </summary>
+        /// <typeparam name="T">The type to construct.</typeparam>
+        /// <returns>A handle whose generated <c>From</c> overloads name the constructors of <typeparamref name="T" />.</returns>
+        /// <remarks>
+        ///     The <c>From</c> overloads are generated for every public constructor of
+        ///     <typeparamref name="T" /> at the call site, with typed parameters (no boxing, compile-time
+        ///     validation) and the constructor's documentation copied across. Members assigned by the
+        ///     chosen constructor are not re-populated with random values.
+        /// </remarks>
+        public static Construction<T> Construct<T>()
+        {
+            return new Construction<T>(null, null);
+        }
+
+        /// <summary>
         ///     Begins a configured build that registers a custom value source for every member and root of
         ///     type <typeparamref name="T" />.
         /// </summary>
@@ -193,6 +211,16 @@ namespace ModelBuilder
             using (context.EnterRoot(typeof(T)))
             {
                 return builder.Populate(context, instance);
+            }
+        }
+
+        internal static T ConstructWith<T>(Func<IBuildContext, T> build, BuildConfiguration? configuration, IBuildLog? log)
+        {
+            var context = NewContext(configuration, log);
+
+            using (context.EnterRoot(typeof(T)))
+            {
+                return build(context);
             }
         }
 

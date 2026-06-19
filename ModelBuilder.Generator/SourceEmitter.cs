@@ -1,5 +1,7 @@
-﻿namespace ModelBuilder.Generator
+namespace ModelBuilder.Generator
 {
+    using System;
+    using System.Collections.Generic;
     using System.Text;
 
     /// <summary>
@@ -13,10 +15,13 @@
 
         public static string Emit(GenerationModel model)
         {
-            return Emit(model, hasModuleInitializer: true);
+            return Emit(model, Array.Empty<ConstructionRequest>(), hasModuleInitializer: true);
         }
 
-        public static string Emit(GenerationModel model, bool hasModuleInitializer)
+        public static string Emit(
+            GenerationModel model,
+            IReadOnlyList<ConstructionRequest> constructionRequests,
+            bool hasModuleInitializer)
         {
             var builder = new StringBuilder();
 
@@ -53,6 +58,8 @@
             EmitRegistration(builder, model);
 
             builder.AppendLine("}");
+
+            EmitConstructionExtensions(builder, model, constructionRequests);
 
             return builder.ToString();
         }
@@ -206,13 +213,57 @@
             builder.Append(Indent).AppendLine("    {");
             builder.Append(Indent).AppendLine($"        using (context.Log.BeginScope(global::ModelBuilder.BuildLogEntryKind.CreateInstance, typeof({type})))");
             builder.Append(Indent).AppendLine("        {");
-            builder.Append(Indent).Append("            var instance = new ").Append(type).Append('(');
-            EmitConstructorArguments(builder, model);
-            builder.AppendLine(");");
-            builder.Append(Indent).AppendLine("            return Populate(context, instance, args);");
+
+            var selectedParameters = model.ConstructorParameters;
+
+            if (selectedParameters.Count == 0)
+            {
+                builder.Append(Indent).Append("            var instance = new ").Append(type).AppendLine("();");
+                builder.Append(Indent).AppendLine("            return Populate(context, instance, args);");
+            }
+            else
+            {
+                builder.Append(Indent).Append("            var instance = new ").Append(type).Append('(');
+
+                for (var index = 0; index < selectedParameters.Count; index++)
+                {
+                    var parameter = selectedParameters[index];
+
+                    if (index > 0)
+                    {
+                        builder.Append(", ");
+                    }
+
+                    builder.Append($"context.Build<{parameter.TypeName}>(typeof({type}), \"{parameter.Name}\")");
+                }
+
+                builder.AppendLine(");");
+                builder.Append(Indent).AppendLine("            return PopulateAfterConstruction(context, instance);");
+            }
+
             builder.Append(Indent).AppendLine("        }");
             builder.Append(Indent).AppendLine("    }");
             builder.AppendLine();
+
+            if (selectedParameters.Count > 0)
+            {
+                // Populates the members not assigned by the selected constructor, recording the
+                // constructor-assigned members as siblings first so derived values stay consistent.
+                builder.Append(Indent).AppendLine($"    private {type} PopulateAfterConstruction(global::ModelBuilder.IBuildContext context, {type} instance)");
+                builder.Append(Indent).AppendLine("    {");
+                builder.Append(Indent).AppendLine($"        using (context.Log.BeginScope(global::ModelBuilder.BuildLogEntryKind.PopulateInstance, typeof({type})))");
+                builder.Append(Indent).AppendLine("        using (context.EnterSiblingScope())");
+                builder.Append(Indent).AppendLine("        {");
+
+                EmitConstructorSiblingRecords(builder, Indent + "            ", model.Members, selectedParameters);
+                EmitComplementMembers(builder, Indent + "            ", type, model.Members, selectedParameters);
+
+                builder.Append(Indent).AppendLine("        }");
+                builder.AppendLine();
+                builder.Append(Indent).AppendLine("        return instance;");
+                builder.Append(Indent).AppendLine("    }");
+                builder.AppendLine();
+            }
 
             // Generic Populate
             builder.Append(Indent).AppendLine($"    public {type} Populate(global::ModelBuilder.IBuildContext context, {type} instance, object?[]? args = null)");
@@ -251,20 +302,211 @@
             builder.Append(Indent).AppendLine("}");
         }
 
-        private static void EmitConstructorArguments(StringBuilder builder, BuildableModel model)
+        private static void EmitConstructorSiblingRecords(
+            StringBuilder builder,
+            string indent,
+            EquatableArray<MemberModel> members,
+            EquatableArray<MemberModel> ctorParameters)
         {
+            foreach (var member in members)
+            {
+                if (MatchingParameterIndex(member, ctorParameters) < 0)
+                {
+                    continue;
+                }
+
+                builder.Append(indent).AppendLine($"context.RecordSibling(\"{member.Name}\", instance.{member.Name});");
+            }
+        }
+
+        private static void EmitComplementMembers(
+            StringBuilder builder,
+            string indent,
+            string type,
+            EquatableArray<MemberModel> members,
+            EquatableArray<MemberModel> ctorParameters)
+        {
+            foreach (var member in members)
+            {
+                if (MatchingParameterIndex(member, ctorParameters) >= 0)
+                {
+                    continue;
+                }
+
+                builder.Append(indent).AppendLine($"if (context.ShouldPopulate(typeof({type}), \"{member.Name}\", typeof({member.TypeName})))");
+                builder.Append(indent).AppendLine("{");
+                builder.Append(indent).Append(Indent).AppendLine($"instance.{member.Name} = context.Build<{member.TypeName}>(typeof({type}), \"{member.Name}\");");
+                builder.Append(indent).Append(Indent).AppendLine($"context.RecordSibling(\"{member.Name}\", instance.{member.Name});");
+                builder.Append(indent).AppendLine("}");
+            }
+        }
+
+        private static int MatchingParameterIndex(MemberModel member, EquatableArray<MemberModel> ctorParameters)
+        {
+            for (var index = 0; index < ctorParameters.Count; index++)
+            {
+                var parameter = ctorParameters[index];
+
+                if (string.Equals(parameter.Name, member.Name, StringComparison.OrdinalIgnoreCase)
+                    && string.Equals(parameter.TypeName, member.TypeName, StringComparison.Ordinal))
+                {
+                    return index;
+                }
+            }
+
+            return -1;
+        }
+
+        private static void EmitConstructionExtensions(
+            StringBuilder builder,
+            GenerationModel model,
+            IReadOnlyList<ConstructionRequest> constructionRequests)
+        {
+            if (constructionRequests.Count == 0)
+            {
+                return;
+            }
+
+            var modelsByName = new Dictionary<string, BuildableModel>(StringComparer.Ordinal);
+
+            foreach (var buildable in model.Builders)
+            {
+                modelsByName[buildable.FullyQualifiedName] = buildable;
+            }
+
+            // Group the requested types by the namespace they were constructed in, so each namespace
+            // gets one extension class whose From overloads are in scope without any consumer import.
+            var byNamespace = new Dictionary<string, List<BuildableModel>>(StringComparer.Ordinal);
+
+            foreach (var request in constructionRequests)
+            {
+                if (modelsByName.TryGetValue(request.TypeFullName, out var buildable) == false)
+                {
+                    continue;
+                }
+
+                if (byNamespace.TryGetValue(request.CallingNamespace, out var list) == false)
+                {
+                    list = new List<BuildableModel>();
+                    byNamespace[request.CallingNamespace] = list;
+                }
+
+                if (list.Contains(buildable) == false)
+                {
+                    list.Add(buildable);
+                }
+            }
+
+            foreach (var pair in byNamespace)
+            {
+                EmitConstructionExtensionClass(builder, pair.Key, pair.Value);
+            }
+        }
+
+        private static void EmitConstructionExtensionClass(
+            StringBuilder builder,
+            string callingNamespace,
+            List<BuildableModel> types)
+        {
+            var hasNamespace = string.IsNullOrEmpty(callingNamespace) == false;
+            var classIndent = hasNamespace ? Indent : string.Empty;
+
+            builder.AppendLine();
+
+            if (hasNamespace)
+            {
+                builder.AppendLine($"namespace {callingNamespace}");
+                builder.AppendLine("{");
+            }
+
+            builder.Append(classIndent).AppendLine("[global::System.CodeDom.Compiler.GeneratedCode(\"ModelBuilder.Generator\", null)]");
+            builder.Append(classIndent).AppendLine("internal static class ModelBuilderConstructionExtensions");
+            builder.Append(classIndent).AppendLine("{");
+
             var first = true;
 
-            foreach (var parameter in model.ConstructorParameters)
+            foreach (var model in types)
             {
-                if (first == false)
+                foreach (var constructor in model.AllConstructors)
+                {
+                    if (first == false)
+                    {
+                        builder.AppendLine();
+                    }
+
+                    EmitFromOverload(builder, classIndent + Indent, model, constructor);
+                    first = false;
+                }
+            }
+
+            builder.Append(classIndent).AppendLine("}");
+
+            if (hasNamespace)
+            {
+                builder.AppendLine("}");
+            }
+        }
+
+        private static void EmitFromOverload(
+            StringBuilder builder,
+            string indent,
+            BuildableModel model,
+            ConstructorModel constructor)
+        {
+            var type = model.FullyQualifiedName;
+            var parameters = constructor.Parameters;
+
+            foreach (var docLine in constructor.DocLines)
+            {
+                builder.Append(indent).AppendLine(docLine);
+            }
+
+            builder.Append(indent).Append($"public static {type} From(this global::ModelBuilder.Construction<{type}> construction");
+
+            for (var index = 0; index < parameters.Count; index++)
+            {
+                var parameter = parameters[index];
+
+                builder.Append($", {parameter.TypeName} {parameter.Name}");
+            }
+
+            builder.AppendLine(")");
+            builder.Append(indent).AppendLine("{");
+
+            var body = indent + Indent;
+
+            builder.Append(body).AppendLine("return construction.Execute(context =>");
+            builder.Append(body).AppendLine("{");
+
+            var lambda = body + Indent;
+
+            builder.Append(lambda).AppendLine($"using (context.Log.BeginScope(global::ModelBuilder.BuildLogEntryKind.CreateInstance, typeof({type})))");
+            builder.Append(lambda).AppendLine("using (context.EnterSiblingScope())");
+            builder.Append(lambda).AppendLine("{");
+
+            var inner = lambda + Indent;
+
+            builder.Append(inner).Append($"var instance = new {type}(");
+
+            for (var index = 0; index < parameters.Count; index++)
+            {
+                if (index > 0)
                 {
                     builder.Append(", ");
                 }
 
-                builder.Append($"context.Build<{parameter.TypeName}>(typeof({model.FullyQualifiedName}), \"{parameter.Name}\")");
-                first = false;
+                builder.Append(parameters[index].Name);
             }
+
+            builder.AppendLine(");");
+
+            EmitConstructorSiblingRecords(builder, inner, model.Members, parameters);
+            EmitComplementMembers(builder, inner, type, model.Members, parameters);
+
+            builder.Append(inner).AppendLine("return instance;");
+            builder.Append(lambda).AppendLine("}");
+            builder.Append(body).AppendLine("});");
+            builder.Append(indent).AppendLine("}");
         }
 
         private static void EmitRegistration(StringBuilder builder, GenerationModel model)

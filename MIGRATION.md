@@ -38,6 +38,15 @@ These keep their shape, so the bulk of a typical test project compiles unchanged
 - `Model.Mapping<TSource, TTarget>()`
 - `Model.WriteLog(sink)`
 
+## New — typed construction
+
+`Model.Create<T>(args)` still works, but its `params object?[]` arguments box value types and are
+matched at runtime. vNext adds `Model.Construct<T>().From(...)`, a generated typed entry point with a
+`From` overload per public constructor: strongly-typed arguments (no boxing, compile-time
+validation), the constructor's documentation surfaced in the editor, and constructor-assigned
+members left untouched by population. See the README *Typed construction* section.
+
+
 ## Mapped — mechanical replacement
 
 | v8 API | vNext replacement | Notes |

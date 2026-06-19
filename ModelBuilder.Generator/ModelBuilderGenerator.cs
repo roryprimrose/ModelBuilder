@@ -44,6 +44,8 @@ namespace ModelBuilder.Generator
             bool hasModuleInitializer)
         {
             var distinct = new Dictionary<string, INamedTypeSymbol>();
+            var constructionRequests = new List<ConstructionRequest>();
+            var seenRequests = new HashSet<string>();
 
             foreach (var capture in captures)
             {
@@ -54,7 +56,19 @@ namespace ModelBuilder.Generator
 
                 ReportRootDiagnostics(context, capture);
 
-                distinct[capture.Symbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)] = capture.Symbol;
+                var typeName = capture.Symbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+
+                distinct[typeName] = capture.Symbol;
+
+                if (capture.ConstructNamespace is not null)
+                {
+                    var key = capture.ConstructNamespace + "|" + typeName;
+
+                    if (seenRequests.Add(key))
+                    {
+                        constructionRequests.Add(new ConstructionRequest(typeName, capture.ConstructNamespace));
+                    }
+                }
             }
 
             if (distinct.Count == 0)
@@ -69,7 +83,9 @@ namespace ModelBuilder.Generator
                 return;
             }
 
-            context.AddSource("ModelBuilderGenerated.g.cs", SourceEmitter.Emit(models, hasModuleInitializer));
+            context.AddSource(
+                "ModelBuilderGenerated.g.cs",
+                SourceEmitter.Emit(models, constructionRequests, hasModuleInitializer));
         }
 
         private static void ReportRootDiagnostics(SourceProductionContext context, RootCapture capture)
@@ -149,6 +165,25 @@ namespace ModelBuilder.Generator
                 return new RootCapture(method.TypeArguments[1] as INamedTypeSymbol, invocation.GetLocation());
             }
 
+            if (method.Name == "Construct")
+            {
+                // Model.Construct<T>() makes T a build root and requests typed From overloads in the
+                // namespace of this call site.
+                if (method.TypeArguments.Length != 1)
+                {
+                    return default;
+                }
+
+                var enclosing = context.SemanticModel.GetEnclosingSymbol(invocation.SpanStart, token);
+                var ns = enclosing?.ContainingNamespace;
+                var namespaceName = ns is null || ns.IsGlobalNamespace ? string.Empty : ns.ToDisplayString();
+
+                return new RootCapture(
+                    method.TypeArguments[0] as INamedTypeSymbol,
+                    invocation.GetLocation(),
+                    constructNamespace: namespaceName);
+            }
+
             if (method.Name != "Create" && method.Name != "Populate" && method.Name != "Ignoring")
             {
                 return default;
@@ -198,19 +233,22 @@ namespace ModelBuilder.Generator
             {
                 Expression: MemberAccessExpressionSyntax
                 {
-                    Name.Identifier.ValueText: "Create" or "Populate" or "Mapping" or "Ignoring"
+                    Name.Identifier.ValueText: "Create" or "Populate" or "Mapping" or "Ignoring" or "Construct"
                 }
             };
         }
 
         private readonly struct RootCapture
         {
-            public RootCapture(INamedTypeSymbol? symbol, Location location, bool isTypeOfRoot = false)
+            public RootCapture(INamedTypeSymbol? symbol, Location location, bool isTypeOfRoot = false, string? constructNamespace = null)
             {
                 Symbol = symbol;
                 Location = location;
                 IsTypeOfRoot = isTypeOfRoot;
+                ConstructNamespace = constructNamespace;
             }
+
+            public string? ConstructNamespace { get; }
 
             public bool IsTypeOfRoot { get; }
 

@@ -39,6 +39,15 @@ namespace ModelBuilder
             where TTarget : TSource;
 
         /// <summary>
+        ///     Begins a typed construction of <typeparamref name="T" /> using this configuration. Supply
+        ///     constructor arguments through the generated <c>From</c> extension method on the returned
+        ///     handle.
+        /// </summary>
+        /// <typeparam name="T">The type to construct.</typeparam>
+        /// <returns>A handle whose generated <c>From</c> overloads name the constructors of <typeparamref name="T" />.</returns>
+        Construction<T> Construct<T>();
+
+        /// <summary>
         ///     Registers a custom value source for every member and root of type <typeparamref name="T" />.
         /// </summary>
         /// <typeparam name="T">The type the value source produces.</typeparam>
