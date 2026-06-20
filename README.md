@@ -96,8 +96,9 @@ automatically — you do not pass constructor arguments to `Create`. Constructor
 parameterless constructor, then the constructor with the fewest parameters.
 
 When a type is built through a constructor, ModelBuilder matches constructor parameters to
-properties of the same name and type, so a member the constructor already assigned is not
-overwritten with a fresh random value.
+properties of the same name (case-insensitive) and type **at compile time**, and the matched members
+are simply left out of the generated population code. A value the constructor assigned is therefore
+never overwritten — there is no runtime value comparison.
 
 To supply specific constructor arguments yourself, use [typed construction](#typed-construction).
 
