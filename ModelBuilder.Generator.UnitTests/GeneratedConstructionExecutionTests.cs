@@ -1,4 +1,4 @@
-namespace ModelBuilder.Generator.UnitTests
+﻿namespace ModelBuilder.Generator.UnitTests
 {
     using System;
     using System.Reflection;
@@ -12,6 +12,8 @@ namespace ModelBuilder.Generator.UnitTests
         public void ConstructFromUsesSuppliedConstructorArgumentsAndPopulatesOtherMembers()
         {
             const string source = @"
+using ModelBuilder;
+
 namespace Sample
 {
     public sealed class Person
@@ -55,6 +57,8 @@ namespace Sample
         public void ConstructFromEmitsAnOverloadPerPublicConstructor()
         {
             const string source = @"
+using ModelBuilder;
+
 namespace Sample
 {
     public sealed class Money
@@ -98,6 +102,8 @@ namespace Sample
         public void ConstructFromCopiesConstructorXmlDocumentation()
         {
             const string source = @"
+using ModelBuilder;
+
 namespace Sample
 {
     public sealed class Account
@@ -128,6 +134,8 @@ namespace Sample
         public void CreateEmitsConstructorSuppressionForParameterisedType()
         {
             const string source = @"
+using ModelBuilder;
+
 namespace Sample
 {
     public sealed class Person
@@ -159,6 +167,8 @@ namespace Sample
         public void ConstructFromDerivesMemberFromConstructorOnlyParameters()
         {
             const string source = @"
+using ModelBuilder;
+
 namespace Sample
 {
     public sealed class Contact
@@ -194,6 +204,8 @@ namespace Sample
         public void CreateRecordsConstructorParametersAsSiblings()
         {
             const string source = @"
+using ModelBuilder;
+
 namespace Sample
 {
     public sealed class Contact
@@ -233,6 +245,8 @@ namespace Sample
         public void ConstructFromRejectsWrongArgumentTypeAtCompileTime()
         {
             const string source = @"
+using ModelBuilder;
+
 namespace Sample
 {
     public sealed class Person
@@ -252,6 +266,47 @@ namespace Sample
 
             // The typed From overload gives compile-time validation: an int does not satisfy string.
             harness.CompilationErrors.Should().NotBeEmpty();
+        }
+
+        [Fact]
+        public void ConstructFromResolvesViaUnqualifiedModelAndModelBuilderNamespace()
+        {
+            // The realistic call shape: Model used unqualified under `using ModelBuilder;`. The generated
+            // From extension lives in the ModelBuilder namespace, so the same using brings it into scope
+            // with no per-namespace emission.
+            const string source = @"
+using ModelBuilder;
+
+namespace Sample
+{
+    public sealed class Person
+    {
+        public Person(string firstName, string lastName) { FirstName = firstName; LastName = lastName; }
+
+        public string FirstName { get; set; }
+
+        public string LastName { get; set; }
+    }
+
+    public static class Caller
+    {
+        public static Person Build() => Model.Construct<Person>().From(""Fred"", ""Smith"");
+    }
+}";
+
+            var harness = GeneratorTestHarness.Run(source);
+            harness.CompilationErrors.Should().BeEmpty();
+
+            // A single extension class is emitted into the ModelBuilder namespace (not per calling namespace).
+            harness.GeneratedSources[0].Should().Contain("namespace ModelBuilder");
+            harness.GeneratedSources[0].Should().NotContain("namespace Sample");
+
+            var assembly = harness.EmitAndLoad();
+            var personType = assembly.GetType("Sample.Person", throwOnError: true)!;
+            var person = InvokeCaller(assembly);
+
+            personType.GetProperty("FirstName")!.GetValue(person).Should().Be("Fred");
+            personType.GetProperty("LastName")!.GetValue(person).Should().Be("Smith");
         }
 
         private static object InvokeCaller(Assembly assembly)

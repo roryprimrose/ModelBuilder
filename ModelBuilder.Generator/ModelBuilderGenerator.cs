@@ -44,7 +44,7 @@ namespace ModelBuilder.Generator
             bool hasModuleInitializer)
         {
             var distinct = new Dictionary<string, INamedTypeSymbol>();
-            var constructionRequests = new List<ConstructionRequest>();
+            var constructionTypeNames = new List<string>();
             var seenRequests = new HashSet<string>();
 
             foreach (var capture in captures)
@@ -60,14 +60,9 @@ namespace ModelBuilder.Generator
 
                 distinct[typeName] = capture.Symbol;
 
-                if (capture.ConstructNamespace is not null)
+                if (capture.IsConstructRoot && seenRequests.Add(typeName))
                 {
-                    var key = capture.ConstructNamespace + "|" + typeName;
-
-                    if (seenRequests.Add(key))
-                    {
-                        constructionRequests.Add(new ConstructionRequest(typeName, capture.ConstructNamespace));
-                    }
+                    constructionTypeNames.Add(typeName);
                 }
             }
 
@@ -85,7 +80,7 @@ namespace ModelBuilder.Generator
 
             context.AddSource(
                 "ModelBuilderGenerated.g.cs",
-                SourceEmitter.Emit(models, constructionRequests, hasModuleInitializer));
+                SourceEmitter.Emit(models, constructionTypeNames, hasModuleInitializer));
         }
 
         private static void ReportRootDiagnostics(SourceProductionContext context, RootCapture capture)
@@ -167,21 +162,16 @@ namespace ModelBuilder.Generator
 
             if (method.Name == "Construct")
             {
-                // Model.Construct<T>() makes T a build root and requests typed From overloads in the
-                // namespace of this call site.
+                // Model.Construct<T>() makes T a build root and requests typed From overloads.
                 if (method.TypeArguments.Length != 1)
                 {
                     return default;
                 }
 
-                var enclosing = context.SemanticModel.GetEnclosingSymbol(invocation.SpanStart, token);
-                var ns = enclosing?.ContainingNamespace;
-                var namespaceName = ns is null || ns.IsGlobalNamespace ? string.Empty : ns.ToDisplayString();
-
                 return new RootCapture(
                     method.TypeArguments[0] as INamedTypeSymbol,
                     invocation.GetLocation(),
-                    constructNamespace: namespaceName);
+                    isConstructRoot: true);
             }
 
             if (method.Name != "Create" && method.Name != "Populate" && method.Name != "Ignoring")
@@ -240,15 +230,15 @@ namespace ModelBuilder.Generator
 
         private readonly struct RootCapture
         {
-            public RootCapture(INamedTypeSymbol? symbol, Location location, bool isTypeOfRoot = false, string? constructNamespace = null)
+            public RootCapture(INamedTypeSymbol? symbol, Location location, bool isTypeOfRoot = false, bool isConstructRoot = false)
             {
                 Symbol = symbol;
                 Location = location;
                 IsTypeOfRoot = isTypeOfRoot;
-                ConstructNamespace = constructNamespace;
+                IsConstructRoot = isConstructRoot;
             }
 
-            public string? ConstructNamespace { get; }
+            public bool IsConstructRoot { get; }
 
             public bool IsTypeOfRoot { get; }
 

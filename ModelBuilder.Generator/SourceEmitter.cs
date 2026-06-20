@@ -15,12 +15,12 @@ namespace ModelBuilder.Generator
 
         public static string Emit(GenerationModel model)
         {
-            return Emit(model, Array.Empty<ConstructionRequest>(), hasModuleInitializer: true);
+            return Emit(model, Array.Empty<string>(), hasModuleInitializer: true);
         }
 
         public static string Emit(
             GenerationModel model,
-            IReadOnlyList<ConstructionRequest> constructionRequests,
+            IReadOnlyList<string> constructionTypeNames,
             bool hasModuleInitializer)
         {
             var builder = new StringBuilder();
@@ -59,7 +59,7 @@ namespace ModelBuilder.Generator
 
             builder.AppendLine("}");
 
-            EmitConstructionExtensions(builder, model, constructionRequests);
+            EmitConstructionExtensions(builder, model, constructionTypeNames);
 
             return builder.ToString();
         }
@@ -341,7 +341,7 @@ namespace ModelBuilder.Generator
         private static void EmitConstructionExtensions(
             StringBuilder builder,
             GenerationModel model,
-            IReadOnlyList<ConstructionRequest> constructionRequests)
+            IReadOnlyList<string> constructionRequests)
         {
             if (constructionRequests.Count == 0)
             {
@@ -355,54 +355,45 @@ namespace ModelBuilder.Generator
                 modelsByName[buildable.FullyQualifiedName] = buildable;
             }
 
-            // Group the requested types by the namespace they were constructed in, so each namespace
-            // gets one extension class whose From overloads are in scope without any consumer import.
-            var byNamespace = new Dictionary<string, List<BuildableModel>>(StringComparer.Ordinal);
+            // Collect the distinct requested types that have a builder. A single extension class is
+            // emitted into the ModelBuilder namespace: any call site that writes Model.Construct<T>()
+            // with Model unqualified necessarily has `using ModelBuilder;` (or a global using) in scope,
+            // which also brings these From overloads into scope, so no per-namespace emission is needed.
+            var types = new List<BuildableModel>();
+            var seen = new HashSet<string>(StringComparer.Ordinal);
 
-            foreach (var request in constructionRequests)
+            foreach (var typeName in constructionRequests)
             {
-                if (modelsByName.TryGetValue(request.TypeFullName, out var buildable) == false)
+                if (seen.Add(typeName) == false)
                 {
                     continue;
                 }
 
-                if (byNamespace.TryGetValue(request.CallingNamespace, out var list) == false)
+                if (modelsByName.TryGetValue(typeName, out var buildable))
                 {
-                    list = new List<BuildableModel>();
-                    byNamespace[request.CallingNamespace] = list;
-                }
-
-                if (list.Contains(buildable) == false)
-                {
-                    list.Add(buildable);
+                    types.Add(buildable);
                 }
             }
 
-            foreach (var pair in byNamespace)
+            if (types.Count == 0)
             {
-                EmitConstructionExtensionClass(builder, pair.Key, pair.Value);
+                return;
             }
+
+            EmitConstructionExtensionClass(builder, types);
         }
 
         private static void EmitConstructionExtensionClass(
             StringBuilder builder,
-            string callingNamespace,
             List<BuildableModel> types)
         {
-            var hasNamespace = string.IsNullOrEmpty(callingNamespace) == false;
-            var classIndent = hasNamespace ? Indent : string.Empty;
-
             builder.AppendLine();
+            builder.AppendLine("namespace ModelBuilder");
+            builder.AppendLine("{");
 
-            if (hasNamespace)
-            {
-                builder.AppendLine($"namespace {callingNamespace}");
-                builder.AppendLine("{");
-            }
-
-            builder.Append(classIndent).AppendLine("[global::System.CodeDom.Compiler.GeneratedCode(\"ModelBuilder.Generator\", null)]");
-            builder.Append(classIndent).AppendLine("internal static class ModelBuilderConstructionExtensions");
-            builder.Append(classIndent).AppendLine("{");
+            builder.Append(Indent).AppendLine("[global::System.CodeDom.Compiler.GeneratedCode(\"ModelBuilder.Generator\", null)]");
+            builder.Append(Indent).AppendLine("internal static class GeneratedConstructionExtensions");
+            builder.Append(Indent).AppendLine("{");
 
             var first = true;
 
@@ -415,17 +406,13 @@ namespace ModelBuilder.Generator
                         builder.AppendLine();
                     }
 
-                    EmitFromOverload(builder, classIndent + Indent, model, constructor);
+                    EmitFromOverload(builder, Indent + Indent, model, constructor);
                     first = false;
                 }
             }
 
-            builder.Append(classIndent).AppendLine("}");
-
-            if (hasNamespace)
-            {
-                builder.AppendLine("}");
-            }
+            builder.Append(Indent).AppendLine("}");
+            builder.AppendLine("}");
         }
 
         private static void EmitFromOverload(

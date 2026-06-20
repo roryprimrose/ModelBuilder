@@ -135,8 +135,10 @@ var order = Model.Ignoring<Order>(x => x.InternalId)
     .From(customerId);
 ```
 
-The `From` overloads are generated into the namespace of the call site, so they are available with
-no extra `using`. They appear in the editor as soon as `Model.Construct<T>()` is written.
+The `From` overloads are generated as extension methods in the `ModelBuilder` namespace. Because you
+already have `using ModelBuilder;` in scope wherever you write `Model.Construct<T>()`, they are
+available with no extra `using`, and they appear in the editor as soon as `Model.Construct<T>()` is
+written.
 
 ### Ignoring members
 

@@ -1243,14 +1243,18 @@ root type down to the failing member**, plus the captured build log.
     supplied by the caller, the **non-selected** constructors' parameter types do not need to be
     buildable, so collecting all public constructors for emission does **not** expand the build
     graph.
-  - **Discoverability (resolved: per-calling-namespace emission).** An extension method is only
-    offered when its containing static class's namespace is imported. Rather than require the
-    consumer to add a `using` (poor discovery) or emit a `global using` (would force the consumer to
-    compile with C# 10+), the generator captures the **namespace of each `Construct<T>()` call site**
-    and emits a `From` extension class **into that same namespace**, so the overloads are in scope
-    with no consumer import and **no `LangVersion` floor** — the broadest, safest compatibility. The
-    extension classes are emitted into the **single** generated file (additional namespace blocks),
-    preserving the one-file invariant.
+  - **Discoverability (resolved: emit into the `ModelBuilder` namespace).** An extension method is
+    only offered when its containing static class's namespace is in scope. The key invariant: to write
+    `Model.Construct<T>()` with `Model` **unqualified**, the call site must already have
+    `using ModelBuilder;` (file-level or global) — and that same `using` brings an extension class in
+    the `ModelBuilder` namespace into scope. So a **single** generated `internal static` extension
+    class in `namespace ModelBuilder` covers every ergonomic call site, with no consumer import and no
+    `LangVersion` floor. (An earlier iteration emitted a copy of the class into each call-site
+    namespace; that was dropped — it tracked call-site namespaces through the incremental pipeline,
+    duplicated overloads across namespaces, and bought only the fully-qualified
+    `global::ModelBuilder.Model.Construct(...)`-without-a-`using` edge case, which is an unusual style
+    and trivially fixed with a `using`.) The extension class is emitted into the **single** generated
+    file, preserving the one-file invariant.
   - Rejected verbs: `With` (reads as mutation; near C# `with` expressions), `Using` (near `using`
     directives/statements), `WithParams`. `From` reads front-to-back ("construct T **from** these
     values"), has no keyword proximity.
