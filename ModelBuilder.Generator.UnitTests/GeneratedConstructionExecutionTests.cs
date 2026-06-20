@@ -148,8 +148,85 @@ namespace Sample
             var harness = GeneratorTestHarness.Run(source);
             harness.CompilationErrors.Should().BeEmpty();
 
-            // The Create path routes through the suppression helper instead of the all-members Populate.
-            harness.GeneratedSources[0].Should().Contain("PopulateAfterConstruction");
+            // FirstName matches the constructor parameter, so the Create path suppresses it: it is only
+            // assigned in the standalone Populate method (which populates every member), not in Create.
+            // Title has no matching parameter, so it is assigned in both Create's complement and Populate.
+            CountOccurrences(harness.GeneratedSources[0], "instance.FirstName = context.Build").Should().Be(1);
+            CountOccurrences(harness.GeneratedSources[0], "instance.Title = context.Build").Should().Be(2);
+        }
+
+        [Fact]
+        public void ConstructFromDerivesMemberFromConstructorOnlyParameters()
+        {
+            const string source = @"
+namespace Sample
+{
+    public sealed class Contact
+    {
+        public Contact(string firstName, string lastName)
+        {
+            // firstName and lastName are constructor parameters only - never exposed as properties.
+        }
+
+        public string Email { get; set; } = string.Empty;
+    }
+
+    public static class Caller
+    {
+        public static Contact Build() => global::ModelBuilder.Model.Construct<Contact>().From(""Fred"", ""Smith"");
+    }
+}";
+
+            var harness = GeneratorTestHarness.Run(source);
+            harness.CompilationErrors.Should().BeEmpty();
+
+            var assembly = harness.EmitAndLoad();
+            var contactType = assembly.GetType("Sample.Contact", throwOnError: true)!;
+
+            var contact = InvokeCaller(assembly);
+            var email = (string)contactType.GetProperty("Email")!.GetValue(contact)!;
+
+            // Email derives from the constructor-only firstName/lastName arguments via siblings.
+            email.Should().StartWith("fred.smith@");
+        }
+
+        [Fact]
+        public void CreateRecordsConstructorParametersAsSiblings()
+        {
+            const string source = @"
+namespace Sample
+{
+    public sealed class Contact
+    {
+        public Contact(string firstName, string lastName)
+        {
+        }
+
+        public string Email { get; set; } = string.Empty;
+    }
+
+    public static class Caller
+    {
+        public static Contact Build() => global::ModelBuilder.Model.Create<Contact>();
+    }
+}";
+
+            var harness = GeneratorTestHarness.Run(source);
+            harness.CompilationErrors.Should().BeEmpty();
+
+            // The generated Create records each constructor argument as a sibling under the parameter
+            // name, so members like Email can derive from them.
+            harness.GeneratedSources[0].Should().Contain("context.RecordSibling(\"firstName\"");
+            harness.GeneratedSources[0].Should().Contain("context.RecordSibling(\"lastName\"");
+
+            // The email still derives from those siblings at runtime.
+            var assembly = harness.EmitAndLoad();
+            var contactType = assembly.GetType("Sample.Contact", throwOnError: true)!;
+            var contact = InvokeCaller(assembly);
+            var email = (string)contactType.GetProperty("Email")!.GetValue(contact)!;
+
+            email.Should().Contain("@");
+            email.Should().Contain(".");
         }
 
         [Fact]

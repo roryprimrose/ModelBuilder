@@ -1284,11 +1284,23 @@ root type down to the failing member**, plus the captured build log.
   - the standalone `Model.Populate(instance)` path is unchanged and still assigns **all** settable
     members, because no construction happened there.
 
-  Constructor-set members are still **recorded as siblings** (under their property name) before the
-  complement is populated, so sibling-derived values (e.g. `Email` from `FirstName`/`LastName`) stay
-  consistent with the supplied constructor arguments. Interaction to record: an explicit `.From(...)`
-  argument therefore **overrides** any custom/built-in value source for that member (the member is
-  skipped in population); nested members are unaffected.
+  **Constructor arguments are siblings (resolved).** Every constructor argument is recorded as a
+  sibling under the **parameter name** (camelCase), so members built during population can derive from
+  it. This works even when a parameter is **not exposed as a property** — a type with
+  `Contact(string firstName, string lastName)` and only an `Email` property still derives `Email`
+  from the constructor arguments. Two mechanics make this work:
+  - The generated `Create<T>()`/`From` code builds (or accepts) each constructor argument into a
+    local, records it as a sibling under the parameter name in declaration order (so a later argument
+    can read an earlier one), then constructs and populates the complement members.
+  - Sibling lookup is **case-insensitive** (`StringComparer.OrdinalIgnoreCase` in the sibling scope),
+    so a camelCase parameter (`firstName`) satisfies the PascalCase lookup the built-in derived
+    sources use (`FirstName`). This is safe because C# forbids two parameters or two properties that
+    differ only by case.
+
+  Members suppressed by the constructor match (above) do not need a separate sibling record — the
+  constructor argument they came from is already recorded under the parameter name. Interaction to
+  record: an explicit `.From(...)` argument therefore **overrides** any custom/built-in value source
+  for that member (the member is skipped in population); nested members are unaffected.
 
 ---
 

@@ -39,6 +39,23 @@ namespace ModelBuilder.UnitTests.vNext
             }
         }
 
+        [Theory]
+        [InlineData("firstName", "FirstName")]
+        [InlineData("FirstName", "firstname")]
+        [InlineData("FIRSTNAME", "firstName")]
+        public void GetSiblingMatchesNameCaseInsensitively(string recordedName, string lookupName)
+        {
+            var sut = new BuildContext(new RandomSource(1));
+
+            using (sut.EnterSiblingScope())
+            {
+                // A camelCase constructor parameter must satisfy a PascalCase sibling lookup and vice versa.
+                sut.RecordSibling(recordedName, "Janet");
+
+                sut.GetSibling<string>(lookupName).Should().Be("Janet");
+            }
+        }
+
         [Fact]
         public void GetSiblingReturnsDefaultForWrongType()
         {

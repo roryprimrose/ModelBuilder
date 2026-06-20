@@ -100,6 +100,13 @@ properties of the same name (case-insensitive) and type **at compile time**, and
 are simply left out of the generated population code. A value the constructor assigned is therefore
 never overwritten — there is no runtime value comparison.
 
+Constructor arguments also become **sibling values** for the rest of the build, keyed by the
+parameter name, so members derived from siblings stay consistent with them. This holds even when a
+parameter is **never exposed as a property** — a type with `Contact(string firstName, string
+lastName)` and only an `Email` property still gets an `Email` built from those constructor arguments,
+because `firstName`/`lastName` are recorded as siblings (matched case-insensitively against the
+`FirstName`/`LastName` the email source looks for).
+
 To supply specific constructor arguments yourself, use [typed construction](#typed-construction).
 
 ### Typed construction

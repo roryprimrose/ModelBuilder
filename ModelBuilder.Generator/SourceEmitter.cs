@@ -211,59 +211,57 @@ namespace ModelBuilder.Generator
             // Generic Create
             builder.Append(Indent).AppendLine($"    public {type} Create(global::ModelBuilder.IBuildContext context)");
             builder.Append(Indent).AppendLine("    {");
-            builder.Append(Indent).AppendLine($"        using (context.Log.BeginScope(global::ModelBuilder.BuildLogEntryKind.CreateInstance, typeof({type})))");
-            builder.Append(Indent).AppendLine("        {");
 
             var selectedParameters = model.ConstructorParameters;
 
             if (selectedParameters.Count == 0)
             {
+                builder.Append(Indent).AppendLine($"        using (context.Log.BeginScope(global::ModelBuilder.BuildLogEntryKind.CreateInstance, typeof({type})))");
+                builder.Append(Indent).AppendLine("        {");
                 builder.Append(Indent).Append("            var instance = new ").Append(type).AppendLine("();");
                 builder.Append(Indent).AppendLine("            return Populate(context, instance);");
+                builder.Append(Indent).AppendLine("        }");
             }
             else
             {
-                builder.Append(Indent).Append("            var instance = new ").Append(type).Append('(');
+                builder.Append(Indent).AppendLine($"        using (context.Log.BeginScope(global::ModelBuilder.BuildLogEntryKind.CreateInstance, typeof({type})))");
+                builder.Append(Indent).AppendLine("        using (context.EnterSiblingScope())");
+                builder.Append(Indent).AppendLine("        {");
 
+                // Build each constructor argument into a local and record it as a sibling under the
+                // parameter name, in declaration order, so later arguments and the populated members can
+                // derive from earlier ones (for example an Email member from firstName/lastName
+                // parameters that are never exposed as properties).
                 for (var index = 0; index < selectedParameters.Count; index++)
                 {
                     var parameter = selectedParameters[index];
 
+                    builder.Append(Indent).AppendLine($"            var __arg{index} = context.Build<{parameter.TypeName}>(typeof({type}), \"{parameter.Name}\");");
+                    builder.Append(Indent).AppendLine($"            context.RecordSibling(\"{parameter.Name}\", __arg{index});");
+                }
+
+                builder.Append(Indent).Append("            var instance = new ").Append(type).Append('(');
+
+                for (var index = 0; index < selectedParameters.Count; index++)
+                {
                     if (index > 0)
                     {
                         builder.Append(", ");
                     }
 
-                    builder.Append($"context.Build<{parameter.TypeName}>(typeof({type}), \"{parameter.Name}\")");
+                    builder.Append("__arg").Append(index);
                 }
 
                 builder.AppendLine(");");
-                builder.Append(Indent).AppendLine("            return PopulateAfterConstruction(context, instance);");
-            }
 
-            builder.Append(Indent).AppendLine("        }");
-            builder.Append(Indent).AppendLine("    }");
-            builder.AppendLine();
-
-            if (selectedParameters.Count > 0)
-            {
-                // Populates the members not assigned by the selected constructor, recording the
-                // constructor-assigned members as siblings first so derived values stay consistent.
-                builder.Append(Indent).AppendLine($"    private {type} PopulateAfterConstruction(global::ModelBuilder.IBuildContext context, {type} instance)");
-                builder.Append(Indent).AppendLine("    {");
-                builder.Append(Indent).AppendLine($"        using (context.Log.BeginScope(global::ModelBuilder.BuildLogEntryKind.PopulateInstance, typeof({type})))");
-                builder.Append(Indent).AppendLine("        using (context.EnterSiblingScope())");
-                builder.Append(Indent).AppendLine("        {");
-
-                EmitConstructorSiblingRecords(builder, Indent + "            ", model.Members, selectedParameters);
                 EmitComplementMembers(builder, Indent + "            ", type, model.Members, selectedParameters);
 
+                builder.Append(Indent).AppendLine("            return instance;");
                 builder.Append(Indent).AppendLine("        }");
-                builder.AppendLine();
-                builder.Append(Indent).AppendLine("        return instance;");
-                builder.Append(Indent).AppendLine("    }");
-                builder.AppendLine();
             }
+
+            builder.Append(Indent).AppendLine("    }");
+            builder.AppendLine();
 
             // Generic Populate
             builder.Append(Indent).AppendLine($"    public {type} Populate(global::ModelBuilder.IBuildContext context, {type} instance)");
@@ -300,23 +298,6 @@ namespace ModelBuilder.Generator
             builder.AppendLine();
             builder.Append(Indent).AppendLine($"    global::System.Type global::ModelBuilder.IModelBuilder.BuildType => typeof({type});");
             builder.Append(Indent).AppendLine("}");
-        }
-
-        private static void EmitConstructorSiblingRecords(
-            StringBuilder builder,
-            string indent,
-            EquatableArray<MemberModel> members,
-            EquatableArray<MemberModel> ctorParameters)
-        {
-            foreach (var member in members)
-            {
-                if (MatchingParameterIndex(member, ctorParameters) < 0)
-                {
-                    continue;
-                }
-
-                builder.Append(indent).AppendLine($"context.RecordSibling(\"{member.Name}\", instance.{member.Name});");
-            }
         }
 
         private static void EmitComplementMembers(
@@ -500,7 +481,14 @@ namespace ModelBuilder.Generator
 
             builder.AppendLine(");");
 
-            EmitConstructorSiblingRecords(builder, inner, model.Members, parameters);
+            // Record each constructor argument as a sibling under the parameter name so the populated
+            // members can derive from them (e.g. an Email member from firstName/lastName), even when the
+            // parameters are not exposed as properties.
+            for (var index = 0; index < parameters.Count; index++)
+            {
+                builder.Append(inner).AppendLine($"context.RecordSibling(\"{parameters[index].Name}\", {parameters[index].Name});");
+            }
+
             EmitComplementMembers(builder, inner, type, model.Members, parameters);
 
             builder.Append(inner).AppendLine("return instance;");

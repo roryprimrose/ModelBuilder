@@ -126,7 +126,10 @@ namespace ModelBuilder
         /// <inheritdoc />
         public IDisposable EnterSiblingScope()
         {
-            _siblingScopes.Add(new Dictionary<string, object?>(StringComparer.Ordinal));
+            // Sibling names are matched case-insensitively so a camelCase constructor parameter (e.g.
+            // firstName) satisfies a PascalCase sibling lookup (e.g. FirstName) used by the built-in
+            // derived sources.
+            _siblingScopes.Add(new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase));
             _scopedValueScopes.Add(new Dictionary<string, object?>(StringComparer.Ordinal));
 
             return new SiblingScope(this);
