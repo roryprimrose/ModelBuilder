@@ -1,4 +1,4 @@
-namespace ModelBuilder.UnitTests.vNext
+﻿namespace ModelBuilder.UnitTests
 {
     using System.Linq;
     using FluentAssertions;
