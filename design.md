@@ -17,7 +17,7 @@ understand and impossible to run under Native AOT.
   `PropertyInfo.SetValue`, `Type.GetConstructors`, or `dynamic`/`ExpandoObject`.
 - **Native AOT and trimming safe.** The shipped assembly carries no trim warnings and works in a
   fully trimmed/AOT app.
-- **Keep the common API.** `Model.Create<T>()`, `Model.Create<T>(args)`, `.Set(...)`,
+- **Keep the common API.** `Model.Create<T>()`, `Model.Construct<T>().From(...)`, `.Set(...)`,
   `.SetEach(...)`, `Model.Ignoring<T>(...)`, and reusable configuration modules continue to work
   with minimal source changes for existing consumers.
 - **Dramatically simpler internals.** Collapse the build pipeline from
@@ -202,18 +202,16 @@ For each concrete type `T` reachable from a build root, emit a `partial`/interna
 // GENERATED
 internal sealed class PersonBuilder : IModelBuilder<Person>
 {
-    public Person Create(BuildContext ctx, params object?[]? args)
+    public Person Create(BuildContext ctx)
     {
         // Constructor selection resolved at compile time (no GetConstructors at runtime).
-        var instance = args is { Length: > 0 }
-            ? CreateWithArgs(ctx, args)
-            : new Person();
+        var instance = new Person();
 
-        Populate(ctx, instance, args);
+        Populate(ctx, instance);
         return instance;
     }
 
-    public Person Populate(BuildContext ctx, Person instance, object?[]? args = null)
+    public Person Populate(BuildContext ctx, Person instance)
     {
         // Emitted in execute-order; each branch checks ignore rules + ctor-param-match.
         if (ctx.ShouldPopulate(BuilderIds.Person_Gender))
@@ -265,7 +263,7 @@ Preserve the everyday API so existing tests compile largely unchanged:
 ```csharp
 // Create
 var p = Model.Create<Person>();
-var p2 = Model.Create<Person>("Fred", "Smith");
+var p2 = Model.Construct<Person>().From("Fred", "Smith");
 var u = Model.Create<Uri>();
 
 // Post-build tweaks (unchanged)
@@ -296,7 +294,7 @@ build root and emits one builder per concrete type reachable through constructor
 populated members. There are exactly two ways to introduce a root:
 
 1. **Call-site discovery (primary).** Every `Model.Create<T>()` / `Model.Populate<T>()` /
-   `...Create<T>(args)` call in the compilation contributes `T` as a root. `T` is a closed,
+   `Model.Construct<T>()` call in the compilation contributes `T` as a root. `T` is a closed,
    compile-time type argument, so the generator knows it precisely and recurses from there. This
    covers the overwhelming majority of usage and needs no annotations.
 
@@ -345,7 +343,7 @@ maintains by hand. Discovery happens in three tiers, and only the third is manua
 
 | Tier | Trigger | Manual? | Typical case |
 |------|---------|---------|--------------|
-| 1. Reachability (primary) | `Model.Create<T>()` / `Populate<T>()` / `Create<T>(args)`, and everything reachable from `T` through constructor parameters and populated members | No | `Create<Order>()` automatically pulls in `Customer`, `List<OrderLine>`, `OrderStatus`, … — the whole subtree |
+| 1. Reachability (primary) | `Model.Create<T>()` / `Populate<T>()` / `Construct<T>()`, and everything reachable from `T` through constructor parameters and populated members | No | `Create<Order>()` automatically pulls in `Customer`, `List<OrderLine>`, `OrderStatus`, … — the whole subtree |
 | 2. Mapping | `Mapping<TAbstract, TConcrete>()` makes `TConcrete` a root | No | `Mapping<Stream, MemoryStream>()` |
 | 3. Attribute | `[GenerateModelBuilder]` on a type or `[assembly: GenerateModelBuilder(typeof(X))]` | Yes | A type built only polymorphically through a base/interface, or only ever referenced via a runtime `Type` |
 
@@ -372,7 +370,7 @@ What is *not* discoverable, and therefore not supported (per §1 non-goals):
 dictionary lookup plus a virtual call, never reflection:
 
 ```csharp
-public static object Create(Type instanceType, params object?[]? args)
+public static object Create(Type instanceType)
 {
     if (!ModelBuilderRegistry.TryGet(instanceType, out var builder))
     {
@@ -1200,16 +1198,18 @@ root type down to the failing member**, plus the captured build log.
   practical. Quality of diagnostics is treated as a first-class deliverable, not a nicety.
 
 - **12.8 — Typed constructor invocation (`Model.Construct<T>().From(...)`). Resolved — implemented.**
-  Today `Model.Create<T>(params object?[]? args)` is the only construction entry point: the
-  args are loosely typed `object?[]`, which **boxes** value-type arguments and allocates an array,
-  is matched at **runtime** (an unbuildable arg list throws `ModelBuildException` rather than failing
-  to compile), and gives **no per-type IntelliSense** — the generic `Create<T>` shows only
-  `params object?[]?`, never `T`'s actual constructor parameters or their xmldoc.
+  The original `Model.Create<T>(params object?[]? args)` overload matched its args with loosely
+  typed `object?[]`, which **boxed** value-type arguments and allocated an array, was matched at
+  **runtime** (an unbuildable arg list threw `ModelBuildException` rather than failing to compile),
+  and gave **no per-type IntelliSense** — the generic `Create<T>` showed only `params object?[]?`,
+  never `T`'s actual constructor parameters or their xmldoc. That args overload has been **removed**:
+  `Model.Create<T>()` now always generates its constructor arguments, and typed construction is the
+  way to supply specific ones.
 
   **Goal.** A typed, per-constructor entry point so that, for a given `T`, the editor offers exactly
   `T`'s constructors (parameter names + copied ctor xmldoc), arguments are passed with their real
-  types (no boxing, compile-time arity/type validation), and the existing `Model.Create<T>()` stays
-  exactly as-is.
+  types (no boxing, compile-time arity/type validation), while the parameterless `Model.Create<T>()`
+  stays exactly as-is.
 
   **Why the obvious shapes do not work (the constraints that force the design):**
   - `Create<T>(string, string)` cannot have **per-`T`** parameters — a C# generic method has one
@@ -1375,10 +1375,11 @@ There is **no back-compat shim** (§12.6). Migration is manual, but mechanical: 
 mapping from each removed or changed v8 API to its vNext equivalent, structured so an AI agent can
 apply it deterministically across a consumer's test project. The guide must cover at least:
 
-**Unchanged — no action.** `Model.Create<T>()`, `Model.Create<T>(args)`, `Model.Create(typeof(T))`,
+**Unchanged — no action.** `Model.Create<T>()`, `Model.Create(typeof(T))`,
 `.Set(...)`, `.SetEach(...)`, `Model.Ignoring<T>(x => x.Member)`, `Model.UsingModule<T>()`,
 `Model.Mapping<TSource, TTarget>()`. These keep their shape, so the bulk of a typical test project
-compiles unchanged.
+compiles unchanged. **Changed:** `Model.Create<T>(args)` is removed — pass constructor arguments
+through `Model.Construct<T>().From(...)` (§12.8).
 
 **Mapped — mechanical replacement.**
 

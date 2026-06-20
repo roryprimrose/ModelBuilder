@@ -64,12 +64,12 @@
 
         private sealed class WidgetBuilder : IModelBuilder
         {
-            public object Create(IBuildContext context, params object?[]? args)
+            public object Create(IBuildContext context)
             {
                 return new Widget();
             }
 
-            public object Populate(IBuildContext context, object instance, object?[]? args = null)
+            public object Populate(IBuildContext context, object instance)
             {
                 return instance;
             }

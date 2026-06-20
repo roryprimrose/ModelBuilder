@@ -327,7 +327,7 @@ namespace ModelBuilder
 
         /// <summary>
         ///     Attempts to build a root value from a registered value source, so that
-        ///     <see cref="Model.Create{T}(object[])" /> works for value-source-only types such as enums and
+        ///     <see cref="Model.Create{T}()" /> works for value-source-only types such as enums and
         ///     primitives that have no generated model builder.
         /// </summary>
         /// <typeparam name="T">The root type to build.</typeparam>

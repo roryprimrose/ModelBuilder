@@ -15,9 +15,8 @@ namespace ModelBuilder
         ///     Creates a populated instance of <typeparamref name="T" /> using this configuration.
         /// </summary>
         /// <typeparam name="T">The type to create.</typeparam>
-        /// <param name="args">The optional constructor arguments.</param>
         /// <returns>The created instance.</returns>
-        T Create<T>(params object?[]? args);
+        T Create<T>();
 
         /// <summary>
         ///     Adds an ignore rule for the specified member.

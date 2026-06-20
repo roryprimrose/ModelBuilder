@@ -14,18 +14,18 @@ namespace ModelBuilder
         private Action<string>? _logSink;
 
         /// <inheritdoc />
-        public T Create<T>(params object?[]? args)
+        public T Create<T>()
         {
             if (_logSink == null)
             {
-                return Model.CreateWith<T>(_configuration, args);
+                return Model.CreateWith<T>(_configuration);
             }
 
             var log = new BuildLog();
 
             try
             {
-                return Model.CreateWith<T>(_configuration, log, args);
+                return Model.CreateWith<T>(_configuration, log);
             }
             finally
             {

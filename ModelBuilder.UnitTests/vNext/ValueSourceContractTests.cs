@@ -65,12 +65,12 @@
 
         private sealed class WidgetBuilder : IModelBuilder<Widget>
         {
-            public Widget Create(IBuildContext context, params object?[]? args)
+            public Widget Create(IBuildContext context)
             {
-                return Populate(context, new Widget(), args);
+                return Populate(context, new Widget());
             }
 
-            public Widget Populate(IBuildContext context, Widget instance, object?[]? args = null)
+            public Widget Populate(IBuildContext context, Widget instance)
             {
                 instance.Serial = context.Random.NextInt32(1, int.MaxValue);
 

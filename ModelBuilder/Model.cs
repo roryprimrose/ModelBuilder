@@ -16,11 +16,10 @@ namespace ModelBuilder
         ///     Creates a populated instance of the specified type.
         /// </summary>
         /// <param name="instanceType">The type to create.</param>
-        /// <param name="args">The optional constructor arguments.</param>
         /// <returns>The created instance.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="instanceType" /> parameter is <c>null</c>.</exception>
         /// <exception cref="ModelBuildException">No builder has been generated for the type.</exception>
-        public static object Create(Type instanceType, params object?[]? args)
+        public static object Create(Type instanceType)
         {
             instanceType = instanceType ?? throw new ArgumentNullException(nameof(instanceType));
 
@@ -34,7 +33,7 @@ namespace ModelBuilder
 
             using (context.EnterRoot(instanceType))
             {
-                return builder.Create(context, args);
+                return builder.Create(context);
             }
         }
 
@@ -42,12 +41,11 @@ namespace ModelBuilder
         ///     Creates a populated instance of <typeparamref name="T" />.
         /// </summary>
         /// <typeparam name="T">The type to create.</typeparam>
-        /// <param name="args">The optional constructor arguments.</param>
         /// <returns>The created instance.</returns>
         /// <exception cref="ModelBuildException">No builder has been generated for the type.</exception>
-        public static T Create<T>(params object?[]? args)
+        public static T Create<T>()
         {
-            return CreateWith<T>(null, args);
+            return CreateWith<T>(null);
         }
 
         /// <summary>
@@ -160,12 +158,12 @@ namespace ModelBuilder
             return new ModelConfiguration().WriteLog(sink);
         }
 
-        internal static T CreateWith<T>(BuildConfiguration? configuration, object?[]? args)
+        internal static T CreateWith<T>(BuildConfiguration? configuration)
         {
-            return CreateWith<T>(configuration, null, args);
+            return CreateWith<T>(configuration, (IBuildLog?)null);
         }
 
-        internal static T CreateWith<T>(BuildConfiguration? configuration, IBuildLog? log, object?[]? args)
+        internal static T CreateWith<T>(BuildConfiguration? configuration, IBuildLog? log)
         {
             var context = NewContext(configuration, log);
 
@@ -175,7 +173,7 @@ namespace ModelBuilder
             {
                 using (context.EnterRoot(typeof(T)))
                 {
-                    return builder.Create(context, args);
+                    return builder.Create(context);
                 }
             }
 
@@ -242,7 +240,7 @@ namespace ModelBuilder
 
         /// <summary>
         ///     Gets the registry that maps a runtime <see cref="Type" /> to its generated builder for the
-        ///     non-generic <see cref="Create(Type, object[])" /> path. The generated module initializer
+        ///     non-generic <see cref="Create(Type)" /> path. The generated module initializer
         ///     registers each builder through this registry.
         /// </summary>
         public static IModelBuilderRegistry Registry => _registry;

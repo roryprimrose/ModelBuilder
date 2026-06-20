@@ -111,26 +111,26 @@
 
         private sealed class WidgetBuilder : IModelBuilder<Widget>, IModelBuilder
         {
-            public Widget Create(IBuildContext context, params object?[]? args)
+            public Widget Create(IBuildContext context)
             {
-                return Populate(context, new Widget(), args);
+                return Populate(context, new Widget());
             }
 
-            public Widget Populate(IBuildContext context, Widget instance, object?[]? args = null)
+            public Widget Populate(IBuildContext context, Widget instance)
             {
                 instance.Built = true;
 
                 return instance;
             }
 
-            object IModelBuilder.Create(IBuildContext context, params object?[]? args)
+            object IModelBuilder.Create(IBuildContext context)
             {
-                return Create(context, args);
+                return Create(context);
             }
 
-            object IModelBuilder.Populate(IBuildContext context, object instance, object?[]? args)
+            object IModelBuilder.Populate(IBuildContext context, object instance)
             {
-                return Populate(context, (Widget)instance, args);
+                return Populate(context, (Widget)instance);
             }
 
             public Type BuildType => typeof(Widget);

@@ -31,20 +31,29 @@ diagnostic** (`MB1001`/`MB1002`/`MB1005`), not a runtime surprise.
 
 These keep their shape, so the bulk of a typical test project compiles unchanged:
 
-- `Model.Create<T>()`, `Model.Create<T>(args)`, `Model.Create(typeof(T))`
+- `Model.Create<T>()`, `Model.Create(typeof(T))`
 - `.Set(...)`, `.SetEach(...)`
 - `Model.Ignoring<T>(x => x.Member)`
 - `Model.UsingModule<T>()`
 - `Model.Mapping<TSource, TTarget>()`
 - `Model.WriteLog(sink)`
 
-## New — typed construction
+## Changed — constructor arguments
 
-`Model.Create<T>(args)` still works, but its `params object?[]` arguments box value types and are
-matched at runtime. vNext adds `Model.Construct<T>().From(...)`, a generated typed entry point with a
-`From` overload per public constructor: strongly-typed arguments (no boxing, compile-time
-validation), the constructor's documentation surfaced in the editor, and constructor-assigned
-members left untouched by population. See the README *Typed construction* section.
+`Model.Create<T>(args)` is **removed**: `Create<T>()` no longer accepts constructor arguments and
+always generates them. To pass specific constructor arguments, use the new typed entry point
+`Model.Construct<T>().From(...)` — a generated `From` overload per public constructor with
+strongly-typed arguments (no boxing, compile-time validation), the constructor's documentation
+surfaced in the editor, and constructor-assigned members left untouched by population. See the README
+*Typed construction* section.
+
+```csharp
+// v8 / earlier vNext
+var person = Model.Create<Person>("Fred", "Smith");
+
+// vNext
+var person = Model.Construct<Person>().From("Fred", "Smith");
+```
 
 
 ## Mapped — mechanical replacement

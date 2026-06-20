@@ -209,7 +209,7 @@ namespace ModelBuilder.Generator
             builder.Append(Indent).AppendLine("{");
 
             // Generic Create
-            builder.Append(Indent).AppendLine($"    public {type} Create(global::ModelBuilder.IBuildContext context, params object?[]? args)");
+            builder.Append(Indent).AppendLine($"    public {type} Create(global::ModelBuilder.IBuildContext context)");
             builder.Append(Indent).AppendLine("    {");
             builder.Append(Indent).AppendLine($"        using (context.Log.BeginScope(global::ModelBuilder.BuildLogEntryKind.CreateInstance, typeof({type})))");
             builder.Append(Indent).AppendLine("        {");
@@ -219,7 +219,7 @@ namespace ModelBuilder.Generator
             if (selectedParameters.Count == 0)
             {
                 builder.Append(Indent).Append("            var instance = new ").Append(type).AppendLine("();");
-                builder.Append(Indent).AppendLine("            return Populate(context, instance, args);");
+                builder.Append(Indent).AppendLine("            return Populate(context, instance);");
             }
             else
             {
@@ -266,7 +266,7 @@ namespace ModelBuilder.Generator
             }
 
             // Generic Populate
-            builder.Append(Indent).AppendLine($"    public {type} Populate(global::ModelBuilder.IBuildContext context, {type} instance, object?[]? args = null)");
+            builder.Append(Indent).AppendLine($"    public {type} Populate(global::ModelBuilder.IBuildContext context, {type} instance)");
             builder.Append(Indent).AppendLine("    {");
             builder.Append(Indent).AppendLine($"        using (context.Log.BeginScope(global::ModelBuilder.BuildLogEntryKind.PopulateInstance, typeof({type})))");
             builder.Append(Indent).AppendLine($"        using (context.EnterSiblingScope())");
@@ -288,14 +288,14 @@ namespace ModelBuilder.Generator
             builder.AppendLine();
 
             // Non-generic surface
-            builder.Append(Indent).AppendLine("    object global::ModelBuilder.IModelBuilder.Create(global::ModelBuilder.IBuildContext context, params object?[]? args)");
+            builder.Append(Indent).AppendLine("    object global::ModelBuilder.IModelBuilder.Create(global::ModelBuilder.IBuildContext context)");
             builder.Append(Indent).AppendLine("    {");
-            builder.Append(Indent).AppendLine("        return Create(context, args)!;");
+            builder.Append(Indent).AppendLine("        return Create(context)!;");
             builder.Append(Indent).AppendLine("    }");
             builder.AppendLine();
-            builder.Append(Indent).AppendLine("    object global::ModelBuilder.IModelBuilder.Populate(global::ModelBuilder.IBuildContext context, object instance, object?[]? args)");
+            builder.Append(Indent).AppendLine("    object global::ModelBuilder.IModelBuilder.Populate(global::ModelBuilder.IBuildContext context, object instance)");
             builder.Append(Indent).AppendLine("    {");
-            builder.Append(Indent).AppendLine($"        return Populate(context, ({type})instance, args)!;");
+            builder.Append(Indent).AppendLine($"        return Populate(context, ({type})instance)!;");
             builder.Append(Indent).AppendLine("    }");
             builder.AppendLine();
             builder.Append(Indent).AppendLine($"    global::System.Type global::ModelBuilder.IModelBuilder.BuildType => typeof({type});");

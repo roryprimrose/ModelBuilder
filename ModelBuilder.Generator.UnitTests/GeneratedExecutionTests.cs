@@ -605,11 +605,11 @@ namespace Sample
         {
             var createGeneric = typeof(Model)
                 .GetMethods(BindingFlags.Public | BindingFlags.Static)
-                .First(method => method.Name == "Create" && method.IsGenericMethodDefinition && method.GetParameters().Length == 1);
+                .First(method => method.Name == "Create" && method.IsGenericMethodDefinition && method.GetParameters().Length == 0);
 
             var closed = createGeneric.MakeGenericMethod(instanceType);
 
-            return closed.Invoke(null, new object?[] { null })!;
+            return closed.Invoke(null, null)!;
         }
 
         private sealed class ConstantInt32Source : IValueSource<int>

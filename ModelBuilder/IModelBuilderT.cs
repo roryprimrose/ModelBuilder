@@ -12,17 +12,15 @@ namespace ModelBuilder
         ///     Creates and populates a new instance of <typeparamref name="T" />.
         /// </summary>
         /// <param name="context">The build context for the current build.</param>
-        /// <param name="args">The optional constructor arguments.</param>
         /// <returns>The created instance.</returns>
-        T Create(IBuildContext context, params object?[]? args);
+        T Create(IBuildContext context);
 
         /// <summary>
         ///     Populates an existing instance of <typeparamref name="T" />.
         /// </summary>
         /// <param name="context">The build context for the current build.</param>
         /// <param name="instance">The instance to populate.</param>
-        /// <param name="args">The optional constructor arguments.</param>
         /// <returns>The populated instance.</returns>
-        T Populate(IBuildContext context, T instance, object?[]? args = null);
+        T Populate(IBuildContext context, T instance);
     }
 }

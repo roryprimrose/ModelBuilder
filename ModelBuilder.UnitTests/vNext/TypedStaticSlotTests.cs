@@ -55,12 +55,12 @@
 
         private sealed class SampleBuilder : IModelBuilder<Sample>
         {
-            public Sample Create(IBuildContext context, params object?[]? args)
+            public Sample Create(IBuildContext context)
             {
                 return new Sample();
             }
 
-            public Sample Populate(IBuildContext context, Sample instance, object?[]? args = null)
+            public Sample Populate(IBuildContext context, Sample instance)
             {
                 return instance;
             }

@@ -55,6 +55,13 @@ walks the whole object graph reachable from the type you ask for.
 var person = Model.Create<Person>();
 ```
 
+Value-source types such as enums and primitives can be built as roots directly:
+
+```csharp
+var status = Model.Create<OrderStatus>();
+var id = Model.Create<Guid>();
+```
+
 You can also build by runtime `Type` when the type is only known at runtime:
 
 ```csharp
@@ -82,32 +89,22 @@ the type (or naming it from your test assembly):
 [assembly: GenerateModelBuilder(typeof(MyApp.PluginPayload))]
 ```
 
-Value-source types such as enums and primitives can be built as roots directly:
-
-```csharp
-var status = Model.Create<OrderStatus>();
-var id = Model.Create<Guid>();
-```
-
 ### Constructor arguments and parameter matching
 
-You can supply constructor arguments for the top-level type being created:
-
-```csharp
-var person = Model.Create<Person>("Fred", "Smith");
-```
+`Model.Create<T>()` chooses a constructor and fills its arguments with generated values
+automatically — you do not pass constructor arguments to `Create`. Constructor selection prefers a
+parameterless constructor, then the constructor with the fewest parameters.
 
 When a type is built through a constructor, ModelBuilder matches constructor parameters to
-properties of the same name and type so a freshly generated value does not overwrite a value the
-constructor already assigned. Constructor selection prefers a parameterless constructor, then the
-constructor with the fewest parameters, unless you supply arguments that match a specific
-constructor.
+properties of the same name and type, so a member the constructor already assigned is not
+overwritten with a fresh random value.
+
+To supply specific constructor arguments yourself, use [typed construction](#typed-construction).
 
 ### Typed construction
 
-`Model.Create<T>(params object?[]? args)` matches its arguments at runtime, which boxes value types
-and only fails when the build runs. When you want a specific constructor with **typed** arguments,
-use `Model.Construct<T>().From(...)`:
+`Model.Create<T>()` always generates the constructor arguments for you. When you want to pass
+specific constructor arguments, use `Model.Construct<T>().From(...)`:
 
 ```csharp
 var person = Model.Construct<Person>().From("Fred", "Smith");
