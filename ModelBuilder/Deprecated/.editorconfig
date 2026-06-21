@@ -1,0 +1,14 @@
+# Deprecated v8 compatibility shims.
+#
+# Every type in this folder is an intentionally-empty stub that throws NotImplementedException and is
+# marked [Obsolete(message, error: true)] so that a v8 consumer who upgrades to vNext gets a compile
+# error that names the vNext replacement. They are never executed and are excluded from coverage, so
+# the analyzer / documentation rules that apply to real production code are turned off here.
+[*.cs]
+generated_code = true
+
+# Intentional: these stubs have no XML documentation because the [Obsolete] message carries the guidance.
+dotnet_diagnostic.CS1591.severity = none
+
+# Intentional: cross-references between the stubs (and the broad using set) are by design.
+dotnet_diagnostic.IDE0005.severity = none

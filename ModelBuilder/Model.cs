@@ -8,7 +8,7 @@ namespace ModelBuilder
     ///     generated builders through the typed-static slots on the generic path and through the
     ///     registry on the runtime-<see cref="Type" /> path.
     /// </summary>
-    public static class Model
+    public static partial class Model
     {
         private static readonly ModelBuilderRegistry _registry = new ModelBuilderRegistry();
 

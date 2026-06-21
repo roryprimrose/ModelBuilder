@@ -19,7 +19,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="..\README.md">
+    <!--
+      Pack every root markdown file (README, MIGRATION, design, LICENSE) so the relative links the
+      README makes to sibling docs such as MIGRATION.md resolve inside the package. PackageReadmeFile
+      above still nominates README.md as the rendered readme.
+    -->
+    <None Include="..\*.md">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
