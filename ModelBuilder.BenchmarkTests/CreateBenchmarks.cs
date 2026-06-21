@@ -7,7 +7,7 @@ namespace ModelBuilder.BenchmarkTests
     /// <summary>
     /// Measures <c>Model.Create&lt;T&gt;()</c> across model shapes of increasing size and
     /// complexity. Captures execution time, allocated bytes and GC counts so the cost of the
-    /// reflection-based v8 build can be compared against the source-generated vNext build.
+    /// reflection-based v8 build can be compared against the source-generated v9 build.
     /// </summary>
     [MemoryDiagnoser]
     public class CreateBenchmarks

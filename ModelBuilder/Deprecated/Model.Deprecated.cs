@@ -9,8 +9,8 @@ namespace ModelBuilder
 
     /// <content>
     ///     v8 compatibility shims for members of <see cref="Model" /> that were removed or changed shape in
-    ///     ModelBuilder vNext. These overloads exist only so a v8 consumer gets a compile error pointing at
-    ///     the vNext replacement; they throw if reached.
+    ///     ModelBuilder v9. These overloads exist only so a v8 consumer gets a compile error pointing at
+    ///     the v9 replacement; they throw if reached.
     /// </content>
     public static partial class Model
     {

@@ -698,4 +698,4 @@ The previous reflection-based extensibility pipeline (`IExecuteStrategy`, `ICons
 `ITypeCreator`, `IValueGenerator`, `IPostBuildAction`, the per-`ParameterInfo`/`PropertyInfo`
 overloads and so on) has been removed in favour of the source-generated model and a small set of
 supported seams (`IValueSource<T>`, mappings, ignore rules and `[GenerateModelBuilder]`). The
-[migration guide](MIGRATION.md) maps every changed and removed v8 API to its vNext equivalent.
+[migration guide](MIGRATION.md) maps every changed and removed v8 API to its v9 equivalent.

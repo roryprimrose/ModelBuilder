@@ -1,4 +1,4 @@
-# ModelBuilder vNext — High-Level Design
+# ModelBuilder v9 — High-Level Design
 
 This document describes the high-level design of the current ModelBuilder library and proposes
 the design for a complete rewrite. The rewrite targets a **source-generated, reflection-free,
@@ -32,7 +32,7 @@ understand and impossible to run under Native AOT.
 - 100% binary or API back-compat with v8. Deep extensibility consumers (custom `IExecuteStrategy`,
   `IBuildAction`, `IBuildProcessor`, per-`ParameterInfo`/`PropertyInfo` generator overloads) will
   need to migrate. This is acceptable and intended — see §3.
-- **No runtime reflection fallback of any kind.** vNext is a pure source-generator implementation.
+- **No runtime reflection fallback of any kind.** v9 is a pure source-generator implementation.
   There is no hybrid mode and no reflection escape hatch. Consumers who need the reflection-based
   engine stay on the v8 line; the rewrite ships under a new major version. (Resolves §12.1.)
 - **No support for runtime-only / `dynamic` types.** If a type, constructor, or member is not
@@ -157,7 +157,7 @@ populate code, deterministic candidate selection).
 
 ---
 
-## 4. Design principles for vNext
+## 4. Design principles for v9
 
 - **Compile-time first.** If the type is referenced in `Model.Create<T>()` (or reachable from
   one), the generator emits a dedicated, allocation-light builder for it.
@@ -399,7 +399,7 @@ Two behaviours make the common case painless:
 
 ## 7. Replacing each reflection point
 
-| Current (reflection/dynamic) | vNext (generated) |
+| Current (reflection/dynamic) | v9 (generated) |
 |------------------------------|-------------------|
 | `Activator.CreateInstance(type,args)` | Emitted `new T(...)` with the chosen constructor |
 | `GetConstructors` + arg matching | Compile-time constructor selection + typed overloads |
@@ -413,7 +413,7 @@ Two behaviours make the common case painless:
 
 ---
 
-## 8. Extensibility in vNext (intentionally smaller)
+## 8. Extensibility in v9 (intentionally smaller)
 
 Keep only what real usage needs:
 
@@ -461,7 +461,7 @@ generator-side member metadata (name, declared type, accessibility), not at runt
 
 The current library splits leaf-value creation (`IValueGenerator`) from object creation +
 population (`ITypeCreator`). The two are nearly the same shape, and consumers only ever needed
-"give me a value for this type/name". vNext collapses them into **one** opt-in abstraction. Because
+"give me a value for this type/name". v9 collapses them into **one** opt-in abstraction. Because
 everything is source-generated and the generator knows the concrete target type at each call site,
 the abstraction is **generic** — `IValueSource<T>` — so value types are produced and assigned
 without boxing:
@@ -864,7 +864,7 @@ code; only `.When(...)` falls through to runtime.** Two practical consequences:
 
 "Closed-generic source" = `IValueSource<T>` with a concrete `T` (`IValueSource<int>`,
 `IValueSource<Gender>`). The challenge is holding many *differently-typed* sources and dispatching to
-the right one on two different paths without boxing the produced value. vNext uses a two-part scheme
+the right one on two different paths without boxing the produced value. v9 uses a two-part scheme
 (your decision #4 — keep no-reflection, high-performance, broad reach):
 
 1. **Generic hot path — typed static slot (no dictionary, no box).** For the common
@@ -991,7 +991,7 @@ replaces the current library's reflection-based access to non-public constructor
 #### 9.1.1 `IRandomSource` requirements (lessons from the v8 `RandomGenerator`)
 
 The v8 `RandomGenerator` underpins every numeric/byte value in the library, and a review of it
-surfaced concrete defects that the vNext `IRandomSource` must fix by construction. These are
+surfaced concrete defects that the v9 `IRandomSource` must fix by construction. These are
 acceptance criteria, not aspirations:
 
 - **Thread-safe.** v8 shares one `static readonly Random` across all instances; `System.Random` is
@@ -1022,14 +1022,14 @@ acceptance criteria, not aspirations:
   full-`double` case).
 
 These criteria are exercised by the BenchmarkDotNet baseline (§13 step 2 — the v8 boxing/`double`
-path is a key allocation source to measure) and by unit tests carried into vNext (thread-safety
+path is a key allocation source to measure) and by unit tests carried into v9 (thread-safety
 stress test, seeded-reproducibility test, wide-integer distribution test).
 
 ### 9.2 Build log (troubleshooting why a value was/was not created)
 
 Generated code has the shape of the object graph baked in, but a developer still needs to see
 **what the builder actually did** at runtime to understand why a type came out wrong (e.g. a
-property left at its default, a mapping that didn't fire, a value source that didn't match). vNext
+property left at its default, a mapping that didn't fire, a value source that didn't match). v9
 keeps a structured build log, opt-in and reflection-free.
 
 - **Always-available, opt-in capture.** `BuildContext` carries an `IBuildLog`. By default it is a
@@ -1067,7 +1067,7 @@ keeps a structured build log, opt-in and reflection-free.
 ### 9.3 Exceptions (enough detail to find and fix the problem)
 
 When a build fails, the exception must let a developer locate the failure in the object graph
-without a debugger. vNext standardises on a `ModelBuildException` that carries the **path from the
+without a debugger. v9 standardises on a `ModelBuildException` that carries the **path from the
 root type down to the failing member**, plus the captured build log.
 
 - **Tree path to failure.** Every exception includes the build chain as a readable path, e.g.:
@@ -1114,7 +1114,7 @@ root type down to the failing member**, plus the captured build log.
 
 ## 10. AOT, trimming, and target frameworks
 
-- **Target framework set.** The current v8 library targets `netstandard2.0` only. vNext keeps
+- **Target framework set.** The current v8 library targets `netstandard2.0` only. v9 keeps
   `netstandard2.0` for broad reach (retained per #246) **and** adds every currently-supported modern
   .NET TFM — at time of writing `net8.0`, `net9.0`, and `net10.0`. The full set is:
 
@@ -1143,7 +1143,7 @@ root type down to the failing member**, plus the captured build log.
 
 ## 11. Known issues addressed by this design
 
-| Issue | How vNext addresses it |
+| Issue | How v9 addresses it |
 |-------|------------------------|
 | #347 self-reference stack overflow | Compile-time-aware circular guard in `BuildContext` |
 | #283 `Exception.Data` overflow | Generated recursion/depth guard + ignore-by-default for problematic BCL members |
@@ -1161,7 +1161,7 @@ root type down to the failing member**, plus the captured build log.
 
 ### Resolved
 
-- **12.1 — No reflection retained.** vNext is a pure source generator. There is no hybrid engine
+- **12.1 — No reflection retained.** v9 is a pure source generator. There is no hybrid engine
   and no runtime reflection fallback. `dynamic`/runtime-only types are no longer supported.
   Consumers needing the reflection design stay on the v8 line. (See §1 non-goals, §10.)
 - **12.2 — Discovery.** `Model.Create<T>()` is the root of the type tree, found via call-site
@@ -1183,12 +1183,12 @@ root type down to the failing member**, plus the captured build log.
 - **12.5 — Visibility.** Build support is limited to types/constructors/members visible to the
   generated code: public always; internal when in-compilation or via `[InternalsVisibleTo]`;
   private/protected never. Inaccessible requirements are a build diagnostic. (See §8.3.)
-- **12.6 — No back-compat shim.** vNext is a substantial rewrite and **accepts breaking changes** to
+- **12.6 — No back-compat shim.** v9 is a substantial rewrite and **accepts breaking changes** to
   keep the offering simple. There is no compatibility layer mapping old
   `IConfigurationModule.Configure(IBuildConfiguration)` calls (`AddIgnoreRule`, `AddTypeCreator`,
   `DefaultConfigurationModule`, custom `ITypeCreator`/`IValueGenerator`, etc.) onto the new
   configuration. Instead, the package ships a **migration guide in the README** (§14) that maps each
-  removed/renamed API to its vNext equivalent, so a human — or an AI agent — can perform the
+  removed/renamed API to its v9 equivalent, so a human — or an AI agent — can perform the
   migration deterministically.
 - **12.7 — Rich compile-time + runtime diagnostics.** Decided **yes**, and broadened: invest
   heavily in compilation and error reporting (§15). `Model.Create(typeof(X))` with a constant
@@ -1276,7 +1276,7 @@ root type down to the failing member**, plus the captured build log.
   applies to every nested member.
 
   **Constructor-assigned member suppression (resolved, applied to both paths).** The generated
-  population must not re-randomise a member the constructor just set. The clean vNext rule is
+  population must not re-randomise a member the constructor just set. The clean v9 rule is
   compile-time, not v8's runtime value-comparison: for a given constructor the generator knows its
   parameters, so it **omits from that construction's population** any settable member whose name
   matches a constructor parameter (case-insensitive) **and** whose type matches. This is applied
@@ -1355,7 +1355,7 @@ root type down to the failing member**, plus the captured build log.
      `[GcServer]`/Gen0–2 columns); a seeded `IRandomSource` keeps runs comparable.
    - Run it against the current library and **record the results in markdown** (committed), as the
      reflection-based baseline.
-   - **Retain this project in vNext.** It re-runs unchanged against the new library, and the
+   - **Retain this project in v9.** It re-runs unchanged against the new library, and the
      old-vs-new delta becomes documentation in the new library's README/perf page — the concrete
      reflection-vs-source-generated/AOT improvement (faster `Create`, far fewer allocations, lower
      GC pressure) we expect to demonstrate.
@@ -1379,16 +1379,16 @@ root type down to the failing member**, plus the captured build log.
    where practical. Each generator feature lands with its diagnostics, not without them.
 10. AOT/trim validation app + CI; port the existing unit-test corpus as behavioral parity tests, and
     add diagnostic-snapshot tests asserting each `MB####` fires with the right location and message.
-    Re-run the step-2 benchmarks against vNext and publish the old-vs-new delta.
+    Re-run the step-2 benchmarks against v9 and publish the old-vs-new delta.
 11. README migration guide (§14) and the "not supported" section, written to be followed by a human
     or an AI agent.
 
 ---
 
-## 14. Migration guide (v8 → vNext, README content)
+## 14. Migration guide (v8 → v9, README content)
 
 There is **no back-compat shim** (§12.6). Migration is manual, but mechanical: the README ships a
-mapping from each removed or changed v8 API to its vNext equivalent, structured so an AI agent can
+mapping from each removed or changed v8 API to its v9 equivalent, structured so an AI agent can
 apply it deterministically across a consumer's test project. The guide must cover at least:
 
 **Unchanged — no action.** `Model.Create<T>()`, `Model.Create(typeof(T))`,
@@ -1399,7 +1399,7 @@ through `Model.Construct<T>().From(...)` (§12.8).
 
 **Mapped — mechanical replacement.**
 
-| v8 API | vNext replacement | Notes |
+| v8 API | v9 replacement | Notes |
 |--------|-------------------|-------|
 | `IValueGenerator` / `ValueGeneratorBase` | `IValueSource<T>` (§8.2) | One `Create` method; no `IsMatch`/`Generate(Type,…)`; matching moves to registration. |
 | `ITypeCreator` / `TypeCreatorBase` (e.g. a creator for a constructor-only type) | `IValueSource<T>` (§8.2) | `Create` calls the constructor; the engine populates afterwards. |
@@ -1424,9 +1424,9 @@ ignore rules (e.g. ignoring a problematic framework property), and registers a c
 for a constructor-only type. That is the realistic shape of a consuming module and the clearest
 template for an agent to pattern-match against.
 
-**Not supported in vNext — call it out explicitly.** Beyond the per-API table, the README must carry
+**Not supported in v9 — call it out explicitly.** Beyond the per-API table, the README must carry
 a plain "What this version no longer supports" section so a reader (or agent) can decide up front
-whether vNext fits, rather than discovering a gap mid-migration. At minimum it states:
+whether v9 fits, rather than discovering a gap mid-migration. At minimum it states:
 
 - **No runtime reflection / no `dynamic` or runtime-only types** (§1, §10). A `Type` known only at
   runtime — loaded from a plugin, computed reflectively — cannot be built; there is no reflection
@@ -1454,7 +1454,7 @@ what to use instead, so "not supported" always comes with the supported alternat
 ## 15. Diagnostics and error reporting (a first-class deliverable)
 
 A source-generated, compile-time-first library can move most failures from "mysterious runtime
-exception" to "precise build error at the offending line". vNext treats that as a primary feature,
+exception" to "precise build error at the offending line". v9 treats that as a primary feature,
 not an afterthought: a developer should rarely need a debugger to understand why a model didn't
 build the way they expected. Diagnostics come in two layers — **compile-time** (Roslyn analyzer +
 generator diagnostics, surfaced in the IDE and build output) and **runtime** (the structured

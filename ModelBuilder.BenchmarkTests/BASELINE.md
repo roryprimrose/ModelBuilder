@@ -1,7 +1,7 @@
 # ModelBuilder v8 baseline benchmarks
 
-This document records the **reflection-based v8 baseline** captured before the vNext rewrite
-(see [`design.md`](../design.md) §13 step 2). The same BenchmarkDotNet suite is retained into vNext
+This document records the **reflection-based v8 baseline** captured before the v9 rewrite
+(see [`design.md`](../design.md) §13 step 2). The same BenchmarkDotNet suite is retained into v9
 and re-run unchanged against the source-generated library so the old-vs-new delta — faster `Create`,
 far fewer allocations, lower GC pressure — can be published as concrete evidence.
 
@@ -101,7 +101,7 @@ Runtimes  : .NET Framework 4.7.2 (4.8.1 runtime), .NET 8.0.28, .NET 9.0.16, .NET
 | SmallNestedPopulate | .NET Framework 4.7.2 | 139.06 μs | 2.81 | 22.9492 | 1.2207 | 142.29 KB | 1.64 |
 | WithEnumsNullablePopulate | .NET Framework 4.7.2 | 47.44 μs | 0.96 | 12.5732 | 0.6104 | 77.58 KB | 0.90 |
 
-## Baseline observations (what vNext must beat)
+## Baseline observations (what v9 must beat)
 
 - **Allocations dominate and scale super-linearly with graph size.** A flat POCO allocates ~71–88 KB
   to build; the deep/wide and collection graphs allocate **~480–684 KB** — 5–8× the flat case. This
@@ -114,25 +114,25 @@ Runtimes  : .NET Framework 4.7.2 (4.8.1 runtime), .NET 8.0.28, .NET 9.0.16, .NET
 - **Constructor-arg matching is not a hotspot** relative to property population at the same graph
   size — useful to know before optimising the generator's constructor selection.
 
-These numbers are the reflection-based "before". The vNext target is materially lower `Mean`,
+These numbers are the reflection-based "before". The v9 target is materially lower `Mean`,
 **substantially lower Allocated/Alloc Ratio**, and fewer Gen0/Gen1 collections across every shape,
 with the largest wins on the deep/wide and collection-heavy graphs.
 
-## vNext delta (source-generated vs reflection)
+## v9 delta (source-generated vs reflection)
 
-`CreateComparisonBenchmarks` runs the v8 reflection engine and the vNext source-generated engine on
+`CreateComparisonBenchmarks` runs the v8 reflection engine and the v9 source-generated engine on
 the same shapes side by side (the v8 method is the baseline).
 
 > [!IMPORTANT]
-> **This is an accumulating record — retain every run.** The v8-vs-vNext comparison below (Run 1) is a
+> **This is an accumulating record — retain every run.** The v8-vs-v9 comparison below (Run 1) is a
 > **frozen historical snapshot**: the v8 reflection engine and its `CreateComparisonBenchmarks` harness
 > were removed in the cutover, so that exact side-by-side can never be regenerated. Keep it as-is.
-> Ongoing tracking is **vNext-only** from the live `CreateBenchmarks`/`PopulateBenchmarks` suite — when
-> you capture a new vNext run, **append** it as a new dated run below and leave both the v8 baseline
+> Ongoing tracking is **v9-only** from the live `CreateBenchmarks`/`PopulateBenchmarks` suite — when
+> you capture a new v9 run, **append** it as a new dated run below and leave both the v8 baseline
 > tables further up this document and every earlier run in place. Never overwrite or delete old data;
 > the point is to keep the full history visible so drift between runs stays trackable.
 
-### Run 1 — initial v8-vs-vNext comparison (short job, .NET 8.0) — frozen
+### Run 1 — initial v8-vs-v9 comparison (short job, .NET 8.0) — frozen
 
 First and final side-by-side capture, taken when the comparison benchmark landed (design.md §10, step
 10) while the v8 engine still existed. The v8 engine has since been removed, so this snapshot cannot be
@@ -141,32 +141,32 @@ re-run; it is retained here permanently as the "before/after" evidence.
 | Shape | Engine | Mean | Ratio | Gen0 | Gen1 | Allocated | Alloc Ratio |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | FlatPoco | v8 | 32.22 μs | 1.00 | 4.8828 | 0.2441 | 80.91 KB | 1.00 |
-| FlatPoco | **vNext** | **14.44 μs** | **0.45** | 0.2747 | - | **4.50 KB** | **0.06** |
+| FlatPoco | **v9** | **14.44 μs** | **0.45** | 0.2747 | - | **4.50 KB** | **0.06** |
 | SmallNested | v8 | 98.83 μs | 1.00 | 7.8125 | 0.4883 | 134.96 KB | 1.00 |
-| SmallNested | **vNext** | **7.19 μs** | **0.07** | 0.2670 | - | **4.45 KB** | **0.03** |
+| SmallNested | **v9** | **7.19 μs** | **0.07** | 0.2670 | - | **4.45 KB** | **0.03** |
 | WithCollections | v8 | 285.32 μs | 1.00 | 35.1563 | 1.9531 | 589.34 KB | 1.00 |
-| WithCollections | **vNext** | **19.52 μs** | **0.07** | 0.7324 | - | **11.99 KB** | **0.02** |
+| WithCollections | **v9** | **19.52 μs** | **0.07** | 0.7324 | - | **11.99 KB** | **0.02** |
 | WithEnumsNullable | v8 | 34.92 μs | 1.00 | 4.2725 | 0.1221 | 70.91 KB | 1.00 |
-| WithEnumsNullable | **vNext** | **2.99 μs** | **0.09** | 0.1488 | - | **2.47 KB** | **0.03** |
+| WithEnumsNullable | **v9** | **2.99 μs** | **0.09** | 0.1488 | - | **2.47 KB** | **0.03** |
 
-> Ratios are vNext relative to the v8 baseline **for the same shape** (the table above uses each v8
+> Ratios are v9 relative to the v8 baseline **for the same shape** (the table above uses each v8
 > method as its own baseline, so the v8 rows read 1.00).
 
 **The headline result the rewrite set out to demonstrate (Run 1):**
 
-- **Faster everywhere** — vNext is 2.2× faster on the flat POCO and 11–14× faster on the nested,
+- **Faster everywhere** — v9 is 2.2× faster on the flat POCO and 11–14× faster on the nested,
   collection and enum/nullable shapes, because there is no per-build reflection, constructor
   resolution, or `ExpandoObject`.
-- **Allocations collapse** — vNext allocates **6–50× less** (e.g. `WithCollections` 589 KB → 12 KB,
+- **Allocations collapse** — v9 allocates **6–50× less** (e.g. `WithCollections` 589 KB → 12 KB,
   `SmallNested` 135 KB → 4.5 KB). The reflection metadata, boxing and per-call configuration objects
   are simply gone.
-- **No Gen1 pressure** — vNext records **zero Gen1 collections** across every shape, versus
+- **No Gen1 pressure** — v9 records **zero Gen1 collections** across every shape, versus
   non-trivial Gen1 on the v8 path; Gen0 drops by an order of magnitude too.
 
 <!--
-### Run N — <date>, <job>, <runtime> (vNext-only)
+### Run N — <date>, <job>, <runtime> (v9-only)
 
-Append the next vNext run here, ABOVE the older runs (most-recent-first), leaving every prior run and
+Append the next v9 run here, ABOVE the older runs (most-recent-first), leaving every prior run and
 the frozen Run 1 in place. Capture it from the live suite:
 
     dotnet run -c Release -f net8.0 -- --filter *Create* *Populate* --runtimes net8.0 --job short

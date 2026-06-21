@@ -6,7 +6,7 @@ namespace ModelBuilder.AotValidation
 
     /// <summary>
     ///     The <see cref="Program" /> class
-    ///     exercises a representative slice of the vNext engine so the trim and AOT analyzers can prove
+    ///     exercises a representative slice of the v9 engine so the trim and AOT analyzers can prove
     ///     the build path is reflection-free. It is not a functional test; it exists to fail the build
     ///     if any AOT/trim warning is introduced.
     /// </summary>

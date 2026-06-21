@@ -1,4 +1,4 @@
-// Several tests exercise the vNext registration mechanism by assigning the process-global
+// Several tests exercise the v9 registration mechanism by assigning the process-global
 // typed-static slots (ValueSource<T>.Instance, ModelBuilderSlot<T>.Instance) and the shared
 // Model.Registry / named-value-source registries. Those slots are static by design, so two test
 // classes touching the same closed generic (for example ValueSource<int>) race when xUnit runs

@@ -1,17 +1,17 @@
-# Migrating from ModelBuilder v8 to vNext
+# Migrating from ModelBuilder v8 to v9
 
-vNext is a source-generated, reflection-free, AOT- and trim-compatible rewrite of ModelBuilder. It
+v9 is a source-generated, reflection-free, AOT- and trim-compatible rewrite of ModelBuilder. It
 keeps the everyday API but removes the deep extensibility pipeline that depended on runtime
 reflection. There is **no back-compat shim** — migration is manual, but mechanical. This guide maps
-every changed API to its vNext equivalent so a human (or an AI agent) can apply it deterministically.
+every changed API to its v9 equivalent so a human (or an AI agent) can apply it deterministically.
 
 > [!IMPORTANT]
-> vNext ships as a new major version. Consumers that need the reflection-based engine, runtime-only
+> v9 ships as a new major version. Consumers that need the reflection-based engine, runtime-only
 > (`dynamic`) types, or the removed extensibility hooks should stay on the v8 line.
 
-## How vNext works (the one thing to understand)
+## How v9 works (the one thing to understand)
 
-vNext discovers every type you build **at compile time** and generates a dedicated builder for it.
+v9 discovers every type you build **at compile time** and generates a dedicated builder for it.
 The triggers are:
 
 1. **`Model.Create<T>()` / `Model.Populate<T>()` / `Model.Create(typeof(T))`** — `T` and everything
@@ -48,17 +48,17 @@ surfaced in the editor, and constructor-assigned members left untouched by popul
 *Typed construction* section.
 
 ```csharp
-// v8 / earlier vNext
+// v8 / earlier v9
 var person = Model.Create<Person>("Fred", "Smith");
 
-// vNext
+// v9
 var person = Model.Construct<Person>().From("Fred", "Smith");
 ```
 
 
 ## Mapped — mechanical replacement
 
-| v8 API | vNext replacement | Notes |
+| v8 API | v9 replacement | Notes |
 | --- | --- | --- |
 | `IValueGenerator` / `ValueGeneratorBase` | `IValueSource<T>` | One `Create` method; no `IsMatch`/`Generate(Type,…)`. Matching moves to registration. |
 | `ITypeCreator` / `TypeCreatorBase` (constructor-only type) | `IValueSource<T>` | `Create` calls the constructor and returns the instance; the engine populates it afterwards. |
@@ -99,7 +99,7 @@ public class TestModule : IConfigurationModule
 }
 ```
 
-**vNext** (the defaults are implicit; the module only adds deltas):
+**v9** (the defaults are implicit; the module only adds deltas):
 
 ```csharp
 public sealed class TestModule : IConfigurationModule
@@ -113,9 +113,9 @@ public sealed class TestModule : IConfigurationModule
 }
 ```
 
-## What vNext no longer supports
+## What v9 no longer supports
 
-Decide up front whether vNext fits:
+Decide up front whether v9 fits:
 
 - **No runtime reflection / no `dynamic` or runtime-only types.** A `Type` known only at runtime
   (loaded from a plugin, computed reflectively) cannot be built — there is no reflection fallback.

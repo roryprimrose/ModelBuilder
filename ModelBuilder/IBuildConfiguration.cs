@@ -5,7 +5,7 @@ namespace ModelBuilder
 
     /// <summary>
     ///     The <see cref="IBuildConfiguration" /> interface
-    ///     defines the slim vNext build configuration: the type mappings and ignore rules that
+    ///     defines the slim v9 build configuration: the type mappings and ignore rules that
     ///     configuration modules populate and that the engine consults while building an object graph.
     /// </summary>
     public interface IBuildConfiguration

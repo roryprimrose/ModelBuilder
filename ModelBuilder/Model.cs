@@ -4,7 +4,7 @@ namespace ModelBuilder
 
     /// <summary>
     ///     The <see cref="Model" /> class
-    ///     is the static entry point for the vNext source-generated engine. It dispatches to the
+    ///     is the static entry point for the v9 source-generated engine. It dispatches to the
     ///     generated builders through the typed-static slots on the generic path and through the
     ///     registry on the runtime-<see cref="Type" /> path.
     /// </summary>

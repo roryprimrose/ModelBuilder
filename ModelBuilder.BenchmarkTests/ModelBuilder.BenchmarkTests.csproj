@@ -22,7 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ModelBuilder\ModelBuilder.csproj" />
-    <!-- The generator runs as an analyzer so the vNext comparison benchmarks emit builders. -->
+    <!-- The generator runs as an analyzer so the v9 comparison benchmarks emit builders. -->
     <ProjectReference Include="..\ModelBuilder.Generator\ModelBuilder.Generator.csproj"
                       OutputItemType="Analyzer"
                       ReferenceOutputAssembly="false" />
