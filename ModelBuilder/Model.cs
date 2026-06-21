@@ -91,8 +91,8 @@ namespace ModelBuilder
         }
 
         /// <summary>
-        ///     Begins a configured build that registers a custom value source for every member and root of
-        ///     type <typeparamref name="T" />.
+        ///     Begins a configured build that registers a custom value source for every build target and root
+        ///     of type <typeparamref name="T" />. A build target is a constructor parameter or settable member.
         /// </summary>
         /// <typeparam name="T">The type the value source produces.</typeparam>
         /// <param name="source">The value source to register.</param>
@@ -104,23 +104,23 @@ namespace ModelBuilder
         }
 
         /// <summary>
-        ///     Begins a configured build that registers a custom value source for members of type
-        ///     <typeparamref name="T" /> whose name matches one of <paramref name="memberNames" />.
+        ///     Begins a configured build that registers a custom value source for build targets of type
+        ///     <typeparamref name="T" /> whose name matches one of <paramref name="names" />. A build target is
+        ///     a constructor parameter or settable member.
         /// </summary>
         /// <typeparam name="T">The type the value source produces.</typeparam>
         /// <param name="source">The value source to register.</param>
-        /// <param name="memberNames">The member names the source matches.</param>
+        /// <param name="names">The names the source matches.</param>
         /// <returns>A configuration to continue building.</returns>
         /// <exception cref="ArgumentNullException">
-        ///     The <paramref name="source" /> or <paramref name="memberNames" /> parameter is <c>null</c>.
+        ///     The <paramref name="source" /> or <paramref name="names" /> parameter is <c>null</c>.
         /// </exception>
         /// <exception cref="ArgumentException">
-        ///     The <paramref name="memberNames" /> parameter is empty or contains a null, empty or
-        ///     whitespace entry.
+        ///     The <paramref name="names" /> parameter is empty or contains a null, empty or whitespace entry.
         /// </exception>
-        public static IModelConfiguration AddValueSource<T>(IValueSource<T> source, params string[] memberNames)
+        public static IModelConfiguration AddValueSource<T>(IValueSource<T> source, params string[] names)
         {
-            return new ModelConfiguration().AddValueSource(source, memberNames);
+            return new ModelConfiguration().AddValueSource(source, names);
         }
 
         /// <summary>

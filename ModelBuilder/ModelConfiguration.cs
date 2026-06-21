@@ -67,9 +67,9 @@ namespace ModelBuilder
         }
 
         /// <inheritdoc />
-        public IModelConfiguration AddValueSource<T>(IValueSource<T> source, params string[] memberNames)
+        public IModelConfiguration AddValueSource<T>(IValueSource<T> source, params string[] names)
         {
-            _configuration.AddValueSource(source, memberNames);
+            _configuration.AddValueSource(source, names);
 
             return this;
         }

@@ -169,9 +169,9 @@ what keeps the build deterministic and reflection-free.
 ### Custom value sources
 
 When the built-in data does not produce what your model needs, register a custom value source. A
-value source is an `IValueSource<T>` that produces a `T` for a member or root; the simplest way to
-supply one is `DelegateValueSource<T>` wrapping a lambda. A registered source takes precedence over
-the built-in sources.
+value source is an `IValueSource<T>` that produces a `T` for a build target (a constructor parameter
+or settable member) or a root; the simplest way to supply one is `DelegateValueSource<T>` wrapping a
+lambda. A registered source takes precedence over the built-in sources.
 
 Register a source **by type** to control every value of that type:
 
@@ -180,9 +180,10 @@ var order = Model.AddValueSource(new DelegateValueSource<OrderStatus>(c => Order
     .Create<Order>();
 ```
 
-Register a source **by member name** to control only members whose name matches (matched as a whole
-PascalCase/camelCase word, the same way the built-in entity data is matched). A named source takes
-precedence over a typed source for a matching member:
+Register a source **by name** to control only build targets — constructor parameters or settable
+members — whose name matches (matched as a whole PascalCase/camelCase word, the same way the built-in
+entity data is matched). A named source takes precedence over a typed source for a matching build
+target:
 
 ```csharp
 var account = Model.AddValueSource(

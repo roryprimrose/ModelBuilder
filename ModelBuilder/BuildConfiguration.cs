@@ -46,26 +46,26 @@ namespace ModelBuilder
         }
 
         /// <inheritdoc />
-        public IBuildConfiguration AddValueSource<T>(IValueSource<T> source, params string[] memberNames)
+        public IBuildConfiguration AddValueSource<T>(IValueSource<T> source, params string[] names)
         {
             source = source ?? throw new ArgumentNullException(nameof(source));
-            memberNames = memberNames ?? throw new ArgumentNullException(nameof(memberNames));
+            names = names ?? throw new ArgumentNullException(nameof(names));
 
-            if (memberNames.Length == 0)
+            if (names.Length == 0)
             {
-                throw new ArgumentException("At least one member name must be supplied.", nameof(memberNames));
+                throw new ArgumentException("At least one name must be supplied.", nameof(names));
             }
 
-            foreach (var memberName in memberNames)
+            foreach (var name in names)
             {
-                if (string.IsNullOrWhiteSpace(memberName))
+                if (string.IsNullOrWhiteSpace(name))
                 {
-                    throw new ArgumentException("Member names must not be null, empty or whitespace.", nameof(memberNames));
+                    throw new ArgumentException("Names must not be null, empty or whitespace.", nameof(names));
                 }
             }
 
             _namedValueSources ??= new NamedValueSourceRegistry();
-            _namedValueSources.Register(source, memberNames);
+            _namedValueSources.Register(source, names);
 
             return this;
         }

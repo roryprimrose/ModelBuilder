@@ -31,7 +31,7 @@ namespace ModelBuilder
             where TTarget : TSource;
 
         /// <summary>
-        ///     Registers a custom value source that produces values for every member and root of type
+        ///     Registers a custom value source that produces values for every build target and root of type
         ///     <typeparamref name="T" />, overriding the built-in source for that type.
         /// </summary>
         /// <typeparam name="T">The type the value source produces.</typeparam>
@@ -40,35 +40,35 @@ namespace ModelBuilder
         /// <exception cref="ArgumentNullException">The <paramref name="source" /> parameter is <c>null</c>.</exception>
         /// <remarks>
         ///     A registered value source takes precedence over the built-in sources. Use the overload that
-        ///     accepts member names to scope a source to specific members rather than to every value of the
-        ///     type.
+        ///     accepts names to scope a source to specific build targets rather than to every value of the
+        ///     type. A build target is a constructor parameter or settable member.
         /// </remarks>
         IBuildConfiguration AddValueSource<T>(IValueSource<T> source);
 
         /// <summary>
-        ///     Registers a custom value source that produces values for members of type
-        ///     <typeparamref name="T" /> whose name matches one of <paramref name="memberNames" />,
-        ///     overriding the built-in source for those members.
+        ///     Registers a custom value source that produces values for build targets of type
+        ///     <typeparamref name="T" /> whose name matches one of <paramref name="names" />, overriding the
+        ///     built-in source for those build targets. A build target is a constructor parameter or settable
+        ///     member.
         /// </summary>
         /// <typeparam name="T">The type the value source produces.</typeparam>
         /// <param name="source">The value source to register.</param>
-        /// <param name="memberNames">
-        ///     The member names the source matches, each compared as a whole PascalCase or camelCase word
-        ///     within the member name.
+        /// <param name="names">
+        ///     The names the source matches, each compared as a whole PascalCase or camelCase word within the
+        ///     build target name.
         /// </param>
         /// <returns>The same configuration instance for chaining.</returns>
         /// <exception cref="ArgumentNullException">
-        ///     The <paramref name="source" /> or <paramref name="memberNames" /> parameter is <c>null</c>.
+        ///     The <paramref name="source" /> or <paramref name="names" /> parameter is <c>null</c>.
         /// </exception>
         /// <exception cref="ArgumentException">
-        ///     The <paramref name="memberNames" /> parameter is empty or contains a null, empty or
-        ///     whitespace entry.
+        ///     The <paramref name="names" /> parameter is empty or contains a null, empty or whitespace entry.
         /// </exception>
         /// <remarks>
         ///     A named value source takes precedence over both the typed sources and the built-in sources
-        ///     for a matching member.
+        ///     for a matching build target.
         /// </remarks>
-        IBuildConfiguration AddValueSource<T>(IValueSource<T> source, params string[] memberNames);
+        IBuildConfiguration AddValueSource<T>(IValueSource<T> source, params string[] names);
 
         /// <summary>
         ///     Registers a targeted ignore rule for a specific member on a specific type.
