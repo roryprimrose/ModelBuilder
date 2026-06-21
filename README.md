@@ -34,14 +34,22 @@ discovered at compile time and gets a dedicated builder, so ModelBuilder:
   * [Ignoring members](#ignoring-members)
   * [Mapping abstract and interface types](#mapping-abstract-and-interface-types)
   * [Custom value sources](#custom-value-sources)
+    + [Writing a reusable value source](#writing-a-reusable-value-source)
+    + [The build context seams](#the-build-context-seams)
 - [How types are discovered](#how-types-are-discovered)
   * [Build-time diagnostics](#build-time-diagnostics)
   * [GenerateModelBuilder](#generatemodelbuilder)
 - [Populating a model](#populating-a-model)
 - [Changing the model after creation](#changing-the-model-after-creation)
 - [Logging the build process](#logging-the-build-process)
+  * [Inspecting the structured log](#inspecting-the-structured-log)
+- [Handling build failures](#handling-build-failures)
 - [Configuration modules](#configuration-modules)
 - [Built-in data](#built-in-data)
+  * [Entity-style data matched by member name](#entity-style-data-matched-by-member-name)
+  * [Cross-field consistency](#cross-field-consistency)
+  * [Reusable reference data sets](#reusable-reference-data-sets)
+- [Generating random values](#generating-random-values)
 - [Target frameworks](#target-frameworks)
 - [Migrating from v8](#migrating-from-v8)
 - [Supporters](#supporters)
@@ -153,6 +161,12 @@ typed expression and returns a configuration you continue building from:
 var person = Model.Ignoring<Person>(x => x.FirstName).Create<Person>();
 ```
 
+The examples here finish with `Create<T>()`, but every fluent entry point on `Model` returns the same
+configuration, and you can complete it with whichever build you need — `Create<T>()` for a new
+instance, `Populate<T>(instance)` to fill one you already have, or `Construct<T>().From(...)` to supply
+constructor arguments. The configuration also keeps composing, so you can chain further `Ignoring`,
+`Mapping`, `AddValueSource`, `UsingModule` or `WriteLog` calls before the terminal build.
+
 The rule applies wherever that member appears in the graph, so it also covers types nested deeper
 than the root:
 
@@ -220,12 +234,12 @@ var order = Model.AddValueSource(new DelegateValueSource<OrderStatus>(c => Order
     .Create<Order>();
 ```
 
-Register a source **for named build targets of a type** to narrow it to the constructor parameters or
-settable members whose name matches one of the supplied names (matched as a whole
+Register a source **scoped to specific member names** to narrow it to the constructor parameters or
+settable members whose name matches one of the supplied member names (matched as a whole
 PascalCase/camelCase word, the same way the built-in entity data is matched). The source still only
-applies to build targets of its `T`, so it both matches the name and produces the right type. A named
-source takes precedence over a type-only source for a matching build target. The following code uses
-this expression for every `string` parameter or property named `AccountNumber`:
+applies to build targets of its `T`, so it matches on both the member name and the type. A
+member-name-scoped source takes precedence over a type-only source for a matching build target. The
+following code uses this expression for every `string` parameter or property named `AccountNumber`:
 
 ```csharp
 var account = Model.AddValueSource(
@@ -269,6 +283,68 @@ public sealed class AddressModule : IConfigurationModule
 
 Custom value sources can be registered through a configuration module's `IBuildConfiguration` exactly
 as above, so they can be packaged and shared like mappings and ignore rules.
+
+#### Writing a reusable value source
+
+`DelegateValueSource<T>` is the quickest way to supply a source, and it has two factory shapes. The
+first ignores where the value is going; the second also receives a `BuildTarget` describing the type
+and (optional) member name being built, so one source can vary its output by member:
+
+```csharp
+// Same value everywhere.
+var pending = new DelegateValueSource<OrderStatus>(context => OrderStatus.Pending);
+
+// Vary the value by the member being built.
+var labelled = new DelegateValueSource<string>((context, target) =>
+    target.MemberName is null ? "value" : target.MemberName + "-" + context.Random.NextInt32(1, 999));
+```
+
+A lambda is ideal for a one-off source defined right where it is registered. When the source is worth
+keeping as a reusable, testable unit, however, implement `IValueSource<T>` as a dedicated class.
+Reach for a class when the source holds its own state or dependencies, when several tests or
+[configuration modules](#configuration-modules) need to share the exact same logic, or simply when a
+descriptive class name documents intent better than an inline lambda. A class also gives the source a
+single place to unit-test.
+
+The source's `Create` method receives the same `IBuildContext` and `BuildTarget` that
+`DelegateValueSource<T>` passes to its factory:
+
+```csharp
+public sealed class SkuValueSource : IValueSource<string>
+{
+    public string Create(IBuildContext context, in BuildTarget target)
+    {
+        return "SKU-" + context.Random.NextInt32(10000, 99999);
+    }
+}
+
+// "Sku" is the member name to match (as in the AccountNumber example above); it is unrelated to the
+// SkuValueSource class name. Drop it to apply the source to every string build target instead.
+var product = Model.AddValueSource(new SkuValueSource(), "Sku").Create<Product>();
+```
+
+`NullableValueSource<T>` wraps a value-type source so it produces `T?`. It returns `null` for a fixed
+share of values (a built-in 5% default that is not currently configurable) and otherwise delegates to
+the underlying source — the mechanism that makes generated nullable members occasionally `null`.
+
+#### The build context seams
+
+The `IBuildContext` passed to every value source exposes the same seams the engine and built-in
+sources use, so a custom source can participate fully in a build:
+
+| Member | Purpose |
+| --- | --- |
+| `Random` | The build's `IRandomSource` — seedable, thread-safe, typed (see [Generating random values](#generating-random-values)). |
+| `GetSibling<T>(name)` / `GetSibling<T>(names...)` | Read a value already set on the instance being built (the first match across the candidate names), so derived members stay consistent. Returns `default` when there is no match. |
+| `GetOrAddScopedValue<T>(key, factory)` | Get-or-create a value cached for the lifetime of the current instance, so several sources can share one data item (such as an address row). A different instance elsewhere in the graph gets its own scope. |
+| `NextCount()` | A random collection length within the built-in min/max bounds (a fixed 1–10 default). |
+| `Build<T>(declaringType, name)` | Recursively build a nested member value through the normal source/builder resolution, with circular-reference and depth guards applied. |
+| `ShouldPopulate(declaringType, name, memberType)` | Whether a member passes the configured ignore rules. |
+| `RecordSibling(name, value)` / `EnterSiblingScope()` | Record a value into, or open, the sibling scope that `GetSibling<T>` reads. |
+| `Configuration` / `Log` | The active `IBuildConfiguration` and `IBuildLog` for the build. |
+
+All numeric range methods on `Random` are inclusive of both bounds, and `GetSibling<T>` name matching
+is the same whole-word, case-insensitive scheme used by the built-in entity data.
 
 ## How types are discovered
 
@@ -357,6 +433,35 @@ var organisation = Model.Create<Organisation>();
 organisation.Staff.SetEach(x => x.Email = null);
 ```
 
+`SetEach` has overloads for the common collection and dictionary shapes (`IEnumerable<T>`, `IList<T>`,
+`ICollection<T>`, `IReadOnlyList<T>`, `List<T>`, `Collection<T>`, `ReadOnlyCollection<T>`, the
+`IDictionary`/`IReadOnlyDictionary`/`Dictionary`/`ReadOnlyDictionary` families) and returns the same
+collection type it received, so it stays chainable. A second overload passes the **index** alongside
+each item:
+
+```csharp
+var staff = Model.Create<Organisation>().Staff;
+
+// The lambda receives the zero-based index and the item.
+staff.SetEach((index, person) => person.EmployeeNumber = index + 1);
+```
+
+The `SetEach` overloads above cover the common collection and dictionary types by name. If your
+variable's type is some other collection — a `Queue<T>`, a `HashSet<T>`, or a custom collection — none
+of those overloads match it, so the compiler cannot pick one. `SetEachExplicit` is the fallback for
+that case: it works on any `IEnumerable<TEntry>` (or `IEnumerable<KeyValuePair<TKey, TValue>>` for
+dictionaries), runs the action over every item, and returns the collection unchanged. Because the
+compiler cannot infer the type arguments from the receiver alone, you supply them explicitly — the
+collection type first, then the item type — which is what gives the method its name. Index-aware
+overloads are available too, matching `SetEach`:
+
+```csharp
+var queue = new Queue<Person>(Model.Create<List<Person>>());
+
+// <Queue<Person>, Person> = <the collection type, the item type>.
+queue.SetEachExplicit<Queue<Person>, Person>((index, person) => person.Email = null);
+```
+
 ## Logging the build process
 
 ModelBuilder can render a structured log of how a value was built. `WriteLog` enables logging and
@@ -386,16 +491,59 @@ public class WriteLogTests
 The log shows the build tree — each type entered, each member created, and any member skipped by an
 ignore rule, a circular-reference guard or the depth guard.
 
+### Inspecting the structured log
+
+`WriteLog(Action<string>)` renders the log to text, but the log is also a structured tree you can
+inspect programmatically. An `IBuildLog` exposes `Entries`, a list of `BuildLogEntry` nodes that each
+carry a `Kind` (`CreateInstance`, `PopulateInstance`, `CreateValue` or `SkipMember`), the `TargetType`,
+an optional `MemberName` and `Reason`, and nested `Children`. This is the same tree captured on a
+[`ModelBuildException`](#handling-build-failures), so you can assert on exactly what the builder did —
+for example that a member was skipped for the expected reason — rather than parsing rendered text:
+
+```csharp
+static bool WasSkipped(IReadOnlyList<BuildLogEntry> entries, string memberName) =>
+    entries.Any(e =>
+        (e.Kind == BuildLogEntryKind.SkipMember && e.MemberName == memberName)
+        || WasSkipped(e.Children, memberName));
+```
+
+## Handling build failures
+
+When a build cannot complete, ModelBuilder throws a `ModelBuildException`. As well as the message, it
+carries structured context so you can diagnose the failure without a debugger:
+
+| Member | Description |
+| --- | --- |
+| `FailureKind` | A `FailureKind` enum categorising the cause: `InaccessibleConstructor`, `UnmappedAbstractType`, `NoValueSource`, `NoBuilderForType`, `CircularReference`, `DepthExceeded`, `ValueSourceThrew` or `Unspecified`. |
+| `TargetType` | The type being built when the failure occurred, or `null`. |
+| `TargetMember` | The member being built when the failure occurred, or `null`. |
+| `BuildPath` | The `BuildFrame` chain from the root type down to the failing member. |
+| `BuildLog` | The structured [build log](#inspecting-the-structured-log) captured up to the failure. |
+
+Branch on `FailureKind` rather than the message so your handling survives wording changes:
+
+```csharp
+try
+{
+    var parcel = Model.Create<Parcel>();
+}
+catch (ModelBuildException ex) when (ex.FailureKind == FailureKind.UnmappedAbstractType)
+{
+    // A reachable abstract/interface member has no mapping — add a Model.Mapping<,> for it.
+    Console.WriteLine($"Map {ex.TargetType} before building (at {ex.TargetMember}).");
+}
+```
+
 ## Configuration modules
 
 An `IConfigurationModule` packages reusable build configuration so it can be shared across tests. A
-module receives a `BuildConfiguration` and adds type mappings and ignore rules; the built-in value
-sources are always applied, so a module only declares the deltas it needs.
+module receives an `IBuildConfiguration` and adds type mappings, ignore rules and custom value
+sources; the built-in value sources are always applied, so a module only declares the deltas it needs.
 
 ```csharp
 public sealed class TestModule : IConfigurationModule
 {
-    public void Configure(BuildConfiguration configuration)
+    public void Configure(IBuildConfiguration configuration)
     {
         // Use a concrete type wherever IShipment is needed.
         configuration.AddMapping<IShipment, GroundShipment>();
@@ -466,12 +614,77 @@ first:
   absent), and `FullName`/`UserName` are composed from the same name fields. A model that spells the
   members `GivenName`/`Surname` still gets a matching email.
 - **One coherent location per instance.** `Country`, `State`, `City`, `PostCode` and `Phone` are
-  drawn from a single address row, so an instance never produces an impossible combination such as
-  *London, New South Wales, India*. A different instance elsewhere in the graph gets its own
-  location.
+  drawn from a single built-in [`Location`](#reusable-reference-data-sets) row, so an instance never
+  produces an impossible combination such as *London, New South Wales, India*. A different instance
+  elsewhere in the graph gets its own location.
 - **Age follows date of birth.** `DateOfBirth` is the definitive value; `Age` is the number of
   completed years between it and a fixed reference date, so a generated `Age` of 18 can never sit
   next to a `DateOfBirth` that implies 35.
+
+### Reusable reference data sets
+
+The same embedded data the built-in sources draw from is exposed through the static `ModelBuilder.Data.TestData`
+class, so you can use it directly in your own value sources, fixtures or assertions. Each property is a
+cached `IReadOnlyList<>` read once from embedded resources:
+
+| `TestData` member | Contents |
+| --- | --- |
+| `MaleNames`, `FemaleNames` | Given names |
+| `LastNames` | Family names |
+| `Companies` | Company names |
+| `Domains` | Email/web domains |
+| `TimeZones` | Time-zone identifiers |
+| `Locations` | `Location` rows pairing `City`, `State`, `Country`, `PostCode`, `Phone`, `StreetName` and `StreetSuffix` so a drawn location is internally consistent |
+
+```csharp
+var random = new RandomSource();
+var location = TestData.Locations[random.NextInt32(0, TestData.Locations.Count - 1)];
+
+// location.City, location.State, location.Country, location.PostCode all belong together.
+```
+
+`Location` (in the same `ModelBuilder.Data` namespace) is a plain mutable type. You can build your own
+instances with an object initializer, or parse one from a CSV line with `Location.Parse`. The CSV
+columns are comma-separated in this exact order:
+
+```text
+Country,State,City,PostCode,StreetName,StreetSuffix,Phone
+```
+
+```csharp
+var custom = new Location { City = "Hobart", State = "Tasmania", Country = "Australia" };
+var parsed = Location.Parse("Australia,Tasmania,Hobart,7000,Murray,Street,03 6200 0000");
+```
+
+These are for your own value sources and fixtures. The built-in `TestData` lists (including
+`Locations`) are read-only, so there is no public API to add your own entries to the data the built-in
+location source draws from — to inject custom location data into a build, register a [custom value
+source](#custom-value-sources) for the relevant members.
+
+## Generating random values
+
+ModelBuilder's randomness comes from `IRandomSource`, implemented by `RandomSource`. It is the
+`Random` seam on `IBuildContext`, but you can also use it standalone — for direct random values or to
+make a build reproducible by seeding it. It is thread-safe, returns each value type directly without
+boxing, and generates wide-integer and `decimal` ranges with their own arithmetic so there is no
+precision loss through `double`:
+
+```csharp
+// A default source is independently seeded; pass a seed to reproduce a sequence.
+var random = new RandomSource(seed: 1234);
+
+int dice = random.NextInt32(1, 6);          // every range method is inclusive of both bounds
+decimal price = random.NextDecimal(0m, 100m);
+bool flag = random.NextBool();
+
+var buffer = new byte[16];
+random.NextBytes(buffer);
+```
+
+Typed methods cover the full numeric range — `NextByte`, `NextSByte`, `NextInt16`/`NextUInt16`,
+`NextInt32`/`NextUInt32`, `NextInt64`/`NextUInt64`, `NextSingle`, `NextDouble`, `NextDecimal` — plus
+`NextBool` and `NextBytes`. The integer and floating-point overloads default to the type's full range,
+and the `Seed` property reports the seed in use so a failing test can be replayed.
 
 ## Target frameworks
 
@@ -486,7 +699,3 @@ The previous reflection-based extensibility pipeline (`IExecuteStrategy`, `ICons
 overloads and so on) has been removed in favour of the source-generated model and a small set of
 supported seams (`IValueSource<T>`, mappings, ignore rules and `[GenerateModelBuilder]`). The
 [migration guide](MIGRATION.md) maps every changed and removed v8 API to its vNext equivalent.
-
-## Supporters
-
-This project is supported by [JetBrains](https://www.jetbrains.com/?from=ModelBuilder)
