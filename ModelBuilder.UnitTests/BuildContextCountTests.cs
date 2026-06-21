@@ -10,7 +10,7 @@
         [Fact]
         public void NextCountReturnsValueWithinConfiguredRange()
         {
-            var options = new BuildContextOptions
+            var options = new BuildOptions
             {
                 MinCount = 3,
                 MaxCount = 7
@@ -25,7 +25,7 @@
         [Fact]
         public void NextCountDoesNotThrowWhenMaxBelowMin()
         {
-            var options = new BuildContextOptions
+            var options = new BuildOptions
             {
                 MinCount = 10,
                 MaxCount = 2
@@ -40,7 +40,7 @@
         [Fact]
         public void NextCountCoercesNegativeMinToZero()
         {
-            var options = new BuildContextOptions
+            var options = new BuildOptions
             {
                 MinCount = -5,
                 MaxCount = -1

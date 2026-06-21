@@ -64,7 +64,7 @@ var person = Model.Construct<Person>().From("Fred", "Smith");
 | `ITypeCreator` / `TypeCreatorBase` (constructor-only type) | `IValueSource<T>` | `Create` calls the constructor and returns the instance; the engine populates it afterwards. |
 | `configuration.AddValueGenerator<G>()` | `configuration.AddValueSource<T>(source, "MemberName")` (named) or `configuration.AddValueSource<T>(source)` (typed) | The `T` fixes the type; the member name is declared at registration. |
 | `configuration.AddTypeCreator<C>()` | `configuration.AddValueSource<T>(source)` | Same registration shape; `Create` calls the constructor. |
-| `UpdateValueGenerator<G>(g => g.X = …)` / `UpdateTypeCreator<C>(c => c.X = …)` | `BuildContextOptions` (e.g. `MinCount`/`MaxCount`/`NullPercentage`/`MaxDepth`) | Strongly-typed tuning hooks instead of reflection-tuning arbitrary generators. |
+| `UpdateValueGenerator<G>(g => g.X = …)` / `UpdateTypeCreator<C>(c => c.X = …)` | `Model.SetOptions(x => …)` / `configuration.SetOptions(x => …)` (`MinCount`/`MaxCount`/`NullPercentage`/`MaxDepth` on `BuildOptions`) | Strongly-typed build options instead of reflection-tuning arbitrary generators. Per-member overrides (e.g. an age range) move to a custom `IValueSource<T>`. |
 | `AddIgnoreRule<T>(x => x.Member)` | `Model.Ignoring<T>(x => x.Member)` or `configuration.IgnoreAny(member => ...)` | Targeted unchanged; type-agnostic `IgnoreAny` is new. |
 | `AddCreationRule(predicate, value, priority)` | `configuration.AddValueSource<T>(source, "MemberName")` | The fast-value shortcut becomes an ordinary named source. |
 | `DefaultConfigurationModule` (called explicitly) | implicit default configuration | The built-in sources register automatically; a custom module only adds deltas. |

@@ -1,10 +1,13 @@
 namespace ModelBuilder
 {
     /// <summary>
-    ///     The <see cref="BuildContextOptions" /> class
-    ///     is used to configure the behaviour of a <see cref="BuildContext" />.
+    ///     The <see cref="BuildOptions" /> class
+    ///     holds the tunable, build-wide settings that control collection sizes, the frequency of
+    ///     <c>null</c> values and the maximum graph depth. Configure it through
+    ///     <see cref="Model.SetOptions" />, <see cref="IModelConfiguration.SetOptions" /> or
+    ///     <see cref="IBuildConfiguration.SetOptions" />.
     /// </summary>
-    internal sealed class BuildContextOptions
+    public sealed class BuildOptions
     {
         /// <summary>
         ///     The default maximum build depth.
@@ -38,17 +41,28 @@ namespace ModelBuilder
         /// <summary>
         ///     Gets or sets the maximum number of items generated for a collection.
         /// </summary>
+        /// <remarks>
+        ///     A value below <see cref="MinCount" /> is coerced up to <see cref="MinCount" /> when a
+        ///     collection length is drawn, so setting <see cref="MaxCount" /> without
+        ///     <see cref="MinCount" /> cannot throw.
+        /// </remarks>
         public int MaxCount { get; set; } = DefaultMaxCount;
 
         /// <summary>
         ///     Gets or sets the minimum number of items generated for a collection.
         /// </summary>
+        /// <remarks>
+        ///     A negative value is coerced up to zero when a collection length is drawn.
+        /// </remarks>
         public int MinCount { get; set; } = DefaultMinCount;
 
         /// <summary>
         ///     Gets or sets the percentage chance (0 to 100) that a nullable value is produced as
         ///     <c>null</c> rather than a value.
         /// </summary>
+        /// <returns>
+        ///     A value of 0 never produces <c>null</c>; a value of 100 always produces <c>null</c>.
+        /// </returns>
         public int NullPercentage { get; set; } = DefaultNullPercentage;
     }
 }

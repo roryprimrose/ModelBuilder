@@ -31,7 +31,7 @@ namespace ModelBuilder
         internal BuildContext(
             IRandomSource random,
             IBuildLog? log = null,
-            BuildContextOptions? options = null,
+            BuildOptions? options = null,
             IBuildConfiguration? configuration = null,
             ValueSourceRegistry? valueSources = null,
             NamedValueSourceRegistry? namedValueSources = null)
@@ -39,7 +39,7 @@ namespace ModelBuilder
             Random = random ?? throw new ArgumentNullException(nameof(random));
             Log = log ?? NullBuildLog.Instance;
 
-            var resolvedOptions = options ?? new BuildContextOptions();
+            var resolvedOptions = options ?? new BuildOptions();
 
             MaxDepth = resolvedOptions.MaxDepth;
             NullPercentage = resolvedOptions.NullPercentage;

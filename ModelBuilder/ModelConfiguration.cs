@@ -91,6 +91,14 @@ namespace ModelBuilder
         }
 
         /// <inheritdoc />
+        public IModelConfiguration SetOptions(Action<BuildOptions> configure)
+        {
+            _configuration.SetOptions(configure);
+
+            return this;
+        }
+
+        /// <inheritdoc />
         public T Populate<T>(T instance)
         {
             if (_logSink == null)

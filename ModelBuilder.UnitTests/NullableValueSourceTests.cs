@@ -14,7 +14,7 @@
 
             try
             {
-                var options = new BuildContextOptions
+                var options = new BuildOptions
                 {
                     NullPercentage = 0
                 };
@@ -39,7 +39,7 @@
         {
             ValueSource<int>.Instance = null;
 
-            var options = new BuildContextOptions
+            var options = new BuildOptions
             {
                 NullPercentage = 0
             };
@@ -59,7 +59,7 @@
 
             try
             {
-                var options = new BuildContextOptions
+                var options = new BuildOptions
                 {
                     NullPercentage = 100
                 };

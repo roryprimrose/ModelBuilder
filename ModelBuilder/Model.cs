@@ -149,6 +149,18 @@ namespace ModelBuilder
         }
 
         /// <summary>
+        ///     Begins a configured build that tunes the build options, such as collection sizes, the
+        ///     frequency of <c>null</c> values and the maximum graph depth.
+        /// </summary>
+        /// <param name="configure">An action that mutates the build options.</param>
+        /// <returns>A configuration to continue building.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="configure" /> parameter is <c>null</c>.</exception>
+        public static IModelConfiguration SetOptions(Action<BuildOptions> configure)
+        {
+            return new ModelConfiguration().SetOptions(configure);
+        }
+
+        /// <summary>
         ///     Populates an existing instance of <typeparamref name="T" />.
         /// </summary>
         /// <typeparam name="T">The type to populate.</typeparam>
@@ -249,7 +261,7 @@ namespace ModelBuilder
 
         private static BuildContext NewContext(BuildConfiguration? configuration, IBuildLog? log)
         {
-            return new BuildContext(new RandomSource(), log, null, configuration);
+            return new BuildContext(new RandomSource(), log, configuration?.Options, configuration);
         }
 
         private static ModelBuildException NoBuilder(Type type)

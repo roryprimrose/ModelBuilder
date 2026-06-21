@@ -13,6 +13,7 @@ namespace ModelBuilder
         private readonly HashSet<MemberKey> _ignoredMembers = new HashSet<MemberKey>();
         private readonly List<Func<MemberSignature, bool>> _ignorePredicates = new List<Func<MemberSignature, bool>>();
         private readonly Dictionary<Type, Type> _typeMappings = new Dictionary<Type, Type>();
+        private readonly BuildOptions _options = new BuildOptions();
         private ValueSourceRegistry? _valueSources;
         private NamedValueSourceRegistry? _namedValueSources;
 
@@ -111,6 +112,16 @@ namespace ModelBuilder
         }
 
         /// <inheritdoc />
+        public IBuildConfiguration SetOptions(Action<BuildOptions> configure)
+        {
+            configure = configure ?? throw new ArgumentNullException(nameof(configure));
+
+            configure(_options);
+
+            return this;
+        }
+
+        /// <inheritdoc />
         public bool TryGetMapping(Type sourceType, out Type targetType)
         {
             sourceType = sourceType ?? throw new ArgumentNullException(nameof(sourceType));
@@ -120,6 +131,11 @@ namespace ModelBuilder
 
         /// <inheritdoc />
         public IReadOnlyDictionary<Type, Type> TypeMappings => _typeMappings;
+
+        /// <summary>
+        ///     Gets the build options configured for this build.
+        /// </summary>
+        internal BuildOptions Options => _options;
 
         /// <summary>
         ///     Gets a value indicating whether any custom typed value sources have been registered.

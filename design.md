@@ -421,8 +421,10 @@ Keep only what real usage needs:
   Kept; this is the main customization seam used in practice.
 - **Ignore rules** — both targeted and type-agnostic (§8.1).
 - **Type mapping** — `Mapping<TSource,TTarget>()`, validated at compile time.
-- **Value overrides** — strongly-typed tuning hooks (e.g. age range, collection counts) replacing
-  the open-ended `UpdateValueGenerator<T>`/`UpdateTypeCreator<T>` reflection-tuning.
+- **Value overrides** — `BuildOptions` (collection counts, null frequency, max depth), tuned through
+  `Model.SetOptions(x => …)` / `IBuildConfiguration.SetOptions(x => …)`, replacing the open-ended
+  `UpdateValueGenerator<T>`/`UpdateTypeCreator<T>` reflection-tuning. Per-member overrides (e.g. an
+  age range) are served by a custom `IValueSource<T>` rather than a dedicated tuning hook.
 - **Custom value source** — one unified, **generic** abstraction (`IValueSource<T>`) that supplies
   *and optionally populates* a strongly-typed value for a specific type/name (§8.2), avoiding the
   boxing a non-generic `object`-returning source would incur. Covers the custom-type-creator and
@@ -1405,7 +1407,7 @@ through `Model.Construct<T>().From(...)` (§12.8).
 | `ITypeCreator` / `TypeCreatorBase` (e.g. a creator for a constructor-only type) | `IValueSource<T>` (§8.2) | `Create` calls the constructor; the engine populates afterwards. |
 | `configuration.AddValueGenerator<G>()` | `configuration.AddValueSource<T, S>().ForMembersNamed(...)` | Type fixed by `T`; name/predicate at registration (§8.2.2). |
 | `configuration.AddTypeCreator<C>()` | `configuration.AddValueSource<T, S>()` | Same registration shape. |
-| `UpdateValueGenerator<G>(g => g.X = …)` / `UpdateTypeCreator<C>(c => c.X = …)` | strongly-typed value-override hooks (§8 value overrides) | e.g. age range, collection `MinCount`/`MaxCount`. |
+| `UpdateValueGenerator<G>(g => g.X = …)` / `UpdateTypeCreator<C>(c => c.X = …)` | `Model.SetOptions(x => …)` / `IBuildConfiguration.SetOptions(x => …)` (§8 value overrides) | Build-wide `BuildOptions`: collection `MinCount`/`MaxCount`, `NullPercentage`, `MaxDepth`. Per-member overrides (e.g. age range) move to a custom `IValueSource<T>`. |
 | `AddIgnoreRule<T>(x => x.Member)` | `Model.Ignoring<T>(x => x.Member)` or module `IgnoreAny(...)` (§8.1) | Targeted unchanged; type-agnostic is new. |
 | `AddCreationRule(predicate, value, priority)` | a small `IValueSource<T>` registered with `.When(...)`/`.ForMembers...` | The fast-value shortcut becomes an ordinary source. |
 | `DefaultConfigurationModule` (called explicitly in a custom module) | implicit default configuration | The default sources are registered automatically; a custom module only adds deltas. |

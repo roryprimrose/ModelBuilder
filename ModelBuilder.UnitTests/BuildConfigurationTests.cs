@@ -72,6 +72,45 @@
         }
 
         [Fact]
+        public void SetOptionsMutatesOptions()
+        {
+            var sut = new BuildConfiguration();
+
+            sut.SetOptions(x =>
+            {
+                x.MinCount = 2;
+                x.MaxCount = 5;
+                x.NullPercentage = 0;
+                x.MaxDepth = 12;
+            });
+
+            sut.Options.MinCount.Should().Be(2);
+            sut.Options.MaxCount.Should().Be(5);
+            sut.Options.NullPercentage.Should().Be(0);
+            sut.Options.MaxDepth.Should().Be(12);
+        }
+
+        [Fact]
+        public void SetOptionsReturnsSameInstanceForChaining()
+        {
+            var sut = new BuildConfiguration();
+
+            var actual = sut.SetOptions(_ => { });
+
+            actual.Should().BeSameAs(sut);
+        }
+
+        [Fact]
+        public void SetOptionsThrowsWithNullConfigure()
+        {
+            var sut = new BuildConfiguration();
+
+            Action action = () => sut.SetOptions(null!);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
         public void TryGetMappingReturnsFalseWhenNoMappingRegistered()
         {
             var sut = new BuildConfiguration();

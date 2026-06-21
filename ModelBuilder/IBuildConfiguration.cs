@@ -90,6 +90,15 @@ namespace ModelBuilder
         IBuildConfiguration IgnoreAny(Func<MemberSignature, bool> predicate);
 
         /// <summary>
+        ///     Applies tuning to the build options, such as collection sizes, the frequency of <c>null</c>
+        ///     values and the maximum graph depth.
+        /// </summary>
+        /// <param name="configure">An action that mutates the build options.</param>
+        /// <returns>The same configuration instance for chaining.</returns>
+        /// <exception cref="ArgumentNullException">The name="configure" /> parameter is <c>null</c>.</exception>
+        IBuildConfiguration SetOptions(Action<BuildOptions> configure);
+
+        /// <summary>
         ///     Determines whether the specified member should be ignored.
         /// </summary>
         /// <param name="member">The member to evaluate.</param>

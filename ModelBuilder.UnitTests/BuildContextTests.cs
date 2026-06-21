@@ -80,7 +80,7 @@
         [Fact]
         public void IsDepthExceededReturnsTrueAtMaxDepth()
         {
-            var options = new BuildContextOptions
+            var options = new BuildOptions
             {
                 MaxDepth = 1
             };

@@ -45,6 +45,8 @@ discovered at compile time and gets a dedicated builder, so ModelBuilder:
   * [Inspecting the structured log](#inspecting-the-structured-log)
 - [Handling build failures](#handling-build-failures)
 - [Configuration modules](#configuration-modules)
+  * [Default configuration](#default-configuration)
+- [Tuning the build](#tuning-the-build)
 - [Built-in data](#built-in-data)
   * [Entity-style data matched by member name](#entity-style-data-matched-by-member-name)
   * [Cross-field consistency](#cross-field-consistency)
@@ -323,9 +325,10 @@ public sealed class SkuValueSource : IValueSource<string>
 var product = Model.AddValueSource(new SkuValueSource(), "Sku").Create<Product>();
 ```
 
-`NullableValueSource<T>` wraps a value-type source so it produces `T?`. It returns `null` for a fixed
-share of values (a built-in 5% default that is not currently configurable) and otherwise delegates to
-the underlying source — the mechanism that makes generated nullable members occasionally `null`.
+`NullableValueSource<T>` wraps a value-type source so it produces `T?`. It returns `null` for a share
+of values set by `BuildOptions.NullPercentage` (a 5% default; see [Tuning the build](#tuning-the-build))
+and otherwise delegates to the underlying source — the mechanism that makes generated nullable members
+occasionally `null`.
 
 #### The build context seams
 
@@ -337,7 +340,7 @@ sources use, so a custom source can participate fully in a build:
 | `Random` | The build's `IRandomSource` — seedable, thread-safe, typed (see [Generating random values](#generating-random-values)). |
 | `GetSibling<T>(name)` / `GetSibling<T>(names...)` | Read a value already set on the instance being built (the first match across the candidate names), so derived members stay consistent. Returns `default` when there is no match. |
 | `GetOrAddScopedValue<T>(key, factory)` | Get-or-create a value cached for the lifetime of the current instance, so several sources can share one data item (such as an address row). A different instance elsewhere in the graph gets its own scope. |
-| `NextCount()` | A random collection length within the built-in min/max bounds (a fixed 1–10 default). |
+| `NextCount()` | A random collection length within the configured min/max bounds (a 1–10 default; tune with [SetOptions](#tuning-the-build)). |
 | `Build<T>(declaringType, name)` | Recursively build a nested member value through the normal source/builder resolution, with circular-reference and depth guards applied. |
 | `ShouldPopulate(declaringType, name, memberType)` | Whether a member passes the configured ignore rules. |
 | `RecordSibling(name, value)` / `EnterSiblingScope()` | Record a value into, or open, the sibling scope that `GetSibling<T>` reads. |
@@ -566,6 +569,55 @@ var layered = Model.UsingModule<UnitTestModule>()
     .UsingModule<IntegrationTestModule>()
     .Create<Account>();
 ```
+
+### Default configuration
+
+A build with no configuration — `Model.Create<T>()` with no module, ignore rule, mapping or option
+override — starts from these defaults. A module, or a fluent call on `Model`, only adds deltas on top:
+
+| Category | Default |
+| --- | --- |
+| Type mappings | None. Abstract and interface members are unbuildable until you add a [`Mapping<,>`](#mapping-abstract-and-interface-types). |
+| Ignore rules | None. Every settable member and constructor parameter is populated. |
+| Custom value sources | None registered, but the **built-in value sources always apply** (you never register them, and a custom source only overrides the built-in for its type/name). |
+| Built-in typed sources | `bool`; every numeric type (`byte`/`sbyte`/`short`/`ushort`/`int`/`uint`/`long`/`ulong`/`float`/`double`/`decimal`); `char`; `string`; `Guid`; `DateTime`; `DateTimeOffset`; `TimeSpan`; `Uri`; `Version`; `byte[]`. Enums, nullables and collections are handled by the generator. |
+| Built-in named sources | The entity-style member-name sources in [Built-in data](#entity-style-data-matched-by-member-name) (names, email, company, location fields, age, date of birth, …). |
+| Build options | `MinCount` 1, `MaxCount` 10, `NullPercentage` 5, `MaxDepth` 50 — see [Tuning the build](#tuning-the-build). |
+
+## Tuning the build
+
+A few build-wide settings live on `BuildOptions`: the collection-size range (`MinCount`/`MaxCount`),
+the chance a nullable value is produced as `null` (`NullPercentage`, 0–100), and the maximum graph
+depth (`MaxDepth`). Tune them with `Model.SetOptions`, which returns the same fluent configuration as
+the other entry points:
+
+```csharp
+// Always populate nullables, and make collections hold exactly three items.
+var order = Model.SetOptions(x =>
+    {
+        x.NullPercentage = 0;
+        x.MinCount = 3;
+        x.MaxCount = 3;
+    })
+    .Create<Order>();
+```
+
+The same call is available on the `IBuildConfiguration` a [configuration module](#configuration-modules)
+receives, so a module can set defaults that every build using it inherits:
+
+```csharp
+public sealed class CompactModule : IConfigurationModule
+{
+    public void Configure(IBuildConfiguration configuration)
+    {
+        configuration.SetOptions(x => x.MaxCount = 3);
+    }
+}
+```
+
+`MinCount`/`MaxCount` are coerced when a collection length is drawn — a negative minimum becomes zero
+and a maximum below the minimum is raised to it — so setting `MaxCount` without `MinCount` cannot
+throw. The defaults are `MinCount` 1, `MaxCount` 10, `NullPercentage` 5 and `MaxDepth` 50.
 
 ## Built-in data
 

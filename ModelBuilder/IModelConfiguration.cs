@@ -93,6 +93,15 @@ namespace ModelBuilder
         IModelConfiguration AddValueSource<T>(IValueSource<T> source, params string[] names);
 
         /// <summary>
+        ///     Applies tuning to the build options, such as collection sizes, the frequency of <c>null</c>
+        ///     values and the maximum graph depth.
+        /// </summary>
+        /// <param name="configure">An action that mutates the build options.</param>
+        /// <returns>The same configuration for chaining.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="configure" /> parameter is <c>null</c>.</exception>
+        IModelConfiguration SetOptions(Action<BuildOptions> configure);
+
+        /// <summary>
         ///     Populates an existing instance of <typeparamref name="T" /> using this configuration.
         /// </summary>
         /// <typeparam name="T">The type to populate.</typeparam>

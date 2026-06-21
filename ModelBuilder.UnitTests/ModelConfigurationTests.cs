@@ -97,6 +97,26 @@
             actual.Should().BeSameAs(sut);
         }
 
+        [Fact]
+        public void SetOptionsReturnsSameConfigurationForChaining()
+        {
+            var sut = new ModelConfiguration();
+
+            var actual = sut.SetOptions(x => x.MaxCount = 3);
+
+            actual.Should().BeSameAs(sut);
+        }
+
+        [Fact]
+        public void SetOptionsThrowsWithNullConfigure()
+        {
+            var sut = new ModelConfiguration();
+
+            Action action = () => sut.SetOptions(null!);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
         private interface IThing
         {
         }
