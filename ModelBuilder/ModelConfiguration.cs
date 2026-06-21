@@ -44,6 +44,22 @@ namespace ModelBuilder
         }
 
         /// <inheritdoc />
+        public IModelConfiguration Ignoring(Type declaringType, string memberName)
+        {
+            _configuration.Ignore(declaringType, memberName);
+
+            return this;
+        }
+
+        /// <inheritdoc />
+        public IModelConfiguration IgnoringAny(Func<MemberSignature, bool> predicate)
+        {
+            _configuration.IgnoreAny(predicate);
+
+            return this;
+        }
+
+        /// <inheritdoc />
         public IModelConfiguration Mapping<TSource, TTarget>()
             where TTarget : TSource
         {

@@ -38,6 +38,56 @@
         }
 
         [Fact]
+        public void IgnoringByTypeAndNameReturnsSameConfigurationForChaining()
+        {
+            var sut = new ModelConfiguration();
+
+            var actual = sut.Ignoring(typeof(Sample), nameof(Sample.Name));
+
+            actual.Should().BeSameAs(sut);
+        }
+
+        [Fact]
+        public void IgnoringByTypeAndNameThrowsWithNullDeclaringType()
+        {
+            var sut = new ModelConfiguration();
+
+            Action action = () => sut.Ignoring(null!, nameof(Sample.Name));
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void IgnoringByTypeAndNameThrowsWithNullMemberName()
+        {
+            var sut = new ModelConfiguration();
+
+            Action action = () => sut.Ignoring(typeof(Sample), null!);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void IgnoringAnyReturnsSameConfigurationForChaining()
+        {
+            var sut = new ModelConfiguration();
+
+            var actual = sut.IgnoringAny(member => member.Name == nameof(Sample.Name));
+
+            actual.Should().BeSameAs(sut);
+        }
+
+        [Fact]
+        public void IgnoringAnyThrowsWithNullPredicate()
+        {
+            var sut = new ModelConfiguration();
+
+            Action action = () => sut.IgnoringAny(null!);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
         public void MappingReturnsSameConfigurationForChaining()
         {
             var sut = new ModelConfiguration();

@@ -29,6 +29,25 @@ namespace ModelBuilder
         IModelConfiguration Ignoring<T>(Expression<Func<T, object?>> expression);
 
         /// <summary>
+        ///     Adds an ignore rule for the named member on the specified declaring type.
+        /// </summary>
+        /// <param name="declaringType">The type that declares the member to ignore.</param>
+        /// <param name="memberName">The name of the member to ignore.</param>
+        /// <returns>The same configuration for chaining.</returns>
+        /// <exception cref="ArgumentNullException">
+        ///     The <paramref name="declaringType" /> or <paramref name="memberName" /> parameter is <c>null</c>.
+        /// </exception>
+        IModelConfiguration Ignoring(Type declaringType, string memberName);
+
+        /// <summary>
+        ///     Adds an ignore rule that applies to any member matching the predicate, across all types.
+        /// </summary>
+        /// <param name="predicate">The predicate evaluated against each member.</param>
+        /// <returns>The same configuration for chaining.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="predicate" /> parameter is <c>null</c>.</exception>
+        IModelConfiguration IgnoringAny(Func<MemberSignature, bool> predicate);
+
+        /// <summary>
         ///     Adds a type mapping from a source type to a concrete target type.
         /// </summary>
         /// <typeparam name="TSource">The source type, typically an interface or abstract type.</typeparam>

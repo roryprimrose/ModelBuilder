@@ -142,17 +142,56 @@ written.
 
 ### Ignoring members
 
-You can skip setting a member when building a type:
+Ignoring a member skips it during population, leaving it at whatever value the constructor or the
+type's own initializer set. There are three ways to declare an ignore rule, depending on whether you
+target one member, one member on one type, or any member matching a condition.
+
+`Model.Ignoring<T>(expression)` is the fluent per-build form. It selects a member with a strongly
+typed expression and returns a configuration you continue building from:
 
 ```csharp
 var person = Model.Ignoring<Person>(x => x.FirstName).Create<Person>();
 ```
 
-This also applies to members of types nested deeper in the graph:
+The rule applies wherever that member appears in the graph, so it also covers types nested deeper
+than the root:
 
 ```csharp
 var person = Model.Ignoring<Address>(x => x.AddressLine1).Create<Person>();
 ```
+
+The remaining two forms are also fluent on `Model` (and on the configuration a [module](#configuration-modules)
+receives), so they compose in the same chain as `Ignoring<T>`.
+
+`Ignoring(Type declaringType, string memberName)` targets a single member on a specific type by name —
+the non-generic equivalent of `Ignoring<T>`, useful when you only have the `Type` or want to name the
+member as a string:
+
+```csharp
+var request = Model.Ignoring(typeof(Request), nameof(Request.Data)).Create<Request>();
+```
+
+`IgnoringAny(Func<MemberSignature, bool> predicate)` ignores every member, on any type, for which the
+predicate returns `true`. The predicate receives a `MemberSignature` exposing the member's
+`DeclaringType`, `Name` and `MemberType`, so you can match by naming convention, declaring type or
+member type across the whole graph:
+
+```csharp
+// Ignore every member whose name ends in "Internal", regardless of which type declares it.
+var account = Model.IgnoringAny(member => member.Name.EndsWith("Internal", StringComparison.Ordinal))
+    .Create<Account>();
+
+// Ignore every Stream-typed member anywhere in the graph.
+var report = Model.IgnoringAny(member => typeof(Stream).IsAssignableFrom(member.MemberType))
+    .Create<Report>();
+```
+
+Inside a [configuration module](#configuration-modules) the same two rules are declared on the
+`IBuildConfiguration` as `Ignore(Type, memberName)` and `IgnoreAny(predicate)` (imperative names,
+identical behaviour), so they can be packaged and reused.
+
+All three forms compose — a build sees the union of every ignore rule from the fluent chain and from
+each applied module.
 
 ### Mapping abstract and interface types
 
@@ -173,17 +212,20 @@ value source is an `IValueSource<T>` that produces a `T` for a build target (a c
 or settable member) or a root; the simplest way to supply one is `DelegateValueSource<T>` wrapping a
 lambda. A registered source takes precedence over the built-in sources.
 
-Register a source **by type** to control every value of that type:
+Register a source **for every value of a type** to control all build targets of that type. The
+following code generates every `OrderStatus` value in the graph as `OrderStatus.Pending`:
 
 ```csharp
 var order = Model.AddValueSource(new DelegateValueSource<OrderStatus>(c => OrderStatus.Pending))
     .Create<Order>();
 ```
 
-Register a source **by name** to control only build targets — constructor parameters or settable
-members — whose name matches (matched as a whole PascalCase/camelCase word, the same way the built-in
-entity data is matched). A named source takes precedence over a typed source for a matching build
-target:
+Register a source **for named build targets of a type** to narrow it to the constructor parameters or
+settable members whose name matches one of the supplied names (matched as a whole
+PascalCase/camelCase word, the same way the built-in entity data is matched). The source still only
+applies to build targets of its `T`, so it both matches the name and produces the right type. A named
+source takes precedence over a type-only source for a matching build target. The following code uses
+this expression for every `string` parameter or property named `AccountNumber`:
 
 ```csharp
 var account = Model.AddValueSource(
@@ -195,7 +237,10 @@ var account = Model.AddValueSource(
 The factory receives the `IBuildContext`, so a custom source can use the same seams the built-in
 sources use — the random source, `GetSibling<T>` to stay consistent with other members already set on
 the instance, and `GetOrAddScopedValue<T>` to share one cached data item across several related
-members (the mechanism the built-in location and date-of-birth sources use):
+members (the mechanism the built-in location and date-of-birth sources use). In the following module
+`AddressRow` is your own type and data set (not part of ModelBuilder); the module draws a
+`Street`/`AddressLine1` and `City` from a single cached `AddressRow` so they stay consistent on each
+instance:
 
 ```csharp
 public sealed class AddressModule : IConfigurationModule
@@ -213,6 +258,8 @@ public sealed class AddressModule : IConfigurationModule
             "City");
     }
 
+    // AddressRow is your own type holding a related set of address fields. ModelBuilder does not
+    // supply it; this example assumes an AddressRow.Random() factory you provide.
     private static AddressRow RowFor(IBuildContext context)
     {
         return context.GetOrAddScopedValue(AddressKey, _ => AddressRow.Random());
@@ -228,9 +275,9 @@ as above, so they can be packaged and shared like mappings and ignore rules.
 Every buildable type is found **at compile time** by a source generator. A type gets a generated
 builder when it is reachable from one of these triggers:
 
-1. **`Model.Create<T>()`, `Model.Populate<T>()` or `Model.Create(typeof(T))`** — `T` and everything
-   reachable from it (constructor parameters and public settable properties) become buildable. This
-   covers almost everything with no annotations.
+1. **`Model.Create<T>()`, `Model.Populate<T>()`, `Model.Construct<T>()` or `Model.Create(typeof(T))`** —
+   `T` and everything reachable from it (constructor parameters and public settable properties) become
+   buildable. This covers almost everything with no annotations.
 2. **`Model.Mapping<TSource, TTarget>()`** — makes `TTarget` buildable for abstract/interface
    members.
 3. **`[GenerateModelBuilder]`** — names a root that is only ever built polymorphically or via a
