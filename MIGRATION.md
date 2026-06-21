@@ -14,9 +14,9 @@ every changed API to its v9 equivalent so a human (or an AI agent) can apply it 
 v9 discovers every type you build **at compile time** and generates a dedicated builder for it.
 The triggers are:
 
-1. **`Model.Create<T>()` / `Model.Populate<T>()` / `Model.Create(typeof(T))`** — `T` and everything
-   reachable from it (constructor parameters, public settable properties) get a builder. This covers
-   almost everything with zero annotations.
+1. **`Model.Create<T>()` / `Model.Populate<T>()` / `Model.Construct<T>()` / `Model.Create(typeof(T))`** —
+   `T` and everything reachable from it (constructor parameters, public settable properties) get a
+   builder. This covers almost everything with zero annotations.
 2. **`Model.Mapping<TAbstract, TConcrete>()`** — makes `TConcrete` buildable for abstract/interface
    members.
 3. **`[GenerateModelBuilder]`** — names a root that is only ever built polymorphically or via a
@@ -119,9 +119,9 @@ Decide up front whether v9 fits:
 
 - **No runtime reflection / no `dynamic` or runtime-only types.** A `Type` known only at runtime
   (loaded from a plugin, computed reflectively) cannot be built — there is no reflection fallback.
-- **Only compile-time-discoverable types are buildable.** If a type is not reached from a
-  `Model.Create<T>()`, a mapping, or `[GenerateModelBuilder]`, no builder exists for it (diagnostic
-  `MB1001`/`MB1002`/`MB1005`).
+- **Only compile-time-discoverable types are buildable.** If a type is not reached from a call site
+  (`Model.Create<T>()`, `Populate<T>()` or `Construct<T>()`), a mapping, or `[GenerateModelBuilder]`,
+  no builder exists for it (diagnostic `MB1001`/`MB1002`/`MB1005`).
 - **Visibility limits.** `private`/`protected` types, constructors and members cannot be built;
   `internal` only via `[InternalsVisibleTo]` to the test assembly.
 - **Removed extensibility pipeline** (see above) — custom `IExecuteStrategy`/`IBuildProcessor`/

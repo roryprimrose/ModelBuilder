@@ -78,10 +78,10 @@ object person = Model.Create(typeof(Person));
 
 This path still depends on compile-time discovery. A builder only exists for a type the generator
 saw at compile time, so the runtime `Type` you pass must already be buildable through one of the
-[discovery triggers](#how-types-are-discovered) — a `Model.Create<T>()`/`Model.Create(typeof(T))`
-call somewhere in the build, a `Mapping<,>`, or a `[GenerateModelBuilder]` annotation. Passing a
-`Type` that the generator never saw throws a `ModelBuildException` at runtime, because there is no
-generated builder to dispatch to:
+[discovery triggers](#how-types-are-discovered) — a `Model.Create<T>()`, `Construct<T>()`,
+`Populate<T>()` or `Model.Create(typeof(T))` call somewhere in the build, a `Mapping<,>`, or a
+`[GenerateModelBuilder]` annotation. Passing a `Type` that the generator never saw throws a
+`ModelBuildException` at runtime, because there is no generated builder to dispatch to:
 
 ```csharp
 // Throws at runtime: the concrete type came from reflection/config/a plugin, so the generator
