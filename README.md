@@ -36,6 +36,7 @@ discovered at compile time and gets a dedicated builder, so ModelBuilder:
   * [Custom value sources](#custom-value-sources)
     + [Writing a reusable value source](#writing-a-reusable-value-source)
     + [The build context seams](#the-build-context-seams)
+- [Runnable examples](#runnable-examples)
 - [How types are discovered](#how-types-are-discovered)
   * [Build-time diagnostics](#build-time-diagnostics)
   * [GenerateModelBuilder](#generatemodelbuilder)
@@ -348,6 +349,39 @@ sources use, so a custom source can participate fully in a build:
 
 All numeric range methods on `Random` are inclusive of both bounds, and `GetSibling<T>` name matching
 is the same whole-word, case-insensitive scheme used by the built-in entity data.
+
+## Runnable examples
+
+A complete, runnable [`ModelBuilder.Examples`](ModelBuilder.Examples/ModelBuilder.Examples.csproj)
+console project demonstrates every scenario above end to end. Its source is bundled in this NuGet
+package (under `ModelBuilder.Examples/`, mirroring the repository), so the links below resolve both on
+GitHub and when browsing the package contents. The project references the generator as an analyzer —
+the wiring a consuming project needs for the source generator to run and emit the `From` overloads:
+
+```xml
+<ProjectReference Include="..\ModelBuilder.Generator\ModelBuilder.Generator.csproj"
+                  OutputItemType="Analyzer"
+                  ReferenceOutputAssembly="false" />
+```
+
+Run the whole set with `dotnet run --project ModelBuilder.Examples`. Each scenario lives in its own
+file under [`ModelBuilder.Examples/Examples`](ModelBuilder.Examples/Examples), building the sample
+model types in [`ModelBuilder.Examples/Models`](ModelBuilder.Examples/Models):
+
+| Scenario | Example file |
+| --- | --- |
+| [Creating a model](#creating-a-model) | [CreatingModelsExample.cs](ModelBuilder.Examples/Examples/CreatingModelsExample.cs) |
+| [Typed construction](#typed-construction) | [TypedConstructionExample.cs](ModelBuilder.Examples/Examples/TypedConstructionExample.cs) |
+| [Ignoring members](#ignoring-members) | [IgnoringMembersExample.cs](ModelBuilder.Examples/Examples/IgnoringMembersExample.cs) |
+| [Mapping abstract and interface types](#mapping-abstract-and-interface-types) | [MappingTypesExample.cs](ModelBuilder.Examples/Examples/MappingTypesExample.cs) |
+| [Custom value sources](#custom-value-sources) | [CustomValueSourcesExample.cs](ModelBuilder.Examples/Examples/CustomValueSourcesExample.cs), [SkuValueSource.cs](ModelBuilder.Examples/Examples/SkuValueSource.cs) |
+| [Populating a model](#populating-a-model) | [PopulatingModelsExample.cs](ModelBuilder.Examples/Examples/PopulatingModelsExample.cs) |
+| [Changing the model after creation](#changing-the-model-after-creation) | [ChangingAfterCreationExample.cs](ModelBuilder.Examples/Examples/ChangingAfterCreationExample.cs) |
+| [Logging the build process](#logging-the-build-process) | [LoggingBuildsExample.cs](ModelBuilder.Examples/Examples/LoggingBuildsExample.cs) |
+| [Handling build failures](#handling-build-failures) | [HandlingFailuresExample.cs](ModelBuilder.Examples/Examples/HandlingFailuresExample.cs) |
+| [Configuration modules](#configuration-modules) | [ConfigurationModulesExample.cs](ModelBuilder.Examples/Examples/ConfigurationModulesExample.cs), [ExampleModule.cs](ModelBuilder.Examples/Examples/ExampleModule.cs) |
+| [Tuning the build](#tuning-the-build) | [TuningTheBuildExample.cs](ModelBuilder.Examples/Examples/TuningTheBuildExample.cs) |
+| [Built-in data](#built-in-data) | [BuiltInDataExample.cs](ModelBuilder.Examples/Examples/BuiltInDataExample.cs) |
 
 ## How types are discovered
 

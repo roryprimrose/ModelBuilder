@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <IsPackable>false</IsPackable>
+    <!--
+      The example model types use get/set auto-properties for clarity, which trip nullable
+      reference warnings (CS8618) the shipping library avoids. These are illustrative DTOs, so
+      warnings are not treated as errors in this project the way they are for the library.
+    -->
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ModelBuilder\ModelBuilder.csproj" />
+    <!--
+      The generator runs as an analyzer (not a normal reference) so that writing
+      Model.Create<T>(), Construct<T>().From(...) and friends in this project emits the builders
+      and the typed From overloads at compile time. This is the wiring a consuming project needs
+      to make the source generator run.
+    -->
+    <ProjectReference Include="..\ModelBuilder.Generator\ModelBuilder.Generator.csproj"
+                      OutputItemType="Analyzer"
+                      ReferenceOutputAssembly="false" />
+  </ItemGroup>
+
+</Project>

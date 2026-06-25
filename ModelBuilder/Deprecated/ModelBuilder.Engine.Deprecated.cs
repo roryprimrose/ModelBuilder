@@ -191,10 +191,9 @@ namespace ModelBuilder
         [ExcludeFromCodeCoverage]
         public static T Next<T>(this IReadOnlyList<T> source) => throw new NotImplementedException();
 
-        [Obsolete(DeprecationMessages.Common, true)]
-        [ExcludeFromCodeCoverage]
-        public static T Set<T>(this T instance, Action<T> action) => throw new NotImplementedException();
-
+        // Note: the v8 Set<T>(this T, Action<T>) overload is intentionally NOT redeclared here. It
+        // remains a live v9 API on SetExtensions, so a deprecated stub with the identical signature
+        // would make every call to .Set(...) ambiguous (CS0121) for consumers.
         [Obsolete(DeprecationMessages.Common, true)]
         [ExcludeFromCodeCoverage]
         public static T Set<T, TVALUE>(this T instance, Expression<Func<T, TVALUE>> expressionFunc, TVALUE value)

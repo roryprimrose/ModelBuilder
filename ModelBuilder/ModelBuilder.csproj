@@ -31,6 +31,22 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!--
+      Pack the runnable examples project's source into the package, mirroring its repo-relative path
+      (ModelBuilder.Examples\...). The README is packed at the package root and links to these files
+      with repo-relative paths, so the same links resolve both on GitHub and when browsing the package.
+      These files are bundled as documentation only; they sit under ModelBuilder.Examples\ (not under
+      contentFiles\ or build\), so they are never compiled into a consuming project. bin\ and obj\ are
+      excluded so only authored source is packed.
+    -->
+    <None Include="..\ModelBuilder.Examples\**\*.cs;..\ModelBuilder.Examples\ModelBuilder.Examples.csproj"
+          Exclude="..\ModelBuilder.Examples\bin\**;..\ModelBuilder.Examples\obj\**"
+          Pack="true"
+          PackagePath="ModelBuilder.Examples"
+          Visible="false" />
+  </ItemGroup>
+
+  <ItemGroup>
     <!-- The unit tests exercise internal engine types (registries, value sources, build context, etc.). -->
     <InternalsVisibleTo Include="ModelBuilder.UnitTests" />
   </ItemGroup>

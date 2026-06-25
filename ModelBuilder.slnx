@@ -1,7 +1,4 @@
 <Solution>
-  <Configurations>
-    <Platform Name="Any CPU" />
-  </Configurations>
   <Folder Name="/.github/">
     <File Path=".github/dependabot.yml" />
   </Folder>
@@ -26,6 +23,7 @@
   </Folder>
   <Project Path="ModelBuilder.AotValidation/ModelBuilder.AotValidation.csproj" />
   <Project Path="ModelBuilder.BenchmarkTests/ModelBuilder.BenchmarkTests.csproj" />
+  <Project Path="ModelBuilder.Examples/ModelBuilder.Examples.csproj" />
   <Project Path="ModelBuilder.Generator/ModelBuilder.Generator.csproj" />
   <Project Path="ModelBuilder.Generator.UnitTests/ModelBuilder.Generator.UnitTests.csproj" />
   <Project Path="ModelBuilder.UnitTests/ModelBuilder.UnitTests.csproj" />
