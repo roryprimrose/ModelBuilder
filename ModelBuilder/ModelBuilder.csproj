@@ -28,6 +28,15 @@
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
+    <!--
+      The machine-readable migration map ships next to the markdown guides so an AI agent or tool can
+      load it deterministically when upgrading a consumer from v8. MIGRATION-AI.md (a *.md) is packed
+      by the glob above; the JSON map needs its own entry.
+    -->
+    <None Include="..\migration-map.json">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 
   <ItemGroup>

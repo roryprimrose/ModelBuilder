@@ -814,3 +814,8 @@ The previous reflection-based extensibility pipeline (`IExecuteStrategy`, `ICons
 overloads and so on) has been removed in favour of the source-generated model and a small set of
 supported seams (`IValueSource<T>`, mappings, ignore rules and `[GenerateModelBuilder]`). The
 [migration guide](MIGRATION.md) maps every changed and removed v8 API to its v9 equivalent.
+
+For an automated upgrade, the package also ships an AI-agent playbook
+([MIGRATION-AI.md](MIGRATION-AI.md)) and a machine-readable map
+([migration-map.json](migration-map.json)) so an agent or tool can apply the migration
+deterministically.

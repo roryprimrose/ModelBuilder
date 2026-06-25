@@ -5,6 +5,11 @@ keeps the everyday API but removes the deep extensibility pipeline that depended
 reflection. There is **no back-compat shim** — migration is manual, but mechanical. This guide maps
 every changed API to its v9 equivalent so a human (or an AI agent) can apply it deterministically.
 
+> [!TIP]
+> For an automated upgrade, a procedural **AI-agent playbook** ([MIGRATION-AI.md](MIGRATION-AI.md))
+> and a **machine-readable map** ([migration-map.json](migration-map.json)) ship alongside this guide
+> inside the NuGet package.
+
 > [!IMPORTANT]
 > v9 ships as a new major version. Consumers that need the reflection-based engine, runtime-only
 > (`dynamic`) types, or the removed extensibility hooks should stay on the v8 line.
@@ -129,6 +134,22 @@ Decide up front whether v9 fits:
 - **`DefaultTypeResolver` automatic interface/abstract scanning is removed.** Abstract and interface
   targets need an explicit `Mapping<,>`; there is no assembly scan that guesses a concrete type.
 - **Per-`ParameterInfo`/`PropertyInfo` generator overloads and `CacheLevel`** no longer exist.
+
+## Diagnostics reference
+
+v9 reports unbuildable usage at **build time**, so an agent can treat each diagnostic as a worklist
+item. This table maps every diagnostic to its fix.
+
+| ID | Severity | Meaning | Fix |
+| --- | --- | --- | --- |
+| `MB1001` | Warning | An abstract/interface **build root** has no mapping. | Add `Model.Mapping<TAbstract, TConcrete>()`, or build a concrete type. |
+| `MB1002` | Warning | A build root has no **accessible (public) constructor**. | Add or expose a public constructor. |
+| `MB1005` | Warning | `Model.Create(typeof(X))` names a type with no generated builder. | Call `Model.Create<X>()` somewhere, add a `Mapping<,>`, or annotate with `[GenerateModelBuilder]`. |
+| `CS0619` | Error | Use of a **removed v8 API** (an `[Obsolete(error)]` shim). | Apply the matching row from [Mapped](#mapped--mechanical-replacement) / [Removed](#removed--no-equivalent); the obsolete message names the v9 replacement. |
+
+> [!NOTE]
+> An unmapped abstract **member** (as opposed to a build root) is left `null` rather than reported as
+> a diagnostic; add a `Model.Mapping<,>` for it if you need it populated.
 
 ## What you gain
 
