@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <IsPackable>false</IsPackable>
+    <IsRoslynComponent>true</IsRoslynComponent>
+    <!-- The code fix uses the Roslyn API surface; it should not be gated by the runtime ruleset. -->
+    <CodeAnalysisRuleSet />
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!--
+      Build the code fix against Roslyn 4.8 (the compiler shipped in the .NET 8 SDK) via
+      VersionOverride, for the same reason as the generator: a Roslyn component loads inside the
+      consumer's IDE/compiler, so the Microsoft.CodeAnalysis version it is built against sets the
+      minimum tooling a consumer needs. 4.8 covers every currently-supported SDK (.NET 8, 9 and 10).
+      Microsoft.CodeAnalysis.CSharp.Workspaces provides the CodeFixProvider/Document API; its
+      transitive Microsoft.CodeAnalysis.CSharp is overridden to 4.8 as well so the floor is not raised
+      back up by central transitive pinning. Both are private: the package ships only this DLL, and the
+      IDE host supplies the Roslyn assemblies at run time.
+    -->
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" VersionOverride="4.8.0">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" VersionOverride="4.8.0">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+
+</Project>

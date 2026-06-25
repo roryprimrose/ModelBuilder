@@ -70,6 +70,15 @@
                       OutputItemType="Analyzer"
                       ReferenceOutputAssembly="false"
                       PrivateAssets="all" />
+    <!--
+      Reference the code-fix provider purely to guarantee it is built before pack copies its DLL. It is
+      not a source generator, so it does no work during this build; the None item below ships it into the
+      package's analyzers path where the consumer's IDE loads it.
+    -->
+    <ProjectReference Include="..\ModelBuilder.CodeFixes\ModelBuilder.CodeFixes.csproj"
+                      OutputItemType="Analyzer"
+                      ReferenceOutputAssembly="false"
+                      PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>
@@ -81,6 +90,15 @@
       the DLL exists by the time pack copies it.
     -->
     <None Include="..\ModelBuilder.Generator\bin\$(Configuration)\netstandard2.0\ModelBuilder.Generator.dll"
+          Pack="true"
+          PackagePath="analyzers/dotnet/cs"
+          Visible="false" />
+    <!--
+      Pack the code-fix provider alongside the generator so the consumer's IDE offers the v8 to v9
+      quick fixes (for example rewriting Model.Create<T>(args) to Model.Construct<T>().From(args)). The
+      ProjectReference above guarantees the DLL exists by the time pack copies it.
+    -->
+    <None Include="..\ModelBuilder.CodeFixes\bin\$(Configuration)\netstandard2.0\ModelBuilder.CodeFixes.dll"
           Pack="true"
           PackagePath="analyzers/dotnet/cs"
           Visible="false" />

@@ -23,6 +23,8 @@
   </Folder>
   <Project Path="ModelBuilder.AotValidation/ModelBuilder.AotValidation.csproj" />
   <Project Path="ModelBuilder.BenchmarkTests/ModelBuilder.BenchmarkTests.csproj" />
+  <Project Path="ModelBuilder.CodeFixes.UnitTests/ModelBuilder.CodeFixes.UnitTests.csproj" />
+  <Project Path="ModelBuilder.CodeFixes/ModelBuilder.CodeFixes.csproj" />
   <Project Path="ModelBuilder.Examples/ModelBuilder.Examples.csproj" />
   <Project Path="ModelBuilder.Generator/ModelBuilder.Generator.csproj" />
   <Project Path="ModelBuilder.Generator.UnitTests/ModelBuilder.Generator.UnitTests.csproj" />
