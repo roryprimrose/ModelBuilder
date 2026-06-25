@@ -22,14 +22,15 @@
 
   <!--
     Test stack: xUnit v3 on Microsoft.Testing.Platform (MTP).
-    FluentAssertions is pinned to the 7.x line, the last release published under
-    the Apache-2.0 licence; 8.0.0+ moved to a commercial licence that is
-    incompatible with this MIT-licensed library.
+    FluentAssertions 8.x is licensed under the Xceed Community License (Non-Commercial Use), whose
+    definition of non-commercial use explicitly includes "developing or testing open-source software
+    or open-source projects". This repository is MIT-licensed, open source and not sold, and
+    FluentAssertions is a test-only dependency that is never redistributed, so that grant applies.
   -->
   <ItemGroup>
     <PackageVersion Include="xunit.v3" Version="3.2.2" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
-    <PackageVersion Include="FluentAssertions" Version="7.2.2" />
+    <PackageVersion Include="FluentAssertions" Version="8.10.0" />
   </ItemGroup>
 
 </Project>
