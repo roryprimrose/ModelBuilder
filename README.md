@@ -111,6 +111,13 @@ properties of the same name (case-insensitive) and type **at compile time**, and
 are simply left out of the generated population code. A value the constructor assigned is therefore
 never overwritten — there is no runtime value comparison.
 
+By default a value is generated for every parameter of the chosen constructor, including optional
+ones — an optional parameter's declared default is not special-cased, so that member is still varied
+like any other. Set `BuildOptions.UseConstructorDefaults` (see [Tuning the build](#tuning-the-build))
+to instead use an optional parameter's declared default value. For per-argument control, use
+[typed construction](#typed-construction), whose `From` overloads expose each optional parameter's
+default.
+
 Constructor arguments also become **sibling values** for the rest of the build, keyed by the
 parameter name, so members derived from siblings stay consistent with them. This holds even when a
 parameter is **never exposed as a property** — a type with `Contact(string firstName, string
@@ -137,6 +144,15 @@ documentation copied across. Because the arguments are strongly typed:
 - a wrong argument type or count is a **compile-time error**, not a runtime exception,
 - members assigned by the chosen constructor are **not** re-populated with random values (they keep
   the values you passed, and sibling-derived members such as `Email` stay consistent with them).
+
+Constructor parameters that declare a **default value** are emitted as optional on the generated
+`From` overload, so you can omit them to take the default or pass an argument to override it:
+
+```csharp
+// Connection(string host, int port = 8080, bool secure = true)
+var fromDefaults = Model.Construct<Connection>().From("db1");        // port 8080, secure true
+var overridden = Model.Construct<Connection>().From("db1", 9090);   // port 9090, secure true
+```
 
 Every other member is still populated as usual, and the whole configuration chain composes with it:
 
@@ -616,7 +632,7 @@ override — starts from these defaults. A module, or a fluent call on `Model`, 
 | Custom value sources | None registered, but the **built-in value sources always apply** (you never register them, and a custom source only overrides the built-in for its type/name). |
 | Built-in typed sources | `bool`; every numeric type (`byte`/`sbyte`/`short`/`ushort`/`int`/`uint`/`long`/`ulong`/`float`/`double`/`decimal`); `char`; `string`; `Guid`; `DateTime`; `DateTimeOffset`; `TimeSpan`; `Uri`; `Version`; `byte[]`. Enums, nullables and collections are handled by the generator. |
 | Built-in named sources | The entity-style member-name sources in [Built-in data](#entity-style-data-matched-by-member-name) (names, email, company, location fields, age, date of birth, …). |
-| Build options | `MinCount` 1, `MaxCount` 10, `NullPercentage` 5, `MaxDepth` 50 — see [Tuning the build](#tuning-the-build). |
+| Build options | `MinCount` 1, `MaxCount` 10, `NullPercentage` 5, `MaxDepth` 50, `UseConstructorDefaults` off — see [Tuning the build](#tuning-the-build). |
 
 ## Tuning the build
 
@@ -652,6 +668,19 @@ public sealed class CompactModule : IConfigurationModule
 `MinCount`/`MaxCount` are coerced when a collection length is drawn — a negative minimum becomes zero
 and a maximum below the minimum is raised to it — so setting `MaxCount` without `MinCount` cannot
 throw. The defaults are `MinCount` 1, `MaxCount` 10, `NullPercentage` 5 and `MaxDepth` 50.
+
+`UseConstructorDefaults` (off by default) controls how the automatic `Model.Create<T>()` path fills
+an **optional** constructor parameter. Off, a value is generated for it like any other member; on, the
+parameter's declared default value is used instead:
+
+```csharp
+// Widget(string label, int size = 7) — size uses its default of 7 instead of a generated value.
+var widget = Model.SetOptions(x => x.UseConstructorDefaults = true).Create<Widget>();
+```
+
+This applies only to the constructor `Create<T>()` selects. The explicit
+[`Construct<T>().From(...)`](#typed-construction) path always gives per-argument control regardless of
+this option, because its generated overloads expose each optional parameter's default.
 
 ## Built-in data
 

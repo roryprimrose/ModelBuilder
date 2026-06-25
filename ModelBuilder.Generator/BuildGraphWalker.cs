@@ -1,8 +1,11 @@
 namespace ModelBuilder.Generator
 {
+    using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
+    using System.Globalization;
     using System.Linq;
+    using System.Text;
     using Microsoft.CodeAnalysis;
 
     /// <summary>
@@ -292,7 +295,8 @@ namespace ModelBuilder.Generator
                     ctorParameters.Add(
                         new MemberModel(
                             parameter.Name,
-                            parameter.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)));
+                            parameter.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
+                            FormatDefaultLiteral(parameter)));
                 }
             }
 
@@ -322,7 +326,8 @@ namespace ModelBuilder.Generator
                     parameters.Add(
                         new MemberModel(
                             parameter.Name,
-                            parameter.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)));
+                            parameter.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
+                            FormatDefaultLiteral(parameter)));
                 }
 
                 allConstructors.Add(
@@ -545,6 +550,132 @@ namespace ModelBuilder.Generator
             }
 
             return candidate;
+        }
+
+        private static string? FormatDefaultLiteral(IParameterSymbol parameter)
+        {
+            if (parameter.HasExplicitDefaultValue == false)
+            {
+                return null;
+            }
+
+            var value = parameter.ExplicitDefaultValue;
+            var type = parameter.Type;
+
+            if (value == null)
+            {
+                // A null explicit default on a non-nullable value type represents default(T); otherwise
+                // it is a null literal.
+                if (type.IsValueType
+                    && (type is not INamedTypeSymbol named
+                        || named.OriginalDefinition.SpecialType != SpecialType.System_Nullable_T))
+                {
+                    var typeName = type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+
+                    return "default(" + typeName + ")";
+                }
+
+                return "null";
+            }
+
+            if (type.TypeKind == TypeKind.Enum)
+            {
+                // The default carries the enum's underlying integral value; cast it back to the enum
+                // type so the literal is valid even when the value has no named member.
+                var enumName = type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+                var underlying = ((IFormattable)value).ToString(null, CultureInfo.InvariantCulture);
+
+                return "(" + enumName + ")(" + underlying + ")";
+            }
+
+            var effectiveType = type;
+
+            if (type is INamedTypeSymbol { OriginalDefinition.SpecialType: SpecialType.System_Nullable_T } nullable)
+            {
+                effectiveType = nullable.TypeArguments[0];
+            }
+
+            // Numeric literals need their type suffix so the literal is valid for the parameter type
+            // (for example a float default must be written as 1.5F, not 1.5).
+            switch (effectiveType.SpecialType)
+            {
+                case SpecialType.System_Single:
+                    return Convert.ToSingle(value, CultureInfo.InvariantCulture).ToString("R", CultureInfo.InvariantCulture) + "F";
+                case SpecialType.System_Double:
+                    return Convert.ToDouble(value, CultureInfo.InvariantCulture).ToString("R", CultureInfo.InvariantCulture) + "D";
+                case SpecialType.System_Decimal:
+                    return Convert.ToDecimal(value, CultureInfo.InvariantCulture).ToString(CultureInfo.InvariantCulture) + "M";
+                case SpecialType.System_Int64:
+                    return Convert.ToInt64(value, CultureInfo.InvariantCulture).ToString(CultureInfo.InvariantCulture) + "L";
+                case SpecialType.System_UInt64:
+                    return Convert.ToUInt64(value, CultureInfo.InvariantCulture).ToString(CultureInfo.InvariantCulture) + "UL";
+                case SpecialType.System_UInt32:
+                    return Convert.ToUInt32(value, CultureInfo.InvariantCulture).ToString(CultureInfo.InvariantCulture) + "U";
+                default:
+                    return FormatConstantLiteral(value);
+            }
+        }
+
+        private static string FormatConstantLiteral(object value)
+        {
+            switch (value)
+            {
+                case bool flag:
+                    return flag ? "true" : "false";
+                case string text:
+                    return "\"" + EscapeContent(text, false) + "\"";
+                case char character:
+                    return "'" + EscapeContent(character.ToString(), true) + "'";
+                default:
+                    // Remaining integral primitives (byte, sbyte, short, ushort, int).
+                    return ((IFormattable)value).ToString(null, CultureInfo.InvariantCulture);
+            }
+        }
+
+        private static string EscapeContent(string value, bool inChar)
+        {
+            var builder = new StringBuilder(value.Length);
+
+            foreach (var character in value)
+            {
+                switch (character)
+                {
+                    case '\\':
+                        builder.Append("\\\\");
+                        break;
+                    case '\0':
+                        builder.Append("\\0");
+                        break;
+                    case '\n':
+                        builder.Append("\\n");
+                        break;
+                    case '\r':
+                        builder.Append("\\r");
+                        break;
+                    case '\t':
+                        builder.Append("\\t");
+                        break;
+                    case '"' when inChar == false:
+                        builder.Append("\\\"");
+                        break;
+                    case '\'' when inChar:
+                        builder.Append("\\'");
+                        break;
+                    default:
+                        if (char.IsControl(character))
+                        {
+                            builder.Append("\\u").Append(((int)character).ToString("x4", CultureInfo.InvariantCulture));
+                        }
+                        else
+                        {
+                            builder.Append(character);
+                        }
+
+                        break;
+                }
+            }
+
+            return builder.ToString();
         }
     }
 }

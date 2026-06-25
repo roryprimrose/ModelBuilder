@@ -1153,7 +1153,7 @@ root type down to the failing member**, plus the captured build log.
 | #292 type mapping not always applied | Mapping resolved at compile time, single path |
 | #242 non-deterministic type resolution | Explicit compile-time mapping; ambiguity = diagnostic |
 | #188 `MaxCount` without `MinCount` | Validated, coerced configuration |
-| #340 / #346 constructor default values | Honored in generated constructor calls |
+| #340 / #346 constructor default values | Honored on the explicit `Construct<T>().From(...)` overloads (optional params), and on `Create<T>()` when `BuildOptions.UseConstructorDefaults` is set |
 | #349 `WriteLog` drops messages on throw | Build log flushed on the exception path (§9.2) |
 | #293 shrink explicit API | Whole extensibility surface reduced (§8) |
 

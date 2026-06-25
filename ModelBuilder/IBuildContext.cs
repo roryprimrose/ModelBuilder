@@ -27,6 +27,16 @@ namespace ModelBuilder
         IRandomSource Random { get; }
 
         /// <summary>
+        ///     Gets a value indicating whether the automatic build path uses an optional constructor
+        ///     parameter's declared default value instead of a generated value.
+        /// </summary>
+        /// <returns>
+        ///     <c>true</c> if optional constructor parameters use their declared default value;
+        ///     otherwise, <c>false</c>.
+        /// </returns>
+        bool UseConstructorDefaults { get; }
+
+        /// <summary>
         ///     Builds a value for a member, resolving a registered value source first and then a
         ///     registered builder, with circular-reference and depth guards applied for built types.
         /// </summary>

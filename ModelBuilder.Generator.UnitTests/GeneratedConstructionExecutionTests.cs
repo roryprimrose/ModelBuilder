@@ -309,6 +309,331 @@ namespace Sample
             personType.GetProperty("LastName")!.GetValue(person).Should().Be("Smith");
         }
 
+        [Fact]
+        public void ConstructFromUsesDefaultsWhenAllParametersAreOptional()
+        {
+            const string source = @"
+using ModelBuilder;
+
+namespace Sample
+{
+    public sealed class Settings
+    {
+        public Settings(int retries = 3, string mode = ""fast"")
+        {
+            Retries = retries;
+            Mode = mode;
+        }
+
+        public int Retries { get; set; }
+
+        public string Mode { get; set; }
+    }
+
+    public static class Caller
+    {
+        // Every parameter is optional, so From can be called with no arguments.
+        public static Settings Build() => global::ModelBuilder.Model.Construct<Settings>().From();
+    }
+}";
+
+            var harness = GeneratorTestHarness.Run(source);
+            harness.CompilationErrors.Should().BeEmpty();
+
+            // The generated From overload carries the declared defaults so the call can omit them.
+            harness.GeneratedSources[0].Should().Contain("retries = 3");
+            harness.GeneratedSources[0].Should().Contain("mode = \"fast\"");
+
+            var assembly = harness.EmitAndLoad();
+            var settingsType = assembly.GetType("Sample.Settings", throwOnError: true)!;
+            var settings = InvokeCaller(assembly);
+
+            settingsType.GetProperty("Retries")!.GetValue(settings).Should().Be(3);
+            settingsType.GetProperty("Mode")!.GetValue(settings).Should().Be("fast");
+        }
+
+        [Fact]
+        public void ConstructFromUsesDefaultsForOmittedOptionalParameters()
+        {
+            const string source = @"
+using ModelBuilder;
+
+namespace Sample
+{
+    public sealed class Connection
+    {
+        public Connection(string host, int port = 8080, bool secure = true)
+        {
+            Host = host;
+            Port = port;
+            Secure = secure;
+        }
+
+        public string Host { get; set; }
+
+        public int Port { get; set; }
+
+        public bool Secure { get; set; }
+    }
+
+    public static class Caller
+    {
+        // Pass only the required host; port and secure fall back to their defaults.
+        public static Connection Build() => global::ModelBuilder.Model.Construct<Connection>().From(""db1"");
+    }
+}";
+
+            var harness = GeneratorTestHarness.Run(source);
+            harness.CompilationErrors.Should().BeEmpty();
+
+            var assembly = harness.EmitAndLoad();
+            var connectionType = assembly.GetType("Sample.Connection", throwOnError: true)!;
+            var connection = InvokeCaller(assembly);
+
+            connectionType.GetProperty("Host")!.GetValue(connection).Should().Be("db1");
+            connectionType.GetProperty("Port")!.GetValue(connection).Should().Be(8080);
+            connectionType.GetProperty("Secure")!.GetValue(connection).Should().Be(true);
+        }
+
+        [Fact]
+        public void ConstructFromAllowsOverridingAnOptionalParameter()
+        {
+            const string source = @"
+using ModelBuilder;
+
+namespace Sample
+{
+    public sealed class Connection
+    {
+        public Connection(string host, int port = 8080, bool secure = true)
+        {
+            Host = host;
+            Port = port;
+            Secure = secure;
+        }
+
+        public string Host { get; set; }
+
+        public int Port { get; set; }
+
+        public bool Secure { get; set; }
+    }
+
+    public static class Caller
+    {
+        // Override port, leave secure at its default.
+        public static Connection Build() => global::ModelBuilder.Model.Construct<Connection>().From(""db1"", 9090);
+    }
+}";
+
+            var harness = GeneratorTestHarness.Run(source);
+            harness.CompilationErrors.Should().BeEmpty();
+
+            var assembly = harness.EmitAndLoad();
+            var connectionType = assembly.GetType("Sample.Connection", throwOnError: true)!;
+            var connection = InvokeCaller(assembly);
+
+            connectionType.GetProperty("Port")!.GetValue(connection).Should().Be(9090);
+            connectionType.GetProperty("Secure")!.GetValue(connection).Should().Be(true);
+        }
+
+        [Fact]
+        public void ConstructFromEmitsTypedDefaultLiteralsForEachParameterKind()
+        {
+            const string source = @"
+using ModelBuilder;
+
+namespace Sample
+{
+    public enum Speed { Slow, Fast }
+
+    public sealed class Options
+    {
+        public Options(
+            int count = 5,
+            long size = 100,
+            double ratio = 1.5,
+            bool flag = true,
+            string name = ""abc"",
+            Speed speed = Speed.Fast,
+            string? note = null)
+        {
+            Count = count;
+            Size = size;
+            Ratio = ratio;
+            Flag = flag;
+            Name = name;
+            Speed = speed;
+            Note = note;
+        }
+
+        public int Count { get; set; }
+
+        public long Size { get; set; }
+
+        public double Ratio { get; set; }
+
+        public bool Flag { get; set; }
+
+        public string Name { get; set; }
+
+        public Speed Speed { get; set; }
+
+        public string? Note { get; set; }
+    }
+
+    public static class Caller
+    {
+        public static Options Build() => global::ModelBuilder.Model.Construct<Options>().From();
+    }
+}";
+
+            var harness = GeneratorTestHarness.Run(source);
+            harness.CompilationErrors.Should().BeEmpty();
+
+            var generated = harness.GeneratedSources[0];
+
+            // Each default is rendered as a valid C# literal for its parameter type.
+            generated.Should().Contain("count = 5");
+            generated.Should().Contain("size = 100L");
+            generated.Should().Contain("ratio = 1.5D");
+            generated.Should().Contain("flag = true");
+            generated.Should().Contain("name = \"abc\"");
+            generated.Should().Contain("speed = (global::Sample.Speed)(1)");
+            generated.Should().Contain("note = null");
+
+            var assembly = harness.EmitAndLoad();
+            var optionsType = assembly.GetType("Sample.Options", throwOnError: true)!;
+            var options = InvokeCaller(assembly);
+
+            optionsType.GetProperty("Count")!.GetValue(options).Should().Be(5);
+            optionsType.GetProperty("Size")!.GetValue(options).Should().Be(100L);
+            optionsType.GetProperty("Ratio")!.GetValue(options).Should().Be(1.5d);
+            optionsType.GetProperty("Flag")!.GetValue(options).Should().Be(true);
+            optionsType.GetProperty("Name")!.GetValue(options).Should().Be("abc");
+            optionsType.GetProperty("Speed")!.GetValue(options)!.ToString().Should().Be("Fast");
+            optionsType.GetProperty("Note")!.GetValue(options).Should().BeNull();
+        }
+
+        [Fact]
+        public void CreateUsesConstructorDefaultsForAllOptionalParametersWhenEnabled()
+        {
+            const string source = @"
+using ModelBuilder;
+
+namespace Sample
+{
+    public sealed class Defaults
+    {
+        public Defaults(int a = 1, string b = ""x"", bool c = true)
+        {
+            A = a;
+            B = b;
+            C = c;
+        }
+
+        public int A { get; set; }
+
+        public string B { get; set; }
+
+        public bool C { get; set; }
+    }
+
+    public static class Caller
+    {
+        public static Defaults Build() =>
+            global::ModelBuilder.Model.SetOptions(o => o.UseConstructorDefaults = true).Create<Defaults>();
+    }
+}";
+
+            var harness = GeneratorTestHarness.Run(source);
+            harness.CompilationErrors.Should().BeEmpty();
+
+            var assembly = harness.EmitAndLoad();
+            var defaultsType = assembly.GetType("Sample.Defaults", throwOnError: true)!;
+            var defaults = InvokeCaller(assembly);
+
+            // With the option on, every optional parameter uses its declared default.
+            defaultsType.GetProperty("A")!.GetValue(defaults).Should().Be(1);
+            defaultsType.GetProperty("B")!.GetValue(defaults).Should().Be("x");
+            defaultsType.GetProperty("C")!.GetValue(defaults).Should().Be(true);
+        }
+
+        [Fact]
+        public void CreateUsesConstructorDefaultsForSomeOptionalParametersWhenEnabled()
+        {
+            const string source = @"
+using ModelBuilder;
+
+namespace Sample
+{
+    public sealed class Widget
+    {
+        public Widget(string label, int size = 7)
+        {
+            Label = label;
+            Size = size;
+        }
+
+        public string Label { get; set; }
+
+        public int Size { get; set; }
+    }
+
+    public static class Caller
+    {
+        public static Widget Build() =>
+            global::ModelBuilder.Model.SetOptions(o => o.UseConstructorDefaults = true).Create<Widget>();
+    }
+}";
+
+            var harness = GeneratorTestHarness.Run(source);
+            harness.CompilationErrors.Should().BeEmpty();
+
+            var assembly = harness.EmitAndLoad();
+            var widgetType = assembly.GetType("Sample.Widget", throwOnError: true)!;
+            var widget = InvokeCaller(assembly);
+
+            // The optional size uses its default; the required label is still generated.
+            widgetType.GetProperty("Size")!.GetValue(widget).Should().Be(7);
+            widgetType.GetProperty("Label")!.GetValue(widget).Should().NotBeNull();
+        }
+
+        [Fact]
+        public void CreateGeneratesOptionalParameterValuesWhenOptionDisabled()
+        {
+            const string source = @"
+using ModelBuilder;
+
+namespace Sample
+{
+    public sealed class Widget
+    {
+        public Widget(int size = 7)
+        {
+            Size = size;
+        }
+
+        public int Size { get; set; }
+    }
+
+    public static class Caller
+    {
+        public static Widget Build() => global::ModelBuilder.Model.Create<Widget>();
+    }
+}";
+
+            var harness = GeneratorTestHarness.Run(source);
+            harness.CompilationErrors.Should().BeEmpty();
+
+            // The Create path is guarded by the runtime option: it uses the default only when the option
+            // is set, and otherwise builds a value.
+            harness.GeneratedSources[0].Should().Contain("context.UseConstructorDefaults ? 7 : context.Build");
+
+            var assembly = harness.EmitAndLoad();
+            InvokeCaller(assembly).Should().NotBeNull();
+        }
+
         private static object InvokeCaller(Assembly assembly)
         {
             return assembly.GetType("Sample.Caller", throwOnError: true)!

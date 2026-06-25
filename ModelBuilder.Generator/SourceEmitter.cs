@@ -236,7 +236,16 @@ namespace ModelBuilder.Generator
                 {
                     var parameter = selectedParameters[index];
 
-                    builder.Append(Indent).AppendLine($"            var __arg{index} = context.Build<{parameter.TypeName}>(typeof({type}), \"{parameter.Name}\");");
+                    if (parameter.DefaultLiteral != null)
+                    {
+                        // An optional parameter: use its declared default when configured, otherwise build a value.
+                        builder.Append(Indent).AppendLine($"            var __arg{index} = context.UseConstructorDefaults ? {parameter.DefaultLiteral} : context.Build<{parameter.TypeName}>(typeof({type}), \"{parameter.Name}\");");
+                    }
+                    else
+                    {
+                        builder.Append(Indent).AppendLine($"            var __arg{index} = context.Build<{parameter.TypeName}>(typeof({type}), \"{parameter.Name}\");");
+                    }
+
                     builder.Append(Indent).AppendLine($"            context.RecordSibling(\"{parameter.Name}\", __arg{index});");
                 }
 
@@ -436,6 +445,11 @@ namespace ModelBuilder.Generator
                 var parameter = parameters[index];
 
                 builder.Append($", {parameter.TypeName} {parameter.Name}");
+
+                if (parameter.DefaultLiteral != null)
+                {
+                    builder.Append($" = {parameter.DefaultLiteral}");
+                }
             }
 
             builder.AppendLine(")");

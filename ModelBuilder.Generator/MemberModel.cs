@@ -8,16 +8,18 @@ namespace ModelBuilder.Generator
     /// </summary>
     internal readonly struct MemberModel : IEquatable<MemberModel>
     {
-        public MemberModel(string name, string typeName)
+        public MemberModel(string name, string typeName, string? defaultLiteral = null)
         {
             Name = name;
             TypeName = typeName;
+            DefaultLiteral = defaultLiteral;
         }
 
         public bool Equals(MemberModel other)
         {
             return string.Equals(Name, other.Name, StringComparison.Ordinal)
-                   && string.Equals(TypeName, other.TypeName, StringComparison.Ordinal);
+                   && string.Equals(TypeName, other.TypeName, StringComparison.Ordinal)
+                   && string.Equals(DefaultLiteral, other.DefaultLiteral, StringComparison.Ordinal);
         }
 
         public override bool Equals(object? obj)
@@ -29,10 +31,16 @@ namespace ModelBuilder.Generator
         {
             unchecked
             {
-                return StringComparer.Ordinal.GetHashCode(Name) * 397
-                       ^ StringComparer.Ordinal.GetHashCode(TypeName);
+                var hash = StringComparer.Ordinal.GetHashCode(Name) * 397
+                           ^ StringComparer.Ordinal.GetHashCode(TypeName);
+
+                hash = hash * 397 ^ (DefaultLiteral == null ? 0 : StringComparer.Ordinal.GetHashCode(DefaultLiteral));
+
+                return hash;
             }
         }
+
+        public string? DefaultLiteral { get; }
 
         public string Name { get; }
 

@@ -45,6 +45,7 @@ namespace ModelBuilder
             NullPercentage = resolvedOptions.NullPercentage;
             MinCount = resolvedOptions.MinCount;
             MaxCount = resolvedOptions.MaxCount;
+            UseConstructorDefaults = resolvedOptions.UseConstructorDefaults;
             Configuration = configuration ?? _emptyConfiguration;
             _buildConfiguration = Configuration as BuildConfiguration;
             ValueSources = valueSources ?? BuiltInValueSources.Default;
@@ -491,6 +492,9 @@ namespace ModelBuilder
 
         /// <inheritdoc />
         public IBuildLog Log { get; }
+
+        /// <inheritdoc />
+        public bool UseConstructorDefaults { get; }
 
         /// <summary>
         ///     Gets the maximum depth the build may descend before it is considered to have exceeded a

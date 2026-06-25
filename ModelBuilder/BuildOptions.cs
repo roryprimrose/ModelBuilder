@@ -64,5 +64,21 @@ namespace ModelBuilder
         ///     A value of 0 never produces <c>null</c>; a value of 100 always produces <c>null</c>.
         /// </returns>
         public int NullPercentage { get; set; } = DefaultNullPercentage;
+
+        /// <summary>
+        ///     Gets or sets a value indicating whether the automatic build path uses an optional
+        ///     constructor parameter's declared default value instead of generating one.
+        /// </summary>
+        /// <returns>
+        ///     <c>true</c> if optional constructor parameters use their declared default value on the
+        ///     automatic build path; otherwise, <c>false</c> and a value is generated for them.
+        /// </returns>
+        /// <remarks>
+        ///     This applies to the constructor selected by <see cref="Model.Create{T}()" /> and the
+        ///     non-generic create path. The explicit <see cref="Model.Construct{T}" /> path always lets
+        ///     the caller decide per argument, because the generated <c>From</c> overloads expose each
+        ///     optional parameter's default.
+        /// </remarks>
+        public bool UseConstructorDefaults { get; set; }
     }
 }
