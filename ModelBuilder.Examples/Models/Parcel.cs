@@ -6,8 +6,8 @@ namespace ModelBuilder.Examples.Models
     /// </summary>
     public class Parcel
     {
-        public string Label { get; set; }
+        public string Label { get; set; } = string.Empty;
 
-        public IShipment Shipment { get; set; }
+        public IShipment? Shipment { get; set; }
     }
 }

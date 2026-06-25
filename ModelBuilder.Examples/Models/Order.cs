@@ -21,8 +21,8 @@ namespace ModelBuilder.Examples.Models
 
         public OrderStatus Status { get; set; }
 
-        public string Reference { get; set; }
+        public string Reference { get; set; } = string.Empty;
 
-        public string InternalId { get; set; }
+        public string InternalId { get; set; } = string.Empty;
     }
 }

@@ -6,10 +6,10 @@ namespace ModelBuilder.Examples.Models
     /// </summary>
     public class Request
     {
-        public string Reference { get; set; }
+        public string Reference { get; set; } = string.Empty;
 
-        public string Data { get; set; }
+        public string Data { get; set; } = string.Empty;
 
-        public string SecretInternal { get; set; }
+        public string SecretInternal { get; set; } = string.Empty;
     }
 }

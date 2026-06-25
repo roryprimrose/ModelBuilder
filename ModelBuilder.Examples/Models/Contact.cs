@@ -17,6 +17,6 @@ namespace ModelBuilder.Examples.Models
 
         public string LastName { get; }
 
-        public string Email { get; set; }
+        public string Email { get; set; } = string.Empty;
     }
 }

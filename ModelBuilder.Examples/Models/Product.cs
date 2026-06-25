@@ -6,9 +6,9 @@ namespace ModelBuilder.Examples.Models
     /// </summary>
     public class Product
     {
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
-        public string Sku { get; set; }
+        public string Sku { get; set; } = string.Empty;
 
         public decimal Price { get; set; }
     }

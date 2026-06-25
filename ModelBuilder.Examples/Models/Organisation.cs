@@ -8,8 +8,8 @@ namespace ModelBuilder.Examples.Models
     /// </summary>
     public class Organisation
     {
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
-        public List<Person> Staff { get; set; }
+        public List<Person> Staff { get; set; } = new();
     }
 }

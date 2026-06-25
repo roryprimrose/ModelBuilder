@@ -20,8 +20,9 @@ namespace ModelBuilder.Examples.Examples
 
             // The module maps IShipment, ignores Request.Data and *Internal members, and caps counts.
             var parcel = Model.UsingModule<ExampleModule>().Create<Parcel>();
+            var shipment = parcel.Shipment!;
 
-            Console.WriteLine($"Module-built parcel shipped via {parcel.Shipment.Carrier}");
+            Console.WriteLine($"Module-built parcel shipped via {shipment.Carrier}");
 
             var request = Model.UsingModule<ExampleModule>().Create<Request>();
 

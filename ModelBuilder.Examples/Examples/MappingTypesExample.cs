@@ -20,8 +20,9 @@ namespace ModelBuilder.Examples.Examples
 
             // Parcel.Shipment is an IShipment; map it to a concrete type so the build can complete.
             var parcel = Model.Mapping<IShipment, GroundShipment>().Create<Parcel>();
+            var shipment = parcel.Shipment!;
 
-            Console.WriteLine($"Parcel '{parcel.Label}' shipped via {parcel.Shipment.Carrier} ({parcel.Shipment.GetType().Name})");
+            Console.WriteLine($"Parcel '{parcel.Label}' shipped via {shipment.Carrier} ({shipment.GetType().Name})");
             Console.WriteLine();
         }
     }

@@ -4,12 +4,6 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>net8.0</TargetFramework>
     <IsPackable>false</IsPackable>
-    <!--
-      The example model types use get/set auto-properties for clarity, which trip nullable
-      reference warnings (CS8618) the shipping library avoids. These are illustrative DTOs, so
-      warnings are not treated as errors in this project the way they are for the library.
-    -->
-    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
   </PropertyGroup>
 
   <ItemGroup>
