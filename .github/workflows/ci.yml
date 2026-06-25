@@ -115,13 +115,15 @@ jobs:
       with:
         name: packages
       
-    - name: Setup nuget
-      uses: nuget/setup-nuget@v2
+    - name: Setup dotnet
+      uses: actions/setup-dotnet@v4.0.0
+      with:
+        dotnet-version: 10.x
 
     - name: Publish to MyGet.org
       env: 
         MYGET_APIKEY: ${{ secrets.MYGET_APIKEY }}
-      run: nuget push *.*.symbols.nupkg $MYGET_APIKEY -source https://www.myget.org/F/neovolve/api/v2/package
+      run: dotnet nuget push "*.symbols.nupkg" --api-key "$MYGET_APIKEY" --source https://www.myget.org/F/neovolve/api/v2/package --skip-duplicate
       
   release:
     needs: build
@@ -151,18 +153,20 @@ jobs:
       shell: pwsh
       run: Add-Content -Path ${env:GITHUB_ENV} "`nprojectName=$(${env:GITHUB_REPOSITORY}.substring(${env:GITHUB_REPOSITORY}.IndexOf('/') + 1))" -Encoding utf8
       
-    - name: Setup nuget
-      uses: nuget/setup-nuget@v2
+    - name: Setup dotnet
+      uses: actions/setup-dotnet@v4.0.0
+      with:
+        dotnet-version: 10.x
       
     - name: Publish to GitHub
       env: 
         GPR_APIKEY: ${{ secrets.GPR_APIKEY }}
-      run: nuget push *.*.symbols.nupkg $GPR_APIKEY -source https://nuget.pkg.github.com/roryprimrose/index.json
+      run: dotnet nuget push "*.symbols.nupkg" --api-key "$GPR_APIKEY" --source https://nuget.pkg.github.com/roryprimrose/index.json --skip-duplicate
       
     - name: Publish to NuGet.org
       env: 
         NUGET_APIKEY: ${{ secrets.NUGET_APIKEY }}
-      run: nuget push *.*.symbols.nupkg $NUGET_APIKEY -source https://api.nuget.org/v3/index.json
+      run: dotnet nuget push "*.symbols.nupkg" --api-key "$NUGET_APIKEY" --source https://api.nuget.org/v3/index.json --skip-duplicate
 
     - name: Create release
       id: create_release
