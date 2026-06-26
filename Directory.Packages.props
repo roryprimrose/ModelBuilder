@@ -16,6 +16,11 @@
     <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.14.0" />
   </ItemGroup>
 
+  <!-- Versioning. Referenced CI-only from Directory.Build.props; matches the GitVersion 6.7.0 config. -->
+  <ItemGroup>
+    <PackageVersion Include="GitVersion.MsBuild" Version="6.7.0" />
+  </ItemGroup>
+
   <!-- Benchmarking -->
   <ItemGroup>
     <PackageVersion Include="BenchmarkDotNet" Version="0.15.8" />

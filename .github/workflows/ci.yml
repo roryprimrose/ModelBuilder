@@ -34,20 +34,17 @@ jobs:
           versionSpec: '6.x'
     
     - name: Use GitVersion
-      id: gitversion # step id used as reference for output values
+      id: gitversion # step id used as reference for output values (consumed by the version.txt step)
       uses: gittools/actions/gitversion/execute@v4
       with:
         configFilePath: ./GitVersion.yml
 
-    - name: Update project version
-      uses: roryprimrose/set-vs-sdk-project-version@v1
-      with:
-        # GitVersion 6 removed the NuGetVersionV2 variable; SemVer is the SemVer-2.0 NuGet version.
-        version: ${{ steps.gitversion.outputs.SemVer }}
-        assemblyVersion: ${{ steps.gitversion.outputs.AssemblySemVer }}
-        fileVersion: ${{ steps.gitversion.outputs.MajorMinorPatch }}
-        informationalVersion: ${{ steps.gitversion.outputs.InformationalVersion }}  
-        
+    # Assembly and package version stamping is handled by GitVersion.MsBuild during the build (referenced
+    # CI-only from Directory.Build.props), replacing the deprecated set-vs-sdk-project-version action that
+    # mutated the csproj files. The GitVersion CLI step above remains the source for version.txt, which the
+    # release job uses for the tag, release name and asset filenames; both read the same GitVersion.yml so
+    # the value always matches the packaged version.
+
     - name: Setup dotnet
       uses: actions/setup-dotnet@v5
       with:
