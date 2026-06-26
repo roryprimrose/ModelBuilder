@@ -98,5 +98,69 @@
             actual.Scheme.Should().Be("https");
             TestData.Domains.Should().Contain(actual.Host);
         }
+
+        [Fact]
+        public void ByteArraySourceProducesNonEmptyBuffer()
+        {
+            var context = new BuildContext(new RandomSource(42));
+
+            context.TryResolveValueSource<byte[]>(out var source);
+
+            var actual = source!.Create(context, new BuildTarget(typeof(byte[])));
+
+            actual.Should().NotBeNull();
+            actual!.Length.Should().BeInRange(1, 16);
+        }
+
+        [Fact]
+        public void CharSourceProducesAlphanumericValue()
+        {
+            var context = new BuildContext(new RandomSource(42));
+
+            context.TryResolveValueSource<char>(out var source);
+
+            var actual = source!.Create(context, new BuildTarget(typeof(char)));
+
+            char.IsLetterOrDigit(actual).Should().BeTrue();
+        }
+
+        [Fact]
+        public void MiddleNameSourceProducesName()
+        {
+            var registry = BuiltInValueSources.CreateNamedRegistry();
+            registry.TryGet<string>("MiddleName", out var source).Should().BeTrue();
+
+            var actual = source!.Create(
+                new BuildContext(new RandomSource(42)),
+                new BuildTarget(typeof(string), "MiddleName"));
+
+            actual.Should().NotBeNullOrEmpty();
+        }
+
+        [Fact]
+        public void TimeSpanSourceProducesValueWithinADay()
+        {
+            var context = new BuildContext(new RandomSource(42));
+
+            context.TryResolveValueSource<TimeSpan>(out var source);
+
+            var actual = source!.Create(context, new BuildTarget(typeof(TimeSpan)));
+
+            actual.Should().BeGreaterThanOrEqualTo(TimeSpan.Zero);
+            actual.Should().BeLessThanOrEqualTo(TimeSpan.FromMinutes(1440));
+        }
+
+        [Fact]
+        public void VersionSourceProducesVersion()
+        {
+            var context = new BuildContext(new RandomSource(42));
+
+            context.TryResolveValueSource<Version>(out var source);
+
+            var actual = source!.Create(context, new BuildTarget(typeof(Version)));
+
+            actual.Should().NotBeNull();
+            actual!.Major.Should().BeInRange(0, 20);
+        }
     }
 }
