@@ -29,4 +29,8 @@
     <AdditionalFiles Include="AnalyzerReleases.Unshipped.md" />
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="ModelBuilder.Generator.UnitTests" />
+  </ItemGroup>
+
 </Project>
