@@ -46,6 +46,23 @@
         }
 
         [Fact]
+        public void FullConstructorUsesEmptyCollectionsWhenBuildPathAndLogAreNull()
+        {
+            var sut = new ModelBuildException(
+                "Failed",
+                FailureKind.NoValueSource,
+                typeof(string),
+                "Host",
+                null!,
+                null!,
+                null);
+
+            sut.BuildPath.Should().BeEmpty();
+            sut.BuildLog.Should().BeEmpty();
+            sut.InnerException.Should().BeNull();
+        }
+
+        [Fact]
         public void MessageConstructorSetsMessage()
         {
             var sut = new ModelBuildException("Something failed");
@@ -60,6 +77,18 @@
 
             sut.Message.Should().Be("No builder");
             sut.FailureKind.Should().Be(FailureKind.NoBuilderForType);
+        }
+
+        [Fact]
+        public void MessageWithInnerExceptionConstructorSetsBoth()
+        {
+            var inner = new InvalidOperationException("boom");
+
+            var sut = new ModelBuildException("Wrapped failure", inner);
+
+            sut.Message.Should().Be("Wrapped failure");
+            sut.InnerException.Should().BeSameAs(inner);
+            sut.FailureKind.Should().Be(FailureKind.Unspecified);
         }
     }
 }
