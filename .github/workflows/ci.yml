@@ -32,7 +32,6 @@ jobs:
       id: gitversion # step id used as reference for output values
       uses: gittools/actions/gitversion/execute@v4
       with:
-        useConfigFile: true
         configFilePath: ./GitVersion.yml
 
     - name: Update project version
