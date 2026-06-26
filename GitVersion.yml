@@ -1,6 +1,11 @@
-mode: ContinuousDeployment
+workflow: GitHubFlow/v1
 branches:
-  master:
-    tag: beta
+  main:
+    label: beta
+    deployment-mode: ContinuousDeployment
   hotfix:
-    tag: useBranchName
+    regex: ^hotfix(es)?[/-]
+    source-branches:
+      - main
+    label: useBranchName
+    deployment-mode: ContinuousDeployment

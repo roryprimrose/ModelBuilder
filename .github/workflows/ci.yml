@@ -24,16 +24,13 @@ jobs:
         fetch-depth: 0
 
     - name: Install GitVersion
-      # Intentionally left on gittools/actions@v1.1.1 with GitVersion 5.x: upgrading the action major
-      # moves to GitVersion 6, whose configuration schema differs from the GitVersion.yml in this repo,
-      # so it is treated as a separate, deliberate migration rather than a routine action bump.
-      uses: gittools/actions/gitversion/setup@v1.1.1
+      uses: gittools/actions/gitversion/setup@v4
       with:
-          versionSpec: '5.x'
+          versionSpec: '6.x'
     
     - name: Use GitVersion
       id: gitversion # step id used as reference for output values
-      uses: gittools/actions/gitversion/execute@v1.1.1
+      uses: gittools/actions/gitversion/execute@v4
       with:
         useConfigFile: true
         configFilePath: ./GitVersion.yml
@@ -41,7 +38,8 @@ jobs:
     - name: Update project version
       uses: roryprimrose/set-vs-sdk-project-version@v1
       with:
-        version: ${{ steps.gitversion.outputs.NuGetVersionV2 }}
+        # GitVersion 6 removed the NuGetVersionV2 variable; SemVer is the SemVer-2.0 NuGet version.
+        version: ${{ steps.gitversion.outputs.SemVer }}
         assemblyVersion: ${{ steps.gitversion.outputs.AssemblySemVer }}
         fileVersion: ${{ steps.gitversion.outputs.MajorMinorPatch }}
         informationalVersion: ${{ steps.gitversion.outputs.InformationalVersion }}  
@@ -99,7 +97,7 @@ jobs:
     - shell: bash
       name: Write version
       run: |
-        echo '${{ steps.gitversion.outputs.NuGetVersionV2 }}' > version.txt
+        echo '${{ steps.gitversion.outputs.SemVer }}' > version.txt
     - name: Upload version
       uses: actions/upload-artifact@v5
       with:
@@ -153,7 +151,7 @@ jobs:
       shell: bash
       run: |
         value=`cat version.txt`
-        echo NuGetVersionV2=$(echo $value) >> $GITHUB_ENV 
+        echo SemVer=$(echo $value) >> $GITHUB_ENV 
     
     - name: Resolve project name
       shell: pwsh
@@ -179,10 +177,10 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ env.NuGetVersionV2 }}
-        name: Release ${{ env.NuGetVersionV2 }}
+        tag_name: ${{ env.SemVer }}
+        name: Release ${{ env.SemVer }}
         draft: false
-        prerelease: ${{ contains(env.NuGetVersionV2, 'beta') }}
+        prerelease: ${{ contains(env.SemVer, 'beta') }}
         files: |
-          ${{ env.projectName }}.${{ env.NuGetVersionV2 }}.nupkg
-          ${{ env.projectName }}.${{ env.NuGetVersionV2 }}.symbols.nupkg
+          ${{ env.projectName }}.${{ env.SemVer }}.nupkg
+          ${{ env.projectName }}.${{ env.SemVer }}.symbols.nupkg
