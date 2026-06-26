@@ -31,7 +31,17 @@ namespace ModelBuilder.Generator
 
             var hasModuleInitializer = context.CompilationProvider.Select(
                 static (compilation, _) =>
-                    compilation.GetTypeByMetadataName("System.Runtime.CompilerServices.ModuleInitializerAttribute") is not null);
+                {
+                    var symbol = compilation.GetTypeByMetadataName("System.Runtime.CompilerServices.ModuleInitializerAttribute");
+
+                    // A referenced assembly may declare its own internal ModuleInitializerAttribute
+                    // polyfill (for example BenchmarkDotNet). GetTypeByMetadataName finds such a type
+                    // even though the generated [ModuleInitializer] cannot bind to it, which fails with
+                    // CS0122. Only treat the attribute as present when it is actually accessible from the
+                    // compilation; otherwise the generator must emit its own accessible polyfill.
+                    return symbol is not null
+                        && compilation.IsSymbolAccessibleWithin(symbol, compilation.Assembly);
+                });
 
             var collected = roots.Collect().Combine(hasModuleInitializer);
 
