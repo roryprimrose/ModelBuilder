@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <!--
+      net472 exercises the netstandard2.0 consumption path; the modern TFMs cover
+      the AOT-capable runtimes. The same benchmark suite runs unchanged on each.
+    -->
+    <TargetFrameworks>net472;net8.0;net9.0;net10.0</TargetFrameworks>
+    <IsPackable>false</IsPackable>
+    <!--
+      BenchmarkDotNet generates and emits its own boilerplate; analyzer warnings
+      from generated and benchmark code should not fail the baseline build.
+    -->
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BenchmarkDotNet" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ModelBuilder\ModelBuilder.csproj" />
+    <!-- The generator runs as an analyzer so the v9 comparison benchmarks emit builders. -->
+    <ProjectReference Include="..\ModelBuilder.Generator\ModelBuilder.Generator.csproj"
+                      OutputItemType="Analyzer"
+                      ReferenceOutputAssembly="false" />
+  </ItemGroup>
+
+</Project>

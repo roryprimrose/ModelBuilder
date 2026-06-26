@@ -1,0 +1,28 @@
+<Project>
+
+  <!--
+    Shared build settings for all projects in the repository.
+    Project-specific settings (package metadata, code-analysis rulesets, TFMs)
+    remain in the individual .csproj files.
+  -->
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningsAsErrors />
+    <NeutralLanguage>en-US</NeutralLanguage>
+  </PropertyGroup>
+
+  <!--
+    Version stamping is delegated to GitVersion.MsBuild, which computes the version from GitVersion.yml
+    during the build and sets Version/AssemblyVersion/FileVersion/InformationalVersion. It is referenced
+    only in CI (GitHub Actions sets GITHUB_ACTIONS=true); local builds skip it entirely - the package is
+    not even restored - so there is no per-build GitVersion cost on a developer machine and local builds
+    use the default 1.0.0.
+  -->
+  <ItemGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
+    <PackageReference Include="GitVersion.MsBuild" PrivateAssets="all" />
+  </ItemGroup>
+
+</Project>

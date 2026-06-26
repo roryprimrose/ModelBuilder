@@ -1,14 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net8.0;net9.0;net10.0</TargetFrameworks>
 
     <CodeAnalysisRuleSet>..\Solution Items\Application.ruleset</CodeAnalysisRuleSet>
-    <NeutralLanguage>en-US</NeutralLanguage>
-    <LangVersion>latest</LangVersion>
-    <Nullable>enable</Nullable>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <WarningsAsErrors />
 
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <Authors>rprimrose</Authors>
@@ -24,40 +19,99 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="..\README.md">
+    <!--
+      Pack every root markdown file (README, MIGRATION, design, LICENSE) so the relative links the
+      README makes to sibling docs such as MIGRATION.md resolve inside the package. PackageReadmeFile
+      above still nominates README.md as the rendered readme.
+    -->
+    <None Include="..\*.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <!--
+      The machine-readable migration map ships next to the markdown guides so an AI agent or tool can
+      load it deterministically when upgrading a consumer from v8. MIGRATION-AI.md (a *.md) is packed
+      by the glob above; the JSON map needs its own entry.
+    -->
+    <None Include="..\migration-map.json">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Resources\Companies.txt" />
-    <None Remove="Resources\Domains.txt" />
-    <None Remove="Resources\FemaleNames.txt" />
-    <None Remove="Resources\LastNames.txt" />
-    <None Remove="Resources\Locations.txt" />
-    <None Remove="Resources\MaleNames.txt" />
-    <None Remove="Resources\TimeZones.txt" />
+    <!--
+      Pack the runnable examples project's source into the package, mirroring its repo-relative path
+      (ModelBuilder.Examples\...). The README is packed at the package root and links to these files
+      with repo-relative paths, so the same links resolve both on GitHub and when browsing the package.
+      These files are bundled as documentation only; they sit under ModelBuilder.Examples\ (not under
+      contentFiles\ or build\), so they are never compiled into a consuming project. bin\ and obj\ are
+      excluded so only authored source is packed.
+    -->
+    <None Include="..\ModelBuilder.Examples\**\*.cs;..\ModelBuilder.Examples\ModelBuilder.Examples.csproj"
+          Exclude="..\ModelBuilder.Examples\bin\**;..\ModelBuilder.Examples\obj\**"
+          Pack="true"
+          PackagePath="ModelBuilder.Examples"
+          Visible="false" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Companies.txt" />
-    <EmbeddedResource Include="Resources\Domains.txt" />
-    <EmbeddedResource Include="Resources\FemaleNames.txt" />
-    <EmbeddedResource Include="Resources\LastNames.txt" />
-    <EmbeddedResource Include="Resources\Locations.txt" />
-    <EmbeddedResource Include="Resources\MaleNames.txt" />
-    <EmbeddedResource Include="Resources\TimeZones.txt" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <Compile Update="BuildConfigurationExtensions.*.cs">
-      <DependentUpon>BuildConfigurationExtensions.cs</DependentUpon>
-    </Compile>
+    <!-- The unit tests exercise internal engine types (registries, value sources, build context, etc.). -->
+    <InternalsVisibleTo Include="ModelBuilder.UnitTests" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="8.0.0">
+    <!--
+      Reference the source generator so it runs during this build, but do not add it as a runtime
+      dependency (ReferenceOutputAssembly=false) and do not flow it to consumers as a normal reference
+      (PrivateAssets=all). The None item below is what places its DLL into the package.
+    -->
+    <ProjectReference Include="..\ModelBuilder.Generator\ModelBuilder.Generator.csproj"
+                      OutputItemType="Analyzer"
+                      ReferenceOutputAssembly="false"
+                      PrivateAssets="all" />
+    <!--
+      Reference the code-fix provider purely to guarantee it is built before pack copies its DLL. It is
+      not a source generator, so it does no work during this build; the None item below ships it into the
+      package's analyzers path where the consumer's IDE loads it.
+    -->
+    <ProjectReference Include="..\ModelBuilder.CodeFixes\ModelBuilder.CodeFixes.csproj"
+                      OutputItemType="Analyzer"
+                      ReferenceOutputAssembly="false"
+                      PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!--
+      Pack the generator assembly into analyzers/dotnet/cs so NuGet loads it as a Roslyn source generator
+      in the consuming project's compilation. Without this the package would ship only the runtime library
+      and no builders would be generated for consumers. Analyzers are not target-framework specific, so a
+      single None item is used rather than a per-TFM packaging hook. The ProjectReference above guarantees
+      the DLL exists by the time pack copies it.
+    -->
+    <None Include="..\ModelBuilder.Generator\bin\$(Configuration)\netstandard2.0\ModelBuilder.Generator.dll"
+          Pack="true"
+          PackagePath="analyzers/dotnet/cs"
+          Visible="false" />
+    <!--
+      Pack the code-fix provider alongside the generator so the consumer's IDE offers the v8 to v9
+      quick fixes (for example rewriting Model.Create<T>(args) to Model.Construct<T>().From(args)). The
+      ProjectReference above guarantees the DLL exists by the time pack copies it.
+    -->
+    <None Include="..\ModelBuilder.CodeFixes\bin\$(Configuration)\netstandard2.0\ModelBuilder.CodeFixes.dll"
+          Pack="true"
+          PackagePath="analyzers/dotnet/cs"
+          Visible="false" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- The SDK includes *.txt files as None by default, so remove them before re-adding as embedded resources. -->
+    <None Remove="Resources\*.txt" />
+    <EmbeddedResource Include="Resources\*.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

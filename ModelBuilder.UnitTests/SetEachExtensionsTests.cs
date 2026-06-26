@@ -1,528 +1,276 @@
-﻿namespace ModelBuilder.UnitTests
+namespace ModelBuilder.UnitTests
 {
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Linq;
     using FluentAssertions;
-    using ModelBuilder.UnitTests.Models;
+    using ModelBuilder;
     using Xunit;
 
     public class SetEachExtensionsTests
     {
         [Fact]
-        public void SetEachCollectionRunsActionAgainstInstance()
+        public void SetEachAppliesActionToEachItemWhenSourceIsCollection()
         {
-            var index = 0;
-            var sut = new Collection<Person>
-            {
-                new(),
-                new()
-            };
+            var source = new Collection<Person> { new(), new() };
 
-            var actual = sut.SetEach(
-                x =>
-                {
-                    index++;
-                    x.Priority = index;
-                });
+            source.SetEach(x => x.Age = 5);
 
-            actual.Should().BeSameAs(sut);
-            actual.Count.Should().Be(2);
-            actual.First().Priority.Should().Be(1);
-            actual.Skip(1).First().Priority.Should().Be(2);
+            source.Should().OnlyContain(x => x.Age == 5);
         }
 
         [Fact]
-        public void SetEachCollectionThrowsExceptionWithNullAction()
+        public void SetEachAppliesActionToEachItemWhenSourceIsDictionary()
         {
-            var sut = new Collection<string>();
+            var source = new Dictionary<string, Person> { ["a"] = new(), ["b"] = new() };
 
-            Action action = () => sut.SetEach((Action<string>)null!);
+            source.SetEach(x => x.Value.Age = 7);
+
+            source.Values.Should().OnlyContain(x => x.Age == 7);
+        }
+
+        [Fact]
+        public void SetEachAppliesActionToEachItemWhenSourceIsList()
+        {
+            var source = new List<Person> { new(), new() };
+
+            source.SetEach(x => x.Age = 3);
+
+            source.Should().OnlyContain(x => x.Age == 3);
+        }
+
+        [Fact]
+        public void SetEachAppliesActionToEachItemWhenSourceIsReadOnlyCollection()
+        {
+            var source = new ReadOnlyCollection<Person>(new List<Person> { new(), new() });
+
+            source.SetEach(x => x.Age = 9);
+
+            source.Should().OnlyContain(x => x.Age == 9);
+        }
+
+        [Fact]
+        public void SetEachAppliesActionToEachItemWhenSourceIsReadOnlyDictionary()
+        {
+            var source = new ReadOnlyDictionary<string, Person>(
+                new Dictionary<string, Person> { ["a"] = new(), ["b"] = new() });
+
+            source.SetEach(x => x.Value.Age = 11);
+
+            source.Values.Should().OnlyContain(x => x.Age == 11);
+        }
+
+        [Fact]
+        public void SetEachConvertsNonListEnumerableBeforeApplyingAction()
+        {
+            var first = new Person();
+            var second = new Person();
+            IEnumerable<Person> source = new[] { first, second }.Where(x => x != null);
+
+            var actual = source.SetEach(x => x.Age = 8);
+
+            actual.Should().BeOfType<List<Person>>();
+            first.Age.Should().Be(8);
+            second.Age.Should().Be(8);
+        }
+
+        [Fact]
+        public void SetEachOnEnumerableReturnsUnderlyingListWhenSourceIsAlreadyList()
+        {
+            var list = new List<Person> { new(), new() };
+            IEnumerable<Person> source = list;
+
+            var actual = source.SetEach(x => x.Age = 4);
+
+            actual.Should().BeSameAs(list);
+        }
+
+        [Fact]
+        public void SetEachReturnsSameInstanceWhenSourceIsCollection()
+        {
+            var source = new Collection<Person> { new() };
+
+            var actual = source.SetEach(x => x.Age = 1);
+
+            actual.Should().BeSameAs(source);
+        }
+
+        [Fact]
+        public void SetEachReturnsSameInstanceWhenSourceIsICollection()
+        {
+            ICollection<Person> source = new List<Person> { new() };
+
+            var actual = source.SetEach(x => x.Age = 1);
+
+            actual.Should().BeSameAs(source);
+        }
+
+        [Fact]
+        public void SetEachReturnsSameInstanceWhenSourceIsIDictionary()
+        {
+            IDictionary<string, Person> source = new Dictionary<string, Person> { ["a"] = new() };
+
+            var actual = source.SetEach(x => x.Value.Age = 1);
+
+            actual.Should().BeSameAs(source);
+        }
+
+        [Fact]
+        public void SetEachReturnsSameInstanceWhenSourceIsIList()
+        {
+            IList<Person> source = new List<Person> { new() };
+
+            var actual = source.SetEach(x => x.Age = 1);
+
+            actual.Should().BeSameAs(source);
+        }
+
+        [Fact]
+        public void SetEachReturnsSameInstanceWhenSourceIsIReadOnlyCollection()
+        {
+            IReadOnlyCollection<Person> source = new List<Person> { new() };
+
+            var actual = source.SetEach(x => x.Age = 1);
+
+            actual.Should().BeSameAs(source);
+        }
+
+        [Fact]
+        public void SetEachReturnsSameInstanceWhenSourceIsIReadOnlyDictionary()
+        {
+            IReadOnlyDictionary<string, Person> source = new Dictionary<string, Person> { ["a"] = new() };
+
+            var actual = source.SetEach(x => x.Value.Age = 1);
+
+            actual.Should().BeSameAs(source);
+        }
+
+        [Fact]
+        public void SetEachReturnsSameInstanceWhenSourceIsIReadOnlyList()
+        {
+            IReadOnlyList<Person> source = new List<Person> { new() };
+
+            var actual = source.SetEach(x => x.Age = 1);
+
+            actual.Should().BeSameAs(source);
+        }
+
+        [Fact]
+        public void SetEachReturnsSameInstanceWhenSourceIsList()
+        {
+            var source = new List<Person> { new() };
+
+            var actual = source.SetEach(x => x.Age = 1);
+
+            actual.Should().BeSameAs(source);
+        }
+
+        [Fact]
+        public void SetEachExplicitAppliesActionToEachItem()
+        {
+            var source = new List<Person> { new(), new() };
+
+            var actual = source.SetEachExplicit((Person x) => x.Age = 6);
+
+            actual.Should().BeSameAs(source);
+            source.Should().OnlyContain(x => x.Age == 6);
+        }
+
+        [Fact]
+        public void SetEachExplicitAppliesActionToEachDictionaryEntry()
+        {
+            var source = new Dictionary<string, Person> { ["a"] = new(), ["b"] = new() };
+
+            var actual = source.SetEachExplicit((KeyValuePair<string, Person> x) => x.Value.Age = 6);
+
+            actual.Should().BeSameAs(source);
+            source.Values.Should().OnlyContain(x => x.Age == 6);
+        }
+
+        [Fact]
+        public void SetEachExplicitThrowsWithNullAction()
+        {
+            var source = new List<Person>();
+
+            Action action = () => source.SetEachExplicit((Action<Person>)null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
-        public void SetEachCollectionThrowsExceptionWithNullInstance()
+        public void SetEachExplicitThrowsWithNullInstances()
         {
-            Action action = () => ((Collection<string>)null!).SetEach(_ => { });
+            List<Person> source = null!;
+
+            Action action = () => source.SetEachExplicit((Person x) => x.Age = 1);
 
             action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
-        public void SetEachDictionaryRunsActionAgainstInstance()
+        public void SetEachThrowsWithNullActionWhenSourceIsDictionary()
         {
-            var sut = new Dictionary<Guid, Person>
-            {
-                {
-                    Guid.NewGuid(), new Person()
-                },
-                {
-                    Guid.NewGuid(), new Person()
-                }
-            };
+            var source = new Dictionary<string, Person>();
 
-            var actual = sut.SetEach(x => { x.Value.Id = x.Key; });
-
-            actual.Should().BeSameAs(sut);
-            actual.Count.Should().Be(2);
-            actual.First().Key.Should().Be(actual.First().Value.Id);
-            actual.Skip(1).First().Key.Should().Be(actual.Skip(1).First().Value.Id);
-        }
-
-        [Fact]
-        public void SetEachDictionaryThrowsExceptionWithNullAction()
-        {
-            var sut = new Dictionary<Guid, Person>();
-
-            Action action = () => sut.SetEach((Action<KeyValuePair<Guid, Person>>)null!);
+            Action action = () => source.SetEach((Action<KeyValuePair<string, Person>>)null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
-        public void SetEachDictionaryThrowsExceptionWithNullInstance()
+        public void SetEachThrowsWithNullActionWhenSourceIsEnumerable()
         {
-            Action action = () => ((Dictionary<Guid, Person>)null!).SetEach(_ => { });
+            IEnumerable<Person> source = new List<Person>();
+
+            Action action = () => source.SetEach((Action<Person>)null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
-        public void SetEachICollectionRunsActionAgainstInstance()
+        public void SetEachThrowsWithNullActionWhenSourceIsList()
         {
-            var index = 0;
-            var source = new List<Person>
-            {
-                new(),
-                new()
-            };
-            ICollection<Person> sut = new Collection<Person>(source);
+            var source = new List<Person>();
 
-            var actual = sut.SetEach(
-                x =>
-                {
-                    index++;
-                    x.Priority = index;
-                });
-
-            actual.Should().BeSameAs(sut);
-            actual.Count.Should().Be(2);
-            actual.First().Priority.Should().Be(1);
-            actual.Skip(1).First().Priority.Should().Be(2);
-        }
-
-        [Fact]
-        public void SetEachICollectionThrowsExceptionWithNullAction()
-        {
-            var data = new List<Person>();
-
-            ICollection<Person> sut = new Collection<Person>(data);
-
-            Action action = () => sut.SetEach((Action<Person>)null!);
+            Action action = () => source.SetEach((Action<Person>)null!);
 
             action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
-        public void SetEachICollectionThrowsExceptionWithNullInstance()
+        public void SetEachThrowsWithNullInstancesWhenSourceIsDictionary()
         {
-            Action action = () => ((ICollection<Person>)null!).SetEach(_ => { });
+            Dictionary<string, Person> source = null!;
+
+            Action action = () => source.SetEach(x => x.Value.Age = 1);
 
             action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
-        public void SetEachIDictionaryRunsActionAgainstInstance()
+        public void SetEachThrowsWithNullInstancesWhenSourceIsEnumerable()
         {
-            IDictionary<Guid, Person> sut = new Dictionary<Guid, Person>
-            {
-                {
-                    Guid.NewGuid(), new Person()
-                },
-                {
-                    Guid.NewGuid(), new Person()
-                }
-            };
+            IEnumerable<Person> source = null!;
 
-            var actual = sut.SetEach(x => { x.Value.Id = x.Key; });
-
-            actual.Should().BeSameAs(sut);
-            actual.Count.Should().Be(2);
-            actual.First().Key.Should().Be(actual.First().Value.Id);
-            actual.Skip(1).First().Key.Should().Be(actual.Skip(1).First().Value.Id);
-        }
-
-        [Fact]
-        public void SetEachIDictionaryThrowsExceptionWithNullAction()
-        {
-            IDictionary<Guid, Person> sut = new Dictionary<Guid, Person>();
-
-            Action action = () => sut.SetEach((Action<KeyValuePair<Guid, Person>>)null!);
+            Action action = () => source.SetEach(x => x.Age = 1);
 
             action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
-        public void SetEachIDictionaryThrowsExceptionWithNullInstance()
+        public void SetEachThrowsWithNullInstancesWhenSourceIsList()
         {
-            Action action = () => ((IDictionary<Guid, Person>)null!).SetEach(_ => { });
+            List<Person> source = null!;
+
+            Action action = () => source.SetEach(x => x.Age = 1);
 
             action.Should().Throw<ArgumentNullException>();
         }
 
-        [Fact]
-        public void SetEachIEnumerableRunsActionAgainstInstance()
+        private class Person
         {
-            var index = 0;
-            var sut = BuildPeople();
-
-            var actual = sut.SetEach(
-                x =>
-                {
-                    index++;
-                    x.Priority = index;
-                });
-
-            actual.Count.Should().Be(2);
-            actual[0].Priority.Should().Be(1);
-            actual[1].Priority.Should().Be(2);
-        }
-
-        [Fact]
-        public void SetEachIEnumerableThrowsExceptionWithNullAction()
-        {
-            IEnumerable<string> sut = new Collection<string>();
-
-            Action action = () => sut.SetEach((Action<string>)null!);
-
-            action.Should().Throw<ArgumentNullException>();
-        }
-
-        [Fact]
-        public void SetEachIEnumerableThrowsExceptionWithNullInstance()
-        {
-            Action action = () => ((IEnumerable<string>)null!).SetEach(_ => { });
-
-            action.Should().Throw<ArgumentNullException>();
-        }
-
-        [Fact]
-        public void SetEachIListRunsActionAgainstInstance()
-        {
-            var index = 0;
-            IList<Person> sut = new List<Person>
-            {
-                new(),
-                new()
-            };
-
-            var actual = sut.SetEach(
-                x =>
-                {
-                    index++;
-                    x.Priority = index;
-                });
-
-            actual.Should().BeSameAs(sut);
-            actual.Count.Should().Be(2);
-            actual.First().Priority.Should().Be(1);
-            actual.Skip(1).First().Priority.Should().Be(2);
-        }
-
-        [Fact]
-        public void SetEachIListThrowsExceptionWithNullAction()
-        {
-            IList<string> sut = new List<string>();
-
-            Action action = () => sut.SetEach((Action<string>)null!);
-
-            action.Should().Throw<ArgumentNullException>();
-        }
-
-        [Fact]
-        public void SetEachIListThrowsExceptionWithNullInstance()
-        {
-            Action action = () => ((IList<string>)null!).SetEach(_ => { });
-
-            action.Should().Throw<ArgumentNullException>();
-        }
-
-        [Fact]
-        public void SetEachIReadOnlyCollectionRunsActionAgainstInstance()
-        {
-            var index = 0;
-            var source = new List<Person>
-            {
-                new(),
-                new()
-            };
-            IReadOnlyCollection<Person> sut = new ReadOnlyCollection<Person>(source);
-
-            var actual = sut.SetEach(
-                x =>
-                {
-                    index++;
-                    x.Priority = index;
-                });
-
-            actual.Should().BeSameAs(sut);
-            actual.Count.Should().Be(2);
-            actual.First().Priority.Should().Be(1);
-            actual.Skip(1).First().Priority.Should().Be(2);
-        }
-
-        [Fact]
-        public void SetEachIReadOnlyCollectionThrowsExceptionWithNullAction()
-        {
-            var data = new List<Person>();
-
-            IReadOnlyCollection<Person> sut = new ReadOnlyCollection<Person>(data);
-
-            Action action = () => sut.SetEach((Action<Person>)null!);
-
-            action.Should().Throw<ArgumentNullException>();
-        }
-
-        [Fact]
-        public void SetEachIReadOnlyCollectionThrowsExceptionWithNullInstance()
-        {
-            Action action = () => ((IReadOnlyCollection<Person>)null!).SetEach(_ => { });
-
-            action.Should().Throw<ArgumentNullException>();
-        }
-
-        [Fact]
-        public void SetEachIReadOnlyDictionaryRunsActionAgainstInstance()
-        {
-            IReadOnlyDictionary<Guid, Person> sut = new Dictionary<Guid, Person>
-            {
-                {
-                    Guid.NewGuid(), new Person()
-                },
-                {
-                    Guid.NewGuid(), new Person()
-                }
-            };
-
-            var actual = sut.SetEach(x => { x.Value.Id = x.Key; });
-
-            actual.Should().BeSameAs(sut);
-            actual.Count.Should().Be(2);
-            actual.First().Key.Should().Be(actual.First().Value.Id);
-            actual.Skip(1).First().Key.Should().Be(actual.Skip(1).First().Value.Id);
-        }
-
-        [Fact]
-        public void SetEachIReadOnlyDictionaryThrowsExceptionWithNullAction()
-        {
-            IReadOnlyDictionary<Guid, Person> sut = new Dictionary<Guid, Person>();
-
-            Action action = () => sut.SetEach((Action<KeyValuePair<Guid, Person>>)null!);
-
-            action.Should().Throw<ArgumentNullException>();
-        }
-
-        [Fact]
-        public void SetEachIReadOnlyDictionaryThrowsExceptionWithNullInstance()
-        {
-            Action action = () => ((IReadOnlyDictionary<Guid, Person>)null!).SetEach(_ => { });
-
-            action.Should().Throw<ArgumentNullException>();
-        }
-
-        [Fact]
-        public void SetEachIReadOnlyListRunsActionAgainstInstance()
-        {
-            var index = 0;
-            var source = new List<Person>
-            {
-                new(),
-                new()
-            };
-            IReadOnlyList<Person> sut = new ReadOnlyCollection<Person>(source);
-
-            var actual = sut.SetEach(
-                x =>
-                {
-                    index++;
-                    x.Priority = index;
-                });
-
-            actual.Should().BeSameAs(sut);
-            actual.Count.Should().Be(2);
-            actual[0].Priority.Should().Be(1);
-            actual[1].Priority.Should().Be(2);
-        }
-
-        [Fact]
-        public void SetEachIReadOnlyListThrowsExceptionWithNullAction()
-        {
-            var data = new List<Person>();
-
-            IReadOnlyList<Person> sut = new ReadOnlyCollection<Person>(data);
-
-            Action action = () => sut.SetEach((Action<Person>)null!);
-
-            action.Should().Throw<ArgumentNullException>();
-        }
-
-        [Fact]
-        public void SetEachIReadOnlyListThrowsExceptionWithNullInstance()
-        {
-            Action action = () => ((IReadOnlyList<Person>)null!).SetEach(_ => { });
-
-            action.Should().Throw<ArgumentNullException>();
-        }
-
-        [Fact]
-        public void SetEachListAsIEnumerableRunsActionAgainstInstance()
-        {
-            var index = 0;
-            var sut = new List<Person>
-            {
-                new(),
-                new()
-            };
-
-            var actual = sut.SetEach(
-                x =>
-                {
-                    index++;
-                    x.Priority = index;
-                });
-
-            actual.Should().BeSameAs(sut);
-            actual.Count.Should().Be(2);
-            actual[0].Priority.Should().Be(1);
-            actual[1].Priority.Should().Be(2);
-        }
-
-        [Fact]
-        public void SetEachListThrowsExceptionWithNullAction()
-        {
-            var sut = new List<string>();
-
-            Action action = () => sut.SetEach((Action<string>)null!);
-
-            action.Should().Throw<ArgumentNullException>();
-        }
-
-        [Fact]
-        public void SetEachListThrowsExceptionWithNullInstance()
-        {
-            Action action = () => ((List<Person>)null!).SetEach(_ => { });
-
-            action.Should().Throw<ArgumentNullException>();
-        }
-
-        [Fact]
-        public void SetEachReadOnlyCollectionRunsActionAgainstInstance()
-        {
-            var index = 0;
-            var source = new List<Person>
-            {
-                new(),
-                new()
-            };
-            var sut = new ReadOnlyCollection<Person>(source);
-
-            var actual = sut.SetEach(
-                x =>
-                {
-                    index++;
-                    x.Priority = index;
-                });
-
-            actual.Should().BeSameAs(sut);
-            actual.Count.Should().Be(2);
-            actual.First().Priority.Should().Be(1);
-            actual.Skip(1).First().Priority.Should().Be(2);
-        }
-
-        [Fact]
-        public void SetEachReadOnlyCollectionThrowsExceptionWithNullAction()
-        {
-            var data = new List<Person>();
-
-            var sut = new ReadOnlyCollection<Person>(data);
-
-            Action action = () => sut.SetEach((Action<Person>)null!);
-
-            action.Should().Throw<ArgumentNullException>();
-        }
-
-        [Fact]
-        public void SetEachReadOnlyCollectionThrowsExceptionWithNullInstance()
-        {
-            Action action = () => ((ReadOnlyCollection<Person>)null!).SetEach(_ => { });
-
-            action.Should().Throw<ArgumentNullException>();
-        }
-
-        [Fact]
-        public void SetEachReadOnlyDictionaryRunsActionAgainstInstance()
-        {
-            var data = new Dictionary<Guid, Person>
-            {
-                {
-                    Guid.NewGuid(), new Person()
-                },
-                {
-                    Guid.NewGuid(), new Person()
-                }
-            };
-
-            var sut = new ReadOnlyDictionary<Guid, Person>(data);
-
-            var actual = sut.SetEach(x => { x.Value.Id = x.Key; });
-
-            actual.Should().BeSameAs(sut);
-            actual.Count.Should().Be(2);
-            actual.First().Key.Should().Be(actual.First().Value.Id);
-            actual.Skip(1).First().Key.Should().Be(actual.Skip(1).First().Value.Id);
-        }
-
-        [Fact]
-        public void SetEachReadOnlyDictionaryThrowsExceptionWithNullAction()
-        {
-            var data = new Dictionary<Guid, Person>
-            {
-                {
-                    Guid.NewGuid(), new Person()
-                },
-                {
-                    Guid.NewGuid(), new Person()
-                }
-            };
-
-            var sut = new ReadOnlyDictionary<Guid, Person>(data);
-
-            Action action = () => sut.SetEach((Action<KeyValuePair<Guid, Person>>)null!);
-
-            action.Should().Throw<ArgumentNullException>();
-        }
-
-        [Fact]
-        public void SetEachReadOnlyDictionaryThrowsExceptionWithNullInstance()
-        {
-            Action action = () => ((ReadOnlyDictionary<Guid, Person>)null!).SetEach(_ => { });
-
-            action.Should().Throw<ArgumentNullException>();
-        }
-
-        private static IEnumerable<Person> BuildPeople()
-        {
-            yield return new()
-            {
-                Id = Guid.NewGuid()
-            };
-            yield return new()
-            {
-                Id = Guid.NewGuid()
-            };
+            public int Age { get; set; }
         }
     }
 }

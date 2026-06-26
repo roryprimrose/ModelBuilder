@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <IsPackable>false</IsPackable>
+    <IsRoslynComponent>true</IsRoslynComponent>
+    <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
+    <!-- The generated boilerplate and Roslyn API surface should not be gated by the runtime ruleset. -->
+    <CodeAnalysisRuleSet />
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!--
+      Build the generator against Roslyn 4.8 (the compiler that ships in the .NET 8 SDK) via a
+      VersionOverride, rather than the repo-wide latest Microsoft.CodeAnalysis.CSharp. A Roslyn
+      source generator runs inside the consumer's compiler, so the Microsoft.CodeAnalysis version it
+      is built against sets the minimum compiler/SDK a consumer needs. Referencing a newer version
+      would make the analyzer fail to load (CS9057) on older-but-still-supported SDKs and silently
+      emit no builders. 4.8 is the floor that covers every currently-supported SDK (.NET 8, 9 and 10);
+      the generator only uses APIs available in 4.8 (IIncrementalGenerator, ForAttributeWithMetadataName).
+    -->
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" VersionOverride="4.8.0">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="AnalyzerReleases.Shipped.md" />
+    <AdditionalFiles Include="AnalyzerReleases.Unshipped.md" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="ModelBuilder.Generator.UnitTests" />
+  </ItemGroup>
+
+</Project>

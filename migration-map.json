@@ -1,0 +1,185 @@
+{
+  "library": "ModelBuilder",
+  "fromVersion": "8.x",
+  "toVersion": "9.x",
+  "description": "Machine-readable map from ModelBuilder v8 APIs to their v9 equivalents. Intended for AI agents and tooling performing an automated upgrade. The human-readable source of truth is MIGRATION.md; this file encodes its tables as structured data.",
+  "docs": {
+    "migrationGuide": "MIGRATION.md",
+    "aiPlaybook": "MIGRATION-AI.md",
+    "readme": "README.md"
+  },
+  "paradigm": {
+    "summary": "v9 replaces v8's runtime reflection build pipeline with compile-time source-generated builders. There is no back-compat shim; every removed v8 type is a throwing, [Obsolete(error: true)] stub so usage fails at build time.",
+    "implication": "Migration is compile-error driven: bump the package, build, and the compiler emits one error per v8 usage. Fix each using the mappings below, rebuild, and run the tests.",
+    "discoveryTriggers": [
+      "Model.Create<T>()",
+      "Model.Populate<T>()",
+      "Model.Construct<T>()",
+      "Model.Create(typeof(T))",
+      "Model.Mapping<TAbstract, TConcrete>()",
+      "[GenerateModelBuilder] / [assembly: GenerateModelBuilder(typeof(T))]"
+    ]
+  },
+  "verification": {
+    "build": "dotnet build -c Release",
+    "test": "dotnet test -c Release",
+    "successCriteria": "Solution builds with no errors (v9 fails unbuildable usage at compile time, not runtime) and all tests pass."
+  },
+  "unchanged": [
+    "Model.Create<T>()",
+    "Model.Create(typeof(T))",
+    ".Set(...)",
+    ".SetEach(...)",
+    "Model.Ignoring<T>(x => x.Member)",
+    "Model.UsingModule<T>()",
+    "Model.Mapping<TSource, TTarget>()",
+    "Model.WriteLog(sink)"
+  ],
+  "mappings": [
+    {
+      "kind": "changed",
+      "v8": "Model.Create<T>(args)",
+      "v9": "Model.Construct<T>().From(args)",
+      "automatable": true,
+      "docAnchor": "changed--constructor-arguments",
+      "notes": "Create<T>() no longer accepts constructor arguments and always generates them. Construct<T>().From(...) emits a typed From overload per public constructor.",
+      "before": "var person = Model.Create<Person>(\"Fred\", \"Smith\");",
+      "after": "var person = Model.Construct<Person>().From(\"Fred\", \"Smith\");"
+    },
+    {
+      "kind": "mapped",
+      "v8": "IValueGenerator / ValueGeneratorBase",
+      "v9": "IValueSource<T>",
+      "automatable": false,
+      "docAnchor": "mapped--mechanical-replacement",
+      "notes": "One Create method; no IsMatch / Generate(Type, ...). Matching moves to registration (AddValueSource<T>(source, \"MemberName\"))."
+    },
+    {
+      "kind": "mapped",
+      "v8": "ITypeCreator / TypeCreatorBase (constructor-only type)",
+      "v9": "IValueSource<T>",
+      "automatable": false,
+      "docAnchor": "mapped--mechanical-replacement",
+      "notes": "Create calls the constructor and returns the instance; the engine populates it afterwards."
+    },
+    {
+      "kind": "mapped",
+      "v8": "configuration.AddValueGenerator<G>()",
+      "v9": "configuration.AddValueSource<T>(source, \"MemberName\") or configuration.AddValueSource<T>(source)",
+      "automatable": false,
+      "docAnchor": "mapped--mechanical-replacement",
+      "notes": "The T fixes the type; the member name is declared at registration."
+    },
+    {
+      "kind": "mapped",
+      "v8": "configuration.AddTypeCreator<C>()",
+      "v9": "configuration.AddValueSource<T>(source)",
+      "automatable": false,
+      "docAnchor": "mapped--mechanical-replacement",
+      "notes": "Same registration shape; Create calls the constructor."
+    },
+    {
+      "kind": "mapped",
+      "v8": "UpdateValueGenerator<G>(g => g.X = ...) / UpdateTypeCreator<C>(c => c.X = ...)",
+      "v9": "Model.SetOptions(x => ...) / configuration.SetOptions(x => ...)",
+      "automatable": false,
+      "docAnchor": "mapped--mechanical-replacement",
+      "notes": "MinCount / MaxCount / NullPercentage / MaxDepth on BuildOptions. Per-member overrides (e.g. an age range) move to a custom IValueSource<T>."
+    },
+    {
+      "kind": "mapped",
+      "v8": "AddIgnoreRule<T>(x => x.Member)",
+      "v9": "Model.Ignoring<T>(x => x.Member) or configuration.IgnoreAny(member => ...)",
+      "automatable": false,
+      "docAnchor": "mapped--mechanical-replacement",
+      "notes": "Targeted form unchanged; type-agnostic IgnoreAny is new."
+    },
+    {
+      "kind": "mapped",
+      "v8": "AddCreationRule(predicate, value, priority)",
+      "v9": "configuration.AddValueSource<T>(source, \"MemberName\")",
+      "automatable": false,
+      "docAnchor": "mapped--mechanical-replacement",
+      "notes": "The fast-value shortcut becomes an ordinary named source."
+    },
+    {
+      "kind": "mapped",
+      "v8": "DefaultConfigurationModule (called explicitly)",
+      "v9": "implicit default configuration",
+      "automatable": false,
+      "docAnchor": "mapped--mechanical-replacement",
+      "notes": "The built-in sources register automatically; a custom module only adds deltas."
+    },
+    {
+      "kind": "mapped",
+      "v8": "RandomGenerator (object NextValue(Type, ...))",
+      "v9": "IRandomSource (NextInt32 / NextInt64 / NextDouble / ...)",
+      "automatable": false,
+      "docAnchor": "mapped--mechanical-replacement",
+      "notes": "Typed, thread-safe, seedable, no boxing, no precision loss."
+    }
+  ],
+  "removed": [
+    {
+      "v8": "IExecuteStrategy, IBuildProcessor, IBuildAction, IBuildCapability",
+      "replacement": null,
+      "docAnchor": "removed--no-equivalent",
+      "guidance": "No equivalent. Move to the supported seams: IValueSource<T>, mappings, ignore rules, [GenerateModelBuilder]. Construction, member discovery and ordering are decided at compile time, so there is no runtime pipeline to extend."
+    },
+    {
+      "v8": "IConstructorResolver, IParameterResolver, IPropertyResolver, ITypeResolver",
+      "replacement": null,
+      "docAnchor": "removed--no-equivalent",
+      "guidance": "No equivalent. Construction and member resolution are performed by the source generator."
+    },
+    {
+      "v8": "CacheLevel",
+      "replacement": null,
+      "docAnchor": "removed--no-equivalent",
+      "guidance": "No equivalent. Caching is handled internally by the source generator."
+    },
+    {
+      "v8": "Type / PropertyInfo / ParameterInfo generator overload triplets",
+      "replacement": null,
+      "docAnchor": "removed--no-equivalent",
+      "guidance": "No equivalent. Per-ParameterInfo/PropertyInfo overloads are gone; member handling is compile-time."
+    },
+    {
+      "v8": "DefaultTypeResolver automatic interface/abstract scanning",
+      "replacement": "Model.Mapping<TAbstract, TConcrete>()",
+      "docAnchor": "what-v9-no-longer-supports",
+      "guidance": "Abstract and interface targets need an explicit Mapping<,>; there is no assembly scan that guesses a concrete type."
+    }
+  ],
+  "diagnostics": [
+    {
+      "id": "MB1001",
+      "title": "Abstract or interface build root has no mapping",
+      "severity": "Warning",
+      "fix": "Add Model.Mapping<TAbstract, TConcrete>() or build a concrete type instead."
+    },
+    {
+      "id": "MB1002",
+      "title": "Build root has no accessible constructor",
+      "severity": "Warning",
+      "fix": "Add a public constructor or expose an accessible one."
+    },
+    {
+      "id": "MB1005",
+      "title": "Model.Create(typeof(X)) names a type that cannot be built",
+      "severity": "Warning",
+      "fix": "Call Model.Create<X>() somewhere, add a Mapping<,>, or annotate the type with [GenerateModelBuilder]."
+    },
+    {
+      "id": "CS0619",
+      "title": "Use of a removed v8 API (an [Obsolete(error)] shim)",
+      "severity": "Error",
+      "fix": "Apply the matching entry from 'mappings' or 'removed'. The obsolete message names the v9 replacement."
+    }
+  ],
+  "unsupported": [
+    "No runtime reflection / no dynamic or runtime-only types: a Type known only at runtime cannot be built (no reflection fallback).",
+    "Only compile-time-discoverable types are buildable (reachable from a call site, a mapping, or [GenerateModelBuilder]).",
+    "Visibility limits: private/protected types, constructors and members cannot be built; internal only via [InternalsVisibleTo] to the test assembly."
+  ]
+}

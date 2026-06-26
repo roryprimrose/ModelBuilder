@@ -1,148 +1,291 @@
-﻿namespace ModelBuilder
+namespace ModelBuilder
 {
     using System;
-    using System.Linq.Expressions;
-    using ModelBuilder.IgnoreRules;
 
     /// <summary>
-    ///     The <see cref="Model" />
-    ///     class provides the main entry point into generating model instances.
+    ///     The <see cref="Model" /> class
+    ///     is the static entry point for the v9 source-generated engine. It dispatches to the
+    ///     generated builders through the typed-static slots on the generic path and through the
+    ///     registry on the runtime-<see cref="Type" /> path.
     /// </summary>
-    public static class Model
+    public static partial class Model
     {
+        private static readonly ModelBuilderRegistry _registry = new ModelBuilderRegistry();
+
         /// <summary>
-        ///     Creates an instance of a type using the default build and execute strategies and constructor any provided
-        ///     arguments.
+        ///     Creates a populated instance of the specified type.
         /// </summary>
-        /// <param name="instanceType">The type of instance to create.</param>
-        /// <param name="args">The constructor arguments to create the type with.</param>
-        /// <returns>The new instance.</returns>
+        /// <param name="instanceType">The type to create.</param>
+        /// <returns>The created instance.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="instanceType" /> parameter is <c>null</c>.</exception>
-        public static object Create(Type instanceType, params object?[]? args)
+        /// <exception cref="ModelBuildException">No builder has been generated for the type.</exception>
+        public static object Create(Type instanceType)
         {
             instanceType = instanceType ?? throw new ArgumentNullException(nameof(instanceType));
 
-            return ResolveDefault().Create(instanceType, args);
+            if (_registry.TryGet(instanceType, out var builder) == false
+                || builder is null)
+            {
+                throw NoBuilder(instanceType);
+            }
+
+            var context = NewContext(null, null);
+
+            using (context.EnterRoot(instanceType))
+            {
+                return builder.Create(context);
+            }
         }
 
         /// <summary>
-        ///     Creates an instance of <typeparamref name="T" /> using the default build and execute strategies and any provided
-        ///     constructor
-        ///     arguments.
+        ///     Creates a populated instance of <typeparamref name="T" />.
         /// </summary>
-        /// <typeparam name="T">The type of instance to create.</typeparam>
-        /// <param name="args">The constructor arguments to create the type with.</param>
-        /// <returns>The new instance.</returns>
-        public static T Create<T>(params object?[]? args) where T : notnull
+        /// <typeparam name="T">The type to create.</typeparam>
+        /// <returns>The created instance.</returns>
+        /// <exception cref="ModelBuildException">No builder has been generated for the type.</exception>
+        public static T Create<T>()
         {
-            return ResolveDefault<T>().Create(args);
+            return CreateWith<T>(null);
         }
 
         /// <summary>
-        ///     Returns a <see cref="IBuildConfiguration" /> with a new <see cref="IIgnoreRule" /> that matches the specified
-        ///     expression.
+        ///     Begins a configured build that ignores the specified member.
         /// </summary>
-        /// <typeparam name="T">The type of instance that matches the rule.</typeparam>
-        /// <param name="expression">The expression that identifies a property on <typeparamref name="T" /></param>
-        /// <returns>A new build configuration.</returns>
+        /// <typeparam name="T">The type that declares the member to ignore.</typeparam>
+        /// <param name="expression">An expression selecting the member to ignore.</param>
+        /// <returns>A configuration to continue building.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="expression" /> parameter is <c>null</c>.</exception>
-        public static IBuildConfiguration Ignoring<T>(Expression<Func<T, object?>> expression)
+        public static IModelConfiguration Ignoring<T>(System.Linq.Expressions.Expression<Func<T, object?>> expression)
         {
-            expression = expression ?? throw new ArgumentNullException(nameof(expression));
-
-            return UsingDefaultConfiguration().Ignoring(expression);
+            return new ModelConfiguration().Ignoring(expression);
         }
 
         /// <summary>
-        ///     Returns a <see cref="IBuildConfiguration" /> with a new <see cref="TypeMappingRule" /> that matches the specified
-        ///     expression.
+        ///     Begins a configured build that ignores the named member on the specified declaring type.
         /// </summary>
-        /// <typeparam name="TSource">The source type to use for type mapping.</typeparam>
-        /// <typeparam name="TTarget">The target type to use for type mapping.</typeparam>
-        /// <returns>A new build configuration.</returns>
-        public static IBuildConfiguration Mapping<TSource, TTarget>()
+        /// <param name="declaringType">The type that declares the member to ignore.</param>
+        /// <param name="memberName">The name of the member to ignore.</param>
+        /// <returns>A configuration to continue building.</returns>
+        /// <exception cref="ArgumentNullException">
+        ///     The <paramref name="declaringType" /> or <paramref name="memberName" /> parameter is <c>null</c>.
+        /// </exception>
+        public static IModelConfiguration Ignoring(Type declaringType, string memberName)
         {
-            return UsingDefaultConfiguration().Mapping<TSource, TTarget>();
+            return new ModelConfiguration().Ignoring(declaringType, memberName);
         }
 
         /// <summary>
-        ///     Populates the properties of the specified instance using the default build and execute strategies.
+        ///     Begins a configured build that ignores any member matching the predicate, across all types.
         /// </summary>
-        /// <typeparam name="T">The type of instance to create.</typeparam>
-        /// <returns>The new instance.</returns>
-        public static T Populate<T>(T instance) where T : notnull
+        /// <param name="predicate">The predicate evaluated against each member.</param>
+        /// <returns>A configuration to continue building.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="predicate" /> parameter is <c>null</c>.</exception>
+        public static IModelConfiguration IgnoringAny(Func<MemberSignature, bool> predicate)
         {
-            return ResolveDefault<T>().Populate(instance);
+            return new ModelConfiguration().IgnoringAny(predicate);
         }
 
         /// <summary>
-        ///     Returns a new <see cref="IBuildConfiguration" /> that is configured using <see cref="DefaultConfigurationModule" />
-        ///     .
+        ///     Begins a configured build that maps a source type to a concrete target type.
         /// </summary>
-        /// <returns>The new build configuration.</returns>
-        public static IBuildConfiguration UsingDefaultConfiguration()
+        /// <typeparam name="TSource">The source type, typically an interface or abstract type.</typeparam>
+        /// <typeparam name="TTarget">The concrete type to build in its place.</typeparam>
+        /// <returns>A configuration to continue building.</returns>
+        public static IModelConfiguration Mapping<TSource, TTarget>()
+            where TTarget : TSource
         {
-            var configuration = new BuildConfiguration();
-
-            return configuration.UsingModule<DefaultConfigurationModule>();
+            return new ModelConfiguration().Mapping<TSource, TTarget>();
         }
 
         /// <summary>
-        ///     Returns a new execute strategy configured with <see cref="DefaultConfigurationModule" />.
+        ///     Begins a typed construction of <typeparamref name="T" />. Supply constructor arguments
+        ///     through the generated <c>From</c> extension method on the returned handle, for example
+        ///     <c>Model.Construct&lt;Person&gt;().From("Fred", "Smith")</c>.
         /// </summary>
-        /// <typeparam name="T">The type of execute strategy to create.</typeparam>
-        /// <returns>A new execute strategy.</returns>
-        public static T UsingExecuteStrategy<T>() where T : IExecuteStrategy, new()
+        /// <typeparam name="T">The type to construct.</typeparam>
+        /// <returns>A handle whose generated <c>From</c> overloads name the constructors of <typeparamref name="T" />.</returns>
+        /// <remarks>
+        ///     The <c>From</c> overloads are generated for every public constructor of
+        ///     <typeparamref name="T" /> at the call site, with typed parameters (no boxing, compile-time
+        ///     validation) and the constructor's documentation copied across. Members assigned by the
+        ///     chosen constructor are not re-populated with random values.
+        /// </remarks>
+        public static Construction<T> Construct<T>()
         {
-            return UsingDefaultConfiguration().UsingExecuteStrategy<T>();
+            return new Construction<T>(null, null);
         }
 
         /// <summary>
-        ///     Returns a configuration using the specified <see cref="IConfigurationModule" />.
+        ///     Begins a configured build that registers a custom value source for every build target and root
+        ///     of type <typeparamref name="T" />. A build target is a constructor parameter or settable member.
         /// </summary>
-        /// <typeparam name="T">The type of configuration module to use.</typeparam>
-        /// <returns>The build configuration.</returns>
-        public static IBuildConfiguration UsingModule<T>() where T : IConfigurationModule, new()
+        /// <typeparam name="T">The type the value source produces.</typeparam>
+        /// <param name="source">The value source to register.</param>
+        /// <returns>A configuration to continue building.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="source" /> parameter is <c>null</c>.</exception>
+        public static IModelConfiguration AddValueSource<T>(IValueSource<T> source)
         {
-            return UsingDefaultConfiguration().UsingModule<T>();
+            return new ModelConfiguration().AddValueSource(source);
         }
 
         /// <summary>
-        ///     Writes the log entry using the specified action after the execute strategy is invoked.
+        ///     Begins a configured build that registers a custom value source for build targets of type
+        ///     <typeparamref name="T" /> whose name matches one of <paramref name="names" />. A build target is
+        ///     a constructor parameter or settable member.
         /// </summary>
-        /// <typeparam name="T">The type of instance to create and populate.</typeparam>
-        /// <param name="action">The logging action to call.</param>
-        /// <returns>The execute strategy to invoke.</returns>
-        /// <exception cref="ArgumentNullException">The <paramref name="action" /> parameter is <c>null</c>.</exception>
-        public static IExecuteStrategy<T> WriteLog<T>(Action<string> action)
-            where T : notnull
+        /// <typeparam name="T">The type the value source produces.</typeparam>
+        /// <param name="source">The value source to register.</param>
+        /// <param name="names">The names the source matches.</param>
+        /// <returns>A configuration to continue building.</returns>
+        /// <exception cref="ArgumentNullException">
+        ///     The <paramref name="source" /> or <paramref name="names" /> parameter is <c>null</c>.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        ///     The <paramref name="names" /> parameter is empty or contains a null, empty or whitespace entry.
+        /// </exception>
+        public static IModelConfiguration AddValueSource<T>(IValueSource<T> source, params string[] names)
         {
-            action = action ?? throw new ArgumentNullException(nameof(action));
-
-            return ResolveDefault<T>().WriteLog(action);
+            return new ModelConfiguration().AddValueSource(source, names);
         }
 
         /// <summary>
-        ///     Writes the log entry using the specified action after the execute strategy is invoked.
+        ///     Begins a configured build that tunes the build options, such as collection sizes, the
+        ///     frequency of <c>null</c> values and the maximum graph depth.
         /// </summary>
-        /// <param name="action">The logging action to call.</param>
-        /// <returns>The execute strategy to invoke.</returns>
-        /// <exception cref="ArgumentNullException">The <paramref name="action" /> parameter is <c>null</c>.</exception>
-        public static IExecuteStrategy WriteLog(Action<string> action)
+        /// <param name="configure">An action that mutates the build options.</param>
+        /// <returns>A configuration to continue building.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="configure" /> parameter is <c>null</c>.</exception>
+        public static IModelConfiguration SetOptions(Action<BuildOptions> configure)
         {
-            action = action ?? throw new ArgumentNullException(nameof(action));
-
-            return ResolveDefault().WriteLog(action);
+            return new ModelConfiguration().SetOptions(configure);
         }
 
-        private static IExecuteStrategy ResolveDefault()
+        /// <summary>
+        ///     Populates an existing instance of <typeparamref name="T" />.
+        /// </summary>
+        /// <typeparam name="T">The type to populate.</typeparam>
+        /// <param name="instance">The instance to populate.</param>
+        /// <returns>The populated instance.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="instance" /> parameter is <c>null</c>.</exception>
+        /// <exception cref="ModelBuildException">No builder has been generated for the type.</exception>
+        public static T Populate<T>(T instance)
         {
-            return UsingExecuteStrategy<DefaultExecuteStrategy>();
+            return PopulateWith(instance, null);
         }
 
-        private static IExecuteStrategy<T> ResolveDefault<T>() where T : notnull
+        /// <summary>
+        ///     Begins a configured build using the specified configuration module.
+        /// </summary>
+        /// <typeparam name="TModule">The configuration module to apply.</typeparam>
+        /// <returns>A configuration to continue building.</returns>
+        public static IModelConfiguration UsingModule<TModule>()
+            where TModule : IConfigurationModule, new()
         {
-            return UsingExecuteStrategy<DefaultExecuteStrategy<T>>();
+            return new ModelConfiguration().UsingModule<TModule>();
         }
+
+        /// <summary>
+        ///     Begins a configured build that writes the structured build log to the supplied sink.
+        /// </summary>
+        /// <param name="sink">The action that receives the rendered build log after the build.</param>
+        /// <returns>A configuration to continue building.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="sink" /> parameter is <c>null</c>.</exception>
+        public static IModelConfiguration WriteLog(Action<string> sink)
+        {
+            return new ModelConfiguration().WriteLog(sink);
+        }
+
+        internal static T CreateWith<T>(BuildConfiguration? configuration)
+        {
+            return CreateWith<T>(configuration, (IBuildLog?)null);
+        }
+
+        internal static T CreateWith<T>(BuildConfiguration? configuration, IBuildLog? log)
+        {
+            var context = NewContext(configuration, log);
+
+            var builder = ModelBuilderSlot<T>.Instance;
+
+            if (builder != null)
+            {
+                using (context.EnterRoot(typeof(T)))
+                {
+                    return builder.Create(context);
+                }
+            }
+
+            // No generated model builder exists for T. Fall back to a registered value source so that
+            // value-source-only roots such as Model.Create<int>() or Model.Create<SomeEnum>() work.
+            using (context.EnterRoot(typeof(T)))
+            {
+                if (context.TryBuildRootValue<T>(out var value))
+                {
+                    return value;
+                }
+            }
+
+            throw NoBuilder(typeof(T));
+        }
+
+        internal static T PopulateWith<T>(T instance, BuildConfiguration? configuration)
+        {
+            return PopulateWith(instance, configuration, null);
+        }
+
+        internal static T PopulateWith<T>(T instance, BuildConfiguration? configuration, IBuildLog? log)
+        {
+            if (instance is null)
+            {
+                throw new ArgumentNullException(nameof(instance));
+            }
+
+            var builder = ModelBuilderSlot<T>.Instance ?? throw NoBuilder(typeof(T));
+
+            var context = NewContext(configuration, log);
+
+            using (context.EnterRoot(typeof(T)))
+            {
+                return builder.Populate(context, instance);
+            }
+        }
+
+        internal static T ConstructWith<T>(Func<IBuildContext, T> build, BuildConfiguration? configuration, IBuildLog? log)
+        {
+            var context = NewContext(configuration, log);
+
+            using (context.EnterRoot(typeof(T)))
+            {
+                return build(context);
+            }
+        }
+
+        private static BuildContext NewContext(BuildConfiguration? configuration, IBuildLog? log)
+        {
+            return new BuildContext(new RandomSource(), log, configuration?.Options, configuration);
+        }
+
+        private static ModelBuildException NoBuilder(Type type)
+        {
+            var message = "No builder was generated for '"
+                          + type.FullName
+                          + "'. Make it discoverable: call Model.Create<"
+                          + type.Name
+                          + ">() somewhere, add a Mapping<,> to it, or annotate it with [GenerateModelBuilder].";
+
+            return new ModelBuildException(message, FailureKind.NoBuilderForType);
+        }
+
+        /// <summary>
+        ///     Gets the registry that maps a runtime <see cref="Type" /> to its generated builder for the
+        ///     non-generic <see cref="Create(Type)" /> path. The generated module initializer
+        ///     registers each builder through this registry.
+        /// </summary>
+        public static IModelBuilderRegistry Registry => _registry;
+
+        /// <summary>
+        ///     Gets the concrete registry for engine-internal lookups (the read side is not part of the
+        ///     public contract).
+        /// </summary>
+        internal static ModelBuilderRegistry RegistryInternal => _registry;
     }
 }

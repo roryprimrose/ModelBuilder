@@ -1,0 +1,33 @@
+<Solution>
+  <Folder Name="/.github/">
+    <File Path=".github/dependabot.yml" />
+  </Folder>
+  <Folder Name="/.github/workflows/">
+    <File Path=".github/workflows/ci.yml" />
+  </Folder>
+  <Folder Name="/Documentation/">
+    <File Path="LICENSE.md" />
+    <File Path="MIGRATION.md" />
+    <File Path="README.md" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path=".gitattributes" />
+    <File Path=".gitignore" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+    <File Path="GitVersion.yml" />
+    <File Path="global.json" />
+    <File Path="Solution Items/Application.ruleset" />
+    <File Path="Solution Items/CustomDictionary.xml" />
+    <File Path="Solution Items/UnitTest.ruleset" />
+  </Folder>
+  <Project Path="ModelBuilder.AotValidation/ModelBuilder.AotValidation.csproj" />
+  <Project Path="ModelBuilder.BenchmarkTests/ModelBuilder.BenchmarkTests.csproj" />
+  <Project Path="ModelBuilder.CodeFixes.UnitTests/ModelBuilder.CodeFixes.UnitTests.csproj" />
+  <Project Path="ModelBuilder.CodeFixes/ModelBuilder.CodeFixes.csproj" />
+  <Project Path="ModelBuilder.Examples/ModelBuilder.Examples.csproj" />
+  <Project Path="ModelBuilder.Generator/ModelBuilder.Generator.csproj" />
+  <Project Path="ModelBuilder.Generator.UnitTests/ModelBuilder.Generator.UnitTests.csproj" />
+  <Project Path="ModelBuilder.UnitTests/ModelBuilder.UnitTests.csproj" />
+  <Project Path="ModelBuilder/ModelBuilder.csproj" />
+</Solution>

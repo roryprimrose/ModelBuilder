@@ -1,0 +1,267 @@
+﻿namespace ModelBuilder.UnitTests
+{
+    using System;
+    using System.Linq;
+    using FluentAssertions;
+    using ModelBuilder;
+    using ModelBuilder.Data;
+    using Xunit;
+
+    public class NamedValueSourcesTests
+    {
+        [Fact]
+        public void BuildResolvesFirstNameFromEntityData()
+        {
+            var context = new BuildContext(new RandomSource(7));
+
+            var actual = context.Build<string>(typeof(Sample), "FirstName");
+
+            var known = TestData.FemaleNames.Concat(TestData.MaleNames);
+            known.Should().Contain(actual);
+        }
+
+        [Fact]
+        public void BuildResolvesEmailContainingAtSymbol()
+        {
+            var context = new BuildContext(new RandomSource(7));
+
+            var actual = context.Build<string>(typeof(Sample), "Email");
+
+            actual.Should().Contain("@");
+        }
+
+        [Fact]
+        public void BuildResolvesCompanyFromEntityData()
+        {
+            var context = new BuildContext(new RandomSource(7));
+
+            var actual = context.Build<string>(typeof(Sample), "Company");
+
+            TestData.Companies.Should().Contain(actual);
+        }
+
+        [Fact]
+        public void BuildResolvesCountryFromEntityData()
+        {
+            var context = new BuildContext(new RandomSource(7));
+
+            var actual = context.Build<string>(typeof(Sample), "Country");
+
+            TestData.Locations.Select(location => location.Country).Should().Contain(actual);
+        }
+
+        [Fact]
+        public void BuildMatchesNamesCaseInsensitivelyAndBySubstring()
+        {
+            var context = new BuildContext(new RandomSource(7));
+
+            var actual = context.Build<string>(typeof(Sample), "ContactEmailAddress");
+
+            actual.Should().Contain("@");
+        }
+
+        [Fact]
+        public void BuildFallsBackToRandomStringForUnmatchedMember()
+        {
+            var context = new BuildContext(new RandomSource(7));
+
+            var actual = context.Build<string>(typeof(Sample), "SomethingArbitrary");
+
+            actual.Should().NotBeNullOrEmpty();
+        }
+
+        [Theory]
+        [InlineData("FullName")]
+        [InlineData("Name")]
+        [InlineData("DisplayName")]
+        public void BuildResolvesFullNameAsTwoParts(string memberName)
+        {
+            var context = new BuildContext(new RandomSource(7));
+
+            var actual = context.Build<string>(typeof(Sample), memberName);
+
+            // A full name composes a first and last name separated by a space.
+            actual.Should().Contain(" ");
+            actual.Trim().Should().Be(actual);
+        }
+
+        [Theory]
+        [InlineData("UserName")]
+        [InlineData("Username")]
+        [InlineData("Login")]
+        public void BuildResolvesUserNameAsLowercaseDottedValue(string memberName)
+        {
+            var context = new BuildContext(new RandomSource(7));
+
+            var actual = context.Build<string>(typeof(Sample), memberName);
+
+            actual.Should().NotBeNullOrEmpty();
+            actual.Should().Contain(".");
+            actual.Should().Be(actual.ToLowerInvariant());
+        }
+
+        [Fact]
+        public void BuildResolvesAgeWithinHumanPlausibleRange()
+        {
+            var context = new BuildContext(new RandomSource(7));
+
+            for (var index = 0; index < 100; index++)
+            {
+                var actual = context.Build<int>(typeof(Sample), "Age");
+
+                actual.Should().BeInRange(1, 100);
+            }
+        }
+
+        [Fact]
+        public void BuildDoesNotConstrainIntegerMembersContainingAgeMidWord()
+        {
+            var context = new BuildContext(new RandomSource(7));
+
+            var sawValueOutsideAgeRange = false;
+
+            for (var index = 0; index < 100 && sawValueOutsideAgeRange == false; index++)
+            {
+                // "age" appears mid-word in "PageCount"; the Age named source must not hijack it, so the
+                // general int source applies and values are not confined to the human age range.
+                var actual = context.Build<int>(typeof(Sample), "PageCount");
+
+                if (actual < 1 || actual > 100)
+                {
+                    sawValueOutsideAgeRange = true;
+                }
+            }
+
+            sawValueOutsideAgeRange.Should().BeTrue();
+        }
+
+        [Theory]
+        [InlineData("DateOfBirth")]
+        [InlineData("DOB")]
+        [InlineData("BirthDate")]
+        public void BuildResolvesDateOfBirthWithinHumanPlausibleRange(string memberName)
+        {
+            var context = new BuildContext(new RandomSource(7));
+
+            for (var index = 0; index < 100; index++)
+            {
+                var actual = context.Build<DateTime>(typeof(Sample), memberName);
+
+                actual.Kind.Should().Be(DateTimeKind.Utc);
+                actual.Year.Should().BeInRange(1919, 2020);
+            }
+        }
+
+        [Fact]
+        public void BuildResolvesDomainNameFromDomainDataRatherThanFullName()
+        {
+            var context = new BuildContext(new RandomSource(7));
+
+            // "DomainName" contains the "Name" alias of the full-name source, but the more specific Domain
+            // source is registered first and "Domain" is a whole word, so it wins.
+            var actual = context.Build<string>(typeof(Sample), "DomainName");
+
+            TestData.Domains.Should().Contain(actual);
+        }
+
+        [Fact]
+        public void BuildResolvesLocationMembersFromSingleCoherentRow()
+        {
+            var context = new BuildContext(new RandomSource(7));
+
+            string country;
+            string state;
+            string city;
+            string postCode;
+            string phone;
+
+            // Within one instance scope, every location-style member must come from the same location row.
+            using (context.EnterSiblingScope())
+            {
+                country = context.Build<string>(typeof(Sample), "Country");
+                state = context.Build<string>(typeof(Sample), "State");
+                city = context.Build<string>(typeof(Sample), "City");
+                postCode = context.Build<string>(typeof(Sample), "PostCode");
+                phone = context.Build<string>(typeof(Sample), "Phone");
+            }
+
+            var matchingRows = TestData.Locations.Where(location =>
+                location.Country == country
+                && location.State == state
+                && location.City == city
+                && location.PostCode == postCode
+                && location.Phone == phone);
+
+            // Exactly the cached row satisfies all five values together, proving they are internally
+            // consistent rather than independently sampled.
+            matchingRows.Should().NotBeEmpty();
+        }
+
+        [Fact]
+        public void BuildResolvesLocationMembersIndependentlyAcrossScopes()
+        {
+            var context = new BuildContext(new RandomSource(7));
+
+            string firstCountry;
+
+            using (context.EnterSiblingScope())
+            {
+                firstCountry = context.Build<string>(typeof(Sample), "Country");
+            }
+
+            var sawDifferentCountry = false;
+
+            for (var index = 0; index < 50 && sawDifferentCountry == false; index++)
+            {
+                using (context.EnterSiblingScope())
+                {
+                    var country = context.Build<string>(typeof(Sample), "Country");
+
+                    if (country != firstCountry)
+                    {
+                        sawDifferentCountry = true;
+                    }
+                }
+            }
+
+            // A new instance scope picks its own location, so the cached value does not leak between
+            // instances.
+            sawDifferentCountry.Should().BeTrue();
+        }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void BuildResolvesAgeAndDateOfBirthConsistentlyRegardlessOfOrder(bool ageFirst)
+        {
+            var context = new BuildContext(new RandomSource(7));
+            var reference = new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
+            int age;
+            DateTime dateOfBirth;
+
+            using (context.EnterSiblingScope())
+            {
+                if (ageFirst)
+                {
+                    age = context.Build<int>(typeof(Sample), "Age");
+                    dateOfBirth = context.Build<DateTime>(typeof(Sample), "DateOfBirth");
+                }
+                else
+                {
+                    dateOfBirth = context.Build<DateTime>(typeof(Sample), "DateOfBirth");
+                    age = context.Build<int>(typeof(Sample), "Age");
+                }
+            }
+
+            // The date of birth represents exactly the cached age in completed years against the fixed
+            // reference, whichever member is built first.
+            dateOfBirth.Should().BeOnOrBefore(reference.AddYears(-age));
+            dateOfBirth.Should().BeAfter(reference.AddYears(-(age + 1)));
+        }
+
+        private sealed class Sample
+        {
+        }
+    }
+}

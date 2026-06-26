@@ -1,78 +1,121 @@
 ﻿namespace ModelBuilder.UnitTests
 {
+    using System;
+    using System.IO;
     using FluentAssertions;
-    using NSubstitute;
+    using ModelBuilder;
     using Xunit;
 
     public class BuildConfigurationTests
     {
         [Fact]
-        public void CanSetConstructorResolver()
-        {
-            var expected = Substitute.For<IConstructorResolver>();
-
-            var sut = new BuildConfiguration { ConstructorResolver = expected };
-
-            var actual = sut.ConstructorResolver;
-
-            actual.Should().Be(expected);
-        }
-
-        [Fact]
-        public void CanSetParameterResolver()
-        {
-            var expected = Substitute.For<IParameterResolver>();
-
-            var sut = new BuildConfiguration { ParameterResolver = expected };
-
-            var actual = sut.ParameterResolver;
-
-            actual.Should().Be(expected);
-        }
-
-        [Fact]
-        public void CanSetPropertyResolver()
-        {
-            var expected = Substitute.For<IPropertyResolver>();
-
-            var sut = new BuildConfiguration { PropertyResolver = expected };
-
-            var actual = sut.PropertyResolver;
-
-            actual.Should().Be(expected);
-        }
-
-        [Fact]
-        public void CanSetTypeResolver()
-        {
-            var expected = Substitute.For<ITypeResolver>();
-
-            var sut = new BuildConfiguration { TypeResolver = expected };
-
-            var actual = sut.TypeResolver;
-
-            actual.Should().Be(expected);
-        }
-
-        [Fact]
-        public void CreatedWithDefaultValues()
+        public void AddMappingGenericRegistersMapping()
         {
             var sut = new BuildConfiguration();
 
-            sut.TypeMappingRules.Should().BeEmpty();
-            sut.IgnoreRules.Should().BeEmpty();
-            sut.TypeCreators.Should().BeEmpty();
-            sut.ValueGenerators.Should().BeEmpty();
-            sut.ExecuteOrderRules.Should().BeEmpty();
-            sut.CreationRules.Should().BeEmpty();
-            sut.PostBuildActions.Should().BeEmpty();
-            sut.ConstructorResolver.Should().BeOfType<DefaultConstructorResolver>();
-            sut.ConstructorResolver.As<DefaultConstructorResolver>().CacheLevel.Should().Be(CacheLevel.PerInstance);
-            sut.ParameterResolver.Should().BeOfType<DefaultParameterResolver>();
-            sut.ParameterResolver.As<DefaultParameterResolver>().CacheLevel.Should().Be(CacheLevel.PerInstance);
-            sut.PropertyResolver.Should().BeOfType<DefaultPropertyResolver>();
-            sut.PropertyResolver.As<DefaultPropertyResolver>().CacheLevel.Should().Be(CacheLevel.PerInstance);
-            sut.TypeResolver.Should().BeOfType<DefaultTypeResolver>();
+            sut.AddMapping<Stream, MemoryStream>();
+
+            sut.TryGetMapping(typeof(Stream), out var target).Should().BeTrue();
+            target.Should().Be(typeof(MemoryStream));
+        }
+
+        [Fact]
+        public void AddMappingReturnsSameInstanceForChaining()
+        {
+            var sut = new BuildConfiguration();
+
+            var actual = sut.AddMapping(typeof(Stream), typeof(MemoryStream));
+
+            actual.Should().BeSameAs(sut);
+        }
+
+        [Fact]
+        public void AddMappingThrowsWithNullSourceType()
+        {
+            var sut = new BuildConfiguration();
+
+            Action action = () => sut.AddMapping(null!, typeof(MemoryStream));
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void IgnoreAnyAppliesPredicateAcrossTypes()
+        {
+            var sut = new BuildConfiguration();
+
+            sut.IgnoreAny(member => member.Name == "Description");
+
+            sut.ShouldIgnore(new MemberSignature(typeof(Uri), "Description", typeof(string))).Should().BeTrue();
+            sut.ShouldIgnore(new MemberSignature(typeof(Version), "Description", typeof(string))).Should().BeTrue();
+            sut.ShouldIgnore(new MemberSignature(typeof(Uri), "Host", typeof(string))).Should().BeFalse();
+        }
+
+        [Fact]
+        public void IgnoreRegistersTargetedRule()
+        {
+            var sut = new BuildConfiguration();
+
+            sut.Ignore(typeof(Uri), "Host");
+
+            sut.ShouldIgnore(new MemberSignature(typeof(Uri), "Host", typeof(string))).Should().BeTrue();
+            sut.ShouldIgnore(new MemberSignature(typeof(Uri), "Port", typeof(int))).Should().BeFalse();
+            sut.ShouldIgnore(new MemberSignature(typeof(Version), "Host", typeof(string))).Should().BeFalse();
+        }
+
+        [Fact]
+        public void ShouldIgnoreReturnsFalseWhenNoRulesRegistered()
+        {
+            var sut = new BuildConfiguration();
+
+            sut.ShouldIgnore(new MemberSignature(typeof(Uri), "Host", typeof(string))).Should().BeFalse();
+        }
+
+        [Fact]
+        public void SetOptionsMutatesOptions()
+        {
+            var sut = new BuildConfiguration();
+
+            sut.SetOptions(x =>
+            {
+                x.MinCount = 2;
+                x.MaxCount = 5;
+                x.NullPercentage = 0;
+                x.MaxDepth = 12;
+            });
+
+            sut.Options.MinCount.Should().Be(2);
+            sut.Options.MaxCount.Should().Be(5);
+            sut.Options.NullPercentage.Should().Be(0);
+            sut.Options.MaxDepth.Should().Be(12);
+        }
+
+        [Fact]
+        public void SetOptionsReturnsSameInstanceForChaining()
+        {
+            var sut = new BuildConfiguration();
+
+            var actual = sut.SetOptions(_ => { });
+
+            actual.Should().BeSameAs(sut);
+        }
+
+        [Fact]
+        public void SetOptionsThrowsWithNullConfigure()
+        {
+            var sut = new BuildConfiguration();
+
+            Action action = () => sut.SetOptions(null!);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void TryGetMappingReturnsFalseWhenNoMappingRegistered()
+        {
+            var sut = new BuildConfiguration();
+
+            sut.TryGetMapping(typeof(Stream), out _).Should().BeFalse();
         }
     }
 }

@@ -23,12 +23,17 @@ bld/
 [Bb]in/
 [Oo]bj/
 
+# BenchmarkDotNet generated artifacts (reports are summarised into committed markdown)
+BenchmarkDotNet.Artifacts/
+
 # Visual Studio 2015 cache/options directory
 .vs/
 
 # MSTest test Results
 [Tt]est[Rr]esult*/
 [Bb]uild[Ll]og.*
+# The pattern above targets MSBuild diagnostic logs; keep the v9 BuildLog source file tracked.
+![Bb]uild[Ll]og.cs
 
 # NUNIT
 *.VisualState.xml

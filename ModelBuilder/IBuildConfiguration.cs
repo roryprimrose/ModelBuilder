@@ -1,72 +1,121 @@
-﻿namespace ModelBuilder
+namespace ModelBuilder
 {
+    using System;
     using System.Collections.Generic;
-    using ModelBuilder.CreationRules;
-    using ModelBuilder.ExecuteOrderRules;
-    using ModelBuilder.IgnoreRules;
-    using ModelBuilder.TypeCreators;
-    using ModelBuilder.ValueGenerators;
 
     /// <summary>
-    ///     The <see cref="IBuildConfiguration" />
-    ///     interface defines the configuration used to create and populate instances.
+    ///     The <see cref="IBuildConfiguration" /> interface
+    ///     defines the slim v9 build configuration: the type mappings and ignore rules that
+    ///     configuration modules populate and that the engine consults while building an object graph.
     /// </summary>
     public interface IBuildConfiguration
     {
         /// <summary>
-        ///     Gets or sets the constructor resolver used to create an instance of a type.
+        ///     Registers a mapping from a source type to a concrete target type.
         /// </summary>
-        IConstructorResolver ConstructorResolver { get; set; }
+        /// <param name="sourceType">The source type, typically an interface or abstract type.</param>
+        /// <param name="targetType">The concrete type to build in its place.</param>
+        /// <returns>The same configuration instance for chaining.</returns>
+        /// <exception cref="ArgumentNullException">
+        ///     The <paramref name="sourceType" /> or <paramref name="targetType" /> parameter is <c>null</c>.
+        /// </exception>
+        IBuildConfiguration AddMapping(Type sourceType, Type targetType);
 
         /// <summary>
-        ///     Gets the creation rules used to quickly generate values without invoking <see cref="ITypeCreator" /> or
-        ///     <see cref="IValueGenerator" /> instances.
+        ///     Registers a mapping from a source type to a concrete target type.
         /// </summary>
-        ICollection<ICreationRule> CreationRules { get; }
+        /// <typeparam name="TSource">The source type, typically an interface or abstract type.</typeparam>
+        /// <typeparam name="TTarget">The concrete type to build in its place.</typeparam>
+        /// <returns>The same configuration instance for chaining.</returns>
+        IBuildConfiguration AddMapping<TSource, TTarget>()
+            where TTarget : TSource;
 
         /// <summary>
-        ///     Gets the execute order rules used to determine the order that properties are populated.
+        ///     Registers a custom value source that produces values for every build target and root of type
+        ///     <typeparamref name="T" />, overriding the built-in source for that type.
         /// </summary>
-        ICollection<IExecuteOrderRule> ExecuteOrderRules { get; }
+        /// <typeparam name="T">The type the value source produces.</typeparam>
+        /// <param name="source">The value source to register.</param>
+        /// <returns>The same configuration instance for chaining.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="source" /> parameter is <c>null</c>.</exception>
+        /// <remarks>
+        ///     A registered value source takes precedence over the built-in sources. Use the overload that
+        ///     accepts names to scope a source to specific build targets rather than to every value of the
+        ///     type. A build target is a constructor parameter or settable member.
+        /// </remarks>
+        IBuildConfiguration AddValueSource<T>(IValueSource<T> source);
 
         /// <summary>
-        ///     Gets the ignore rules used to skip over property population.
+        ///     Registers a custom value source that produces values for build targets of type
+        ///     <typeparamref name="T" /> whose name matches one of <paramref name="names" />, overriding the
+        ///     built-in source for those build targets. A build target is a constructor parameter or settable
+        ///     member.
         /// </summary>
-        ICollection<IIgnoreRule> IgnoreRules { get; }
+        /// <typeparam name="T">The type the value source produces.</typeparam>
+        /// <param name="source">The value source to register.</param>
+        /// <param name="names">
+        ///     The names the source matches, each compared as a whole PascalCase or camelCase word within the
+        ///     build target name.
+        /// </param>
+        /// <returns>The same configuration instance for chaining.</returns>
+        /// <exception cref="ArgumentNullException">
+        ///     The <paramref name="source" /> or <paramref name="names" /> parameter is <c>null</c>.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        ///     The <paramref name="names" /> parameter is empty or contains a null, empty or whitespace entry.
+        /// </exception>
+        /// <remarks>
+        ///     A named value source takes precedence over both the typed sources and the built-in sources
+        ///     for a matching build target.
+        /// </remarks>
+        IBuildConfiguration AddValueSource<T>(IValueSource<T> source, params string[] names);
 
         /// <summary>
-        ///     Gets or sets the parameter resolver used to create an instance of a type.
+        ///     Registers a targeted ignore rule for a specific member on a specific type.
         /// </summary>
-        IParameterResolver ParameterResolver { get; set; }
+        /// <param name="declaringType">The type that declares the member.</param>
+        /// <param name="memberName">The name of the member to ignore.</param>
+        /// <returns>The same configuration instance for chaining.</returns>
+        /// <exception cref="ArgumentNullException">
+        ///     The <paramref name="declaringType" /> or <paramref name="memberName" /> parameter is <c>null</c>.
+        /// </exception>
+        IBuildConfiguration Ignore(Type declaringType, string memberName);
 
         /// <summary>
-        ///     Gets the post build actions used to modify instances after they have been created or populated.
+        ///     Registers a type-agnostic ignore rule that applies to any member matching the predicate.
         /// </summary>
-        ICollection<IPostBuildAction> PostBuildActions { get; }
+        /// <param name="predicate">The predicate evaluated against each member.</param>
+        /// <returns>The same configuration instance for chaining.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="predicate" /> parameter is <c>null</c>.</exception>
+        IBuildConfiguration IgnoreAny(Func<MemberSignature, bool> predicate);
 
         /// <summary>
-        ///     Gets or sets the property resolver used to populate an instance of a type.
+        ///     Applies tuning to the build options, such as collection sizes, the frequency of <c>null</c>
+        ///     values and the maximum graph depth.
         /// </summary>
-        IPropertyResolver PropertyResolver { get; set; }
+        /// <param name="configure">An action that mutates the build options.</param>
+        /// <returns>The same configuration instance for chaining.</returns>
+        /// <exception cref="ArgumentNullException">The name="configure" /> parameter is <c>null</c>.</exception>
+        IBuildConfiguration SetOptions(Action<BuildOptions> configure);
 
         /// <summary>
-        ///     Gets the type creators used to create instances.
+        ///     Determines whether the specified member should be ignored.
         /// </summary>
-        ICollection<ITypeCreator> TypeCreators { get; }
+        /// <param name="member">The member to evaluate.</param>
+        /// <returns><c>true</c> if the member should be ignored; otherwise, <c>false</c>.</returns>
+        bool ShouldIgnore(in MemberSignature member);
 
         /// <summary>
-        ///     Gets the rules used to map between types before attempting to create a value of the source type.
+        ///     Attempts to resolve a mapped concrete type for the specified source type.
         /// </summary>
-        ICollection<TypeMappingRule> TypeMappingRules { get; }
+        /// <param name="sourceType">The source type to resolve.</param>
+        /// <param name="targetType">The mapped concrete type, when one is registered.</param>
+        /// <returns><c>true</c> if a mapping is registered; otherwise, <c>false</c>.</returns>
+        bool TryGetMapping(Type sourceType, out Type targetType);
 
         /// <summary>
-        ///     Gets or sets the type resolver used to determine the build type.
+        ///     Gets the registered type mappings.
         /// </summary>
-        ITypeResolver TypeResolver { get; set; }
-
-        /// <summary>
-        ///     Gets the value generators used to generate flat values.
-        /// </summary>
-        ICollection<IValueGenerator> ValueGenerators { get; }
+        IReadOnlyDictionary<Type, Type> TypeMappings { get; }
     }
 }

@@ -1,0 +1,42 @@
+<Project>
+
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
+  </PropertyGroup>
+
+  <!-- Production analyzers -->
+  <ItemGroup>
+    <PackageVersion Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.301" />
+  </ItemGroup>
+
+  <!-- Source generator (Roslyn) -->
+  <ItemGroup>
+    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="4.14.0" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.14.0" />
+  </ItemGroup>
+
+  <!-- Versioning. Referenced CI-only from Directory.Build.props; matches the GitVersion 6.7.0 config. -->
+  <ItemGroup>
+    <PackageVersion Include="GitVersion.MsBuild" Version="6.7.0" />
+  </ItemGroup>
+
+  <!-- Benchmarking -->
+  <ItemGroup>
+    <PackageVersion Include="BenchmarkDotNet" Version="0.15.8" />
+  </ItemGroup>
+
+  <!--
+    Test stack: xUnit v3 on Microsoft.Testing.Platform (MTP).
+    FluentAssertions 8.x is licensed under the Xceed Community License (Non-Commercial Use), whose
+    definition of non-commercial use explicitly includes "developing or testing open-source software
+    or open-source projects". This repository is MIT-licensed, open source and not sold, and
+    FluentAssertions is a test-only dependency that is never redistributed, so that grant applies.
+  -->
+  <ItemGroup>
+    <PackageVersion Include="xunit.v3" Version="3.2.2" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
+    <PackageVersion Include="FluentAssertions" Version="8.10.0" />
+  </ItemGroup>
+
+</Project>

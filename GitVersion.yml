@@ -1,6 +1,21 @@
-mode: ContinuousDeployment
+workflow: GitHubFlow/v1
+# GitVersion 6 renamed the v5 versioning modes. The v5 root 'mode: ContinuousDeployment'
+# (increment the pre-release number with the commit count so every build on a branch gets a unique
+# NuGet version) maps to v6 'mode: ContinuousDelivery'. The GitHubFlow/v1 preset defaults
+# feature/unknown branches to ManualDeployment (a fixed pre-release number), which would make
+# successive builds on the same branch collide on one package version, so they are overridden back
+# to ContinuousDelivery here. The key is 'mode'; 'deployment-mode' is silently ignored in 6.x.
 branches:
-  master:
-    tag: beta
+  main:
+    label: beta
+    mode: ContinuousDelivery
+  feature:
+    mode: ContinuousDelivery
+  unknown:
+    mode: ContinuousDelivery
   hotfix:
-    tag: useBranchName
+    regex: ^hotfix(es)?[/-]
+    source-branches:
+      - main
+    label: useBranchName
+    mode: ContinuousDelivery
