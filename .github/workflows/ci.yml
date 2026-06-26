@@ -19,11 +19,14 @@ jobs:
     steps:
 
     - name: Checkout
-      uses: actions/checkout@v4.1.6
+      uses: actions/checkout@v5
       with:
         fetch-depth: 0
 
     - name: Install GitVersion
+      # Intentionally left on gittools/actions@v1.1.1 with GitVersion 5.x: upgrading the action major
+      # moves to GitVersion 6, whose configuration schema differs from the GitVersion.yml in this repo,
+      # so it is treated as a separate, deliberate migration rather than a routine action bump.
       uses: gittools/actions/gitversion/setup@v1.1.1
       with:
           versionSpec: '5.x'
@@ -44,7 +47,7 @@ jobs:
         informationalVersion: ${{ steps.gitversion.outputs.InformationalVersion }}  
         
     - name: Setup dotnet
-      uses: actions/setup-dotnet@v4.0.0
+      uses: actions/setup-dotnet@v5
       with:
         # 10.x provides the SDK pinned in global.json; 8.x provides the runtime the tests target.
         dotnet-version: |
@@ -88,7 +91,7 @@ jobs:
       run: dotnet pack "./${{ env.projectName }}/${{ env.projectName }}.csproj" -c Release --no-build --include-symbols -o $GITHUB_WORKSPACE/staging
 
     - name: Publish build artifacts
-      uses: actions/upload-artifact@v4.3.3
+      uses: actions/upload-artifact@v5
       with:
         name: packages
         path: staging
@@ -98,7 +101,7 @@ jobs:
       run: |
         echo '${{ steps.gitversion.outputs.NuGetVersionV2 }}' > version.txt
     - name: Upload version
-      uses: actions/upload-artifact@v4.3.3
+      uses: actions/upload-artifact@v5
       with:
         name: version
         path: version.txt
@@ -111,12 +114,12 @@ jobs:
 
     steps:
     - name: Download packages
-      uses: actions/download-artifact@v4.1.7
+      uses: actions/download-artifact@v5
       with:
         name: packages
       
     - name: Setup dotnet
-      uses: actions/setup-dotnet@v4.0.0
+      uses: actions/setup-dotnet@v5
       with:
         dotnet-version: 10.x
 
@@ -128,18 +131,21 @@ jobs:
   release:
     needs: build
     runs-on: ubuntu-latest
+    # softprops/action-gh-release creates a GitHub release, which needs write access to repo contents.
+    permissions:
+      contents: write
     # Only run on pushes which should only be on the base repository and only where the branch is master or is a version tagged build
     if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v')) && github.actor != 'dependabot[bot]'
 
     steps:
     
     - name: Download packages
-      uses: actions/download-artifact@v4.1.7
+      uses: actions/download-artifact@v5
       with:
         name: packages
       
     - name: Download version
-      uses: actions/download-artifact@v4.1.7
+      uses: actions/download-artifact@v5
       with:
         name: version
 
@@ -154,7 +160,7 @@ jobs:
       run: Add-Content -Path ${env:GITHUB_ENV} "`nprojectName=$(${env:GITHUB_REPOSITORY}.substring(${env:GITHUB_REPOSITORY}.IndexOf('/') + 1))" -Encoding utf8
       
     - name: Setup dotnet
-      uses: actions/setup-dotnet@v4.0.0
+      uses: actions/setup-dotnet@v5
       with:
         dotnet-version: 10.x
       
@@ -168,35 +174,15 @@ jobs:
         NUGET_APIKEY: ${{ secrets.NUGET_APIKEY }}
       run: dotnet nuget push "*.symbols.nupkg" --api-key "$NUGET_APIKEY" --source https://api.nuget.org/v3/index.json --skip-duplicate
 
-    - name: Create release
-      id: create_release
-      uses: actions/create-release@v1.1.4
+    - name: Create release and upload assets
+      uses: softprops/action-gh-release@v3
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         tag_name: ${{ env.NuGetVersionV2 }}
-        release_name: Release ${{ env.NuGetVersionV2 }}
+        name: Release ${{ env.NuGetVersionV2 }}
         draft: false
         prerelease: ${{ contains(env.NuGetVersionV2, 'beta') }}
-    
-    - name: Upload release asset for package
-      id: upload-release-asset-package
-      uses: actions/upload-release-asset@v1.0.2
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ${{ env.projectName }}.${{ env.NuGetVersionV2 }}.nupkg
-        asset_name: ${{ env.projectName }}.${{ env.NuGetVersionV2 }}.nupkg
-        asset_content_type: application/zip
-    
-    - name: Upload release asset for symbol package
-      id: upload-release-asset-symbolpackage
-      uses: actions/upload-release-asset@v1.0.2
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ${{ env.projectName }}.${{ env.NuGetVersionV2 }}.symbols.nupkg
-        asset_name: ${{ env.projectName }}.${{ env.NuGetVersionV2 }}.symbols.nupkg
-        asset_content_type: application/zip
+        files: |
+          ${{ env.projectName }}.${{ env.NuGetVersionV2 }}.nupkg
+          ${{ env.projectName }}.${{ env.NuGetVersionV2 }}.symbols.nupkg
