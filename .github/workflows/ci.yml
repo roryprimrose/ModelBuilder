@@ -15,6 +15,11 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    # pull-requests: write lets the coverage step post and update a PR comment via the gh CLI on
+    # same-repo PRs. contents: read covers checkout and the GitVersion history fetch.
+    permissions:
+      contents: read
+      pull-requests: write
 
     steps:
 
@@ -57,28 +62,44 @@ jobs:
     - name: Build
       run: dotnet build -c Release --no-restore
 
+    - name: Install coverage tool
+      run: dotnet tool install --global dotnet-coverage --version 18.8.0
+
     - name: Test
-      run: dotnet test -c Release --no-build
+      # dotnet-coverage wraps the test run and instruments the test host processes, writing one merged
+      # Cobertura report. This is decoupled from the Microsoft.Testing.Platform version that xUnit v3
+      # ships, unlike the Microsoft.Testing.Extensions.CodeCoverage package which must match it exactly.
+      run: dotnet-coverage collect -f cobertura -o coverage.cobertura.xml -- dotnet test -c Release --no-build
 
-    # Code coverage reporting is temporarily disabled: coverlet.msbuild does not run under the
-    # Microsoft Testing Platform that xUnit v3 uses. MTP-native coverage is reintroduced when the
-    # CI/coverage workstream of the rewrite is implemented (see design.md s13).
-    # - name: Generate coverage report
-    #   uses: danielpalme/ReportGenerator-GitHub-Action@5.2.4
-    #   with:
-    #     reports: "**/coverage*cobertura.xml"
-    #     targetdir: "Report"
-    #     reporttypes: "HtmlInline;Cobertura"
-    #     tag: '${{ github.run_number }}_${{ github.run_id }}'
-    #   if: github.event_name == 'pull_request' && github.repository == github.event.pull_request.head.repo.full_name && github.actor != 'dependabot[bot]'
+    # Coverage is collected by dotnet-coverage above (MTP-native coverlet does not run under the
+    # Microsoft Testing Platform that xUnit v3 uses). The report and comment stay entirely within
+    # GitHub Actions: ReportGenerator runs on the runner and the comment is posted with the built-in
+    # gh CLI, so no third-party service is involved.
+    - name: Generate coverage report
+      if: ${{ !cancelled() && hashFiles('coverage.cobertura.xml') != '' }}
+      uses: danielpalme/ReportGenerator-GitHub-Action@5.5.10
+      with:
+        reports: coverage.cobertura.xml
+        targetdir: coveragereport
+        reporttypes: MarkdownSummaryGithub;TextSummary
+        assemblyfilters: +ModelBuilder;+ModelBuilder.Generator;+ModelBuilder.CodeFixes
+        title: Code Coverage
 
-    # - name: Publish coverage report
-    #   uses: 5monkeys/cobertura-action@master
-    #   with:
-    #     path: Report/Cobertura.xml
-    #     repo_token: ${{ secrets.GITHUB_TOKEN }}
-    #     minimum_coverage: 75
-    #   if: github.event_name == 'pull_request' && github.repository == github.event.pull_request.head.repo.full_name && github.actor != 'dependabot[bot]'
+    - name: Publish coverage to job summary
+      if: ${{ !cancelled() && hashFiles('coveragereport/SummaryGithub.md') != '' }}
+      shell: bash
+      run: cat coveragereport/SummaryGithub.md >> "$GITHUB_STEP_SUMMARY"
+
+    - name: Comment coverage on pull request
+      # Same-repo PRs only: a fork PR is given a read-only token that cannot post comments, so those
+      # rely on the job summary above. --edit-last --create-if-none keeps one coverage comment that is
+      # updated across the PR's commits rather than adding a new comment per build.
+      if: ${{ !cancelled() && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]' && hashFiles('coveragereport/SummaryGithub.md') != '' }}
+      shell: bash
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        PR_NUMBER: ${{ github.event.pull_request.number }}
+      run: gh pr comment "$PR_NUMBER" --edit-last --create-if-none --body-file coveragereport/SummaryGithub.md
       
     - name: Resolve project name
       shell: pwsh
