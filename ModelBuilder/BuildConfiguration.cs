@@ -100,6 +100,17 @@ namespace ModelBuilder
                 return true;
             }
 
+            // Honour a rule declared on a base type or interface of the member's declaring type so that an
+            // ignore rule keyed on a mapped-from or base type still applies when a more specific type is
+            // built (for example Ignoring<IShipment>(x => x.Data) when IShipment is mapped to Shipment).
+            foreach (var ignored in _ignoredMembers)
+            {
+                if (ignored.AppliesTo(member.DeclaringType, member.Name))
+                {
+                    return true;
+                }
+            }
+
             foreach (var predicate in _ignorePredicates)
             {
                 if (predicate(member))
@@ -168,6 +179,14 @@ namespace ModelBuilder
             {
                 _declaringType = declaringType;
                 _memberName = memberName;
+            }
+
+            public bool AppliesTo(Type declaringType, string memberName)
+            {
+                // The rule applies when the member name matches and the rule's type is the same as, or a
+                // base type or interface of, the type being built.
+                return string.Equals(_memberName, memberName, StringComparison.Ordinal)
+                       && _declaringType.IsAssignableFrom(declaringType);
             }
 
             public bool Equals(MemberKey other)
