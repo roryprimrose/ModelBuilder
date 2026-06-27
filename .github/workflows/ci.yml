@@ -24,7 +24,7 @@ jobs:
     steps:
 
     - name: Checkout
-      uses: actions/checkout@v5
+      uses: actions/checkout@v7
       with:
         fetch-depth: 0
 
@@ -106,7 +106,7 @@ jobs:
       run: dotnet pack "./${{ env.projectName }}/${{ env.projectName }}.csproj" -c Release --no-build --include-symbols -o $GITHUB_WORKSPACE/staging
 
     - name: Publish build artifacts
-      uses: actions/upload-artifact@v6
+      uses: actions/upload-artifact@v7
       with:
         name: packages
         path: staging
@@ -116,7 +116,7 @@ jobs:
       run: |
         echo '${{ steps.gitversion.outputs.SemVer }}' > version.txt
     - name: Upload version
-      uses: actions/upload-artifact@v6
+      uses: actions/upload-artifact@v7
       with:
         name: version
         path: version.txt
@@ -129,7 +129,7 @@ jobs:
 
     steps:
     - name: Download packages
-      uses: actions/download-artifact@v7
+      uses: actions/download-artifact@v8
       with:
         name: packages
       
@@ -159,12 +159,12 @@ jobs:
     steps:
     
     - name: Download packages
-      uses: actions/download-artifact@v7
+      uses: actions/download-artifact@v8
       with:
         name: packages
       
     - name: Download version
-      uses: actions/download-artifact@v7
+      uses: actions/download-artifact@v8
       with:
         name: version
 

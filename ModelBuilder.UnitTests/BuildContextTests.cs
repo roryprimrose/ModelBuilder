@@ -40,6 +40,28 @@
         }
 
         [Fact]
+        public void RetainAssignedValuesDefaultsToFalse()
+        {
+            var sut = new BuildContext(new RandomSource(1));
+
+            sut.RetainAssignedValues.Should().BeFalse();
+        }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void RetainAssignedValuesReflectsOptions(bool retainAssignedValues)
+        {
+            var options = new BuildOptions
+            {
+                RetainAssignedValues = retainAssignedValues
+            };
+            var sut = new BuildContext(new RandomSource(1), null, options);
+
+            sut.RetainAssignedValues.Should().Be(retainAssignedValues);
+        }
+
+        [Fact]
         public void CreateBuildExceptionCapturesCurrentTargetAndPath()
         {
             var sut = new BuildContext(new RandomSource(1));

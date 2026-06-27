@@ -46,6 +46,7 @@ namespace ModelBuilder
             MinCount = resolvedOptions.MinCount;
             MaxCount = resolvedOptions.MaxCount;
             UseConstructorDefaults = resolvedOptions.UseConstructorDefaults;
+            RetainAssignedValues = resolvedOptions.RetainAssignedValues;
             Configuration = configuration ?? _emptyConfiguration;
             _buildConfiguration = Configuration as BuildConfiguration;
             ValueSources = valueSources ?? BuiltInValueSources.Default;
@@ -495,6 +496,9 @@ namespace ModelBuilder
 
         /// <inheritdoc />
         public bool UseConstructorDefaults { get; }
+
+        /// <inheritdoc />
+        public bool RetainAssignedValues { get; }
 
         /// <summary>
         ///     Gets the maximum depth the build may descend before it is considered to have exceeded a

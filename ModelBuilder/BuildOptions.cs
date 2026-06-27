@@ -80,5 +80,26 @@ namespace ModelBuilder
         ///     optional parameter's default.
         /// </remarks>
         public bool UseConstructorDefaults { get; set; }
+
+        /// <summary>
+        ///     Gets or sets a value indicating whether a settable member that already holds a non-default
+        ///     value is retained instead of being overwritten with a generated value.
+        /// </summary>
+        /// <returns>
+        ///     <c>true</c> if a member that already holds a non-default value is left untouched;
+        ///     otherwise, <c>false</c> and every settable member is overwritten with a generated value.
+        /// </returns>
+        /// <remarks>
+        ///     This is <c>false</c> by default so that every settable member is populated with a
+        ///     generated value, including a member a constructor or property initializer assigned. This
+        ///     keeps the common case of a property initialised with a newly constructed instance (for
+        ///     example <c>public Address Address { get; set; } = new();</c>) from being left with its own
+        ///     members unpopulated. Set it to <c>true</c> to preserve assigned values, which also keeps a
+        ///     more derived instance assigned to a less derived member. A member is considered to hold a
+        ///     non-default value when it differs from <c>default</c> for its type, so a reference member
+        ///     that is <c>null</c> and a value member that equals its zero value are always generated and
+        ///     cannot be distinguished from an unset member.
+        /// </remarks>
+        public bool RetainAssignedValues { get; set; }
     }
 }
