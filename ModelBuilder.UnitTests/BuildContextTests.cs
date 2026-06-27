@@ -40,11 +40,11 @@
         }
 
         [Fact]
-        public void RetainAssignedValuesDefaultsToTrue()
+        public void RetainAssignedValuesDefaultsToFalse()
         {
             var sut = new BuildContext(new RandomSource(1));
 
-            sut.RetainAssignedValues.Should().BeTrue();
+            sut.RetainAssignedValues.Should().BeFalse();
         }
 
         [Theory]

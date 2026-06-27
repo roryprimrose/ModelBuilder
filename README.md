@@ -638,7 +638,7 @@ override — starts from these defaults. A module, or a fluent call on `Model`, 
 | Custom value sources | None registered, but the **built-in value sources always apply** (you never register them, and a custom source only overrides the built-in for its type/name). |
 | Built-in typed sources | `bool`; every numeric type (`byte`/`sbyte`/`short`/`ushort`/`int`/`uint`/`long`/`ulong`/`float`/`double`/`decimal`); `char`; `string`; `Guid`; `DateTime`; `DateTimeOffset`; `TimeSpan`; `Uri`; `Version`; `byte[]`. Enums, nullables and collections are handled by the generator. |
 | Built-in named sources | The entity-style member-name sources in [Built-in data](#entity-style-data-matched-by-member-name) (names, email, company, location fields, age, date of birth, …). |
-| Build options | `MinCount` 1, `MaxCount` 10, `NullPercentage` 5, `MaxDepth` 50, `UseConstructorDefaults` off, `RetainAssignedValues` on — see [Tuning the build](#tuning-the-build). |
+| Build options | `MinCount` 1, `MaxCount` 10, `NullPercentage` 5, `MaxDepth` 50, `UseConstructorDefaults` off, `RetainAssignedValues` off — see [Tuning the build](#tuning-the-build). |
 
 ## Tuning the build
 
@@ -688,10 +688,12 @@ This applies only to the constructor `Create<T>()` selects. The explicit
 [`Construct<T>().From(...)`](#typed-construction) path always gives per-argument control regardless of
 this option, because its generated overloads expose each optional parameter's default.
 
-`RetainAssignedValues` (on by default) controls whether a settable member that already holds a
-non-default value is kept instead of being overwritten with a generated value. With it on, a value a
-constructor or a property initializer assigned is preserved, which also keeps a more derived instance
-assigned to a less derived member:
+`RetainAssignedValues` (off by default) controls whether a settable member that already holds a
+non-default value is kept instead of being overwritten with a generated value. Off, every settable
+member is populated with a generated value, including one a constructor or property initializer
+assigned — so a property newed up with an empty instance (`public Address Address { get; set; } = new();`)
+still has its own members filled in. Turn it on to preserve assigned values, which also keeps a more
+derived instance assigned to a less derived member:
 
 ```csharp
 public sealed class Owner
@@ -701,11 +703,9 @@ public sealed class Owner
     public Animal Pet { get; set; }
 }
 
-// Pet keeps the Dog the constructor assigned rather than being replaced with a generated Animal.
-var owner = Model.Create<Owner>();
-
-// Turn the option off to overwrite every settable member with a generated value.
-var replaced = Model.SetOptions(x => x.RetainAssignedValues = false).Create<Owner>();
+// With the option on, Pet keeps the Dog the constructor assigned rather than being replaced with a
+// generated Animal. Off (the default), Pet is rebuilt as a generated Animal.
+var owner = Model.SetOptions(x => x.RetainAssignedValues = true).Create<Owner>();
 ```
 
 A member counts as assigned only when it differs from `default` for its type, so a `null` reference

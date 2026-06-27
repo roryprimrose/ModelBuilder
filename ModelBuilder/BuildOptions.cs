@@ -90,13 +90,16 @@ namespace ModelBuilder
         ///     otherwise, <c>false</c> and every settable member is overwritten with a generated value.
         /// </returns>
         /// <remarks>
-        ///     This is <c>true</c> by default so that a value already assigned by a constructor or a
-        ///     property initializer is preserved, which also keeps a more derived instance assigned to a
-        ///     less derived member. A member is considered to hold a non-default value when it differs
-        ///     from <c>default</c> for its type, so a reference member that is <c>null</c> and a value
-        ///     member that equals its zero value are always generated and cannot be distinguished from an
-        ///     unset member.
+        ///     This is <c>false</c> by default so that every settable member is populated with a
+        ///     generated value, including a member a constructor or property initializer assigned. This
+        ///     keeps the common case of a property initialised with a newly constructed instance (for
+        ///     example <c>public Address Address { get; set; } = new();</c>) from being left with its own
+        ///     members unpopulated. Set it to <c>true</c> to preserve assigned values, which also keeps a
+        ///     more derived instance assigned to a less derived member. A member is considered to hold a
+        ///     non-default value when it differs from <c>default</c> for its type, so a reference member
+        ///     that is <c>null</c> and a value member that equals its zero value are always generated and
+        ///     cannot be distinguished from an unset member.
         /// </remarks>
-        public bool RetainAssignedValues { get; set; } = true;
+        public bool RetainAssignedValues { get; set; }
     }
 }
