@@ -64,6 +64,36 @@
         }
 
         [Fact]
+        public void ShouldIgnoreAppliesRuleFromBaseTypeToDerivedType()
+        {
+            var sut = new BuildConfiguration();
+
+            sut.Ignore(typeof(Exception), "Message");
+
+            sut.ShouldIgnore(new MemberSignature(typeof(InvalidOperationException), "Message", typeof(string))).Should().BeTrue();
+        }
+
+        [Fact]
+        public void ShouldIgnoreAppliesRuleFromInterfaceToImplementingType()
+        {
+            var sut = new BuildConfiguration();
+
+            sut.Ignore(typeof(IDisposable), "Tag");
+
+            sut.ShouldIgnore(new MemberSignature(typeof(MemoryStream), "Tag", typeof(string))).Should().BeTrue();
+        }
+
+        [Fact]
+        public void ShouldIgnoreDoesNotApplyRuleToUnrelatedType()
+        {
+            var sut = new BuildConfiguration();
+
+            sut.Ignore(typeof(MemoryStream), "Length");
+
+            sut.ShouldIgnore(new MemberSignature(typeof(Uri), "Length", typeof(int))).Should().BeFalse();
+        }
+
+        [Fact]
         public void ShouldIgnoreReturnsFalseWhenNoRulesRegistered()
         {
             var sut = new BuildConfiguration();
