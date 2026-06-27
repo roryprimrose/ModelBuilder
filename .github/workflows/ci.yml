@@ -146,9 +146,11 @@ jobs:
   release:
     needs: build
     runs-on: ubuntu-latest
-    # softprops/action-gh-release creates a GitHub release, which needs write access to repo contents.
+    # action-gh-release needs contents: write to create the GitHub release; the GitHub Packages push
+    # below authenticates with the built-in GITHUB_TOKEN, which needs packages: write.
     permissions:
       contents: write
+      packages: write
     # Run on pushes to the base repository for the default branch (main) or a version tagged build.
     # Main builds are untagged and GitVersion stamps them as a beta pre-release (see GitVersion.yml),
     # so they publish pre-release packages; version tags publish the stable release.
@@ -182,8 +184,10 @@ jobs:
         dotnet-version: 10.x
       
     - name: Publish to GitHub
+      # Authenticate with the workflow's built-in GITHUB_TOKEN (scoped by packages: write above) rather
+      # than a personal access token secret, so publishing does not break when a PAT expires.
       env: 
-        GPR_APIKEY: ${{ secrets.GPR_APIKEY }}
+        GPR_APIKEY: ${{ secrets.GITHUB_TOKEN }}
       run: dotnet nuget push "*.symbols.nupkg" --api-key "$GPR_APIKEY" --source https://nuget.pkg.github.com/roryprimrose/index.json --skip-duplicate
       
     - name: Publish to NuGet.org
