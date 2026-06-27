@@ -178,7 +178,7 @@ namespace Sample
             // firstName and lastName are constructor parameters only - never exposed as properties.
         }
 
-        public string Email { get; set; } = string.Empty;
+        public string? Email { get; set; }
     }
 
     public static class Caller
@@ -214,7 +214,7 @@ namespace Sample
         {
         }
 
-        public string Email { get; set; } = string.Empty;
+        public string? Email { get; set; }
     }
 
     public static class Caller
@@ -632,6 +632,150 @@ namespace Sample
 
             var assembly = harness.EmitAndLoad();
             InvokeCaller(assembly).Should().NotBeNull();
+        }
+
+        [Fact]
+        public void PopulateRetainsAssignedMemberValueByDefault()
+        {
+            const string source = @"
+using ModelBuilder;
+
+namespace Sample
+{
+    public sealed class Holder
+    {
+        public string Preset { get; set; } = ""kept"";
+
+        public string? Generated { get; set; }
+    }
+
+    public static class Caller
+    {
+        public static Holder Build()
+        {
+            var instance = new Holder();
+
+            return global::ModelBuilder.Model.Populate(instance);
+        }
+    }
+}";
+
+            var harness = GeneratorTestHarness.Run(source);
+            harness.CompilationErrors.Should().BeEmpty();
+
+            var assembly = harness.EmitAndLoad();
+            var holderType = assembly.GetType("Sample.Holder", throwOnError: true)!;
+            var holder = InvokeCaller(assembly);
+
+            // The pre-assigned member is retained while the default member is still generated.
+            holderType.GetProperty("Preset")!.GetValue(holder).Should().Be("kept");
+            holderType.GetProperty("Generated")!.GetValue(holder).Should().NotBeNull();
+        }
+
+        [Fact]
+        public void PopulateOverwritesAssignedMemberWhenRetainDisabled()
+        {
+            const string source = @"
+using ModelBuilder;
+
+namespace Sample
+{
+    public sealed class Holder
+    {
+        public string Preset { get; set; } = ""kept"";
+    }
+
+    public static class Caller
+    {
+        public static Holder Build()
+        {
+            var instance = new Holder();
+
+            return global::ModelBuilder.Model.SetOptions(o => o.RetainAssignedValues = false).Populate(instance);
+        }
+    }
+}";
+
+            var harness = GeneratorTestHarness.Run(source);
+            harness.CompilationErrors.Should().BeEmpty();
+
+            var assembly = harness.EmitAndLoad();
+            var holderType = assembly.GetType("Sample.Holder", throwOnError: true)!;
+            var holder = InvokeCaller(assembly);
+
+            // With retention disabled the pre-assigned value is overwritten with a generated value.
+            holderType.GetProperty("Preset")!.GetValue(holder).Should().NotBe("kept");
+        }
+
+        [Fact]
+        public void CreateRetainsConstructorAssignedMemberByDefault()
+        {
+            const string source = @"
+using ModelBuilder;
+
+namespace Sample
+{
+    public class Animal
+    {
+    }
+
+    public sealed class Dog : Animal
+    {
+    }
+
+    public sealed class Owner
+    {
+        public Owner()
+        {
+            Pet = new Dog();
+        }
+
+        public Animal Pet { get; set; }
+    }
+
+    public static class Caller
+    {
+        public static Owner Build() => global::ModelBuilder.Model.Create<Owner>();
+    }
+}";
+
+            var harness = GeneratorTestHarness.Run(source);
+            harness.CompilationErrors.Should().BeEmpty();
+
+            var assembly = harness.EmitAndLoad();
+            var ownerType = assembly.GetType("Sample.Owner", throwOnError: true)!;
+            var dogType = assembly.GetType("Sample.Dog", throwOnError: true)!;
+            var owner = InvokeCaller(assembly);
+
+            // The more derived instance assigned by the constructor is retained rather than replaced
+            // with a generated value of the less derived member type.
+            ownerType.GetProperty("Pet")!.GetValue(owner).Should().BeOfType(dogType);
+        }
+
+        [Fact]
+        public void PopulateGuardsMemberAssignmentWithRetainOption()
+        {
+            const string source = @"
+using ModelBuilder;
+
+namespace Sample
+{
+    public sealed class Item
+    {
+        public string? Name { get; set; }
+    }
+
+    public static class Caller
+    {
+        public static Item Build() => global::ModelBuilder.Model.Create<Item>();
+    }
+}";
+
+            var harness = GeneratorTestHarness.Run(source);
+            harness.CompilationErrors.Should().BeEmpty();
+
+            // The generated assignment is guarded by the runtime retain option.
+            harness.GeneratedSources[0].Should().Contain("context.RetainAssignedValues == false");
         }
 
         private static object InvokeCaller(Assembly assembly)

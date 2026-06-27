@@ -37,6 +37,16 @@ namespace ModelBuilder
         bool UseConstructorDefaults { get; }
 
         /// <summary>
+        ///     Gets a value indicating whether a settable member that already holds a non-default value
+        ///     is retained instead of being overwritten with a generated value.
+        /// </summary>
+        /// <returns>
+        ///     <c>true</c> if a member that already holds a non-default value is left untouched;
+        ///     otherwise, <c>false</c>.
+        /// </returns>
+        bool RetainAssignedValues { get; }
+
+        /// <summary>
         ///     Builds a value for a member, resolving a registered value source first and then a
         ///     registered builder, with circular-reference and depth guards applied for built types.
         /// </summary>

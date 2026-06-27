@@ -283,7 +283,10 @@ namespace ModelBuilder.Generator
             {
                 builder.Append(Indent).AppendLine($"            if (context.ShouldPopulate(typeof({type}), \"{member.Name}\", typeof({member.TypeName})))");
                 builder.Append(Indent).AppendLine("            {");
-                builder.Append(Indent).AppendLine($"                instance.{member.Name} = context.Build<{member.TypeName}>(typeof({type}), \"{member.Name}\");");
+                builder.Append(Indent).AppendLine($"                if (context.RetainAssignedValues == false || global::System.Collections.Generic.EqualityComparer<{member.TypeName}>.Default.Equals(instance.{member.Name}!, default({member.TypeName})!))");
+                builder.Append(Indent).AppendLine("                {");
+                builder.Append(Indent).AppendLine($"                    instance.{member.Name} = context.Build<{member.TypeName}>(typeof({type}), \"{member.Name}\");");
+                builder.Append(Indent).AppendLine("                }");
                 builder.Append(Indent).AppendLine($"                context.RecordSibling(\"{member.Name}\", instance.{member.Name});");
                 builder.Append(Indent).AppendLine("            }");
             }
@@ -325,7 +328,10 @@ namespace ModelBuilder.Generator
 
                 builder.Append(indent).AppendLine($"if (context.ShouldPopulate(typeof({type}), \"{member.Name}\", typeof({member.TypeName})))");
                 builder.Append(indent).AppendLine("{");
-                builder.Append(indent).Append(Indent).AppendLine($"instance.{member.Name} = context.Build<{member.TypeName}>(typeof({type}), \"{member.Name}\");");
+                builder.Append(indent).Append(Indent).AppendLine($"if (context.RetainAssignedValues == false || global::System.Collections.Generic.EqualityComparer<{member.TypeName}>.Default.Equals(instance.{member.Name}!, default({member.TypeName})!))");
+                builder.Append(indent).Append(Indent).AppendLine("{");
+                builder.Append(indent).Append(Indent).Append(Indent).AppendLine($"instance.{member.Name} = context.Build<{member.TypeName}>(typeof({type}), \"{member.Name}\");");
+                builder.Append(indent).Append(Indent).AppendLine("}");
                 builder.Append(indent).Append(Indent).AppendLine($"context.RecordSibling(\"{member.Name}\", instance.{member.Name});");
                 builder.Append(indent).AppendLine("}");
             }
