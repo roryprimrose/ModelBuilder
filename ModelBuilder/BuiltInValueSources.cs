@@ -51,7 +51,7 @@
             registry.Register(new DelegateValueSource<string>(NextEmail), "Email");
             registry.Register(new DelegateValueSource<string>(c => Pick(c, TestData.Domains)), _domainMembers);
             registry.Register(new DelegateValueSource<string>(c => Pick(c, TestData.Companies)), "Company", "Business");
-            registry.Register(new DelegateValueSource<string>(c => Location(c).Country), "Country");
+            registry.Register(new DelegateValueSource<string>(c => Location(c).Country), "Country", "Region", "CountryRegion");
             registry.Register(new DelegateValueSource<string>(c => Location(c).State), "State", "Province");
             registry.Register(new DelegateValueSource<string>(c => Location(c).City), "City", "Suburb", "Town");
             registry.Register(new DelegateValueSource<string>(c => Location(c).PostCode), "PostCode", "ZipCode", "Postcode", "Zip");

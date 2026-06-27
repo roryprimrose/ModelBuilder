@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using FluentAssertions;
     using ModelBuilder;
     using ModelBuilder.Data;
@@ -122,6 +123,24 @@
             var actual = source!.Create(context, new BuildTarget(typeof(char)));
 
             char.IsLetterOrDigit(actual).Should().BeTrue();
+        }
+
+        [Theory]
+        [InlineData("Country")]
+        [InlineData("Region")]
+        [InlineData("CountryRegion")]
+        public void CountrySourceMatchesRegionAliases(string memberName)
+        {
+            var registry = BuiltInValueSources.CreateNamedRegistry();
+            registry.TryGet<string>(memberName, out var source).Should().BeTrue();
+
+            var actual = source!.Create(
+                new BuildContext(new RandomSource(5)),
+                new BuildTarget(typeof(string), memberName));
+
+            // The value comes from the curated location data, proving the alias resolves to the country
+            // source rather than falling through to the generic string source.
+            TestData.Locations.Select(location => location.Country).Should().Contain(actual);
         }
 
         [Fact]
