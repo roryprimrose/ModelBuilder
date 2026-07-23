@@ -7,18 +7,18 @@
 
   <!-- Production analyzers -->
   <ItemGroup>
-    <PackageVersion Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.301" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.302" />
   </ItemGroup>
 
   <!-- Source generator (Roslyn) -->
   <ItemGroup>
-    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="4.14.0" />
-    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.14.0" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="5.6.0" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="5.6.0" />
   </ItemGroup>
 
-  <!-- Versioning. Referenced CI-only from Directory.Build.props; matches the GitVersion 6.7.0 config. -->
+  <!-- Versioning. Referenced CI-only from Directory.Build.props; matches the GitVersion 6.8.2 config. -->
   <ItemGroup>
-    <PackageVersion Include="GitVersion.MsBuild" Version="6.7.0" />
+    <PackageVersion Include="GitVersion.MsBuild" Version="6.8.2" />
   </ItemGroup>
 
   <!-- Benchmarking -->

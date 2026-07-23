@@ -46,7 +46,7 @@ jobs:
     # the value always matches the packaged version.
 
     - name: Setup dotnet
-      uses: actions/setup-dotnet@v5
+      uses: actions/setup-dotnet@v6
       with:
         # 10.x provides the SDK pinned in global.json; 8.x provides the runtime the tests target.
         dotnet-version: |
@@ -142,7 +142,7 @@ jobs:
         name: packages
       
     - name: Setup dotnet
-      uses: actions/setup-dotnet@v5
+      uses: actions/setup-dotnet@v6
       with:
         dotnet-version: 10.x
 
@@ -187,7 +187,7 @@ jobs:
       run: Add-Content -Path ${env:GITHUB_ENV} "`nprojectName=$(${env:GITHUB_REPOSITORY}.substring(${env:GITHUB_REPOSITORY}.IndexOf('/') + 1))" -Encoding utf8
       
     - name: Setup dotnet
-      uses: actions/setup-dotnet@v5
+      uses: actions/setup-dotnet@v6
       with:
         dotnet-version: 10.x
       
