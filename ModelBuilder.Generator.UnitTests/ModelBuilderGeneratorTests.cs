@@ -317,6 +317,88 @@ namespace Sample
         }
 
         [Fact]
+        public void ReportsMB1012ForUnmappedAbstractMember()
+        {
+            const string source = @"
+namespace Sample
+{
+    public interface IEngine
+    {
+        int Horsepower { get; set; }
+    }
+
+    public sealed class Car
+    {
+        public IEngine? Engine { get; set; }
+    }
+
+    public static class Caller
+    {
+        public static Car Build() => global::ModelBuilder.Model.Create<Car>();
+    }
+}";
+
+            var harness = GeneratorTestHarness.Run(source);
+
+            harness.GeneratorDiagnostics.Should().Contain(d => d.Id == "MB1012");
+        }
+
+        [Fact]
+        public void DoesNotReportMB1012ForMappedAbstractMember()
+        {
+            const string source = @"
+namespace Sample
+{
+    public interface IEngine
+    {
+        int Horsepower { get; set; }
+    }
+
+    public sealed class V8Engine : IEngine
+    {
+        public int Horsepower { get; set; }
+    }
+
+    public sealed class Car
+    {
+        public IEngine? Engine { get; set; }
+    }
+
+    public static class Caller
+    {
+        public static Car Build() =>
+            global::ModelBuilder.Model.Mapping<IEngine, V8Engine>().Create<Car>();
+    }
+}";
+
+            var harness = GeneratorTestHarness.Run(source);
+
+            harness.GeneratorDiagnostics.Should().NotContain(d => d.Id == "MB1012");
+        }
+
+        [Fact]
+        public void DoesNotReportMB1012ForRecognizedCollectionInterfaceMember()
+        {
+            const string source = @"
+namespace Sample
+{
+    public sealed class Car
+    {
+        public System.Collections.Generic.IList<int>? Parts { get; set; }
+    }
+
+    public static class Caller
+    {
+        public static Car Build() => global::ModelBuilder.Model.Create<Car>();
+    }
+}";
+
+            var harness = GeneratorTestHarness.Run(source);
+
+            harness.GeneratorDiagnostics.Should().NotContain(d => d.Id == "MB1012");
+        }
+
+        [Fact]
         public void DoesNotReportDiagnosticsForBuildableRoot()
         {
             const string source = @"

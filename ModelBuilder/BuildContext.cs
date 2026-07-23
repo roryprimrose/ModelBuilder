@@ -317,6 +317,8 @@ namespace ModelBuilder
 
             if (builder == null)
             {
+                Log.Write(BuildLogEntryKind.SkipMember, memberType, memberName, "no builder registered", collectionIndex);
+
                 return default!;
             }
 

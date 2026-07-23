@@ -63,5 +63,14 @@ namespace ModelBuilder.Generator
             DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
             helpLinkUri: "https://github.com/roryprimrose/ModelBuilder");
+
+        public static readonly DiagnosticDescriptor UnmappedAbstractMember = new DiagnosticDescriptor(
+            "MB1012",
+            "Member resolves to an unmapped abstract or interface type",
+            "'{0}' is abstract or an interface and appears as a member type with no Mapping<,> to a concrete type, so it will be left at its default value wherever it is used. Add Model.Mapping<{0}, TConcrete>() to give it a concrete type.",
+            Category,
+            DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
+            helpLinkUri: "https://github.com/roryprimrose/ModelBuilder");
     }
 }
