@@ -641,6 +641,165 @@ namespace Sample
         }
 
         [Fact]
+        public void CreateBuildsCustomTypeThatInheritsCollection()
+        {
+            const string source = @"
+namespace Sample
+{
+    public sealed class WidgetBag : System.Collections.ObjectModel.Collection<int>
+    {
+    }
+
+    public sealed class Holder
+    {
+        public WidgetBag? Bag { get; set; }
+    }
+
+    public static class Caller
+    {
+        public static Holder Build() => global::ModelBuilder.Model.Create<Holder>();
+    }
+}";
+
+            var harness = GeneratorTestHarness.Run(source);
+            harness.CompilationErrors.Should().BeEmpty();
+
+            var assembly = harness.EmitAndLoad();
+            var holderType = assembly.GetType("Sample.Holder", throwOnError: true)!;
+
+            ValueSource<int>.Instance = new SequentialInt32Source();
+
+            try
+            {
+                var holder = CreateViaModel(holderType);
+
+                var bag = holderType.GetProperty("Bag")!.GetValue(holder);
+
+                bag.Should().NotBeNull();
+                bag.Should().BeOfType(assembly.GetType("Sample.WidgetBag", throwOnError: true)!);
+
+                var enumerable = (System.Collections.IEnumerable)bag!;
+
+                enumerable.Cast<object>().Should().NotBeEmpty();
+            }
+            finally
+            {
+                ValueSource<int>.Instance = null;
+            }
+        }
+
+        [Fact]
+        public void CreateBuildsCustomTypeThatInheritsDictionary()
+        {
+            const string source = @"
+namespace Sample
+{
+    public sealed class WidgetMap : System.Collections.Generic.Dictionary<int, int>
+    {
+    }
+
+    public sealed class Holder
+    {
+        public WidgetMap? Map { get; set; }
+    }
+
+    public static class Caller
+    {
+        public static Holder Build() => global::ModelBuilder.Model.Create<Holder>();
+    }
+}";
+
+            var harness = GeneratorTestHarness.Run(source);
+            harness.CompilationErrors.Should().BeEmpty();
+
+            var assembly = harness.EmitAndLoad();
+            var holderType = assembly.GetType("Sample.Holder", throwOnError: true)!;
+
+            ValueSource<int>.Instance = new SequentialInt32Source();
+
+            try
+            {
+                var holder = CreateViaModel(holderType);
+
+                var map = holderType.GetProperty("Map")!.GetValue(holder);
+
+                map.Should().NotBeNull();
+                map.Should().BeOfType(assembly.GetType("Sample.WidgetMap", throwOnError: true)!);
+
+                var dictionary = (System.Collections.IDictionary)map!;
+
+                dictionary.Count.Should().BeGreaterThan(0);
+            }
+            finally
+            {
+                ValueSource<int>.Instance = null;
+            }
+        }
+
+        [Fact]
+        public void CreateBuildsCustomTypeThatImplementsIList()
+        {
+            const string source = @"
+namespace Sample
+{
+    public sealed class CustomList : System.Collections.Generic.IList<int>
+    {
+        private readonly System.Collections.Generic.List<int> _items = new System.Collections.Generic.List<int>();
+
+        public int this[int index] { get => _items[index]; set => _items[index] = value; }
+        public int Count => _items.Count;
+        public bool IsReadOnly => false;
+        public void Add(int item) => _items.Add(item);
+        public void Clear() => _items.Clear();
+        public bool Contains(int item) => _items.Contains(item);
+        public void CopyTo(int[] array, int arrayIndex) => _items.CopyTo(array, arrayIndex);
+        public System.Collections.Generic.IEnumerator<int> GetEnumerator() => _items.GetEnumerator();
+        public int IndexOf(int item) => _items.IndexOf(item);
+        public void Insert(int index, int item) => _items.Insert(index, item);
+        public bool Remove(int item) => _items.Remove(item);
+        public void RemoveAt(int index) => _items.RemoveAt(index);
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => _items.GetEnumerator();
+    }
+
+    public sealed class Holder
+    {
+        public CustomList? Items { get; set; }
+    }
+
+    public static class Caller
+    {
+        public static Holder Build() => global::ModelBuilder.Model.Create<Holder>();
+    }
+}";
+
+            var harness = GeneratorTestHarness.Run(source);
+            harness.CompilationErrors.Should().BeEmpty();
+
+            var assembly = harness.EmitAndLoad();
+            var holderType = assembly.GetType("Sample.Holder", throwOnError: true)!;
+
+            ValueSource<int>.Instance = new SequentialInt32Source();
+
+            try
+            {
+                var holder = CreateViaModel(holderType);
+
+                var items = holderType.GetProperty("Items")!.GetValue(holder);
+
+                items.Should().NotBeNull();
+                items.Should().BeOfType(assembly.GetType("Sample.CustomList", throwOnError: true)!);
+
+                var enumerable = (System.Collections.IEnumerable)items!;
+
+                enumerable.Cast<object>().Should().NotBeEmpty();
+            }
+            finally
+            {
+                ValueSource<int>.Instance = null;
+            }
+        }
+
+        [Fact]
         public void UnsupportedCollectionShapeReportsDiagnostic()
         {
             const string source = @"

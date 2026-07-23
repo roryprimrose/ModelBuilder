@@ -982,6 +982,18 @@ root, constructor parameter, or settable member of any of the following shapes g
 | `ImmutableQueue<T>` | `IImmutableQueue<T>` |
 | `ImmutableStack<T>` | `IImmutableStack<T>` |
 
+**User-defined collection types.** A concrete, accessible, non-abstract type with a public
+parameterless constructor that either derives from one of the mutable Add-based or keyed kinds
+above (for example `class WidgetBag : Collection<Widget>`) or implements `ICollection<T>` /
+`IDictionary<TKey, TValue>` directly (for example a hand-written `IList<T>` implementation) is
+classified with the matching shape and built as *itself* — constructed via its own parameterless
+constructor and populated through its own (inherited or implemented) mutator — rather than being
+discarded as an ordinary class with no settable members. This does not extend to the read-only
+wrapper or immutable kinds, since those have no usable parameterless constructor to build a
+subclass through. A type that doesn't qualify (abstract, no parameterless constructor, or matches
+no known shape) falls back to being populated as an ordinary class from its settable members, as
+before.
+
 **Construction strategy per kind:**
 
 - **Array** builds directly into a `T[]` of the chosen count, one indexed `Build<T>` call per slot.
@@ -998,6 +1010,7 @@ root, constructor parameter, or settable member of any of the following shapes g
   build a mutable backing collection (`List<T>`/`Dictionary<K,V>`/`ObservableCollection<T>`) the same
   way as their mutable counterparts, then wrap it in the read-only type — the only construction path
   available, since these types have no public mutators of their own.
+
 - **Immutable** kinds build a mutable `List<T>`/`Dictionary<K,V>` backing collection the same way,
   then call the matching `{ImmutableXxx}.CreateRange(backing)` factory method — immutable collections
   have no mutators to call incrementally.

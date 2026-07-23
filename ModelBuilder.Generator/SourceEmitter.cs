@@ -260,9 +260,9 @@ namespace ModelBuilder.Generator
         {
             var slot = model.SlotType;
             var element = model.ElementType;
-            var backingType = GetAddBasedBackingTypeName(kind, element);
+            var backingType = model.IsCustomType ? slot : GetAddBasedBackingTypeName(kind, element);
             var addMethod = GetAddMethodName(kind);
-            var constructorArgs = kind == CollectionKind.List ? "count" : string.Empty;
+            var constructorArgs = kind == CollectionKind.List && model.IsCustomType == false ? "count" : string.Empty;
 
             builder.Append(Indent).AppendLine($"        var result = new {backingType}({constructorArgs});");
             builder.Append(Indent).AppendLine("        for (var i = 0; i < count; i++)");
@@ -287,7 +287,7 @@ namespace ModelBuilder.Generator
             var slot = model.SlotType;
             var element = model.ElementType;
             var value = model.ValueType;
-            var backingType = GetKeyedBackingTypeName(model.Kind, element, value);
+            var backingType = model.IsCustomType ? slot : GetKeyedBackingTypeName(model.Kind, element, value);
 
             builder.Append(Indent).AppendLine($"        var result = new {backingType}();");
             builder.Append(Indent).AppendLine("        for (var i = 0; i < count; i++)");

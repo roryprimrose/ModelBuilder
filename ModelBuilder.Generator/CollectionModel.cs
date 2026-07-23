@@ -16,7 +16,8 @@ namespace ModelBuilder.Generator
             string elementType,
             string valueType,
             bool keyCanBeNull,
-            bool retryOnKeyCollision = false)
+            bool retryOnKeyCollision = false,
+            bool isCustomType = false)
         {
             Kind = kind;
             SlotType = slotType;
@@ -25,6 +26,7 @@ namespace ModelBuilder.Generator
             ValueType = valueType;
             KeyCanBeNull = keyCanBeNull;
             RetryOnKeyCollision = retryOnKeyCollision;
+            IsCustomType = isCustomType;
         }
 
         public bool Equals(CollectionModel other)
@@ -35,7 +37,8 @@ namespace ModelBuilder.Generator
                    && string.Equals(ElementType, other.ElementType, StringComparison.Ordinal)
                    && string.Equals(ValueType, other.ValueType, StringComparison.Ordinal)
                    && KeyCanBeNull == other.KeyCanBeNull
-                   && RetryOnKeyCollision == other.RetryOnKeyCollision;
+                   && RetryOnKeyCollision == other.RetryOnKeyCollision
+                   && IsCustomType == other.IsCustomType;
         }
 
         public override bool Equals(object? obj)
@@ -55,6 +58,7 @@ namespace ModelBuilder.Generator
                 hash = hash * 397 ^ StringComparer.Ordinal.GetHashCode(ValueType);
                 hash = hash * 397 ^ KeyCanBeNull.GetHashCode();
                 hash = hash * 397 ^ RetryOnKeyCollision.GetHashCode();
+                hash = hash * 397 ^ IsCustomType.GetHashCode();
 
                 return hash;
             }
@@ -86,5 +90,14 @@ namespace ModelBuilder.Generator
         ///     Gets the value type for dictionaries; empty for other kinds.
         /// </summary>
         public string ValueType { get; }
+
+        /// <summary>
+        ///     Gets a value indicating whether <see cref="SlotType" /> is a user-defined type that was
+        ///     classified by inheriting from, or directly implementing, one of the well-known
+        ///     collection shapes rather than being one of those shapes itself. When <c>true</c>, the
+        ///     generated source constructs <see cref="SlotType" /> directly (via its own parameterless
+        ///     constructor) instead of a well-known BCL backing type.
+        /// </summary>
+        public bool IsCustomType { get; }
     }
 }
