@@ -62,6 +62,14 @@ jobs:
     - name: Install coverage tool
       run: dotnet tool install --global dotnet-coverage --version 18.8.0
 
+    - name: Install Mono
+      # ModelBuilder.IntegrationTests (and ModelBuilder.BenchmarkTests) target net472 to exercise the
+      # netstandard2.0 consumption path. The net472 test host needs Mono to execute on this Linux
+      # runner, which isn't preinstalled.
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y mono-complete
+
     - name: Test
       # dotnet-coverage wraps the test run and instruments the test host processes, writing one merged
       # Cobertura report. This is decoupled from the Microsoft.Testing.Platform version that xUnit v3
