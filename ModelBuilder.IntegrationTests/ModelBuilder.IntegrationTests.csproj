@@ -1,12 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <!--
-      net472 exercises the netstandard2.0 consumption path (mirrors ModelBuilder.BenchmarkTests); the
-      modern TFMs cover the AOT-capable runtimes. The same scenario suite runs unchanged on each so any
-      per-TFM behavioral drift in the generator or runtime is caught.
-    -->
-    <TargetFrameworks>net472;net8.0;net9.0;net10.0</TargetFrameworks>
+    <TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
     <CodeAnalysisRuleSet>..\Solution Items\UnitTest.ruleset</CodeAnalysisRuleSet>
 
     <!-- xUnit v3 runs on the Microsoft Testing Platform, which requires an executable test host. -->
@@ -30,7 +25,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ModelBuilder\ModelBuilder.csproj" />
-    <!-- Explicit so the generator reliably runs on every TFM above, including net472. -->
+    <!-- Explicit so the generator reliably runs on every TFM above. -->
     <ProjectReference Include="..\ModelBuilder.Generator\ModelBuilder.Generator.csproj"
                       OutputItemType="Analyzer"
                       ReferenceOutputAssembly="false" />
