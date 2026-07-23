@@ -156,7 +156,9 @@
             configuration.AddValueSource(
                 new DelegateValueSource<string>(context =>
                 {
-                    capturedIndex = ((BuildContext)context).BuildPath[^1].CollectionIndex;
+                    var buildPath = ((BuildContext)context).BuildPath;
+
+                    capturedIndex = buildPath[buildPath.Count - 1].CollectionIndex;
 
                     return "value";
                 }));
@@ -178,7 +180,9 @@
             configuration.AddValueSource(
                 new DelegateValueSource<string>(context =>
                 {
-                    capturedIndex = ((BuildContext)context).BuildPath[^1].CollectionIndex;
+                    var buildPath = ((BuildContext)context).BuildPath;
+
+                    capturedIndex = buildPath[buildPath.Count - 1].CollectionIndex;
 
                     return "value";
                 }));
