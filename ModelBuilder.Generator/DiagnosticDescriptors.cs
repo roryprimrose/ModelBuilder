@@ -45,5 +45,23 @@ namespace ModelBuilder.Generator
             DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
             helpLinkUri: "https://github.com/roryprimrose/ModelBuilder");
+
+        public static readonly DiagnosticDescriptor OpenMappingTargetNoAccessibleConstructor = new DiagnosticDescriptor(
+            "MB1006",
+            "Open generic mapping target has no accessible constructor",
+            "'{0}' has no public constructor accessible to the generated code, so no builder can ever be generated for a closed shape of the '{1}' mapping. Add a public constructor or expose an accessible one.",
+            Category,
+            DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
+            helpLinkUri: "https://github.com/roryprimrose/ModelBuilder");
+
+        public static readonly DiagnosticDescriptor OpenMappingNeverUsedInClosedForm = new DiagnosticDescriptor(
+            "MB1007",
+            "Open generic mapping is never used in closed form",
+            "'{0}' has an open generic mapping registered, but no closed Model.Mapping<,>() call declares a shape to build, so no builder will ever be generated for it. Add Model.Mapping<TClosedSource, TClosedTarget>() for each closed shape you need built.",
+            Category,
+            DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
+            helpLinkUri: "https://github.com/roryprimrose/ModelBuilder");
     }
 }

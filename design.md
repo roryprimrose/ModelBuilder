@@ -421,6 +421,18 @@ Keep only what real usage needs:
   Kept; this is the main customization seam used in practice.
 - **Ignore rules** — both targeted and type-agnostic (§8.1).
 - **Type mapping** — `Mapping<TSource,TTarget>()`, validated at compile time.
+  `Model.Mapping(Type, Type)` / `IBuildConfiguration.AddMapping(Type, Type)` also accept an open
+  generic source/target pair (for example `Model.Mapping(typeof(IRepository<>), typeof(Repository<>))`):
+  at runtime, `IBuildConfiguration.TryGetMapping` falls back from a closed member type to its open
+  generic definition and constructs the matching closed target via `MakeGenericType`. The generator
+  discovers open mapping declarations (`GetRootType`'s `"Mapping"` branch, both `typeof()` arguments
+  unbound) separately from ordinary roots, but does **not** infer which closed shapes to build from an
+  open declaration alone — each closed shape still needs its own explicit
+  `Mapping<TClosedSource, TClosedTarget>()` (or `Mapping(typeof(TClosedSource), typeof(TClosedTarget))`)
+  declaration to become a build root, exactly like a non-generic mapping. Two diagnostics guard this:
+  `MB1006` (the open mapping's target has no accessible constructor — no closed shape could ever be
+  built) and `MB1007` (the open mapping is never paired with a closed `Mapping<,>()` declaration — no
+  builder will ever be generated for any closed shape of it).
 - **Value overrides** — `BuildOptions` (collection counts, null frequency, max depth), tuned through
   `Model.SetOptions(x => …)` / `IBuildConfiguration.SetOptions(x => …)`, replacing the open-ended
   `UpdateValueGenerator<T>`/`UpdateTypeCreator<T>` reflection-tuning. Per-member overrides (e.g. an
@@ -967,7 +979,7 @@ root, constructor parameter, or settable member of any of the following shapes g
 | `SortedDictionary<K,V>` | — |
 | `SortedList<K,V>` | — |
 | `ConcurrentDictionary<K,V>` | — |
-| `ConcurrentBag<T>` | — |
+| `ConcurrentBag<T>` | `IProducerConsumerCollection<T>` |
 | `ConcurrentQueue<T>` | — |
 | `ConcurrentStack<T>` | — |
 | `ReadOnlyCollection<T>` | — |
@@ -981,6 +993,19 @@ root, constructor parameter, or settable member of any of the following shapes g
 | `ImmutableSortedDictionary<K,V>` | — |
 | `ImmutableQueue<T>` | `IImmutableQueue<T>` |
 | `ImmutableStack<T>` | `IImmutableStack<T>` |
+
+**Interface ownership.** Several kinds above share BCL interfaces that are already reachable
+through a sibling kind (for example `Queue<T>`, `Stack<T>`, `SortedSet<T>` and `Collection<T>` all
+implement `IEnumerable<T>`/`ICollection<T>`/`IReadOnlyCollection<T>`, already owned by `List<T>`;
+`SortedSet<T>` also implements `ISet<T>`/`IReadOnlySet<T>`, already owned by `HashSet<T>`;
+`ImmutableSortedSet<T>` also implements `IImmutableSet<T>`, already owned by `ImmutableHashSet<T>`).
+Requesting a shared interface always resolves to its owning kind; a kind never listed with an
+interface target in the table above has no interface of its own reachable in the build graph — only
+its concrete type resolves to it. `IProducerConsumerCollection<T>` is the one exception: it is
+implemented by `ConcurrentBag<T>`, `ConcurrentQueue<T>` and `ConcurrentStack<T>` alike, a genuine
+three-way ambiguity with no existing owner, so it defaults to `ConcurrentBag<T>` — the same
+"first/simplest concrete kind wins" rule `ImmutableHashSet<T>` already follows for `IImmutableSet<T>`
+over `ImmutableSortedSet<T>`.
 
 **User-defined collection types.** A concrete, accessible, non-abstract type with a public
 parameterless constructor that either derives from one of the mutable Add-based or keyed kinds

@@ -57,6 +57,23 @@ namespace ModelBuilder
             where TTarget : TSource;
 
         /// <summary>
+        ///     Adds a type mapping from a source type to a concrete target type.
+        /// </summary>
+        /// <param name="sourceType">The source type, typically an interface or abstract type.</param>
+        /// <param name="targetType">The concrete type to build in its place.</param>
+        /// <returns>The same configuration for chaining.</returns>
+        /// <exception cref="ArgumentNullException">
+        ///     The <paramref name="sourceType" /> or <paramref name="targetType" /> parameter is <c>null</c>.
+        /// </exception>
+        /// <remarks>
+        ///     <paramref name="sourceType" /> and <paramref name="targetType" /> may both be open generic type
+        ///     definitions, letting one mapping serve every closed shape at build time. Declare each closed
+        ///     shape you need built with its own <see cref="Mapping{TSource, TTarget}" /> (or this overload with
+        ///     closed types) call.
+        /// </remarks>
+        IModelConfiguration Mapping(Type sourceType, Type targetType);
+
+        /// <summary>
         ///     Begins a typed construction of <typeparamref name="T" /> using this configuration. Supply
         ///     constructor arguments through the generated <c>From</c> extension method on the returned
         ///     handle.

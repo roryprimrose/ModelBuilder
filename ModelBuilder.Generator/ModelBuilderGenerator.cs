@@ -27,7 +27,7 @@ namespace ModelBuilder.Generator
                 .CreateSyntaxProvider(
                     static (node, _) => IsCandidateInvocation(node),
                     static (ctx, token) => GetRootType(ctx, token))
-                .Where(static capture => capture.Symbol is not null)
+                .Where(static capture => capture.Symbol is not null || capture.IsOpenMappingDeclaration)
                 .Select(static (capture, _) => capture);
 
             var attributeRoots = context.SyntaxProvider
@@ -69,15 +69,29 @@ namespace ModelBuilder.Generator
             var distinct = new Dictionary<string, INamedTypeSymbol>();
             var constructionTypeNames = new List<string>();
             var seenRequests = new HashSet<string>();
+            var closedMappingSourceDefinitions = new HashSet<INamedTypeSymbol>(SymbolEqualityComparer.Default);
+            var openMappingDeclarations = new List<RootCapture>();
 
             foreach (var capture in captures)
             {
+                if (capture.IsOpenMappingDeclaration)
+                {
+                    openMappingDeclarations.Add(capture);
+
+                    continue;
+                }
+
                 if (capture.Symbol is null)
                 {
                     continue;
                 }
 
                 ReportRootDiagnostics(context, capture);
+
+                if (capture.MappingSourceDefinition is not null)
+                {
+                    closedMappingSourceDefinitions.Add(capture.MappingSourceDefinition);
+                }
 
                 var typeName = capture.Symbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
 
@@ -87,6 +101,11 @@ namespace ModelBuilder.Generator
                 {
                     constructionTypeNames.Add(typeName);
                 }
+            }
+
+            foreach (var declaration in openMappingDeclarations)
+            {
+                ReportOpenMappingDiagnostics(context, declaration, closedMappingSourceDefinitions);
             }
 
             if (distinct.Count == 0)
@@ -110,6 +129,35 @@ namespace ModelBuilder.Generator
             context.AddSource(
                 "ModelBuilderGenerated.g.cs",
                 SourceEmitter.Emit(models, constructionTypeNames, hasModuleInitializer));
+        }
+
+        private static void ReportOpenMappingDiagnostics(
+            SourceProductionContext context,
+            RootCapture declaration,
+            HashSet<INamedTypeSymbol> closedMappingSourceDefinitions)
+        {
+            var source = declaration.OpenMappingSource!;
+            var target = declaration.OpenMappingTarget!;
+            var location = declaration.Location ?? Location.None;
+
+            if (BuildGraphWalker.HasAccessibleConstructor(target) == false)
+            {
+                context.ReportDiagnostic(
+                    Diagnostic.Create(
+                        DiagnosticDescriptors.OpenMappingTargetNoAccessibleConstructor,
+                        location,
+                        target.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat),
+                        source.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)));
+            }
+
+            if (closedMappingSourceDefinitions.Contains(source) == false)
+            {
+                context.ReportDiagnostic(
+                    Diagnostic.Create(
+                        DiagnosticDescriptors.OpenMappingNeverUsedInClosedForm,
+                        location,
+                        source.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)));
+            }
         }
 
         private static void ReportRootDiagnostics(SourceProductionContext context, RootCapture capture)
@@ -180,13 +228,46 @@ namespace ModelBuilder.Generator
 
             if (method.Name == "Mapping")
             {
-                // Model.Mapping<TSource, TTarget>() makes the concrete TTarget a build root.
-                if (method.TypeArguments.Length != 2)
+                if (method.TypeArguments.Length == 2)
                 {
-                    return default;
+                    // Model.Mapping<TSource, TTarget>() makes the concrete TTarget a build root.
+                    var closedSourceDefinition = (method.TypeArguments[0] as INamedTypeSymbol)?.OriginalDefinition;
+
+                    return new RootCapture(
+                        method.TypeArguments[1] as INamedTypeSymbol,
+                        invocation.GetLocation(),
+                        mappingSourceDefinition: closedSourceDefinition);
                 }
 
-                return new RootCapture(method.TypeArguments[1] as INamedTypeSymbol, invocation.GetLocation());
+                if (method.TypeArguments.Length == 0
+                    && TryGetTypeOfArgument(invocation, context.SemanticModel, token, 0, out var mappingSourceType)
+                    && TryGetTypeOfArgument(invocation, context.SemanticModel, token, 1, out var mappingTargetType))
+                {
+                    // Model.Mapping(typeof(TSource), typeof(TTarget)) - the Type-based overload. Both
+                    // arguments must agree on being open (an open generic mapping declaration, validated
+                    // and cross-referenced against closed Mapping<,> usages rather than walked as a root)
+                    // or both closed (behaves exactly like the generic Mapping<TSource, TTarget>() overload).
+                    if (mappingSourceType!.IsUnboundGenericType && mappingTargetType!.IsUnboundGenericType)
+                    {
+                        // Normalize the unbound generic type symbols from typeof(X<>) to their original
+                        // definitions - the same representation used for the closed side below - so
+                        // constructor lookups and cross-referencing are accurate and symbol-comparable.
+                        return new RootCapture(
+                            mappingSourceType.OriginalDefinition,
+                            mappingTargetType.OriginalDefinition,
+                            invocation.GetLocation());
+                    }
+
+                    if (mappingSourceType.IsUnboundGenericType == false && mappingTargetType!.IsUnboundGenericType == false)
+                    {
+                        return new RootCapture(
+                            mappingTargetType,
+                            invocation.GetLocation(),
+                            mappingSourceDefinition: mappingSourceType.OriginalDefinition);
+                    }
+                }
+
+                return default;
             }
 
             if (method.Name == "Construct")
@@ -213,7 +294,7 @@ namespace ModelBuilder.Generator
                 // Non-generic Model.Create(typeof(X)) - the typeof constant names a build root (s6.2.1).
                 if (method.Name == "Create"
                     && containingType == ModelTypeName
-                    && TryGetTypeOfArgument(invocation, context.SemanticModel, token, out var constantType))
+                    && TryGetTypeOfArgument(invocation, context.SemanticModel, token, 0, out var constantType))
                 {
                     return new RootCapture(constantType, invocation.GetLocation(), isTypeOfRoot: true);
                 }
@@ -228,15 +309,17 @@ namespace ModelBuilder.Generator
             InvocationExpressionSyntax invocation,
             SemanticModel semanticModel,
             CancellationToken token,
+            int argumentIndex,
             out INamedTypeSymbol? type)
         {
             type = null;
 
-            var firstArgument = invocation.ArgumentList.Arguments.Count > 0
-                ? invocation.ArgumentList.Arguments[0].Expression
-                : null;
+            if (invocation.ArgumentList.Arguments.Count <= argumentIndex)
+            {
+                return false;
+            }
 
-            if (firstArgument is not TypeOfExpressionSyntax typeOf)
+            if (invocation.ArgumentList.Arguments[argumentIndex].Expression is not TypeOfExpressionSyntax typeOf)
             {
                 return false;
             }
@@ -307,19 +390,48 @@ namespace ModelBuilder.Generator
 
         private readonly struct RootCapture
         {
-            public RootCapture(INamedTypeSymbol? symbol, Location location, bool isTypeOfRoot = false, bool isConstructRoot = false)
+            public RootCapture(
+                INamedTypeSymbol? symbol,
+                Location location,
+                bool isTypeOfRoot = false,
+                bool isConstructRoot = false,
+                INamedTypeSymbol? mappingSourceDefinition = null)
             {
                 Symbol = symbol;
                 Location = location;
                 IsTypeOfRoot = isTypeOfRoot;
                 IsConstructRoot = isConstructRoot;
+                MappingSourceDefinition = mappingSourceDefinition;
+                IsOpenMappingDeclaration = false;
+                OpenMappingSource = null;
+                OpenMappingTarget = null;
+            }
+
+            public RootCapture(INamedTypeSymbol openSource, INamedTypeSymbol openTarget, Location location)
+            {
+                Symbol = null;
+                Location = location;
+                IsTypeOfRoot = false;
+                IsConstructRoot = false;
+                MappingSourceDefinition = null;
+                IsOpenMappingDeclaration = true;
+                OpenMappingSource = openSource;
+                OpenMappingTarget = openTarget;
             }
 
             public bool IsConstructRoot { get; }
 
+            public bool IsOpenMappingDeclaration { get; }
+
             public bool IsTypeOfRoot { get; }
 
             public Location? Location { get; }
+
+            public INamedTypeSymbol? MappingSourceDefinition { get; }
+
+            public INamedTypeSymbol? OpenMappingSource { get; }
+
+            public INamedTypeSymbol? OpenMappingTarget { get; }
 
             public INamedTypeSymbol? Symbol { get; }
         }

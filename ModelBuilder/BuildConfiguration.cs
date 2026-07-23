@@ -137,7 +137,32 @@ namespace ModelBuilder
         {
             sourceType = sourceType ?? throw new ArgumentNullException(nameof(sourceType));
 
-            return _typeMappings.TryGetValue(sourceType, out targetType!);
+            if (_typeMappings.TryGetValue(sourceType, out targetType!))
+            {
+                return true;
+            }
+
+            // A mapping registered against an open generic source (for example
+            // AddMapping(typeof(IRepository<>), typeof(Repository<>))) has no exact dictionary entry
+            // for a closed member type such as IRepository<Widget>. Fall back to the source's open
+            // generic definition and, when the registered target is itself open, construct the closed
+            // target from the same type arguments. The closed target still needs its own generated
+            // builder (registered via Model.RegistryInternal) to actually resolve a value - this only
+            // fixes the type lookup, not builder discovery.
+            if (sourceType.IsGenericType
+                && sourceType.IsGenericTypeDefinition == false
+                && _typeMappings.TryGetValue(sourceType.GetGenericTypeDefinition(), out var openTarget))
+            {
+                targetType = openTarget.IsGenericTypeDefinition
+                    ? openTarget.MakeGenericType(sourceType.GetGenericArguments())
+                    : openTarget;
+
+                return true;
+            }
+
+            targetType = null!;
+
+            return false;
         }
 
         /// <inheritdoc />
