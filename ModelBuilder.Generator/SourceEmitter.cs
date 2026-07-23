@@ -510,7 +510,7 @@ namespace ModelBuilder.Generator
 
             foreach (var member in model.Members)
             {
-                builder.Append(Indent).AppendLine($"            if (context.ShouldPopulate(typeof({type}), \"{member.Name}\", typeof({member.TypeName})))");
+                builder.Append(Indent).AppendLine($"            if (context.ShouldPopulate(typeof({type}), \"{member.Name}\", typeof({member.RuntimeTypeName})))");
                 builder.Append(Indent).AppendLine("            {");
                 builder.Append(Indent).AppendLine($"                if (context.RetainAssignedValues == false || global::System.Collections.Generic.EqualityComparer<{member.TypeName}>.Default.Equals(instance.{member.Name}!, default({member.TypeName})!))");
                 builder.Append(Indent).AppendLine("                {");
@@ -555,7 +555,7 @@ namespace ModelBuilder.Generator
                     continue;
                 }
 
-                builder.Append(indent).AppendLine($"if (context.ShouldPopulate(typeof({type}), \"{member.Name}\", typeof({member.TypeName})))");
+                builder.Append(indent).AppendLine($"if (context.ShouldPopulate(typeof({type}), \"{member.Name}\", typeof({member.RuntimeTypeName})))");
                 builder.Append(indent).AppendLine("{");
                 builder.Append(indent).Append(Indent).AppendLine($"if (context.RetainAssignedValues == false || global::System.Collections.Generic.EqualityComparer<{member.TypeName}>.Default.Equals(instance.{member.Name}!, default({member.TypeName})!))");
                 builder.Append(indent).Append(Indent).AppendLine("{");
@@ -572,8 +572,12 @@ namespace ModelBuilder.Generator
             {
                 var parameter = ctorParameters[index];
 
+                // Compare using RuntimeTypeName (top-level nullable annotation stripped) rather than
+                // TypeName, so a settable property that differs from its matching constructor parameter
+                // only in top-level nullability (for example ctor parameter `string currency` and
+                // property `string? Currency`) still matches.
                 if (string.Equals(parameter.Name, member.Name, StringComparison.OrdinalIgnoreCase)
-                    && string.Equals(parameter.TypeName, member.TypeName, StringComparison.Ordinal))
+                    && string.Equals(parameter.RuntimeTypeName, member.RuntimeTypeName, StringComparison.Ordinal))
                 {
                     return index;
                 }

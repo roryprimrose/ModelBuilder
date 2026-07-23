@@ -4,6 +4,7 @@
     using System.Linq;
     using System.Reflection;
     using FluentAssertions;
+    using Microsoft.CodeAnalysis;
     using ModelBuilder;
     using Xunit;
 
@@ -819,6 +820,48 @@ namespace Sample
             var harness = GeneratorTestHarness.Run(source);
 
             harness.GeneratorDiagnostics.Should().Contain(d => d.Id == "MB1011");
+        }
+
+        [Fact]
+        public void CreateBuildsNullableReferenceTypeMembersWithoutNullabilityMismatch()
+        {
+            // Regression test for a generic invariant container (List<T>) with a nullable-reference-
+            // annotated type argument (object?): the generated code must format the typeof() argument
+            // without the top-level "?" (CS8639) while still using the fully nullable-annotated type for
+            // Build<T>()/EqualityComparer<T>/default(T), otherwise the generic argument mismatches
+            // between "List<object>" and "List<object?>" trigger CS8619.
+            const string source = @"
+namespace Sample
+{
+    public sealed class Bucket
+    {
+        public object? State { get; set; }
+        public System.Collections.Generic.List<object?>? Items { get; set; }
+    }
+
+    public static class Caller
+    {
+        public static Bucket Build() => global::ModelBuilder.Model.Create<Bucket>();
+    }
+}";
+
+            var harness = GeneratorTestHarness.Run(source);
+            harness.CompilationDiagnostics
+                .Where(d => d.Severity is DiagnosticSeverity.Error or DiagnosticSeverity.Warning)
+                .Should()
+                .BeEmpty();
+
+            var assembly = harness.EmitAndLoad();
+            var bucketType = assembly.GetType("Sample.Bucket", throwOnError: true)!;
+
+            // Plain `object`/`object?` has no registered value source, so building it legitimately
+            // yields null; the point of this test is that generation and compilation succeed without
+            // CS8619/CS8639, and that the collection member itself (not its unresolvable elements) is
+            // populated.
+            var bucket = CreateViaModel(bucketType);
+
+            var items = (System.Collections.IEnumerable)bucketType.GetProperty("Items")!.GetValue(bucket)!;
+            items.Should().NotBeNull();
         }
 
         [Fact]

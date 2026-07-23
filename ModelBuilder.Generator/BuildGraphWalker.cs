@@ -15,12 +15,43 @@ namespace ModelBuilder.Generator
     /// </summary>
     internal static class BuildGraphWalker
     {
+        // Adds the "?" nullable-reference-type modifier (e.g. "object?", "List<object?>") on top of the
+        // default fully-qualified format, so generic type arguments used in generated code (Build<T>(),
+        // EqualityComparer<T>, default(T)) match the member/parameter's actual declared nullability and
+        // don't trigger CS8619 ("Nullability of reference types in value of type X doesn't match target
+        // type Y") for reference-typed members/elements that are declared nullable.
+        private static readonly SymbolDisplayFormat _nullableAwareFormat =
+            SymbolDisplayFormat.FullyQualifiedFormat.WithMiscellaneousOptions(
+                SymbolDisplayFormat.FullyQualifiedFormat.MiscellaneousOptions
+                | SymbolDisplayMiscellaneousOptions.IncludeNullableReferenceTypeModifier);
+
         /// <summary>
         ///     Determines whether the type has a public constructor the generated code can call.
         /// </summary>
         public static bool HasAccessibleConstructor(INamedTypeSymbol type)
         {
             return SelectConstructor(type) != null;
+        }
+
+        /// <summary>
+        ///     Renders a type name preserving nullable reference annotations (including nested ones, for
+        ///     example <c>List&lt;object?&gt;</c>), for use as a generic type argument.
+        /// </summary>
+        private static string FormatTypeName(ITypeSymbol type)
+        {
+            return type.ToDisplayString(_nullableAwareFormat);
+        }
+
+        /// <summary>
+        ///     Renders a type name suitable for a <c>typeof(...)</c> expression: nested nullable
+        ///     annotations are preserved (for example <c>List&lt;object?&gt;</c>), but a top-level
+        ///     nullable reference annotation is stripped, since <c>typeof</c> rejects it with CS8639.
+        /// </summary>
+        private static string FormatRuntimeTypeName(ITypeSymbol type)
+        {
+            var notAnnotated = type.WithNullableAnnotation(NullableAnnotation.NotAnnotated);
+
+            return notAnnotated.ToDisplayString(_nullableAwareFormat);
         }
 
         public static GenerationModel Walk(IEnumerable<INamedTypeSymbol> roots)
@@ -56,7 +87,9 @@ namespace ModelBuilder.Generator
 
                 if (TryClassifyCollection(type, out _, out var rootElement, out var rootValue, unsupported))
                 {
-                    collections[type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)] = type;
+                    var rootSlotName = FormatRuntimeTypeName(type);
+
+                    collections[rootSlotName] = type;
 
                     if (rootElement != null)
                     {
@@ -154,12 +187,15 @@ namespace ModelBuilder.Generator
             var retryOnKeyCollision = _retryOnKeyCollisionKinds.Contains(kind);
             var isCustomType = IsCustomCollectionType(type);
 
+            var elementTypeName = element != null ? FormatTypeName(element) : string.Empty;
+            var valueTypeName = value != null ? FormatTypeName(value) : string.Empty;
+
             return new CollectionModel(
                 kind,
                 slotType,
                 CreateName(slotType, "ValueSource", sourceNames),
-                element?.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) ?? string.Empty,
-                value?.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) ?? string.Empty,
+                elementTypeName,
+                valueTypeName,
                 keyCanBeNull,
                 retryOnKeyCollision,
                 isCustomType);
@@ -237,7 +273,9 @@ namespace ModelBuilder.Generator
             {
                 if (array.Rank == 1)
                 {
-                    collections[type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)] = type;
+                    var arraySlotName = FormatRuntimeTypeName(type);
+
+                    collections[arraySlotName] = type;
 
                     Visit(array.ElementType, queue, seen, nullables, collections, unsupported);
                 }
@@ -264,7 +302,9 @@ namespace ModelBuilder.Generator
 
             if (TryClassifyCollection(named, out _, out var element, out var value, unsupported))
             {
-                collections[named.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)] = named;
+                var namedSlotName = FormatRuntimeTypeName(named);
+
+                collections[namedSlotName] = named;
 
                 if (element != null)
                 {
@@ -733,8 +773,9 @@ namespace ModelBuilder.Generator
                     ctorParameters.Add(
                         new MemberModel(
                             parameter.Name,
-                            parameter.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
-                            FormatDefaultLiteral(parameter)));
+                            FormatTypeName(parameter.Type),
+                            FormatDefaultLiteral(parameter),
+                            FormatRuntimeTypeName(parameter.Type)));
                 }
             }
 
@@ -745,7 +786,8 @@ namespace ModelBuilder.Generator
                 members.Add(
                     new MemberModel(
                         property.Name,
-                        property.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)));
+                        FormatTypeName(property.Type),
+                        runtimeTypeName: FormatRuntimeTypeName(property.Type)));
             }
 
             var allConstructors = ImmutableArray.CreateBuilder<ConstructorModel>();
@@ -764,8 +806,9 @@ namespace ModelBuilder.Generator
                     parameters.Add(
                         new MemberModel(
                             parameter.Name,
-                            parameter.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
-                            FormatDefaultLiteral(parameter)));
+                            FormatTypeName(parameter.Type),
+                            FormatDefaultLiteral(parameter),
+                            FormatRuntimeTypeName(parameter.Type)));
                 }
 
                 allConstructors.Add(
