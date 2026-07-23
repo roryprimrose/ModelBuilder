@@ -28,6 +28,7 @@
   <Project Path="ModelBuilder.Examples/ModelBuilder.Examples.csproj" />
   <Project Path="ModelBuilder.Generator/ModelBuilder.Generator.csproj" />
   <Project Path="ModelBuilder.Generator.UnitTests/ModelBuilder.Generator.UnitTests.csproj" />
+  <Project Path="ModelBuilder.IntegrationTests/ModelBuilder.IntegrationTests.csproj" />
   <Project Path="ModelBuilder.UnitTests/ModelBuilder.UnitTests.csproj" />
   <Project Path="ModelBuilder/ModelBuilder.csproj" />
 </Solution>
