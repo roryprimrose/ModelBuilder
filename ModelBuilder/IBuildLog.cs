@@ -17,12 +17,16 @@ namespace ModelBuilder
         /// <param name="targetType">The type the scope relates to.</param>
         /// <param name="memberName">The optional name of the member the scope relates to.</param>
         /// <param name="reason">The optional reason recorded for the scope.</param>
+        /// <param name="collectionIndex">
+        ///     The optional zero-based index of the item within an enclosing collection.
+        /// </param>
         /// <returns>A token that ends the scope when disposed.</returns>
         IDisposable BeginScope(
             BuildLogEntryKind kind,
             Type targetType,
             string? memberName = null,
-            string? reason = null);
+            string? reason = null,
+            int? collectionIndex = null);
 
         /// <summary>
         ///     Records a leaf entry beneath the current scope.
@@ -31,11 +35,15 @@ namespace ModelBuilder
         /// <param name="targetType">The type the entry relates to.</param>
         /// <param name="memberName">The optional name of the member the entry relates to.</param>
         /// <param name="reason">The optional reason recorded for the entry.</param>
+        /// <param name="collectionIndex">
+        ///     The optional zero-based index of the item within an enclosing collection.
+        /// </param>
         void Write(
             BuildLogEntryKind kind,
             Type targetType,
             string? memberName = null,
-            string? reason = null);
+            string? reason = null,
+            int? collectionIndex = null);
 
         /// <summary>
         ///     Gets the root entries recorded in the log.

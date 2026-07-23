@@ -88,6 +88,28 @@
             sut.Entries[0].TargetType.Should().Be(typeof(Guid));
         }
 
+        [Fact]
+        public void WriteStoresCollectionIndex()
+        {
+            var sut = new BuildLog();
+
+            sut.Write(BuildLogEntryKind.CreateValue, typeof(int), "item", collectionIndex: 2);
+
+            sut.Entries[0].CollectionIndex.Should().Be(2);
+        }
+
+        [Fact]
+        public void BeginScopeStoresCollectionIndex()
+        {
+            var sut = new BuildLog();
+
+            using (sut.BeginScope(BuildLogEntryKind.CreateValue, typeof(int), "item", collectionIndex: 5))
+            {
+            }
+
+            sut.Entries[0].CollectionIndex.Should().Be(5);
+        }
+
         private sealed class Person
         {
         }

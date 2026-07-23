@@ -20,11 +20,12 @@ namespace ModelBuilder
             BuildLogEntryKind kind,
             Type targetType,
             string? memberName = null,
-            string? reason = null)
+            string? reason = null,
+            int? collectionIndex = null)
         {
             targetType = targetType ?? throw new ArgumentNullException(nameof(targetType));
 
-            var entry = new BuildLogEntry(kind, targetType, memberName, reason);
+            var entry = new BuildLogEntry(kind, targetType, memberName, reason, collectionIndex);
 
             AddEntry(entry);
             _scopes.Push(entry);
@@ -53,11 +54,12 @@ namespace ModelBuilder
             BuildLogEntryKind kind,
             Type targetType,
             string? memberName = null,
-            string? reason = null)
+            string? reason = null,
+            int? collectionIndex = null)
         {
             targetType = targetType ?? throw new ArgumentNullException(nameof(targetType));
 
-            AddEntry(new BuildLogEntry(kind, targetType, memberName, reason));
+            AddEntry(new BuildLogEntry(kind, targetType, memberName, reason, collectionIndex));
         }
 
         private static void RenderEntry(StringBuilder builder, BuildLogEntry entry, int depth)

@@ -524,6 +524,145 @@ namespace Sample
         }
 
         [Fact]
+        public void CreateBuildsExpandedCollectionKinds()
+        {
+            const string source = @"
+namespace Sample
+{
+    public sealed class Bag
+    {
+        public System.Collections.Generic.Queue<int> Queue { get; set; }
+        public System.Collections.Generic.Stack<int> Stack { get; set; }
+        public System.Collections.Generic.SortedSet<int> SortedSet { get; set; }
+        public System.Collections.ObjectModel.Collection<int> Collection { get; set; }
+        public System.Collections.ObjectModel.ObservableCollection<int> Observable { get; set; }
+        public System.Collections.Concurrent.ConcurrentBag<int> ConcurrentBag { get; set; }
+        public System.Collections.Concurrent.ConcurrentQueue<int> ConcurrentQueue { get; set; }
+        public System.Collections.Concurrent.ConcurrentStack<int> ConcurrentStack { get; set; }
+        public System.Collections.Generic.SortedDictionary<int, int> SortedDictionary { get; set; }
+        public System.Collections.Generic.SortedList<int, int> SortedList { get; set; }
+        public System.Collections.Concurrent.ConcurrentDictionary<int, int> ConcurrentDictionary { get; set; }
+        public System.Collections.ObjectModel.ReadOnlyCollection<int> ReadOnlyCollection { get; set; }
+        public System.Collections.ObjectModel.ReadOnlyDictionary<int, int> ReadOnlyDictionary { get; set; }
+        public System.Collections.ObjectModel.ReadOnlyObservableCollection<int> ReadOnlyObservable { get; set; }
+        public System.Collections.Immutable.ImmutableArray<int> ImmutableArray { get; set; }
+        public System.Collections.Immutable.ImmutableList<int> ImmutableList { get; set; }
+        public System.Collections.Immutable.ImmutableHashSet<int> ImmutableHashSet { get; set; }
+        public System.Collections.Immutable.ImmutableSortedSet<int> ImmutableSortedSet { get; set; }
+        public System.Collections.Immutable.ImmutableDictionary<int, int> ImmutableDictionary { get; set; }
+        public System.Collections.Immutable.ImmutableSortedDictionary<int, int> ImmutableSortedDictionary { get; set; }
+        public System.Collections.Immutable.ImmutableQueue<int> ImmutableQueue { get; set; }
+        public System.Collections.Immutable.ImmutableStack<int> ImmutableStack { get; set; }
+    }
+
+    public static class Caller
+    {
+        public static Bag Build() => global::ModelBuilder.Model.Create<Bag>();
+    }
+}";
+
+            var harness = GeneratorTestHarness.Run(source);
+            harness.CompilationErrors.Should().BeEmpty();
+
+            var assembly = harness.EmitAndLoad();
+            var bagType = assembly.GetType("Sample.Bag", throwOnError: true)!;
+
+            ValueSource<int>.Instance = new SequentialInt32Source();
+
+            try
+            {
+                var bag = CreateViaModel(bagType);
+
+                foreach (var property in bagType.GetProperties())
+                {
+                    var value = property.GetValue(bag);
+
+                    value.Should().NotBeNull($"{property.Name} should have been populated");
+
+                    var enumerable = (System.Collections.IEnumerable)value!;
+
+                    enumerable.Cast<object>().Should().NotBeEmpty($"{property.Name} should contain items");
+                }
+            }
+            finally
+            {
+                ValueSource<int>.Instance = null;
+            }
+        }
+
+        [Fact]
+        public void CreateByTypeBuildsCollectionOnlyRoot()
+        {
+            const string source = @"
+namespace Sample
+{
+    public static class Caller
+    {
+        public static object Build() => global::ModelBuilder.Model.Create(typeof(System.Collections.Generic.List<int>));
+    }
+}";
+
+            var harness = GeneratorTestHarness.Run(source);
+            harness.CompilationErrors.Should().BeEmpty();
+
+            var assembly = harness.EmitAndLoad();
+            var callerType = assembly.GetType("Sample.Caller", throwOnError: true)!;
+
+            var result = callerType.GetMethod("Build")!.Invoke(null, null);
+
+            var list = (System.Collections.IEnumerable)result!;
+
+            list.Cast<object>().Should().NotBeEmpty();
+        }
+
+        [Fact]
+        public void CreateBuildsGenericCollectionOnlyRoot()
+        {
+            const string source = @"
+namespace Sample
+{
+    public static class Caller
+    {
+        public static System.Collections.Generic.List<int> Build() => global::ModelBuilder.Model.Create<System.Collections.Generic.List<int>>();
+    }
+}";
+
+            var harness = GeneratorTestHarness.Run(source);
+            harness.CompilationErrors.Should().BeEmpty();
+
+            var assembly = harness.EmitAndLoad();
+            var callerType = assembly.GetType("Sample.Caller", throwOnError: true)!;
+
+            var result = callerType.GetMethod("Build")!.Invoke(null, null);
+
+            var list = (System.Collections.IEnumerable)result!;
+
+            list.Cast<object>().Should().NotBeEmpty();
+        }
+
+        [Fact]
+        public void UnsupportedCollectionShapeReportsDiagnostic()
+        {
+            const string source = @"
+namespace Sample
+{
+    public sealed class Bag
+    {
+        public System.ArraySegment<int> Segment { get; set; }
+    }
+
+    public static class Caller
+    {
+        public static Bag Build() => global::ModelBuilder.Model.Create<Bag>();
+    }
+}";
+
+            var harness = GeneratorTestHarness.Run(source);
+
+            harness.GeneratorDiagnostics.Should().Contain(d => d.Id == "MB1011");
+        }
+
+        [Fact]
         public void CreateBuildsStructWithSettableProperties()
         {
             const string source = @"

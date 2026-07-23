@@ -81,7 +81,13 @@ namespace ModelBuilder.Generator
                 return;
             }
 
-            var models = BuildGraphWalker.Walk(distinct.Values);
+            var models = BuildGraphWalker.Walk(distinct.Values, out var unsupportedCollectionShapes);
+
+            foreach (var unsupportedShape in unsupportedCollectionShapes)
+            {
+                context.ReportDiagnostic(
+                    Diagnostic.Create(DiagnosticDescriptors.UnsupportedCollectionShape, Location.None, unsupportedShape));
+            }
 
             if (models.IsEmpty)
             {

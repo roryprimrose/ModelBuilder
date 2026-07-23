@@ -146,6 +146,74 @@
             sut.Random.Should().BeSameAs(random);
         }
 
+        [Fact]
+        public void BuildWithCollectionIndexRecordsIndexOnBuildFrame()
+        {
+            int? capturedIndex = null;
+
+            var configuration = new BuildConfiguration();
+
+            configuration.AddValueSource(
+                new DelegateValueSource<string>(context =>
+                {
+                    capturedIndex = ((BuildContext)context).BuildPath[^1].CollectionIndex;
+
+                    return "value";
+                }));
+
+            var sut = new BuildContext(new RandomSource(1), configuration: configuration);
+
+            sut.Build<string>(typeof(Order), "item", 3);
+
+            capturedIndex.Should().Be(3);
+        }
+
+        [Fact]
+        public void BuildWithoutCollectionIndexLeavesBuildFrameIndexNull()
+        {
+            int? capturedIndex = 0;
+
+            var configuration = new BuildConfiguration();
+
+            configuration.AddValueSource(
+                new DelegateValueSource<string>(context =>
+                {
+                    capturedIndex = ((BuildContext)context).BuildPath[^1].CollectionIndex;
+
+                    return "value";
+                }));
+
+            var sut = new BuildContext(new RandomSource(1), configuration: configuration);
+
+            sut.Build<string>(typeof(Order), "Name");
+
+            capturedIndex.Should().BeNull();
+        }
+
+        [Fact]
+        public void BuildNestsLogEntriesUnderTheValueSourceScope()
+        {
+            var configuration = new BuildConfiguration();
+
+            configuration.AddValueSource(
+                new DelegateValueSource<Customer>(context =>
+                {
+                    context.Build<string>(typeof(Customer), "Name");
+
+                    return new Customer();
+                }));
+
+            var log = new BuildLog();
+            var sut = new BuildContext(new RandomSource(1), log, configuration: configuration);
+
+            sut.Build<Customer>(typeof(Order), "Customer");
+
+            log.Entries.Should().ContainSingle();
+            log.Entries[0].MemberName.Should().Be("Customer");
+            log.Entries[0].Children.Should().ContainSingle();
+            log.Entries[0].Children[0].MemberName.Should().Be("Name");
+        }
+
         private sealed class Customer
         {
         }

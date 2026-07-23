@@ -6,8 +6,8 @@ namespace ModelBuilder
     ///     The <see cref="IBuildContext" /> interface
     ///     is the per-build surface shared with generated builders and custom value sources. It exposes
     ///     the random source, build log, configuration, sibling-scope access, and the recursive
-    ///     <see cref="Build{T}" /> entry point, without leaking the engine's internal build chain,
-    ///     depth guards, or registries.
+    ///     <see cref="Build{T}(Type, string)" /> entry point, without leaking the engine's internal build
+    ///     chain, depth guards, or registries.
     /// </summary>
     public interface IBuildContext
     {
@@ -58,6 +58,20 @@ namespace ModelBuilder
         ///     The <paramref name="declaringType" /> or <paramref name="memberName" /> parameter is <c>null</c>.
         /// </exception>
         T Build<T>(Type declaringType, string memberName);
+
+        /// <summary>
+        ///     Builds a value for an item within a collection, recording its zero-based index on the
+        ///     build path and build log so failures and traces can identify which item failed.
+        /// </summary>
+        /// <typeparam name="T">The item type to build.</typeparam>
+        /// <param name="declaringType">The collection type that declares the item.</param>
+        /// <param name="memberName">The name of the member (for example <c>"item"</c> or <c>"key"</c>).</param>
+        /// <param name="collectionIndex">The zero-based index of the item within the collection.</param>
+        /// <returns>The built value, or <c>default</c> when no source or builder is registered or a guard fired.</returns>
+        /// <exception cref="ArgumentNullException">
+        ///     The <paramref name="declaringType" /> or <paramref name="memberName" /> parameter is <c>null</c>.
+        /// </exception>
+        T Build<T>(Type declaringType, string memberName, int collectionIndex);
 
         /// <summary>
         ///     Opens a sibling scope for the instance currently being populated, so that members already

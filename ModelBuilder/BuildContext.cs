@@ -98,18 +98,22 @@ namespace ModelBuilder
         /// <param name="declaringType">The type that declares the member.</param>
         /// <param name="memberName">The name of the member.</param>
         /// <param name="memberType">The type of the member.</param>
+        /// <param name="collectionIndex">
+        ///     The zero-based index of the item within an enclosing collection, or <c>null</c> when this
+        ///     frame is not a collection item.
+        /// </param>
         /// <returns>A token that exits the frame when disposed.</returns>
         /// <exception cref="ArgumentNullException">
         ///     The <paramref name="declaringType" />, <paramref name="memberName" />, or
         ///     <paramref name="memberType" /> parameter is <c>null</c>.
         /// </exception>
-        internal IDisposable EnterMember(Type declaringType, string memberName, Type memberType)
+        internal IDisposable EnterMember(Type declaringType, string memberName, Type memberType, int? collectionIndex = null)
         {
             declaringType = declaringType ?? throw new ArgumentNullException(nameof(declaringType));
             memberName = memberName ?? throw new ArgumentNullException(nameof(memberName));
             memberType = memberType ?? throw new ArgumentNullException(nameof(memberType));
 
-            return Enter(new BuildFrame(declaringType, memberName, memberType));
+            return Enter(new BuildFrame(declaringType, memberName, memberType, collectionIndex));
         }
 
         /// <summary>
@@ -218,6 +222,17 @@ namespace ModelBuilder
         /// <inheritdoc />
         public T Build<T>(Type declaringType, string memberName)
         {
+            return BuildCore<T>(declaringType, memberName, null);
+        }
+
+        /// <inheritdoc />
+        public T Build<T>(Type declaringType, string memberName, int collectionIndex)
+        {
+            return BuildCore<T>(declaringType, memberName, collectionIndex);
+        }
+
+        private T BuildCore<T>(Type declaringType, string memberName, int? collectionIndex)
+        {
             declaringType = declaringType ?? throw new ArgumentNullException(nameof(declaringType));
             memberName = memberName ?? throw new ArgumentNullException(nameof(memberName));
 
@@ -227,14 +242,14 @@ namespace ModelBuilder
             {
                 if (IsInBuildChain(mappedType))
                 {
-                    Log.Write(BuildLogEntryKind.SkipMember, mappedType, memberName, "circular-reference guard");
+                    Log.Write(BuildLogEntryKind.SkipMember, mappedType, memberName, "circular-reference guard", collectionIndex);
 
                     return default!;
                 }
 
                 if (Model.RegistryInternal.TryGet(mappedType, out var mappedBuilder) && mappedBuilder != null)
                 {
-                    using (EnterMember(declaringType, memberName, mappedType))
+                    using (EnterMember(declaringType, memberName, mappedType, collectionIndex))
                     {
                         return (T)Invoke(memberName, () => mappedBuilder.Create(this));
                     }
@@ -250,9 +265,8 @@ namespace ModelBuilder
                 && _buildConfiguration.CustomNamedValueSources!.TryGet<T>(memberName, out var customNamed)
                 && customNamed != null)
             {
-                Log.Write(BuildLogEntryKind.CreateValue, memberType, memberName, "custom named value source");
-
-                using (EnterMember(declaringType, memberName, memberType))
+                using (Log.BeginScope(BuildLogEntryKind.CreateValue, memberType, memberName, "custom named value source", collectionIndex))
+                using (EnterMember(declaringType, memberName, memberType, collectionIndex))
                 {
                     return Invoke(memberName, () => customNamed.Create(this, new BuildTarget(memberType, memberName)));
                 }
@@ -263,9 +277,8 @@ namespace ModelBuilder
                 && _buildConfiguration.CustomValueSources!.TryGet<T>(out var customTyped)
                 && customTyped != null)
             {
-                Log.Write(BuildLogEntryKind.CreateValue, memberType, memberName, "custom value source");
-
-                using (EnterMember(declaringType, memberName, memberType))
+                using (Log.BeginScope(BuildLogEntryKind.CreateValue, memberType, memberName, "custom value source", collectionIndex))
+                using (EnterMember(declaringType, memberName, memberType, collectionIndex))
                 {
                     return Invoke(memberName, () => customTyped.Create(this, new BuildTarget(memberType, memberName)));
                 }
@@ -275,9 +288,8 @@ namespace ModelBuilder
 
             if (source != null)
             {
-                Log.Write(BuildLogEntryKind.CreateValue, memberType, memberName, "registered value source");
-
-                using (EnterMember(declaringType, memberName, memberType))
+                using (Log.BeginScope(BuildLogEntryKind.CreateValue, memberType, memberName, "registered value source", collectionIndex))
+                using (EnterMember(declaringType, memberName, memberType, collectionIndex))
                 {
                     return Invoke(memberName, () => source.Create(this, new BuildTarget(memberType, memberName)));
                 }
@@ -285,9 +297,8 @@ namespace ModelBuilder
 
             if (NamedValueSources.TryGet<T>(memberName, out var named) && named != null)
             {
-                Log.Write(BuildLogEntryKind.CreateValue, memberType, memberName, "named value source");
-
-                using (EnterMember(declaringType, memberName, memberType))
+                using (Log.BeginScope(BuildLogEntryKind.CreateValue, memberType, memberName, "named value source", collectionIndex))
+                using (EnterMember(declaringType, memberName, memberType, collectionIndex))
                 {
                     return Invoke(memberName, () => named.Create(this, new BuildTarget(memberType, memberName)));
                 }
@@ -295,9 +306,8 @@ namespace ModelBuilder
 
             if (TryResolveValueSource<T>(out var builtIn) && builtIn != null)
             {
-                Log.Write(BuildLogEntryKind.CreateValue, memberType, memberName, "built-in value source");
-
-                using (EnterMember(declaringType, memberName, memberType))
+                using (Log.BeginScope(BuildLogEntryKind.CreateValue, memberType, memberName, "built-in value source", collectionIndex))
+                using (EnterMember(declaringType, memberName, memberType, collectionIndex))
                 {
                     return Invoke(memberName, () => builtIn.Create(this, new BuildTarget(memberType, memberName)));
                 }
@@ -312,19 +322,19 @@ namespace ModelBuilder
 
             if (IsInBuildChain(memberType))
             {
-                Log.Write(BuildLogEntryKind.SkipMember, memberType, memberName, "circular-reference guard");
+                Log.Write(BuildLogEntryKind.SkipMember, memberType, memberName, "circular-reference guard", collectionIndex);
 
                 return default!;
             }
 
             if (IsDepthExceeded)
             {
-                Log.Write(BuildLogEntryKind.SkipMember, memberType, memberName, "depth guard");
+                Log.Write(BuildLogEntryKind.SkipMember, memberType, memberName, "depth guard", collectionIndex);
 
                 return default!;
             }
 
-            using (EnterMember(declaringType, memberName, memberType))
+            using (EnterMember(declaringType, memberName, memberType, collectionIndex))
             {
                 return Invoke(memberName, () => builder.Create(this));
             }
@@ -346,9 +356,10 @@ namespace ModelBuilder
             {
                 var target = new BuildTarget(targetType, targetType.Name);
 
-                Log.Write(BuildLogEntryKind.CreateValue, targetType, targetType.Name, "root value source");
-
-                value = Invoke(targetType.Name, () => source.Create(this, target));
+                using (Log.BeginScope(BuildLogEntryKind.CreateValue, targetType, targetType.Name, "root value source"))
+                {
+                    value = Invoke(targetType.Name, () => source.Create(this, target));
+                }
 
                 return true;
             }

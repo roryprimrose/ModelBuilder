@@ -36,5 +36,14 @@ namespace ModelBuilder.Generator
             DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
             helpLinkUri: "https://github.com/roryprimrose/ModelBuilder");
+
+        public static readonly DiagnosticDescriptor UnsupportedCollectionShape = new DiagnosticDescriptor(
+            "MB1011",
+            "Discovered collection shape is not supported",
+            "'{0}' is a collection shape ModelBuilder does not build (it has no usable mutator, or it is a live view over another collection). Add a Model.Mapping<,> to a supported collection, or register a custom IValueSource<{0}>.",
+            Category,
+            DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
+            helpLinkUri: "https://github.com/roryprimrose/ModelBuilder");
     }
 }

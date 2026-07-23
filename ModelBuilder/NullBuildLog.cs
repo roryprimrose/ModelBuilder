@@ -21,7 +21,8 @@ namespace ModelBuilder
             BuildLogEntryKind kind,
             Type targetType,
             string? memberName = null,
-            string? reason = null)
+            string? reason = null,
+            int? collectionIndex = null)
         {
             return _scope;
         }
@@ -31,7 +32,8 @@ namespace ModelBuilder
             BuildLogEntryKind kind,
             Type targetType,
             string? memberName = null,
-            string? reason = null)
+            string? reason = null,
+            int? collectionIndex = null)
         {
         }
 

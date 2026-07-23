@@ -15,7 +15,8 @@ namespace ModelBuilder.Generator
             string sourceName,
             string elementType,
             string valueType,
-            bool keyCanBeNull)
+            bool keyCanBeNull,
+            bool retryOnKeyCollision = false)
         {
             Kind = kind;
             SlotType = slotType;
@@ -23,6 +24,7 @@ namespace ModelBuilder.Generator
             ElementType = elementType;
             ValueType = valueType;
             KeyCanBeNull = keyCanBeNull;
+            RetryOnKeyCollision = retryOnKeyCollision;
         }
 
         public bool Equals(CollectionModel other)
@@ -32,7 +34,8 @@ namespace ModelBuilder.Generator
                    && string.Equals(SourceName, other.SourceName, StringComparison.Ordinal)
                    && string.Equals(ElementType, other.ElementType, StringComparison.Ordinal)
                    && string.Equals(ValueType, other.ValueType, StringComparison.Ordinal)
-                   && KeyCanBeNull == other.KeyCanBeNull;
+                   && KeyCanBeNull == other.KeyCanBeNull
+                   && RetryOnKeyCollision == other.RetryOnKeyCollision;
         }
 
         public override bool Equals(object? obj)
@@ -51,6 +54,7 @@ namespace ModelBuilder.Generator
                 hash = hash * 397 ^ StringComparer.Ordinal.GetHashCode(ElementType);
                 hash = hash * 397 ^ StringComparer.Ordinal.GetHashCode(ValueType);
                 hash = hash * 397 ^ KeyCanBeNull.GetHashCode();
+                hash = hash * 397 ^ RetryOnKeyCollision.GetHashCode();
 
                 return hash;
             }
@@ -65,6 +69,12 @@ namespace ModelBuilder.Generator
         ///     Gets a value indicating whether the dictionary key type can be <c>null</c>.
         /// </summary>
         public bool KeyCanBeNull { get; }
+
+        /// <summary>
+        ///     Gets a value indicating whether a colliding random key is retried (up to a bounded
+        ///     attempt count) rather than silently overwriting the earlier entry.
+        /// </summary>
+        public bool RetryOnKeyCollision { get; }
 
         public CollectionKind Kind { get; }
 

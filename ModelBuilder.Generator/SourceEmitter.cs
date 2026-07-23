@@ -143,7 +143,6 @@ namespace ModelBuilder.Generator
         private static void EmitCollectionSource(StringBuilder builder, CollectionModel model)
         {
             var slot = model.SlotType;
-            var element = model.ElementType;
 
             builder.Append(Indent).AppendLine($"internal sealed class {model.SourceName}");
             builder.Append(Indent).AppendLine($"    : global::ModelBuilder.IValueSource<{slot}>");
@@ -155,42 +154,57 @@ namespace ModelBuilder.Generator
             switch (model.Kind)
             {
                 case CollectionKind.Array:
-                    builder.Append(Indent).AppendLine($"        var result = new {element}[count];");
-                    builder.Append(Indent).AppendLine("        for (var i = 0; i < count; i++)");
-                    builder.Append(Indent).AppendLine("        {");
-                    builder.Append(Indent).AppendLine($"            result[i] = context.Build<{element}>(typeof({slot}), \"item\");");
-                    builder.Append(Indent).AppendLine("        }");
+                    EmitArrayBody(builder, model);
 
                     break;
+                case CollectionKind.List:
                 case CollectionKind.Set:
-                    builder.Append(Indent).AppendLine($"        var result = new global::System.Collections.Generic.HashSet<{element}>();");
-                    builder.Append(Indent).AppendLine("        for (var i = 0; i < count; i++)");
-                    builder.Append(Indent).AppendLine("        {");
-                    builder.Append(Indent).AppendLine($"            result.Add(context.Build<{element}>(typeof({slot}), \"item\"));");
-                    builder.Append(Indent).AppendLine("        }");
+                case CollectionKind.Collection:
+                case CollectionKind.Queue:
+                case CollectionKind.Stack:
+                case CollectionKind.SortedSet:
+                case CollectionKind.ObservableCollection:
+                case CollectionKind.ConcurrentBag:
+                case CollectionKind.ConcurrentQueue:
+                case CollectionKind.ConcurrentStack:
+                    EmitAddBasedBody(builder, model, model.Kind);
 
                     break;
                 case CollectionKind.Dictionary:
-                    builder.Append(Indent).AppendLine($"        var result = new global::System.Collections.Generic.Dictionary<{element}, {model.ValueType}>();");
-                    builder.Append(Indent).AppendLine("        for (var i = 0; i < count; i++)");
-                    builder.Append(Indent).AppendLine("        {");
-                    builder.Append(Indent).AppendLine($"            var key = context.Build<{element}>(typeof({slot}), \"key\");");
+                case CollectionKind.SortedDictionary:
+                case CollectionKind.SortedList:
+                case CollectionKind.ConcurrentDictionary:
+                    EmitKeyedBody(builder, model);
 
-                    if (model.KeyCanBeNull)
-                    {
-                        builder.Append(Indent).AppendLine("            if (key is null) { continue; }");
-                    }
+                    break;
+                case CollectionKind.ReadOnlyCollection:
+                    EmitReadOnlyCollectionBody(builder, model);
 
-                    builder.Append(Indent).AppendLine($"            result[key] = context.Build<{model.ValueType}>(typeof({slot}), \"value\");");
-                    builder.Append(Indent).AppendLine("        }");
+                    break;
+                case CollectionKind.ReadOnlyDictionary:
+                    EmitReadOnlyDictionaryBody(builder, model);
+
+                    break;
+                case CollectionKind.ReadOnlyObservableCollection:
+                    EmitReadOnlyObservableCollectionBody(builder, model);
+
+                    break;
+                case CollectionKind.ImmutableArray:
+                case CollectionKind.ImmutableList:
+                case CollectionKind.ImmutableHashSet:
+                case CollectionKind.ImmutableSortedSet:
+                case CollectionKind.ImmutableQueue:
+                case CollectionKind.ImmutableStack:
+                    EmitImmutableSingleBody(builder, model);
+
+                    break;
+                case CollectionKind.ImmutableDictionary:
+                case CollectionKind.ImmutableSortedDictionary:
+                    EmitImmutableDictionaryBody(builder, model);
 
                     break;
                 default:
-                    builder.Append(Indent).AppendLine($"        var result = new global::System.Collections.Generic.List<{element}>(count);");
-                    builder.Append(Indent).AppendLine("        for (var i = 0; i < count; i++)");
-                    builder.Append(Indent).AppendLine("        {");
-                    builder.Append(Indent).AppendLine($"            result.Add(context.Build<{element}>(typeof({slot}), \"item\"));");
-                    builder.Append(Indent).AppendLine("        }");
+                    EmitAddBasedBody(builder, model, CollectionKind.List);
 
                     break;
             }
@@ -199,6 +213,221 @@ namespace ModelBuilder.Generator
             builder.Append(Indent).AppendLine("    }");
             builder.Append(Indent).AppendLine("}");
         }
+
+        private static void EmitArrayBody(StringBuilder builder, CollectionModel model)
+        {
+            var slot = model.SlotType;
+            var element = model.ElementType;
+
+            builder.Append(Indent).AppendLine($"        var result = new {element}[count];");
+            builder.Append(Indent).AppendLine("        for (var i = 0; i < count; i++)");
+            builder.Append(Indent).AppendLine("        {");
+            builder.Append(Indent).AppendLine($"            result[i] = context.Build<{element}>(typeof({slot}), \"item\", i);");
+            builder.Append(Indent).AppendLine("        }");
+        }
+
+        private static string GetAddBasedBackingTypeName(CollectionKind kind, string element)
+        {
+            return kind switch
+            {
+                CollectionKind.List => $"global::System.Collections.Generic.List<{element}>",
+                CollectionKind.Set => $"global::System.Collections.Generic.HashSet<{element}>",
+                CollectionKind.Collection => $"global::System.Collections.ObjectModel.Collection<{element}>",
+                CollectionKind.Queue => $"global::System.Collections.Generic.Queue<{element}>",
+                CollectionKind.Stack => $"global::System.Collections.Generic.Stack<{element}>",
+                CollectionKind.SortedSet => $"global::System.Collections.Generic.SortedSet<{element}>",
+                CollectionKind.ObservableCollection => $"global::System.Collections.ObjectModel.ObservableCollection<{element}>",
+                CollectionKind.ConcurrentBag => $"global::System.Collections.Concurrent.ConcurrentBag<{element}>",
+                CollectionKind.ConcurrentQueue => $"global::System.Collections.Concurrent.ConcurrentQueue<{element}>",
+                CollectionKind.ConcurrentStack => $"global::System.Collections.Concurrent.ConcurrentStack<{element}>",
+                _ => $"global::System.Collections.Generic.List<{element}>"
+            };
+        }
+
+        private static string GetAddMethodName(CollectionKind kind)
+        {
+            return kind switch
+            {
+                CollectionKind.Queue => "Enqueue",
+                CollectionKind.ConcurrentQueue => "Enqueue",
+                CollectionKind.Stack => "Push",
+                CollectionKind.ConcurrentStack => "Push",
+                _ => "Add"
+            };
+        }
+
+        private static void EmitAddBasedBody(StringBuilder builder, CollectionModel model, CollectionKind kind)
+        {
+            var slot = model.SlotType;
+            var element = model.ElementType;
+            var backingType = GetAddBasedBackingTypeName(kind, element);
+            var addMethod = GetAddMethodName(kind);
+            var constructorArgs = kind == CollectionKind.List ? "count" : string.Empty;
+
+            builder.Append(Indent).AppendLine($"        var result = new {backingType}({constructorArgs});");
+            builder.Append(Indent).AppendLine("        for (var i = 0; i < count; i++)");
+            builder.Append(Indent).AppendLine("        {");
+            builder.Append(Indent).AppendLine($"            result.{addMethod}(context.Build<{element}>(typeof({slot}), \"item\", i));");
+            builder.Append(Indent).AppendLine("        }");
+        }
+
+        private static string GetKeyedBackingTypeName(CollectionKind kind, string element, string value)
+        {
+            return kind switch
+            {
+                CollectionKind.SortedDictionary => $"global::System.Collections.Generic.SortedDictionary<{element}, {value}>",
+                CollectionKind.SortedList => $"global::System.Collections.Generic.SortedList<{element}, {value}>",
+                CollectionKind.ConcurrentDictionary => $"global::System.Collections.Concurrent.ConcurrentDictionary<{element}, {value}>",
+                _ => $"global::System.Collections.Generic.Dictionary<{element}, {value}>"
+            };
+        }
+
+        private static void EmitKeyedBody(StringBuilder builder, CollectionModel model)
+        {
+            var slot = model.SlotType;
+            var element = model.ElementType;
+            var value = model.ValueType;
+            var backingType = GetKeyedBackingTypeName(model.Kind, element, value);
+
+            builder.Append(Indent).AppendLine($"        var result = new {backingType}();");
+            builder.Append(Indent).AppendLine("        for (var i = 0; i < count; i++)");
+            builder.Append(Indent).AppendLine("        {");
+
+            if (model.RetryOnKeyCollision)
+            {
+                builder.Append(Indent).AppendLine($"            {element} key;");
+                builder.Append(Indent).AppendLine("            var attempts = 0;");
+                builder.Append(Indent).AppendLine("            do");
+                builder.Append(Indent).AppendLine("            {");
+                builder.Append(Indent).AppendLine($"                key = context.Build<{element}>(typeof({slot}), \"key\", i);");
+                builder.Append(Indent).AppendLine("                attempts++;");
+                builder.Append(Indent).AppendLine("            }");
+
+                if (model.KeyCanBeNull)
+                {
+                    builder.Append(Indent).AppendLine("            while ((key is null || result.ContainsKey(key)) && attempts < 10);");
+                    builder.Append(Indent).AppendLine("            if (key is null) { continue; }");
+                }
+                else
+                {
+                    builder.Append(Indent).AppendLine("            while (result.ContainsKey(key) && attempts < 10);");
+                }
+            }
+            else
+            {
+                builder.Append(Indent).AppendLine($"            var key = context.Build<{element}>(typeof({slot}), \"key\", i);");
+
+                if (model.KeyCanBeNull)
+                {
+                    builder.Append(Indent).AppendLine("            if (key is null) { continue; }");
+                }
+            }
+
+            builder.Append(Indent).AppendLine($"            result[key] = context.Build<{value}>(typeof({slot}), \"value\", i);");
+            builder.Append(Indent).AppendLine("        }");
+        }
+
+        private static void EmitReadOnlyCollectionBody(StringBuilder builder, CollectionModel model)
+        {
+            var slot = model.SlotType;
+            var element = model.ElementType;
+
+            builder.Append(Indent).AppendLine($"        var backing = new global::System.Collections.Generic.List<{element}>(count);");
+            builder.Append(Indent).AppendLine("        for (var i = 0; i < count; i++)");
+            builder.Append(Indent).AppendLine("        {");
+            builder.Append(Indent).AppendLine($"            backing.Add(context.Build<{element}>(typeof({slot}), \"item\", i));");
+            builder.Append(Indent).AppendLine("        }");
+            builder.Append(Indent).AppendLine($"        var result = new global::System.Collections.ObjectModel.ReadOnlyCollection<{element}>(backing);");
+        }
+
+        private static void EmitReadOnlyDictionaryBody(StringBuilder builder, CollectionModel model)
+        {
+            var slot = model.SlotType;
+            var element = model.ElementType;
+            var value = model.ValueType;
+
+            builder.Append(Indent).AppendLine($"        var backing = new global::System.Collections.Generic.Dictionary<{element}, {value}>();");
+            builder.Append(Indent).AppendLine("        for (var i = 0; i < count; i++)");
+            builder.Append(Indent).AppendLine("        {");
+            builder.Append(Indent).AppendLine($"            var key = context.Build<{element}>(typeof({slot}), \"key\", i);");
+
+            if (model.KeyCanBeNull)
+            {
+                builder.Append(Indent).AppendLine("            if (key is null) { continue; }");
+            }
+
+            builder.Append(Indent).AppendLine($"            backing[key] = context.Build<{value}>(typeof({slot}), \"value\", i);");
+            builder.Append(Indent).AppendLine("        }");
+            builder.Append(Indent)
+                .AppendLine($"        var result = new global::System.Collections.ObjectModel.ReadOnlyDictionary<{element}, {value}>(backing);");
+        }
+
+        private static void EmitReadOnlyObservableCollectionBody(StringBuilder builder, CollectionModel model)
+        {
+            var slot = model.SlotType;
+            var element = model.ElementType;
+
+            builder.Append(Indent).AppendLine($"        var backing = new global::System.Collections.ObjectModel.ObservableCollection<{element}>();");
+            builder.Append(Indent).AppendLine("        for (var i = 0; i < count; i++)");
+            builder.Append(Indent).AppendLine("        {");
+            builder.Append(Indent).AppendLine($"            backing.Add(context.Build<{element}>(typeof({slot}), \"item\", i));");
+            builder.Append(Indent).AppendLine("        }");
+            builder.Append(Indent)
+                .AppendLine($"        var result = new global::System.Collections.ObjectModel.ReadOnlyObservableCollection<{element}>(backing);");
+        }
+
+        private static string GetImmutableFactoryTypeName(CollectionKind kind)
+        {
+            return kind switch
+            {
+                CollectionKind.ImmutableArray => "global::System.Collections.Immutable.ImmutableArray",
+                CollectionKind.ImmutableList => "global::System.Collections.Immutable.ImmutableList",
+                CollectionKind.ImmutableHashSet => "global::System.Collections.Immutable.ImmutableHashSet",
+                CollectionKind.ImmutableSortedSet => "global::System.Collections.Immutable.ImmutableSortedSet",
+                CollectionKind.ImmutableQueue => "global::System.Collections.Immutable.ImmutableQueue",
+                CollectionKind.ImmutableStack => "global::System.Collections.Immutable.ImmutableStack",
+                CollectionKind.ImmutableDictionary => "global::System.Collections.Immutable.ImmutableDictionary",
+                CollectionKind.ImmutableSortedDictionary => "global::System.Collections.Immutable.ImmutableSortedDictionary",
+                _ => "global::System.Collections.Immutable.ImmutableList"
+            };
+        }
+
+        private static void EmitImmutableSingleBody(StringBuilder builder, CollectionModel model)
+        {
+            var slot = model.SlotType;
+            var element = model.ElementType;
+            var factory = GetImmutableFactoryTypeName(model.Kind);
+
+            builder.Append(Indent).AppendLine($"        var backing = new global::System.Collections.Generic.List<{element}>(count);");
+            builder.Append(Indent).AppendLine("        for (var i = 0; i < count; i++)");
+            builder.Append(Indent).AppendLine("        {");
+            builder.Append(Indent).AppendLine($"            backing.Add(context.Build<{element}>(typeof({slot}), \"item\", i));");
+            builder.Append(Indent).AppendLine("        }");
+            builder.Append(Indent).AppendLine($"        var result = {factory}.CreateRange(backing);");
+        }
+
+        private static void EmitImmutableDictionaryBody(StringBuilder builder, CollectionModel model)
+        {
+            var slot = model.SlotType;
+            var element = model.ElementType;
+            var value = model.ValueType;
+            var factory = GetImmutableFactoryTypeName(model.Kind);
+
+            builder.Append(Indent).AppendLine($"        var backing = new global::System.Collections.Generic.Dictionary<{element}, {value}>();");
+            builder.Append(Indent).AppendLine("        for (var i = 0; i < count; i++)");
+            builder.Append(Indent).AppendLine("        {");
+            builder.Append(Indent).AppendLine($"            var key = context.Build<{element}>(typeof({slot}), \"key\", i);");
+
+            if (model.KeyCanBeNull)
+            {
+                builder.Append(Indent).AppendLine("            if (key is null) { continue; }");
+            }
+
+            builder.Append(Indent).AppendLine($"            backing[key] = context.Build<{value}>(typeof({slot}), \"value\", i);");
+            builder.Append(Indent).AppendLine("        }");
+            builder.Append(Indent).AppendLine($"        var result = {factory}.CreateRange(backing);");
+        }
+
 
         private static void EmitBuilder(StringBuilder builder, BuildableModel model)
         {
@@ -515,16 +744,23 @@ namespace ModelBuilder.Generator
             foreach (var enumModel in model.Enums)
             {
                 builder.Append(Indent).AppendLine($"        global::ModelBuilder.ValueSource<{enumModel.FullyQualifiedName}>.Instance = new {enumModel.SourceName}();");
+                builder.Append(Indent)
+                    .AppendLine($"        global::ModelBuilder.Model.RegisterValueSource<{enumModel.FullyQualifiedName}>(new {enumModel.SourceName}());");
             }
 
             foreach (var underlying in model.NullableUnderlyingTypes)
             {
                 builder.Append(Indent).AppendLine($"        global::ModelBuilder.ValueSource<{underlying}?>.Instance = new global::ModelBuilder.NullableValueSource<{underlying}>();");
+                builder.Append(Indent)
+                    .AppendLine(
+                        $"        global::ModelBuilder.Model.RegisterValueSource<{underlying}?>(new global::ModelBuilder.NullableValueSource<{underlying}>());");
             }
 
             foreach (var collection in model.Collections)
             {
                 builder.Append(Indent).AppendLine($"        global::ModelBuilder.ValueSource<{collection.SlotType}>.Instance = new {collection.SourceName}();");
+                builder.Append(Indent)
+                    .AppendLine($"        global::ModelBuilder.Model.RegisterValueSource<{collection.SlotType}>(new {collection.SourceName}());");
             }
 
             foreach (var buildable in model.Builders)

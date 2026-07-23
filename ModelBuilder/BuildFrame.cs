@@ -15,15 +15,26 @@ namespace ModelBuilder
         /// <param name="declaringType">The type that declares the member being built.</param>
         /// <param name="memberName">The name of the member being built, or <c>null</c> for the root.</param>
         /// <param name="memberType">The type of the value being built at this frame.</param>
+        /// <param name="collectionIndex">
+        ///     The zero-based index of the item within an enclosing collection, or <c>null</c> when this
+        ///     frame is not a collection item.
+        /// </param>
         /// <exception cref="ArgumentNullException">
         ///     The <paramref name="declaringType" /> or <paramref name="memberType" /> parameter is <c>null</c>.
         /// </exception>
-        public BuildFrame(Type declaringType, string? memberName, Type memberType)
+        public BuildFrame(Type declaringType, string? memberName, Type memberType, int? collectionIndex = null)
         {
             DeclaringType = declaringType ?? throw new ArgumentNullException(nameof(declaringType));
             MemberType = memberType ?? throw new ArgumentNullException(nameof(memberType));
             MemberName = memberName;
+            CollectionIndex = collectionIndex;
         }
+
+        /// <summary>
+        ///     Gets the zero-based index of the item within an enclosing collection.
+        /// </summary>
+        /// <returns>The item index, or <c>null</c> when this frame is not a collection item.</returns>
+        public int? CollectionIndex { get; }
 
         /// <summary>
         ///     Gets the type that declares the member being built.
