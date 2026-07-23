@@ -18,16 +18,29 @@ namespace ModelBuilder.Generator
     {
         private const string ModelTypeName = "ModelBuilder.Model";
         private const string ConfigurationTypeName = "ModelBuilder.IModelConfiguration";
+        private const string GenerateModelBuilderAttributeName = "ModelBuilder.GenerateModelBuilderAttribute";
 
         /// <inheritdoc />
         public void Initialize(IncrementalGeneratorInitializationContext context)
         {
-            var roots = context.SyntaxProvider
+            var invocationRoots = context.SyntaxProvider
                 .CreateSyntaxProvider(
                     static (node, _) => IsCandidateInvocation(node),
                     static (ctx, token) => GetRootType(ctx, token))
                 .Where(static capture => capture.Symbol is not null)
                 .Select(static (capture, _) => capture);
+
+            var attributeRoots = context.SyntaxProvider
+                .ForAttributeWithMetadataName(
+                    GenerateModelBuilderAttributeName,
+                    static (node, _) => IsCandidateAttributeTarget(node),
+                    static (ctx, token) => GetAttributeRoots(ctx, token))
+                .SelectMany(static (captures, _) => captures)
+                .Where(static capture => capture.Symbol is not null);
+
+            var roots = invocationRoots.Collect()
+                .Combine(attributeRoots.Collect())
+                .Select(static (pair, _) => pair.Left.AddRange(pair.Right));
 
             var hasModuleInitializer = context.CompilationProvider.Select(
                 static (compilation, _) =>
@@ -43,7 +56,7 @@ namespace ModelBuilder.Generator
                         && compilation.IsSymbolAccessibleWithin(symbol, compilation.Assembly);
                 });
 
-            var collected = roots.Collect().Combine(hasModuleInitializer);
+            var collected = roots.Combine(hasModuleInitializer);
 
             context.RegisterSourceOutput(collected, static (spc, input) => Execute(spc, input.Left, input.Right));
         }
@@ -242,6 +255,54 @@ namespace ModelBuilder.Generator
                     Name.Identifier.ValueText: "Create" or "Populate" or "Mapping" or "Ignoring" or "Construct"
                 }
             };
+        }
+
+        private static bool IsCandidateAttributeTarget(SyntaxNode node)
+        {
+            // Type-level [GenerateModelBuilder] is applied directly to a class/struct declaration.
+            // Assembly-level [assembly: GenerateModelBuilder(typeof(X))] attaches to the
+            // CompilationUnitSyntax of whichever file declares it; only files with a top-level
+            // attribute list can possibly carry one, so filtering on AttributeLists.Count avoids
+            // matching every file in the compilation.
+            return node is ClassDeclarationSyntax or StructDeclarationSyntax
+                || (node is CompilationUnitSyntax unit && unit.AttributeLists.Count > 0);
+        }
+
+        private static ImmutableArray<RootCapture> GetAttributeRoots(GeneratorAttributeSyntaxContext context, CancellationToken token)
+        {
+            if (context.TargetSymbol is INamedTypeSymbol typeSymbol)
+            {
+                // [GenerateModelBuilder] applied directly to a type names that type as a root.
+                var location = context.Attributes.Length > 0
+                    ? context.Attributes[0].ApplicationSyntaxReference?.GetSyntax(token).GetLocation()
+                    : null;
+
+                return ImmutableArray.Create(new RootCapture(typeSymbol, location ?? Location.None));
+            }
+
+            if (context.TargetSymbol is IAssemblySymbol)
+            {
+                var builder = ImmutableArray.CreateBuilder<RootCapture>();
+
+                foreach (var attribute in context.Attributes)
+                {
+                    // [assembly: GenerateModelBuilder(typeof(X))] names X as a root via the
+                    // constructor's typeof(...) constant.
+                    if (attribute.ConstructorArguments.Length == 0
+                        || attribute.ConstructorArguments[0].Value is not INamedTypeSymbol targetType)
+                    {
+                        continue;
+                    }
+
+                    var location = attribute.ApplicationSyntaxReference?.GetSyntax(token).GetLocation() ?? Location.None;
+
+                    builder.Add(new RootCapture(targetType, location));
+                }
+
+                return builder.ToImmutable();
+            }
+
+            return ImmutableArray<RootCapture>.Empty;
         }
 
         private readonly struct RootCapture
