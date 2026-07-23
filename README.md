@@ -243,7 +243,9 @@ var payload = Model.Mapping<IShipment, GroundShipment>().Create<Parcel>();
 ```
 
 There is no automatic assembly scan that guesses a concrete type — the mapping is explicit, which is
-what keeps the build deterministic and reflection-free.
+what keeps the build deterministic and reflection-free. This applies whether the abstract/interface
+type is the root you asked to build (`MB1001`) or a member reached along the way (`MB1012`) — either
+way, without a mapping the value is left at its default rather than built.
 
 #### Open generic type mapping
 
@@ -459,6 +461,7 @@ diagnostic**, not a runtime exception:
 | `MB1006` | An open generic [`Model.Mapping(Type, Type)`](#open-generic-type-mapping) target has no accessible constructor. |
 | `MB1007` | An open generic [`Model.Mapping(Type, Type)`](#open-generic-type-mapping) is never paired with a closed `Mapping<,>()` declaration. |
 | `MB1011` | The discovered collection is a shape ModelBuilder does not build (for example `ArraySegment<T>` or a live view like `Dictionary<K,V>.KeyCollection`). |
+| `MB1012` | A *member* (not a root) resolves to an abstract or interface type with no `Mapping<,>` to a concrete type, so it is silently left at its default value wherever it is used. |
 
 ### GenerateModelBuilder
 

@@ -1586,12 +1586,13 @@ runs. Indicative catalogue (IDs illustrative, severities tunable via `.editorcon
 | `MB1003` | Error | A value-ordering cycle (`.Before(...)`) has no valid topological order (§8.2.6) | "Remove or invert one `.Before(...)` in the cycle `{a → b → … → a}`." |
 | `MB1004` | Error | `.ForMembersMatching(expr)` uses a lambda shape the generator can't interpret (§8.2.8) | "Use a supported expression (`EndsWith`/`StartsWith`/`Contains`/`==`/`&&`/`||`/`!`) or switch to `.When(...)` for runtime evaluation." |
 | `MB1005` | Warning | `Model.Create(typeof(X))` names a constant type that can't be built (unbuildable/inaccessible/unmapped) (§12.7) | "`{X}` has no generated builder — make it discoverable (`Create<{X}>()`, a mapping, or `[GenerateModelBuilder]`)." |
-| `MB1006` | Warning | A `[GenerateModelBuilder]` attribute is declared on a **production** type rather than in the test assembly (§6.1) | "Move to `[assembly: GenerateModelBuilder(typeof({X}))]` in the test project to avoid shipping the attribute." |
-| `MB1007` | Warning | Two sources match the same target with equal priority (ambiguous selection) | "Give one source a higher priority, or narrow its `.ForMembers...` constraint." |
+| `MB1006` | Warning | An open generic `Model.Mapping(typeof(TSource<>), typeof(TTarget<>))` target has no accessible constructor for any closed shape (§8.2, #399) | "Add an accessible constructor to `{target}`, or narrow the mapping to shapes that have one." |
+| `MB1007` | Warning | An open generic mapping is registered but never paired with a closed `Model.Mapping<TSource, TTarget>()` declaration, so no builder is ever generated for it (§8.2, #399) | "Add `Model.Mapping<TClosedSource, TClosedTarget>()` for each closed shape you need built." |
 | `MB1008` | Warning | A registered `IValueSource<T>` is never selected (dead registration) | "Remove the registration or widen its match; it currently matches no discovered member." |
 | `MB1009` | Info | A member falls back to runtime matching via `.When(...)` on a hot path | "Express the condition with `.ForMembersNamed/Matching(...)` to compile it in, if possible." |
 | `MB1010` | Error | A write-only or init-only member is targeted in a way that can't be satisfied (§7, #282) | "Remove the member from population, or provide it via constructor args." |
 | `MB1011` | Warning | A discovered collection is a shape ModelBuilder does not build (no mutator, or a live view) (§8.2) | "Add `Model.Mapping<,>` to a supported collection, or register a custom `IValueSource<{X}>`." |
+| `MB1012` | Warning | A discovered *member* (not a root) resolves to an abstract/interface type with no `Mapping<,>` to a concrete type, so it is silently left at its default value (#400) | "Add `Model.Mapping<{abstract}, {concrete}>()` to give `{abstract}` a concrete type." |
 
 The generator also emits the **cycle** and **ambiguity** errors against the *merged* configuration
 for the whole compilation, so a conflict introduced by combining two modules is caught (§8.2.6).

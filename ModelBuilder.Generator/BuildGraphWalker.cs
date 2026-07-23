@@ -25,6 +25,9 @@ namespace ModelBuilder.Generator
                 SymbolDisplayFormat.FullyQualifiedFormat.MiscellaneousOptions
                 | SymbolDisplayMiscellaneousOptions.IncludeNullableReferenceTypeModifier);
 
+        private static readonly HashSet<INamedTypeSymbol> _emptyKnownMappedSources =
+            new HashSet<INamedTypeSymbol>(SymbolEqualityComparer.Default);
+
         /// <summary>
         ///     Determines whether the type has a public constructor the generated code can call.
         /// </summary>
@@ -56,16 +59,21 @@ namespace ModelBuilder.Generator
 
         public static GenerationModel Walk(IEnumerable<INamedTypeSymbol> roots)
         {
-            return Walk(roots, out _);
+            return Walk(roots, _emptyKnownMappedSources, out _, out _);
         }
 
-        public static GenerationModel Walk(IEnumerable<INamedTypeSymbol> roots, out ImmutableArray<string> unsupportedCollectionShapes)
+        public static GenerationModel Walk(
+            IEnumerable<INamedTypeSymbol> roots,
+            HashSet<INamedTypeSymbol> knownMappedSources,
+            out ImmutableArray<string> unsupportedCollectionShapes,
+            out ImmutableArray<string> unmappedMemberTypes)
         {
             var discovered = new Dictionary<string, INamedTypeSymbol>();
             var enums = new Dictionary<string, INamedTypeSymbol>();
             var nullables = new SortedSet<string>(System.StringComparer.Ordinal);
             var collections = new Dictionary<string, ITypeSymbol>();
             var unsupported = new HashSet<string>();
+            var unmapped = new HashSet<string>();
             var queue = new Queue<INamedTypeSymbol>();
             var seen = new HashSet<INamedTypeSymbol>(SymbolEqualityComparer.Default);
 
@@ -93,12 +101,12 @@ namespace ModelBuilder.Generator
 
                     if (rootElement != null)
                     {
-                        Visit(rootElement, queue, seen, nullables, collections, unsupported);
+                        Visit(rootElement, queue, seen, nullables, collections, unsupported, knownMappedSources, unmapped);
                     }
 
                     if (rootValue != null)
                     {
-                        Visit(rootValue, queue, seen, nullables, collections, unsupported);
+                        Visit(rootValue, queue, seen, nullables, collections, unsupported, knownMappedSources, unmapped);
                     }
 
                     continue;
@@ -120,12 +128,12 @@ namespace ModelBuilder.Generator
 
                 foreach (var parameter in SelectConstructor(type)?.Parameters ?? ImmutableArray<IParameterSymbol>.Empty)
                 {
-                    Visit(parameter.Type, queue, seen, nullables, collections, unsupported);
+                    Visit(parameter.Type, queue, seen, nullables, collections, unsupported, knownMappedSources, unmapped);
                 }
 
                 foreach (var property in GetSettableProperties(type))
                 {
-                    Visit(property.Type, queue, seen, nullables, collections, unsupported);
+                    Visit(property.Type, queue, seen, nullables, collections, unsupported, knownMappedSources, unmapped);
                 }
             }
 
@@ -153,6 +161,7 @@ namespace ModelBuilder.Generator
             }
 
             unsupportedCollectionShapes = unsupported.OrderBy(name => name, System.StringComparer.Ordinal).ToImmutableArray();
+            unmappedMemberTypes = unmapped.OrderBy(name => name, System.StringComparer.Ordinal).ToImmutableArray();
 
             return new GenerationModel(
                 new EquatableArray<BuildableModel>(builders.ToImmutable()),
@@ -267,7 +276,9 @@ namespace ModelBuilder.Generator
             HashSet<INamedTypeSymbol> seen,
             SortedSet<string> nullables,
             Dictionary<string, ITypeSymbol> collections,
-            HashSet<string> unsupported)
+            HashSet<string> unsupported,
+            HashSet<INamedTypeSymbol> knownMappedSources,
+            HashSet<string> unmappedMemberTypes)
         {
             if (type is IArrayTypeSymbol array)
             {
@@ -277,7 +288,7 @@ namespace ModelBuilder.Generator
 
                     collections[arraySlotName] = type;
 
-                    Visit(array.ElementType, queue, seen, nullables, collections, unsupported);
+                    Visit(array.ElementType, queue, seen, nullables, collections, unsupported, knownMappedSources, unmappedMemberTypes);
                 }
 
                 return;
@@ -295,7 +306,7 @@ namespace ModelBuilder.Generator
 
                 nullables.Add(underlying.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat));
 
-                Visit(underlying, queue, seen, nullables, collections, unsupported);
+                Visit(underlying, queue, seen, nullables, collections, unsupported, knownMappedSources, unmappedMemberTypes);
 
                 return;
             }
@@ -308,12 +319,12 @@ namespace ModelBuilder.Generator
 
                 if (element != null)
                 {
-                    Visit(element, queue, seen, nullables, collections, unsupported);
+                    Visit(element, queue, seen, nullables, collections, unsupported, knownMappedSources, unmappedMemberTypes);
                 }
 
                 if (value != null)
                 {
-                    Visit(value, queue, seen, nullables, collections, unsupported);
+                    Visit(value, queue, seen, nullables, collections, unsupported, knownMappedSources, unmappedMemberTypes);
                 }
 
                 return;
@@ -321,6 +332,17 @@ namespace ModelBuilder.Generator
 
             if (named.IsGenericType && IsUnsupportedCollectionShape(named))
             {
+                return;
+            }
+
+            if ((named.TypeKind == TypeKind.Interface || named.IsAbstract)
+                && knownMappedSources.Contains(named.OriginalDefinition) == false)
+            {
+                // Neither a recognized collection shape nor a type with a Mapping<,> registered anywhere
+                // in the compilation - the generator has nothing concrete to build here, and the member
+                // would otherwise be silently left at its default value with zero signal as to why.
+                unmappedMemberTypes.Add(named.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat));
+
                 return;
             }
 

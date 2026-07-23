@@ -11,3 +11,4 @@ MB1005  | ModelBuilder | Warning | Model.Create(typeof(X)) names a type that can
 MB1006  | ModelBuilder | Warning | Open generic mapping target has no accessible constructor
 MB1007  | ModelBuilder | Warning | Open generic mapping is never used in closed form
 MB1011  | ModelBuilder | Warning | Discovered collection shape is not supported
+MB1012  | ModelBuilder | Warning | Member resolves to an unmapped abstract or interface type

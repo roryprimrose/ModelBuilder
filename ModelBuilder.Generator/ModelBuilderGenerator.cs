@@ -113,12 +113,22 @@ namespace ModelBuilder.Generator
                 return;
             }
 
-            var models = BuildGraphWalker.Walk(distinct.Values, out var unsupportedCollectionShapes);
+            var models = BuildGraphWalker.Walk(
+                distinct.Values,
+                closedMappingSourceDefinitions,
+                out var unsupportedCollectionShapes,
+                out var unmappedMemberTypes);
 
             foreach (var unsupportedShape in unsupportedCollectionShapes)
             {
                 context.ReportDiagnostic(
                     Diagnostic.Create(DiagnosticDescriptors.UnsupportedCollectionShape, Location.None, unsupportedShape));
+            }
+
+            foreach (var unmappedMemberType in unmappedMemberTypes)
+            {
+                context.ReportDiagnostic(
+                    Diagnostic.Create(DiagnosticDescriptors.UnmappedAbstractMember, Location.None, unmappedMemberType));
             }
 
             if (models.IsEmpty)

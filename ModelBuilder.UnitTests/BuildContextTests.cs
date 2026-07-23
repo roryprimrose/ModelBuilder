@@ -218,6 +218,21 @@
             log.Entries[0].Children[0].MemberName.Should().Be("Name");
         }
 
+        [Fact]
+        public void BuildReturnsDefaultAndWritesSkipMemberLogWhenNoBuilderIsRegistered()
+        {
+            var log = new BuildLog();
+            var sut = new BuildContext(new RandomSource(1), log);
+
+            var result = sut.Build<Customer>(typeof(Order), "Customer");
+
+            result.Should().BeNull();
+            log.Entries.Should().ContainSingle();
+            log.Entries[0].Kind.Should().Be(BuildLogEntryKind.SkipMember);
+            log.Entries[0].MemberName.Should().Be("Customer");
+            log.Entries[0].Reason.Should().Be("no builder registered");
+        }
+
         private sealed class Customer
         {
         }
