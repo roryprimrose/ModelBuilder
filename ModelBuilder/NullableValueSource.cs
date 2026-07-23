@@ -26,12 +26,40 @@ namespace ModelBuilder
                 return null;
             }
 
-            if (ctx.TryResolveValueSource<T>(out var inner) == false || inner == null)
+            if (ctx.TryResolveValueSource<T>(out var inner) && inner != null)
+            {
+                return inner.Create(ctx, in target);
+            }
+
+            // T has no registered value source (an ordinary user-defined struct such as a discovered
+            // class/struct builds through the generated ModelBuilderSlot<T> builder instead of a value
+            // source). Fall back to it so Nullable<T> members of a custom struct populate consistently
+            // with their non-nullable counterparts, instead of always resolving to null.
+            var builder = ModelBuilderSlot<T>.Instance;
+
+            if (builder == null)
             {
                 return null;
             }
 
-            return inner.Create(ctx, in target);
+            if (ctx.IsInBuildChain(typeof(T)))
+            {
+                ctx.Log.Write(BuildLogEntryKind.SkipMember, typeof(T), target.MemberName, "circular-reference guard");
+
+                return null;
+            }
+
+            if (ctx.IsDepthExceeded)
+            {
+                ctx.Log.Write(BuildLogEntryKind.SkipMember, typeof(T), target.MemberName, "depth guard");
+
+                return null;
+            }
+
+            using (ctx.EnterMember(typeof(T), target.MemberName ?? typeof(T).Name, typeof(T)))
+            {
+                return builder.Create(ctx);
+            }
         }
     }
 }
