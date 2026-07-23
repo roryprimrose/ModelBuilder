@@ -33,6 +33,8 @@ namespace ModelBuilder.IntegrationTests
             actual.ConcurrentBagItems.Should().HaveCount(3);
             actual.ConcurrentQueueItems.Should().HaveCount(3);
             actual.ConcurrentStackItems.Should().HaveCount(3);
+            actual.ProducerConsumerCollectionItems.Should().HaveCount(3);
+            actual.ProducerConsumerCollectionItems.Should().BeOfType<System.Collections.Concurrent.ConcurrentBag<Widget>>();
             actual.DictionaryItems.Should().HaveCount(3);
             actual.SortedDictionaryItems.Should().HaveCount(3);
             actual.SortedListItems.Should().HaveCount(3);

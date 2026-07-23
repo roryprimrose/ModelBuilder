@@ -461,6 +461,12 @@ namespace ModelBuilder.Generator
 
                     return true;
                 case "System.Collections.Concurrent.ConcurrentBag<T>":
+                // IProducerConsumerCollection<T> is implemented by ConcurrentBag<T>, ConcurrentQueue<T>
+                // and ConcurrentStack<T> alike (a genuine 3-way ambiguity), so it needs its own explicit
+                // default rather than being derived automatically from an interface walk. ConcurrentBag
+                // is chosen to match how ImmutableHashSet already "wins" IImmutableSet over
+                // ImmutableSortedSet.
+                case "System.Collections.Concurrent.IProducerConsumerCollection<T>":
                     kind = CollectionKind.ConcurrentBag;
                     element = args[0];
 
@@ -977,8 +983,22 @@ namespace ModelBuilder.Generator
                 return false;
             }
 
-            if (type.IsAbstract || type.IsStatic || type.IsGenericType)
+            if (type.IsAbstract || type.IsStatic)
             {
+                return false;
+            }
+
+            if (type.IsUnboundGenericType)
+            {
+                return false;
+            }
+
+            if (type.IsGenericType && IsClosedConstructedType(type) == false)
+            {
+                // An open generic type (still carrying its own type parameters, e.g. reached via
+                // an open Model.Mapping(typeof(X<>), typeof(Y<>)) declaration) has nothing concrete
+                // to construct. A fully closed generic (e.g. Repository<Widget>) is buildable like
+                // any other class/struct.
                 return false;
             }
 
@@ -1006,6 +1026,24 @@ namespace ModelBuilder.Generator
             }
 
             return SelectConstructor(type) != null;
+        }
+
+        private static bool IsClosedConstructedType(INamedTypeSymbol type)
+        {
+            foreach (var argument in type.TypeArguments)
+            {
+                if (argument.TypeKind == TypeKind.TypeParameter)
+                {
+                    return false;
+                }
+
+                if (argument is INamedTypeSymbol { IsGenericType: true } nested && IsClosedConstructedType(nested) == false)
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         private static IMethodSymbol? SelectConstructor(INamedTypeSymbol type)

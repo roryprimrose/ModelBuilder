@@ -33,6 +33,8 @@ namespace ModelBuilder.IntegrationTests.Models
 
         public ConcurrentStack<Widget> ConcurrentStackItems { get; set; } = new();
 
+        public IProducerConsumerCollection<Widget> ProducerConsumerCollectionItems { get; set; } = new ConcurrentBag<Widget>();
+
         public Dictionary<string, Widget> DictionaryItems { get; set; } = new();
 
         public SortedDictionary<string, Widget> SortedDictionaryItems { get; set; } = new();

@@ -69,6 +69,14 @@ namespace ModelBuilder
         }
 
         /// <inheritdoc />
+        public IModelConfiguration Mapping(Type sourceType, Type targetType)
+        {
+            _configuration.AddMapping(sourceType, targetType);
+
+            return this;
+        }
+
+        /// <inheritdoc />
         public Construction<T> Construct<T>()
         {
             return new Construction<T>(_configuration, _logSink);

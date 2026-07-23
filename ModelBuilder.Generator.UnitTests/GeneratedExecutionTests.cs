@@ -311,6 +311,200 @@ namespace Sample
         }
 
         [Fact]
+        public void CreateBuildsClosedUserDefinedGenericTypeAsRoot()
+        {
+            const string source = @"
+namespace Sample
+{
+    public sealed class Box<T>
+    {
+        public T? Value { get; set; }
+    }
+
+    public static class Caller
+    {
+        public static Box<int> Build() => global::ModelBuilder.Model.Create<Box<int>>();
+    }
+}";
+
+            var harness = GeneratorTestHarness.Run(source);
+            harness.CompilationErrors.Should().BeEmpty();
+
+            var assembly = harness.EmitAndLoad();
+            var callerType = assembly.GetType("Sample.Caller", throwOnError: true)!;
+            var boxType = assembly.GetType("Sample.Box`1", throwOnError: true)!;
+            var closedBoxType = boxType.MakeGenericType(typeof(int));
+
+            var box = callerType.GetMethod("Build")!.Invoke(null, null)!;
+
+            closedBoxType.GetProperty("Value")!.GetValue(box).Should().NotBe(0);
+        }
+
+        [Fact]
+        public void CreateBuildsClosedUserDefinedGenericTypeAsMember()
+        {
+            const string source = @"
+namespace Sample
+{
+    public sealed class Box<T>
+    {
+        public T? Value { get; set; }
+    }
+
+    public sealed class Widget
+    {
+        public int Id { get; set; }
+    }
+
+    public sealed class Holder
+    {
+        public Box<Widget>? Item { get; set; }
+    }
+
+    public static class Caller
+    {
+        public static Holder Build() => global::ModelBuilder.Model.Create<Holder>();
+    }
+}";
+
+            var harness = GeneratorTestHarness.Run(source);
+            harness.CompilationErrors.Should().BeEmpty();
+
+            var assembly = harness.EmitAndLoad();
+            var holderType = assembly.GetType("Sample.Holder", throwOnError: true)!;
+            var boxType = assembly.GetType("Sample.Box`1", throwOnError: true)!;
+            var widgetType = assembly.GetType("Sample.Widget", throwOnError: true)!;
+            var closedBoxType = boxType.MakeGenericType(widgetType);
+
+            var holder = CreateViaModel(holderType);
+
+            var item = holderType.GetProperty("Item")!.GetValue(holder);
+
+            item.Should().NotBeNull();
+            item!.GetType().Should().Be(closedBoxType);
+        }
+
+        [Fact]
+        public void OpenGenericMappingBuildsClosedTargetWhenClosedShapeIsDeclared()
+        {
+            const string source = @"
+namespace Sample
+{
+    public interface IRepository<T>
+    {
+        T? Item { get; set; }
+    }
+
+    public sealed class Repository<T> : IRepository<T>
+    {
+        public T? Item { get; set; }
+    }
+
+    public sealed class Widget
+    {
+        public int Value { get; set; }
+    }
+
+    public sealed class Holder
+    {
+        public IRepository<Widget>? Repo { get; set; }
+    }
+
+    public static class Caller
+    {
+        public static Holder Build() =>
+            global::ModelBuilder.Model.Mapping(typeof(IRepository<>), typeof(Repository<>))
+                .Mapping<IRepository<Widget>, Repository<Widget>>()
+                .Create<Holder>();
+    }
+}";
+
+            var harness = GeneratorTestHarness.Run(source);
+            harness.CompilationErrors.Should().BeEmpty();
+            harness.GeneratorDiagnostics.Should().NotContain(d => d.Id == "MB1006" || d.Id == "MB1007");
+
+            var assembly = harness.EmitAndLoad();
+            var holderType = assembly.GetType("Sample.Holder", throwOnError: true)!;
+            var repositoryType = assembly.GetType("Sample.Repository`1", throwOnError: true)!;
+            var widgetType = assembly.GetType("Sample.Widget", throwOnError: true)!;
+            var closedRepositoryType = repositoryType.MakeGenericType(widgetType);
+
+            ValueSource<int>.Instance = new SequentialInt32Source();
+
+            try
+            {
+                var callerType = assembly.GetType("Sample.Caller", throwOnError: true)!;
+                var holder = callerType.GetMethod("Build")!.Invoke(null, null)!;
+
+                var repo = holderType.GetProperty("Repo")!.GetValue(holder);
+
+                repo.Should().NotBeNull();
+                repo!.GetType().Should().Be(closedRepositoryType);
+            }
+            finally
+            {
+                ValueSource<int>.Instance = null;
+            }
+        }
+
+        [Fact]
+        public void OpenGenericMappingWithNoAccessibleConstructorReportsDiagnostic()
+        {
+            const string source = @"
+namespace Sample
+{
+    public interface IRepository<T>
+    {
+    }
+
+    public sealed class Repository<T> : IRepository<T>
+    {
+        private Repository()
+        {
+        }
+    }
+
+    public static class Caller
+    {
+        public static void Configure() =>
+            global::ModelBuilder.Model.Mapping(typeof(IRepository<>), typeof(Repository<>));
+    }
+}";
+
+            var harness = GeneratorTestHarness.Run(source);
+            harness.CompilationErrors.Should().BeEmpty();
+
+            harness.GeneratorDiagnostics.Should().Contain(d => d.Id == "MB1006");
+        }
+
+        [Fact]
+        public void OpenGenericMappingNeverUsedInClosedFormReportsDiagnostic()
+        {
+            const string source = @"
+namespace Sample
+{
+    public interface IRepository<T>
+    {
+    }
+
+    public sealed class Repository<T> : IRepository<T>
+    {
+    }
+
+    public static class Caller
+    {
+        public static void Configure() =>
+            global::ModelBuilder.Model.Mapping(typeof(IRepository<>), typeof(Repository<>));
+    }
+}";
+
+            var harness = GeneratorTestHarness.Run(source);
+            harness.CompilationErrors.Should().BeEmpty();
+
+            harness.GeneratorDiagnostics.Should().Contain(d => d.Id == "MB1007");
+        }
+
+        [Fact]
         public void CreateTerminatesOnSelfReferencingType()
         {
             const string source = @"
@@ -584,6 +778,50 @@ namespace Sample
 
                     enumerable.Cast<object>().Should().NotBeEmpty($"{property.Name} should contain items");
                 }
+            }
+            finally
+            {
+                ValueSource<int>.Instance = null;
+            }
+        }
+
+        [Fact]
+        public void CreateBuildsConcurrentBagForIProducerConsumerCollectionMember()
+        {
+            const string source = @"
+namespace Sample
+{
+    public sealed class Bag
+    {
+        public System.Collections.Concurrent.IProducerConsumerCollection<int> Items { get; set; }
+    }
+
+    public static class Caller
+    {
+        public static Bag Build() => global::ModelBuilder.Model.Create<Bag>();
+    }
+}";
+
+            var harness = GeneratorTestHarness.Run(source);
+            harness.CompilationErrors.Should().BeEmpty();
+
+            var assembly = harness.EmitAndLoad();
+            var bagType = assembly.GetType("Sample.Bag", throwOnError: true)!;
+
+            ValueSource<int>.Instance = new SequentialInt32Source();
+
+            try
+            {
+                var bag = CreateViaModel(bagType);
+
+                var items = bagType.GetProperty("Items")!.GetValue(bag);
+
+                items.Should().NotBeNull();
+                items.Should().BeOfType<System.Collections.Concurrent.ConcurrentBag<int>>();
+
+                var enumerable = (System.Collections.IEnumerable)items!;
+
+                enumerable.Cast<object>().Should().NotBeEmpty();
             }
             finally
             {

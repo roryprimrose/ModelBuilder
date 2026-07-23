@@ -33,6 +33,7 @@ discovered at compile time and gets a dedicated builder, so ModelBuilder:
   * [Typed construction](#typed-construction)
   * [Ignoring members](#ignoring-members)
   * [Mapping abstract and interface types](#mapping-abstract-and-interface-types)
+    + [Open generic type mapping](#open-generic-type-mapping)
   * [Custom value sources](#custom-value-sources)
     + [Writing a reusable value source](#writing-a-reusable-value-source)
     + [The build context seams](#the-build-context-seams)
@@ -244,6 +245,28 @@ var payload = Model.Mapping<IShipment, GroundShipment>().Create<Parcel>();
 There is no automatic assembly scan that guesses a concrete type — the mapping is explicit, which is
 what keeps the build deterministic and reflection-free.
 
+#### Open generic type mapping
+
+`Model.Mapping(Type, Type)` accepts open generic type definitions, registering a mapping that applies
+to every closed shape of the source at runtime:
+
+```csharp
+var payload = Model.Mapping(typeof(IRepository<>), typeof(Repository<>))
+    .Mapping<IRepository<Widget>, Repository<Widget>>()
+    .Create<Holder>();
+```
+
+The open mapping only registers the **runtime fallback** used when no exact closed mapping matches a
+requested type. It does not, by itself, make the compiler generate a builder for any particular closed
+shape — you still declare each closed shape you need built, exactly as with a non-generic mapping (a
+`Model.Mapping<TClosedSource, TClosedTarget>()`/`Model.Mapping(typeof(TClosedSource), typeof(TClosedTarget))`
+call for that shape). The generator reports two diagnostics to help catch mistakes:
+
+| Diagnostic | Meaning |
+| --- | --- |
+| `MB1006` | An open generic mapping's target has no accessible constructor, so no closed shape of it could ever be built. |
+| `MB1007` | An open generic mapping is registered but never paired with a closed `Mapping<,>()` declaration, so no builder will ever be generated for any of its closed shapes. |
+
 ### Custom value sources
 
 When the built-in data does not produce what your model needs, register a custom value source. A
@@ -413,8 +436,9 @@ builder when it is reachable from one of these triggers:
 1. **`Model.Create<T>()`, `Model.Populate<T>()`, `Model.Construct<T>()` or `Model.Create(typeof(T))`** —
    `T` and everything reachable from it (constructor parameters and public settable properties) become
    buildable. This covers almost everything with no annotations.
-2. **`Model.Mapping<TSource, TTarget>()`** — makes `TTarget` buildable for abstract/interface
-   members.
+2. **`Model.Mapping<TSource, TTarget>()` / `Model.Mapping(Type, Type)`** — makes `TTarget` buildable
+   for abstract/interface members. The non-generic overload also accepts an [open generic type
+   definition](#open-generic-type-mapping) pair (`typeof(IRepository<>)`, `typeof(Repository<>)`).
 3. **`[GenerateModelBuilder]`** — names a root that is only ever built polymorphically or via a
    runtime `Type`.
 
@@ -432,6 +456,8 @@ diagnostic**, not a runtime exception:
 | `MB1001` | The requested root type cannot have a builder generated (for example it is abstract, an interface, or has no accessible constructor — a supported collection shape such as `List<T>` or `Dictionary<K,V>` is buildable even though it's generic). |
 | `MB1002` | The root type is inaccessible (for example `private`) to the generated code. |
 | `MB1005` | A `Model.Create(typeof(X))` root could not be resolved to a buildable type. |
+| `MB1006` | An open generic [`Model.Mapping(Type, Type)`](#open-generic-type-mapping) target has no accessible constructor. |
+| `MB1007` | An open generic [`Model.Mapping(Type, Type)`](#open-generic-type-mapping) is never paired with a closed `Mapping<,>()` declaration. |
 | `MB1011` | The discovered collection is a shape ModelBuilder does not build (for example `ArraySegment<T>` or a live view like `Dictionary<K,V>.KeyCollection`). |
 
 ### GenerateModelBuilder

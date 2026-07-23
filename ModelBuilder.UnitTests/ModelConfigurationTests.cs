@@ -118,6 +118,16 @@
         }
 
         [Fact]
+        public void MappingByTypeReturnsSameConfigurationForChaining()
+        {
+            var sut = new ModelConfiguration();
+
+            var actual = sut.Mapping(typeof(IThing), typeof(Thing));
+
+            actual.Should().BeSameAs(sut);
+        }
+
+        [Fact]
         public void PopulateInvokesLogSinkWhenWriteLogConfigured()
         {
             ModelBuilderSlot<Probe>.Instance = new ProbeBuilder();

@@ -19,6 +19,14 @@ namespace ModelBuilder
         /// <exception cref="ArgumentNullException">
         ///     The <paramref name="sourceType" /> or <paramref name="targetType" /> parameter is <c>null</c>.
         /// </exception>
+        /// <remarks>
+        ///     <paramref name="sourceType" /> and <paramref name="targetType" /> may both be open generic type
+        ///     definitions (for example <c>typeof(IRepository&lt;&gt;)</c> mapped to <c>typeof(Repository&lt;&gt;)</c>),
+        ///     in which case a closed member type is resolved against the source's generic type definition and
+        ///     the matching closed target is constructed from the same type arguments. The closed target type
+        ///     still needs its own generated builder to be reachable in the build graph for a value to be
+        ///     produced.
+        /// </remarks>
         IBuildConfiguration AddMapping(Type sourceType, Type targetType);
 
         /// <summary>
@@ -111,6 +119,11 @@ namespace ModelBuilder
         /// <param name="sourceType">The source type to resolve.</param>
         /// <param name="targetType">The mapped concrete type, when one is registered.</param>
         /// <returns><c>true</c> if a mapping is registered; otherwise, <c>false</c>.</returns>
+        /// <remarks>
+        ///     When <paramref name="sourceType" /> is a closed generic type with no exact mapping, this falls
+        ///     back to a mapping registered against its open generic type definition and constructs the closed
+        ///     target from <paramref name="sourceType" />'s type arguments.
+        /// </remarks>
         bool TryGetMapping(Type sourceType, out Type targetType);
 
         /// <summary>

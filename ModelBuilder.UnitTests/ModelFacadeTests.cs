@@ -119,6 +119,30 @@
             }
         }
 
+        [Fact]
+        public void MappingGenericReturnsConfiguration()
+        {
+            var actual = global::ModelBuilder.Model.Mapping<IThing, Thing>();
+
+            actual.Should().NotBeNull();
+        }
+
+        [Fact]
+        public void MappingByTypeReturnsConfiguration()
+        {
+            var actual = global::ModelBuilder.Model.Mapping(typeof(IThing), typeof(Thing));
+
+            actual.Should().NotBeNull();
+        }
+
+        private interface IThing
+        {
+        }
+
+        private sealed class Thing : IThing
+        {
+        }
+
         private sealed class Unregistered
         {
         }

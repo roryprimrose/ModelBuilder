@@ -1,6 +1,7 @@
 ﻿namespace ModelBuilder.UnitTests
 {
     using System;
+    using System.Collections.Generic;
     using System.IO;
     using FluentAssertions;
     using ModelBuilder;
@@ -37,6 +38,48 @@
             Action action = () => sut.AddMapping(null!, typeof(MemoryStream));
 
             action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void TryGetMappingConstructsClosedTargetFromOpenGenericMapping()
+        {
+            var sut = new BuildConfiguration();
+
+            sut.AddMapping(typeof(IList<>), typeof(List<>));
+
+            sut.TryGetMapping(typeof(IList<int>), out var target).Should().BeTrue();
+            target.Should().Be(typeof(List<int>));
+        }
+
+        [Fact]
+        public void TryGetMappingPrefersExactClosedMappingOverOpenGenericMapping()
+        {
+            var sut = new BuildConfiguration();
+
+            sut.AddMapping(typeof(IList<>), typeof(List<>));
+            sut.AddMapping(typeof(IList<int>), typeof(CustomIntList));
+
+            sut.TryGetMapping(typeof(IList<int>), out var target).Should().BeTrue();
+            target.Should().Be(typeof(CustomIntList));
+        }
+
+        [Fact]
+        public void TryGetMappingReturnsRegisteredClosedTargetForOpenGenericSource()
+        {
+            var sut = new BuildConfiguration();
+
+            sut.AddMapping(typeof(IList<>), typeof(CustomIntList));
+
+            sut.TryGetMapping(typeof(IList<int>), out var target).Should().BeTrue();
+            target.Should().Be(typeof(CustomIntList));
+        }
+
+        [Fact]
+        public void TryGetMappingReturnsFalseWhenOpenGenericSourceHasNoMapping()
+        {
+            var sut = new BuildConfiguration();
+
+            sut.TryGetMapping(typeof(IList<int>), out _).Should().BeFalse();
         }
 
         [Fact]
@@ -146,6 +189,10 @@
             var sut = new BuildConfiguration();
 
             sut.TryGetMapping(typeof(Stream), out _).Should().BeFalse();
+        }
+
+        private class CustomIntList : List<int>
+        {
         }
     }
 }

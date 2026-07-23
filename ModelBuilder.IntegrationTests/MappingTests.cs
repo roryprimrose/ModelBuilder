@@ -30,5 +30,14 @@ namespace ModelBuilder.IntegrationTests
             actual.Engine.Should().NotBeNull();
             actual.Engine.Should().BeOfType<DieselEngine>();
         }
+
+        [Fact]
+        public void CreatePopulatesInterfaceMemberUsingNonGenericMapping()
+        {
+            var actual = Model.Mapping(typeof(IEngine), typeof(DieselEngine)).Create<Vehicle>();
+
+            actual.Engine.Should().NotBeNull();
+            actual.Engine.Should().BeOfType<DieselEngine>();
+        }
     }
 }
