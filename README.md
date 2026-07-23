@@ -429,9 +429,10 @@ diagnostic**, not a runtime exception:
 
 | Diagnostic | Meaning |
 | --- | --- |
-| `MB1001` | The requested root type cannot have a builder generated (for example it is abstract, an interface, generic or has no accessible constructor). |
+| `MB1001` | The requested root type cannot have a builder generated (for example it is abstract, an interface, or has no accessible constructor — a supported collection shape such as `List<T>` or `Dictionary<K,V>` is buildable even though it's generic). |
 | `MB1002` | The root type is inaccessible (for example `private`) to the generated code. |
 | `MB1005` | A `Model.Create(typeof(X))` root could not be resolved to a buildable type. |
+| `MB1011` | The discovered collection is a shape ModelBuilder does not build (for example `ArraySegment<T>` or a live view like `Dictionary<K,V>.KeyCollection`). |
 
 ### GenerateModelBuilder
 
