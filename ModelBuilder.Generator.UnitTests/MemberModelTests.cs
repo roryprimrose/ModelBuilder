@@ -41,6 +41,15 @@ namespace ModelBuilder.Generator.UnitTests
         }
 
         [Fact]
+        public void EqualsReturnsFalseForDifferentRuntimeTypeName()
+        {
+            var first = new MemberModel("Name", "System.String", runtimeTypeName: "System.String");
+            var second = new MemberModel("Name", "System.String", runtimeTypeName: "System.Object");
+
+            first.Equals(second).Should().BeFalse();
+        }
+
+        [Fact]
         public void EqualsReturnsFalseForDifferentTypeName()
         {
             var first = new MemberModel("Name", "System.String");
@@ -75,6 +84,26 @@ namespace ModelBuilder.Generator.UnitTests
             sut.Name.Should().Be("Name");
             sut.TypeName.Should().Be("System.String");
             sut.DefaultLiteral.Should().Be("default");
+        }
+
+        [Fact]
+        public void RuntimeTypeNameDefaultsToTypeNameWhenNotSpecified()
+        {
+            var sut = new MemberModel("Name", "System.Collections.Generic.List<object?>?");
+
+            sut.RuntimeTypeName.Should().Be("System.Collections.Generic.List<object?>?");
+        }
+
+        [Fact]
+        public void RuntimeTypeNameReturnsExplicitValueWhenSpecified()
+        {
+            var sut = new MemberModel(
+                "Name",
+                "System.Collections.Generic.List<object?>?",
+                runtimeTypeName: "System.Collections.Generic.List<object?>");
+
+            sut.RuntimeTypeName.Should().Be("System.Collections.Generic.List<object?>");
+            sut.TypeName.Should().Be("System.Collections.Generic.List<object?>?");
         }
     }
 }
