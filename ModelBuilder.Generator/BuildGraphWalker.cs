@@ -25,10 +25,16 @@ namespace ModelBuilder.Generator
 
         public static GenerationModel Walk(IEnumerable<INamedTypeSymbol> roots)
         {
+            return Walk(roots, out _);
+        }
+
+        public static GenerationModel Walk(IEnumerable<INamedTypeSymbol> roots, out ImmutableArray<string> unsupportedCollectionShapes)
+        {
             var discovered = new Dictionary<string, INamedTypeSymbol>();
             var enums = new Dictionary<string, INamedTypeSymbol>();
             var nullables = new SortedSet<string>(System.StringComparer.Ordinal);
             var collections = new Dictionary<string, ITypeSymbol>();
+            var unsupported = new HashSet<string>();
             var queue = new Queue<INamedTypeSymbol>();
             var seen = new HashSet<INamedTypeSymbol>(SymbolEqualityComparer.Default);
 
@@ -44,6 +50,23 @@ namespace ModelBuilder.Generator
                 if (type.TypeKind == TypeKind.Enum)
                 {
                     enums[type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)] = type;
+
+                    continue;
+                }
+
+                if (TryClassifyCollection(type, out _, out var rootElement, out var rootValue, unsupported))
+                {
+                    collections[type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)] = type;
+
+                    if (rootElement != null)
+                    {
+                        Visit(rootElement, queue, seen, nullables, collections, unsupported);
+                    }
+
+                    if (rootValue != null)
+                    {
+                        Visit(rootValue, queue, seen, nullables, collections, unsupported);
+                    }
 
                     continue;
                 }
@@ -64,12 +87,12 @@ namespace ModelBuilder.Generator
 
                 foreach (var parameter in SelectConstructor(type)?.Parameters ?? ImmutableArray<IParameterSymbol>.Empty)
                 {
-                    Visit(parameter.Type, queue, seen, nullables, collections);
+                    Visit(parameter.Type, queue, seen, nullables, collections, unsupported);
                 }
 
                 foreach (var property in GetSettableProperties(type))
                 {
-                    Visit(property.Type, queue, seen, nullables, collections);
+                    Visit(property.Type, queue, seen, nullables, collections, unsupported);
                 }
             }
 
@@ -96,6 +119,8 @@ namespace ModelBuilder.Generator
                 collectionModels.Add(CreateCollectionModel(pair.Value, pair.Key, sourceNames));
             }
 
+            unsupportedCollectionShapes = unsupported.OrderBy(name => name, System.StringComparer.Ordinal).ToImmutableArray();
+
             return new GenerationModel(
                 new EquatableArray<BuildableModel>(builders.ToImmutable()),
                 new EquatableArray<EnumModel>(enumModels.ToImmutable()),
@@ -103,9 +128,31 @@ namespace ModelBuilder.Generator
                 new EquatableArray<CollectionModel>(collectionModels.ToImmutable()));
         }
 
+        private static readonly HashSet<CollectionKind> _keyedCollectionKinds = new HashSet<CollectionKind>
+        {
+            CollectionKind.Dictionary,
+            CollectionKind.SortedDictionary,
+            CollectionKind.SortedList,
+            CollectionKind.ConcurrentDictionary,
+            CollectionKind.ReadOnlyDictionary,
+            CollectionKind.ImmutableDictionary,
+            CollectionKind.ImmutableSortedDictionary
+        };
+
+        private static readonly HashSet<CollectionKind> _retryOnKeyCollisionKinds = new HashSet<CollectionKind>
+        {
+            CollectionKind.SortedDictionary,
+            CollectionKind.SortedList,
+            CollectionKind.ConcurrentDictionary
+        };
+
         private static CollectionModel CreateCollectionModel(ITypeSymbol type, string slotType, HashSet<string> sourceNames)
         {
-            TryClassifyCollection(type, out var kind, out var element, out var value);
+            TryClassifyCollection(type, out var kind, out var element, out var value, null);
+
+            var keyCanBeNull = _keyedCollectionKinds.Contains(kind) && element?.IsReferenceType == true;
+            var retryOnKeyCollision = _retryOnKeyCollisionKinds.Contains(kind);
+            var isCustomType = IsCustomCollectionType(type);
 
             return new CollectionModel(
                 kind,
@@ -113,7 +160,23 @@ namespace ModelBuilder.Generator
                 CreateName(slotType, "ValueSource", sourceNames),
                 element?.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) ?? string.Empty,
                 value?.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) ?? string.Empty,
-                kind == CollectionKind.Dictionary && element?.IsReferenceType == true);
+                keyCanBeNull,
+                retryOnKeyCollision,
+                isCustomType);
+        }
+
+        private static bool IsCustomCollectionType(ITypeSymbol type)
+        {
+            if (type is not INamedTypeSymbol named)
+            {
+                // Arrays are always built as the well-known T[] shape.
+                return false;
+            }
+
+            // A type is "custom" when it reached collection classification without directly
+            // matching one of the well-known BCL definitions/interfaces itself - i.e. it was
+            // classified through inheritance or interface implementation instead.
+            return TryClassifyByDefinition(named.OriginalDefinition.ToDisplayString(), named.TypeArguments, out _, out _, out _) == false;
         }
 
         private static EnumModel CreateEnumModel(INamedTypeSymbol type, string fullyQualifiedName, HashSet<string> sourceNames)
@@ -167,7 +230,8 @@ namespace ModelBuilder.Generator
             Queue<INamedTypeSymbol> queue,
             HashSet<INamedTypeSymbol> seen,
             SortedSet<string> nullables,
-            Dictionary<string, ITypeSymbol> collections)
+            Dictionary<string, ITypeSymbol> collections,
+            HashSet<string> unsupported)
         {
             if (type is IArrayTypeSymbol array)
             {
@@ -175,7 +239,7 @@ namespace ModelBuilder.Generator
                 {
                     collections[type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)] = type;
 
-                    Visit(array.ElementType, queue, seen, nullables, collections);
+                    Visit(array.ElementType, queue, seen, nullables, collections, unsupported);
                 }
 
                 return;
@@ -193,36 +257,59 @@ namespace ModelBuilder.Generator
 
                 nullables.Add(underlying.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat));
 
-                Visit(underlying, queue, seen, nullables, collections);
+                Visit(underlying, queue, seen, nullables, collections, unsupported);
 
                 return;
             }
 
-            if (TryClassifyCollection(named, out _, out var element, out var value))
+            if (TryClassifyCollection(named, out _, out var element, out var value, unsupported))
             {
                 collections[named.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)] = named;
 
                 if (element != null)
                 {
-                    Visit(element, queue, seen, nullables, collections);
+                    Visit(element, queue, seen, nullables, collections, unsupported);
                 }
 
                 if (value != null)
                 {
-                    Visit(value, queue, seen, nullables, collections);
+                    Visit(value, queue, seen, nullables, collections, unsupported);
                 }
 
+                return;
+            }
+
+            if (named.IsGenericType && IsUnsupportedCollectionShape(named))
+            {
                 return;
             }
 
             Enqueue(named, queue, seen);
         }
 
+
+        private static readonly string[] _unsupportedCollectionShapeDefinitions =
+        {
+            "System.ArraySegment<T>",
+            "System.Collections.Generic.Dictionary<TKey, TValue>.KeyCollection",
+            "System.Collections.Generic.Dictionary<TKey, TValue>.ValueCollection",
+            "System.Collections.Generic.SortedDictionary<TKey, TValue>.KeyCollection",
+            "System.Collections.Generic.SortedDictionary<TKey, TValue>.ValueCollection"
+        };
+
+        private static bool IsUnsupportedCollectionShape(INamedTypeSymbol named)
+        {
+            var definition = named.OriginalDefinition.ToDisplayString();
+
+            return Array.IndexOf(_unsupportedCollectionShapeDefinitions, definition) >= 0;
+        }
+
         private static bool TryClassifyCollection(
             ITypeSymbol type,
             out CollectionKind kind,
             out ITypeSymbol? element,
-            out ITypeSymbol? value)
+            out ITypeSymbol? value,
+            HashSet<string>? unsupportedShapes)
         {
             kind = CollectionKind.Array;
             element = null;
@@ -241,16 +328,56 @@ namespace ModelBuilder.Generator
                 return true;
             }
 
-            if (type is not INamedTypeSymbol { IsGenericType: true } named)
+            if (type is not INamedTypeSymbol named)
             {
                 return false;
             }
 
-            var definition = named.OriginalDefinition.ToDisplayString();
-            var args = named.TypeArguments;
+            if (IsUnsupportedCollectionShape(named))
+            {
+                unsupportedShapes?.Add(named.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat));
+
+                return false;
+            }
+
+            if (named.IsGenericType
+                && TryClassifyByDefinition(named.OriginalDefinition.ToDisplayString(), named.TypeArguments, out kind, out element, out value))
+            {
+                return true;
+            }
+
+            // A user-defined type that derives from a known mutable BCL collection (for example
+            // `class WidgetBag : Collection<Widget>`) or implements `ICollection<T>`/
+            // `IDictionary<TKey, TValue>` directly (for example a hand-written `IList<T>`
+            // implementation) is built the same way as its matched shape, but constructed as the
+            // requested type itself so its own behavior/state is preserved.
+            if (named.TypeKind == TypeKind.Class
+                && named.IsAbstract == false
+                && IsAccessible(named)
+                && HasPublicParameterlessConstructor(named)
+                && (TryClassifyByBaseDefinition(named, out kind, out element, out value)
+                    || TryClassifyByInterfaceImplementation(named, out kind, out element, out value)))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        private static bool TryClassifyByDefinition(
+            string definition,
+            ImmutableArray<ITypeSymbol> args,
+            out CollectionKind kind,
+            out ITypeSymbol? element,
+            out ITypeSymbol? value)
+        {
+            kind = CollectionKind.Array;
+            element = null;
+            value = null;
 
             switch (definition)
             {
+                // Single-type-argument, "Add"-based kinds.
                 case "System.Collections.Generic.List<T>":
                 case "System.Collections.Generic.IList<T>":
                 case "System.Collections.Generic.ICollection<T>":
@@ -263,10 +390,53 @@ namespace ModelBuilder.Generator
                     return true;
                 case "System.Collections.Generic.HashSet<T>":
                 case "System.Collections.Generic.ISet<T>":
+                case "System.Collections.Generic.IReadOnlySet<T>":
                     kind = CollectionKind.Set;
                     element = args[0];
 
                     return true;
+                case "System.Collections.ObjectModel.Collection<T>":
+                    kind = CollectionKind.Collection;
+                    element = args[0];
+
+                    return true;
+                case "System.Collections.Generic.Queue<T>":
+                    kind = CollectionKind.Queue;
+                    element = args[0];
+
+                    return true;
+                case "System.Collections.Generic.Stack<T>":
+                    kind = CollectionKind.Stack;
+                    element = args[0];
+
+                    return true;
+                case "System.Collections.Generic.SortedSet<T>":
+                    kind = CollectionKind.SortedSet;
+                    element = args[0];
+
+                    return true;
+                case "System.Collections.ObjectModel.ObservableCollection<T>":
+                    kind = CollectionKind.ObservableCollection;
+                    element = args[0];
+
+                    return true;
+                case "System.Collections.Concurrent.ConcurrentBag<T>":
+                    kind = CollectionKind.ConcurrentBag;
+                    element = args[0];
+
+                    return true;
+                case "System.Collections.Concurrent.ConcurrentQueue<T>":
+                    kind = CollectionKind.ConcurrentQueue;
+                    element = args[0];
+
+                    return true;
+                case "System.Collections.Concurrent.ConcurrentStack<T>":
+                    kind = CollectionKind.ConcurrentStack;
+                    element = args[0];
+
+                    return true;
+
+                // Two-type-argument, keyed kinds.
                 case "System.Collections.Generic.Dictionary<TKey, TValue>":
                 case "System.Collections.Generic.IDictionary<TKey, TValue>":
                 case "System.Collections.Generic.IReadOnlyDictionary<TKey, TValue>":
@@ -275,9 +445,277 @@ namespace ModelBuilder.Generator
                     value = args[1];
 
                     return true;
+                case "System.Collections.Generic.SortedDictionary<TKey, TValue>":
+                    kind = CollectionKind.SortedDictionary;
+                    element = args[0];
+                    value = args[1];
+
+                    return true;
+                case "System.Collections.Generic.SortedList<TKey, TValue>":
+                    kind = CollectionKind.SortedList;
+                    element = args[0];
+                    value = args[1];
+
+                    return true;
+                case "System.Collections.Concurrent.ConcurrentDictionary<TKey, TValue>":
+                    kind = CollectionKind.ConcurrentDictionary;
+                    element = args[0];
+                    value = args[1];
+
+                    return true;
+
+                // Read-only wrapper kinds.
+                case "System.Collections.ObjectModel.ReadOnlyCollection<T>":
+                    kind = CollectionKind.ReadOnlyCollection;
+                    element = args[0];
+
+                    return true;
+                case "System.Collections.ObjectModel.ReadOnlyDictionary<TKey, TValue>":
+                    kind = CollectionKind.ReadOnlyDictionary;
+                    element = args[0];
+                    value = args[1];
+
+                    return true;
+                case "System.Collections.ObjectModel.ReadOnlyObservableCollection<T>":
+                    kind = CollectionKind.ReadOnlyObservableCollection;
+                    element = args[0];
+
+                    return true;
+
+                // Immutable, single-type-argument kinds.
+                case "System.Collections.Immutable.ImmutableArray<T>":
+                    kind = CollectionKind.ImmutableArray;
+                    element = args[0];
+
+                    return true;
+                case "System.Collections.Immutable.ImmutableList<T>":
+                case "System.Collections.Immutable.IImmutableList<T>":
+                    kind = CollectionKind.ImmutableList;
+                    element = args[0];
+
+                    return true;
+                case "System.Collections.Immutable.ImmutableHashSet<T>":
+                case "System.Collections.Immutable.IImmutableSet<T>":
+                    kind = CollectionKind.ImmutableHashSet;
+                    element = args[0];
+
+                    return true;
+                case "System.Collections.Immutable.ImmutableSortedSet<T>":
+                    kind = CollectionKind.ImmutableSortedSet;
+                    element = args[0];
+
+                    return true;
+                case "System.Collections.Immutable.ImmutableQueue<T>":
+                case "System.Collections.Immutable.IImmutableQueue<T>":
+                    kind = CollectionKind.ImmutableQueue;
+                    element = args[0];
+
+                    return true;
+                case "System.Collections.Immutable.ImmutableStack<T>":
+                case "System.Collections.Immutable.IImmutableStack<T>":
+                    kind = CollectionKind.ImmutableStack;
+                    element = args[0];
+
+                    return true;
+
+                // Immutable, keyed kinds.
+                case "System.Collections.Immutable.ImmutableDictionary<TKey, TValue>":
+                case "System.Collections.Immutable.IImmutableDictionary<TKey, TValue>":
+                    kind = CollectionKind.ImmutableDictionary;
+                    element = args[0];
+                    value = args[1];
+
+                    return true;
+                case "System.Collections.Immutable.ImmutableSortedDictionary<TKey, TValue>":
+                    kind = CollectionKind.ImmutableSortedDictionary;
+                    element = args[0];
+                    value = args[1];
+
+                    return true;
                 default:
                     return false;
             }
+        }
+
+        private static bool TryClassifyByBaseDefinition(
+            INamedTypeSymbol named,
+            out CollectionKind kind,
+            out ITypeSymbol? element,
+            out ITypeSymbol? value)
+        {
+            for (var ancestor = named.BaseType;
+                 ancestor != null && ancestor.SpecialType != SpecialType.System_Object;
+                 ancestor = ancestor.BaseType)
+            {
+                if (ancestor.IsGenericType == false)
+                {
+                    continue;
+                }
+
+                if (TryClassifyByMutableBaseDefinition(ancestor.OriginalDefinition.ToDisplayString(), ancestor.TypeArguments, out kind, out element, out value))
+                {
+                    return true;
+                }
+            }
+
+            kind = CollectionKind.Array;
+            element = null;
+            value = null;
+
+            return false;
+        }
+
+        private static bool TryClassifyByMutableBaseDefinition(
+            string definition,
+            ImmutableArray<ITypeSymbol> args,
+            out CollectionKind kind,
+            out ITypeSymbol? element,
+            out ITypeSymbol? value)
+        {
+            // Only the concrete, non-sealed, parameterless-constructible BCL collection kinds are
+            // classifiable as an inheritance base. Read-only wrappers and immutable kinds are
+            // excluded here: they have no usable parameterless constructor (or, for the immutable
+            // kinds, are sealed and cannot be subclassed at all).
+            kind = CollectionKind.Array;
+            element = null;
+            value = null;
+
+            switch (definition)
+            {
+                case "System.Collections.Generic.List<T>":
+                    kind = CollectionKind.List;
+                    element = args[0];
+
+                    return true;
+                case "System.Collections.Generic.HashSet<T>":
+                    kind = CollectionKind.Set;
+                    element = args[0];
+
+                    return true;
+                case "System.Collections.ObjectModel.Collection<T>":
+                    kind = CollectionKind.Collection;
+                    element = args[0];
+
+                    return true;
+                case "System.Collections.Generic.Queue<T>":
+                    kind = CollectionKind.Queue;
+                    element = args[0];
+
+                    return true;
+                case "System.Collections.Generic.Stack<T>":
+                    kind = CollectionKind.Stack;
+                    element = args[0];
+
+                    return true;
+                case "System.Collections.Generic.SortedSet<T>":
+                    kind = CollectionKind.SortedSet;
+                    element = args[0];
+
+                    return true;
+                case "System.Collections.ObjectModel.ObservableCollection<T>":
+                    kind = CollectionKind.ObservableCollection;
+                    element = args[0];
+
+                    return true;
+                case "System.Collections.Concurrent.ConcurrentBag<T>":
+                    kind = CollectionKind.ConcurrentBag;
+                    element = args[0];
+
+                    return true;
+                case "System.Collections.Concurrent.ConcurrentQueue<T>":
+                    kind = CollectionKind.ConcurrentQueue;
+                    element = args[0];
+
+                    return true;
+                case "System.Collections.Concurrent.ConcurrentStack<T>":
+                    kind = CollectionKind.ConcurrentStack;
+                    element = args[0];
+
+                    return true;
+                case "System.Collections.Generic.Dictionary<TKey, TValue>":
+                    kind = CollectionKind.Dictionary;
+                    element = args[0];
+                    value = args[1];
+
+                    return true;
+                case "System.Collections.Generic.SortedDictionary<TKey, TValue>":
+                    kind = CollectionKind.SortedDictionary;
+                    element = args[0];
+                    value = args[1];
+
+                    return true;
+                case "System.Collections.Generic.SortedList<TKey, TValue>":
+                    kind = CollectionKind.SortedList;
+                    element = args[0];
+                    value = args[1];
+
+                    return true;
+                case "System.Collections.Concurrent.ConcurrentDictionary<TKey, TValue>":
+                    kind = CollectionKind.ConcurrentDictionary;
+                    element = args[0];
+                    value = args[1];
+
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        private static bool TryClassifyByInterfaceImplementation(
+            INamedTypeSymbol named,
+            out CollectionKind kind,
+            out ITypeSymbol? element,
+            out ITypeSymbol? value)
+        {
+            // A custom type that implements IDictionary<TKey, TValue> directly (rather than
+            // deriving from a known keyed base type) is keyed - checked first since
+            // IDictionary<TKey, TValue> also implements ICollection<KeyValuePair<TKey, TValue>>.
+            foreach (var candidateInterface in named.AllInterfaces)
+            {
+                if (candidateInterface.IsGenericType
+                    && candidateInterface.OriginalDefinition.ToDisplayString() == "System.Collections.Generic.IDictionary<TKey, TValue>")
+                {
+                    kind = CollectionKind.Dictionary;
+                    element = candidateInterface.TypeArguments[0];
+                    value = candidateInterface.TypeArguments[1];
+
+                    return true;
+                }
+            }
+
+            // A custom type that implements ICollection<T> directly (for example a hand-written
+            // IList<T> implementation, since IList<T> extends ICollection<T>) is Add-based.
+            foreach (var candidateInterface in named.AllInterfaces)
+            {
+                if (candidateInterface.IsGenericType
+                    && candidateInterface.OriginalDefinition.ToDisplayString() == "System.Collections.Generic.ICollection<T>")
+                {
+                    kind = CollectionKind.List;
+                    element = candidateInterface.TypeArguments[0];
+                    value = null;
+
+                    return true;
+                }
+            }
+
+            kind = CollectionKind.Array;
+            element = null;
+            value = null;
+
+            return false;
+        }
+
+        private static bool HasPublicParameterlessConstructor(INamedTypeSymbol type)
+        {
+            foreach (var constructor in type.InstanceConstructors)
+            {
+                if (constructor.DeclaredAccessibility == Accessibility.Public && constructor.Parameters.Length == 0)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private static BuildableModel CreateModel(

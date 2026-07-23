@@ -15,6 +15,15 @@
             sut.DeclaringType.Should().Be(typeof(Uri));
             sut.MemberName.Should().Be("Endpoint");
             sut.MemberType.Should().Be(typeof(string));
+            sut.CollectionIndex.Should().BeNull();
+        }
+
+        [Fact]
+        public void ConstructorStoresCollectionIndex()
+        {
+            var sut = new BuildFrame(typeof(Uri), "item", typeof(string), 3);
+
+            sut.CollectionIndex.Should().Be(3);
         }
 
         [Fact]

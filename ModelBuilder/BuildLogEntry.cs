@@ -12,12 +12,13 @@ namespace ModelBuilder
     {
         private readonly List<BuildLogEntry> _children = new List<BuildLogEntry>();
 
-        internal BuildLogEntry(BuildLogEntryKind kind, Type targetType, string? memberName, string? reason)
+        internal BuildLogEntry(BuildLogEntryKind kind, Type targetType, string? memberName, string? reason, int? collectionIndex = null)
         {
             Kind = kind;
             TargetType = targetType;
             MemberName = memberName;
             Reason = reason;
+            CollectionIndex = collectionIndex;
         }
 
         internal void Add(BuildLogEntry child)
@@ -29,6 +30,12 @@ namespace ModelBuilder
         ///     Gets the child entries nested beneath this entry.
         /// </summary>
         public IReadOnlyList<BuildLogEntry> Children => _children;
+
+        /// <summary>
+        ///     Gets the zero-based index of the item within an enclosing collection.
+        /// </summary>
+        /// <returns>The item index, or <c>null</c> when this entry does not relate to a collection item.</returns>
+        public int? CollectionIndex { get; }
 
         /// <summary>
         ///     Gets the kind of action this entry records.

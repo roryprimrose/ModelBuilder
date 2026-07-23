@@ -81,6 +81,25 @@
         }
 
         [Fact]
+        public void CreateTypeUsesRegisteredValueSourceFactoryWhenNoBuilderRegistered()
+        {
+            global::ModelBuilder.Model.RegisterValueSource(new ValueSourceOnlySource());
+
+            var actual = global::ModelBuilder.Model.Create(typeof(ValueSourceOnly));
+
+            actual.Should().BeOfType<ValueSourceOnly>();
+            ((ValueSourceOnly)actual).Value.Should().Be(42);
+        }
+
+        [Fact]
+        public void RegisterValueSourceThrowsWithNullSource()
+        {
+            Action action = () => global::ModelBuilder.Model.RegisterValueSource<ValueSourceOnly>(null!);
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
         public void PopulateUsesSlotBuilder()
         {
             ModelBuilderSlot<Widget>.Instance = new WidgetBuilder();
@@ -102,6 +121,19 @@
 
         private sealed class Unregistered
         {
+        }
+
+        private sealed class ValueSourceOnly
+        {
+            public int Value { get; set; }
+        }
+
+        private sealed class ValueSourceOnlySource : IValueSource<ValueSourceOnly>
+        {
+            public ValueSourceOnly Create(IBuildContext context, in BuildTarget target)
+            {
+                return new ValueSourceOnly { Value = 42 };
+            }
         }
 
         private sealed class Widget

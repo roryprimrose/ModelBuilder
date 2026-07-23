@@ -39,6 +39,33 @@
             source.Should().BeNull();
         }
 
+        [Fact]
+        public void TryCreateBoxedReturnsTrueAndBoxedValueForRegisteredType()
+        {
+            var sut = new ValueSourceRegistry();
+            sut.Register<int>(new ConstantInt32Source());
+
+            var context = new BuildContext(new RandomSource(1));
+
+            var actual = sut.TryCreateBoxed(typeof(int), context, out var value);
+
+            actual.Should().BeTrue();
+            value.Should().Be(7);
+        }
+
+        [Fact]
+        public void TryCreateBoxedReturnsFalseForUnregisteredType()
+        {
+            var sut = new ValueSourceRegistry();
+
+            var context = new BuildContext(new RandomSource(1));
+
+            var actual = sut.TryCreateBoxed(typeof(int), context, out var value);
+
+            actual.Should().BeFalse();
+            value.Should().BeNull();
+        }
+
         private sealed class ConstantInt32Source : IValueSource<int>
         {
             public int Create(IBuildContext context, in BuildTarget target)

@@ -7,18 +7,30 @@
 
   <!-- Production analyzers -->
   <ItemGroup>
-    <PackageVersion Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.301" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.302" />
   </ItemGroup>
 
-  <!-- Source generator (Roslyn) -->
+  <!--
+    Source generator (Roslyn).
+    KNOWN INCOMPATIBILITY (2026-07-23): bumping to 5.6.0 (Dependabot PR #393) built and passed the
+    full test suite locally on Windows, but crashed the "Test" step in CI (ubuntu-latest) with exit
+    code 134 (SIGABRT) in ~12s — far faster than a normal test run, indicating a runtime/native
+    crash rather than a test failure. Reverting only this pin back to 4.14.0 (keeping every other
+    dependency bump from that same PR batch) fixed CI immediately, isolating the crash to this
+    package's major version jump. Root cause not fully diagnosed (GitHub Actions log content wasn't
+    retrievable with available tooling), but it reproduces reliably on Linux CI and not on Windows,
+    so a local build/test pass is NOT sufficient to validate a future bump here.
+    Before bumping past 4.x again: bump on a branch, push, and confirm the CI "build" job (not just
+    a local run) is green before merging.
+  -->
   <ItemGroup>
     <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="4.14.0" />
     <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.14.0" />
   </ItemGroup>
 
-  <!-- Versioning. Referenced CI-only from Directory.Build.props; matches the GitVersion 6.7.0 config. -->
+  <!-- Versioning. Referenced CI-only from Directory.Build.props; matches the GitVersion 6.8.2 config. -->
   <ItemGroup>
-    <PackageVersion Include="GitVersion.MsBuild" Version="6.7.0" />
+    <PackageVersion Include="GitVersion.MsBuild" Version="6.8.2" />
   </ItemGroup>
 
   <!-- Benchmarking -->

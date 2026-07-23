@@ -1,6 +1,7 @@
 namespace ModelBuilder
 {
     using System;
+    using System.Collections.Generic;
 
     /// <summary>
     ///     The <see cref="Model" /> class
@@ -11,6 +12,8 @@ namespace ModelBuilder
     public static partial class Model
     {
         private static readonly ModelBuilderRegistry _registry = new ModelBuilderRegistry();
+        private static readonly Dictionary<Type, Func<IBuildContext, object?>> _valueSourceFactories =
+            new Dictionary<Type, Func<IBuildContext, object?>>();
 
         /// <summary>
         ///     Creates a populated instance of the specified type.
@@ -23,18 +26,43 @@ namespace ModelBuilder
         {
             instanceType = instanceType ?? throw new ArgumentNullException(nameof(instanceType));
 
-            if (_registry.TryGet(instanceType, out var builder) == false
-                || builder is null)
-            {
-                throw NoBuilder(instanceType);
-            }
-
             var context = NewContext(null, null);
 
             using (context.EnterRoot(instanceType))
             {
-                return builder.Create(context);
+                if (_registry.TryGet(instanceType, out var builder) && builder != null)
+                {
+                    return builder.Create(context);
+                }
+
+                if (_valueSourceFactories.TryGetValue(instanceType, out var factory))
+                {
+                    return factory(context)!;
+                }
+
+                if (BuiltInValueSources.Default.TryCreateBoxed(instanceType, context, out var builtInValue))
+                {
+                    return builtInValue!;
+                }
             }
+
+            throw NoBuilder(instanceType);
+        }
+
+        /// <summary>
+        ///     Registers a value-source factory for a runtime type, so that <see cref="Create(Type)" />
+        ///     can resolve value-source-only roots (collections, enums, nullable wrappers) that have no
+        ///     generated class builder, without runtime reflection. Called by generated code; not
+        ///     typically called directly.
+        /// </summary>
+        /// <typeparam name="T">The type the value source produces.</typeparam>
+        /// <param name="source">The value source to register.</param>
+        /// <exception cref="ArgumentNullException">The <paramref name="source" /> parameter is <c>null</c>.</exception>
+        public static void RegisterValueSource<T>(IValueSource<T> source)
+        {
+            source = source ?? throw new ArgumentNullException(nameof(source));
+
+            _valueSourceFactories[typeof(T)] = context => source.Create(context, new BuildTarget(typeof(T), typeof(T).Name));
         }
 
         /// <summary>

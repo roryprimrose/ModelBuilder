@@ -947,10 +947,80 @@ extension point: a consumer adding several value sources around a shared data se
 source cache a chosen data item under a key and the others read it for coherent, related values.
 
 **Tier 4 — collections (structural, generator-emitted):**
-`T[]`, `List<T>`, `IList<T>`, `IReadOnlyList<T>`, `IEnumerable<T>`, `ICollection<T>`,
-`IReadOnlyCollection<T>`, `Dictionary<K,V>`, `IDictionary<K,V>`, `IReadOnlyDictionary<K,V>`,
-`HashSet<T>`, `ISet<T>` — built structurally from the element/key/value sources, with the
-`MinCount`/`MaxCount` controls (and the #188 `MaxCount`-without-`MinCount` validation).
+
+Every collection is built structurally from its element/key/value sources, honoring the
+`MinCount`/`MaxCount` controls (and the #188 `MaxCount`-without-`MinCount` validation). A build
+root, constructor parameter, or settable member of any of the following shapes gets a generated
+`IValueSource<T>` — no `Mapping<,>` or custom source required:
+
+| Materialized as | Interface targets that resolve to it |
+|---|---|
+| `T[]` | — |
+| `List<T>` | `IList<T>`, `ICollection<T>`, `IEnumerable<T>`, `IReadOnlyList<T>`, `IReadOnlyCollection<T>` |
+| `HashSet<T>` | `ISet<T>`, `IReadOnlySet<T>` |
+| `Dictionary<K,V>` | `IDictionary<K,V>`, `IReadOnlyDictionary<K,V>` |
+| `Collection<T>` | — |
+| `Queue<T>` | — |
+| `Stack<T>` | — |
+| `SortedSet<T>` | — |
+| `ObservableCollection<T>` | — |
+| `SortedDictionary<K,V>` | — |
+| `SortedList<K,V>` | — |
+| `ConcurrentDictionary<K,V>` | — |
+| `ConcurrentBag<T>` | — |
+| `ConcurrentQueue<T>` | — |
+| `ConcurrentStack<T>` | — |
+| `ReadOnlyCollection<T>` | — |
+| `ReadOnlyDictionary<K,V>` | — |
+| `ReadOnlyObservableCollection<T>` | — |
+| `ImmutableArray<T>` | — |
+| `ImmutableList<T>` | `IImmutableList<T>` |
+| `ImmutableHashSet<T>` | `IImmutableSet<T>` |
+| `ImmutableSortedSet<T>` | — |
+| `ImmutableDictionary<K,V>` | `IImmutableDictionary<K,V>` |
+| `ImmutableSortedDictionary<K,V>` | — |
+| `ImmutableQueue<T>` | `IImmutableQueue<T>` |
+| `ImmutableStack<T>` | `IImmutableStack<T>` |
+
+**User-defined collection types.** A concrete, accessible, non-abstract type with a public
+parameterless constructor that either derives from one of the mutable Add-based or keyed kinds
+above (for example `class WidgetBag : Collection<Widget>`) or implements `ICollection<T>` /
+`IDictionary<TKey, TValue>` directly (for example a hand-written `IList<T>` implementation) is
+classified with the matching shape and built as *itself* — constructed via its own parameterless
+constructor and populated through its own (inherited or implemented) mutator — rather than being
+discarded as an ordinary class with no settable members. This does not extend to the read-only
+wrapper or immutable kinds, since those have no usable parameterless constructor to build a
+subclass through. A type that doesn't qualify (abstract, no parameterless constructor, or matches
+no known shape) falls back to being populated as an ordinary class from its settable members, as
+before.
+
+**Construction strategy per kind:**
+
+- **Array** builds directly into a `T[]` of the chosen count, one indexed `Build<T>` call per slot.
+- **Add-based** kinds (`List`, `HashSet`, `Collection`, `Queue`, `Stack`, `SortedSet`,
+  `ObservableCollection`, `ConcurrentBag`, `ConcurrentQueue`, `ConcurrentStack`) build the backing
+  type directly and call its natural mutator (`Add`/`Enqueue`/`Push`) once per item.
+- **Keyed** kinds (`Dictionary`, `SortedDictionary`, `SortedList`, `ConcurrentDictionary`) build the
+  backing type directly and assign `result[key] = value` per pair. `SortedDictionary`, `SortedList`,
+  and `ConcurrentDictionary` retry key generation (bounded at 10 attempts) when a generated key
+  collides with one already present, so a small key space does not silently under-populate the
+  collection; a colliding `Dictionary` key is skipped instead, unchanged from prior behavior. A
+  reference-typed key that comes back `null` is always skipped, never retried indefinitely.
+- **Read-only wrapper** kinds (`ReadOnlyCollection`, `ReadOnlyDictionary`, `ReadOnlyObservableCollection`)
+  build a mutable backing collection (`List<T>`/`Dictionary<K,V>`/`ObservableCollection<T>`) the same
+  way as their mutable counterparts, then wrap it in the read-only type — the only construction path
+  available, since these types have no public mutators of their own.
+
+- **Immutable** kinds build a mutable `List<T>`/`Dictionary<K,V>` backing collection the same way,
+  then call the matching `{ImmutableXxx}.CreateRange(backing)` factory method — immutable collections
+  have no mutators to call incrementally.
+
+**Unsupported collection shapes.** A small number of BCL collection-shaped types are intentionally
+excluded because they have no usable mutator or are a live view over another collection rather than
+an independently constructible value: `ArraySegment<T>`, `Dictionary<K,V>.KeyCollection`/
+`.ValueCollection`, and `SortedDictionary<K,V>.KeyCollection`/`.ValueCollection`. Discovering one of
+these as a build target raises `MB1011` instead of silently producing a null or empty value; add a
+`Mapping<,>` to a supported collection or register a custom `IValueSource<T>` to build it.
 
 **Explicitly out of scope — no built-in source (require a `Mapping<,>` or custom source):**
 `Stream` and other abstract IO, `Type`, `Task`/`Task<T>`, `Expression`, delegates, `object`,
@@ -1496,6 +1566,7 @@ runs. Indicative catalogue (IDs illustrative, severities tunable via `.editorcon
 | `MB1008` | Warning | A registered `IValueSource<T>` is never selected (dead registration) | "Remove the registration or widen its match; it currently matches no discovered member." |
 | `MB1009` | Info | A member falls back to runtime matching via `.When(...)` on a hot path | "Express the condition with `.ForMembersNamed/Matching(...)` to compile it in, if possible." |
 | `MB1010` | Error | A write-only or init-only member is targeted in a way that can't be satisfied (§7, #282) | "Remove the member from population, or provide it via constructor args." |
+| `MB1011` | Warning | A discovered collection is a shape ModelBuilder does not build (no mutator, or a live view) (§8.2) | "Add `Model.Mapping<,>` to a supported collection, or register a custom `IValueSource<{X}>`." |
 
 The generator also emits the **cycle** and **ambiguity** errors against the *merged* configuration
 for the whole compilation, so a conflict introduced by combining two modules is caught (§8.2.6).
