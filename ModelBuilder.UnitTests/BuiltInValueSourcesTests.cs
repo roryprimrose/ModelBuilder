@@ -116,7 +116,6 @@
         }
 
         [Fact]
-<<<<<<< HEAD
         public void ExceptionSourceProducesInvalidOperationExceptionWithMessage()
         {
             var context = new BuildContext(new RandomSource(42));
@@ -127,7 +126,9 @@
 
             actual.Should().BeOfType<InvalidOperationException>();
             actual.Message.Should().NotBeNullOrEmpty();
-=======
+        }
+
+        [Fact]
         public void ObjectSourceProducesStringValue()
         {
             var context = new BuildContext(new RandomSource(42));
@@ -138,7 +139,6 @@
 
             actual.Should().BeOfType<string>();
             ((string)actual).Should().NotBeNullOrEmpty();
->>>>>>> a1bcecc (Add built-in object value source mapped to string)
         }
 
         [Fact]
