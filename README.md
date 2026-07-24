@@ -250,7 +250,15 @@ way, without a mapping the value is left at its default rather than built.
 The common BCL collection interfaces (`IList<>`, `ICollection<>`, `IEnumerable<>`,
 `IReadOnlyList<>`, `IReadOnlyCollection<>`, `IDictionary<,>`, `IReadOnlyDictionary<,>`, `ISet<>`)
 have built-in mappings to their obvious concrete counterparts and do not require explicit
-declarations.
+declarations — whether they appear as a member type or as the root of a `Model.Create<T>()` call:
+
+```csharp
+// As a root — creates a populated List<string> returned as IList<string>:
+var names = Model.Create<IList<string>>();
+
+// As a member — the property is populated with a Dictionary<string, int>:
+var order = Model.Create<Order>(); // Order.Metadata is IDictionary<string, int>
+```
 
 #### Open generic type mapping
 

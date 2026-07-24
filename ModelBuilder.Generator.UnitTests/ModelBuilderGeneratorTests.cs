@@ -293,6 +293,64 @@ namespace Sample
         }
 
         [Fact]
+        public void DoesNotReportMB1001ForBuiltInCollectionInterfaceRoot()
+        {
+            const string source = @"
+namespace Sample
+{
+    public static class Caller
+    {
+        public static System.Collections.Generic.IList<int> Build()
+            => global::ModelBuilder.Model.Create<System.Collections.Generic.IList<int>>();
+    }
+}";
+
+            var harness = GeneratorTestHarness.Run(source);
+
+            harness.GeneratorDiagnostics.Should().NotContain(d => d.Id == "MB1001");
+            harness.CompilationErrors.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void DoesNotReportMB1001ForBuiltInDictionaryInterfaceRoot()
+        {
+            const string source = @"
+namespace Sample
+{
+    public static class Caller
+    {
+        public static System.Collections.Generic.IDictionary<string, int> Build()
+            => global::ModelBuilder.Model.Create<System.Collections.Generic.IDictionary<string, int>>();
+    }
+}";
+
+            var harness = GeneratorTestHarness.Run(source);
+
+            harness.GeneratorDiagnostics.Should().NotContain(d => d.Id == "MB1001");
+            harness.CompilationErrors.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void DoesNotReportMB1001ForBuiltInCollectionInterfaceTypeOfRoot()
+        {
+            const string source = @"
+namespace Sample
+{
+    public static class Caller
+    {
+        public static object Build()
+            => global::ModelBuilder.Model.Create(typeof(System.Collections.Generic.ISet<int>));
+    }
+}";
+
+            var harness = GeneratorTestHarness.Run(source);
+
+            harness.GeneratorDiagnostics.Should().NotContain(d => d.Id == "MB1001");
+            harness.GeneratorDiagnostics.Should().NotContain(d => d.Id == "MB1005");
+            harness.CompilationErrors.Should().BeEmpty();
+        }
+
+        [Fact]
         public void ReportsMB1002ForRootWithoutAccessibleConstructor()
         {
             const string source = @"
