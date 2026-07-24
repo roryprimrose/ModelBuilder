@@ -286,6 +286,21 @@ namespace ModelBuilder
                 {
                     return value;
                 }
+
+                // Fall back to built-in type mappings (e.g. IList<> → List<>) so collection
+                // interfaces resolve without requiring the caller to declare them.
+                if (context.Configuration.TryGetMapping(typeof(T), out var mappedType))
+                {
+                    if (_registry.TryGet(mappedType, out var mappedBuilder) && mappedBuilder != null)
+                    {
+                        return (T)mappedBuilder.Create(context);
+                    }
+
+                    if (_valueSourceFactories.TryGetValue(mappedType, out var mappedFactory))
+                    {
+                        return (T)mappedFactory(context)!;
+                    }
+                }
             }
 
             throw NoBuilder(typeof(T));
