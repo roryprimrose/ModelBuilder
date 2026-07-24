@@ -44,6 +44,21 @@ namespace ModelBuilder
                 {
                     return builtInValue!;
                 }
+
+                // Fall back to built-in type mappings (e.g. IReadOnlyDictionary<,> → Dictionary<,>)
+                // so collection interfaces resolve without requiring the caller to declare them.
+                if (context.Configuration.TryGetMapping(instanceType, out var mappedType))
+                {
+                    if (_registry.TryGet(mappedType, out var mappedBuilder) && mappedBuilder != null)
+                    {
+                        return mappedBuilder.Create(context);
+                    }
+
+                    if (_valueSourceFactories.TryGetValue(mappedType, out var mappedFactory))
+                    {
+                        return mappedFactory(context)!;
+                    }
+                }
             }
 
             throw NoBuilder(instanceType);
@@ -271,6 +286,21 @@ namespace ModelBuilder
                 {
                     return value;
                 }
+
+                // Fall back to built-in type mappings (e.g. IList<> → List<>) so collection
+                // interfaces resolve without requiring the caller to declare them.
+                if (context.Configuration.TryGetMapping(typeof(T), out var mappedType))
+                {
+                    if (_registry.TryGet(mappedType, out var mappedBuilder) && mappedBuilder != null)
+                    {
+                        return (T)mappedBuilder.Create(context);
+                    }
+
+                    if (_valueSourceFactories.TryGetValue(mappedType, out var mappedFactory))
+                    {
+                        return (T)mappedFactory(context)!;
+                    }
+                }
             }
 
             throw NoBuilder(typeof(T));
@@ -336,5 +366,40 @@ namespace ModelBuilder
         ///     public contract).
         /// </summary>
         internal static ModelBuilderRegistry RegistryInternal => _registry;
+
+        /// <summary>
+        ///     Attempts to create a value for the specified type using a registered value-source
+        ///     factory. Used by <see cref="BuildContext" /> when a type mapping resolves to a
+        ///     type that has a value source but no model builder (common for collections).
+        /// </summary>
+        /// <param name="type">The type to create a value for.</param>
+        /// <param name="context">The build context.</param>
+        /// <param name="value">The created value, when a factory exists.</param>
+        /// <returns><c>true</c> if a factory was found and invoked; otherwise, <c>false</c>.</returns>
+        internal static bool TryCreateFromValueSourceFactory(Type type, IBuildContext context, out object? value)
+        {
+            if (_valueSourceFactories.TryGetValue(type, out var factory))
+            {
+                value = factory(context);
+
+                return true;
+            }
+
+            value = null;
+
+            return false;
+        }
+
+        /// <summary>
+        ///     Returns whether a value-source factory is registered for the specified type, without
+        ///     invoking it. Used by <see cref="BuildContext" /> to test resolution before entering a
+        ///     build frame.
+        /// </summary>
+        /// <param name="type">The type to check.</param>
+        /// <returns><c>true</c> if a factory is registered; otherwise, <c>false</c>.</returns>
+        internal static bool HasValueSourceFactory(Type type)
+        {
+            return _valueSourceFactories.ContainsKey(type);
+        }
     }
 }

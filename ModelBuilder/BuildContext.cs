@@ -254,6 +254,20 @@ namespace ModelBuilder
                         return (T)Invoke(memberName, () => mappedBuilder.Create(this));
                     }
                 }
+
+                if (Model.HasValueSourceFactory(mappedType))
+                {
+                    using (Log.BeginScope(BuildLogEntryKind.CreateValue, mappedType, memberName, "mapped value source", collectionIndex))
+                    using (EnterMember(declaringType, memberName, mappedType, collectionIndex))
+                    {
+                        return (T)Invoke(memberName, () =>
+                        {
+                            Model.TryCreateFromValueSourceFactory(mappedType, this, out var result);
+
+                            return result!;
+                        });
+                    }
+                }
             }
 
             // Custom value sources registered on the build configuration take precedence over the

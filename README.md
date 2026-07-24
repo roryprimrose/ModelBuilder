@@ -247,6 +247,19 @@ what keeps the build deterministic and reflection-free. This applies whether the
 type is the root you asked to build (`MB1001`) or a member reached along the way (`MB1012`) — either
 way, without a mapping the value is left at its default rather than built.
 
+The common BCL collection interfaces (`IList<>`, `ICollection<>`, `IEnumerable<>`,
+`IReadOnlyList<>`, `IReadOnlyCollection<>`, `IDictionary<,>`, `IReadOnlyDictionary<,>`, `ISet<>`)
+have built-in mappings to their obvious concrete counterparts and do not require explicit
+declarations — whether they appear as a member type or as the root of a `Model.Create<T>()` call:
+
+```csharp
+// As a root — creates a populated List<string> returned as IList<string>:
+var names = Model.Create<IList<string>>();
+
+// As a member — the property is populated with a Dictionary<string, int>:
+var order = Model.Create<Order>(); // Order.Metadata is IDictionary<string, int>
+```
+
 #### Open generic type mapping
 
 `Model.Mapping(Type, Type)` accepts open generic type definitions, registering a mapping that applies
@@ -663,7 +676,7 @@ override — starts from these defaults. A module, or a fluent call on `Model`, 
 
 | Category | Default |
 | --- | --- |
-| Type mappings | None. Abstract and interface members are unbuildable until you add a [`Mapping<,>`](#mapping-abstract-and-interface-types). |
+| Type mappings | Built-in for common BCL collection interfaces (`IReadOnlyDictionary<,>` → `Dictionary<,>`, `IDictionary<,>` → `Dictionary<,>`, `IReadOnlyList<>` / `IReadOnlyCollection<>` / `IList<>` / `ICollection<>` / `IEnumerable<>` → `List<>`, `ISet<>` → `HashSet<>`). Other abstract and interface members are unbuildable until you add a [`Mapping<,>`](#mapping-abstract-and-interface-types). |
 | Ignore rules | None. Every settable member and constructor parameter is populated. |
 | Custom value sources | None registered, but the **built-in value sources always apply** (you never register them, and a custom source only overrides the built-in for its type/name). |
 | Built-in typed sources | `bool`; every numeric type (`byte`/`sbyte`/`short`/`ushort`/`int`/`uint`/`long`/`ulong`/`float`/`double`/`decimal`); `char`; `string`; `Guid`; `DateTime`; `DateTimeOffset`; `TimeSpan`; `Uri`; `Version`; `byte[]`; `Exception` (produces `InvalidOperationException` with a random message); `object` (produces a random string). Enums, nullables and collections are handled by the generator. |

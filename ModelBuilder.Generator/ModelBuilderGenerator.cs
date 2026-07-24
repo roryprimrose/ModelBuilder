@@ -306,13 +306,18 @@ namespace ModelBuilder.Generator
                     && containingType == ModelTypeName
                     && TryGetTypeOfArgument(invocation, context.SemanticModel, token, 0, out var constantType))
                 {
-                    return new RootCapture(constantType, invocation.GetLocation(), isTypeOfRoot: true);
+                    return new RootCapture(
+                        ResolveBuiltInMapping(constantType, context.SemanticModel.Compilation),
+                        invocation.GetLocation(),
+                        isTypeOfRoot: true);
                 }
 
                 return default;
             }
 
-            return new RootCapture(method.TypeArguments[0] as INamedTypeSymbol, invocation.GetLocation());
+            return new RootCapture(
+                ResolveBuiltInMapping(method.TypeArguments[0] as INamedTypeSymbol, context.SemanticModel.Compilation),
+                invocation.GetLocation());
         }
 
         private static bool TryGetTypeOfArgument(
@@ -396,6 +401,62 @@ namespace ModelBuilder.Generator
             }
 
             return ImmutableArray<RootCapture>.Empty;
+        }
+
+        private static INamedTypeSymbol? ResolveBuiltInMapping(INamedTypeSymbol? symbol, Compilation compilation)
+        {
+            if (symbol is null
+                || symbol.TypeKind != TypeKind.Interface
+                || !symbol.IsGenericType
+                || symbol.IsUnboundGenericType)
+            {
+                return symbol;
+            }
+
+            var definition = symbol.OriginalDefinition;
+            var targetMetadataName = GetBuiltInMappingTarget(definition);
+
+            if (targetMetadataName is null)
+            {
+                return symbol;
+            }
+
+            var concreteDefinition = compilation.GetTypeByMetadataName(targetMetadataName);
+
+            if (concreteDefinition is null)
+            {
+                return symbol;
+            }
+
+            return concreteDefinition.Construct(symbol.TypeArguments.ToArray());
+        }
+
+        private static string? GetBuiltInMappingTarget(INamedTypeSymbol definition)
+        {
+            if (definition.ContainingNamespace?.ToDisplayString() != "System.Collections.Generic")
+            {
+                return null;
+            }
+
+            switch (definition.MetadataName)
+            {
+                case "IDictionary`2":
+                case "IReadOnlyDictionary`2":
+                    return "System.Collections.Generic.Dictionary`2";
+
+                case "IList`1":
+                case "IReadOnlyList`1":
+                case "IReadOnlyCollection`1":
+                case "ICollection`1":
+                case "IEnumerable`1":
+                    return "System.Collections.Generic.List`1";
+
+                case "ISet`1":
+                    return "System.Collections.Generic.HashSet`1";
+
+                default:
+                    return null;
+            }
         }
 
         private readonly struct RootCapture

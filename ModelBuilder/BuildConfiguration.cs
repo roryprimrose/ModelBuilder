@@ -10,6 +10,18 @@ namespace ModelBuilder
     /// </summary>
     internal sealed class BuildConfiguration : IBuildConfiguration
     {
+        private static readonly Dictionary<Type, Type> _builtInMappings = new Dictionary<Type, Type>
+        {
+            { typeof(IReadOnlyDictionary<,>), typeof(Dictionary<,>) },
+            { typeof(IDictionary<,>), typeof(Dictionary<,>) },
+            { typeof(IReadOnlyList<>), typeof(List<>) },
+            { typeof(IReadOnlyCollection<>), typeof(List<>) },
+            { typeof(IList<>), typeof(List<>) },
+            { typeof(ICollection<>), typeof(List<>) },
+            { typeof(IEnumerable<>), typeof(List<>) },
+            { typeof(ISet<>), typeof(HashSet<>) },
+        };
+
         private readonly HashSet<MemberKey> _ignoredMembers = new HashSet<MemberKey>();
         private readonly List<Func<MemberSignature, bool>> _ignorePredicates = new List<Func<MemberSignature, bool>>();
         private readonly Dictionary<Type, Type> _typeMappings = new Dictionary<Type, Type>();
@@ -150,14 +162,27 @@ namespace ModelBuilder
             // builder (registered via Model.RegistryInternal) to actually resolve a value - this only
             // fixes the type lookup, not builder discovery.
             if (sourceType.IsGenericType
-                && sourceType.IsGenericTypeDefinition == false
-                && _typeMappings.TryGetValue(sourceType.GetGenericTypeDefinition(), out var openTarget))
+                && sourceType.IsGenericTypeDefinition == false)
             {
-                targetType = openTarget.IsGenericTypeDefinition
-                    ? openTarget.MakeGenericType(sourceType.GetGenericArguments())
-                    : openTarget;
+                var definition = sourceType.GetGenericTypeDefinition();
 
-                return true;
+                if (_typeMappings.TryGetValue(definition, out var openTarget))
+                {
+                    targetType = openTarget.IsGenericTypeDefinition
+                        ? openTarget.MakeGenericType(sourceType.GetGenericArguments())
+                        : openTarget;
+
+                    return true;
+                }
+
+                // Fall back to built-in mappings for common BCL collection interfaces so consumers
+                // do not need to declare the same obvious mappings in every project.
+                if (_builtInMappings.TryGetValue(definition, out var builtInTarget))
+                {
+                    targetType = builtInTarget.MakeGenericType(sourceType.GetGenericArguments());
+
+                    return true;
+                }
             }
 
             targetType = null!;
