@@ -79,7 +79,7 @@
         {
             var sut = new BuildConfiguration();
 
-            sut.TryGetMapping(typeof(IList<int>), out _).Should().BeFalse();
+            sut.TryGetMapping(typeof(IComparable<int>), out _).Should().BeFalse();
         }
 
         [Fact]
@@ -189,6 +189,34 @@
             var sut = new BuildConfiguration();
 
             sut.TryGetMapping(typeof(Stream), out _).Should().BeFalse();
+        }
+
+        [Theory]
+        [InlineData(typeof(IReadOnlyDictionary<string, int>), typeof(Dictionary<string, int>))]
+        [InlineData(typeof(IDictionary<string, int>), typeof(Dictionary<string, int>))]
+        [InlineData(typeof(IReadOnlyList<int>), typeof(List<int>))]
+        [InlineData(typeof(IReadOnlyCollection<int>), typeof(List<int>))]
+        [InlineData(typeof(IList<int>), typeof(List<int>))]
+        [InlineData(typeof(ICollection<int>), typeof(List<int>))]
+        [InlineData(typeof(IEnumerable<int>), typeof(List<int>))]
+        [InlineData(typeof(ISet<int>), typeof(HashSet<int>))]
+        public void TryGetMappingResolvesBuiltInCollectionInterfaceMapping(Type source, Type expectedTarget)
+        {
+            var sut = new BuildConfiguration();
+
+            sut.TryGetMapping(source, out var target).Should().BeTrue();
+            target.Should().Be(expectedTarget);
+        }
+
+        [Fact]
+        public void TryGetMappingPrefersUserMappingOverBuiltIn()
+        {
+            var sut = new BuildConfiguration();
+
+            sut.AddMapping(typeof(IList<>), typeof(CustomIntList));
+
+            sut.TryGetMapping(typeof(IList<int>), out var target).Should().BeTrue();
+            target.Should().Be(typeof(CustomIntList));
         }
 
         private class CustomIntList : List<int>
