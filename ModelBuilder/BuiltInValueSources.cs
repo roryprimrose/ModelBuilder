@@ -112,6 +112,7 @@
             registry.Register<Version>(new DelegateValueSource<Version>(NextVersion));
             registry.Register<byte[]>(new DelegateValueSource<byte[]>(NextBytes));
             registry.Register<Exception>(new DelegateValueSource<Exception>(NextException));
+            registry.Register<object>(new DelegateValueSource<object>(c => NextString(c)));
 
             return registry;
         }
