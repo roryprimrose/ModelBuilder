@@ -34,6 +34,7 @@
             yield return new object[] { typeof(Version) };
             yield return new object[] { typeof(byte[]) };
             yield return new object[] { typeof(Exception) };
+            yield return new object[] { typeof(object) };
         }
 
         [Theory]
@@ -115,6 +116,7 @@
         }
 
         [Fact]
+<<<<<<< HEAD
         public void ExceptionSourceProducesInvalidOperationExceptionWithMessage()
         {
             var context = new BuildContext(new RandomSource(42));
@@ -125,6 +127,18 @@
 
             actual.Should().BeOfType<InvalidOperationException>();
             actual.Message.Should().NotBeNullOrEmpty();
+=======
+        public void ObjectSourceProducesStringValue()
+        {
+            var context = new BuildContext(new RandomSource(42));
+
+            context.TryResolveValueSource<object>(out var source).Should().BeTrue();
+
+            var actual = source!.Create(context, new BuildTarget(typeof(object)));
+
+            actual.Should().BeOfType<string>();
+            ((string)actual).Should().NotBeNullOrEmpty();
+>>>>>>> a1bcecc (Add built-in object value source mapped to string)
         }
 
         [Fact]
