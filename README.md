@@ -666,7 +666,7 @@ override — starts from these defaults. A module, or a fluent call on `Model`, 
 | Type mappings | None. Abstract and interface members are unbuildable until you add a [`Mapping<,>`](#mapping-abstract-and-interface-types). |
 | Ignore rules | None. Every settable member and constructor parameter is populated. |
 | Custom value sources | None registered, but the **built-in value sources always apply** (you never register them, and a custom source only overrides the built-in for its type/name). |
-| Built-in typed sources | `bool`; every numeric type (`byte`/`sbyte`/`short`/`ushort`/`int`/`uint`/`long`/`ulong`/`float`/`double`/`decimal`); `char`; `string`; `Guid`; `DateTime`; `DateTimeOffset`; `TimeSpan`; `Uri`; `Version`; `byte[]`. Enums, nullables and collections are handled by the generator. |
+| Built-in typed sources | `bool`; every numeric type (`byte`/`sbyte`/`short`/`ushort`/`int`/`uint`/`long`/`ulong`/`float`/`double`/`decimal`); `char`; `string`; `Guid`; `DateTime`; `DateTimeOffset`; `TimeSpan`; `Uri`; `Version`; `byte[]`; `Exception` (produces `InvalidOperationException` with a random message). Enums, nullables and collections are handled by the generator. |
 | Built-in named sources | The entity-style member-name sources in [Built-in data](#entity-style-data-matched-by-member-name) (names, email, company, location fields, age, date of birth, …). |
 | Build options | `MinCount` 1, `MaxCount` 10, `NullPercentage` 5, `MaxDepth` 50, `UseConstructorDefaults` off, `RetainAssignedValues` off — see [Tuning the build](#tuning-the-build). |
 
@@ -746,8 +746,8 @@ excludes matched members from the generated population code at compile time.
 ## Built-in data
 
 ModelBuilder ships value sources for the common primitive and BCL types (`bool`, the numeric types,
-`char`, `string`, `Guid`, `DateTime`, `DateTimeOffset`, `TimeSpan`, `Uri`, `Version`, `byte[]`),
-plus enum, nullable and collection support that the generator wires up automatically.
+`char`, `string`, `Guid`, `DateTime`, `DateTimeOffset`, `TimeSpan`, `Uri`, `Version`, `byte[]`,
+`Exception`), plus enum, nullable and collection support that the generator wires up automatically.
 
 ### Entity-style data matched by member name
 

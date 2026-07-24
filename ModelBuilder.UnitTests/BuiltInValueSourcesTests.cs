@@ -33,6 +33,7 @@
             yield return new object[] { typeof(Uri) };
             yield return new object[] { typeof(Version) };
             yield return new object[] { typeof(byte[]) };
+            yield return new object[] { typeof(Exception) };
         }
 
         [Theory]
@@ -111,6 +112,19 @@
 
             actual.Should().NotBeNull();
             actual!.Length.Should().BeInRange(1, 16);
+        }
+
+        [Fact]
+        public void ExceptionSourceProducesInvalidOperationExceptionWithMessage()
+        {
+            var context = new BuildContext(new RandomSource(42));
+
+            context.TryResolveValueSource<Exception>(out var source).Should().BeTrue();
+
+            var actual = source!.Create(context, new BuildTarget(typeof(Exception)));
+
+            actual.Should().BeOfType<InvalidOperationException>();
+            actual.Message.Should().NotBeNullOrEmpty();
         }
 
         [Fact]
