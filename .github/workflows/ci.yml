@@ -146,11 +146,14 @@ jobs:
   release:
     needs: build
     runs-on: ubuntu-latest
+    environment: production
     # action-gh-release needs contents: write to create the GitHub release; the GitHub Packages push
-    # below authenticates with the built-in GITHUB_TOKEN, which needs packages: write.
+    # below authenticates with the built-in GITHUB_TOKEN, which needs packages: write; id-token: write
+    # allows the NuGet/login OIDC token exchange for trusted publishing.
     permissions:
       contents: write
       packages: write
+      id-token: write
     # Run on pushes to the base repository for the default branch (main) or a version tagged build.
     # Main builds are untagged and GitVersion stamps them as a beta pre-release (see GitVersion.yml),
     # so they publish pre-release packages; version tags publish the stable release.
@@ -190,10 +193,14 @@ jobs:
         GPR_APIKEY: ${{ secrets.GITHUB_TOKEN }}
       run: dotnet nuget push "*.symbols.nupkg" --api-key "$GPR_APIKEY" --source https://nuget.pkg.github.com/roryprimrose/index.json --skip-duplicate
       
+    - name: NuGet login (OIDC trusted publishing)
+      uses: NuGet/login@v1
+      id: nuget-login
+      with:
+        user: rprimrose
+
     - name: Publish to NuGet.org
-      env: 
-        NUGET_APIKEY: ${{ secrets.NUGET_APIKEY }}
-      run: dotnet nuget push "*.symbols.nupkg" --api-key "$NUGET_APIKEY" --source https://api.nuget.org/v3/index.json --skip-duplicate
+      run: dotnet nuget push "*.symbols.nupkg" --api-key "${{ steps.nuget-login.outputs.NUGET_API_KEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
 
     - name: Create release and upload assets
       # Only create a GitHub release for an explicit version tag; main pre-release builds publish the
