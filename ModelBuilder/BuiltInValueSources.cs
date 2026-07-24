@@ -111,6 +111,7 @@
             registry.Register<Uri>(new DelegateValueSource<Uri>(NextUri));
             registry.Register<Version>(new DelegateValueSource<Version>(NextVersion));
             registry.Register<byte[]>(new DelegateValueSource<byte[]>(NextBytes));
+            registry.Register<Exception>(new DelegateValueSource<Exception>(NextException));
 
             return registry;
         }
@@ -282,6 +283,13 @@
             context.Random.NextBytes(buffer);
 
             return buffer;
+        }
+
+        private static Exception NextException(IBuildContext context)
+        {
+            var message = NextString(context);
+
+            return new InvalidOperationException(message);
         }
 
         private static DateTime NextDateTime(IBuildContext context)
