@@ -74,7 +74,7 @@ jobs:
     # gh CLI, so no third-party service is involved.
     - name: Generate coverage report
       if: ${{ !cancelled() && hashFiles('coverage.cobertura.xml') != '' }}
-      uses: danielpalme/ReportGenerator-GitHub-Action@5.5.10
+      uses: danielpalme/ReportGenerator-GitHub-Action@5.5.11
       with:
         reports: coverage.cobertura.xml
         targetdir: coveragereport
