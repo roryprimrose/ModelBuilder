@@ -7,7 +7,7 @@
 
   <!-- Production analyzers -->
   <ItemGroup>
-    <PackageVersion Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.302" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.400" />
   </ItemGroup>
 
   <!--
