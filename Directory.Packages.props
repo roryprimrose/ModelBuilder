@@ -46,7 +46,7 @@
     FluentAssertions is a test-only dependency that is never redistributed, so that grant applies.
   -->
   <ItemGroup>
-    <PackageVersion Include="xunit.v3" Version="3.2.2" />
+    <PackageVersion Include="xunit.v3" Version="4.0.1" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
     <PackageVersion Include="FluentAssertions" Version="8.10.0" />
   </ItemGroup>
